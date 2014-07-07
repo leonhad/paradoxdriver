@@ -1,6 +1,24 @@
 package org.paradox.parser;
 
 import junit.framework.Assert;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 import org.paradox.parser.nodes.FieldNode;
 import org.paradox.parser.nodes.SQLNode;
@@ -14,15 +32,15 @@ public class SQLParserTest {
         SQLParser parser = new SQLParser("SELECT * FROM cliente.db");
         SQLNode tree = parser.parse();
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        assertTrue(tree instanceof SelectNode);
 
         SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(1, select.getFields().size());
-        Assert.assertEquals("*", ((FieldNode) select.getFields().get(0)).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals("*", select.getFields().get(0).getName());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("CLIENTE.DB", ((TableNode) select.getTables().get(0)).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
     }
 
     @Test
@@ -30,18 +48,18 @@ public class SQLParserTest {
         SQLParser parser = new SQLParser("SELECT CODIGO, NOME FROM cliente, estado");
         SQLNode tree = parser.parse();
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        assertTrue(tree instanceof SelectNode);
 
         SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(2, select.getFields().size());
-        Assert.assertEquals("CODIGO", ((FieldNode) select.getFields().get(0)).getName());
-        Assert.assertEquals("NOME", ((FieldNode) select.getFields().get(1)).getName());
+        assertEquals(2, select.getFields().size());
+        assertEquals("CODIGO", select.getFields().get(0).getName());
+        assertEquals("NOME", select.getFields().get(1).getName());
 
-        Assert.assertEquals(2, select.getTables().size());
-        Assert.assertEquals("CLIENTE", ((TableNode) select.getTables().get(0)).getName());
-        Assert.assertEquals(2, select.getTables().size());
-        Assert.assertEquals("ESTADO", ((TableNode) select.getTables().get(1)).getName());
+        assertEquals(2, select.getTables().size());
+        assertEquals("CLIENTE", select.getTables().get(0).getName());
+        assertEquals(2, select.getTables().size());
+        assertEquals("ESTADO", select.getTables().get(1).getName());
     }
 
     @Test
@@ -49,14 +67,14 @@ public class SQLParserTest {
         SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
         SQLNode tree = parser.parse();
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        assertTrue(tree instanceof SelectNode);
 
         SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(1, select.getFields().size());
-        Assert.assertEquals("*", ((FieldNode) select.getFields().get(0)).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals("*", select.getFields().get(0).getName());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("CLIENTE.DB", ((TableNode) select.getTables().get(0)).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
     }
 }

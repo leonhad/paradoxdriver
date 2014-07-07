@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import static java.nio.ByteBuffer.allocate;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import static java.nio.charset.Charset.forName;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.paradox.ParadoxConnection;
@@ -14,10 +16,7 @@ import org.paradox.metadata.ParadoxField;
 import org.paradox.metadata.ParadoxIndex;
 import org.paradox.utils.filefilters.SecondaryIndexFilter;
 
-/**
- *
- * @author 72330554168
- */
+
 public class IndexData {
 
     public static ArrayList<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
@@ -39,7 +38,7 @@ public class IndexData {
     }
 
     private static ParadoxIndex loadIndexHeader(final ParadoxConnection conn, final File file) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.allocate(2048);
+        final ByteBuffer buffer = allocate(2048);
         
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
@@ -79,7 +78,7 @@ public class IndexData {
             if (index.getVersionId() > 4) {
                 // Set the charset
                 buffer.position(0x6A);
-                index.setCharset(Charset.forName("cp" + buffer.getShort()));
+                index.setCharset(forName("cp" + buffer.getShort()));
 
                 buffer.position(0x78);
             } else {
@@ -105,7 +104,7 @@ public class IndexData {
             }
 
             for (int loop = 0; loop < index.getFieldCount(); loop++) {
-                final ByteBuffer name = ByteBuffer.allocate(261);
+                final ByteBuffer name = allocate(261);
 
                 while (true) {
                     final byte c = buffer.get();
@@ -126,7 +125,7 @@ public class IndexData {
             index.setFieldsOrder(fieldsOrder);
 
             // Sort Order ID
-            final ByteBuffer sortOrderID = ByteBuffer.allocate(26);
+            final ByteBuffer sortOrderID = allocate(26);
             while (true) {
                 final byte c = buffer.get();
                 if (c == 0) {
@@ -138,7 +137,7 @@ public class IndexData {
             index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
 
             // Index name
-            final ByteBuffer name = ByteBuffer.allocate(26);
+            final ByteBuffer name = allocate(26);
             while (true) {
                 final byte c = buffer.get();
                 if (c == 0) {
@@ -159,5 +158,8 @@ public class IndexData {
             fs.close();
         }
         return index;
+    }
+
+    private IndexData() {
     }
 }

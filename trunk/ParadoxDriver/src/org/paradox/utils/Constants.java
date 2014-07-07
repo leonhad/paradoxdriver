@@ -1,10 +1,7 @@
 package org.paradox.utils;
 
-/**
- *
- * @author 72330554168
- */
-public final class Constants {
+
+public class Constants {
 
     /**
      * Prefixo do driver
@@ -22,4 +19,7 @@ public final class Constants {
     public static final String DRIVER_NAME = "Paradox (OpenParadox)";
 
     public static final String DRIVER_VERSION = MAJOR_VERSION + "." + MINOR_VERSION;
+
+    private Constants() {
+    }
 }

@@ -11,9 +11,16 @@ import org.paradox.procedures.math.Sum;
  *
  * @author 72330554168
  */
-public final class ProcedureAS {
+public class ProcedureAS {
 
     private static final ProcedureAS instance = new ProcedureAS();
+
+    public static ProcedureAS getInstance() {
+        return instance;
+    }
+
+
+    private ArrayList<CallableProcedure> procedures = new ArrayList<CallableProcedure>();
 
     private ProcedureAS() {
         register(new Averange());
@@ -22,12 +29,6 @@ public final class ProcedureAS {
         register(new Min());
         register(new Sum());
     }
-
-    public static ProcedureAS getInstance() {
-        return instance;
-    }
-
-    private ArrayList<CallableProcedure> procedures = new ArrayList<CallableProcedure>();
 
     public void register(final CallableProcedure procedure) {
         procedures.add(procedure);

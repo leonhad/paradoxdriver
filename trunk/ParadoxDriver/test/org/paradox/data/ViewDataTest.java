@@ -1,11 +1,15 @@
 package org.paradox.data;
 
-import java.sql.DriverManager;
-import junit.framework.Assert;
+import static java.lang.Class.forName;
+import static java.sql.DriverManager.getConnection;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.paradox.Driver;
 import org.paradox.ParadoxConnection;
+import static org.paradox.data.ViewData.listViews;
+import static org.paradox.data.ViewData.parseExpression;
 import org.paradox.metadata.ParadoxField;
 
 /**
@@ -16,24 +20,24 @@ public class ViewDataTest {
 
     @Before
     public void setUp() throws ClassNotFoundException {
-        Class.forName(Driver.class.getName());
+        forName(Driver.class.getName());
     }
 
     @Test
     public void testListViews() throws Exception {
-        ParadoxConnection conn = (ParadoxConnection)DriverManager.getConnection("jdbc:paradox:./db");
-        ViewData.listViews(conn);
+        ParadoxConnection conn = (ParadoxConnection)getConnection("jdbc:paradox:./db");
+        listViews(conn);
     }
 
     @Test
     public void testParseExpression() throws Exception {
         final ParadoxField field = new ParadoxField();
-        ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
-        Assert.assertEquals(Boolean.TRUE, Boolean.valueOf(field.isChecked()));
-        Assert.assertEquals("_PC", field.getJoinName());
-        Assert.assertEquals("CALC _PC*_QTD", field.getExpression());
-        Assert.assertEquals("CUSTOTOTAL", field.getAlias());
+        parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
+        assertEquals(true, field.isChecked());
+        assertEquals("_PC", field.getJoinName());
+        assertEquals("CALC _PC*_QTD", field.getExpression());
+        assertEquals("CUSTOTOTAL", field.getAlias());
 
-        Assert.assertTrue(field.isChecked());
+        assertTrue(field.isChecked());
     }
 }

@@ -1,5 +1,7 @@
 package org.paradox.data.table.value;
 
+import static java.lang.Integer.valueOf;
+
 public class IntegerValue extends AbstractNumericValue {
 
     public IntegerValue(final Integer value) {
@@ -7,6 +9,6 @@ public class IntegerValue extends AbstractNumericValue {
     }
 
     public IntegerValue(final int value) {
-        super(Integer.valueOf(value));
+        super(value);
     }
 }

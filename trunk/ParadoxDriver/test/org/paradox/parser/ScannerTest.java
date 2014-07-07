@@ -2,6 +2,9 @@ package org.paradox.parser;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
+import static java.nio.CharBuffer.wrap;
+import static java.nio.CharBuffer.wrap;
+import static java.nio.CharBuffer.wrap;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -12,7 +15,7 @@ public class ScannerTest {
      */
     @Test
     public void testHasNext() throws Exception {
-        Scanner scanner = new Scanner(CharBuffer.wrap("(SELECT * FROM Teste)"));
+        Scanner scanner = new Scanner(wrap("(SELECT * FROM Teste)"));
         for (int loop = 0; loop < 6; loop++) {
             assertTrue(scanner.hasNext());
             scanner.nextToken();
@@ -26,7 +29,7 @@ public class ScannerTest {
     @Test
     public void testPushBack() throws IOException {
         Token token = null;
-        Scanner scanner = new Scanner(CharBuffer.wrap("(SELECT * FROM Teste)"));
+        Scanner scanner = new Scanner(wrap("(SELECT * FROM Teste)"));
         for (int loop = 0; loop < 6; loop++) {
             token = scanner.nextToken();
         }
@@ -45,7 +48,7 @@ public class ScannerTest {
     @Test
     public void testGroup() throws IOException {
         Token token = null;
-        Scanner scanner = new Scanner(CharBuffer.wrap(" \"test 1\" \"Table.db\"" ));
+        Scanner scanner = new Scanner(wrap(" \"test 1\" \"Table.db\"" ));
         token = scanner.nextToken();
         assertEquals("test 1", token.getValue());
         token = scanner.nextToken();

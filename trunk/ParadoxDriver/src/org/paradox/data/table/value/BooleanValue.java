@@ -10,6 +10,6 @@ public class BooleanValue extends AbstractFieldValue<Boolean> {
         if (value == null) {
             return false;
         }
-        return value.booleanValue();
+        return value;
     }
 }

@@ -16,6 +16,33 @@ import org.paradox.metadata.ParadoxField;
  */
 public class ColumnDTO {
 
+    public static String getTypeName(final int type) throws SQLException {
+        switch (type) {
+            case Types.VARCHAR:
+                return "VARCHAR";
+            case Types.DATE:
+                return "DATE";
+            case Types.INTEGER:
+                return "INTEGER";
+            case Types.DOUBLE:
+                return "DOUBLE";
+            case Types.NUMERIC:
+                return "NUMERIC";
+            case Types.BOOLEAN:
+                return "BOOLEAN";
+            case Types.BLOB:
+                return "BLOB";
+            case Types.TIME:
+                return "TIME";
+            case Types.TIMESTAMP:
+                return "TIMESTAMP";
+            case Types.BINARY:
+                return "BINARY";
+            default:
+                throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND);
+        }
+    }
+
     private ParadoxField field;
     /**
      * Column index
@@ -61,33 +88,6 @@ public class ColumnDTO {
 
     public void setField(ParadoxField field) {
         this.field = field;
-    }
-
-    public static String getTypeName(final int type) throws SQLException {
-        switch (type) {
-            case Types.VARCHAR:
-                return "VARCHAR";
-            case Types.DATE:
-                return "DATE";
-            case Types.INTEGER:
-                return "INTEGER";
-            case Types.DOUBLE:
-                return "DOUBLE";
-            case Types.NUMERIC:
-                return "NUMERIC";
-            case Types.BOOLEAN:
-                return "BOOLEAN";
-            case Types.BLOB:
-                return "BLOB";
-            case Types.TIME:
-                return "TIME";
-            case Types.TIMESTAMP:
-                return "TIMESTAMP";
-            case Types.BINARY:
-                return "BINARY";
-            default:
-                throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND);
-        }
     }
 
     /**
@@ -285,4 +285,5 @@ public class ColumnDTO {
     public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
     }
+
 }

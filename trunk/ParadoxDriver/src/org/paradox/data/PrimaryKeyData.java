@@ -7,16 +7,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import static java.nio.ByteBuffer.allocate;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import org.paradox.metadata.ParadoxTable;
 
-/**
- *
- * @author 72330554168
- */
+
 public class PrimaryKeyData {
     public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
         final String name = table.getName().substring(0, table.getName().length() - 3) + ".PX";
@@ -54,7 +52,7 @@ public class PrimaryKeyData {
     }
 
     private static ParadoxPK loadPKHeader(final ParadoxConnection conn, final File file) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.allocate(2048);
+        final ByteBuffer buffer = allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
         final FileInputStream fs = new FileInputStream(file);
@@ -89,5 +87,8 @@ public class PrimaryKeyData {
             fs.close();
         }
         return pk;
+    }
+
+    private PrimaryKeyData() {
     }
 }

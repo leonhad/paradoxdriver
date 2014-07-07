@@ -97,4 +97,7 @@ public class DateUtils {
                 + inputDay
                 - SDN_OFFSET);
     }
+
+    private DateUtils() {
+    }
 }

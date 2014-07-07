@@ -3,10 +3,12 @@ package org.paradox;
 import org.paradox.utils.Constants;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import static java.sql.DriverManager.registerDriver;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * Driver JDBC tipo 4 para o PARADOX
@@ -23,7 +25,7 @@ public class Driver implements java.sql.Driver {
         try {
             // Registra o driver
             final Driver driverInst = new Driver();
-            DriverManager.registerDriver(driverInst);
+            registerDriver(driverInst);
         } catch (Exception e) {
         }
     }
@@ -98,5 +100,9 @@ public class Driver implements java.sql.Driver {
     @Override
     public boolean jdbcCompliant() {
         return false;
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -2,6 +2,7 @@ package org.paradox;
 
 import org.paradox.metadata.ParadoxDatabaseMetaData;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Array;
@@ -24,6 +25,7 @@ import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 import org.paradox.utils.SQLStates;
 
 /**
@@ -70,7 +72,7 @@ public class ParadoxConnection implements Connection {
      */
     private final String url;
     private final File dir;
-    private ArrayList<Statement> statements = new ArrayList<Statement>();
+    private final ArrayList<Statement> statements = new ArrayList<Statement>();
     private int transactionIsolation = Connection.TRANSACTION_NONE;
     private FileOutputStream lock;
 
@@ -86,7 +88,7 @@ public class ParadoxConnection implements Connection {
             lock = new FileOutputStream(lockFile);
 
             catalog = dir.getName();
-        } catch (final IOException e) {
+        } catch (final FileNotFoundException e) {
             throw new SQLException(e);
         }
     }
@@ -392,5 +394,21 @@ public class ParadoxConnection implements Connection {
 
     public File getDir() {
         return dir;
+    }
+
+    public void setSchema(String schema) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void abort(Executor executor) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public int getNetworkTimeout() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

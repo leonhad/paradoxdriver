@@ -1,14 +1,29 @@
 package org.paradox.test;
 
+import static java.lang.Class.forName;
 import org.paradox.ParadoxConnection;
 import org.paradox.Driver;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import static java.sql.DriverManager.getConnection;
+import static java.sql.DriverManager.getConnection;
+import static java.sql.DriverManager.getConnection;
+import static java.sql.DriverManager.getConnection;
+import static java.sql.DriverManager.getConnection;
+import static java.sql.DriverManager.getConnection;
+import static java.sql.DriverManager.getConnection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import org.junit.Test;
 import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 
 /**
@@ -20,7 +35,7 @@ public class MainTest {
 
     @Before
     public void setUp() throws Exception {
-        Class.forName(Driver.class.getName());
+        forName(Driver.class.getName());
     }
 
     @Test
@@ -28,7 +43,7 @@ public class MainTest {
         Connection conn = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:paradox:./db");
+            conn = getConnection("jdbc:paradox:./db");
         } finally {
             if (conn != null) {
                 conn.close();
@@ -41,7 +56,7 @@ public class MainTest {
         Connection conn = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:paradox:./db");
+            conn = getConnection("jdbc:paradox:./db");
             if (conn.isWrapperFor(ParadoxConnection.class)) {
                 conn.unwrap(ParadoxConnection.class);
             } else {
@@ -60,14 +75,14 @@ public class MainTest {
         ResultSet rs = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:paradox:./db");
+            conn = getConnection("jdbc:paradox:./db");
             final DatabaseMetaData meta = conn.getMetaData();
 
             rs = meta.getCatalogs();
             if (rs.next()) {
-                Assert.assertEquals("db", rs.getString("TABLE_CAT"));
+                assertEquals("db", rs.getString("TABLE_CAT"));
             } else {
-                Assert.fail("No catalog selected.");
+                fail("No catalog selected.");
             }
         } finally {
             if (rs != null) {
@@ -85,7 +100,7 @@ public class MainTest {
         ResultSet rs = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:paradox:./db");
+            conn = getConnection("jdbc:paradox:./db");
             final DatabaseMetaData meta = conn.getMetaData();
 
             rs = meta.getPrimaryKeys("db", "APP", "GENEROCLIENTE.db");
@@ -120,15 +135,15 @@ public class MainTest {
         ResultSet rs = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:paradox:./db");
+            conn = getConnection("jdbc:paradox:./db");
             final DatabaseMetaData meta = conn.getMetaData();
 
             rs = meta.getIndexInfo("db", "APP", "TESTE.db", true, true);
-            Assert.assertTrue(rs.next());
-            Assert.assertEquals("TESTE.PX", rs.getString("INDEX_NAME"));
-            Assert.assertTrue(rs.next());
-            Assert.assertEquals("0123456789012345678901234", rs.getString("INDEX_NAME"));
-            Assert.assertTrue(rs.next());
+            assertTrue(rs.next());
+            assertEquals("TESTE.PX", rs.getString("INDEX_NAME"));
+            assertTrue(rs.next());
+            assertEquals("0123456789012345678901234", rs.getString("INDEX_NAME"));
+            assertTrue(rs.next());
         } finally {
             if (rs != null) {
                 rs.close();
@@ -145,7 +160,7 @@ public class MainTest {
         ResultSet rs = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:paradox:./db");
+            conn = getConnection("jdbc:paradox:./db");
             final DatabaseMetaData meta = conn.getMetaData();
 
             rs = meta.getColumns("db", "APP", "CONTASAPAGAR.QBE", "%");
@@ -181,7 +196,7 @@ public class MainTest {
         ResultSet rs = null;
 
         try {
-            conn = DriverManager.getConnection("jdbc:paradox:./db");
+            conn = getConnection("jdbc:paradox:./db");
             stmt = conn.createStatement();
 
             rs = stmt.executeQuery("SELECT \"codigo\", codigodist FROM \"PRODUTO.db\"");

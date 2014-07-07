@@ -1,10 +1,7 @@
 package org.paradox.utils;
 
-/**
- *
- * @author 72330554168
- */
-public final class Expressions {
+
+public class Expressions {
 
     public static boolean accept(final String expression, final String criteria, final boolean caseSensitive) {
         final char[] crit = caseSensitive ? criteria.toCharArray() : criteria.toUpperCase().toCharArray();
@@ -45,14 +42,13 @@ public final class Expressions {
                     break;
             }
         }
-        if (index <= limit) {
-            // Expression not ends
-            return false;
-        }
-        return true;
+        return index > limit;
     }
 
     public static boolean accept(final String expression, final String criteria) {
         return accept(expression, criteria, false);
+    }
+
+    private Expressions() {
     }
 }

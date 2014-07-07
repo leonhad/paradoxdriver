@@ -2,6 +2,7 @@ package org.paradox.metadata;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import static java.nio.charset.Charset.forName;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +29,7 @@ public class ParadoxTable extends AbstractTable {
     private byte referencialIntegrity;
     private ArrayList<ParadoxField> fields;
     private ArrayList<Short> fieldsOrder;
-    private Charset charset = Charset.forName("Cp437");
+    private Charset charset = forName("Cp437");
 
     public ParadoxTable(final File file, final String name) {
         super(file, name);
@@ -42,7 +43,7 @@ public class ParadoxTable extends AbstractTable {
     @Override
     public boolean equals(final Object obj) {
         if (obj instanceof ParadoxTable) {
-            return getName().equals(((ParadoxTable) obj).getName());
+            return getName().equals(((AbstractTable) obj).getName());
         }
         return false;
     }

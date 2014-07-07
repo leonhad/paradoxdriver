@@ -2,6 +2,11 @@ package org.paradox.utils;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.paradox.utils.Expressions.accept;
+import static org.paradox.utils.Expressions.accept;
+import static org.paradox.utils.Expressions.accept;
+import static org.paradox.utils.Expressions.accept;
+import static org.paradox.utils.Expressions.accept;
 
 /**
  *
@@ -11,31 +16,31 @@ public class ExpressionsTest {
 
     @Test
     public void testEquals() {
-        assertTrue(Expressions.accept("TABLE", "table", false));
+        assertTrue(accept("TABLE", "table", false));
     }
 
     @Test
     public void testNotEquals() {
-        assertFalse(Expressions.accept("TABLE", "table", true));
+        assertFalse(accept("TABLE", "table", true));
     }
 
     @Test
     public void testMix() {
-        assertTrue(Expressions.accept("TESTE.X02", "%.X??"));
+        assertTrue(accept("TESTE.X02", "%.X??"));
     }
 
     @Test
     public void testExtra() {
-        assertFalse(Expressions.accept("TESTE.QBE~", "%.QBE"));
+        assertFalse(accept("TESTE.QBE~", "%.QBE"));
     }
 
     @Test
     public void testUnique() {
-        assertTrue(Expressions.accept("TABLE", "TAB?E"));
+        assertTrue(accept("TABLE", "TAB?E"));
     }
 
     @Test
     public void testLikes() {
-        assertTrue(Expressions.accept("TABLE", "TA%"));
+        assertTrue(accept("TABLE", "TA%"));
     }
 }

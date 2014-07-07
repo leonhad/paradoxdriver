@@ -8,27 +8,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import static java.lang.Integer.parseInt;
 import java.nio.ByteBuffer;
+import static java.nio.ByteBuffer.allocate;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import static java.nio.charset.Charset.forName;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import static org.paradox.data.TableData.listTables;
 import org.paradox.metadata.ParadoxField;
 import org.paradox.metadata.ParadoxTable;
 
-/**
- * Paradox view manipulation
- *
- * @author Leonardo Alves da Costa
- * @since 03/12/2009
- * @version 1.0
- */
-public final class ViewData {
+
+public class ViewData {
     // FIXME Use charset from last table
     // TODO Use lexical based parser
 
-    private static Charset charset = Charset.forName("Cp1250");
+    private static Charset charset = forName("Cp1250");
 
     public static ArrayList<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxView> views = new ArrayList<ParadoxView>();
@@ -65,7 +63,7 @@ public final class ViewData {
     }
 
     private static ParadoxView loadView(final ParadoxConnection conn, final File file) throws IOException, SQLException {
-        final ByteBuffer buffer = ByteBuffer.allocate(8192);
+        final ByteBuffer buffer = allocate(8192);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
@@ -228,11 +226,11 @@ public final class ViewData {
 
     // TODO Review
     private static String getFieldByIndex(final ParadoxTable lastTable, final String[] i) throws NumberFormatException {
-        return lastTable.getFields().get(Integer.parseInt(i[0].trim()) - 1).getName();
+        return lastTable.getFields().get(parseInt(i[0].trim()) - 1).getName();
     }
 
     private static ParadoxTable getTable(final ParadoxConnection conn, final String tableName) throws SQLException {
-        final ArrayList<ParadoxTable> tables = TableData.listTables(conn, tableName.trim());
+        final ArrayList<ParadoxTable> tables = listTables(conn, tableName.trim());
         if (tables.size() > 0) {
             return tables.get(0);
         }
@@ -283,5 +281,8 @@ public final class ViewData {
                 }
             }
         }
+    }
+
+    private ViewData() {
     }
 }

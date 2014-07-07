@@ -8,7 +8,8 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
-import org.paradox.data.TableData;
+import static org.paradox.data.TableData.listTables;
+import static org.paradox.data.TableData.loadData;
 import org.paradox.data.table.value.AbstractFieldValue;
 import org.paradox.metadata.ParadoxField;
 import org.paradox.metadata.ParadoxTable;
@@ -71,7 +72,7 @@ public class ParadoxStatement implements Statement {
                 // Generate SQL Tree
                 tables:
                 for (final TableNode tableNode : from) {
-                    for (final ParadoxTable table : TableData.listTables(conn)) {
+                    for (final ParadoxTable table : listTables(conn)) {
                         if (table.getName().equalsIgnoreCase(tableNode.getName())) {
                             tableNode.setTable(table);
                             continue tables;
@@ -112,7 +113,7 @@ public class ParadoxStatement implements Statement {
                         }
                     }
                 }
-                final ArrayList<ArrayList<AbstractFieldValue>> values = TableData.loadData(conn, from.get(0).getTable(), fieldList);
+                final ArrayList<ArrayList<AbstractFieldValue>> values = loadData(conn, from.get(0).getTable(), fieldList);
 
                 rs = new ParadoxResultSet(conn, this, values, columns);
                 return rs;
@@ -330,5 +331,13 @@ public class ParadoxStatement implements Statement {
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         return getClass().isAssignableFrom(iface);
+    }
+
+    public void closeOnCompletion() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public boolean isCloseOnCompletion() throws SQLException {
+        return true;
     }
 }

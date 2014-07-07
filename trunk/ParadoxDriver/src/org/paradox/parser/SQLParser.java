@@ -2,6 +2,7 @@ package org.paradox.parser;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
+import static java.nio.CharBuffer.wrap;
 import org.paradox.utils.SQLStates;
 import java.sql.SQLException;
 import org.paradox.parser.nodes.FieldNode;
@@ -16,7 +17,7 @@ public class SQLParser {
 
     public SQLParser(final String sql) {
         this.sql = sql;
-        this.scanner = new Scanner(CharBuffer.wrap(sql.toUpperCase().toCharArray()));
+        this.scanner = new Scanner(wrap(sql.toUpperCase().toCharArray()));
     }
 
     public SQLNode parse() throws SQLException, IOException {

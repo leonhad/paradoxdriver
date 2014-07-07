@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.ArrayList;
+import static org.paradox.results.ColumnDTO.getTypeName;
 
 /**
  * Paradox Result Set Meta Data
@@ -22,16 +23,16 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
     private final ArrayList<ColumnDTO> columns;
     private final ParadoxConnection conn;
 
+    public ParadoxResultSetMetaData(final ParadoxConnection conn, final ArrayList<ColumnDTO> columns) {
+        this.columns = columns;
+        this.conn = conn;
+    }
+
     private ColumnDTO getColumn(final int column) throws SQLException {
         if (column < 1 || column > columns.size()) {
             throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN);
         }
         return columns.get(column - 1);
-    }
-
-    public ParadoxResultSetMetaData(final ParadoxConnection conn, final ArrayList<ColumnDTO> columns) {
-        this.columns = columns;
-        this.conn = conn;
     }
 
     @Override
@@ -132,7 +133,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public String getColumnTypeName(int column) throws SQLException {
         final ColumnDTO dto = getColumn(column);
-        return ColumnDTO.getTypeName(dto.getType());
+        return getTypeName(dto.getType());
     }
 
     @Override

@@ -7,10 +7,13 @@ import org.paradox.metadata.ParadoxTable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import static java.lang.Double.compare;
 import java.nio.ByteBuffer;
+import static java.nio.ByteBuffer.allocate;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import static java.nio.charset.Charset.forName;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -26,15 +29,10 @@ import org.paradox.data.table.value.IntegerValue;
 import org.paradox.data.table.value.StringValue;
 import org.paradox.data.table.value.TimeValue;
 import org.paradox.utils.DateUtils;
+import static org.paradox.utils.DateUtils.SdnToGregorian;
 
-/**
- * Paradox table manipulation
- *
- * @author Leonardo Alves da Costa
- * @since 03/12/2009
- * @version 1.0
- */
-public final class TableData {
+
+public class TableData {
 
     public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
@@ -76,7 +74,7 @@ public final class TableData {
         final int blockSize = table.getBlockSizeBytes();
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
-        final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
+        final ByteBuffer buffer = allocate(blockSize);
         FileChannel channel = null;
 
         try {
@@ -109,7 +107,7 @@ public final class TableData {
                             switch (field.getType()) {
                                 case 1: {
                                     // varchar
-                                    final ByteBuffer value = ByteBuffer.allocate(field.getSize());
+                                    final ByteBuffer value = allocate(field.getSize());
 
                                     for (int chars = 0; chars < field.getSize(); chars++) {
                                         value.put(buffer.get());
@@ -128,7 +126,7 @@ public final class TableData {
                                     long days = ((long) (a1 << 24 | a2 << 16 | a3 << 8 | a4)) & 0x0FFFFFFFL;
 
                                     if ((a1 & 0xB0) != 0) {
-                                        final Date date = DateUtils.SdnToGregorian(days + 1721425);
+                                        final Date date = SdnToGregorian(days + 1721425);
                                         fieldValue = new DateValue(date);
                                     } else {
                                         fieldValue = new DateValue(null);
@@ -144,7 +142,7 @@ public final class TableData {
                                 case 6: {
                                     // Number
                                     final double v = buffer.getDouble() * -1;
-                                    if (Double.compare(Double.NEGATIVE_INFINITY, 1 / v) == 0) {
+                                    if (compare(Double.NEGATIVE_INFINITY, 1 / v) == 0) {
                                         fieldValue = new DoubleValue(null);
                                     } else {
                                         fieldValue = new DoubleValue(v);
@@ -212,7 +210,7 @@ public final class TableData {
     private static ParadoxTable loadTableHeader(final ParadoxConnection conn, final File file) throws IOException {
         final FileInputStream fs = new FileInputStream(file);
         final ParadoxTable table = new ParadoxTable(file, file.getName());
-        final ByteBuffer buffer = ByteBuffer.allocate(2048);
+        final ByteBuffer buffer = allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
 
@@ -249,7 +247,7 @@ public final class TableData {
             if (table.getVersionId() > 4) {
                 // Set the charset
                 buffer.position(0x6A);
-                table.setCharset(Charset.forName("cp" + buffer.getShort()));
+                table.setCharset(forName("cp" + buffer.getShort()));
 
                 buffer.position(0x78);
             } else {
@@ -277,7 +275,7 @@ public final class TableData {
             }
 
             for (int loop = 0; loop < table.getFieldCount(); loop++) {
-                final ByteBuffer name = ByteBuffer.allocate(261);
+                final ByteBuffer name = allocate(261);
 
                 while (true) {
                     final byte c = buffer.get();
@@ -303,5 +301,8 @@ public final class TableData {
             fs.close();
         }
         return table;
+    }
+
+    private TableData() {
     }
 }
