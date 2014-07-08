@@ -1,5 +1,6 @@
 package org.paradox;
 
+import java.io.IOException;
 import org.paradox.results.ColumnDTO;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -36,7 +37,7 @@ public class ParadoxStatement implements Statement {
      */
     private boolean closed = false;
     private int maxFieldSize = 255;
-    private int maxRows = -1;
+    private int maxRows = 0;
     private SQLWarning warnings = null;
     private boolean poolable = false;
     private int fetchSize = 10;
@@ -120,7 +121,9 @@ public class ParadoxStatement implements Statement {
             } else {
                 throw new SQLException("Not a SELECT statement", SQLStates.INVALID_COMMAND);
             }
-        } catch (final Exception e) {
+        } catch (final SQLException e) {
+            throw new SQLException(e.getMessage() + ": " + sql, SQLStates.INVALID_SQL, e);
+        } catch (final IOException e) {
             throw new SQLException(e.getMessage() + ": " + sql, SQLStates.INVALID_SQL, e);
         }
     }
@@ -195,6 +198,7 @@ public class ParadoxStatement implements Statement {
         cursorName = name;
     }
 
+    @Override
     public boolean execute(final String sql) throws SQLException {
         // FIXME detectar o tipo de SQL
         rs = (ParadoxResultSet)executeQuery(sql);
@@ -206,9 +210,9 @@ public class ParadoxStatement implements Statement {
         return rs;
     }
 
+    @Override
     public int getUpdateCount() throws SQLException {
-        // FIXME alterar em updates
-        return 0;
+        return -1;
     }
 
     @Override
@@ -249,6 +253,7 @@ public class ParadoxStatement implements Statement {
         return ResultSet.TYPE_FORWARD_ONLY;
     }
 
+    @Override
     public void addBatch(String sql) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }

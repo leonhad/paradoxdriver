@@ -200,7 +200,6 @@ public class MainTest {
             rs = stmt.executeQuery("SELECT AC, State, CITIES FROM \"AREACODES.DB\"");
 
             while (rs.next()) {
-                //System.out.println(rs.getString("AC") + " - " + rs.getString("State"));
                 rs.getString("AC");
                 rs.getString("State");
                 rs.getString("Cities");
