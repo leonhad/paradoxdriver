@@ -1,7 +1,7 @@
 package org.paradox.utils;
 
 /**
- * Armazena os SQL States do driver
+ * Store the SQL States
  *
  * @author Leonardo Alves da Costa
  * @version 1.0

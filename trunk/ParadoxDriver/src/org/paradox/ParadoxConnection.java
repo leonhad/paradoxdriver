@@ -2,9 +2,6 @@ package org.paradox;
 
 import org.paradox.metadata.ParadoxDatabaseMetaData;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -74,23 +71,32 @@ public class ParadoxConnection implements Connection {
     private final File dir;
     private final ArrayList<Statement> statements = new ArrayList<Statement>();
     private int transactionIsolation = Connection.TRANSACTION_NONE;
-    private FileOutputStream lock;
+    //private FileOutputStream lock;
+    /**
+     * Default timeout
+     */
+    private int networkTimeout = 0;
+    /**
+     * Selected Schema
+     */
+    private String schema = "APP";
 
     public ParadoxConnection(final File dir, final String url) throws SQLException {
         this.url = url;
         this.dir = dir;
 
-        try {
+//        try {
             if (!dir.exists() && !dir.isDirectory()) {
                 throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND);
             }
-            final File lockFile = new File(dir.getAbsolutePath() + File.separator + "db.lock");
-            lock = new FileOutputStream(lockFile);
+            // FIXME fix database lock
+            // final File lockFile = new File(dir.getAbsolutePath() + File.separator + "db.lock");
+            // lock = new FileOutputStream(lockFile);
 
             catalog = dir.getName();
-        } catch (final FileNotFoundException e) {
-            throw new SQLException(e);
-        }
+//        } catch (final FileNotFoundException e) {
+//            throw new SQLException(e);
+//        }
     }
 
     public String getCatalogName() {
@@ -148,32 +154,17 @@ public class ParadoxConnection implements Connection {
             stmt.close();
         }
         statements.clear();
-
-        if (lock != null) {
-            try {
-                lock.close();
-            } catch (IOException ex) {
-                throw new SQLException("Error unlocking database.", SQLStates.INVALID_STATE, ex);
-            }
-            lock = null;
-        }
+//
+//        if (lock != null) {
+//            try {
+//                lock.close();
+//            } catch (IOException ex) {
+//                throw new SQLException("Error unlocking database.", SQLStates.INVALID_STATE, ex);
+//            }
+//            lock = null;
+//        }
 
         closed = true;
-    }
-
-    /**
-     * Unlock the database
-     * 
-     * @throws Throwable in dealocation falt
-     */
-    @Override
-    @SuppressWarnings("FinalizeDeclaration")
-    public void finalize() throws Throwable {
-        if (lock != null) {
-            lock.close();
-            lock = null;
-        }
-        super.finalize();
     }
 
     @Override
@@ -206,8 +197,9 @@ public class ParadoxConnection implements Connection {
         return catalog;
     }
 
+    @Override
     public String getSchema() throws SQLException {
-        return "APP";
+        return schema;
     }
 
     @Override
@@ -396,19 +388,23 @@ public class ParadoxConnection implements Connection {
         return dir;
     }
 
+    @Override
     public void setSchema(String schema) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.schema = schema;
     }
 
+    @Override
     public void abort(Executor executor) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new SQLFeatureNotSupportedException();
     }
 
+    @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.networkTimeout = milliseconds;
     }
 
+    @Override
     public int getNetworkTimeout() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return networkTimeout;
     }
 }

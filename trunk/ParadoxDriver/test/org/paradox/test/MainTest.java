@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -91,22 +92,15 @@ public class MainTest {
             conn = getConnection("jdbc:paradox:./db");
             final DatabaseMetaData meta = conn.getMetaData();
 
-            rs = meta.getPrimaryKeys("db", "APP", "GENEROCLIENTE.db");
-            while (rs.next()) {
-                /*System.out.println("TABLE_CAT: " + rs.getString("TABLE_CAT"));
-                System.out.println("TABLE_SCHEM: " + rs.getString("TABLE_SCHEM"));
-                System.out.println("TABLE_NAME: " + rs.getString("TABLE_NAME"));
-                System.out.println("NON_UNIQUE: " + rs.getString("NON_UNIQUE"));
-                System.out.println("INDEX_QUALIFIER: " + rs.getString("INDEX_QUALIFIER"));
-                System.out.println("INDEX_NAME: " + rs.getString("INDEX_NAME"));
-                System.out.println("TYPE: " + rs.getString("TYPE"));
-                System.out.println("ORDINAL_POSITION: " + rs.getString("ORDINAL_POSITION"));
-                System.out.println("COLUMN_NAME: " + rs.getString("COLUMN_NAME"));
-                System.out.println("ASC_OR_DESC: " + rs.getString("ASC_OR_DESC"));
-                System.out.println("CARDINALITY: " + rs.getString("CARDINALITY"));
-                System.out.println("PAGES: " + rs.getString("PAGES"));
-                System.out.println("FILTER_CONDITION: " + rs.getString("FILTER_CONDITION"));*/
-            }
+            rs = meta.getPrimaryKeys("db", "APP", "CUSTOMER.db");
+            assertTrue(rs.next());
+            assertEquals("db", rs.getString("TABLE_CAT"));
+            assertEquals("APP", rs.getString("TABLE_SCHEM"));
+            assertEquals("CUSTOMER.DB", rs.getString("TABLE_NAME"));
+            assertEquals("CustNo", rs.getString("COLUMN_NAME"));
+            assertEquals("0", rs.getString("KEY_SEQ"));
+            assertEquals("CustNo", rs.getString("PK_NAME"));
+            assertFalse(rs.next());
         } finally {
             if (rs != null) {
                 rs.close();
@@ -126,12 +120,28 @@ public class MainTest {
             conn = getConnection("jdbc:paradox:./db");
             final DatabaseMetaData meta = conn.getMetaData();
 
-            rs = meta.getIndexInfo("db", "APP", "TESTE.db", true, true);
-            assertTrue(rs.next());
-            assertEquals("TESTE.PX", rs.getString("INDEX_NAME"));
-            assertTrue(rs.next());
-            assertEquals("0123456789012345678901234", rs.getString("INDEX_NAME"));
-            assertTrue(rs.next());
+            rs = meta.getIndexInfo("db", "APP", "customer.db", true, true);
+//            assertTrue(rs.next());
+//            assertEquals("CUSTOMER.PX", rs.getString("INDEX_NAME"));
+//            assertTrue(rs.next());
+//            assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
+//            assertFalse(rs.next());
+            
+            while(rs.next()) {
+//                System.out.println("TABLE_CAT: " + rs.getString("TABLE_CAT"));
+//                System.out.println("TABLE_SCHEM: " + rs.getString("TABLE_SCHEM"));
+//                System.out.println("TABLE_NAME: " + rs.getString("TABLE_NAME"));
+//                System.out.println("NON_UNIQUE: " + rs.getString("NON_UNIQUE"));
+//                System.out.println("INDEX_QUALIFIER: " + rs.getString("INDEX_QUALIFIER"));
+//                System.out.println("INDEX_NAME: " + rs.getString("INDEX_NAME"));
+//                System.out.println("TYPE: " + rs.getString("TYPE"));
+//                System.out.println("ORDINAL_POSITION: " + rs.getString("ORDINAL_POSITION"));
+//                System.out.println("COLUMN_NAME: " + rs.getString("COLUMN_NAME"));
+//                System.out.println("ASC_OR_DESC: " + rs.getString("ASC_OR_DESC"));
+//                System.out.println("CARDINALITY: " + rs.getString("CARDINALITY"));
+//                System.out.println("PAGES: " + rs.getString("PAGES"));
+//                System.out.println("FILTER_CONDITION: " + rs.getString("FILTER_CONDITION"));
+            }
         } finally {
             if (rs != null) {
                 rs.close();
@@ -154,18 +164,18 @@ public class MainTest {
             rs = meta.getColumns("db", "APP", "CONTASAPAGAR.QBE", "%");
             while (rs.next()) {
                 /*System.out.println("TABLE_CAT: " + rs.getString("TABLE_CAT"));
-                System.out.println("TABLE_SCHEM: " + rs.getString("TABLE_SCHEM"));
-                System.out.println("TABLE_NAME: " + rs.getString("TABLE_NAME"));
-                System.out.println("NON_UNIQUE: " + rs.getString("NON_UNIQUE"));
-                System.out.println("INDEX_QUALIFIER: " + rs.getString("INDEX_QUALIFIER"));
-                System.out.println("INDEX_NAME: " + rs.getString("INDEX_NAME"));
-                System.out.println("TYPE: " + rs.getString("TYPE"));
-                System.out.println("ORDINAL_POSITION: " + rs.getString("ORDINAL_POSITION"));
-                System.out.println("COLUMN_NAME: " + rs.getString("COLUMN_NAME"));
-                System.out.println("ASC_OR_DESC: " + rs.getString("ASC_OR_DESC"));
-                System.out.println("CARDINALITY: " + rs.getString("CARDINALITY"));
-                System.out.println("PAGES: " + rs.getString("PAGES"));
-                System.out.println("FILTER_CONDITION: " + rs.getString("FILTER_CONDITION"));*/
+                 System.out.println("TABLE_SCHEM: " + rs.getString("TABLE_SCHEM"));
+                 System.out.println("TABLE_NAME: " + rs.getString("TABLE_NAME"));
+                 System.out.println("NON_UNIQUE: " + rs.getString("NON_UNIQUE"));
+                 System.out.println("INDEX_QUALIFIER: " + rs.getString("INDEX_QUALIFIER"));
+                 System.out.println("INDEX_NAME: " + rs.getString("INDEX_NAME"));
+                 System.out.println("TYPE: " + rs.getString("TYPE"));
+                 System.out.println("ORDINAL_POSITION: " + rs.getString("ORDINAL_POSITION"));
+                 System.out.println("COLUMN_NAME: " + rs.getString("COLUMN_NAME"));
+                 System.out.println("ASC_OR_DESC: " + rs.getString("ASC_OR_DESC"));
+                 System.out.println("CARDINALITY: " + rs.getString("CARDINALITY"));
+                 System.out.println("PAGES: " + rs.getString("PAGES"));
+                 System.out.println("FILTER_CONDITION: " + rs.getString("FILTER_CONDITION"));*/
             }
         } finally {
             if (rs != null) {
@@ -187,10 +197,13 @@ public class MainTest {
             conn = getConnection("jdbc:paradox:./db");
             stmt = conn.createStatement();
 
-            rs = stmt.executeQuery("SELECT \"codigo\", codigodist FROM \"PRODUTO.DB\"");
+            rs = stmt.executeQuery("SELECT AC, State, CITIES FROM \"AREACODES.DB\"");
 
             while (rs.next()) {
-                System.out.println(rs.getInt(1) + " - " + rs.getString(2));
+                //System.out.println(rs.getString("AC") + " - " + rs.getString("State"));
+                rs.getString("AC");
+                rs.getString("State");
+                rs.getString("Cities");
             }
         } finally {
             if (rs != null) {

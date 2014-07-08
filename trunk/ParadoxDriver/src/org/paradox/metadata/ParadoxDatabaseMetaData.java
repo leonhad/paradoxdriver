@@ -10,6 +10,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Types;
 import java.util.ArrayList;
 import static org.paradox.data.IndexData.listIndexes;
@@ -337,182 +338,228 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return false;
     }
 
+    @Override
     public boolean supportsCatalogsInPrivilegeDefinitions() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsPositionedDelete() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsPositionedUpdate() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsSelectForUpdate() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsStoredProcedures() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsSubqueriesInComparisons() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsSubqueriesInExists() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsSubqueriesInIns() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsSubqueriesInQuantifieds() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsCorrelatedSubqueries() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsUnion() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsUnionAll() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsOpenCursorsAcrossRollback() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsOpenStatementsAcrossCommit() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsOpenStatementsAcrossRollback() throws SQLException {
         return false;
     }
 
+    @Override
     public int getMaxBinaryLiteralLength() throws SQLException {
         return 8;
     }
 
+    @Override
     public int getMaxCharLiteralLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxColumnNameLength() throws SQLException {
         return 8;
     }
 
+    @Override
     public int getMaxColumnsInGroupBy() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxColumnsInIndex() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxColumnsInOrderBy() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxColumnsInSelect() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxColumnsInTable() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxConnections() throws SQLException {
+        // FIXME allow more than one connection
         return 1;
     }
 
+    @Override
     public int getMaxCursorNameLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxIndexLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxSchemaNameLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxProcedureNameLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxCatalogNameLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxRowSize() throws SQLException {
         return 255;
     }
 
+    @Override
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
         return true;
     }
 
+    @Override
     public int getMaxStatementLength() throws SQLException {
         return Integer.MAX_VALUE;
     }
 
+    @Override
     public int getMaxStatements() throws SQLException {
         return Integer.MAX_VALUE;
     }
 
+    @Override
     public int getMaxTableNameLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxTablesInSelect() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getMaxUserNameLength() throws SQLException {
         return 255;
     }
 
+    @Override
     public int getDefaultTransactionIsolation() throws SQLException {
         return Connection.TRANSACTION_NONE;
     }
 
+    @Override
     public boolean supportsTransactions() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsTransactionIsolationLevel(int level) throws SQLException {
         return Connection.TRANSACTION_NONE != level;
     }
 
+    @Override
     public boolean supportsDataDefinitionAndDataManipulationTransactions() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsDataManipulationTransactionsOnly() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
         return false;
     }
 
+    @Override
     public ResultSet getProcedures(String catalog, String schemaPattern, String procedureNamePattern) throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("PROCEDURE_CAT", Types.VARCHAR));
@@ -544,6 +591,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getProcedureColumns(String catalog, String schemaPattern, String procedureNamePattern, String columnNamePattern) throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("PROCEDURE_CAT", Types.VARCHAR));
@@ -600,6 +648,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types) throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("TABLE_CAT", Types.VARCHAR));
@@ -654,6 +703,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getSchemas() throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("TABLE_SCHEM", Types.VARCHAR));
@@ -668,6 +718,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getCatalogs() throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("TABLE_CAT", Types.VARCHAR));
@@ -680,6 +731,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getTableTypes() throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("TABLE_TYPE", Types.VARCHAR));
@@ -694,6 +746,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("TABLE_CAT", Types.VARCHAR));
@@ -832,22 +885,27 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getVersionColumns(String catalog, String schema, String table) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getPrimaryKeys(final String catalog, final String schema, final String tableNamePattern) throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("TABLE_CAT", Types.VARCHAR));
@@ -858,7 +916,6 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new ColumnDTO("PK_NAME", Types.VARCHAR));
 
         final ArrayList<ArrayList<AbstractFieldValue>> values = new ArrayList<ArrayList<AbstractFieldValue>>(1);
-
         final ParadoxTable table = listTables(conn, tableNamePattern).get(0);
 
         int loop = 0;
@@ -876,22 +933,27 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public ResultSet getImportedKeys(String catalog, String schema, String table) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getExportedKeys(String catalog, String schema, String table) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getCrossReference(String primaryCatalog, String primarySchema, String primaryTable, String foreignCatalog, String foreignSchema, String foreignTable) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getTypeInfo() throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getIndexInfo(final String catalog, final String schema, final String tableNamePattern, final boolean unique, final boolean approximate) throws SQLException {
         final ArrayList<ColumnDTO> columns = new ArrayList<ColumnDTO>(1);
         columns.add(new ColumnDTO("TABLE_CAT", Types.VARCHAR));
@@ -969,122 +1031,153 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, values, columns);
     }
 
+    @Override
     public boolean supportsResultSetType(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean ownUpdatesAreVisible(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean ownDeletesAreVisible(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean ownInsertsAreVisible(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean othersUpdatesAreVisible(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean othersDeletesAreVisible(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean othersInsertsAreVisible(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean updatesAreDetected(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean deletesAreDetected(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean insertsAreDetected(int type) throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsBatchUpdates() throws SQLException {
         return false;
     }
 
+    @Override
     public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public Connection getConnection() throws SQLException {
         return conn;
     }
 
+    @Override
     public boolean supportsSavepoints() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsNamedParameters() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsMultipleOpenResults() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsGetGeneratedKeys() throws SQLException {
         return false;
     }
 
+    @Override
     public ResultSet getSuperTypes(String catalog, String schemaPattern, String typeNamePattern) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getSuperTables(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public ResultSet getAttributes(String catalog, String schemaPattern, String typeNamePattern, String attributeNamePattern) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public boolean supportsResultSetHoldability(int holdability) throws SQLException {
         return false;
     }
 
+    @Override
     public int getResultSetHoldability() throws SQLException {
         return conn.getHoldability();
     }
 
+    @Override
     public int getDatabaseMajorVersion() throws SQLException {
-        return 8;
+        // FIXME get the higest table value
+        return 7;
     }
 
+    @Override
     public int getDatabaseMinorVersion() throws SQLException {
         return 0;
     }
 
+    @Override
     public int getJDBCMajorVersion() throws SQLException {
         return 4;
     }
 
+    @Override
     public int getJDBCMinorVersion() throws SQLException {
         return 0;
     }
 
+    @Override
     public int getSQLStateType() throws SQLException {
         return 0;
     }
 
+    @Override
     public boolean locatorsUpdateCopy() throws SQLException {
         return false;
     }
 
+    @Override
     public boolean supportsStatementPooling() throws SQLException {
         return false;
     }
@@ -1098,7 +1191,6 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getSchemas(final String catalog, final String schemaPattern) throws SQLException {
         if ((catalog != null && !accept(conn.getCatalog(), catalog))
                 || (schemaPattern != null && !accept(conn.getSchema(), schemaPattern))) {
-
             return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
         }
         return getSchemas();
@@ -1143,11 +1235,13 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return getClass().isAssignableFrom(iface);
     }
 
+    @Override
     public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<ColumnDTO>());
     }
 
+    @Override
     public boolean generatedKeyAlwaysReturned() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 }

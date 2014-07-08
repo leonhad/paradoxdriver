@@ -104,7 +104,7 @@ public class ParadoxResultSet implements ResultSet {
             throw new SQLException("Invalid column.", SQLStates.INVALID_COLUMN);
         }
         lastValue = row.get(columnIndex - 1);
-        if (lastValue.getValue() != null) {
+        if (lastValue != null && lastValue.getValue() != null) {
             return lastValue.getValue().toString();
         }
         return null;

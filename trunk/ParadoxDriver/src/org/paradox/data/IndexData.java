@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 import static java.nio.ByteBuffer.allocate;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import static java.nio.charset.Charset.forName;
 import java.sql.SQLException;
 import java.util.ArrayList;
