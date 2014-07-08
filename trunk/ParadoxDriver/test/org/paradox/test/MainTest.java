@@ -5,23 +5,11 @@ import org.paradox.ParadoxConnection;
 import org.paradox.Driver;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import static java.sql.DriverManager.getConnection;
-import static java.sql.DriverManager.getConnection;
-import static java.sql.DriverManager.getConnection;
-import static java.sql.DriverManager.getConnection;
-import static java.sql.DriverManager.getConnection;
-import static java.sql.DriverManager.getConnection;
 import static java.sql.DriverManager.getConnection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import org.junit.Test;
-import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
@@ -199,10 +187,10 @@ public class MainTest {
             conn = getConnection("jdbc:paradox:./db");
             stmt = conn.createStatement();
 
-            rs = stmt.executeQuery("SELECT \"codigo\", codigodist FROM \"PRODUTO.db\"");
+            rs = stmt.executeQuery("SELECT \"codigo\", codigodist FROM \"PRODUTO.DB\"");
 
             while (rs.next()) {
-                //System.out.println(rs.getInt(1) + " - " + rs.getString(2));
+                System.out.println(rs.getInt(1) + " - " + rs.getString(2));
             }
         } finally {
             if (rs != null) {

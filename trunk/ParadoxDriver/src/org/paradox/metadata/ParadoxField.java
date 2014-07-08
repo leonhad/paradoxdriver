@@ -16,7 +16,7 @@ public class ParadoxField {
 
     private String name;
     private byte type;
-    private byte size;
+    private short size;
     private ParadoxTable table;
     private String tableName;
     private String alias;
@@ -141,14 +141,14 @@ public class ParadoxField {
     /**
      * @return the size
      */
-    public byte getSize() {
+    public short getSize() {
         return size;
     }
 
     /**
      * @param size the size to set
      */
-    public void setSize(byte size) {
+    public void setSize(short size) {
         this.size = size;
     }
 

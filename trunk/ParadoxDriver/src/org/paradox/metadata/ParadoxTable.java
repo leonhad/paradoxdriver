@@ -6,8 +6,11 @@ import static java.nio.charset.Charset.forName;
 import java.util.ArrayList;
 
 /**
- *
- * @author lcosta
+ * Load Table Data
+ * 
+ * @author Leonardo Costa
+ * @since 14/03/2009
+ * @version 1.1
  */
 public class ParadoxTable extends AbstractTable {
 
@@ -61,18 +64,14 @@ public class ParadoxTable extends AbstractTable {
         return ret;
     }
 
+    /**
+     * Return the block size in bytes
+     * 
+     * @return the block size in bytes
+     */
     public int getBlockSizeBytes() {
-        switch (blockSize) {
-            default:
-            case 1:
-                return 0x0400;
-            case 2:
-                return 0x0800;
-            case 3:
-                return 0x0c00;
-            case 4:
-                return 0x1000;
-        }
+        // The blockSize is always in KiB
+        return blockSize * 1024;
     }
 
     /**

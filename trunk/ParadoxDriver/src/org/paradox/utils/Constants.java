@@ -1,25 +1,26 @@
 package org.paradox.utils;
 
-
-public class Constants {
+public final class Constants {
 
     /**
-     * Prefixo do driver
+     * Driver prefix
      */
     public static final String URL_PREFIX = "jdbc:paradox:";
     /**
-     * Versão maior
+     * Major version of the Driver
      */
     public static final int MAJOR_VERSION = 1;
     /**
-     * Versão menor
+     * Minor version of the Driver
      */
-    public static final int MINOR_VERSION = 0;
-    
+    public static final int MINOR_VERSION = 1;
+    /**
+     * Driver Name
+     */
     public static final String DRIVER_NAME = "Paradox (OpenParadox)";
-
+    /**
+     * Driver String Version
+     */
     public static final String DRIVER_VERSION = MAJOR_VERSION + "." + MINOR_VERSION;
 
-    private Constants() {
-    }
 }

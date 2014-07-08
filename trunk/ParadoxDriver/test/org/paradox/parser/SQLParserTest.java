@@ -1,29 +1,10 @@
 package org.paradox.parser;
 
-import junit.framework.Assert;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
-import org.paradox.parser.nodes.FieldNode;
 import org.paradox.parser.nodes.SQLNode;
 import org.paradox.parser.nodes.SelectNode;
-import org.paradox.parser.nodes.TableNode;
 
 public class SQLParserTest {
 

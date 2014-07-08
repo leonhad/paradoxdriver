@@ -375,10 +375,15 @@
 |      |        field to indicate sort order direction:                      |
 |      |                                                                     |
 |      |           $00      ascending sort (case sensitive)                  |
+
 |      |           $01      ascending sort                                   |
+
 |      |           $10      descending sort  (case insensitive)              |
+
 |      |           $11      descending sort  (case sensitive)                |
+
 |      |           $20      ascending sort (case sensitive unique)           |
+
 |      |           $21      ascending sort (unique)                          |
 |      |           $30      descending sort  (case insensitive unique)       |
 |      |                                                                     |

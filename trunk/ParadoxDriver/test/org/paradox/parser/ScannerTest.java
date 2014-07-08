@@ -1,9 +1,6 @@
 package org.paradox.parser;
 
 import java.io.IOException;
-import java.nio.CharBuffer;
-import static java.nio.CharBuffer.wrap;
-import static java.nio.CharBuffer.wrap;
 import static java.nio.CharBuffer.wrap;
 import org.junit.Test;
 import static org.junit.Assert.*;

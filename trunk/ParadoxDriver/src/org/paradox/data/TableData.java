@@ -12,7 +12,6 @@ import java.nio.ByteBuffer;
 import static java.nio.ByteBuffer.allocate;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import static java.nio.charset.Charset.forName;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -26,9 +25,9 @@ import org.paradox.data.table.value.BooleanValue;
 import org.paradox.data.table.value.DateValue;
 import org.paradox.data.table.value.DoubleValue;
 import org.paradox.data.table.value.IntegerValue;
+import org.paradox.data.table.value.LongValue;
 import org.paradox.data.table.value.StringValue;
 import org.paradox.data.table.value.TimeValue;
-import org.paradox.utils.DateUtils;
 import static org.paradox.utils.DateUtils.SdnToGregorian;
 
 
@@ -81,20 +80,21 @@ public class TableData {
             channel = fs.getChannel();
 
             if (table.getUsedBlocks() > 0) {
-                int nextBlock = 1;
+                int nextBlock = table.getFirstBlock();
                 do {
                     buffer.order(ByteOrder.LITTLE_ENDIAN);
-                    channel.position(headerSize + ((nextBlock - 1) * blockSize));
+                    channel.position(headerSize + (nextBlock - 1) * blockSize);
 
                     buffer.clear();
                     channel.read(buffer);
                     buffer.flip();
 
                     nextBlock = buffer.getShort();
-                    //final int blockNumber = buffer.getShort();
+                    // final int blockNumber = buffer.getShort();;
                     buffer.getShort();
-                    final int addDataSize = buffer.getShort();
-                    final int rowsInBlock = (addDataSize / recordSize) + 1;
+                    
+                    final int addDataSize = (int)buffer.getShort() & 0xFFFF;
+                    final int rowsInBlock = addDataSize / recordSize + 1;
 
                     buffer.order(ByteOrder.BIG_ENDIAN);
 
@@ -134,8 +134,14 @@ public class TableData {
                                     break;
                                 }
                                 case 3: {
-                                    final int v = buffer.getShort();
+                                    final int v = buffer.getInt();
                                     fieldValue = new IntegerValue(v);
+                                    break;
+                                }
+                                case 4: {
+                                    // FIME long value
+                                    final int v = buffer.getInt();
+                                    fieldValue = new LongValue(v);
                                     break;
                                 }
                                 case 5: // Currency
@@ -163,11 +169,23 @@ public class TableData {
                                     }
                                     break;
                                 }
+                                case 0xc: {
+                                    // FIXME blob type
+                                    final ByteBuffer value = allocate(field.getSize());
+
+                                    for (int chars = 0; chars < field.getSize(); chars++) {
+                                        value.put(buffer.get());
+                                    }
+                                    value.flip();
+                                    final String v = table.getCharset().decode(value).toString();
+                                    fieldValue = new StringValue(v);
+                                    break;
+                                }
                                 case 0x14: {
-                                    int a1 = (0x000000FF & ((int) buffer.get()));
-                                    int a2 = (0x000000FF & ((int) buffer.get()));
-                                    int a3 = (0x000000FF & ((int) buffer.get()));
-                                    int a4 = (0x000000FF & ((int) buffer.get()));
+                                    int a1 = 0x000000FF & ((int) buffer.get());
+                                    int a2 = 0x000000FF & ((int) buffer.get());
+                                    int a3 = 0x000000FF & ((int) buffer.get());
+                                    int a4 = 0x000000FF & ((int) buffer.get());
                                     long timeInMillis = ((long) (a1 << 24 | a2 << 16 | a3 << 8 | a4)) & 0x0FFFFFFFL;
 
                                     if ((a1 & 0xB0) != 0) {
@@ -258,7 +276,7 @@ public class TableData {
             for (int loop = 0; loop < table.getFieldCount(); loop++) {
                 final ParadoxField field = new ParadoxField();
                 field.setType(buffer.get());
-                field.setSize(buffer.get());
+                field.setSize(((short)(buffer.get() & 0xff)));
                 field.setTableName(table.getName());
                 field.setTable(table);
                 fields.add(field);

@@ -12,33 +12,35 @@ import java.util.logging.Logger;
 
 /**
  * Driver JDBC tipo 4 para o PARADOX
- * 
+ *
  * @author Leonardo Alves da Costa
- * @version 2.0
+ * @version 2.1
  * @since 14/03/2009
  */
 public class Driver implements java.sql.Driver {
 
-    private Properties _Props = null;
+    private Properties properties = null;
+    
+    private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
 
     static {
         try {
-            // Registra o driver
+            // Register The Paradox Driver
             final Driver driverInst = new Driver();
             registerDriver(driverInst);
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            Logger.getLogger(Driver.class.getName()).severe(e.getMessage());
         }
     }
 
+    // FIXME tratar as propriedades
     @Override
     public Connection connect(final String url, final Properties info) throws SQLException {
-        ParadoxConnection conn = null;
-
         if (acceptsURL(url)) {
             final String dirName = url.substring(Constants.URL_PREFIX.length(), url.length());
-            conn = new ParadoxConnection(new File(dirName), url);
+            return new ParadoxConnection(new File(dirName), url);
         }
-        return conn;
+        return null;
     }
 
     @Override
@@ -46,45 +48,23 @@ public class Driver implements java.sql.Driver {
         return url.startsWith(Constants.URL_PREFIX);
     }
 
+    // FIXME tratar as propriedades
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) throws SQLException {
-        if (_Props == null) {
-            _Props = new Properties();
+        if (properties == null) {
+            properties = new Properties();
         }
 
-        DriverPropertyInfo HostProp =
-                new DriverPropertyInfo("HOST", _Props.getProperty("HOST"));
-        HostProp.required = true;
-
-        HostProp.description = "Hostname of MySQL Server";
-
-        DriverPropertyInfo PortProp =
-                new DriverPropertyInfo("PORT", _Props.getProperty("PORT", "3306"));
-        PortProp.required = false;
-        PortProp.description = "Port number of MySQL Server";
-
-        DriverPropertyInfo DBProp =
-                new DriverPropertyInfo("DBNAME", _Props.getProperty("DBNAME"));
+        DriverPropertyInfo DBProp = new DriverPropertyInfo("DBNAME", properties.getProperty("DBNAME"));
         DBProp.required = false;
         DBProp.description = "Database name";
 
-        DriverPropertyInfo UserProp =
-                new DriverPropertyInfo("user", "SYSTEM");
-        UserProp.required = true;
-        UserProp.description = "Username to authenticate as";
-
-        DriverPropertyInfo PasswordProp =
-                new DriverPropertyInfo("password", "");
-        PasswordProp.required = true;
+        DriverPropertyInfo PasswordProp = new DriverPropertyInfo("password", "");
+        PasswordProp.required = false;
         PasswordProp.description = "Password to use for authentication";
 
-        DriverPropertyInfo Dpi[] = {HostProp,
-            PortProp,
-            DBProp,
-            UserProp,
-            PasswordProp};
+        final DriverPropertyInfo Dpi[] = {DBProp, PasswordProp};
         return Dpi;
-
     }
 
     @Override
@@ -103,6 +83,6 @@ public class Driver implements java.sql.Driver {
     }
 
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return LOGGER;
     }
 }

@@ -1,7 +1,6 @@
 package org.paradox.data;
 
 import static java.lang.Class.forName;
-import java.sql.DriverManager;
 import static java.sql.DriverManager.getConnection;
 import java.util.ArrayList;
 import org.junit.Before;
