@@ -230,7 +230,7 @@ public class TableData {
     private static ParadoxTable loadTableHeader(final File file) throws IOException {
         final FileInputStream fs = new FileInputStream(file);
         final ParadoxTable table = new ParadoxTable(file, file.getName());
-        final ByteBuffer buffer = allocate(2048);
+        ByteBuffer buffer = allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
 
@@ -283,6 +283,11 @@ public class TableData {
                 field.setTable(table);
                 fields.add(field);
             }
+
+            // Restart the buffer with all table header
+            channel.position(0);
+            buffer = allocate(table.getHeaderSize());
+            channel.read(buffer);
 
             if (table.getVersionId() > 4) {
                 if (table.getVersionId() == 0xC) {

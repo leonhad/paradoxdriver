@@ -82,6 +82,7 @@ public class Driver implements java.sql.Driver {
         return false;
     }
 
+    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return LOGGER;
     }
