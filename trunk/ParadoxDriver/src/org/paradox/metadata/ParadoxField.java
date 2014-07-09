@@ -3,7 +3,7 @@ package org.paradox.metadata;
 import org.paradox.utils.SQLStates;
 import java.sql.SQLException;
 import java.sql.Types;
-import org.paradox.results.ColumnDTO;
+import org.paradox.results.Column;
 
 /**
  *  Armazena os campos de uma tabela
@@ -24,8 +24,8 @@ public class ParadoxField {
     private boolean checked;
     private String expression;
 
-    public ColumnDTO getColumn() throws SQLException {
-        final ColumnDTO dto = new ColumnDTO(this);
+    public Column getColumn() throws SQLException {
+        final Column dto = new Column(this);
         dto.setName(name);
         dto.setType(getSqlType());
         dto.setAutoIncrement(type == 0x16);

@@ -25,7 +25,7 @@ public class IndexData {
         for (final File file : fileList) {
             final ParadoxIndex index;
             try {
-                index = loadIndexHeader(conn, file);
+                index = loadIndexHeader(file);
             } catch (final IOException ex) {
                 throw new SQLException("Error loading Paradox index.", ex);
             }
@@ -36,7 +36,7 @@ public class IndexData {
         return indexes;
     }
 
-    private static ParadoxIndex loadIndexHeader(final ParadoxConnection conn, final File file) throws IOException {
+    private static ParadoxIndex loadIndexHeader(final File file) throws IOException {
         final ByteBuffer buffer = allocate(2048);
         
         buffer.order(ByteOrder.LITTLE_ENDIAN);

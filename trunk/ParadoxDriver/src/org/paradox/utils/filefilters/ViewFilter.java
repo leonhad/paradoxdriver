@@ -22,6 +22,7 @@ public class ViewFilter  implements FileFilter {
         this.viewName = viewName;
     }
 
+    @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 

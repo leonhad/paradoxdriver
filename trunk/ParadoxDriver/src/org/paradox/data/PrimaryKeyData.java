@@ -23,7 +23,7 @@ public class PrimaryKeyData {
         for (final File file : fileList) {
             final ParadoxPK key;
             try {
-                key = loadPKHeader(conn, file);
+                key = loadPKHeader(file);
             } catch (final IOException ex) {
                 throw new SQLException("Error loading Paradox tables.", ex);
             }
@@ -40,7 +40,7 @@ public class PrimaryKeyData {
         for (final File file : fileList) {
             final ParadoxPK key;
             try {
-                key = loadPKHeader(conn, file);
+                key = loadPKHeader(file);
             } catch (final IOException ex) {
                 throw new SQLException("Error loading Paradox tables.", ex);
             }
@@ -51,7 +51,7 @@ public class PrimaryKeyData {
         return keys;
     }
 
-    private static ParadoxPK loadPKHeader(final ParadoxConnection conn, final File file) throws IOException {
+    private static ParadoxPK loadPKHeader(final File file) throws IOException {
         final ByteBuffer buffer = allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;

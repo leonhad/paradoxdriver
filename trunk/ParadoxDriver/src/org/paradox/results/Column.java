@@ -14,7 +14,7 @@ import org.paradox.metadata.ParadoxField;
  * @version 1.0
  * @see ParadoxResultSet
  */
-public class ColumnDTO {
+public class Column {
 
     public static String getTypeName(final int type) throws SQLException {
         switch (type) {
@@ -70,14 +70,14 @@ public class ColumnDTO {
     private boolean writeable = false;
     private int maxSize = 255;
 
-    public ColumnDTO() {
+    public Column() {
     }
 
-    public ColumnDTO(final ParadoxField field) {
+    public Column(final ParadoxField field) {
         this.field = field;
     }
 
-    public ColumnDTO(final String name, final int type) {
+    public Column(final String name, final int type) {
         this.name = name;
         this.type = type;
     }

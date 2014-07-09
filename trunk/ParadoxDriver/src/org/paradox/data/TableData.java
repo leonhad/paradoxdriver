@@ -30,7 +30,6 @@ import org.paradox.data.table.value.StringValue;
 import org.paradox.data.table.value.TimeValue;
 import static org.paradox.utils.DateUtils.SdnToGregorian;
 
-
 public class TableData {
 
     public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String tableName) throws SQLException {
@@ -39,7 +38,7 @@ public class TableData {
         for (final File file : fileList) {
             final ParadoxTable table;
             try {
-                table = loadTableHeader(conn, file);
+                table = loadTableHeader(file);
             } catch (final IOException ex) {
                 throw new SQLException("Error loading Paradox tables.", ex);
             }
@@ -56,7 +55,7 @@ public class TableData {
         for (final File file : fileList) {
             final ParadoxTable table;
             try {
-                table = loadTableHeader(conn, file);
+                table = loadTableHeader(file);
             } catch (final IOException ex) {
                 throw new SQLException("Error loading Paradox tables.", ex);
             }
@@ -92,8 +91,8 @@ public class TableData {
                     nextBlock = buffer.getShort();
                     // final int blockNumber = buffer.getShort();;
                     buffer.getShort();
-                    
-                    final int addDataSize = (int)buffer.getShort() & 0xFFFF;
+
+                    final int addDataSize = (int) buffer.getShort() & 0xFFFF;
                     final int rowsInBlock = addDataSize / recordSize + 1;
 
                     buffer.order(ByteOrder.BIG_ENDIAN);
@@ -110,7 +109,10 @@ public class TableData {
                                     final ByteBuffer value = allocate(field.getSize());
 
                                     for (int chars = 0; chars < field.getSize(); chars++) {
-                                        value.put(buffer.get());
+                                        byte temp = buffer.get();
+                                        if (temp != 0) {
+                                            value.put(temp);
+                                        }
                                     }
                                     value.flip();
                                     final String v = table.getCharset().decode(value).toString();
@@ -119,10 +121,10 @@ public class TableData {
                                 }
                                 case 2: {
                                     // Date
-                                    int a1 = (0x000000FF & ((int) buffer.get()));
-                                    int a2 = (0x000000FF & ((int) buffer.get()));
-                                    int a3 = (0x000000FF & ((int) buffer.get()));
-                                    int a4 = (0x000000FF & ((int) buffer.get()));
+                                    int a1 = 0x000000FF & ((int) buffer.get());
+                                    int a2 = 0x000000FF & ((int) buffer.get());
+                                    int a3 = 0x000000FF & ((int) buffer.get());
+                                    int a4 = 0x000000FF & ((int) buffer.get());
                                     long days = ((long) (a1 << 24 | a2 << 16 | a3 << 8 | a4)) & 0x0FFFFFFFL;
 
                                     if ((a1 & 0xB0) != 0) {
@@ -225,7 +227,7 @@ public class TableData {
         return ret;
     }
 
-    private static ParadoxTable loadTableHeader(final ParadoxConnection conn, final File file) throws IOException {
+    private static ParadoxTable loadTableHeader(final File file) throws IOException {
         final FileInputStream fs = new FileInputStream(file);
         final ParadoxTable table = new ParadoxTable(file, file.getName());
         final ByteBuffer buffer = allocate(2048);
@@ -276,7 +278,7 @@ public class TableData {
             for (int loop = 0; loop < table.getFieldCount(); loop++) {
                 final ParadoxField field = new ParadoxField();
                 field.setType(buffer.get());
-                field.setSize(((short)(buffer.get() & 0xff)));
+                field.setSize(((short) (buffer.get() & 0xff)));
                 field.setTableName(table.getName());
                 field.setTable(table);
                 fields.add(field);

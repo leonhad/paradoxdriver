@@ -3,13 +3,13 @@ package org.paradox.metadata;
 import java.sql.Date;
 import org.paradox.ParadoxConnection;
 import org.paradox.utils.SQLStates;
-import org.paradox.results.ColumnDTO;
+import org.paradox.results.Column;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.ArrayList;
-import static org.paradox.results.ColumnDTO.getTypeName;
+import static org.paradox.results.Column.getTypeName;
 
 /**
  * Paradox Result Set Meta Data
@@ -20,15 +20,15 @@ import static org.paradox.results.ColumnDTO.getTypeName;
  */
 public class ParadoxResultSetMetaData implements ResultSetMetaData {
 
-    private final ArrayList<ColumnDTO> columns;
+    private final ArrayList<Column> columns;
     private final ParadoxConnection conn;
 
-    public ParadoxResultSetMetaData(final ParadoxConnection conn, final ArrayList<ColumnDTO> columns) {
+    public ParadoxResultSetMetaData(final ParadoxConnection conn, final ArrayList<Column> columns) {
         this.columns = columns;
         this.conn = conn;
     }
 
-    private ColumnDTO getColumn(final int column) throws SQLException {
+    private Column getColumn(final int column) throws SQLException {
         if (column < 1 || column > columns.size()) {
             throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN);
         }
@@ -42,7 +42,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public boolean isAutoIncrement(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isAutoIncrement();
     }
 
@@ -54,43 +54,43 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public boolean isSearchable(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isSearchable();
     }
 
     @Override
     public boolean isCurrency(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isCurrency();
     }
 
     @Override
     public int isNullable(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isNullable() ? ResultSetMetaData.columnNullable : ResultSetMetaData.columnNoNulls;
     }
 
     @Override
     public boolean isSigned(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isSigned();
     }
 
     @Override
     public int getColumnDisplaySize(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.getMaxSize();
     }
 
     @Override
     public String getColumnLabel(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.getName();
     }
 
     @Override
     public String getColumnName(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.getName();
     }
 
@@ -102,19 +102,19 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public int getPrecision(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.getPrecision();
     }
 
     @Override
     public int getScale(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.getScale();
     }
 
     @Override
     public String getTableName(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.getTableName();
     }
 
@@ -126,31 +126,31 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public int getColumnType(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.getType();
     }
 
     @Override
     public String getColumnTypeName(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return getTypeName(dto.getType());
     }
 
     @Override
     public boolean isReadOnly(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isReadOnly();
     }
 
     @Override
     public boolean isWritable(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isWriteable();
     }
 
     @Override
     public boolean isDefinitelyWritable(int column) throws SQLException {
-        final ColumnDTO dto = getColumn(column);
+        final Column dto = getColumn(column);
         return dto.isWriteable();
     }
 

@@ -3,7 +3,7 @@
 package org.paradox;
 
 import org.paradox.metadata.ParadoxResultSetMetaData;
-import org.paradox.results.ColumnDTO;
+import org.paradox.results.Column;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -44,12 +44,12 @@ public class ParadoxResultSet implements ResultSet {
     private SQLWarning warnings = null;
     private final ArrayList<ArrayList<AbstractFieldValue>> values;
     private int position = -1;
-    private final ArrayList<ColumnDTO> columns;
+    private final ArrayList<Column> columns;
     private int fetchSize = 10;
     private final ParadoxConnection conn;
     private AbstractFieldValue lastValue = null;
 
-    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement, final ArrayList<ArrayList<AbstractFieldValue>> values, final ArrayList<ColumnDTO> columns) {
+    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement, final ArrayList<ArrayList<AbstractFieldValue>> values, final ArrayList<Column> columns) {
         this.statement = statement;
         this.values = values;
         this.columns = columns;
@@ -285,7 +285,7 @@ public class ParadoxResultSet implements ResultSet {
 
     @Override
     public int findColumn(final String columnLabel) throws SQLException {
-        for (final ColumnDTO column : columns) {
+        for (final Column column : columns) {
             if (column.getName().equalsIgnoreCase(columnLabel)) {
                 return column.getIndex() + 1;
             }
