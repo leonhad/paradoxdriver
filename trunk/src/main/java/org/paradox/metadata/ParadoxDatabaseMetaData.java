@@ -1305,12 +1305,10 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return getClass().isAssignableFrom(iface);
     }
 
-    @Override
     public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern, String columnNamePattern) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<AbstractFieldValue>>(), new ArrayList<Column>());
     }
 
-    @Override
     public boolean generatedKeyAlwaysReturned() throws SQLException {
         return true;
     }
