@@ -2,8 +2,8 @@ package org.paradox.data;
 
 import static java.lang.Class.forName;
 import static java.sql.DriverManager.getConnection;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.paradox.Driver;
