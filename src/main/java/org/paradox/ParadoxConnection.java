@@ -197,7 +197,6 @@ public class ParadoxConnection implements Connection {
         return catalog;
     }
 
-    @Override
     public String getSchema() throws SQLException {
         return schema;
     }
@@ -388,22 +387,18 @@ public class ParadoxConnection implements Connection {
         return dir;
     }
 
-    @Override
     public void setSchema(String schema) throws SQLException {
         this.schema = schema;
     }
 
-    @Override
     public void abort(Executor executor) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
-    @Override
     public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
         this.networkTimeout = milliseconds;
     }
 
-    @Override
     public int getNetworkTimeout() throws SQLException {
         return networkTimeout;
     }

@@ -347,12 +347,10 @@ public class ParadoxStatement implements Statement {
         return getClass().isAssignableFrom(iface);
     }
 
-    @Override
     public void closeOnCompletion() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
     public boolean isCloseOnCompletion() throws SQLException {
         return true;
     }
