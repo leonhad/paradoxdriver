@@ -1,33 +1,35 @@
 package org.paradox.data;
 
-import static java.lang.Class.forName;
-import static java.sql.DriverManager.getConnection;
-import java.util.ArrayList;
+import java.sql.DriverManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.paradox.Driver;
 import org.paradox.ParadoxConnection;
-import static org.paradox.data.IndexData.listIndexes;
-import org.paradox.metadata.ParadoxIndex;
+import org.paradox.test.MainTest;
 
 /**
- *
- * @author 72330554168
+ * Test for IndexData
+ * 
+ * @author Leonardo Alves da Costa
+ * @since 14/03/2009
+ * @version 1.1
  */
 public class IndexDataTest {
 
-    @Before
-    public void setUp() throws ClassNotFoundException {
-        forName(Driver.class.getName());
-    }
+	@Before
+	public void setUp() throws ClassNotFoundException {
+		Class.forName(Driver.class.getName());
+	}
 
-    @Test
-    public void testListIndexes() throws Exception {
-        ParadoxConnection conn = (ParadoxConnection)getConnection("jdbc:paradox:target/test-classes/db");
-        ArrayList<ParadoxIndex> indexes = listIndexes(conn, "CLIENTE.db");
-//        for (final ParadoxIndex index : indexes) {
-//            System.out.println(index.getName() + "-" + index.getOrder());
-//        }
-    }
+	@Test
+	public void testListIndexes() throws Exception {
+		final ParadoxConnection conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+		IndexData.listIndexes(conn, "CLIENTE.db");
+		// ArrayList<ParadoxIndex> indexes = listIndexes(conn, "CLIENTE.db");
+		// for (final ParadoxIndex index : indexes) {
+		// System.out.println(index.getName() + "-" + index.getOrder());
+		// }
+	}
 
 }

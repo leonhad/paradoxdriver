@@ -1,43 +1,56 @@
 package org.paradox.data;
 
-import static java.lang.Class.forName;
-import static java.sql.DriverManager.getConnection;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.sql.DriverManager;
+
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.paradox.Driver;
 import org.paradox.ParadoxConnection;
-import static org.paradox.data.ViewData.listViews;
-import static org.paradox.data.ViewData.parseExpression;
 import org.paradox.metadata.ParadoxField;
+import org.paradox.test.MainTest;
 
 /**
- *
+ * 
  * @author 72330554168
  */
 public class ViewDataTest {
 
-    @Before
-    public void setUp() throws ClassNotFoundException {
-        forName(Driver.class.getName());
-    }
+	private ParadoxConnection conn;
 
-    @Test
-    public void testListViews() throws Exception {
-        ParadoxConnection conn = (ParadoxConnection)getConnection("jdbc:paradox:./db");
-        listViews(conn);
-    }
+	@BeforeClass
+	public static void setUp() throws Exception {
+		Class.forName(Driver.class.getName());
+	}
 
-    @Test
-    public void testParseExpression() throws Exception {
-        final ParadoxField field = new ParadoxField();
-        parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
-        assertEquals(true, field.isChecked());
-        assertEquals("_PC", field.getJoinName());
-        assertEquals("CALC _PC*_QTD", field.getExpression());
-        assertEquals("CUSTOTOTAL", field.getAlias());
+	@Before
+	public void connect() throws Exception {
+		conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+	}
 
-        assertTrue(field.isChecked());
-    }
+	@After
+	public void closeConnection() throws Exception {
+		if (conn != null) {
+			conn.close();
+		}
+	}
+
+	@Test
+	public void testListViews() throws Exception {
+		ViewData.listViews(conn);
+	}
+
+	@Test
+	public void testParseExpression() throws Exception {
+		final ParadoxField field = new ParadoxField();
+		ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
+		Assert.assertEquals(true, field.isChecked());
+		Assert.assertEquals("_PC", field.getJoinName());
+		Assert.assertEquals("CALC _PC*_QTD", field.getExpression());
+		Assert.assertEquals("CUSTOTOTAL", field.getAlias());
+
+		Assert.assertTrue(field.isChecked());
+	}
 }
