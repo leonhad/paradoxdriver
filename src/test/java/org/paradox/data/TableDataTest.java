@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.paradox.ParadoxConnection;
-import org.paradox.data.table.value.AbstractFieldValue;
+import org.paradox.data.table.value.FieldValue;
 import org.paradox.metadata.ParadoxField;
 import org.paradox.metadata.ParadoxTable;
 import org.paradox.test.MainTest;
@@ -39,7 +39,7 @@ public class TableDataTest {
 	@Test
 	public void testLoadAreaCodes() throws Exception {
 		final ParadoxTable table = TableData.listTables(conn, "areacodes.db").get(0);
-		final ArrayList<ArrayList<AbstractFieldValue>> data = TableData.loadData(conn, table, table.getFields());
+		final ArrayList<ArrayList<FieldValue>> data = TableData.loadData(conn, table, table.getFields());
 		Assert.assertEquals(table.getRowCount(), data.size());
 	}
 
