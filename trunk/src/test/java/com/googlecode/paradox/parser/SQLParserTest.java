@@ -1,10 +1,12 @@
-package org.paradox.parser;
+package com.googlecode.paradox.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import org.paradox.parser.nodes.SQLNode;
-import org.paradox.parser.nodes.SelectNode;
+
+import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.SelectNode;
 
 public class SQLParserTest {
 

@@ -1,9 +1,14 @@
-package org.paradox.parser;
+package com.googlecode.paradox.parser;
+
+import static java.nio.CharBuffer.wrap;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import static java.nio.CharBuffer.wrap;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ScannerTest {
 

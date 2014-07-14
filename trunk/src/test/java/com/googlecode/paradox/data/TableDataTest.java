@@ -1,4 +1,4 @@
-package org.paradox.data;
+package com.googlecode.paradox.data;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -9,11 +9,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.paradox.ParadoxConnection;
-import org.paradox.data.table.value.FieldValue;
-import org.paradox.metadata.ParadoxField;
-import org.paradox.metadata.ParadoxTable;
-import org.paradox.test.MainTest;
+
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.test.MainTest;
 
 public class TableDataTest {
 
