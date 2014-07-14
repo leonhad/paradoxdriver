@@ -110,11 +110,11 @@ public class TableData {
 								for (int chars = 0; chars < field.getSize(); chars++) {
 									valueString.put(buffer.get());
 								}
-								fieldValue = new FieldValue(valueString.array(), Types.VARCHAR, table.getCharset());
+								fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()), Types.VARCHAR);
 								break;
 							}
 							case 2: {
-								// Date
+								// DATE type
 								final int a1 = 0x000000FF & buffer.get();
 								final int a2 = 0x000000FF & buffer.get();
 								final int a3 = 0x000000FF & buffer.get();
@@ -320,6 +320,31 @@ public class TableData {
 			fs.close();
 		}
 		return table;
+	}
+
+	/**
+	 * Convert the Paradox VARCHAR to Java String.
+	 * 
+	 * The paradox fill the entire buffer with zeros at end of VARCHAR literals
+	 * 
+	 * @param buffer
+	 *            VARCHAR Buffer to convert
+	 * @param charset
+	 *            Table Charset (in Java Format)
+	 * @return a Java String
+	 */
+	private static String parseString(final ByteBuffer buffer, final Charset charset) {
+		final byte[] value = buffer.array();
+		int length = value.length;
+		for (; length > 0; length--) {
+			// array value starts with zero, not 1
+			if (value[length - 1] != 0) {
+				break;
+			}
+		}
+		buffer.flip();
+		buffer.limit(length);
+		return charset.decode(buffer).toString();
 	}
 
 	private TableData() {

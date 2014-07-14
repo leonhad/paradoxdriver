@@ -165,7 +165,7 @@ public class MainTest {
 			rs = stmt.executeQuery("SELECT AC, State, CITIES FROM \"AREACODES.DB\"");
 
 			while (rs.next()) {
-				rs.getString("AC");
+				rs.getString("ac");
 				rs.getString("State");
 				rs.getString("Cities");
 			}

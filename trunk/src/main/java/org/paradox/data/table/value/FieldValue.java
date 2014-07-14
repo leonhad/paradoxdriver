@@ -1,10 +1,7 @@
 package org.paradox.data.table.value;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.sql.Date;
 import java.sql.SQLDataException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Time;
 import java.sql.Types;
 
@@ -28,37 +25,6 @@ public class FieldValue {
 	 * @see Types
 	 */
 	private final int type;
-
-	/**
-	 * Convert the Paradox values to Java.
-	 * 
-	 * @param value
-	 *            Value in Paradox Format
-	 * @param type
-	 *            Database value type
-	 */
-	public FieldValue(final byte[] value, final int type, final Charset charset) throws SQLFeatureNotSupportedException {
-		this.type = type;
-
-		switch (type) {
-		case Types.VARCHAR:
-			this.value = parseString(value, charset);
-			break;
-		default:
-			throw new SQLFeatureNotSupportedException("Type " + type + " not supported.");
-		}
-	}
-
-	private Object parseString(final byte[] value, final Charset charset) {
-		int length = value.length;
-		for (; length > 0; length--) {
-			// array value starts with zero, not 1
-			if (value[length - 1] != 0) {
-				break;
-			}
-		}
-		return charset.decode(ByteBuffer.wrap(value, 0, length));
-	}
 
 	/**
 	 * Store a database value already loaded in Java format
