@@ -1,4 +1,4 @@
-package org.paradox.test;
+package com.googlecode.paradox.test;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -13,8 +13,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.paradox.Driver;
-import org.paradox.ParadoxConnection;
+
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 
 /**
  * Generic tests for Paradox Driver

@@ -1,8 +1,10 @@
-package org.paradox.utils;
+package com.googlecode.paradox.utils;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static com.googlecode.paradox.utils.Expressions.accept;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.paradox.utils.Expressions.accept;
 
 /**
  *

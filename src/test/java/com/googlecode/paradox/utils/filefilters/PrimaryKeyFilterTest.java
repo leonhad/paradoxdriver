@@ -1,8 +1,10 @@
-package org.paradox.utils.filefilters;
+package com.googlecode.paradox.utils.filefilters;
+
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
