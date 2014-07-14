@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
@@ -20,6 +21,7 @@ import org.paradox.ParadoxConnection;
 import org.paradox.data.table.value.FieldValue;
 import org.paradox.metadata.ParadoxField;
 import org.paradox.metadata.ParadoxTable;
+import org.paradox.utils.Constants;
 import org.paradox.utils.DateUtils;
 import org.paradox.utils.filefilters.TableFilter;
 
@@ -66,6 +68,7 @@ public class TableData {
 		final int recordSize = table.getRecordSize();
 		final int headerSize = table.getHeaderSize();
 		final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
+		final ByteBuffer valueString = ByteBuffer.allocate(Constants.MAX_STRING_SIZE);
 		FileChannel channel = null;
 
 		try {
@@ -98,19 +101,16 @@ public class TableData {
 
 							switch (field.getType()) {
 							case 1: {
-								// VARCHAR
-								// FIXME: use one buffer to fields
-								final ByteBuffer value = ByteBuffer.allocate(field.getSize());
+								// VARCHAR type
+
+								// reset buffer to zeros
+								valueString.clear();
+								Arrays.fill(valueString.array(), (byte) 0);
 
 								for (int chars = 0; chars < field.getSize(); chars++) {
-									final byte temp = buffer.get();
-									if (temp != 0) {
-										value.put(temp);
-									}
+									valueString.put(buffer.get());
 								}
-								value.flip();
-								final String v = table.getCharset().decode(value).toString();
-								fieldValue = new FieldValue(v, Types.VARCHAR);
+								fieldValue = new FieldValue(valueString.array(), Types.VARCHAR, table.getCharset());
 								break;
 							}
 							case 2: {
@@ -123,7 +123,6 @@ public class TableData {
 
 								if ((a1 & 0xB0) != 0) {
 									final Date date = DateUtils.SdnToGregorian(days + 1721425);
-									// FIXME use buffer to read date
 									fieldValue = new FieldValue(date, Types.DATE);
 								} else {
 									fieldValue = new FieldValue(Types.DATE);
