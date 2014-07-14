@@ -11,6 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.paradox.Driver;
 import org.paradox.ParadoxConnection;
 
@@ -20,6 +22,7 @@ import org.paradox.ParadoxConnection;
  * @author Leonardo Alves da Costa
  * @since 14/3/2009
  */
+@RunWith(JUnit4.class)
 public class MainTest {
 
 	public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
