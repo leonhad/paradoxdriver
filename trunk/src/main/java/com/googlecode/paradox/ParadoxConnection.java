@@ -33,14 +33,15 @@ import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * Conexão JDBC com o PARADOX.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 14/03/2009
  */
 public class ParadoxConnection implements Connection {
 
-	// private final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
+	// private final ArrayList<ParadoxTable> tables = new
+	// ArrayList<ParadoxTable>();
 	/**
 	 * Se esta conexão está fechada
 	 */
@@ -89,9 +90,13 @@ public class ParadoxConnection implements Connection {
 	 */
 	private String schema = "APP";
 
-	public ParadoxConnection(final File dir, final String url) throws SQLException {
+	public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
 		this.url = url;
 		this.dir = dir;
+
+		if (info != null && info.size() > 0) {
+			throw new SQLFeatureNotSupportedException("Change properties is not supported yet.");
+		}
 
 		try {
 			if (!dir.exists() && !dir.isDirectory()) {
@@ -157,7 +162,7 @@ public class ParadoxConnection implements Connection {
 
 	/**
 	 * Fecha a conexão com o PARADOX
-	 * 
+	 *
 	 * @throws java.sql.SQLException
 	 *             Caso haja erro ao desalocar os recursos
 	 */
