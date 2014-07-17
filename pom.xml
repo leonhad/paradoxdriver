@@ -107,6 +107,7 @@
 		<url>http://paradoxdriver.googlecode.com/svn/trunk</url>
 		<connection>scm:svn:http://paradoxdriver.googlecode.com/svn/trunk/</connection>
 		<developerConnection>scm:svn:https://paradoxdriver.googlecode.com/svn/trunk/</developerConnection>
+		<tag>HEAD</tag>
 	</scm>
 	<distributionManagement>
 		<snapshotRepository>
@@ -118,4 +119,17 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+	<issueManagement>
+		<system>Google Code</system>
+		<url>https://code.google.com/p/paradoxdriver/issues</url>
+	</issueManagement>
+	<mailingLists>
+		<mailingList>
+			<name>Discussion List</name>
+			<subscribe>paradoxdriver-discuss+subscribe@googlegroups.com</subscribe>
+			<unsubscribe>paradoxdriver-discuss+unsubscribe@googlegroups.com</unsubscribe>
+			<post>paradoxdriver-discuss@googlegroups.com</post>
+			<archive>https://groups.google.com/d/forum/paradoxdriver-discuss</archive>
+		</mailingList>
+	</mailingLists>
 </project>
