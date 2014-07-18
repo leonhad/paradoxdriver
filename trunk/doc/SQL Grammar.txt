@@ -1,0 +1,49 @@
+* SQL Aggregate Functions:
+
+    AVG() - Returns the average value
+    COUNT() - Returns the number of rows
+    FIRST() - Returns the first value
+    LAST() - Returns the last value
+    MAX() - Returns the largest value
+    MIN() - Returns the smallest value
+    SUM() - Returns the sum
+
+* SQL Scalar functions:
+
+    UCASE() - Converts a field to upper case
+    LCASE() - Converts a field to lower case
+    MID() - Extract characters from a text field
+    LEN() - Returns the length of a text field
+    ROUND() - Rounds a numeric field to the number of decimals specified
+    NOW() - Returns the current system date and time
+    FORMAT() - Formats how a field is to be displayed
+
+* BNF:
+
+<separator> ::= " " | "\t" | "\n" | "\0" | "\r" | <separator> <separator>
+ 
+<upper> ::= A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
+
+<lower> ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s | t | u | v | w | x | y | z
+
+<digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+<identifier> ::= <upper> | <lower> | <digit> | <identifier> <identifier> 
+
+<statement_list> ::= <statement> | <statement> ";" <statement>
+<statement> := <select_statement> | <insert_statement> | <delete_statement> | <update_statement>
+<select_statement> ::= (<separator>) "select" (<separator> "distinct") <separator> <field_list> <separator> "from" <separator> <table_list> (<separator> <where>) (<separator> <having>) (<separator> <order_by>) 
+	| <select_statement> <separator> "union" <separator> <select_statement>
+	| <select_statement> <separator> "union all" <separator> <select_statement>
+<field_list> ::= <field> | <field_list> (<separator>) "," (<separator>) <field>
+<field> :: <identifier> | "*"
+<table_list> ::= <table> | <table_list> (<separator>) "," (<separator>) <table>
+<table> ::= <identifier>
+<where> ::= "where" <separator> <condition_list>
+<having> ::= "having" <separator> <condition_list>
+<order_by> ::= "order by" <field_list>
+<condition_list> ::= <condition> | <condition_list> <separator> <operator> <separator> <condition>
+<operator> ::= "and" | "or" | "xor"
+<condition> ::= "not" <condition> 
+	| "exists" <separator> "(" (<separator>) <select_statement> (<separator>) ")"
+	
