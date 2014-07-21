@@ -1,8 +1,6 @@
 package com.googlecode.paradox.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -10,54 +8,58 @@ import com.googlecode.paradox.parser.nodes.SelectNode;
 
 public class SQLParserTest {
 
-    @Test
-    public void testOne() throws Exception {
-        SQLParser parser = new SQLParser("SELECT * FROM cliente.db");
-        SQLNode tree = parser.parse();
+	@Test
+	public void testOne() throws Exception {
+		final SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
+		final SQLNode tree = parser.parse();
 
-        assertTrue(tree instanceof SelectNode);
+		Assert.assertTrue(tree instanceof SelectNode);
 
-        SelectNode select = (SelectNode) tree;
+		final SelectNode select = (SelectNode) tree;
 
-        assertEquals(1, select.getFields().size());
-        assertEquals("*", select.getFields().get(0).getName());
+		Assert.assertEquals(1, select.getFields().size());
+		Assert.assertEquals("*", select.getFields().get(0).getName());
 
-        assertEquals(1, select.getTables().size());
-        assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
-    }
+		Assert.assertEquals(1, select.getTables().size());
+		Assert.assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
+	}
 
-    @Test
-    public void testTwo() throws Exception {
-        SQLParser parser = new SQLParser("SELECT CODIGO, NOME FROM cliente, estado");
-        SQLNode tree = parser.parse();
+	@Test
+	public void testTwo() throws Exception {
+		final SQLParser parser = new SQLParser("select CODIGO as código, estado.NOME nome FROM cliente, estado");
+		final SQLNode tree = parser.parse();
 
-        assertTrue(tree instanceof SelectNode);
+		Assert.assertTrue(tree instanceof SelectNode);
 
-        SelectNode select = (SelectNode) tree;
+		final SelectNode select = (SelectNode) tree;
 
-        assertEquals(2, select.getFields().size());
-        assertEquals("CODIGO", select.getFields().get(0).getName());
-        assertEquals("NOME", select.getFields().get(1).getName());
+		Assert.assertEquals(2, select.getFields().size());
+		Assert.assertEquals("CODIGO", select.getFields().get(0).getName());
+		Assert.assertEquals("código", select.getFields().get(0).getAlias());
 
-        assertEquals(2, select.getTables().size());
-        assertEquals("CLIENTE", select.getTables().get(0).getName());
-        assertEquals(2, select.getTables().size());
-        assertEquals("ESTADO", select.getTables().get(1).getName());
-    }
+		Assert.assertEquals("estado", select.getFields().get(1).getTableName());
+		Assert.assertEquals("NOME", select.getFields().get(1).getName());
+		Assert.assertEquals("nome", select.getFields().get(1).getAlias());
 
-    @Test
-    public void testTree() throws Exception {
-        SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
-        SQLNode tree = parser.parse();
+		Assert.assertEquals(2, select.getTables().size());
+		Assert.assertEquals("CLIENTE", select.getTables().get(0).getName());
+		Assert.assertEquals(2, select.getTables().size());
+		Assert.assertEquals("ESTADO", select.getTables().get(1).getName());
+	}
 
-        assertTrue(tree instanceof SelectNode);
+	@Test
+	public void testTree() throws Exception {
+		final SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
+		final SQLNode tree = parser.parse();
 
-        SelectNode select = (SelectNode) tree;
+		Assert.assertTrue(tree instanceof SelectNode);
 
-        assertEquals(1, select.getFields().size());
-        assertEquals("*", select.getFields().get(0).getName());
+		final SelectNode select = (SelectNode) tree;
 
-        assertEquals(1, select.getTables().size());
-        assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
-    }
+		Assert.assertEquals(1, select.getFields().size());
+		Assert.assertEquals("*", select.getFields().get(0).getName());
+
+		Assert.assertEquals(1, select.getTables().size());
+		Assert.assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
+	}
 }
