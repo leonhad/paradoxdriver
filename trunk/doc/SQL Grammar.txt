@@ -18,7 +18,7 @@
     NOW() - Returns the current system date and time
     FORMAT() - Formats how a field is to be displayed
 
-* BNF:
+* BNF: This not intent to be a fully functional BNF. It's only a reference to write the lexer and scanner.
 
 <separator> ::= " " | "\t" | "\n" | "\0" | "\r" | <separator> <separator>
  
@@ -30,20 +30,26 @@
 
 <identifier> ::= <upper> | <lower> | <digit> | <identifier> <identifier> 
 
-<statement_list> ::= <statement> | <statement> ";" <statement>
+<statement_list> ::= <statement> | <statement> ";" | <statement> ";" <statement>
 <statement> := <select_statement> | <insert_statement> | <delete_statement> | <update_statement>
 <select_statement> ::= (<separator>) "select" (<separator> "distinct") <separator> <field_list> <separator> "from" <separator> <table_list> (<separator> <where>) (<separator> <having>) (<separator> <order_by>) 
 	| <select_statement> <separator> "union" <separator> <select_statement>
 	| <select_statement> <separator> "union all" <separator> <select_statement>
-<field_list> ::= <field> | <field_list> (<separator>) "," (<separator>) <field>
-<field> :: <identifier> | "*"
+<field_list> ::= <field> | <field_list> (<separator>) "," (<separator>) <field> 
+<field> :: <identifier> | "*" | <identifier> <separator> "as" <separator>  <identifier> | <identifier> <separator>  <identifier>
 <table_list> ::= <table> | <table_list> (<separator>) "," (<separator>) <table>
-<table> ::= <identifier>
+<table> ::= <identifier> | <identifier> <separator> "as" <separator> <identifier> | <identifier> <separator> <identifier>
 <where> ::= "where" <separator> <condition_list>
 <having> ::= "having" <separator> <condition_list>
-<order_by> ::= "order by" <field_list>
 <condition_list> ::= <condition> | <condition_list> <separator> <operator> <separator> <condition>
 <operator> ::= "and" | "or" | "xor"
 <condition> ::= "not" <condition> 
 	| "exists" <separator> "(" (<separator>) <select_statement> (<separator>) ")"
-	
+<order_by> ::= "order by" <identifier_list>
+<identifier_list> ::= <identifier> | <identifier> (<separator>) "," (<separator>) <identifier>
+
+<insert_statement> ::= "insert into" <separator> <table> <separator> ("(" (<separator>) <identifier_list> (<separator>) ")") (<separator>) "values" <separator> "(" (<separator>) <identifier_list> (<separator>) ")")
+
+<delete_statement> ::= "delete from" <separator> <table> (<separator> <where>)
+
+<update_statement> ::= "update" <separator> <table> <separator> "set" <separator> ... 

@@ -3,6 +3,7 @@ package com.googlecode.paradox.parser;
 import java.io.IOException;
 import java.nio.CharBuffer;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -17,7 +18,7 @@ public class SQLParser {
 
 	public SQLParser(final String sql) {
 		this.sql = sql;
-		scanner = new Scanner(CharBuffer.wrap(sql.toUpperCase().toCharArray()));
+		scanner = new Scanner(CharBuffer.wrap(sql.toCharArray()));
 	}
 
 	public SQLNode parse() throws SQLException, IOException {
@@ -25,11 +26,17 @@ public class SQLParser {
 			SQLNode tree = null;
 			final Token token = scanner.nextToken();
 
-			if (token.getType() == TokenType.SELECT) {
+			switch (token.getType()) {
+			case SELECT:
 				tree = parseSelect(null);
-			} else if (token.getType() == TokenType.INSERT || token.getType() == TokenType.DELETE || token.getType() == TokenType.UPDATE) {
-				throw new SQLException("Operação não suportada.", SQLStates.INVALID_SQL);
-			} else {
+				break;
+			case INSERT:
+				throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL);
+			case DELETE:
+				throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL);
+			case UPDATE:
+				throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL);
+			default:
 				throw new SQLException("Invalid SQL: " + sql, SQLStates.INVALID_SQL);
 			}
 			return tree;
@@ -46,13 +53,40 @@ public class SQLParser {
 			t = scanner.nextToken();
 
 			if (t.getType() != TokenType.FROM) {
+				String tableName = null;
+				String alias = null;
+
+				// Field Name
 				if (!firstField) {
 					if (t.getType() != TokenType.COMMA) {
 						throw new SQLException("Missing comma.", SQLStates.INVALID_SQL);
 					}
 					t = scanner.nextToken();
 				}
-				select.getFields().add(new FieldNode(select, t.getValue().toUpperCase()));
+				String fieldName = t.getValue();
+
+				t = scanner.nextToken();
+				if (t.getType() == TokenType.COMMA || t.getType() == TokenType.FROM) {
+					scanner.pushBack(t);
+				} else {
+					// If it has a Table Name
+					if (t.getType() == TokenType.PERIOD) {
+						t = scanner.nextToken();
+						tableName = fieldName;
+						fieldName = t.getValue();
+					}
+					// Field alias (with AS identifier)
+					if (t.getType() == TokenType.AS) {
+						t = scanner.nextToken();
+						alias = t.getValue();
+					} else if (t.getType() == TokenType.IDENTIFIER) {
+						// Field alias (without AS identifier)
+						t = scanner.nextToken();
+						alias = t.getValue();
+					}
+				}
+
+				select.getFields().add(new FieldNode(select, tableName, fieldName, alias));
 				firstField = false;
 			} else {
 				break;

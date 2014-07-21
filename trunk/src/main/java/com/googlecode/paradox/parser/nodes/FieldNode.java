@@ -1,18 +1,46 @@
 package com.googlecode.paradox.parser.nodes;
 
+/**
+ * Stores field values
+ *
+ * @author Leonardo Alves da Costa
+ * @version 1.1
+ * @since 21/07/2014
+ */
 public class FieldNode extends SQLNode {
+	/**
+	 * This field table name
+	 */
+	private final String tableName;
+	/**
+	 * Field alias (AS)
+	 */
+	private final String alias;
 
-    private String tableName;
+	/**
+	 * Stores field valus (from select statements)
+	 *
+	 * @param parent
+	 *            the parent node
+	 * @param tableName
+	 *            this table name
+	 * @param fieldName
+	 *            field name
+	 * @param alias
+	 *            field name alias
+	 */
+	public FieldNode(final SQLNode parent, final String tableName, final String fieldName, final String alias) {
+		super(parent, fieldName);
+		this.tableName = tableName;
+		this.alias = alias;
+	}
 
-    public FieldNode(final SQLNode parent, final String name) {
-        super(parent, name);
-    }
+	public String getTableName() {
+		return tableName;
+	}
 
-    public String getTableName() {
-        return tableName;
-    }
+	public String getAlias() {
+		return alias;
+	}
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
 }
