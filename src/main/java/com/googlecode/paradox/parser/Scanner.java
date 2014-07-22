@@ -10,7 +10,10 @@ import java.util.ArrayList;
  */
 public class Scanner {
 
+	private static final char[] SEPARATORS = { ' ', '\t', '\n', '\0', '\r' };
+	private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=' };
 	private final CharBuffer buffer;
+	private final StringBuilder value = new StringBuilder(299);
 
 	private final ArrayList<Token> tokens = new ArrayList<Token>();
 
@@ -26,57 +29,123 @@ public class Scanner {
 		return buffer.get();
 	}
 
+	private void pushBack() throws IOException {
+		buffer.position(buffer.position() - 1);
+	}
+
 	public void pushBack(final Token token) {
 		tokens.add(token);
 	}
 
-	public Token nextToken() throws IOException {
+	private boolean isSeparator(final char value) {
+		for (final char c : Scanner.SEPARATORS) {
+			if (c == value) {
+				return true;
+			}
+		}
+		return false;
+	}
 
+	private boolean isSpecial(final char value) {
+		for (final char c : Scanner.SPECIAL) {
+			if (c == value) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Token nextToken() throws IOException {
 		final int size = tokens.size();
 		if (size > 0) {
 			final Token token = tokens.get(size - 1);
 			tokens.remove(size - 1);
 			return token;
 		}
-		final StringBuilder value = new StringBuilder();
-		boolean inString = false;
+		value.delete(0, value.length());
 
-		linebreak: while (hasNext()) {
-			final char c = nextChar();
+		while (hasNext()) {
+			char c = nextChar();
 
-			switch (c) {
-			case ' ':
-				if (inString) {
-					value.append(" ");
-				} else if (value.length() != 0) {
-					break linebreak;
-				}
-				break;
-			case '"':
-				if (inString) {
-					break linebreak;
-				}
-				inString = true;
-				break;
-			case '(':
-			case ')':
-			case '+':
-			case '-':
-			case ',':
-			case '.':
-			case '=':
-				if (value.length() == 0) {
-					value.append(c);
-					break linebreak;
-				} else {
-					buffer.position(buffer.position() - 1);
-				}
-				break linebreak;
-			default:
+			// ignore separators
+			if (isSeparator(c)) {
+				continue;
+			} else if (isSpecial(c)) {
 				value.append(c);
+				break;
+			} else if (c == '"') {
+				// identifiers with special chars
+				do {
+					if (hasNext()) {
+						c = nextChar();
+					} else {
+						break;
+					}
+					if (c == '"') {
+						if (hasNext()) {
+							c = nextChar();
+						} else {
+							break;
+						}
+						if (c == '"') {
+							value.append(c);
+							// prevent breaking
+							c = ' ';
+						} else {
+							pushBack();
+							break;
+						}
+					} else {
+						value.append(c);
+					}
+				} while (c != '"');
+				break;
+			} else if (c == '\'') {
+				// identifiers with special chars
+				do {
+					if (hasNext()) {
+						c = nextChar();
+					} else {
+						break;
+					}
+					if (c == '\'') {
+						if (hasNext()) {
+							c = nextChar();
+						} else {
+							break;
+						}
+						if (c == '\'') {
+							value.append(c);
+							// prevent breaking
+							c = ' ';
+						} else {
+							pushBack();
+							break;
+						}
+					} else {
+						value.append(c);
+					}
+				} while (c != '\'');
+				break;
+			} else {
+				while (!isSeparator(c) && !isSpecial(c)) {
+					value.append(c);
+					if (hasNext()) {
+						c = nextChar();
+					} else {
+						break;
+					}
+				}
+				if (isSeparator(c) || isSpecial(c)) {
+					pushBack();
+				}
+				break;
 			}
 		}
-		return getToken(value.toString());
+		if (value.length() > 0) {
+			return getToken(value.toString());
+		}
+		return null;
 	}
 
 	private Token getToken(final String value) {

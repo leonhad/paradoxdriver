@@ -1,59 +1,65 @@
 package com.googlecode.paradox.parser;
 
-import static java.nio.CharBuffer.wrap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
+import java.nio.CharBuffer;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ScannerTest {
 
-    /**
-     * Test of hasNext method, of class Scanner.
-     */
-    @Test
-    public void testHasNext() throws Exception {
-        Scanner scanner = new Scanner(wrap("(SELECT * FROM Teste)"));
-        for (int loop = 0; loop < 6; loop++) {
-            assertTrue(scanner.hasNext());
-            scanner.nextToken();
-        }
-        assertFalse(scanner.hasNext());
-    }
+	/**
+	 * Test of hasNext method, of class Scanner.
+	 */
+	@Test
+	public void testHasNext() throws Exception {
+		final Scanner scanner = new Scanner(CharBuffer.wrap("(SELECT * FROM Teste)"));
+		for (int loop = 0; loop < 6; loop++) {
+			Assert.assertTrue(scanner.hasNext());
+			scanner.nextToken();
+		}
+		Assert.assertFalse(scanner.hasNext());
+	}
 
-    /**
-     * Test of pushBack method, of class Scanner.
-     */
-    @Test
-    public void testPushBack() throws IOException {
-        Token token = null;
-        Scanner scanner = new Scanner(wrap("(SELECT * FROM Teste)"));
-        for (int loop = 0; loop < 6; loop++) {
-            token = scanner.nextToken();
-        }
-        assertFalse(scanner.hasNext());
-        assertNotNull(token);
-        assertEquals(")", token.getValue());
-        scanner.pushBack(token);
+	/**
+	 * Test of pushBack method, of class Scanner.
+	 */
+	@Test
+	public void testPushBack() throws IOException {
+		Token token = null;
+		final Scanner scanner = new Scanner(CharBuffer.wrap("(SELECT * from Teste)"));
+		while (scanner.hasNext()) {
+			token = scanner.nextToken();
+		}
+		Assert.assertFalse(scanner.hasNext());
+		Assert.assertNotNull(token);
+		Assert.assertEquals(")", token.getValue());
+		scanner.pushBack(token);
 
-        assertTrue(scanner.hasNext());
-        token = scanner.nextToken();
-        assertFalse(scanner.hasNext());
-        assertNotNull(token);
-        assertEquals(")", token.getValue());
-    }
+		Assert.assertTrue(scanner.hasNext());
+		token = scanner.nextToken();
+		Assert.assertFalse(scanner.hasNext());
+		Assert.assertNotNull(token);
+		Assert.assertEquals(")", token.getValue());
+	}
 
-    @Test
-    public void testGroup() throws IOException {
-        Token token = null;
-        Scanner scanner = new Scanner(wrap(" \"test 1\" \"Table.db\"" ));
-        token = scanner.nextToken();
-        assertEquals("test 1", token.getValue());
-        token = scanner.nextToken();
-        assertEquals("Table.db", token.getValue());
-    }
+	@Test
+	public void testCharValues() throws IOException {
+		Token token = null;
+		final Scanner scanner = new Scanner(CharBuffer.wrap(" 'test 1' 'Table.db '' '"));
+		token = scanner.nextToken();
+		Assert.assertEquals("test 1", token.getValue());
+		token = scanner.nextToken();
+		Assert.assertEquals("Table.db ' ", token.getValue());
+	}
+
+	@Test
+	public void testGroup() throws IOException {
+		Token token = null;
+		final Scanner scanner = new Scanner(CharBuffer.wrap(" \"test 1\" \"Table.db \"\" \" "));
+		token = scanner.nextToken();
+		Assert.assertEquals("test 1", token.getValue());
+		token = scanner.nextToken();
+		Assert.assertEquals("Table.db \" ", token.getValue());
+	}
 }
