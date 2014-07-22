@@ -4,68 +4,53 @@ import java.util.ArrayList;
 
 public class SelectNode extends SQLNode {
 
-    private ArrayList<FieldNode> fields = new ArrayList<FieldNode>();
-    private ArrayList<TableNode> tables = new ArrayList<TableNode>();
-    private ArrayList<SQLNode> groups = new ArrayList<SQLNode>();
-    private ArrayList<SQLNode> orders = new ArrayList<SQLNode>();
+	private final ArrayList<FieldNode> fields = new ArrayList<FieldNode>();
+	private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
+	private final ArrayList<IdentifierNode> groups = new ArrayList<IdentifierNode>();
+	private final ArrayList<IdentifierNode> order = new ArrayList<IdentifierNode>();
+	private final ArrayList<ConditionNode> conditions = new ArrayList<ConditionNode>();
 
-    public SelectNode(final SQLNode parent) {
-        super(parent, "SELECT");
-    }
+	public SelectNode(final SQLNode parent) {
+		super(parent, "SELECT");
+	}
 
-    /**
-     * @return the fields
-     */
-    public ArrayList<FieldNode> getFields() {
-        return fields;
-    }
+	public void addField(final FieldNode field) {
+		fields.add(field);
+	}
 
-    /**
-     * @param fields the fields to set
-     */
-    public void setFields(ArrayList<FieldNode> fields) {
-        this.fields = fields;
-    }
+	public void addTable(final TableNode table) {
+		tables.add(table);
+	}
 
-    /**
-     * @return the tables
-     */
-    public ArrayList<TableNode> getTables() {
-        return tables;
-    }
+	public void addGroupBy(final IdentifierNode indentifier) {
+		groups.add(indentifier);
+	}
 
-    /**
-     * @param tables the tables to set
-     */
-    public void setTables(ArrayList<TableNode> tables) {
-        this.tables = tables;
-    }
+	public void addOrderBy(final IdentifierNode indentifier) {
+		order.add(indentifier);
+	}
 
-    /**
-     * @return the groups
-     */
-    public ArrayList<SQLNode> getGroups() {
-        return groups;
-    }
+	public void addCondition(final ConditionNode indentifier) {
+		conditions.add(indentifier);
+	}
 
-    /**
-     * @param groups the groups to set
-     */
-    public void setGroups(ArrayList<SQLNode> groups) {
-        this.groups = groups;
-    }
+	public ArrayList<FieldNode> getFields() {
+		return fields;
+	}
 
-    /**
-     * @return the orders
-     */
-    public ArrayList<SQLNode> getOrders() {
-        return orders;
-    }
+	public ArrayList<TableNode> getTables() {
+		return tables;
+	}
 
-    /**
-     * @param orders the orders to set
-     */
-    public void setOrders(ArrayList<SQLNode> orders) {
-        this.orders = orders;
-    }
+	public ArrayList<IdentifierNode> getGroups() {
+		return groups;
+	}
+
+	public ArrayList<IdentifierNode> getOrder() {
+		return order;
+	}
+
+	public ArrayList<? extends ConditionNode> getConditions() {
+		return conditions;
+	}
 }
