@@ -13,6 +13,7 @@ public enum TokenType {
 	DELETE,
 	UPDATE,
 	FROM,
+	DISTINCT,
 	WHERE,
 	JOIN,
 	INNER,

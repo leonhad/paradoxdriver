@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class SelectNode extends StatementNode {
 
+	private boolean distinct;
 	private final ArrayList<FieldNode> fields = new ArrayList<FieldNode>();
 	private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
 	private final ArrayList<IdentifierNode> groups = new ArrayList<IdentifierNode>();
@@ -12,6 +13,14 @@ public class SelectNode extends StatementNode {
 
 	public SelectNode() {
 		super("SELECT");
+	}
+
+	public boolean isDistinct() {
+		return distinct;
+	}
+
+	public void setDistinct(final boolean distinct) {
+		this.distinct = distinct;
 	}
 
 	public void addField(final FieldNode field) {

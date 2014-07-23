@@ -1,20 +1,21 @@
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.metadata.ParadoxTable;
 
 public class TableNode extends SQLNode {
 
-	private ParadoxTable table;
+	private String alias;
 
-	public TableNode(final String name) {
+	public TableNode(final String name, final String alias) {
 		super(name);
+		this.alias = alias;
 	}
 
-	public ParadoxTable getTable() {
-		return table;
+	public String getAlias() {
+		return alias;
 	}
 
-	public void setTable(final ParadoxTable table) {
-		this.table = table;
+	public void setAlias(final String alias) {
+		this.alias = alias;
 	}
+
 }

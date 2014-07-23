@@ -63,17 +63,25 @@ public class SQLParser {
 	 */
 	private SelectNode parseSelect() throws SQLException, IOException {
 		final SelectNode select = new SelectNode();
-		Token t = null;
+		Token t = scanner.nextToken();
+
+		// Allowed only in the beginning of Select Statement
+		if (t.getType() == TokenType.DISTINCT) {
+			select.setDistinct(true);
+		} else {
+			scanner.pushBack(t);
+		}
 
 		// Field loop
 		boolean firstField = true;
 		while (scanner.hasNext()) {
 			t = scanner.nextToken();
 
-			if (t.getType() != TokenType.FROM) {
-				String tableName = null;
-				String alias = null;
+			if (t.getType() == TokenType.DISTINCT) {
+				throw new SQLException("Invalid statement.");
+			}
 
+			if (t.getType() != TokenType.FROM) {
 				// Field Name
 				if (!firstField) {
 					if (t.getType() != TokenType.COMMA) {
@@ -81,10 +89,12 @@ public class SQLParser {
 					}
 					t = scanner.nextToken();
 				}
+				String tableName = null;
 				String fieldName = t.getValue();
+				String fieldAlias = fieldName;
 
 				t = scanner.nextToken();
-				if (t.getType() == TokenType.COMMA || t.getType() == TokenType.FROM) {
+				if (t.getType() != TokenType.IDENTIFIER && t.getType() != TokenType.AS && t.getType() != TokenType.PERIOD) {
 					scanner.pushBack(t);
 				} else {
 					// If it has a Table Name
@@ -92,19 +102,23 @@ public class SQLParser {
 						t = scanner.nextToken();
 						tableName = fieldName;
 						fieldName = t.getValue();
+						fieldAlias = fieldName;
+						if (!scanner.hasNext()) {
+							throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL);
+						}
+						t = scanner.nextToken();
 					}
 					// Field alias (with AS identifier)
 					if (t.getType() == TokenType.AS) {
 						t = scanner.nextToken();
-						alias = t.getValue();
+						fieldAlias = t.getValue();
 					} else if (t.getType() == TokenType.IDENTIFIER) {
 						// Field alias (without AS identifier)
-						t = scanner.nextToken();
-						alias = t.getValue();
+						fieldAlias = t.getValue();
 					}
 				}
 
-				select.getFields().add(new FieldNode(tableName, fieldName, alias));
+				select.getFields().add(new FieldNode(tableName, fieldName, fieldAlias));
 				firstField = false;
 			} else {
 				break;
@@ -116,14 +130,35 @@ public class SQLParser {
 			while (scanner.hasNext()) {
 				t = scanner.nextToken();
 
-				if (t.getType() != TokenType.WHERE) {
-					if (!firstField) {
-						if (t.getType() != TokenType.COMMA) {
-							throw new SQLException("Missing comma.", SQLStates.INVALID_SQL);
-						}
-						t = scanner.nextToken();
+				if (!firstField) {
+					if (t.getType() != TokenType.COMMA) {
+						throw new SQLException("Missing comma.", SQLStates.INVALID_SQL);
 					}
-					select.getTables().add(new TableNode(t.getValue().toUpperCase()));
+					t = scanner.nextToken();
+				}
+				if (t.getType() == TokenType.IDENTIFIER) {
+					final String tableName = t.getValue();
+					String tableAlias = tableName;
+
+					if (scanner.hasNext()) {
+						t = scanner.nextToken();
+						if (t.getType() != TokenType.IDENTIFIER && t.getType() != TokenType.AS) {
+							scanner.pushBack(t);
+						} else {
+							// Field alias (with AS identifier)
+							if (t.getType() == TokenType.AS) {
+								if (!scanner.hasNext()) {
+									throw new SQLException("Unexpected end of SQL statement", SQLStates.INVALID_SQL);
+								}
+								t = scanner.nextToken();
+								tableAlias = t.getValue();
+							} else if (t.getType() == TokenType.IDENTIFIER) {
+								// Field alias (without AS identifier)
+								tableAlias = t.getValue();
+							}
+						}
+					}
+					select.getTables().add(new TableNode(tableName, tableAlias));
 					firstField = false;
 				} else if (t.getType() == TokenType.WHERE) {
 					break;
@@ -132,7 +167,7 @@ public class SQLParser {
 				}
 			}
 		} else {
-			throw new SQLException("FROM spected.", SQLStates.INVALID_SQL);
+			throw new SQLException("FROM expected.", SQLStates.INVALID_SQL);
 		}
 		return select;
 	}
