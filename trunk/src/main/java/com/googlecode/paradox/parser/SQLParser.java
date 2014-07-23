@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.nio.CharBuffer;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.ArrayList;
 
 import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.utils.SQLStates;
 
@@ -21,14 +22,19 @@ public class SQLParser {
 		scanner = new Scanner(CharBuffer.wrap(sql.toCharArray()));
 	}
 
-	public SQLNode parse() throws SQLException, IOException {
-		if (scanner.hasNext()) {
-			SQLNode tree = null;
+	public ArrayList<StatementNode> parse() throws SQLException, IOException {
+		final ArrayList<StatementNode> statementList = new ArrayList<StatementNode>();
+		while (scanner.hasNext()) {
 			final Token token = scanner.nextToken();
 
 			switch (token.getType()) {
+			case SEMI:
+				if (statementList.size() == 0) {
+					throw new SQLException("Unespected semicolon");
+				}
+				break;
 			case SELECT:
-				tree = parseSelect(null);
+				statementList.add(parseSelect());
 				break;
 			case INSERT:
 				throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL);
@@ -39,15 +45,27 @@ public class SQLParser {
 			default:
 				throw new SQLException("Invalid SQL: " + sql, SQLStates.INVALID_SQL);
 			}
-			return tree;
+			return statementList;
 		}
 		throw new SQLException("Invalid SQL: " + sql, SQLStates.INVALID_SQL);
 	}
 
-	private SQLNode parseSelect(final SQLNode parent) throws SQLException, IOException {
-		final SelectNode select = new SelectNode(parent);
+	/**
+	 * Parse a Select Statement
+	 *
+	 * @param parent
+	 *            Statement Owner
+	 * @return a Select Statement Node
+	 * @throws SQLException
+	 *             Invalid SQL
+	 * @throws IOException
+	 *             in case of parser exception
+	 */
+	private SelectNode parseSelect() throws SQLException, IOException {
+		final SelectNode select = new SelectNode();
 		Token t = null;
 
+		// Field loop
 		boolean firstField = true;
 		while (scanner.hasNext()) {
 			t = scanner.nextToken();
@@ -86,7 +104,7 @@ public class SQLParser {
 					}
 				}
 
-				select.getFields().add(new FieldNode(select, tableName, fieldName, alias));
+				select.getFields().add(new FieldNode(tableName, fieldName, alias));
 				firstField = false;
 			} else {
 				break;
@@ -105,7 +123,7 @@ public class SQLParser {
 						}
 						t = scanner.nextToken();
 					}
-					select.getTables().add(new TableNode(select, t.getValue().toUpperCase()));
+					select.getTables().add(new TableNode(t.getValue().toUpperCase()));
 					firstField = false;
 				} else if (t.getType() == TokenType.WHERE) {
 					break;

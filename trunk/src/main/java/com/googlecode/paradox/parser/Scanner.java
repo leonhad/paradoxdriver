@@ -5,13 +5,16 @@ import java.nio.CharBuffer;
 import java.util.ArrayList;
 
 /**
+ * SQL Scanner (read tokens from SQL String).
  *
- * @author 72330554168
+ * @author Leonardo Alves da Costa
+ * @since 23/07/2014
+ * @version 1.1
  */
 public class Scanner {
 
 	private static final char[] SEPARATORS = { ' ', '\t', '\n', '\0', '\r' };
-	private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=' };
+	private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=', ';' };
 	private final CharBuffer buffer;
 	private final StringBuilder value = new StringBuilder(299);
 

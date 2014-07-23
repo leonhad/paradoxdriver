@@ -15,15 +15,15 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * Statement para o PARADOX
- * 
+ *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 15/03/2009
@@ -53,7 +53,11 @@ public class ParadoxStatement implements Statement {
 		}
 		try {
 			final SQLParser parser = new SQLParser(sql);
-			final SQLNode rootNode = parser.parse();
+			final ArrayList<StatementNode> statementList = parser.parse();
+			if (statementList.size() > 1) {
+				throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
+			}
+			final StatementNode rootNode = statementList.get(0);
 
 			if (rootNode instanceof SelectNode) {
 				final SelectNode node = (SelectNode) rootNode;
@@ -62,7 +66,7 @@ public class ParadoxStatement implements Statement {
 				final ArrayList<TableNode> from = node.getTables();
 
 				if (from.size() != 1) {
-					throw new SQLException("Somente uma tabela é suportado", SQLStates.INVALID_SQL);
+					throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
 				}
 
 				// Generate SQL Tree
@@ -73,7 +77,7 @@ public class ParadoxStatement implements Statement {
 							continue tables;
 						}
 					}
-					throw new SQLException("Tabela " + tableNode.getName() + " não encontrada.", SQLStates.INVALID_SQL);
+					throw new SQLException("Table " + tableNode.getName() + " not found.", SQLStates.INVALID_SQL);
 				}
 
 				final ArrayList<Column> columns = new ArrayList<Column>();
