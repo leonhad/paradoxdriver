@@ -13,7 +13,7 @@ public class SQLParserTest {
 
 	@Test
 	public void testOne() throws Exception {
-		final SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
+		final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
 		final ArrayList<StatementNode> list = parser.parse();
 		final SQLNode tree = list.get(0);
 
@@ -25,11 +25,11 @@ public class SQLParserTest {
 		Assert.assertEquals("*", select.getFields().get(0).getName());
 
 		Assert.assertEquals(1, select.getTables().size());
-		Assert.assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
+		Assert.assertEquals("client.db", select.getTables().get(0).getName());
 	}
 
 	@Test
-	public void testTwo() throws Exception {
+	public void testTwoTable() throws Exception {
 		final SQLParser parser = new SQLParser("select CODIGO as código, estado.NOME nome FROM cliente, estado");
 		final ArrayList<StatementNode> list = parser.parse();
 		final SQLNode tree = list.get(0);
@@ -47,14 +47,34 @@ public class SQLParserTest {
 		Assert.assertEquals("nome", select.getFields().get(1).getAlias());
 
 		Assert.assertEquals(2, select.getTables().size());
-		Assert.assertEquals("CLIENTE", select.getTables().get(0).getName());
+		Assert.assertEquals("cliente", select.getTables().get(0).getName());
+		Assert.assertEquals("estado", select.getTables().get(1).getName());
+	}
+
+	@Test
+	public void testTwoTableWithAlias() throws Exception {
+		final SQLParser parser = new SQLParser("select * name FROM client as cli, state STATE");
+		final ArrayList<StatementNode> list = parser.parse();
+		final SQLNode tree = list.get(0);
+
+		Assert.assertTrue(tree instanceof SelectNode);
+
+		final SelectNode select = (SelectNode) tree;
+
+		Assert.assertEquals(1, select.getFields().size());
 		Assert.assertEquals(2, select.getTables().size());
-		Assert.assertEquals("ESTADO", select.getTables().get(1).getName());
+
+		Assert.assertEquals("*", select.getFields().get(0).getName());
+
+		Assert.assertEquals("client", select.getTables().get(0).getName());
+		Assert.assertEquals("cli", select.getTables().get(0).getAlias());
+		Assert.assertEquals("state", select.getTables().get(1).getName());
+		Assert.assertEquals("STATE", select.getTables().get(1).getAlias());
 	}
 
 	@Test
 	public void testTree() throws Exception {
-		final SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
+		final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
 		final ArrayList<StatementNode> list = parser.parse();
 		final SQLNode tree = list.get(0);
 
@@ -66,6 +86,6 @@ public class SQLParserTest {
 		Assert.assertEquals("*", select.getFields().get(0).getName());
 
 		Assert.assertEquals(1, select.getTables().size());
-		Assert.assertEquals("CLIENTE.DB", select.getTables().get(0).getName());
+		Assert.assertEquals("client.db", select.getTables().get(0).getName());
 	}
 }

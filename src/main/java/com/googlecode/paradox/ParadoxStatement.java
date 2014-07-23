@@ -9,12 +9,8 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.SQLParser;
-import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
@@ -61,7 +57,7 @@ public class ParadoxStatement implements Statement {
 
 			if (rootNode instanceof SelectNode) {
 				final SelectNode node = (SelectNode) rootNode;
-				final ArrayList<FieldNode> fields = node.getFields();
+				node.getFields();
 				// final ArrayList<SQLNode> where = node.getWhere();
 				final ArrayList<TableNode> from = node.getTables();
 
@@ -70,51 +66,26 @@ public class ParadoxStatement implements Statement {
 				}
 
 				// Generate SQL Tree
-				tables: for (final TableNode tableNode : from) {
-					for (final ParadoxTable table : TableData.listTables(conn)) {
-						if (table.getName().equalsIgnoreCase(tableNode.getName())) {
-							tableNode.setTable(table);
-							continue tables;
-						}
-					}
-					throw new SQLException("Table " + tableNode.getName() + " not found.", SQLStates.INVALID_SQL);
-				}
-
-				final ArrayList<Column> columns = new ArrayList<Column>();
-
-				for (final FieldNode field : fields) {
-					if ("*".equals(field.getName())) {
-						for (final TableNode tableNode : from) {
-							for (final ParadoxField tableField : tableNode.getTable().getFields()) {
-								columns.add(tableField.getColumn());
-							}
-						}
-					}
-					for (final TableNode tableNode : from) {
-						for (final ParadoxField tableField : tableNode.getTable().getFields()) {
-							if (tableField.getName().equalsIgnoreCase(field.getName())) {
-								columns.add(tableField.getColumn());
-							}
-						}
-					}
-				}
-
-				// Generate SQL Plan
-				// FIXME Generate SQL Plan
-
-				// Execute plan
-				// FIXME more than one table
-				final ArrayList<ParadoxField> fieldList = new ArrayList<ParadoxField>();
-				for (final Column column : columns) {
-					for (final ParadoxField field : from.get(0).getTable().getFields()) {
-						if (field.getName().equalsIgnoreCase(column.getName())) {
-							fieldList.add(field);
-						}
-					}
-				}
-				final ArrayList<ArrayList<FieldValue>> values = TableData.loadData(conn, from.get(0).getTable(), fieldList);
-
-				rs = new ParadoxResultSet(conn, this, values, columns);
+				// FIXME redo this things!!!
+				/*
+				 * tables: for (final TableNode tableNode : from) { for (final ParadoxTable table : TableData.listTables(conn)) { if (table.getName().equalsIgnoreCase(tableNode.getName())) {
+				 * tableNode.setTable(table); continue tables; } } throw new SQLException("Table " + tableNode.getName() + " not found.", SQLStates.INVALID_SQL); }
+				 * 
+				 * final ArrayList<Column> columns = new ArrayList<Column>();
+				 * 
+				 * for (final FieldNode field : fields) { if ("*".equals(field.getName())) { for (final TableNode tableNode : from) { for (final ParadoxField tableField :
+				 * tableNode.getTable().getFields()) { columns.add(tableField.getColumn()); } } } for (final TableNode tableNode : from) { for (final ParadoxField tableField :
+				 * tableNode.getTable().getFields()) { if (tableField.getName().equalsIgnoreCase(field.getName())) { columns.add(tableField.getColumn()); } } } }
+				 * 
+				 * // Generate SQL Plan // FIXME Generate SQL Plan
+				 * 
+				 * // Execute plan // FIXME more than one table final ArrayList<ParadoxField> fieldList = new ArrayList<ParadoxField>(); for (final Column column : columns) { for (final ParadoxField
+				 * field : from.get(0).getTable().getFields()) { if (field.getName().equalsIgnoreCase(column.getName())) { fieldList.add(field); } } }
+				 * 
+				 * final ArrayList<ArrayList<FieldValue>> values = TableData.loadData(conn, from.get(0).getTable(), fieldList);
+				 * 
+				 * rs = new ParadoxResultSet(conn, this, values, columns);
+				 */
 				return rs;
 			} else {
 				throw new SQLException("Not a SELECT statement", SQLStates.INVALID_COMMAND);
