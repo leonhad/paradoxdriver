@@ -1,17 +1,21 @@
 package com.googlecode.paradox.parser;
 
+import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.StatementNode;
 
 public class SQLParserTest {
 
 	@Test
 	public void testOne() throws Exception {
 		final SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
-		final SQLNode tree = parser.parse();
+		final ArrayList<StatementNode> list = parser.parse();
+		final SQLNode tree = list.get(0);
 
 		Assert.assertTrue(tree instanceof SelectNode);
 
@@ -27,7 +31,8 @@ public class SQLParserTest {
 	@Test
 	public void testTwo() throws Exception {
 		final SQLParser parser = new SQLParser("select CODIGO as código, estado.NOME nome FROM cliente, estado");
-		final SQLNode tree = parser.parse();
+		final ArrayList<StatementNode> list = parser.parse();
+		final SQLNode tree = list.get(0);
 
 		Assert.assertTrue(tree instanceof SelectNode);
 
@@ -50,7 +55,8 @@ public class SQLParserTest {
 	@Test
 	public void testTree() throws Exception {
 		final SQLParser parser = new SQLParser("SELECT * FROM \"cliente.db\"");
-		final SQLNode tree = parser.parse();
+		final ArrayList<StatementNode> list = parser.parse();
+		final SQLNode tree = list.get(0);
 
 		Assert.assertTrue(tree instanceof SelectNode);
 

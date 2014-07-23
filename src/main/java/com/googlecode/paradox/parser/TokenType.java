@@ -26,6 +26,7 @@ public enum TokenType {
 	COMMA(","),
 	ASTERISK("*"),
 	PERIOD("."),
+	SEMI(";"),
 	AS,
 	ORDER,
 	BY,

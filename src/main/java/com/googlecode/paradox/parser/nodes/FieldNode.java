@@ -20,8 +20,6 @@ public class FieldNode extends SQLNode {
 	/**
 	 * Stores field valus (from select statements)
 	 *
-	 * @param parent
-	 *            the parent node
 	 * @param tableName
 	 *            this table name
 	 * @param fieldName
@@ -29,8 +27,8 @@ public class FieldNode extends SQLNode {
 	 * @param alias
 	 *            field name alias
 	 */
-	public FieldNode(final SQLNode parent, final String tableName, final String fieldName, final String alias) {
-		super(parent, fieldName);
+	public FieldNode(final String tableName, final String fieldName, final String alias) {
+		super(fieldName);
 		this.tableName = tableName;
 		this.alias = alias;
 	}

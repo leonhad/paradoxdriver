@@ -2,7 +2,7 @@ package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
 
-public class SelectNode extends SQLNode {
+public class SelectNode extends StatementNode {
 
 	private final ArrayList<FieldNode> fields = new ArrayList<FieldNode>();
 	private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
@@ -10,8 +10,8 @@ public class SelectNode extends SQLNode {
 	private final ArrayList<IdentifierNode> order = new ArrayList<IdentifierNode>();
 	private final ArrayList<ConditionNode> conditions = new ArrayList<ConditionNode>();
 
-	public SelectNode(final SQLNode parent) {
-		super(parent, "SELECT");
+	public SelectNode() {
+		super("SELECT");
 	}
 
 	public void addField(final FieldNode field) {
