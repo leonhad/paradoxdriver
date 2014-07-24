@@ -9,7 +9,7 @@ public class SelectNode extends StatementNode {
 	private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
 	private final ArrayList<IdentifierNode> groups = new ArrayList<IdentifierNode>();
 	private final ArrayList<IdentifierNode> order = new ArrayList<IdentifierNode>();
-	private final ArrayList<ConditionNode> conditions = new ArrayList<ConditionNode>();
+	private ArrayList<SQLNode> conditions;
 
 	public SelectNode() {
 		super("SELECT");
@@ -39,8 +39,8 @@ public class SelectNode extends StatementNode {
 		order.add(indentifier);
 	}
 
-	public void addCondition(final ConditionNode indentifier) {
-		conditions.add(indentifier);
+	public void setConditions(final ArrayList<SQLNode> conditions) {
+		this.conditions = conditions;
 	}
 
 	public ArrayList<FieldNode> getFields() {
@@ -59,7 +59,7 @@ public class SelectNode extends StatementNode {
 		return order;
 	}
 
-	public ArrayList<? extends ConditionNode> getConditions() {
+	public ArrayList<SQLNode> getConditions() {
 		return conditions;
 	}
 }

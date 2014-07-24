@@ -1,7 +1,7 @@
 package com.googlecode.paradox.parser;
 
-import java.io.IOException;
 import java.nio.CharBuffer;
+import java.sql.SQLException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,9 +23,11 @@ public class ScannerTest {
 
 	/**
 	 * Test of pushBack method, of class Scanner.
+	 *
+	 * @throws SQLException
 	 */
 	@Test
-	public void testPushBack() throws IOException {
+	public void testPushBack() throws Exception {
 		Token token = null;
 		final Scanner scanner = new Scanner(CharBuffer.wrap("(SELECT * from Teste)"));
 		while (scanner.hasNext()) {
@@ -44,7 +46,7 @@ public class ScannerTest {
 	}
 
 	@Test
-	public void testCharValues() throws IOException {
+	public void testCharValues() throws Exception {
 		Token token = null;
 		final Scanner scanner = new Scanner(CharBuffer.wrap(" 'test 1' 'Table.db '' '"));
 		token = scanner.nextToken();
@@ -54,7 +56,7 @@ public class ScannerTest {
 	}
 
 	@Test
-	public void testGroup() throws IOException {
+	public void testGroup() throws Exception {
 		Token token = null;
 		final Scanner scanner = new Scanner(CharBuffer.wrap(" \"test 1\" \"Table.db \"\" \" "));
 		token = scanner.nextToken();

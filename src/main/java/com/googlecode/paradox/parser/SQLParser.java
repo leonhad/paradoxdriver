@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 
+import com.googlecode.paradox.parser.nodes.ANDNode;
 import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
@@ -84,9 +86,7 @@ public class SQLParser {
 			if (t.getType() != TokenType.FROM) {
 				// Field Name
 				if (!firstField) {
-					if (t.getType() != TokenType.COMMA) {
-						throw new SQLException("Missing comma.", SQLStates.INVALID_SQL);
-					}
+					expect(t, TokenType.COMMA, "Missing comma.");
 					t = scanner.nextToken();
 				}
 				String tableName = null;
@@ -103,9 +103,6 @@ public class SQLParser {
 						tableName = fieldName;
 						fieldName = t.getValue();
 						fieldAlias = fieldName;
-						if (!scanner.hasNext()) {
-							throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL);
-						}
 						t = scanner.nextToken();
 					}
 					// Field alias (with AS identifier)
@@ -134,9 +131,7 @@ public class SQLParser {
 					break;
 				}
 				if (!firstField) {
-					if (t.getType() != TokenType.COMMA) {
-						throw new SQLException("Missing comma.", SQLStates.INVALID_SQL);
-					}
+					expect(t, TokenType.COMMA, "Missing comma.");
 					t = scanner.nextToken();
 				}
 				if (t.getType() == TokenType.IDENTIFIER) {
@@ -150,9 +145,6 @@ public class SQLParser {
 						} else {
 							// Field alias (with AS identifier)
 							if (t.getType() == TokenType.AS) {
-								if (!scanner.hasNext()) {
-									throw new SQLException("Unexpected end of SQL statement", SQLStates.INVALID_SQL);
-								}
 								t = scanner.nextToken();
 								tableAlias = t.getValue();
 							} else if (t.getType() == TokenType.IDENTIFIER) {
@@ -165,9 +157,73 @@ public class SQLParser {
 					firstField = false;
 				}
 			}
+
+			if (t.getType() == TokenType.WHERE) {
+				select.setConditions(parseConditionList());
+			}
 		} else {
 			throw new SQLException("FROM expected.", SQLStates.INVALID_SQL);
 		}
 		return select;
+	}
+
+	private ArrayList<SQLNode> parseConditionList() throws IOException, SQLException {
+		final ArrayList<SQLNode> conditions = new ArrayList<SQLNode>();
+		boolean first = true;
+
+		while (scanner.hasNext()) {
+			final Token t = scanner.nextToken();
+			scanner.pushBack(t);
+			if (t.getType() == TokenType.ORDER || t.getType() == TokenType.HAVING || t.getType() == TokenType.RPAREN) {
+				break;
+			}
+			conditions.add(parseCondition(first));
+			first = false;
+		}
+		return conditions;
+	}
+
+	private SQLNode parseCondition(final boolean first) throws IOException, SQLException {
+		final Token t = scanner.nextToken();
+
+		if (isOperator(t)) {
+			if (first) {
+				throw new SQLException("Invalid start operator.", SQLStates.INVALID_SQL);
+			}
+			switch (t.getType()) {
+			case AND:
+				return new ANDNode(parseCondition(true));
+			case OR:
+				break;
+
+			case XOR:
+
+			default:
+				throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL);
+			}
+		} else if (t.getType() == TokenType.LPAREN) {
+			final SQLNode group = new SQLNode(null);
+			group.setChildren(parseConditionList());
+			expect(TokenType.RPAREN, "Right parentesis expected");
+		}
+
+		return null;
+	}
+
+	private void expect(final TokenType rparen, final String message) throws IOException, SQLException {
+		final Token t = scanner.nextToken();
+		if (t.getType() != rparen) {
+			throw new SQLException(message, SQLStates.INVALID_SQL);
+		}
+	}
+
+	private void expect(final Token t, final TokenType rparen, final String message) throws IOException, SQLException {
+		if (t.getType() != rparen) {
+			throw new SQLException(message, SQLStates.INVALID_SQL);
+		}
+	}
+
+	private boolean isOperator(final Token t) {
+		return t.getType() == TokenType.AND || t.getType() == TokenType.OR || t.getType() == TokenType.XOR;
 	}
 }
