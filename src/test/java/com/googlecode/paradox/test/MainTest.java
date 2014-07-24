@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -19,7 +20,7 @@ import com.googlecode.paradox.ParadoxConnection;
 
 /**
  * Generic tests for Paradox Driver
- * 
+ *
  * @author Leonardo Alves da Costa
  * @since 14/3/2009
  */
@@ -155,6 +156,7 @@ public class MainTest {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void testResultSet() throws Exception {
 		Statement stmt = null;

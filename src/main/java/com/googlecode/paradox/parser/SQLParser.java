@@ -130,6 +130,9 @@ public class SQLParser {
 			while (scanner.hasNext()) {
 				t = scanner.nextToken();
 
+				if (t.getType() == TokenType.WHERE) {
+					break;
+				}
 				if (!firstField) {
 					if (t.getType() != TokenType.COMMA) {
 						throw new SQLException("Missing comma.", SQLStates.INVALID_SQL);
@@ -160,10 +163,6 @@ public class SQLParser {
 					}
 					select.getTables().add(new TableNode(tableName, tableAlias));
 					firstField = false;
-				} else if (t.getType() == TokenType.WHERE) {
-					break;
-				} else if (t != null) {
-					throw new SQLException("Invalid SQL.", SQLStates.INVALID_SQL);
 				}
 			}
 		} else {
