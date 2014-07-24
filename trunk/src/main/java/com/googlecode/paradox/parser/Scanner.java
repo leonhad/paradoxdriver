@@ -2,7 +2,10 @@ package com.googlecode.paradox.parser;
 
 import java.io.IOException;
 import java.nio.CharBuffer;
+import java.sql.SQLException;
 import java.util.ArrayList;
+
+import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * SQL Scanner (read tokens from SQL String).
@@ -58,12 +61,15 @@ public class Scanner {
 		return false;
 	}
 
-	public Token nextToken() throws IOException {
+	public Token nextToken() throws IOException, SQLException {
 		final int size = tokens.size();
 		if (size > 0) {
 			final Token token = tokens.get(size - 1);
 			tokens.remove(size - 1);
 			return token;
+		}
+		if (!hasNext()) {
+			throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL);
 		}
 		value.delete(0, value.length());
 
