@@ -1,11 +1,11 @@
 package com.googlecode.paradox.parser.nodes;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 public class SQLNode {
 
 	private final String name;
-	private ArrayList<SQLNode> children;
+	private Collection<? extends SQLNode> children;
 
 	public SQLNode(final String name) {
 		this.name = name;
@@ -15,11 +15,11 @@ public class SQLNode {
 		return name;
 	}
 
-	public ArrayList<SQLNode> getChildren() {
+	public Collection<? extends SQLNode> getChildren() {
 		return children;
 	}
 
-	public void setChildren(final ArrayList<SQLNode> children) {
+	public void setChildren(final Collection<? extends SQLNode> children) {
 		this.children = children;
 	}
 

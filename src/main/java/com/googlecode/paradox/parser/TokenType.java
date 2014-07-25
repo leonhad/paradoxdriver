@@ -19,7 +19,8 @@ public enum TokenType {
 	INNER,
 	OUTER,
 	INTO,
-	EQUALS,
+	BETWEEN,
+	EQUALS("="),
 	PLUS("+"),
 	MINUS("-"),
 	LPAREN("("),
@@ -28,6 +29,10 @@ public enum TokenType {
 	ASTERISK("*"),
 	PERIOD("."),
 	SEMI(";"),
+	MORE(">"),
+	LESS("<"),
+	NOTEQUALS("<>"),
+	NOTEQUALS2("!="),
 	AS,
 	ORDER,
 	BY,
@@ -56,4 +61,5 @@ public enum TokenType {
 		}
 		return null;
 	}
+
 }

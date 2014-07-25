@@ -8,6 +8,9 @@ import org.junit.Test;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
+import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
+import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
 
 public class SQLParserTest {
 
@@ -91,7 +94,7 @@ public class SQLParserTest {
 
 	@Test
 	public void testWhere() throws Exception {
-		final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b");
+		final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b and c <> t");
 		final ArrayList<StatementNode> list = parser.parse();
 		final SQLNode tree = list.get(0);
 
@@ -105,5 +108,15 @@ public class SQLParserTest {
 		Assert.assertEquals(1, select.getTables().size());
 		Assert.assertEquals("client", select.getTables().get(0).getName());
 		Assert.assertEquals("test", select.getTables().get(0).getAlias());
+
+		Assert.assertEquals(3, select.getConditions().size());
+		Assert.assertEquals("a", select.getConditions().get(0).getName());
+		Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
+		Assert.assertEquals("b", ((EqualsNode) select.getConditions().get(0)).getValue());
+		Assert.assertTrue(select.getConditions().get(1) instanceof ANDNode);
+		Assert.assertEquals("c", select.getConditions().get(2).getName());
+		Assert.assertTrue(select.getConditions().get(2) instanceof NotEqualsNode);
+		Assert.assertEquals("t", ((NotEqualsNode) select.getConditions().get(2)).getValue());
 	}
+
 }

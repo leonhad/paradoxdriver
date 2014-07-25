@@ -6,16 +6,26 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 
-import com.googlecode.paradox.parser.nodes.ANDNode;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.parser.nodes.comparisons.BetweenNode;
+import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
+import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
+import com.googlecode.paradox.parser.nodes.conditional.ExistsNode;
+import com.googlecode.paradox.parser.nodes.conditional.NOTNode;
+import com.googlecode.paradox.parser.nodes.conditional.ORNode;
+import com.googlecode.paradox.parser.nodes.conditional.XORNode;
 import com.googlecode.paradox.utils.SQLStates;
 
 public class SQLParser {
 
+	private Token t;
 	private final String sql;
 	private final Scanner scanner;
 
@@ -65,7 +75,7 @@ public class SQLParser {
 	 */
 	private SelectNode parseSelect() throws SQLException, IOException {
 		final SelectNode select = new SelectNode();
-		Token t = scanner.nextToken();
+		t = scanner.nextToken();
 
 		// Allowed only in the beginning of Select Statement
 		if (t.getType() == TokenType.DISTINCT) {
@@ -86,8 +96,7 @@ public class SQLParser {
 			if (t.getType() != TokenType.FROM) {
 				// Field Name
 				if (!firstField) {
-					expect(t, TokenType.COMMA, "Missing comma.");
-					t = scanner.nextToken();
+					expect(TokenType.COMMA, "Missing comma.");
 				}
 				String tableName = null;
 				String fieldName = t.getValue();
@@ -131,8 +140,7 @@ public class SQLParser {
 					break;
 				}
 				if (!firstField) {
-					expect(t, TokenType.COMMA, "Missing comma.");
-					t = scanner.nextToken();
+					expect(TokenType.COMMA, "Missing comma.");
 				}
 				if (t.getType() == TokenType.IDENTIFIER) {
 					final String tableName = t.getValue();
@@ -159,6 +167,7 @@ public class SQLParser {
 			}
 
 			if (t.getType() == TokenType.WHERE) {
+				expect(TokenType.WHERE);
 				select.setConditions(parseConditionList());
 			}
 		} else {
@@ -169,35 +178,30 @@ public class SQLParser {
 
 	private ArrayList<SQLNode> parseConditionList() throws IOException, SQLException {
 		final ArrayList<SQLNode> conditions = new ArrayList<SQLNode>();
-		boolean first = true;
 
 		while (scanner.hasNext()) {
-			final Token t = scanner.nextToken();
-			scanner.pushBack(t);
 			if (t.getType() == TokenType.ORDER || t.getType() == TokenType.HAVING || t.getType() == TokenType.RPAREN) {
 				break;
 			}
-			conditions.add(parseCondition(first));
-			first = false;
+			conditions.add(parseCondition());
 		}
 		return conditions;
 	}
 
-	private SQLNode parseCondition(final boolean first) throws IOException, SQLException {
-		final Token t = scanner.nextToken();
-
-		if (isOperator(t)) {
-			if (first) {
-				throw new SQLException("Invalid start operator.", SQLStates.INVALID_SQL);
-			}
+	private SQLNode parseCondition() throws IOException, SQLException {
+		if (t.getType() == TokenType.NOT) {
+			return new NOTNode(parseCondition());
+		} else if (t.isOperator()) {
 			switch (t.getType()) {
 			case AND:
-				return new ANDNode(parseCondition(true));
+				expect(TokenType.AND);
+				return new ANDNode(null);
 			case OR:
-				break;
-
+				expect(TokenType.OR);
+				return new ORNode(null);
 			case XOR:
-
+				expect(TokenType.XOR);
+				return new XORNode(null);
 			default:
 				throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL);
 			}
@@ -205,25 +209,80 @@ public class SQLParser {
 			final SQLNode group = new SQLNode(null);
 			group.setChildren(parseConditionList());
 			expect(TokenType.RPAREN, "Right parentesis expected");
-		}
+		} else if (t.getType() == TokenType.EXISTS) {
+			expect(TokenType.EXISTS);
+			expect(TokenType.LPAREN, "Left parentesis expected.");
+			final SelectNode select = parseSelect();
+			expect(TokenType.RPAREN, "Left parentesis expected.");
+			return new ExistsNode(select);
+		} else {
+			final String firstField = t.getValue();
+			expect(TokenType.IDENTIFIER, "Identifier expected");
 
+			switch (t.getType()) {
+			case BETWEEN: {
+				expect(TokenType.BETWEEN);
+				final String left = t.getValue();
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				expect(TokenType.AND, "AND expected.");
+				final String right = t.getValue();
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				return new BetweenNode(firstField, left, right);
+			}
+			case EQUALS: {
+				expect(TokenType.EQUALS);
+				final String value = t.getValue();
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				return new EqualsNode(firstField, value);
+			}
+			case NOTEQUALS: {
+				expect(TokenType.NOTEQUALS);
+				final String value = t.getValue();
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				return new NotEqualsNode(firstField, value);
+			}
+			case NOTEQUALS2: {
+				expect(TokenType.NOTEQUALS2);
+				final String value = t.getValue();
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				return new NotEqualsNode(firstField, value);
+			}
+			case LESS: {
+				expect(TokenType.LESS);
+				final String value = t.getValue();
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				return new LessThanNode(firstField, value);
+			}
+			case MORE: {
+				expect(TokenType.MORE);
+				final String value = t.getValue();
+				expect(TokenType.IDENTIFIER, "Identifier expected");
+				return new GreaterThanNode(firstField, value);
+			}
+			default:
+				throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL);
+			}
+		}
 		return null;
 	}
 
 	private void expect(final TokenType rparen, final String message) throws IOException, SQLException {
-		final Token t = scanner.nextToken();
 		if (t.getType() != rparen) {
 			throw new SQLException(message, SQLStates.INVALID_SQL);
 		}
-	}
-
-	private void expect(final Token t, final TokenType rparen, final String message) throws IOException, SQLException {
-		if (t.getType() != rparen) {
-			throw new SQLException(message, SQLStates.INVALID_SQL);
+		if (scanner.hasNext()) {
+			t = scanner.nextToken();
+		} else {
+			t = null;
 		}
 	}
 
-	private boolean isOperator(final Token t) {
-		return t.getType() == TokenType.AND || t.getType() == TokenType.OR || t.getType() == TokenType.XOR;
+	private void expect(final TokenType rparen) throws IOException, SQLException {
+		if (t.getType() != rparen) {
+			// Expected do not happen
+			throw new SQLException("Unexpected error in SQL syntax", SQLStates.INVALID_SQL);
+		}
+		t = scanner.nextToken();
 	}
 }
