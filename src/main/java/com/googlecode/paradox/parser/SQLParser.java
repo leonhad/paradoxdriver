@@ -7,6 +7,8 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 
 import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.parser.nodes.JoinNode;
+import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
@@ -37,9 +39,9 @@ public class SQLParser {
 	public ArrayList<StatementNode> parse() throws SQLException, IOException {
 		final ArrayList<StatementNode> statementList = new ArrayList<StatementNode>();
 		while (scanner.hasNext()) {
-			final Token token = scanner.nextToken();
+			t = scanner.nextToken();
 
-			switch (token.getType()) {
+			switch (t.getType()) {
 			case SEMI:
 				if (statementList.size() == 0) {
 					throw new SQLException("Unespected semicolon");
@@ -75,20 +77,17 @@ public class SQLParser {
 	 */
 	private SelectNode parseSelect() throws SQLException, IOException {
 		final SelectNode select = new SelectNode();
-		t = scanner.nextToken();
+		expect(TokenType.SELECT);
 
 		// Allowed only in the beginning of Select Statement
 		if (t.getType() == TokenType.DISTINCT) {
 			select.setDistinct(true);
-		} else {
-			scanner.pushBack(t);
+			expect(TokenType.DISTINCT);
 		}
 
 		// Field loop
 		boolean firstField = true;
 		while (scanner.hasNext()) {
-			t = scanner.nextToken();
-
 			if (t.getType() == TokenType.DISTINCT) {
 				throw new SQLException("Invalid statement.");
 			}
@@ -101,26 +100,26 @@ public class SQLParser {
 				String tableName = null;
 				String fieldName = t.getValue();
 				String fieldAlias = fieldName;
+				expect(TokenType.IDENTIFIER);
 
-				t = scanner.nextToken();
-				if (t.getType() != TokenType.IDENTIFIER && t.getType() != TokenType.AS && t.getType() != TokenType.PERIOD) {
-					scanner.pushBack(t);
-				} else {
+				if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS || t.getType() == TokenType.PERIOD) {
 					// If it has a Table Name
 					if (t.getType() == TokenType.PERIOD) {
-						t = scanner.nextToken();
+						expect(TokenType.PERIOD);
 						tableName = fieldName;
-						fieldName = t.getValue();
 						fieldAlias = fieldName;
-						t = scanner.nextToken();
+						fieldName = t.getValue();
+						expect(TokenType.IDENTIFIER);
 					}
 					// Field alias (with AS identifier)
 					if (t.getType() == TokenType.AS) {
-						t = scanner.nextToken();
+						expect(TokenType.AS);
 						fieldAlias = t.getValue();
+						expect(TokenType.IDENTIFIER);
 					} else if (t.getType() == TokenType.IDENTIFIER) {
 						// Field alias (without AS identifier)
 						fieldAlias = t.getValue();
+						expect(TokenType.IDENTIFIER);
 					}
 				}
 
@@ -132,10 +131,9 @@ public class SQLParser {
 		}
 
 		if (t.getType() == TokenType.FROM) {
+			expect(TokenType.FROM);
 			firstField = true;
-			while (scanner.hasNext()) {
-				t = scanner.nextToken();
-
+			do {
 				if (t.getType() == TokenType.WHERE) {
 					break;
 				}
@@ -147,28 +145,65 @@ public class SQLParser {
 					String tableAlias = tableName;
 
 					if (scanner.hasNext()) {
-						t = scanner.nextToken();
-						if (t.getType() != TokenType.IDENTIFIER && t.getType() != TokenType.AS) {
-							scanner.pushBack(t);
-						} else {
+						expect(TokenType.IDENTIFIER);
+						if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS) {
 							// Field alias (with AS identifier)
 							if (t.getType() == TokenType.AS) {
-								t = scanner.nextToken();
+								expect(TokenType.AS);
 								tableAlias = t.getValue();
+								expect(TokenType.IDENTIFIER);
 							} else if (t.getType() == TokenType.IDENTIFIER) {
 								// Field alias (without AS identifier)
 								tableAlias = t.getValue();
+								expect(TokenType.IDENTIFIER);
 							}
 						}
 					}
-					select.getTables().add(new TableNode(tableName, tableAlias));
+
+					final TableNode table = new TableNode(tableName, tableAlias);
+					while (scanner.hasNext() && t.getType() != TokenType.COMMA && t.getType() != TokenType.WHERE) {
+						final JoinNode join = new JoinNode();
+
+						// Inner join
+						if (t.getType() == TokenType.LEFT) {
+							join.setType(JoinType.LEFT_JOIN);
+							expect(TokenType.LEFT);
+						} else if (t.getType() == TokenType.RIGHT) {
+							join.setType(JoinType.RIGHT_JOIN);
+							expect(TokenType.RIGHT);
+						}
+						if (t.getType() == TokenType.INNER) {
+							expect(TokenType.INNER);
+						} else if (t.getType() == TokenType.OUTER) {
+							expect(TokenType.OUTER);
+						}
+						expect(TokenType.JOIN);
+						join.setTableName(t.getValue());
+						join.setTableAlias(t.getValue());
+						expect(TokenType.IDENTIFIER);
+						if (t.getType() == TokenType.AS) {
+							expect(TokenType.AS);
+							join.setTableAlias(t.getValue());
+							expect(TokenType.IDENTIFIER);
+						} else if (t.getType() != TokenType.ON) {
+							join.setTableAlias(t.getValue());
+							expect(TokenType.IDENTIFIER);
+						}
+						expect(TokenType.ON);
+						join.setConditions(parseConditionList());
+						table.addJoin(join);
+					}
+
+					select.getTables().add(table);
 					firstField = false;
 				}
-			}
+			} while (scanner.hasNext());
 
-			if (t.getType() == TokenType.WHERE) {
-				expect(TokenType.WHERE);
-				select.setConditions(parseConditionList());
+			if (scanner.hasNext()) {
+				if (t.getType() == TokenType.WHERE) {
+					expect(TokenType.WHERE);
+					select.setConditions(parseConditionList());
+				}
 			}
 		} else {
 			throw new SQLException("FROM expected.", SQLStates.INVALID_SQL);
@@ -180,7 +215,7 @@ public class SQLParser {
 		final ArrayList<SQLNode> conditions = new ArrayList<SQLNode>();
 
 		while (scanner.hasNext()) {
-			if (t.getType() == TokenType.ORDER || t.getType() == TokenType.HAVING || t.getType() == TokenType.RPAREN) {
+			if (t.isConditionBreak()) {
 				break;
 			}
 			conditions.add(parseCondition());
@@ -283,6 +318,10 @@ public class SQLParser {
 			// Expected do not happen
 			throw new SQLException("Unexpected error in SQL syntax", SQLStates.INVALID_SQL);
 		}
-		t = scanner.nextToken();
+		if (scanner.hasNext()) {
+			t = scanner.nextToken();
+		} else {
+			t = null;
+		}
 	}
 }

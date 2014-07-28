@@ -1,6 +1,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SelectNode extends StatementNode {
 
@@ -13,6 +14,12 @@ public class SelectNode extends StatementNode {
 
 	public SelectNode() {
 		super("SELECT");
+	}
+
+	@Override
+	public String toString() {
+		return getName() + " " + Arrays.deepToString(fields.toArray()) + " FROM " + Arrays.deepToString(tables.toArray()) + " WHERE " + Arrays.deepToString(conditions.toArray()) + " GROUP BY "
+				+ Arrays.deepToString(groups.toArray()) + " ORDER BY " + Arrays.deepToString(order.toArray());
 	}
 
 	public boolean isDistinct() {

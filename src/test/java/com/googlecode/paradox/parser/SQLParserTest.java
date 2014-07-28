@@ -76,7 +76,7 @@ public class SQLParserTest {
 	}
 
 	@Test
-	public void testTree() throws Exception {
+	public void testTable() throws Exception {
 		final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
 		final ArrayList<StatementNode> list = parser.parse();
 		final SQLNode tree = list.get(0);
@@ -90,6 +90,23 @@ public class SQLParserTest {
 
 		Assert.assertEquals(1, select.getTables().size());
 		Assert.assertEquals("client.db", select.getTables().get(0).getName());
+	}
+
+	@Test
+	public void testJoin() throws Exception {
+		final SQLParser parser = new SQLParser("SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
+		final ArrayList<StatementNode> list = parser.parse();
+		final SQLNode tree = list.get(0);
+
+		Assert.assertTrue(tree instanceof SelectNode);
+
+		final SelectNode select = (SelectNode) tree;
+
+		Assert.assertEquals(1, select.getFields().size());
+		Assert.assertEquals("*", select.getFields().get(0).getName());
+
+		Assert.assertEquals(1, select.getTables().size());
+		Assert.assertEquals("client", select.getTables().get(0).getName());
 	}
 
 	@Test

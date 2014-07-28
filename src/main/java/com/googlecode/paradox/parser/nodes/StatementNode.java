@@ -5,5 +5,4 @@ public class StatementNode extends SQLNode {
 	public StatementNode(final String name) {
 		super(name);
 	}
-
 }

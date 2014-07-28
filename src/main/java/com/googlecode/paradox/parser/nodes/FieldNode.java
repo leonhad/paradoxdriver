@@ -33,6 +33,11 @@ public class FieldNode extends SQLNode {
 		this.alias = alias;
 	}
 
+	@Override
+	public String toString() {
+		return tableName + "." + getName() + " AS " + alias;
+	}
+
 	public String getTableName() {
 		return tableName;
 	}

@@ -13,6 +13,11 @@ public class Token {
 		this.value = value;
 	}
 
+	@Override
+	public String toString() {
+		return type + " = " + value;
+	};
+
 	/**
 	 * @return the type
 	 */
@@ -45,6 +50,11 @@ public class Token {
 
 	public boolean isOperator() {
 		return type == TokenType.AND || type == TokenType.OR || type == TokenType.XOR;
+	}
+
+	public boolean isConditionBreak() {
+		return type == TokenType.ORDER || type == TokenType.HAVING || type == TokenType.RPAREN || type == TokenType.LEFT || type == TokenType.RIGHT || type == TokenType.OUTER
+				|| type == TokenType.INNER || type == TokenType.JOIN;
 	}
 
 }
