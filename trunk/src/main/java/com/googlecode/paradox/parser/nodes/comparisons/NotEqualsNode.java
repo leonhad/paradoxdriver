@@ -6,4 +6,8 @@ public class NotEqualsNode extends AbstractComparisonNode {
 		super(name, value);
 	}
 
+	@Override
+	public String toString() {
+		return getName() + " <> " + getValue();
+	}
 }

@@ -13,6 +13,11 @@ public class BetweenNode extends SQLNode {
 		this.right = right;
 	}
 
+	@Override
+	public String toString() {
+		return getName() + " BETWEEN " + left + " AND " + right;
+	}
+
 	public String getLeft() {
 		return left;
 	}
