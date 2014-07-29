@@ -1,13 +1,11 @@
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.parser.nodes.FieldNode;
+
 public class GreaterThanNode extends AbstractComparisonNode {
 
-	public GreaterThanNode(final String name, final String value) {
-		super(name, value);
+	public GreaterThanNode(final FieldNode first, final FieldNode last) {
+		super(">", first, last);
 	}
 
-	@Override
-	public String toString() {
-		return getName() + " > " + getValue();
-	}
 }

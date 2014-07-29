@@ -1,13 +1,10 @@
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.parser.nodes.FieldNode;
+
 public class NotEqualsNode extends AbstractComparisonNode {
 
-	public NotEqualsNode(final String name, final String value) {
-		super(name, value);
-	}
-
-	@Override
-	public String toString() {
-		return getName() + " <> " + getValue();
+	public NotEqualsNode(final FieldNode first, final FieldNode last) {
+		super("<>", first, last);
 	}
 }
