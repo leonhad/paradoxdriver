@@ -1,7 +1,8 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import com.googlecode.paradox.parser.nodes.comparisons.IComparision;
 
 public class SelectNode extends StatementNode {
 
@@ -10,7 +11,7 @@ public class SelectNode extends StatementNode {
 	private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
 	private final ArrayList<IdentifierNode> groups = new ArrayList<IdentifierNode>();
 	private final ArrayList<IdentifierNode> order = new ArrayList<IdentifierNode>();
-	private ArrayList<SQLNode> conditions;
+	private ArrayList<? extends IComparision> conditions;
 
 	public SelectNode() {
 		super("SELECT");
@@ -18,8 +19,68 @@ public class SelectNode extends StatementNode {
 
 	@Override
 	public String toString() {
-		return getName() + " " + Arrays.deepToString(fields.toArray()) + " FROM " + Arrays.deepToString(tables.toArray()) + " WHERE " + Arrays.deepToString(conditions.toArray()) + " GROUP BY "
-				+ Arrays.deepToString(groups.toArray()) + " ORDER BY " + Arrays.deepToString(order.toArray());
+		final StringBuilder builder = new StringBuilder();
+		builder.append(getName());
+		builder.append(" ");
+
+		boolean first = true;
+		for (final FieldNode field : fields) {
+			if (first) {
+				first = false;
+			} else {
+				builder.append(", ");
+			}
+			builder.append(field);
+		}
+		if (tables.size() > 0) {
+			builder.append(" FROM ");
+			first = true;
+			for (final TableNode table : tables) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(", ");
+				}
+				builder.append(table);
+			}
+		}
+		if (conditions != null && conditions.size() > 0) {
+			builder.append(" WHERE ");
+			first = true;
+			for (final IComparision cond : conditions) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(" ");
+				}
+				builder.append(cond);
+			}
+		}
+		if (groups.size() > 0) {
+			builder.append(" GROUP BY ");
+			first = true;
+			for (final IdentifierNode group : groups) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(", ");
+				}
+				builder.append(group);
+			}
+		}
+		if (order.size() > 0) {
+			builder.append(" ORDER BY ");
+			first = true;
+			for (final IdentifierNode ident : order) {
+				if (first) {
+					first = false;
+				} else {
+					builder.append(", ");
+				}
+				builder.append(ident);
+			}
+		}
+		return builder.toString();
 	}
 
 	public boolean isDistinct() {
@@ -46,7 +107,7 @@ public class SelectNode extends StatementNode {
 		order.add(indentifier);
 	}
 
-	public void setConditions(final ArrayList<SQLNode> conditions) {
+	public void setConditions(final ArrayList<? extends IComparision> conditions) {
 		this.conditions = conditions;
 	}
 
@@ -66,7 +127,7 @@ public class SelectNode extends StatementNode {
 		return order;
 	}
 
-	public ArrayList<SQLNode> getConditions() {
+	public ArrayList<? extends IComparision> getConditions() {
 		return conditions;
 	}
 }

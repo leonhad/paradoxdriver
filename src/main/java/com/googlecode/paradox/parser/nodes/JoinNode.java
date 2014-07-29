@@ -1,14 +1,15 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import com.googlecode.paradox.parser.nodes.comparisons.IComparision;
 
 public class JoinNode extends SQLNode {
 
 	private JoinType type = JoinType.CROSS_JOIN;
 	private String tableName;
 	private String tableAlias;
-	private ArrayList<SQLNode> conditions;
+	private ArrayList<IComparision> conditions;
 
 	public JoinNode() {
 		super("JOIN");
@@ -16,7 +17,20 @@ public class JoinNode extends SQLNode {
 
 	@Override
 	public String toString() {
-		return "JOIN " + tableName + " AS " + tableAlias + " ON " + Arrays.deepToString(conditions.toArray());
+		final StringBuilder builder = new StringBuilder();
+		builder.append(type);
+		builder.append(" JOIN ");
+		builder.append(tableName);
+		if (!tableName.equals(tableAlias)) {
+			builder.append(" AS ");
+			builder.append(tableAlias);
+		}
+		builder.append(" ON ");
+		for (final IComparision condition : conditions) {
+			builder.append(condition);
+			builder.append(" ");
+		}
+		return builder.toString();
 	}
 
 	public String getTableAlias() {
@@ -43,11 +57,11 @@ public class JoinNode extends SQLNode {
 		this.tableName = tableName;
 	}
 
-	public ArrayList<SQLNode> getConditions() {
+	public ArrayList<IComparision> getConditions() {
 		return conditions;
 	}
 
-	public void setConditions(final ArrayList<SQLNode> conditions) {
+	public void setConditions(final ArrayList<IComparision> conditions) {
 		this.conditions = conditions;
 	}
 

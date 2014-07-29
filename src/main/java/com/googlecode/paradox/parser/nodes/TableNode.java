@@ -1,7 +1,6 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class TableNode extends SQLNode {
 
@@ -15,7 +14,17 @@ public class TableNode extends SQLNode {
 
 	@Override
 	public String toString() {
-		return getName() + " as " + alias + " " + Arrays.deepToString(joins.toArray());
+		final StringBuilder builder = new StringBuilder();
+		builder.append(getName());
+		if (!getName().equals(alias)) {
+			builder.append(" AS ");
+			builder.append(alias);
+		}
+		for (final JoinNode join : joins) {
+			builder.append(" ");
+			builder.append(join);
+		}
+		return builder.toString();
 	};
 
 	public String getAlias() {

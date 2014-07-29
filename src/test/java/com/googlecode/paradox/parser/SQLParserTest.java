@@ -127,13 +127,37 @@ public class SQLParserTest {
 		Assert.assertEquals("test", select.getTables().get(0).getAlias());
 
 		Assert.assertEquals(3, select.getConditions().size());
-		Assert.assertEquals("a", select.getConditions().get(0).getName());
 		Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
-		Assert.assertEquals("b", ((EqualsNode) select.getConditions().get(0)).getValue());
 		Assert.assertTrue(select.getConditions().get(1) instanceof ANDNode);
-		Assert.assertEquals("c", select.getConditions().get(2).getName());
 		Assert.assertTrue(select.getConditions().get(2) instanceof NotEqualsNode);
-		Assert.assertEquals("t", ((NotEqualsNode) select.getConditions().get(2)).getValue());
+		Assert.assertEquals("a", ((EqualsNode) select.getConditions().get(0)).getFirst().getName());
+		Assert.assertEquals("b", ((EqualsNode) select.getConditions().get(0)).getLast().getName());
+		Assert.assertEquals("c", ((NotEqualsNode) select.getConditions().get(2)).getFirst().getName());
+		Assert.assertEquals("t", ((NotEqualsNode) select.getConditions().get(2)).getLast().getName());
 	}
 
+	@Test
+	public void testWhereWithAlias() throws Exception {
+		final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE test.a = c.b");
+		final ArrayList<StatementNode> list = parser.parse();
+		final SQLNode tree = list.get(0);
+
+		Assert.assertTrue(tree instanceof SelectNode);
+
+		final SelectNode select = (SelectNode) tree;
+
+		Assert.assertEquals(1, select.getFields().size());
+		Assert.assertEquals("*", select.getFields().get(0).getName());
+
+		Assert.assertEquals(1, select.getTables().size());
+		Assert.assertEquals("client", select.getTables().get(0).getName());
+		Assert.assertEquals("test", select.getTables().get(0).getAlias());
+
+		Assert.assertEquals(1, select.getConditions().size());
+		Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
+		Assert.assertEquals("test", ((EqualsNode) select.getConditions().get(0)).getFirst().getTableName());
+		Assert.assertEquals("a", ((EqualsNode) select.getConditions().get(0)).getFirst().getName());
+		Assert.assertEquals("c", ((EqualsNode) select.getConditions().get(0)).getLast().getTableName());
+		Assert.assertEquals("b", ((EqualsNode) select.getConditions().get(0)).getLast().getName());
+	}
 }

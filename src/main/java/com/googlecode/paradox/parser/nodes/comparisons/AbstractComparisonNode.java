@@ -1,18 +1,29 @@
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
-public abstract class AbstractComparisonNode extends SQLNode {
+public abstract class AbstractComparisonNode extends SQLNode implements IComparision {
 
-	private final String value;
+	private final FieldNode first;
+	private final FieldNode last;
 
-	public AbstractComparisonNode(final String name, final String value) {
+	public AbstractComparisonNode(final String name, final FieldNode first, final FieldNode last) {
 		super(name);
-		this.value = value;
+		this.first = first;
+		this.last = last;
 	}
 
-	public String getValue() {
-		return value;
+	public FieldNode getFirst() {
+		return first;
 	}
 
+	public FieldNode getLast() {
+		return last;
+	}
+
+	@Override
+	public String toString() {
+		return first + " " + getName() + " " + last;
+	}
 }

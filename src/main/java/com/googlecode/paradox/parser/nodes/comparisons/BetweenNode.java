@@ -1,37 +1,23 @@
 package com.googlecode.paradox.parser.nodes.comparisons;
 
-import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.FieldNode;
 
-public class BetweenNode extends SQLNode {
+public class BetweenNode extends AbstractComparisonNode {
 
-	private String left;
-	private String right;
+	private final FieldNode middle;
 
-	public BetweenNode(final String name, final String left, final String right) {
-		super(name);
-		this.left = left;
-		this.right = right;
+	public BetweenNode(final FieldNode first, final FieldNode middle, final FieldNode last) {
+		super("BETWEEN", first, last);
+		this.middle = middle;
 	}
 
 	@Override
 	public String toString() {
-		return getName() + " BETWEEN " + left + " AND " + right;
+		return middle + " BETWEEN " + getFirst() + " AND " + getLast();
 	}
 
-	public String getLeft() {
-		return left;
-	}
-
-	public void setLeft(final String left) {
-		this.left = left;
-	}
-
-	public String getRight() {
-		return right;
-	}
-
-	public void setRight(final String right) {
-		this.right = right;
+	public FieldNode getMiddle() {
+		return middle;
 	}
 
 }

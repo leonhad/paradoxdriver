@@ -16,6 +16,7 @@ import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.parser.nodes.comparisons.BetweenNode;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
 import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.IComparision;
 import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
 import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
@@ -211,8 +212,8 @@ public class SQLParser {
 		return select;
 	}
 
-	private ArrayList<SQLNode> parseConditionList() throws IOException, SQLException {
-		final ArrayList<SQLNode> conditions = new ArrayList<SQLNode>();
+	private ArrayList<IComparision> parseConditionList() throws IOException, SQLException {
+		final ArrayList<IComparision> conditions = new ArrayList<IComparision>();
 
 		while (scanner.hasNext()) {
 			if (t.isConditionBreak()) {
@@ -223,9 +224,9 @@ public class SQLParser {
 		return conditions;
 	}
 
-	private SQLNode parseCondition() throws IOException, SQLException {
+	private IComparision parseCondition() throws IOException, SQLException {
 		if (t.getType() == TokenType.NOT) {
-			return new NOTNode(parseCondition());
+			return new NOTNode((SQLNode) parseCondition());
 		} else if (t.isOperator()) {
 			switch (t.getType()) {
 			case AND:
@@ -241,8 +242,8 @@ public class SQLParser {
 				throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL);
 			}
 		} else if (t.getType() == TokenType.LPAREN) {
-			final SQLNode group = new SQLNode(null);
-			group.setChildren(parseConditionList());
+			new SQLNode(null);
+			// group.setChildren(parseConditionList());
 			expect(TokenType.RPAREN, "Right parentesis expected");
 		} else if (t.getType() == TokenType.EXISTS) {
 			expect(TokenType.EXISTS);
@@ -251,48 +252,39 @@ public class SQLParser {
 			expect(TokenType.RPAREN, "Left parentesis expected.");
 			return new ExistsNode(select);
 		} else {
-			final String firstField = t.getValue();
-			expect(TokenType.IDENTIFIER, "Identifier expected");
+			final FieldNode firstField = parseField();
 
 			switch (t.getType()) {
 			case BETWEEN: {
 				expect(TokenType.BETWEEN);
-				final String left = t.getValue();
-				expect(TokenType.IDENTIFIER, "Identifier expected");
+				final FieldNode left = parseField();
 				expect(TokenType.AND, "AND expected.");
-				final String right = t.getValue();
-				expect(TokenType.IDENTIFIER, "Identifier expected");
+				final FieldNode right = parseField();
 				return new BetweenNode(firstField, left, right);
 			}
 			case EQUALS: {
 				expect(TokenType.EQUALS);
-				final String value = t.getValue();
-				expect(TokenType.IDENTIFIER, "Identifier expected");
+				final FieldNode value = parseField();
 				return new EqualsNode(firstField, value);
 			}
 			case NOTEQUALS: {
 				expect(TokenType.NOTEQUALS);
-				final String value = t.getValue();
-				expect(TokenType.IDENTIFIER, "Identifier expected");
+				final FieldNode value = parseField();
 				return new NotEqualsNode(firstField, value);
 			}
 			case NOTEQUALS2: {
 				expect(TokenType.NOTEQUALS2);
-				final String value = t.getValue();
-				expect(TokenType.IDENTIFIER, "Identifier expected");
+				final FieldNode value = parseField();
 				return new NotEqualsNode(firstField, value);
 			}
 			case LESS: {
 				expect(TokenType.LESS);
-				final String value = t.getValue();
-				expect(TokenType.IDENTIFIER, "Identifier expected");
-				expect(TokenType.IDENTIFIER, "Identifier expected");
+				final FieldNode value = parseField();
 				return new LessThanNode(firstField, value);
 			}
 			case MORE: {
 				expect(TokenType.MORE);
-				final String value = t.getValue();
-				expect(TokenType.IDENTIFIER, "Identifier expected");
+				final FieldNode value = parseField();
 				return new GreaterThanNode(firstField, value);
 			}
 			default:
@@ -300,6 +292,22 @@ public class SQLParser {
 			}
 		}
 		return null;
+	}
+
+	private FieldNode parseField() throws SQLException, IOException {
+		String tableName = null;
+		String fieldName = t.getValue();
+
+		expect(TokenType.IDENTIFIER);
+
+		// If it has a Table Name
+		if (scanner.hasNext() && t.getType() == TokenType.PERIOD) {
+			expect(TokenType.PERIOD);
+			tableName = fieldName;
+			fieldName = t.getValue();
+			expect(TokenType.IDENTIFIER);
+		}
+		return new FieldNode(tableName, fieldName, fieldName);
 	}
 
 	private void expect(final TokenType rparen, final String message) throws IOException, SQLException {

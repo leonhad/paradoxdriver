@@ -35,7 +35,17 @@ public class FieldNode extends SQLNode {
 
 	@Override
 	public String toString() {
-		return tableName + "." + getName() + " AS " + alias;
+		final StringBuilder builder = new StringBuilder();
+		if (tableName != null) {
+			builder.append(tableName);
+			builder.append(".");
+		}
+		builder.append(getName());
+		if (!getName().equals(alias)) {
+			builder.append(" AS ");
+			builder.append(alias);
+		}
+		return builder.toString();
 	}
 
 	public String getTableName() {
