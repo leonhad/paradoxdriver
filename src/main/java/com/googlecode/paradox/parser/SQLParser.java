@@ -16,7 +16,6 @@ import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.parser.nodes.comparisons.BetweenNode;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
 import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
-import com.googlecode.paradox.parser.nodes.comparisons.IComparision;
 import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
 import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
@@ -212,8 +211,8 @@ public class SQLParser {
 		return select;
 	}
 
-	private ArrayList<IComparision> parseConditionList() throws IOException, SQLException {
-		final ArrayList<IComparision> conditions = new ArrayList<IComparision>();
+	private ArrayList<SQLNode> parseConditionList() throws IOException, SQLException {
+		final ArrayList<SQLNode> conditions = new ArrayList<SQLNode>();
 
 		while (scanner.hasNext()) {
 			if (t.isConditionBreak()) {
@@ -224,9 +223,9 @@ public class SQLParser {
 		return conditions;
 	}
 
-	private IComparision parseCondition() throws IOException, SQLException {
+	private SQLNode parseCondition() throws IOException, SQLException {
 		if (t.getType() == TokenType.NOT) {
-			return new NOTNode((SQLNode) parseCondition());
+			return new NOTNode(parseCondition());
 		} else if (t.isOperator()) {
 			switch (t.getType()) {
 			case AND:

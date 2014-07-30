@@ -3,7 +3,7 @@ package com.googlecode.paradox.parser.nodes.comparisons;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
-public abstract class AbstractComparisonNode extends SQLNode implements IComparision {
+public abstract class AbstractComparisonNode extends SQLNode {
 
 	private final FieldNode first;
 	private final FieldNode last;
