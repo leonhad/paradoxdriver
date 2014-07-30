@@ -5,10 +5,16 @@ import java.util.Collection;
 public class SQLNode {
 
 	private final String name;
+	private String alias;
 	private Collection<? extends SQLNode> children;
 
 	public SQLNode(final String name) {
 		this.name = name;
+	}
+
+	public SQLNode(final String name, final String alias) {
+		this.name = name;
+		this.alias = alias;
 	}
 
 	@Override
@@ -18,6 +24,10 @@ public class SQLNode {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getAlias() {
+		return alias;
 	}
 
 	public Collection<? extends SQLNode> getChildren() {
