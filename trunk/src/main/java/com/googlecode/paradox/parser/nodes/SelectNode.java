@@ -2,8 +2,6 @@ package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
 
-import com.googlecode.paradox.parser.nodes.comparisons.IComparision;
-
 public class SelectNode extends StatementNode {
 
 	private boolean distinct;
@@ -11,7 +9,7 @@ public class SelectNode extends StatementNode {
 	private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
 	private final ArrayList<IdentifierNode> groups = new ArrayList<IdentifierNode>();
 	private final ArrayList<IdentifierNode> order = new ArrayList<IdentifierNode>();
-	private ArrayList<? extends IComparision> conditions;
+	private ArrayList<SQLNode> conditions;
 
 	public SelectNode() {
 		super("SELECT");
@@ -47,7 +45,7 @@ public class SelectNode extends StatementNode {
 		if (conditions != null && conditions.size() > 0) {
 			builder.append(" WHERE ");
 			first = true;
-			for (final IComparision cond : conditions) {
+			for (final SQLNode cond : conditions) {
 				if (first) {
 					first = false;
 				} else {
@@ -107,7 +105,7 @@ public class SelectNode extends StatementNode {
 		order.add(indentifier);
 	}
 
-	public void setConditions(final ArrayList<? extends IComparision> conditions) {
+	public void setConditions(final ArrayList<SQLNode> conditions) {
 		this.conditions = conditions;
 	}
 
@@ -127,7 +125,7 @@ public class SelectNode extends StatementNode {
 		return order;
 	}
 
-	public ArrayList<? extends IComparision> getConditions() {
+	public ArrayList<SQLNode> getConditions() {
 		return conditions;
 	}
 }
