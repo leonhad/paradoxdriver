@@ -22,6 +22,8 @@ import com.googlecode.paradox.parser.nodes.conditional.ExistsNode;
 import com.googlecode.paradox.parser.nodes.conditional.NOTNode;
 import com.googlecode.paradox.parser.nodes.conditional.ORNode;
 import com.googlecode.paradox.parser.nodes.conditional.XORNode;
+import com.googlecode.paradox.parser.nodes.values.CharacterNode;
+import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.utils.SQLStates;
 
 public class SQLParser {
@@ -99,17 +101,9 @@ public class SQLParser {
 				String tableName = null;
 				String fieldName = t.getValue();
 				String fieldAlias = fieldName;
-				expect(TokenType.IDENTIFIER);
 
-				if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS || t.getType() == TokenType.PERIOD) {
-					// If it has a Table Name
-					if (t.getType() == TokenType.PERIOD) {
-						expect(TokenType.PERIOD);
-						tableName = fieldName;
-						fieldAlias = fieldName;
-						fieldName = t.getValue();
-						expect(TokenType.IDENTIFIER);
-					}
+				if (t.getType() == TokenType.CHARACTER) {
+					expect(TokenType.CHARACTER);
 					// Field alias (with AS identifier)
 					if (t.getType() == TokenType.AS) {
 						expect(TokenType.AS);
@@ -120,9 +114,45 @@ public class SQLParser {
 						fieldAlias = t.getValue();
 						expect(TokenType.IDENTIFIER);
 					}
-				}
+					select.getFields().add(new CharacterNode(fieldName, fieldAlias));
+				} else if (t.getType() == TokenType.NUMERIC) {
+					expect(TokenType.NUMERIC);
+					// Field alias (with AS identifier)
+					if (t.getType() == TokenType.AS) {
+						expect(TokenType.AS);
+						fieldAlias = t.getValue();
+						expect(TokenType.IDENTIFIER);
+					} else if (t.getType() == TokenType.IDENTIFIER) {
+						// Field alias (without AS identifier)
+						fieldAlias = t.getValue();
+						expect(TokenType.IDENTIFIER);
+					}
+					select.getFields().add(new NumericNode(fieldName, fieldAlias));
+				} else {
+					expect(TokenType.IDENTIFIER);
 
-				select.getFields().add(new FieldNode(tableName, fieldName, fieldAlias));
+					if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS || t.getType() == TokenType.PERIOD) {
+						// If it has a Table Name
+						if (t.getType() == TokenType.PERIOD) {
+							expect(TokenType.PERIOD);
+							tableName = fieldName;
+							fieldAlias = fieldName;
+							fieldName = t.getValue();
+							expect(TokenType.IDENTIFIER);
+						}
+						// Field alias (with AS identifier)
+						if (t.getType() == TokenType.AS) {
+							expect(TokenType.AS);
+							fieldAlias = t.getValue();
+							expect(TokenType.IDENTIFIER);
+						} else if (t.getType() == TokenType.IDENTIFIER) {
+							// Field alias (without AS identifier)
+							fieldAlias = t.getValue();
+							expect(TokenType.IDENTIFIER);
+						}
+					}
+					select.getFields().add(new FieldNode(tableName, fieldName, fieldAlias));
+				}
 				firstField = false;
 			} else {
 				break;

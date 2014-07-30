@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class SelectNode extends StatementNode {
 
 	private boolean distinct;
-	private final ArrayList<FieldNode> fields = new ArrayList<FieldNode>();
+	private final ArrayList<SQLNode> fields = new ArrayList<SQLNode>();
 	private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
 	private final ArrayList<IdentifierNode> groups = new ArrayList<IdentifierNode>();
 	private final ArrayList<IdentifierNode> order = new ArrayList<IdentifierNode>();
@@ -22,7 +22,7 @@ public class SelectNode extends StatementNode {
 		builder.append(" ");
 
 		boolean first = true;
-		for (final FieldNode field : fields) {
+		for (final SQLNode field : fields) {
 			if (first) {
 				first = false;
 			} else {
@@ -89,7 +89,7 @@ public class SelectNode extends StatementNode {
 		this.distinct = distinct;
 	}
 
-	public void addField(final FieldNode field) {
+	public void addField(final SQLNode field) {
 		fields.add(field);
 	}
 
@@ -109,7 +109,7 @@ public class SelectNode extends StatementNode {
 		this.conditions = conditions;
 	}
 
-	public ArrayList<FieldNode> getFields() {
+	public ArrayList<SQLNode> getFields() {
 		return fields;
 	}
 
