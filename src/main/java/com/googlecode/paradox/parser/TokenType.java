@@ -43,7 +43,10 @@ public enum TokenType {
 	NOT,
 	AND,
 	XOR,
-	OR;
+	OR,
+	CHARACTER(null), // Not find by it name
+	NUMERIC(null), // Not find by it name
+	NULL;
 
 	private String value;
 
@@ -57,7 +60,7 @@ public enum TokenType {
 
 	public static TokenType get(final String value) {
 		for (final TokenType token : TokenType.values()) {
-			if (token.value.equals(value)) {
+			if (value.equals(token.value)) {
 				return token;
 			}
 		}

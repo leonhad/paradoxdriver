@@ -1,7 +1,6 @@
 package com.googlecode.paradox.parser;
 
 import java.io.IOException;
-import java.nio.CharBuffer;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
@@ -31,9 +30,9 @@ public class SQLParser {
 	private final String sql;
 	private final Scanner scanner;
 
-	public SQLParser(final String sql) {
+	public SQLParser(final String sql) throws SQLException {
 		this.sql = sql;
-		scanner = new Scanner(CharBuffer.wrap(sql.toCharArray()));
+		scanner = new Scanner(sql);
 	}
 
 	public ArrayList<StatementNode> parse() throws SQLException, IOException {
