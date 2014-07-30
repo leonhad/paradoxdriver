@@ -23,8 +23,11 @@ public class Scanner {
 
 	private final ArrayList<Token> tokens = new ArrayList<Token>();
 
-	public Scanner(final CharBuffer buffer) {
-		this.buffer = buffer;
+	public Scanner(final String buffer) throws SQLException {
+		if (buffer == null) {
+			throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL);
+		}
+		this.buffer = CharBuffer.wrap(buffer.trim());
 	}
 
 	public boolean hasNext() throws IOException {
@@ -72,7 +75,7 @@ public class Scanner {
 			throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL);
 		}
 		value.delete(0, value.length());
-
+		boolean characters = false;
 		while (hasNext()) {
 			char c = nextChar();
 
@@ -110,7 +113,8 @@ public class Scanner {
 				} while (c != '"');
 				break;
 			} else if (c == '\'') {
-				// identifiers with special chars
+				// characters
+				characters = true;
 				do {
 					if (hasNext()) {
 						c = nextChar();
@@ -137,8 +141,19 @@ public class Scanner {
 				} while (c != '\'');
 				break;
 			} else {
-				while (!isSeparator(c) && !isSpecial(c)) {
+				boolean numeric = false;
+				int dotcount = 0;
+				while (!isSeparator(c) && (numeric && c == '.' || !isSpecial(c))) {
 					value.append(c);
+					if (value.length() == 1) {
+						numeric = Character.isDigit(value.charAt(0));
+					} else if (c == '.') {
+						dotcount++;
+						// Only one dot per numeric value
+						if (dotcount > 1) {
+							throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL);
+						}
+					}
 					if (hasNext()) {
 						c = nextChar();
 					} else {
@@ -151,7 +166,11 @@ public class Scanner {
 				break;
 			}
 		}
-		if (value.length() > 0) {
+		if (characters) {
+			return new Token(TokenType.CHARACTER, value.toString());
+		} else if (Character.isDigit(value.charAt(0))) {
+			return new Token(TokenType.NUMERIC, value.toString());
+		} else if (value.length() > 0) {
 			return getToken(value.toString());
 		}
 		return null;

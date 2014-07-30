@@ -23,7 +23,7 @@ import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.SQLStates;
 
 /**
- * 
+ *
  * @author Leonardo Alves da Costa
  * @since 14/03/2009
  * @version 1.1
@@ -1218,7 +1218,6 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
 	@Override
 	public int getDatabaseMajorVersion() throws SQLException {
-		// FIXME get the higest table value
 		return 7;
 	}
 
