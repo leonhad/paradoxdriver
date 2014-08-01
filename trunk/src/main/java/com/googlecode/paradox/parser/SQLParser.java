@@ -37,7 +37,7 @@ public class SQLParser {
 		scanner = new Scanner(sql);
 	}
 
-	public ArrayList<StatementNode> parse() throws SQLException, IOException {
+	public ArrayList<StatementNode> parse() throws SQLException {
 		final ArrayList<StatementNode> statementList = new ArrayList<StatementNode>();
 		while (scanner.hasNext()) {
 			t = scanner.nextToken();
@@ -76,7 +76,7 @@ public class SQLParser {
 	 * @throws IOException
 	 *             in case of parser exception
 	 */
-	private SelectNode parseSelect() throws SQLException, IOException {
+	private SelectNode parseSelect() throws SQLException {
 		final SelectNode select = new SelectNode();
 		expect(TokenType.SELECT);
 
@@ -240,7 +240,7 @@ public class SQLParser {
 		return select;
 	}
 
-	private ArrayList<SQLNode> parseConditionList() throws IOException, SQLException {
+	private ArrayList<SQLNode> parseConditionList() throws SQLException {
 		final ArrayList<SQLNode> conditions = new ArrayList<SQLNode>();
 
 		while (scanner.hasNext()) {
@@ -252,7 +252,7 @@ public class SQLParser {
 		return conditions;
 	}
 
-	private SQLNode parseCondition() throws IOException, SQLException {
+	private SQLNode parseCondition() throws SQLException {
 		if (t.getType() == TokenType.NOT) {
 			return new NOTNode(parseCondition());
 		} else if (t.isOperator()) {
@@ -322,7 +322,7 @@ public class SQLParser {
 		return null;
 	}
 
-	private FieldNode parseField() throws SQLException, IOException {
+	private FieldNode parseField() throws SQLException {
 		String tableName = null;
 		String fieldName = t.getValue();
 
@@ -338,7 +338,7 @@ public class SQLParser {
 		return new FieldNode(tableName, fieldName, fieldName);
 	}
 
-	private void expect(final TokenType rparen, final String message) throws IOException, SQLException {
+	private void expect(final TokenType rparen, final String message) throws SQLException {
 		if (t.getType() != rparen) {
 			throw new SQLException(message, SQLStates.INVALID_SQL);
 		}
@@ -349,7 +349,7 @@ public class SQLParser {
 		}
 	}
 
-	private void expect(final TokenType rparen) throws IOException, SQLException {
+	private void expect(final TokenType rparen) throws SQLException {
 		if (t.getType() != rparen) {
 			// Expected do not happen
 			throw new SQLException("Unexpected error in SQL syntax", SQLStates.INVALID_SQL);
