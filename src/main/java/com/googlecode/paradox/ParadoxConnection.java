@@ -40,8 +40,6 @@ import com.googlecode.paradox.utils.SQLStates;
  */
 public class ParadoxConnection implements Connection {
 
-	// private final ArrayList<ParadoxTable> tables = new
-	// ArrayList<ParadoxTable>();
 	/**
 	 * Se esta conexão está fechada
 	 */

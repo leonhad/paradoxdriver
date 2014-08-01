@@ -1,6 +1,5 @@
 package com.googlecode.paradox;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +12,8 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.planner.Planner;
+import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
 
@@ -47,54 +47,17 @@ public class ParadoxStatement implements Statement {
 		if (rs != null && !rs.isClosed()) {
 			rs.close();
 		}
-		try {
-			final SQLParser parser = new SQLParser(sql);
-			final ArrayList<StatementNode> statementList = parser.parse();
-			if (statementList.size() > 1) {
-				throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
-			}
-			final StatementNode rootNode = statementList.get(0);
-
-			if (rootNode instanceof SelectNode) {
-				final SelectNode node = (SelectNode) rootNode;
-				node.getFields();
-				// final ArrayList<SQLNode> where = node.getWhere();
-				final ArrayList<TableNode> from = node.getTables();
-
-				if (from.size() != 1) {
-					throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
-				}
-
-				// Generate SQL Tree
-				// FIXME redo this things!!!
-				/*
-				 * tables: for (final TableNode tableNode : from) { for (final ParadoxTable table : TableData.listTables(conn)) { if (table.getName().equalsIgnoreCase(tableNode.getName())) {
-				 * tableNode.setTable(table); continue tables; } } throw new SQLException("Table " + tableNode.getName() + " not found.", SQLStates.INVALID_SQL); }
-				 * 
-				 * final ArrayList<Column> columns = new ArrayList<Column>();
-				 * 
-				 * for (final FieldNode field : fields) { if ("*".equals(field.getName())) { for (final TableNode tableNode : from) { for (final ParadoxField tableField :
-				 * tableNode.getTable().getFields()) { columns.add(tableField.getColumn()); } } } for (final TableNode tableNode : from) { for (final ParadoxField tableField :
-				 * tableNode.getTable().getFields()) { if (tableField.getName().equalsIgnoreCase(field.getName())) { columns.add(tableField.getColumn()); } } } }
-				 * 
-				 * // Generate SQL Plan // FIXME Generate SQL Plan
-				 * 
-				 * // Execute plan // FIXME more than one table final ArrayList<ParadoxField> fieldList = new ArrayList<ParadoxField>(); for (final Column column : columns) { for (final ParadoxField
-				 * field : from.get(0).getTable().getFields()) { if (field.getName().equalsIgnoreCase(column.getName())) { fieldList.add(field); } } }
-				 * 
-				 * final ArrayList<ArrayList<FieldValue>> values = TableData.loadData(conn, from.get(0).getTable(), fieldList);
-				 * 
-				 * rs = new ParadoxResultSet(conn, this, values, columns);
-				 */
-				return rs;
-			} else {
-				throw new SQLException("Not a SELECT statement", SQLStates.INVALID_COMMAND);
-			}
-		} catch (final SQLException e) {
-			throw new SQLException(e.getMessage() + ": " + sql, SQLStates.INVALID_SQL, e);
-		} catch (final IOException e) {
-			throw new SQLException(e.getMessage() + ": " + sql, SQLStates.INVALID_SQL, e);
+		final SQLParser parser = new SQLParser(sql);
+		final ArrayList<StatementNode> statementList = parser.parse();
+		if (statementList.size() > 1) {
+			throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
 		}
+		final StatementNode node = statementList.get(0);
+		if (!(node instanceof SelectNode)) {
+			throw new SQLFeatureNotSupportedException("Not a SELECT statement.", SQLStates.INVALID_SQL);
+		}
+		executeSelect((SelectNode) node);
+		return rs;
 	}
 
 	@Override
@@ -168,9 +131,28 @@ public class ParadoxStatement implements Statement {
 
 	@Override
 	public boolean execute(final String sql) throws SQLException {
-		// FIXME detectar o tipo de SQL
-		rs = (ParadoxResultSet) executeQuery(sql);
-		return true;
+		if (rs != null && !rs.isClosed()) {
+			rs.close();
+		}
+		boolean select = false;
+		final SQLParser parser = new SQLParser(sql);
+		final ArrayList<StatementNode> statements = parser.parse();
+		for (final StatementNode statement : statements) {
+			if (statement instanceof SelectNode) {
+				executeSelect((SelectNode) statement);
+				select = true;
+			}
+		}
+		return select;
+	}
+
+	private void executeSelect(final SelectNode node) throws SQLException {
+		final Planner planner = new Planner(conn);
+		final SelectPlan plan = (SelectPlan) planner.create(node);
+		plan.execute();
+
+		// FIXME result set
+		rs = new ParadoxResultSet(conn, this, null, null);
 	}
 
 	@Override

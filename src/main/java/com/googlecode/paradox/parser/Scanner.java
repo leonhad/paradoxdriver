@@ -1,6 +1,5 @@
 package com.googlecode.paradox.parser;
 
-import java.io.IOException;
 import java.nio.CharBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,15 +29,15 @@ public class Scanner {
 		this.buffer = CharBuffer.wrap(buffer.trim());
 	}
 
-	public boolean hasNext() throws IOException {
+	public boolean hasNext() throws SQLException {
 		return tokens.size() > 0 || buffer.hasRemaining();
 	}
 
-	private char nextChar() throws IOException {
+	private char nextChar() throws SQLException {
 		return buffer.get();
 	}
 
-	private void pushBack() throws IOException {
+	private void pushBack() throws SQLException {
 		buffer.position(buffer.position() - 1);
 	}
 
@@ -64,7 +63,7 @@ public class Scanner {
 		return false;
 	}
 
-	public Token nextToken() throws IOException, SQLException {
+	public Token nextToken() throws SQLException {
 		final int size = tokens.size();
 		if (size > 0) {
 			final Token token = tokens.get(size - 1);
