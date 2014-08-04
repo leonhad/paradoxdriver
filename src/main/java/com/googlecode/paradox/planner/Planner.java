@@ -33,18 +33,29 @@ public class Planner {
 
 	private Plan createSelect(final SelectNode statement) throws SQLException {
 		final SelectPlan plan = new SelectPlan();
+		final ArrayList<ParadoxTable> paradoxTables = TableData.listTables(conn);
+
+		// Load the table metadata
 		for (final TableNode table : statement.getTables()) {
-			final ArrayList<ParadoxTable> paradoxTables = TableData.listTables(conn, table.getName());
-			if (paradoxTables.size() != 1) {
+			final PlanTableNode node = new PlanTableNode();
+			for (final ParadoxTable paradoxTable : paradoxTables) {
+				if (paradoxTable.getName().equalsIgnoreCase(table.getName())) {
+					node.setTable(paradoxTable);
+					break;
+				}
+			}
+			if (node.getTable() == null) {
 				throw new SQLException("Table " + table.getName() + " not found.", SQLStates.INVALID_SQL);
 			}
-			final PlanTableNode node = new PlanTableNode();
-			node.setTable(paradoxTables.get(0));
 			if (!table.getName().equals(table.getAlias())) {
 				node.setAlias(table.getAlias());
 			}
 			plan.addTable(node);
 		}
+		for (final PlanTableNode table : plan.getTables()) {
+			System.out.println(table.getTable());
+		}
+
 		return plan;
 	}
 }

@@ -14,27 +14,24 @@ import com.googlecode.paradox.utils.Expressions;
  */
 public class TableFilter implements FileFilter {
 
-    private final String tableName;
+	private final String tableName;
 
-    public TableFilter() {
-        tableName = null;
-    }
+	public TableFilter() {
+		tableName = null;
+	}
 
-    public TableFilter(final String tableName) {
-        this.tableName = tableName;
-    }
+	public TableFilter(final String tableName) {
+		this.tableName = tableName;
+	}
 
-    @Override
-    public boolean accept(final File pathname) {
-        final String name = pathname.getName();
+	@Override
+	public boolean accept(final File pathname) {
+		final String name = pathname.getName();
 
-        if (Expressions.accept(name, "%.DB")) {
-            if (tableName != null) {
-                return Expressions.accept(name, tableName);
-            }
-            return true;
-        }
-        return false;
-    }
+		if (tableName != null) {
+			return Expressions.accept(name, tableName);
+		}
+		return Expressions.accept(name, "%.DB");
+	}
 
 }
