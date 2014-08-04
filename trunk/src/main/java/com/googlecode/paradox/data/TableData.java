@@ -27,18 +27,17 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 public class TableData {
 
-	public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String tableName) throws SQLException {
+	public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern) throws SQLException {
 		final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
-		final File[] fileList = conn.getDir().listFiles(new TableFilter(tableName));
+		final File[] fileList = conn.getDir().listFiles(new TableFilter(pattern));
 		for (final File file : fileList) {
-			final ParadoxTable table;
 			try {
-				table = TableData.loadTableHeader(file);
+				final ParadoxTable table = TableData.loadTableHeader(file);
+				if (table.isValid()) {
+					tables.add(table);
+				}
 			} catch (final IOException ex) {
 				throw new SQLException("Error loading Paradox tables.", ex);
-			}
-			if (table.isValid()) {
-				tables.add(table);
 			}
 		}
 		return tables;
@@ -48,14 +47,13 @@ public class TableData {
 		final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
 		final File[] fileList = conn.getDir().listFiles(new TableFilter());
 		for (final File file : fileList) {
-			final ParadoxTable table;
 			try {
-				table = TableData.loadTableHeader(file);
+				final ParadoxTable table = TableData.loadTableHeader(file);
+				if (table.isValid()) {
+					tables.add(table);
+				}
 			} catch (final IOException ex) {
 				throw new SQLException("Error loading Paradox tables.", ex);
-			}
-			if (table.isValid()) {
-				tables.add(table);
 			}
 		}
 		return tables;
@@ -324,9 +322,9 @@ public class TableData {
 
 	/**
 	 * Convert the Paradox VARCHAR to Java String.
-	 * 
+	 *
 	 * The paradox fill the entire buffer with zeros at end of VARCHAR literals
-	 * 
+	 *
 	 * @param buffer
 	 *            VARCHAR Buffer to convert
 	 * @param charset

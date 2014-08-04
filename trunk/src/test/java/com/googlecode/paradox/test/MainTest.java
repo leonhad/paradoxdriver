@@ -82,7 +82,7 @@ public class MainTest {
 			Assert.assertTrue(rs.next());
 			Assert.assertEquals("db", rs.getString("TABLE_CAT"));
 			Assert.assertEquals("APP", rs.getString("TABLE_SCHEM"));
-			Assert.assertEquals("CUSTOMER.DB", rs.getString("TABLE_NAME"));
+			Assert.assertEquals("CUSTOMER", rs.getString("TABLE_NAME"));
 			Assert.assertEquals("CustNo", rs.getString("COLUMN_NAME"));
 			Assert.assertEquals("0", rs.getString("KEY_SEQ"));
 			Assert.assertEquals("CustNo", rs.getString("PK_NAME"));
@@ -163,7 +163,7 @@ public class MainTest {
 		try {
 			stmt = conn.createStatement();
 
-			rs = stmt.executeQuery("SELECT AC, State, CITIES FROM \"AREACODES.DB\"");
+			rs = stmt.executeQuery("SELECT AC, State, CITIES FROM AREACODES");
 
 			while (rs.next()) {
 				rs.getString("ac");
