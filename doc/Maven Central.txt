@@ -1,4 +1,5 @@
 mvn versions:set -DgenerateBackupPoms=false -DnewVersion=1.2.3 
+mvn org.codehaus.mojo:versions-maven-plugin:2.1:set -DgenerateBackupPoms=false -DnewVersion=
 
 Maven Central
 
