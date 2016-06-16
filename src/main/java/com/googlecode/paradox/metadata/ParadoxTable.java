@@ -1,9 +1,13 @@
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.filefilters.TableFilter;
+
 import static java.nio.charset.Charset.forName;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -34,6 +38,8 @@ public class ParadoxTable extends AbstractTable {
     private ArrayList<ParadoxField> fields;
     private ArrayList<Short> fieldsOrder;
     private Charset charset = forName("Cp437");
+
+    private BlobTable blobFile = null;
 
     public ParadoxTable(final File file, final String name) {
         super(file, name);
@@ -74,7 +80,6 @@ public class ParadoxTable extends AbstractTable {
         // The blockSize is always in KiB
         return blockSize * 1024;
     }
-
     /**
      * If this table is valid
      *
@@ -350,5 +355,12 @@ public class ParadoxTable extends AbstractTable {
      */
     public void setCharset(Charset charset) {
         this.charset = charset;
+    }
+
+    public BlobTable getBlobTable() {
+        if (blobFile == null) {
+            blobFile = new BlobTable(this.getFile(), getName());
+        }
+        return blobFile;
     }
 }

@@ -25,4 +25,9 @@ public interface SQLStates {
     String INVALID_COLUMN = "1010";
     String INVALID_STATE = "1011";
     String INVALID_FIELD_VALUE = "1012";
+    String INVALID_TABLE = "1014";
+    String COLUMN_AMBIQUOUS = "1015";
+    String LOAD_DATA = "1100";
+
+    String CLOB_READ = "2000";
 }

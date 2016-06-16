@@ -7,6 +7,7 @@ import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.ParadoxResultSet;
@@ -641,7 +642,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("PROCEDURE_TYPE", Types.INTEGER));
 		columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>();
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>();
 
 		for (final CallableProcedure procedure : ProcedureAS.getInstance().list()) {
 			final ArrayList<FieldValue> row = new ArrayList<FieldValue>();
@@ -683,7 +684,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("IS_NULLABLE", Types.VARCHAR));
 		columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>();
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>();
 
 		for (final CallableProcedure procedure : ProcedureAS.getInstance().list()) {
 			if (Expressions.accept(procedure.getName(), procedureNamePattern)) {
@@ -731,7 +732,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("SELF_REFERENCING_COL_NAME", Types.VARCHAR));
 		columns.add(new Column("REF_GENERATION", Types.VARCHAR));
 
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>(1);
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>(1);
 
 		if (types != null) {
 			for (final String type : types) {
@@ -779,7 +780,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("TABLE_CATALOG", Types.VARCHAR));
 
 		final ArrayList<FieldValue> row = new ArrayList<FieldValue>(1);
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>(1);
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>(1);
 		row.add(new FieldValue(conn.getSchema(), Types.VARCHAR));
 		row.add(new FieldValue(conn.getCatalog(), Types.VARCHAR));
 		values.add(row);
@@ -792,8 +793,8 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
 		columns.add(new Column("TABLE_CAT", Types.VARCHAR));
 
-		final ArrayList<FieldValue> row = new ArrayList<FieldValue>(1);
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>(1);
+		final List<FieldValue> row = new ArrayList<FieldValue>(1);
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>(1);
 		row.add(new FieldValue(conn.getCatalog(), Types.VARCHAR));
 		values.add(row);
 
@@ -806,7 +807,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("TABLE_TYPE", Types.VARCHAR));
 
 		final ArrayList<FieldValue> row = new ArrayList<FieldValue>(1);
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>(1);
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>(1);
 		row.add(new FieldValue("TABLE", Types.VARCHAR));
 		row.add(new FieldValue("VIEW", Types.VARCHAR));
 		row.add(new FieldValue("SYSTEM TABLE", Types.VARCHAR));
@@ -842,7 +843,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("SOURCE_DATA_TYPE", Types.SMALLINT));
 		columns.add(new Column("IS_AUTOINCREMENT", Types.VARCHAR));
 
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>(1);
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>(1);
 
 		final ArrayList<ParadoxTable> tables = TableData.listTables(conn);
 		for (final ParadoxTable table : tables) {
@@ -956,22 +957,22 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
 	@Override
 	public ResultSet getColumnPrivileges(final String catalog, final String schema, final String table, final String columnNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getTablePrivileges(final String catalog, final String schemaPattern, final String tableNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getBestRowIdentifier(final String catalog, final String schema, final String table, final int scope, final boolean nullable) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getVersionColumns(final String catalog, final String schema, final String table) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
@@ -984,7 +985,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("KEY_SEQ", Types.INTEGER));
 		columns.add(new Column("PK_NAME", Types.VARCHAR));
 
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>(1);
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>(1);
 		final ParadoxTable table = TableData.listTables(conn, tableNamePattern).get(0);
 
 		int loop = 0;
@@ -1004,23 +1005,23 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
 	@Override
 	public ResultSet getImportedKeys(final String catalog, final String schema, final String table) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getExportedKeys(final String catalog, final String schema, final String table) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getCrossReference(final String primaryCatalog, final String primarySchema, final String primaryTable, final String foreignCatalog, final String foreignSchema,
 			final String foreignTable) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getTypeInfo() throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
@@ -1040,7 +1041,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		columns.add(new Column("PAGES", Types.INTEGER));
 		columns.add(new Column("FILTER_CONDITION", Types.VARCHAR));
 
-		final ArrayList<ArrayList<FieldValue>> values = new ArrayList<ArrayList<FieldValue>>(1);
+		final List<List<FieldValue>> values = new ArrayList<List<FieldValue>>(1);
 
 		for (final ParadoxTable table : TableData.listTables(conn, tableNamePattern)) {
 			final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(conn, table);
@@ -1073,8 +1074,8 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
 			for (final ParadoxIndex index : IndexData.listIndexes(conn, tableNamePattern)) {
 				int ordinal = 0;
+				final ArrayList<FieldValue> row = new ArrayList<FieldValue>();
 				for (final ParadoxField field : index.getFields()) {
-					final ArrayList<FieldValue> row = new ArrayList<FieldValue>();
 
 					row.add(new FieldValue(conn.getCatalog(), Types.VARCHAR));
 					row.add(new FieldValue(conn.getSchema(), Types.VARCHAR));
@@ -1163,7 +1164,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
 	@Override
 	public ResultSet getUDTs(final String catalog, final String schemaPattern, final String typeNamePattern, final int[] types) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
@@ -1193,17 +1194,17 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
 	@Override
 	public ResultSet getSuperTypes(final String catalog, final String schemaPattern, final String typeNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getSuperTables(final String catalog, final String schemaPattern, final String tableNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getAttributes(final String catalog, final String schemaPattern, final String typeNamePattern, final String attributeNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
@@ -1259,7 +1260,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 	@Override
 	public ResultSet getSchemas(final String catalog, final String schemaPattern) throws SQLException {
 		if (catalog != null && !Expressions.accept(conn.getCatalog(), catalog) || schemaPattern != null && !Expressions.accept(conn.getSchema(), schemaPattern)) {
-			return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+			return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 		}
 		return getSchemas();
 	}
@@ -1276,17 +1277,17 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
 	@Override
 	public ResultSet getClientInfoProperties() throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
 	public ResultSet getFunctionColumns(final String catalog, final String schemaPattern, final String functionNamePattern, final String columnNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override
@@ -1304,7 +1305,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 	}
 
 	public ResultSet getPseudoColumns(final String catalog, final String schemaPattern, final String tableNamePattern, final String columnNamePattern) throws SQLException {
-		return new ParadoxResultSet(conn, null, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	public boolean generatedKeyAlwaysReturned() throws SQLException {

@@ -1,5 +1,7 @@
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.utils.StringUtils;
+
 import java.util.ArrayList;
 
 public class TableNode extends SQLNode {
@@ -8,7 +10,7 @@ public class TableNode extends SQLNode {
 	private final ArrayList<JoinNode> joins = new ArrayList<JoinNode>();
 
 	public TableNode(final String name, final String alias) {
-		super(name);
+		super(StringUtils.removeDb(name));
 		this.alias = alias;
 	}
 

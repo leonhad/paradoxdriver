@@ -1,5 +1,7 @@
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.utils.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -17,11 +19,7 @@ public abstract class AbstractTable {
 
 	public AbstractTable(final File file, final String name) {
 		this.file = file;
-		if (name.toUpperCase().endsWith(".DB")) {
-			this.name = name.substring(0, name.length() - 3);
-		} else {
-			this.name = name;
-		}
+		this.name = StringUtils.removeDb(name);
 	}
 
 	public String getName() {
@@ -39,4 +37,14 @@ public abstract class AbstractTable {
 	public abstract boolean isValid();
 
 	public abstract ArrayList<ParadoxField> getFields();
+
+	public ParadoxField findField(String name) {
+		if (getFields() != null) {
+			for (ParadoxField field: getFields()) {
+				if (field.getName().equalsIgnoreCase(name))
+					return field;
+			}
+		}
+		return null;
+	}
 }

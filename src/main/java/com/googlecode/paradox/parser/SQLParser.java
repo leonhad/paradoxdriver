@@ -22,6 +22,7 @@ import com.googlecode.paradox.parser.nodes.conditional.ExistsNode;
 import com.googlecode.paradox.parser.nodes.conditional.NOTNode;
 import com.googlecode.paradox.parser.nodes.conditional.ORNode;
 import com.googlecode.paradox.parser.nodes.conditional.XORNode;
+import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.utils.SQLStates;
@@ -45,7 +46,7 @@ public class SQLParser {
 			switch (t.getType()) {
 			case SEMI:
 				if (statementList.size() == 0) {
-					throw new SQLException("Unespected semicolon");
+					throw new SQLException("Unexpected semicolon");
 				}
 				break;
 			case SELECT:
@@ -128,6 +129,9 @@ public class SQLParser {
 						expect(TokenType.IDENTIFIER);
 					}
 					select.getFields().add(new NumericNode(fieldName, fieldAlias));
+				}else if (t.getType() == TokenType.ASTERISK) {
+					select.getFields().add(new AsteriskNode());
+					expect(TokenType.ASTERISK);
 				} else {
 					expect(TokenType.IDENTIFIER);
 
@@ -144,7 +148,10 @@ public class SQLParser {
 						if (t.getType() == TokenType.AS) {
 							expect(TokenType.AS);
 							fieldAlias = t.getValue();
-							expect(TokenType.IDENTIFIER);
+							// may be: 	select bebebe as name
+							//			select bebebe as "Name"
+							//			select bebebe as 'Name'
+							expect(TokenType.CHARACTER, TokenType.IDENTIFIER);
 						} else if (t.getType() == TokenType.IDENTIFIER) {
 							// Field alias (without AS identifier)
 							fieldAlias = t.getValue();
@@ -326,7 +333,7 @@ public class SQLParser {
 		String tableName = null;
 		String fieldName = t.getValue();
 
-		expect(TokenType.IDENTIFIER);
+		expect(TokenType.IDENTIFIER, TokenType.NUMERIC, TokenType.CHARACTER);
 
 		// If it has a Table Name
 		if (scanner.hasNext() && t.getType() == TokenType.PERIOD) {
@@ -349,10 +356,17 @@ public class SQLParser {
 		}
 	}
 
-	private void expect(final TokenType rparen) throws SQLException {
-		if (t.getType() != rparen) {
-			// Expected do not happen
-			throw new SQLException("Unexpected error in SQL syntax", SQLStates.INVALID_SQL);
+	private void expect(final TokenType ... rparens) throws SQLException {
+		boolean found = false;
+		for (TokenType rparen : rparens) {
+			if (t.getType() == rparen) {
+				// Expected do not happen
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", t.getValue()), SQLStates.INVALID_SQL);
 		}
 		if (scanner.hasNext()) {
 			t = scanner.nextToken();

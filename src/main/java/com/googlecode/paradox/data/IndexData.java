@@ -38,7 +38,7 @@ public class IndexData {
         return indexes;
     }
 
-    private static ParadoxIndex loadIndexHeader(final File file) throws IOException {
+    private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
         final ByteBuffer buffer = allocate(2048);
         
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -88,7 +88,7 @@ public class IndexData {
 
             final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
             for (int loop = 0; loop < index.getFieldCount(); loop++) {
-                final ParadoxField field = new ParadoxField();
+                final ParadoxField field = new ParadoxField(loop+1);
                 field.setType(buffer.get());
                 field.setSize(buffer.get());
                 fields.add(field);

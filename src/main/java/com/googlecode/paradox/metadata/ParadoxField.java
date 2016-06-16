@@ -18,16 +18,26 @@ public class ParadoxField {
     private String name;
     private byte type;
     private short size;
+    private short physicsSize;
     private ParadoxTable table;
     private String tableName;
     private String alias;
     private String joinName;
     private boolean checked;
     private String expression;
+    private int orderNum; // order of field in table/view (with 1)
+
+    public ParadoxField(int orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public ParadoxField() {
+        this(1);
+    }
 
     public Column getColumn() throws SQLException {
         final Column dto = new Column(this);
-        dto.setName(name);
+        dto.setName(name.toUpperCase());
         dto.setType(getSqlType());
         dto.setAutoIncrement(type == 0x16);
         dto.setCurrency(type == 5);
@@ -66,6 +76,10 @@ public class ParadoxField {
         return hash;
     }
 
+    public int getOrderNum() {
+        return orderNum;
+    }
+
     public boolean isAutoIncrement() {
         return type == 0x16;
     }
@@ -73,7 +87,6 @@ public class ParadoxField {
     public int getSqlType() throws SQLException {
         switch (type) {
             case 1:
-            case 0xC:
             case 0xE:
                 return Types.VARCHAR;
             case 2:
@@ -88,6 +101,8 @@ public class ParadoxField {
                 return Types.NUMERIC;
             case 9:
                 return Types.BOOLEAN;
+            case 0xC:
+                return Types.CLOB;
             case 0xD:
             case 0xF:
             case 0x18:
@@ -149,10 +164,17 @@ public class ParadoxField {
     /**
      * @param size the size to set
      */
-    public void setSize(short size) {
+    public void setSize(short size) throws SQLException{
+        this.physicsSize = size;
+        if (getSqlType() == Types.CLOB || getSqlType() == Types.BLOB) {
+            size -= 10;
+        }
         this.size = size;
     }
 
+    public short getPhysicsSize() {
+        return physicsSize;
+    }
     /**
      * @return the table
      */

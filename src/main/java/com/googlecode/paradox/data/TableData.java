@@ -11,25 +11,23 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.DateUtils;
+import com.googlecode.paradox.utils.StringUtils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 public class TableData {
 
 	public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern) throws SQLException {
 		final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
-		final File[] fileList = conn.getDir().listFiles(new TableFilter(pattern));
+		final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
 		for (final File file : fileList) {
 			try {
 				final ParadoxTable table = TableData.loadTableHeader(file);
@@ -59,8 +57,9 @@ public class TableData {
 		return tables;
 	}
 
-	public static ArrayList<ArrayList<FieldValue>> loadData(final ParadoxConnection conn, final ParadoxTable table, final Collection<ParadoxField> fields) throws IOException, SQLException {
-		final ArrayList<ArrayList<FieldValue>> ret = new ArrayList<ArrayList<FieldValue>>();
+	public static List<List<FieldValue>> loadData(final ParadoxConnection conn, final ParadoxTable table,
+															final Collection<ParadoxField> fields) throws IOException, SQLException {
+		final List<List<FieldValue>> ret = new ArrayList<List<FieldValue>>();
 		final FileInputStream fs = new FileInputStream(table.getFile());
 		final int blockSize = table.getBlockSizeBytes();
 		final int recordSize = table.getRecordSize();
@@ -128,14 +127,14 @@ public class TableData {
 								break;
 							}
 							case 3: {
-								final int v = buffer.getInt();
+								final int v = buffer.getInt() & 0x7FFF;
 								fieldValue = new FieldValue(v, Types.INTEGER);
 								break;
 							}
 							case 4: {
-								// FIME long value
-								final int v = buffer.getInt();
-								fieldValue = new FieldValue(v, Types.BIGINT);
+								long l = buffer.getInt();
+								l &= 0x7FFFFFFF;
+								fieldValue = new FieldValue(l, Types.BIGINT);
 								break;
 							}
 							case 5: // Currency
@@ -163,16 +162,36 @@ public class TableData {
 								}
 								break;
 							}
-							case 0xc: {
-								// FIXME blob type
+							case 0xC: {
+								/*
+								Memo type
+								*/
 								final ByteBuffer value = ByteBuffer.allocate(field.getSize());
+								Arrays.fill(value.array(), (byte) 0);
 
 								for (int chars = 0; chars < field.getSize(); chars++) {
 									value.put(buffer.get());
 								}
 								value.flip();
-								final String v = table.getCharset().decode(value).toString();
-								fieldValue = new FieldValue(v, Types.BLOB);
+
+								buffer.order(ByteOrder.LITTLE_ENDIAN);
+								long offset = buffer.getInt();// & 0x7FFFFFFF;
+								long length = buffer.getInt();// & 0x7FFFFFFF;
+								short modificator = buffer.getShort();// & 0x7FFF;
+								buffer.order(ByteOrder.BIG_ENDIAN);
+
+								ClobDescriptor descriptor = new ClobDescriptor(table.getBlobTable());
+								descriptor.setCharset(table.getCharset());
+								descriptor.setLeader(TableData.parseString(value, table.getCharset()));
+								descriptor.setLength(length);
+								descriptor.setOffset(offset);
+								descriptor.setModificator(modificator);
+
+								fieldValue = new FieldValue(descriptor, Types.CLOB);
+
+								break;
+							}
+							case 0xD: {
 								break;
 							}
 							case 0x14: {
@@ -203,6 +222,7 @@ public class TableData {
 							}
 							// Field filter
 							if (fields.contains(field)) {
+								fieldValue.setField(field);
 								row.add(fieldValue);
 							}
 						}
@@ -219,7 +239,7 @@ public class TableData {
 		return ret;
 	}
 
-	private static ParadoxTable loadTableHeader(final File file) throws IOException {
+	private static ParadoxTable loadTableHeader(final File file) throws IOException, SQLException {
 		final FileInputStream fs = new FileInputStream(file);
 		final ParadoxTable table = new ParadoxTable(file, file.getName());
 		ByteBuffer buffer = ByteBuffer.allocate(2048);
@@ -268,7 +288,7 @@ public class TableData {
 
 			final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
 			for (int loop = 0; loop < table.getFieldCount(); loop++) {
-				final ParadoxField field = new ParadoxField();
+				final ParadoxField field = new ParadoxField(loop+1);
 				field.setType(buffer.get());
 				field.setSize((short) (buffer.get() & 0xff));
 				field.setTableName(table.getName());

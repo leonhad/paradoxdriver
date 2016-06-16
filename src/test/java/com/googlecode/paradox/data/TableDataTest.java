@@ -3,6 +3,7 @@ package com.googlecode.paradox.data;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -39,8 +40,11 @@ public class TableDataTest {
 
 	@Test
 	public void testLoadAreaCodes() throws Exception {
-		final ParadoxTable table = TableData.listTables(conn, "areacodes.db").get(0);
-		final ArrayList<ArrayList<FieldValue>> data = TableData.loadData(conn, table, table.getFields());
+		final List<ParadoxTable> tables = TableData.listTables(conn, "areacodes.db");
+		Assert.assertNotNull("List tables is null", tables);
+		Assert.assertTrue("List tables is empty", tables.size() > 0);
+		final ParadoxTable table = tables.get(0);
+		final List<List<FieldValue>> data = TableData.loadData(conn, table, table.getFields());
 		Assert.assertEquals(table.getRowCount(), data.size());
 	}
 

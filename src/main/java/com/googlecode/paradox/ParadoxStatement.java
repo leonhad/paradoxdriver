@@ -7,6 +7,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.SQLParser;
@@ -152,7 +153,7 @@ public class ParadoxStatement implements Statement {
 		plan.execute();
 
 		// FIXME result set
-		rs = new ParadoxResultSet(conn, this, null, null);
+		rs = new ParadoxResultSet(conn, this, plan.getValues(), plan.getColumns());
 	}
 
 	@Override
@@ -230,7 +231,7 @@ public class ParadoxStatement implements Statement {
 
 	@Override
 	public ResultSet getGeneratedKeys() throws SQLException {
-		return new ParadoxResultSet(conn, this, new ArrayList<ArrayList<FieldValue>>(), new ArrayList<Column>());
+		return new ParadoxResultSet(conn, this, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
 	@Override

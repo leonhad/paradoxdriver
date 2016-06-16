@@ -19,7 +19,7 @@ import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 
 public class PrimaryKeyData {
     public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
-        final String name = table.getName().substring(0, table.getName().length() - 3) + ".PX";
+        final String name = table.getName() + ".PX";
 
         final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter(name));
         for (final File file : fileList) {

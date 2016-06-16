@@ -23,6 +23,7 @@ public enum TokenType {
 	ON,
 	INTO,
 	BETWEEN,
+	ASTERISK("*"),
 	EQUALS("="),
 	PLUS("+"),
 	MINUS("-"),

@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.parser.nodes.SelectNode;
-import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.parser.TokenType;
+import com.googlecode.paradox.parser.nodes.*;
+import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
@@ -32,7 +32,7 @@ public class Planner {
 	}
 
 	private Plan createSelect(final SelectNode statement) throws SQLException {
-		final SelectPlan plan = new SelectPlan();
+		final SelectPlan plan = new SelectPlan(conn);
 		final ArrayList<ParadoxTable> paradoxTables = TableData.listTables(conn);
 
 		// Load the table metadata
@@ -53,8 +53,25 @@ public class Planner {
 			plan.addTable(node);
 		}
 		for (final PlanTableNode table : plan.getTables()) {
-			System.out.println(table.getTable());
+			conn.debug("Add table '%s'", table.getTable().toString());
 		}
+
+		for (final SQLNode field: statement.getFields()) {
+			String name = field.getName();
+			if (field instanceof AsteriskNode) {
+				for (final PlanTableNode table : plan.getTables()) {
+					plan.addColumnFromTable(table.getTable());
+				}
+			} else {
+				String alias = field.getAlias();
+				if (name == null || name.isEmpty()) {
+					throw new SQLException("Column name is empty");
+				}
+				plan.addColumn(name, alias);
+			}
+		}
+		if (plan.getColumns().size() == 0)
+			throw new SQLException("Empty column list", SQLStates.INVALID_SQL);
 
 		return plan;
 	}

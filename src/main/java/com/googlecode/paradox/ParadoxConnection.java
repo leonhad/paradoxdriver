@@ -88,6 +88,18 @@ public class ParadoxConnection implements Connection {
 	 */
 	private String schema = "APP";
 
+	/**
+	 * Show debug message.
+	 */
+	private boolean isDebugMode = true;
+	/**
+	 *
+	 * @param dir
+	 * @param url
+	 * @param info
+	 * @throws SQLException
+	 */
+
 	public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
 		this.url = url;
 		this.dir = dir;
@@ -104,7 +116,7 @@ public class ParadoxConnection implements Connection {
 			final FileChannel channel = lockFile.getChannel();
 			lock = channel.tryLock();
 			if (lock == null || !lock.isValid() || lock.isShared()) {
-				throw new SQLException("Database is not avaliable");
+				throw new SQLException("Database is locked");
 			}
 			catalog = dir.getName();
 		} catch (final FileNotFoundException e) {
@@ -423,5 +435,14 @@ public class ParadoxConnection implements Connection {
 
 	public int getNetworkTimeout() throws SQLException {
 		return networkTimeout;
+	}
+
+	public void debug(String message) {
+		if (isDebugMode)
+			System.out.println(message);
+	}
+
+	public void debug(String format, Object ... params) {
+		this.debug(String.format(format, params));
 	}
 }

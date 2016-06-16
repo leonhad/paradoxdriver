@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.results.Column;
@@ -20,10 +21,10 @@ import com.googlecode.paradox.utils.SQLStates;
  */
 public class ParadoxResultSetMetaData implements ResultSetMetaData {
 
-    private final ArrayList<Column> columns;
+    private final List<Column> columns;
     private final ParadoxConnection conn;
 
-    public ParadoxResultSetMetaData(final ParadoxConnection conn, final ArrayList<Column> columns) {
+    public ParadoxResultSetMetaData(final ParadoxConnection conn, final List<Column> columns) {
         this.columns = columns;
         this.conn = conn;
     }

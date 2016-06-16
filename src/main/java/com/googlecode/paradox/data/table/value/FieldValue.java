@@ -5,6 +5,7 @@ import java.sql.SQLDataException;
 import java.sql.Time;
 import java.sql.Types;
 
+import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.utils.SQLStates;
 
 /**
@@ -26,6 +27,10 @@ public class FieldValue {
 	 */
 	private final int type;
 
+	/**
+	 * Reference on field
+	 */
+	private ParadoxField field;
 	/**
 	 * Store a database value already loaded in Java format
 	 * 
@@ -64,6 +69,14 @@ public class FieldValue {
 		return type;
 	}
 
+
+	public ParadoxField getField() {
+		return field;
+	}
+
+	public void setField(ParadoxField newVal) {
+		this.field = newVal;
+	}
 	/**
 	 * Check for null value
 	 * 

@@ -5,7 +5,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 public class CharacterNode extends SQLNode {
 
 	public CharacterNode(final String value, final String alias) {
-		super(value, alias);
+		super(value.toUpperCase(), alias.toUpperCase());
 	}
 
 }
