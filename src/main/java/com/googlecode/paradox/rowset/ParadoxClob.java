@@ -7,6 +7,7 @@ import com.googlecode.paradox.utils.StringUtils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
 
@@ -64,7 +65,7 @@ public class ParadoxClob implements Clob {
         }
 
         try {
-            return new String(value, (int)pos - 1, length);
+            return new String(value, (int)pos - 1, length, Charset.forName("cp1251"));
 
         } catch (StringIndexOutOfBoundsException e) {
             throw new SQLException("StringIndexOutOfBoundsException: " + e.getMessage());

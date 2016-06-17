@@ -90,12 +90,12 @@ public class BlobTest {
 
             Assert.assertTrue("Nation locale: record not exists", rs.next());
             Clob c = rs.getClob("note");
-            /*String expected = "При разработке электронных сервисов необходимо придерживаться следующих спецификаций:\r\n" +
+            String expected = "При разработке электронных сервисов необходимо придерживаться следующих спецификаций:\r\n" +
                     "\tспецификация универсального описания, поиска и интеграции электронных сервисов Universal Description " +
                     "Discovery and Integration (UDDI) версии 2.0 - стандарт Организации по развитию стандартов " +
                     "структурированной информации Organization for the Advancement of Structured Information Standards " +
-                    "(OASIS) - спецификация носит обязательный характер;\r\n";*/
-            String expected = "Удивительное устройство USB-флешки Kingston DataTraveler";
+                    "(OASIS) - спецификация носит обязательный характер;\r\n";
+            // String expected = "Удивительное устройство USB-флешки Kingston DataTraveler";
             String real = c.getSubString(1, (int) c.length());
             Assert.assertEquals("Unexpect cp1251 text", expected, real);
 
