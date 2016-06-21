@@ -16,21 +16,23 @@ import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 
-
 public class PrimaryKeyData {
+
     public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
         final String name = table.getName() + ".PX";
 
         final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter(name));
-        for (final File file : fileList) {
-            final ParadoxPK key;
-            try {
-                key = loadPKHeader(file);
-            } catch (final IOException ex) {
-                throw new SQLException("Error loading Paradox tables.", ex);
-            }
-            if (key.isValid()) {
-                return key;
+        if (fileList != null) {
+            for (final File file : fileList) {
+                final ParadoxPK key;
+                try {
+                    key = loadPKHeader(file);
+                } catch (final IOException ex) {
+                    throw new SQLException("Error loading Paradox tables.", ex);
+                }
+                if (key.isValid()) {
+                    return key;
+                }
             }
         }
         return null;
@@ -39,15 +41,17 @@ public class PrimaryKeyData {
     public static ArrayList<ParadoxPK> listPrimaryKeys(final ParadoxConnection conn) throws SQLException {
         final ArrayList<ParadoxPK> keys = new ArrayList<ParadoxPK>();
         final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter());
-        for (final File file : fileList) {
-            final ParadoxPK key;
-            try {
-                key = loadPKHeader(file);
-            } catch (final IOException ex) {
-                throw new SQLException("Error loading Paradox tables.", ex);
-            }
-            if (key.isValid()) {
-                keys.add(key);
+        if (fileList != null) {
+            for (final File file : fileList) {
+                final ParadoxPK key;
+                try {
+                    key = loadPKHeader(file);
+                } catch (final IOException ex) {
+                    throw new SQLException("Error loading Paradox tables.", ex);
+                }
+                if (key.isValid()) {
+                    keys.add(key);
+                }
             }
         }
         return keys;

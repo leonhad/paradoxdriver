@@ -369,6 +369,10 @@ public class ParadoxResultSet implements ResultSet {
 		return getBinaryStream(findColumn(columnLabel));
 	}
 
+        public void setWarnings(SQLWarning warning) {
+            this.warnings = warning;
+        }
+        
 	@Override
 	public SQLWarning getWarnings() throws SQLException {
 		return warnings;

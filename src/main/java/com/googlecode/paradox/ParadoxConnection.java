@@ -248,6 +248,11 @@ public class ParadoxConnection implements Connection {
 		return transactionIsolation;
 	}
 
+        
+        public void setWarnings(SQLWarning warning) {
+            this.warnings = warning;
+        }
+        
 	@Override
 	public SQLWarning getWarnings() throws SQLException {
 		return warnings;

@@ -17,22 +17,23 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
 
-
 public class IndexData {
 
     public static ArrayList<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<ParadoxIndex>();
         final String indexNamePattern = tableName.substring(0, tableName.lastIndexOf('.')) + ".X??";
         final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
-        for (final File file : fileList) {
-            final ParadoxIndex index;
-            try {
-                index = loadIndexHeader(file);
-            } catch (final IOException ex) {
-                throw new SQLException("Error loading Paradox index.", ex);
-            }
-            if (index.isValid()) {
-                indexes.add(index);
+        if (fileList != null) {
+            for (final File file : fileList) {
+                final ParadoxIndex index;
+                try {
+                    index = loadIndexHeader(file);
+                } catch (final IOException ex) {
+                    throw new SQLException("Error loading Paradox index.", ex);
+                }
+                if (index.isValid()) {
+                    indexes.add(index);
+                }
             }
         }
         return indexes;
@@ -40,7 +41,7 @@ public class IndexData {
 
     private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
         final ByteBuffer buffer = allocate(2048);
-        
+
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
         final FileInputStream fs = new FileInputStream(file);
@@ -88,7 +89,7 @@ public class IndexData {
 
             final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
             for (int loop = 0; loop < index.getFieldCount(); loop++) {
-                final ParadoxField field = new ParadoxField(loop+1);
+                final ParadoxField field = new ParadoxField(loop + 1);
                 field.setType(buffer.get());
                 field.setSize(buffer.get());
                 fields.add(field);

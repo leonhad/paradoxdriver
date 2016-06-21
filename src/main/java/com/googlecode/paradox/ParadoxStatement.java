@@ -115,6 +115,10 @@ public class ParadoxStatement implements Statement {
 	public void cancel() throws SQLException {
 	}
 
+        public void setWarnings(SQLWarning warning) {
+            this.warnings = warning;
+        }
+
 	@Override
 	public SQLWarning getWarnings() throws SQLException {
 		return warnings;

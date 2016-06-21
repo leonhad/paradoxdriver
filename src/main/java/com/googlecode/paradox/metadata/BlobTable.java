@@ -29,13 +29,13 @@ public class BlobTable extends AbstractTable {
     private boolean isEnd;
     private FileInputStream fs;
     private FileChannel channel = null;
-    private IBlockCache cache;
+    private final IBlockCache cache;
     private int numBlock = 0;
 
     public BlobTable(final File file, final String name) {
         super(file, StringUtils.removeMb(name));
+        this.cache = new AllBlockCache();
         isEnd = isParsed = false;
-        cache = new AllBlockCache();
     }
 
     @Override
@@ -194,9 +194,9 @@ public class BlobTable extends AbstractTable {
             sblockHead.clear();
             channel.read(sblockHead);
             sblockHead.flip();
-            int blobLength = sblockHead.getInt() & 0xFFFFFFFF;
-            @SuppressWarnings("unused")
-            int modificator = sblockHead.getShort() & 0xFFFF;
+            int blobLength = sblockHead.getInt();
+            // Modificator
+            sblockHead.getShort();
 
             ByteBuffer sblockData = ByteBuffer.allocate(blobLength);
             sblockData.order(ByteOrder.LITTLE_ENDIAN);

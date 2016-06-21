@@ -178,19 +178,28 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return "AVERANGE,SUM";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
-	public String getStringFunctions() throws SQLException {
-		return null;
+      	public String getStringFunctions() throws SQLException {
+		return "";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getSystemFunctions() throws SQLException {
-		return null;
+		return "";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getTimeDateFunctions() throws SQLException {
-		return null;
+		return "";
 	}
 
 	@Override
