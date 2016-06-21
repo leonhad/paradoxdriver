@@ -76,7 +76,7 @@ public class TableData {
             channel = fs.getChannel();
 
             if (table.getUsedBlocks() > 0) {
-                int nextBlock = table.getFirstBlock();
+                long nextBlock = table.getFirstBlock();
                 do {
                     buffer.order(ByteOrder.LITTLE_ENDIAN);
                     channel.position(headerSize + (nextBlock - 1) * blockSize);
@@ -86,7 +86,7 @@ public class TableData {
                     buffer.flip();
 
                     nextBlock = buffer.getShort();
-                    // final int blockNumber = buffer.getShort();;
+                    // The block number.
                     buffer.getShort();
 
                     final int addDataSize = buffer.getShort() & 0xFFFF;
@@ -225,7 +225,7 @@ public class TableData {
                                     throw new SQLException("Type " + field.getType() + " not found.");
                             }
                             // Field filter
-                            if (fields.contains(field)) {
+                            if (fields.contains(field) && fieldValue != null) {
                                 fieldValue.setField(field);
                                 row.add(fieldValue);
                             }

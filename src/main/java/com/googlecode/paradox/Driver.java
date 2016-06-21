@@ -11,27 +11,37 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import com.googlecode.paradox.utils.Constants;
+import java.util.logging.Level;
 
 /**
- * Driver JDBC tipo 4 para o PARADOX
+ * PARADOX JDBC type 4 Driver.
  *
  * @author Leonardo Alves da Costa
- * @version 2.1
+ * @version 2.2
  * @since 14/03/2009
  */
 public class Driver implements java.sql.Driver {
 
+    /**
+     * Driver properties, if has some.
+     */
     private Properties properties = null;
 
+    /**
+     * Logger instance for this class.
+     */
     private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
 
+    /**
+     * Register the drive into JDBC API.
+     */
     static {
         try {
             // Register The Paradox Driver
             final Driver driverInst = new Driver();
             DriverManager.registerDriver(driverInst);
         } catch (final SQLException e) {
-            Logger.getLogger(Driver.class.getName()).severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

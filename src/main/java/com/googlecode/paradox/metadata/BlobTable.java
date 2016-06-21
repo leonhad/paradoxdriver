@@ -5,11 +5,13 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,7 +22,6 @@ import java.util.List;
 public class BlobTable extends AbstractTable {
 
     private static final int HEADER_BLOCK_SIZE = 0x1000;
-    private static final short HEADER_BLOCK = 0;
     private static final short SINGLE_BLOCK = 2;
     private static final short SUB_BLOCK = 3;
     private static final short FREE_BLOCK = 4;
@@ -44,21 +45,22 @@ public class BlobTable extends AbstractTable {
     }
 
     @Override
-    public ArrayList<ParadoxField> getFields() {
-        return null;
+    public List<ParadoxField> getFields() {
+        return Collections.emptyList();
     }
 
     /**
      * Read length bytes from offset position in mb file.
-     * @param pOffset offset of the blob's data block in the MB file and an index value
-     * @param length
-     * @return
-     * @throws Exception
+     *
+     * @param pOffset offset of the blob's data block in the MB file and an
+     * index value.
+     * @return the data values.
+     * @throws SQLException in case of parse errors.
      */
-    public byte[] read(long pOffset, long length) throws Exception{
+    public byte[] read(long pOffset) throws SQLException {
 
         short blockType;
-        short offset = (short)(pOffset & 0x000000FF);
+        short offset = (short) (pOffset & 0xFF);
 
         if (offset == 0xFF) {
             blockType = SINGLE_BLOCK;
@@ -78,69 +80,78 @@ public class BlobTable extends AbstractTable {
         return isEnd;
     }
 
-    public void close() {
+    public void close() throws SQLException {
         try {
             fs.close();
-        } catch (Exception x) {
-
+        } catch (IOException ex) {
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
         }
     }
-/******************************** private ******************************************************/
-    private void open() throws Exception {
-        File blobFile = openBlob();
-        fs = new FileInputStream(blobFile);
-        channel = fs.getChannel();
-    }
 
-    private void parse() throws Exception {
-// First block - always 4k bytes
-        channel.position(0);
-        final ByteBuffer buffer = ByteBuffer.allocate(1);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        buffer.clear();
-        channel.read(buffer);
-        buffer.flip();
-        byte headerType = buffer.get();
-        if (headerType != 0) {
-            throw new SQLException("Invalid blob format for '" + getName() + "'", SQLStates.LOAD_DATA);
+    private void open() throws SQLException {
+        try {
+            File blobFile = openBlob();
+            fs = new FileInputStream(blobFile);
+            channel = fs.getChannel();
+        } catch (IOException ex) {
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
         }
-        // No read header (while not necessary)
-        channel.position(HEADER_BLOCK_SIZE);
-        numBlock++;
-        isParsed = true;
     }
 
-    private File openBlob() throws SQLException{
+    private void parse() throws SQLException {
+        try {
+            // First block - always 4k bytes
+            channel.position(0);
+            final ByteBuffer buffer = ByteBuffer.allocate(1);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+            buffer.clear();
+            channel.read(buffer);
+            buffer.flip();
+            byte headerType = buffer.get();
+            if (headerType != 0) {
+                throw new SQLException("Invalid blob format for '" + getName() + "'", SQLStates.LOAD_DATA);
+            }
+            // No read header (while not necessary)
+            channel.position(HEADER_BLOCK_SIZE);
+            numBlock++;
+            isParsed = true;
+        } catch (IOException ex) {
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
+        }
+    }
+
+    private File openBlob() throws SQLException {
         String name = StringUtils.removeDb(getFile().getName());
         final File[] fileList = getFile().getParentFile().listFiles(new TableFilter(name, "mb"));
-        if (fileList == null || fileList.length == 0)
+        if (fileList == null || fileList.length == 0) {
             throw new SQLException(String.format("Blob file not found for table '%s'", name), SQLStates.LOAD_DATA);
-        if (fileList.length > 1)
+        }
+        if (fileList.length > 1) {
             throw new SQLException(String.format("Many blob files for table '%s'", name), SQLStates.LOAD_DATA);
+        }
         return fileList[0];
     }
 
     /**
      * Calculate block type.
      *
-     * We'll refer to the first four bytes after the leader as
-     * MB_Offset. MB_Offset is used to locate the blob data.
+     * We'll refer to the first four bytes after the leader as MB_Offset.
+     * MB_Offset is used to locate the blob data.
      *
-     * If MB_Offset = 0 then the entire blob is contained in the leader.
-     * Take the low-order byte from MB_Offset and call it MB_Index.
-     * Change the low-order byte of MB_Offset to zero.
-     * If MB_Index is FFh, then MB_Offset contains the offset of a type 02 (SINGLE_BLOCK) block in the MB file.
+     * If MB_Offset = 0 then the entire blob is contained in the leader. Take
+     * the low-order byte from MB_Offset and call it MB_Index. Change the
+     * low-order byte of MB_Offset to zero. If MB_Index is FFh, then MB_Offset
+     * contains the offset of a type 02 (SINGLE_BLOCK) block in the MB file.
      *
-     * Otherwise, MB_Offset contains the offset of a type 03 (SUB_BLOCK) block in
-     * the MB file. MB_Index contains the index of an entry in the Blob
+     * Otherwise, MB_Offset contains the offset of a type 03 (SUB_BLOCK) block
+     * in the MB file. MB_Index contains the index of an entry in the Blob
      * Pointer Array in the type 03 block.
      *
      * @param offset
      * @return
      */
-
     private int getBlockNum(long offset) {
-        int idx = (int)(offset & 0x0000FF00) >> 8;
+        int idx = (int) (offset & 0x0000FF00) >> 8;
         return (idx & 0x0F) * 0xF + (idx & 0xF0) >> 4;
     }
 
@@ -160,20 +171,20 @@ public class BlobTable extends AbstractTable {
         return block.getValue();
     }
 
-    private ClobBlock readBlock(int blockNum, short blockType, short offset) throws Exception{
-       List<ClobBlock> nextBlocks = new ArrayList<ClobBlock>(1);
-       while (readNextBlock(nextBlocks)) {
-           cache.add(nextBlocks);
-           ClobBlock next = (cache.get(blockNum, offset));
-           if (next != null) {
-               return next;
-           }
-       }
-       isEnd = true;
-       return null;
+    private ClobBlock readBlock(int blockNum, short blockType, short offset) throws Exception {
+        List<ClobBlock> nextBlocks = new ArrayList<ClobBlock>(1);
+        while (readNextBlock(nextBlocks)) {
+            cache.add(nextBlocks);
+            ClobBlock next = (cache.get(blockNum, offset));
+            if (next != null) {
+                return next;
+            }
+        }
+        isEnd = true;
+        return null;
     }
 
-    private boolean readNextBlock(List<ClobBlock> blocks) throws Exception{
+    private boolean readNextBlock(List<ClobBlock> blocks) throws Exception {
 
         if (channel.position() == channel.size()) {
             return false;
@@ -205,15 +216,15 @@ public class BlobTable extends AbstractTable {
             sblockData.flip();
             values = new byte[blobLength];
             sblockData.get(values);
-            blocks.add(new ClobBlock(numBlock, headerType, (short)0xFF, values));
+            blocks.add(new ClobBlock(numBlock, headerType, (short) 0xFF, values));
             numBlock++;
             channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
         } else if (headerType == SUB_BLOCK) {
             //There are nine more bytes in the header. I have no idea
             // what they contain.
-            channel.position(channel.position()+9);
+            channel.position(channel.position() + 9);
             short n = 0; // 0 - this is header block
-            while (n < 64 ) {
+            while (n < 64) {
                 ByteBuffer blockPointer = ByteBuffer.allocate(5);
                 blockPointer.order(ByteOrder.LITTLE_ENDIAN);
                 blockPointer.clear();

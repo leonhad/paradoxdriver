@@ -277,8 +277,6 @@ public class SQLParser {
 				throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL);
 			}
 		} else if (t.getType() == TokenType.LPAREN) {
-			new SQLNode(null);
-			// group.setChildren(parseConditionList());
 			expect(TokenType.RPAREN, "Right parentesis expected");
 		} else if (t.getType() == TokenType.EXISTS) {
 			expect(TokenType.EXISTS);

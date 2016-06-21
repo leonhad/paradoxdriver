@@ -2,9 +2,6 @@ package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.BlobTable;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.StringUtils;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -19,7 +16,7 @@ import java.sql.SQLException;
 public class ParadoxClob implements Clob {
 
     private long length;
-    private long fieldLength;
+    private final long fieldLength;
     private long offset;
     private short modificator;
     private byte[] value;
@@ -60,15 +57,15 @@ public class ParadoxClob implements Clob {
             throw new SQLException("Invalid position '" + pos + "' in Clob object set");
         }
 
-        if ((pos-1) + length > this.length()) {
+        if ((pos - 1) + length > this.length()) {
             throw new SQLException("Invalid position and substring length");
         }
 
         try {
-            return new String(value, (int)pos - 1, length, Charset.forName("cp1251"));
-
+            // FIXME: fix the bounds checking
+            return new String(value, (int) pos - 1, length, Charset.forName("cp1251"));
         } catch (StringIndexOutOfBoundsException e) {
-            throw new SQLException("StringIndexOutOfBoundsException: " + e.getMessage());
+            throw new SQLException(e);
         }
     }
 
@@ -87,14 +84,14 @@ public class ParadoxClob implements Clob {
             throw new SQLException("Invalid position in Clob object set");
         }
 
-        if ((pos-1) + length > length) {
+        if ((pos - 1) + length > length) {
             throw new SQLException("Invalid position and substring length");
         }
         if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
 
-        return new InputStreamReader(new ByteArrayInputStream(value, (int)pos, (int)length));
+        return new InputStreamReader(new ByteArrayInputStream(value, (int) pos, (int) length));
     }
 
     @Override
@@ -143,9 +140,9 @@ public class ParadoxClob implements Clob {
             // re-size the buffer
 
             if (len == 0) {
-                value = new byte[] {};
+                value = new byte[]{};
             } else {
-                value = (this.getSubString(1, (int)len)).getBytes();
+                value = (this.getSubString(1, (int) len)).getBytes();
             }
         }
     }
@@ -160,22 +157,17 @@ public class ParadoxClob implements Clob {
         }
     }
 
-/********************************* Private methods ****************************************************/
-
-    private void parse() throws SQLException{
+    private void parse() throws SQLException {
         if (!parsed) {
-            try {
-                value = blob.read(offset, fieldLength);
-                parsed = blob.isParsed();
-                length = value.length;
-            } catch (Exception x) {
-                throw new SQLException("Reading CLOB error", SQLStates.LOAD_DATA, x);
-            }
+            value = blob.read(offset);
+            parsed = blob.isParsed();
+            length = value.length;
         }
     }
 
-    private void isValid() throws SQLException{
-        if (!parsed && blob == null)
+    private void isValid() throws SQLException {
+        if (!parsed && blob == null) {
             throw new SQLException("Invalid CLOB descriptor.");
+        }
     }
 }

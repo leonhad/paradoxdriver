@@ -3,7 +3,7 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.utils.StringUtils;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Defines the paradox table default structure
@@ -36,7 +36,7 @@ public abstract class AbstractTable {
 
 	public abstract boolean isValid();
 
-	public abstract ArrayList<ParadoxField> getFields();
+	public abstract List<ParadoxField> getFields();
 
 	public ParadoxField findField(String name) {
 		if (getFields() != null) {
