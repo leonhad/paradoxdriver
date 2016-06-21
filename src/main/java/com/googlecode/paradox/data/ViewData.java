@@ -253,7 +253,7 @@ public class ViewData {
 
                 for (final char c : builder.toString().toCharArray()) {
                     if (c == ' ' || c == ',') {
-                        continue;
+                        break;
                     }
                     temp.append(c);
                 }
