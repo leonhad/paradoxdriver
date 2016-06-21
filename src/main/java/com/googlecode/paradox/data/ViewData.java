@@ -80,16 +80,18 @@ public class ViewData {
             final BufferedReader reader = new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));
             if ("Query".equals(reader.readLine())) {
                 // ANSWER
-                if (reader.readLine() == null) {
+                String line = reader.readLine();
+                if (line == null) {
                     return view;
                 }
 
                 // Extra Line
-                if (reader.readLine() == null) {
+                line = reader.readLine();
+                if (line == null) {
                     return view;
                 }
 
-                String line = readLine(reader);
+                line = readLine(reader);
 
                 // FIELDORDER
                 if (line != null && line.startsWith("FIELDORDER: ")) {
@@ -126,7 +128,8 @@ public class ViewData {
                     view.setFieldsOrder(fields);
 
                     // Extra line
-                    if (reader.readLine() == null) {
+                    line = reader.readLine();
+                    if (line == null) {
                         return view;
                     }
 
@@ -169,7 +172,8 @@ public class ViewData {
                     view.setFieldsSort(fields);
 
                     // Extra Line
-                    if (reader.readLine() == null) {
+                    line = reader.readLine();
+                    if (line == null) {
                         return view;
                     }
 
@@ -203,7 +207,8 @@ public class ViewData {
                         }
                     }
                     // Extra Line
-                    if (reader.readLine() == null) {
+                    line = reader.readLine();
+                    if (line == null) {
                         return view;
                     }
 
