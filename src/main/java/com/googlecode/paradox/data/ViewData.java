@@ -25,7 +25,7 @@ public class ViewData {
 
     private ViewData() {
     }
-    
+
     public static ArrayList<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxView> views = new ArrayList<ParadoxView>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
@@ -80,9 +80,14 @@ public class ViewData {
             final BufferedReader reader = new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));
             if ("Query".equals(reader.readLine())) {
                 // ANSWER
-                reader.readLine();
+                if (reader.readLine() == null) {
+                    return view;
+                }
+
                 // Extra Line
-                reader.readLine();
+                if (reader.readLine() == null) {
+                    return view;
+                }
 
                 String line = readLine(reader);
 
@@ -121,7 +126,10 @@ public class ViewData {
                     view.setFieldsOrder(fields);
 
                     // Extra line
-                    reader.readLine();
+                    if (reader.readLine() == null) {
+                        return view;
+                    }
+
                     // New Line
                     line = reader.readLine().trim();
                 }
@@ -161,8 +169,10 @@ public class ViewData {
                     view.setFieldsSort(fields);
 
                     // Extra Line
-                    reader.readLine();
-                    
+                    if (reader.readLine() == null) {
+                        return view;
+                    }
+
                     // New Line
                     line = readLine(reader);
                 }
@@ -193,7 +203,9 @@ public class ViewData {
                         }
                     }
                     // Extra Line
-                    reader.readLine();
+                    if (reader.readLine() == null) {
+                        return view;
+                    }
 
                     // New Line
                     line = readLine(reader);
@@ -210,7 +222,7 @@ public class ViewData {
         }
         return view;
     }
-    
+
     private static String readLine(final BufferedReader reader) throws IOException {
         String line = reader.readLine();
         return line != null ? line.trim() : null;
@@ -234,7 +246,7 @@ public class ViewData {
 
     private static ParadoxTable getTable(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxTable> tables = TableData.listTables(conn, tableName.trim());
-        if (tables.size() > 0) {
+        if (!tables.isEmpty()) {
             return tables.get(0);
         }
         throw new SQLException("Table " + tableName + " not found");
