@@ -37,142 +37,226 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		this.conn = conn;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean allProceduresAreCallable() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean allTablesAreSelectable() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getURL() throws SQLException {
 		return conn.getUrl();
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getUserName() throws SQLException {
 		return "SYSTEM";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean isReadOnly() throws SQLException {
 		return true;
 
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean nullsAreSortedHigh() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean nullsAreSortedLow() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean nullsAreSortedAtStart() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean nullsAreSortedAtEnd() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getDatabaseProductName() throws SQLException {
 		return Constants.DRIVER_NAME;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getDatabaseProductVersion() throws SQLException {
 		return Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getDriverName() throws SQLException {
 		return Constants.DRIVER_NAME;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getDriverVersion() throws SQLException {
 		return Constants.DRIVER_VERSION;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getDriverMajorVersion() {
 		return Constants.MAJOR_VERSION;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getDriverMinorVersion() {
 		return Constants.MINOR_VERSION;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean usesLocalFiles() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean usesLocalFilePerTable() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsMixedCaseIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean storesUpperCaseIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean storesLowerCaseIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean storesMixedCaseIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsMixedCaseQuotedIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getIdentifierQuoteString() throws SQLException {
 		return "\"";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getSQLKeywords() throws SQLException {
 		return "SELECT";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getNumericFunctions() throws SQLException {
 		return "AVERANGE,SUM";
@@ -202,442 +286,706 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return "";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getSearchStringEscape() throws SQLException {
 		return "\\";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getExtraNameCharacters() throws SQLException {
 		return "";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsAlterTableWithAddColumn() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsAlterTableWithDropColumn() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsColumnAliasing() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean nullPlusNonNullIsNull() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsConvert() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsConvert(final int fromType, final int toType) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsTableCorrelationNames() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsDifferentTableCorrelationNames() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsExpressionsInOrderBy() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsOrderByUnrelated() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsGroupBy() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsGroupByUnrelated() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsGroupByBeyondSelect() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsLikeEscapeClause() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsMultipleResultSets() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsMultipleTransactions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsNonNullableColumns() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsMinimumSQLGrammar() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsCoreSQLGrammar() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsExtendedSQLGrammar() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsANSI92EntryLevelSQL() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsANSI92IntermediateSQL() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsANSI92FullSQL() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsIntegrityEnhancementFacility() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsOuterJoins() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsFullOuterJoins() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsLimitedOuterJoins() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getSchemaTerm() throws SQLException {
 		return "SCHEMA";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getProcedureTerm() throws SQLException {
 		return "PROCEDURE";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getCatalogTerm() throws SQLException {
 		return "CATALOG";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean isCatalogAtStart() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public String getCatalogSeparator() throws SQLException {
 		return ".";
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSchemasInDataManipulation() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSchemasInProcedureCalls() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSchemasInTableDefinitions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSchemasInIndexDefinitions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSchemasInPrivilegeDefinitions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsCatalogsInDataManipulation() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsCatalogsInProcedureCalls() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsCatalogsInTableDefinitions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsCatalogsInIndexDefinitions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsCatalogsInPrivilegeDefinitions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsPositionedDelete() throws SQLException {
 		return false;
 	}
 
-	@Override
+        /***
+         * {@inheritDoc}
+         */
+        @Override
 	public boolean supportsPositionedUpdate() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSelectForUpdate() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsStoredProcedures() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSubqueriesInComparisons() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSubqueriesInExists() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSubqueriesInIns() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsSubqueriesInQuantifieds() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsCorrelatedSubqueries() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsUnion() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsUnionAll() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsOpenCursorsAcrossRollback() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsOpenStatementsAcrossCommit() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsOpenStatementsAcrossRollback() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxBinaryLiteralLength() throws SQLException {
 		return 8;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxCharLiteralLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxColumnNameLength() throws SQLException {
 		return 8;
 	}
-
+        
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxColumnsInGroupBy() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxColumnsInIndex() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxColumnsInOrderBy() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxColumnsInSelect() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxColumnsInTable() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxConnections() throws SQLException {
 		// FIXME allow more than one connection
 		return 1;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxCursorNameLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxIndexLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxSchemaNameLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxProcedureNameLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxCatalogNameLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxRowSize() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
 		return true;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxStatementLength() throws SQLException {
 		return Integer.MAX_VALUE;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxStatements() throws SQLException {
 		return Integer.MAX_VALUE;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxTableNameLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxTablesInSelect() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getMaxUserNameLength() throws SQLException {
 		return 255;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public int getDefaultTransactionIsolation() throws SQLException {
 		return Connection.TRANSACTION_NONE;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsTransactions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsTransactionIsolationLevel(final int level) throws SQLException {
 		return Connection.TRANSACTION_NONE != level;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsDataDefinitionAndDataManipulationTransactions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsDataManipulationTransactionsOnly() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getProcedures(final String catalog, final String schemaPattern, final String procedureNamePattern) throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -670,6 +1018,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getProcedureColumns(final String catalog, final String schemaPattern, final String procedureNamePattern, final String columnNamePattern) throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -727,6 +1078,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getTables(final String catalog, final String schemaPattern, final String tableNamePattern, final String[] types) throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -782,6 +1136,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getSchemas() throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -797,6 +1154,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getCatalogs() throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -810,6 +1170,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getTableTypes() throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -825,6 +1188,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getColumns(final String catalog, final String schemaPattern, final String tableNamePattern, final String columnNamePattern) throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -964,26 +1330,41 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getColumnPrivileges(final String catalog, final String schema, final String table, final String columnNamePattern) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getTablePrivileges(final String catalog, final String schemaPattern, final String tableNamePattern) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getBestRowIdentifier(final String catalog, final String schema, final String table, final int scope, final boolean nullable) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getVersionColumns(final String catalog, final String schema, final String table) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getPrimaryKeys(final String catalog, final String schema, final String tableNamePattern) throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -1012,27 +1393,42 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getImportedKeys(final String catalog, final String schema, final String table) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getExportedKeys(final String catalog, final String schema, final String table) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getCrossReference(final String primaryCatalog, final String primarySchema, final String primaryTable, final String foreignCatalog, final String foreignSchema,
 			final String foreignTable) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getTypeInfo() throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getIndexInfo(final String catalog, final String schema, final String tableNamePattern, final boolean unique, final boolean approximate) throws SQLException {
 		final ArrayList<Column> columns = new ArrayList<Column>(1);
@@ -1111,71 +1507,113 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return new ParadoxResultSet(conn, null, values, columns);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsResultSetType(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsResultSetConcurrency(final int type, final int concurrency) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean ownUpdatesAreVisible(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean ownDeletesAreVisible(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean ownInsertsAreVisible(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean othersUpdatesAreVisible(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean othersDeletesAreVisible(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean othersInsertsAreVisible(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean updatesAreDetected(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean deletesAreDetected(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean insertsAreDetected(final int type) throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public boolean supportsBatchUpdates() throws SQLException {
 		return false;
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public ResultSet getUDTs(final String catalog, final String schemaPattern, final String typeNamePattern, final int[] types) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
 	@Override
 	public Connection getConnection() throws SQLException {
 		return conn;
@@ -1313,10 +1751,18 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 		return getClass().isAssignableFrom(iface);
 	}
 
+        /***
+         * {@inheritDoc}
+         */
+        @Override
 	public ResultSet getPseudoColumns(final String catalog, final String schemaPattern, final String tableNamePattern, final String columnNamePattern) throws SQLException {
 		return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
 	}
 
+        /***
+         * {@inheritDoc}
+         */
+        @Override
 	public boolean generatedKeyAlwaysReturned() throws SQLException {
 		return true;
 	}
