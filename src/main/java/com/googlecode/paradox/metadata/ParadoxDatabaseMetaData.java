@@ -37,6 +37,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     private static final String TABLE = "TABLE";
     private static final String TABLE_CAT = "TABLE_CAT";
     private static final String TABLE_SCHEM = "TABLE_SCHEM";
+    private static final String TABLE_NAME = "TABLE_NAME";
     
     private final ParadoxConnection conn;
 
@@ -1238,7 +1239,6 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         row.add(new FieldValue(Types.VARCHAR));
                         row.add(new FieldValue(Types.VARCHAR));
                         row.add(new FieldValue(Types.VARCHAR));
-                        // FIXME col id
                         row.add(new FieldValue(Types.VARCHAR));
                         row.add(new FieldValue(Types.VARCHAR));
                         values.add(row);
@@ -1328,7 +1328,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final ArrayList<Column> columns = new ArrayList<Column>(1);
         columns.add(new Column(TABLE_CAT, Types.VARCHAR));
         columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
-        columns.add(new Column("TABLE_NAME", Types.VARCHAR));
+        columns.add(new Column(TABLE_NAME, Types.VARCHAR));
         columns.add(new Column(COLUMN_NAME, Types.VARCHAR));
         columns.add(new Column("DATA_TYPE", Types.INTEGER));
         columns.add(new Column(TYPE_NAME, Types.VARCHAR));
@@ -1507,7 +1507,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final ArrayList<Column> columns = new ArrayList<Column>(1);
         columns.add(new Column(TABLE_CAT, Types.VARCHAR));
         columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
-        columns.add(new Column("TABLE_NAME", Types.VARCHAR));
+        columns.add(new Column(TABLE_NAME, Types.VARCHAR));
         columns.add(new Column(COLUMN_NAME, Types.VARCHAR));
         columns.add(new Column("KEY_SEQ", Types.INTEGER));
         columns.add(new Column("PK_NAME", Types.VARCHAR));
@@ -1576,7 +1576,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final ArrayList<Column> columns = new ArrayList<Column>(1);
         columns.add(new Column(TABLE_CAT, Types.VARCHAR));
         columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
-        columns.add(new Column("TABLE_NAME", Types.VARCHAR));
+        columns.add(new Column(TABLE_NAME, Types.VARCHAR));
         columns.add(new Column("NON_UNIQUE", Types.BOOLEAN));
         columns.add(new Column("INDEX_QUALIFIER", Types.VARCHAR));
         columns.add(new Column("INDEX_NAME", Types.VARCHAR));
