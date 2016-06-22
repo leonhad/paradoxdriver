@@ -60,8 +60,8 @@ public final class DateUtils {
     }
 
     public static long gregorianToSdn(final int inputYear, final int inputMonth, final int inputDay) {
-        int year;
-        int month;
+        long year;
+        long month;
 
         /* check for invalid dates */
         if (inputYear == 0 || inputYear < -4714 || inputMonth <= 0 || inputMonth > 12 || inputDay <= 0
