@@ -59,7 +59,7 @@ public final class DateUtils {
         return new java.sql.Date(calendar.getTime().getTime());
     }
 
-    public static long GregorianToSdn(final int inputYear, final int inputMonth, final int inputDay) {
+    public static long gregorianToSdn(final int inputYear, final int inputMonth, final int inputDay) {
         int year;
         int month;
 
