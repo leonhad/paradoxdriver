@@ -7,7 +7,11 @@ package com.googlecode.paradox.utils;
  * @since 09/12/2014.
  * @version 1.1
  */
-public class StringUtils {
+public final class StringUtils {
+
+    private StringUtils() {
+        // Not for use.
+    }
 
     public static String removeDb(final String name) {
         return removeSuffix(name, "DB");
