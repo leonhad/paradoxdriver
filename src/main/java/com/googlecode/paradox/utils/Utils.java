@@ -10,7 +10,14 @@ import java.sql.Wrapper;
  * @since 1.2
  * @version 1.0
  */
-public abstract class Utils {
+public class Utils {
+
+    /**
+     * Utility class, not for use.
+     */
+    private Utils() {
+        throw new IllegalAccessError("Utility class");
+    }
 
     /**
      * Returns true if this either implements the interface argument or is

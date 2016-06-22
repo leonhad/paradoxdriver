@@ -17,6 +17,7 @@ import org.junit.experimental.categories.Category;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.utils.Utils;
 
 /**
  * Generic tests for Paradox Driver
@@ -29,12 +30,12 @@ import com.googlecode.paradox.ParadoxConnection;
 public class MainTest {
 
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private Connection conn;
+
     @BeforeClass
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
-    private Connection conn;
 
     @After
     public void closeConnection() throws Exception {
@@ -265,6 +266,11 @@ public class MainTest {
                 stmt.close();
             }
         }
+    }
+
+    @Test(expected=SQLException.class)
+    public void testUnwrapImpossive() throws Exception {
+        Utils.unwrap(conn, Integer.class);
     }
 
     @Test

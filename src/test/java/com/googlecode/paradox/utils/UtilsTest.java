@@ -17,12 +17,12 @@ import com.googlecode.paradox.integration.MainTest;
 public class UtilsTest {
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
+    private Connection conn;
+
     @BeforeClass
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
-    private Connection conn;
 
     @After
     public void closeConnection() throws Exception {
@@ -36,9 +36,9 @@ public class UtilsTest {
         conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
 
-    @Test(expected=SQLException.class)
+    @Test
     public void testIsNotWrapFor() throws Exception {
-        Utils.unwrap(conn, Integer.class);
+        Assert.assertFalse(Utils.isWrapperFor(conn, Connection.class));
     }
 
     @Test
@@ -51,8 +51,8 @@ public class UtilsTest {
         Assert.assertTrue(Utils.isWrapperFor(conn, ParadoxConnection.class));
     }
 
-    @Test
+    @Test(expected=SQLException.class)
     public void testUnwrapImpossive() throws Exception {
-        Assert.assertFalse(Utils.isWrapperFor(conn, Connection.class));
+        Utils.unwrap(conn, Integer.class);
     }
 }
