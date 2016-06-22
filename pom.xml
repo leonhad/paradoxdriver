@@ -104,12 +104,12 @@
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*.class</include>
+                            </includes>
+                        </configuration>
                     </execution>
-                    <configuration>
-                        <includes>
-                            <include>**/*.class</include>
-                        </includes>
-                    </configuration>
                 </executions>
             </plugin>
             <plugin>
