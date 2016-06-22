@@ -1,10 +1,6 @@
 package com.googlecode.paradox.procedures.math;
 
-import java.util.ArrayList;
-
-import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.procedures.CallableProcedure;
-import java.util.List;
 
 /**
  *
