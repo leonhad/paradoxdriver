@@ -37,16 +37,12 @@ public class BlobTable extends AbstractTable {
         super(file, StringUtils.removeMb(name));
         this.cache = new AllBlockCache();
         isEnd = isParsed = false;
+        fields = Collections.emptyList();
     }
 
     @Override
     public boolean isValid() {
         return false;
-    }
-
-    @Override
-    public List<ParadoxField> getFields() {
-        return Collections.emptyList();
     }
 
     /**
