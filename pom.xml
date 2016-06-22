@@ -7,7 +7,7 @@
     <version>1.2</version>
     <packaging>jar</packaging>
     <name>Paradox Driver</name>
-    <url>http://paradoxdriver.googlecode.com/</url>
+    <url>https://github.com/leonhad/paradoxdriver</url>
     <description>A Paradox Java Driver (using JDBC 4)</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,7 +27,7 @@
             <name>Leonardo Alves da Costa</name>
             <email>leonhad@gmail.com</email>
             <organization>Particular</organization>
-            <organizationUrl>https://code.google.com/u/leonhad/</organizationUrl>
+            <organizationUrl>https://github.com/leonhad/</organizationUrl>
         </developer>
     </developers>
     <build>
@@ -183,10 +183,9 @@
         </license>
     </licenses>
     <scm>
-        <url>http://paradoxdriver.googlecode.com/svn/trunk</url>
-        <connection>scm:svn:http://paradoxdriver.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://paradoxdriver.googlecode.com/svn/trunk/</developerConnection>
-        <tag>HEAD</tag>
+        <connection>scm:git:git@github.com:leonhad/paradoxdriver.git</connection>
+        <developerConnection>scm:git:git@github.com:leonhad/paradoxdriver.git</developerConnection>
+        <url>https://github.com/leonhad/paradoxdriver.git</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -199,8 +198,8 @@
         </repository>
     </distributionManagement>
     <issueManagement>
-        <system>Google Code</system>
-        <url>https://code.google.com/p/paradoxdriver/issues</url>
+        <system>GitHub</system>
+        <url>https://github.com/leonhad/paradoxdriver/issues</url>
     </issueManagement>
     <mailingLists>
         <mailingList>
