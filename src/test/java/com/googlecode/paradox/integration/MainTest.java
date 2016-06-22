@@ -1,4 +1,4 @@
-package com.googlecode.paradox.test;
+package com.googlecode.paradox.integration;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -12,11 +12,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import org.junit.experimental.categories.Category;
 
 /**
  * Generic tests for Paradox Driver
@@ -24,7 +23,7 @@ import com.googlecode.paradox.ParadoxConnection;
  * @author Leonardo Alves da Costa
  * @since 14/3/2009
  */
-@RunWith(JUnit4.class)
+@Category(IntegrationTest.class)
 public class MainTest {
 
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";

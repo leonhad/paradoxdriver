@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.test.MainTest;
+import com.googlecode.paradox.integration.MainTest;
 
 /**
  * Test for IndexData

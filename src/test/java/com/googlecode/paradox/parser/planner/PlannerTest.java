@@ -9,7 +9,7 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.planner.Planner;
-import com.googlecode.paradox.test.MainTest;
+import com.googlecode.paradox.integration.MainTest;
 
 public class PlannerTest {
 	public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
