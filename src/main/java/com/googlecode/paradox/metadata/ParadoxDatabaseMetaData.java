@@ -1406,7 +1406,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
             }
         }
 
-        final ArrayList<? extends ParadoxDataFile> views = ViewData.listViews(conn);
+        final List<? extends ParadoxDataFile> views = ViewData.listViews(conn);
         for (final ParadoxDataFile view : views) {
             if (tableNamePattern == null || Expressions.accept(view.getName(), tableNamePattern)) {
                 int ordinal = 1;

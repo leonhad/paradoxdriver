@@ -17,17 +17,17 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
+import java.util.List;
 
 public class ViewData {
-    // FIXME Use charset from last table
 
     private static final Charset CHARSET = Charset.forName("Cp1250");
 
     private ViewData() {
     }
 
-    public static ArrayList<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
-        final ArrayList<ParadoxView> views = new ArrayList<ParadoxView>();
+    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
+        final List<ParadoxView> views = new ArrayList<ParadoxView>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
             for (final File file : fileList) {
@@ -45,8 +45,8 @@ public class ViewData {
         return views;
     }
 
-    public static ArrayList<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
-        final ArrayList<ParadoxView> views = new ArrayList<ParadoxView>();
+    public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
+        final List<ParadoxView> views = new ArrayList<ParadoxView>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter());
         if (fileList != null) {
             for (final File file : fileList) {
@@ -243,7 +243,6 @@ public class ViewData {
             }
         }
         if (originalField == null) {
-            // FIXME Fix charset
             originalField = new ParadoxField();
             originalField.setType((byte) 1);
         }
@@ -265,37 +264,39 @@ public class ViewData {
             builder.delete(0, "Check".length() + 1);
             field.setChecked(true);
         }
-        if (builder.length() > 0) {
-            if (builder.charAt(0) == '_') {
-                final StringBuilder temp = new StringBuilder(builder.length());
+        if (builder.length() == 0) {
+            return;
+        }
 
-                for (final char c : builder.toString().toCharArray()) {
-                    if (c == ' ' || c == ',') {
-                        break;
-                    }
-                    temp.append(c);
+        if (builder.charAt(0) == '_') {
+            final StringBuilder temp = new StringBuilder(builder.length());
+
+            for (final char c : builder.toString().toCharArray()) {
+                if (c == ' ' || c == ',') {
+                    break;
                 }
-                final String name = temp.toString();
-                builder.delete(0, name.length());
-                field.setJoinName(name);
+                temp.append(c);
             }
-            final String typeTest = builder.toString().trim();
-            if (typeTest.toUpperCase().startsWith("AS")) {
-                field.setAlias(typeTest.substring(3).trim());
+            final String name = temp.toString();
+            builder.delete(0, name.length());
+            field.setJoinName(name);
+        }
+        final String typeTest = builder.toString().trim();
+        if (typeTest.toUpperCase().startsWith("AS")) {
+            field.setAlias(typeTest.substring(3).trim());
+        } else {
+            if (typeTest.startsWith(",")) {
+                builder.delete(0, 1);
+            }
+            final int index = builder.toString().toUpperCase().lastIndexOf("AS");
+            if (index != -1) {
+                field.setExpression(builder.substring(0, index).trim());
+                field.setAlias(builder.substring(index + 3).trim());
             } else {
-                if (typeTest.startsWith(",")) {
-                    builder.delete(0, 1);
-                }
-                final int index = builder.toString().toUpperCase().lastIndexOf("AS");
-                if (index != -1) {
-                    field.setExpression(builder.substring(0, index).trim());
-                    field.setAlias(builder.substring(index + 3).trim());
-                } else {
-                    field.setExpression(builder.toString().trim());
-                }
-                if (field.getExpression().toUpperCase().startsWith("CALC")) {
-                    field.setChecked(true);
-                }
+                field.setExpression(builder.toString().trim());
+            }
+            if (field.getExpression().toUpperCase().startsWith("CALC")) {
+                field.setChecked(true);
             }
         }
     }
