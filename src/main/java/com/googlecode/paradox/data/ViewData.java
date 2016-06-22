@@ -217,7 +217,7 @@ public class ViewData {
                     line = readLine(reader);
                 }
 
-                view.setPrivateFields(fields);
+                view.setFields(fields);
                 view.setValid(true);
             }
         } finally {
