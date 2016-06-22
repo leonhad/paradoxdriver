@@ -4,8 +4,8 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 public class NullNode extends SQLNode {
 
-	public NullNode() {
-		super("NULL");
-	}
+    public NullNode() {
+        super("NULL");
+    }
 
 }

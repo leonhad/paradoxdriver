@@ -15,245 +15,245 @@ import com.googlecode.paradox.utils.SQLStates;
  */
 public class ParadoxField {
 
-	private String name;
-	private byte type;
-	private short size;
-	private short physicsSize;
-	private ParadoxTable table;
-	private String tableName;
-	private String alias;
-	private String joinName;
-	private boolean checked;
-	private String expression;
-	private final int orderNum; // order of field in table/view (with 1)
+    private String name;
+    private byte type;
+    private short size;
+    private short physicsSize;
+    private ParadoxTable table;
+    private String tableName;
+    private String alias;
+    private String joinName;
+    private boolean checked;
+    private String expression;
+    private final int orderNum; // order of field in table/view (with 1)
 
-	public ParadoxField(final int orderNum) {
-		this.orderNum = orderNum;
-	}
+    public ParadoxField(final int orderNum) {
+        this.orderNum = orderNum;
+    }
 
-	public ParadoxField() {
-		this(1);
-	}
+    public ParadoxField() {
+        this(1);
+    }
 
-	public Column getColumn() throws SQLException {
-		final Column dto = new Column(this);
-		dto.setName(name.toUpperCase());
-		dto.setType(getSqlType());
-		dto.setAutoIncrement(type == 0x16);
-		dto.setCurrency(type == 5);
-		dto.setTableName(tableName);
-		switch (type) {
-		case 6:
-			dto.setScale(2);
-		case 5:
-		case 0x16:
-			dto.setPrecision(9);
-		}
-		return dto;
-	}
+    public Column getColumn() throws SQLException {
+        final Column dto = new Column(this);
+        dto.setName(name.toUpperCase());
+        dto.setType(getSqlType());
+        dto.setAutoIncrement(type == 0x16);
+        dto.setCurrency(type == 5);
+        dto.setTableName(tableName);
+        switch (type) {
+        case 6:
+            dto.setScale(2);
+        case 5:
+        case 0x16:
+            dto.setPrecision(9);
+        }
+        return dto;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final ParadoxField other = (ParadoxField) obj;
-		return !(name == null ? other.name != null : !name.equals(other.name));
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ParadoxField other = (ParadoxField) obj;
+        return !(name == null ? other.name != null : !name.equals(other.name));
+    }
 
-	@Override
-	public int hashCode() {
-		int hash = 7;
-		hash = 17 * hash + (name != null ? name.hashCode() : 0);
-		return hash;
-	}
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (name != null ? name.hashCode() : 0);
+        return hash;
+    }
 
-	public int getOrderNum() {
-		return orderNum;
-	}
+    public int getOrderNum() {
+        return orderNum;
+    }
 
-	public boolean isAutoIncrement() {
-		return type == 0x16;
-	}
+    public boolean isAutoIncrement() {
+        return type == 0x16;
+    }
 
-	public int getSqlType() throws SQLException {
-		switch (type) {
-		case 1:
-		case 0xE:
-			return Types.VARCHAR;
-		case 2:
-			return Types.DATE;
-		case 3:
-		case 4:
-		case 0x16:
-			return Types.INTEGER;
-		case 5:
-			return Types.DOUBLE;
-		case 6:
-			return Types.NUMERIC;
-		case 9:
-			return Types.BOOLEAN;
-		case 0xC:
-			return Types.CLOB;
-		case 0xD:
-		case 0xF:
-		case 0x18:
-			return Types.BLOB;
-		case 0x14:
-			return Types.TIME;
-		case 0x15:
-			return Types.TIMESTAMP;
-		case 0x17:
-			return Types.BINARY;
-		default:
-			throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND);
-		}
-	}
+    public int getSqlType() throws SQLException {
+        switch (type) {
+        case 1:
+        case 0xE:
+            return Types.VARCHAR;
+        case 2:
+            return Types.DATE;
+        case 3:
+        case 4:
+        case 0x16:
+            return Types.INTEGER;
+        case 5:
+            return Types.DOUBLE;
+        case 6:
+            return Types.NUMERIC;
+        case 9:
+            return Types.BOOLEAN;
+        case 0xC:
+            return Types.CLOB;
+        case 0xD:
+        case 0xF:
+        case 0x18:
+            return Types.BLOB;
+        case 0x14:
+            return Types.TIME;
+        case 0x15:
+            return Types.TIMESTAMP;
+        case 0x17:
+            return Types.BINARY;
+        default:
+            throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND);
+        }
+    }
 
-	public ParadoxTable getTable() {
-		return table;
-	}
+    public ParadoxTable getTable() {
+        return table;
+    }
 
-	public void setTable(final ParadoxTable table) {
-		this.table = table;
-	}
+    public void setTable(final ParadoxTable table) {
+        this.table = table;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(final String name) {
-		this.name = name;
-	}
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @return the type
-	 */
-	public byte getType() {
-		return type;
-	}
+    /**
+     * @return the type
+     */
+    public byte getType() {
+        return type;
+    }
 
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public void setType(final byte type) {
-		this.type = type;
-	}
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(final byte type) {
+        this.type = type;
+    }
 
-	/**
-	 * @return the size
-	 */
-	public short getSize() {
-		return size;
-	}
+    /**
+     * @return the size
+     */
+    public short getSize() {
+        return size;
+    }
 
-	/**
-	 * @param size
-	 *            the size to set
-	 */
-	public void setSize(short size) throws SQLException {
-		physicsSize = size;
-		if (getSqlType() == Types.CLOB || getSqlType() == Types.BLOB) {
-			size -= 10;
-		}
-		this.size = size;
-	}
+    /**
+     * @param size
+     *            the size to set
+     */
+    public void setSize(short size) throws SQLException {
+        physicsSize = size;
+        if (getSqlType() == Types.CLOB || getSqlType() == Types.BLOB) {
+            size -= 10;
+        }
+        this.size = size;
+    }
 
-	public short getPhysicsSize() {
-		return physicsSize;
-	}
+    public short getPhysicsSize() {
+        return physicsSize;
+    }
 
-	/**
-	 * @return the table
-	 */
-	public String getTableName() {
-		return tableName;
-	}
+    /**
+     * @return the table
+     */
+    public String getTableName() {
+        return tableName;
+    }
 
-	/**
-	 * @param tableName
-	 *            the table to set
-	 */
-	public void setTableName(final String tableName) {
-		this.tableName = tableName;
-	}
+    /**
+     * @param tableName
+     *            the table to set
+     */
+    public void setTableName(final String tableName) {
+        this.tableName = tableName;
+    }
 
-	/**
-	 * @return the alias
-	 */
-	public String getAlias() {
-		if (alias == null) {
-			return name;
-		}
-		return alias;
-	}
+    /**
+     * @return the alias
+     */
+    public String getAlias() {
+        if (alias == null) {
+            return name;
+        }
+        return alias;
+    }
 
-	/**
-	 * @param alias
-	 *            the alias to set
-	 */
-	public void setAlias(final String alias) {
-		this.alias = alias;
-	}
+    /**
+     * @param alias
+     *            the alias to set
+     */
+    public void setAlias(final String alias) {
+        this.alias = alias;
+    }
 
-	/**
-	 * @return the joinName
-	 */
-	public String getJoinName() {
-		return joinName;
-	}
+    /**
+     * @return the joinName
+     */
+    public String getJoinName() {
+        return joinName;
+    }
 
-	/**
-	 * @param joinName
-	 *            the joinName to set
-	 */
-	public void setJoinName(final String joinName) {
-		this.joinName = joinName;
-	}
+    /**
+     * @param joinName
+     *            the joinName to set
+     */
+    public void setJoinName(final String joinName) {
+        this.joinName = joinName;
+    }
 
-	/**
-	 * @return the checked
-	 */
-	public boolean isChecked() {
-		return checked;
-	}
+    /**
+     * @return the checked
+     */
+    public boolean isChecked() {
+        return checked;
+    }
 
-	/**
-	 * @param checked
-	 *            the checked to set
-	 */
-	public void setChecked(final boolean checked) {
-		this.checked = checked;
-	}
+    /**
+     * @param checked
+     *            the checked to set
+     */
+    public void setChecked(final boolean checked) {
+        this.checked = checked;
+    }
 
-	/**
-	 * @return the expression
-	 */
-	public String getExpression() {
-		return expression;
-	}
+    /**
+     * @return the expression
+     */
+    public String getExpression() {
+        return expression;
+    }
 
-	/**
-	 * @param expression
-	 *            the expression to set
-	 */
-	public void setExpression(final String expression) {
-		this.expression = expression;
-	}
+    /**
+     * @param expression
+     *            the expression to set
+     */
+    public void setExpression(final String expression) {
+        this.expression = expression;
+    }
 }

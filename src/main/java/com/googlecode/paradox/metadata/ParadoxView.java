@@ -12,59 +12,59 @@ import java.util.List;
  */
 public class ParadoxView extends ParadoxDataFile {
 
-	private boolean valid = false;
-	private List<ParadoxField> fieldsOrder;
-	private List<ParadoxField> fieldsSort;
+    private boolean valid = false;
+    private List<ParadoxField> fieldsOrder;
+    private List<ParadoxField> fieldsSort;
 
-	public ParadoxView(final File file, final String name) {
-		super(file, name);
-	}
+    public ParadoxView(final File file, final String name) {
+        super(file, name);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isValid() {
-		return valid;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isValid() {
+        return valid;
+    }
 
-	/**
-	 * Sets if this view is valid.
-	 * 
-	 * @param valid
-	 *            the valid to set.
-	 */
-	public void setValid(final boolean valid) {
-		this.valid = valid;
-	}
+    /**
+     * Sets if this view is valid.
+     *
+     * @param valid
+     *            the valid to set.
+     */
+    public void setValid(final boolean valid) {
+        this.valid = valid;
+    }
 
-	/**
-	 * @return the fieldsOrder
-	 */
-	public List<ParadoxField> getFieldsOrder() {
-		return fieldsOrder;
-	}
+    /**
+     * @return the fieldsOrder
+     */
+    public List<ParadoxField> getFieldsOrder() {
+        return fieldsOrder;
+    }
 
-	/**
-	 * @param fieldsOrder
-	 *            the fieldsOrder to set
-	 */
-	public void setFieldsOrder(final List<ParadoxField> fieldsOrder) {
-		this.fieldsOrder = fieldsOrder;
-	}
+    /**
+     * @param fieldsOrder
+     *            the fieldsOrder to set
+     */
+    public void setFieldsOrder(final List<ParadoxField> fieldsOrder) {
+        this.fieldsOrder = fieldsOrder;
+    }
 
-	/**
-	 * @return the fieldsSort
-	 */
-	public List<ParadoxField> getFieldsSort() {
-		return fieldsSort;
-	}
+    /**
+     * @return the fieldsSort
+     */
+    public List<ParadoxField> getFieldsSort() {
+        return fieldsSort;
+    }
 
-	/**
-	 * @param fieldsSort
-	 *            the fieldsSort to set
-	 */
-	public void setFieldsSort(final List<ParadoxField> fieldsSort) {
-		this.fieldsSort = fieldsSort;
-	}
+    /**
+     * @param fieldsSort
+     *            the fieldsSort to set
+     */
+    public void setFieldsSort(final List<ParadoxField> fieldsSort) {
+        this.fieldsSort = fieldsSort;
+    }
 }

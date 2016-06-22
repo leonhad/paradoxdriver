@@ -12,12 +12,12 @@ import org.junit.Test;
  */
 public class ViewFilterTest {
 
-	private final ViewFilter filter = new ViewFilter();
+    private final ViewFilter filter = new ViewFilter();
 
-	@Test
-	public void testAccept() {
-		final File file = new File("teste.qbe");
-		assertTrue(filter.accept(file));
-	}
+    @Test
+    public void testAccept() {
+        final File file = new File("teste.qbe");
+        assertTrue(filter.accept(file));
+    }
 
 }

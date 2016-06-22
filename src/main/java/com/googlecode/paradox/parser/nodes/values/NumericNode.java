@@ -4,7 +4,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 public class NumericNode extends SQLNode {
 
-	public NumericNode(final String value, final String alias) {
-		super(value, alias);
-	}
+    public NumericNode(final String value, final String alias) {
+        super(value, alias);
+    }
 }

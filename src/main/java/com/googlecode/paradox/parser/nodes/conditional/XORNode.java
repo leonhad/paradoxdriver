@@ -6,9 +6,9 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 public class XORNode extends SQLNode {
 
-	public XORNode(final SQLNode child) {
-		super("XOR");
-		setChildren(Arrays.asList(child));
-	}
+    public XORNode(final SQLNode child) {
+        super("XOR");
+        setChildren(Arrays.asList(child));
+    }
 
 }

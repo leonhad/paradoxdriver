@@ -15,87 +15,87 @@ import java.util.ArrayList;
  */
 public class ParadoxTable extends ParadoxDataFile {
 
-	private ArrayList<Short> fieldsOrder;
-	private Charset charset = forName("Cp437");
+    private ArrayList<Short> fieldsOrder;
+    private Charset charset = forName("Cp437");
 
-	private BlobTable blobFile = null;
+    private BlobTable blobFile = null;
 
-	public ParadoxTable(final File file, final String name) {
-		super(file, name);
-	}
+    public ParadoxTable(final File file, final String name) {
+        super(file, name);
+    }
 
-	/**
-	 * Gets the table name.
-	 *
-	 * @return the table name.
-	 */
-	@Override
-	public String toString() {
-		return getName();
-	}
+    /**
+     * Gets the table name.
+     *
+     * @return the table name.
+     */
+    @Override
+    public String toString() {
+        return getName();
+    }
 
-	public ArrayList<ParadoxField> getPrimaryKeys() {
-		final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
-		for (int loop = 0; loop < primaryFieldCount; loop++) {
-			ret.add(fields.get(loop));
-		}
-		return ret;
-	}
+    public ArrayList<ParadoxField> getPrimaryKeys() {
+        final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
+        for (int loop = 0; loop < primaryFieldCount; loop++) {
+            ret.add(fields.get(loop));
+        }
+        return ret;
+    }
 
-	/**
-	 * Return the block size in bytes
-	 *
-	 * @return the block size in bytes
-	 */
-	public int getBlockSizeBytes() {
-		// The blockSize is always in KiB
-		return blockSize * 1024;
-	}
+    /**
+     * Return the block size in bytes
+     *
+     * @return the block size in bytes
+     */
+    public int getBlockSizeBytes() {
+        // The blockSize is always in KiB
+        return blockSize * 1024;
+    }
 
-	/**
-	 * If this table is valid
-	 *
-	 * @return true if this table is valid
-	 */
-	@Override
-	public boolean isValid() {
-		return type == 0 || type == 2;
-	}
+    /**
+     * If this table is valid
+     *
+     * @return true if this table is valid
+     */
+    @Override
+    public boolean isValid() {
+        return type == 0 || type == 2;
+    }
 
-	/**
-	 * @return the fieldsOrder
-	 */
-	public ArrayList<Short> getFieldsOrder() {
-		return fieldsOrder;
-	}
+    /**
+     * @return the fieldsOrder
+     */
+    public ArrayList<Short> getFieldsOrder() {
+        return fieldsOrder;
+    }
 
-	/**
-	 * @param fieldsOrder
-	 *            the fieldsOrder to set
-	 */
-	public void setFieldsOrder(final ArrayList<Short> fieldsOrder) {
-		this.fieldsOrder = fieldsOrder;
-	}
+    /**
+     * @param fieldsOrder
+     *            the fieldsOrder to set
+     */
+    public void setFieldsOrder(final ArrayList<Short> fieldsOrder) {
+        this.fieldsOrder = fieldsOrder;
+    }
 
-	/**
-	 * @return the charset
-	 */
-	public Charset getCharset() {
-		return charset;
-	}
+    /**
+     * @return the charset
+     */
+    public Charset getCharset() {
+        return charset;
+    }
 
-	/**
-	 * @param charset
-	 *            the charset to set
-	 */
-	public void setCharset(final Charset charset) {
-		this.charset = charset;
-	}
+    /**
+     * @param charset
+     *            the charset to set
+     */
+    public void setCharset(final Charset charset) {
+        this.charset = charset;
+    }
 
-	public BlobTable getBlobTable() {
-		if (blobFile == null) {
-			blobFile = new BlobTable(getFile(), getName());
-		}
-		return blobFile;
-	}
+    public BlobTable getBlobTable() {
+        if (blobFile == null) {
+            blobFile = new BlobTable(getFile(), getName());
+        }
+        return blobFile;
+    }
 }

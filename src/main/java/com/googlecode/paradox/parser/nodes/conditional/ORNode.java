@@ -6,9 +6,9 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 public class ORNode extends SQLNode {
 
-	public ORNode(final SQLNode child) {
-		super("OR");
-		setChildren(Arrays.asList(child));
-	}
+    public ORNode(final SQLNode child) {
+        super("OR");
+        setChildren(Arrays.asList(child));
+    }
 
 }

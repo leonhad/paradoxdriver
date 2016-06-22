@@ -6,9 +6,9 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 public class ANDNode extends SQLNode {
 
-	public ANDNode(final SQLNode child) {
-		super("AND");
-		setChildren(Arrays.asList(child));
-	}
+    public ANDNode(final SQLNode child) {
+        super("AND");
+        setChildren(Arrays.asList(child));
+    }
 
 }

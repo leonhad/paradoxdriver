@@ -8,19 +8,19 @@ import com.googlecode.paradox.procedures.CallableProcedure;
  */
 public class Min extends CallableProcedure {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return "min";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return "min";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getRemarks() {
-		return "Returns the row minimum value";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRemarks() {
+        return "Returns the row minimum value";
+    }
 }

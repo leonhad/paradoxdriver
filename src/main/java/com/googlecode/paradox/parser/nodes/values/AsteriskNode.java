@@ -8,7 +8,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  */
 public class AsteriskNode extends SQLNode {
 
-	public AsteriskNode() {
-		super(TokenType.ASTERISK.name());
-	}
+    public AsteriskNode() {
+        super(TokenType.ASTERISK.name());
+    }
 }

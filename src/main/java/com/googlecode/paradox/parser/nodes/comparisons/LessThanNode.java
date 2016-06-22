@@ -4,8 +4,8 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 
 public class LessThanNode extends AbstractComparisonNode {
 
-	public LessThanNode(final FieldNode first, final FieldNode last) {
-		super("<", first, last);
-	}
+    public LessThanNode(final FieldNode first, final FieldNode last) {
+        super("<", first, last);
+    }
 
 }

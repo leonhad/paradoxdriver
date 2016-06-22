@@ -16,36 +16,36 @@ import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 
 public class PlannerTest {
-	public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-	private ParadoxConnection conn;
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private ParadoxConnection conn;
 
-	@BeforeClass
-	public static void setUp() throws Exception {
-		Class.forName(Driver.class.getName());
-	}
+    @BeforeClass
+    public static void setUp() throws Exception {
+        Class.forName(Driver.class.getName());
+    }
 
-	@Before
-	public void connect() throws Exception {
-		conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
-	}
+    @Before
+    public void connect() throws Exception {
+        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+    }
 
-	@After
-	public void closeConnection() throws Exception {
-		if (conn != null) {
-			conn.close();
-		}
-	}
+    @After
+    public void closeConnection() throws Exception {
+        if (conn != null) {
+            conn.close();
+        }
+    }
 
-	@Test
-	public void tableTest() throws Exception {
-		final SQLParser parser = new SQLParser("select * from areacodes a");
-		final Planner planner = new Planner(conn);
-		final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
-		Assert.assertNotNull("No columns", plan.getColumns());
-		Assert.assertEquals("Num of columns in table", 3, plan.getColumns().size());
-		Assert.assertEquals("First column not 'AC'", "AC", plan.getColumns().get(0).getName());
-		Assert.assertEquals("Second column not 'State'", "STATE", plan.getColumns().get(1).getName());
-		Assert.assertEquals("Third column not 'Cities'", "CITIES", plan.getColumns().get(2).getName());
+    @Test
+    public void tableTest() throws Exception {
+        final SQLParser parser = new SQLParser("select * from areacodes a");
+        final Planner planner = new Planner(conn);
+        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+        Assert.assertNotNull("No columns", plan.getColumns());
+        Assert.assertEquals("Num of columns in table", 3, plan.getColumns().size());
+        Assert.assertEquals("First column not 'AC'", "AC", plan.getColumns().get(0).getName());
+        Assert.assertEquals("Second column not 'State'", "STATE", plan.getColumns().get(1).getName());
+        Assert.assertEquals("Third column not 'Cities'", "CITIES", plan.getColumns().get(2).getName());
 
-	}
+    }
 }

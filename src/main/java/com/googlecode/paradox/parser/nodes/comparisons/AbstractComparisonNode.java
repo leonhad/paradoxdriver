@@ -5,25 +5,25 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 public abstract class AbstractComparisonNode extends SQLNode {
 
-	private final FieldNode first;
-	private final FieldNode last;
+    private final FieldNode first;
+    private final FieldNode last;
 
-	public AbstractComparisonNode(final String name, final FieldNode first, final FieldNode last) {
-		super(name);
-		this.first = first;
-		this.last = last;
-	}
+    public AbstractComparisonNode(final String name, final FieldNode first, final FieldNode last) {
+        super(name);
+        this.first = first;
+        this.last = last;
+    }
 
-	public FieldNode getFirst() {
-		return first;
-	}
+    public FieldNode getFirst() {
+        return first;
+    }
 
-	public FieldNode getLast() {
-		return last;
-	}
+    public FieldNode getLast() {
+        return last;
+    }
 
-	@Override
-	public String toString() {
-		return first + " " + getName() + " " + last;
-	}
+    @Override
+    public String toString() {
+        return first + " " + getName() + " " + last;
+    }
 }

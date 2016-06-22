@@ -14,12 +14,12 @@ import org.junit.Test;
  */
 public class SecondaryIndexFilterTest {
 
-	private final SecondaryIndexFilter filter = new SecondaryIndexFilter();
+    private final SecondaryIndexFilter filter = new SecondaryIndexFilter();
 
-	@Test
-	public void testAccept() {
-		final File file = new File("teste.xn2");
-		Assert.assertTrue(filter.accept(file));
-	}
+    @Test
+    public void testAccept() {
+        final File file = new File("teste.xn2");
+        Assert.assertTrue(filter.accept(file));
+    }
 
 }

@@ -9,26 +9,26 @@ import com.googlecode.paradox.metadata.BlobTable;
  */
 public class ClobDescriptor extends BlobDescriptor {
 
-	private String leader;
-	private Charset charset;
+    private String leader;
+    private Charset charset;
 
-	public ClobDescriptor(final BlobTable file) {
-		super(file);
-	}
+    public ClobDescriptor(final BlobTable file) {
+        super(file);
+    }
 
-	public String getLeader() {
-		return leader;
-	}
+    public String getLeader() {
+        return leader;
+    }
 
-	public void setLeader(final String leader) {
-		this.leader = leader;
-	}
+    public void setLeader(final String leader) {
+        this.leader = leader;
+    }
 
-	public Charset getCharset() {
-		return charset;
-	}
+    public Charset getCharset() {
+        return charset;
+    }
 
-	public void setCharset(final Charset charset) {
-		this.charset = charset;
-	}
+    public void setCharset(final Charset charset) {
+        this.charset = charset;
+    }
 }

@@ -8,19 +8,19 @@ import com.googlecode.paradox.procedures.CallableProcedure;
  */
 public class Sum extends CallableProcedure {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return "sum";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return "sum";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getRemarks() {
-		return "Returns the sum of row value";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRemarks() {
+        return "Returns the sum of row value";
+    }
 }

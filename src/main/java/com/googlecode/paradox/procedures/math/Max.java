@@ -8,19 +8,19 @@ import com.googlecode.paradox.procedures.CallableProcedure;
  */
 public class Max extends CallableProcedure {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getName() {
-		return "max";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return "max";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getRemarks() {
-		return "Returns the row max value";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRemarks() {
+        return "Returns the row max value";
+    }
 }

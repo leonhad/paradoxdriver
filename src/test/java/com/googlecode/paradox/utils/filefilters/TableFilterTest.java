@@ -12,15 +12,15 @@ import org.junit.Test;
  */
 public class TableFilterTest {
 
-	private final TableFilter filter = new TableFilter();
+    private final TableFilter filter = new TableFilter();
 
-	/**
-	 * Test of accept method, of class TableFilter.
-	 */
-	@Test
-	public void testAccept() {
-		final File file = new File("teste.db");
-		assertTrue(filter.accept(file));
-	}
+    /**
+     * Test of accept method, of class TableFilter.
+     */
+    @Test
+    public void testAccept() {
+        final File file = new File("teste.db");
+        assertTrue(filter.accept(file));
+    }
 
 }

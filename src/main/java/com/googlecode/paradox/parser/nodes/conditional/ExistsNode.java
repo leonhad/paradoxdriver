@@ -7,9 +7,9 @@ import com.googlecode.paradox.parser.nodes.SelectNode;
 
 public class ExistsNode extends SQLNode {
 
-	public ExistsNode(final SelectNode child) {
-		super("EXISTS");
-		setChildren(Arrays.asList(child));
-	}
+    public ExistsNode(final SelectNode child) {
+        super("EXISTS");
+        setChildren(Arrays.asList(child));
+    }
 
 }
