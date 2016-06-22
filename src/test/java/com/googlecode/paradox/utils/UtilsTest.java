@@ -1,5 +1,8 @@
 package com.googlecode.paradox.utils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -34,6 +37,14 @@ public class UtilsTest {
     @Before
     public void connect() throws Exception {
         conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+    }
+
+    @Test
+    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        final Constructor<Utils> constructor = Utils.class.getDeclaredConstructor();
+        Assert.assertTrue(Modifier.isPrivate(constructor.getModifiers()));
+        constructor.setAccessible(true);
+        constructor.newInstance();
     }
 
     @Test
