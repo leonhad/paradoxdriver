@@ -58,22 +58,20 @@ public class BlobTable extends AbstractTable {
      * @throws SQLException in case of parse errors.
      */
     public byte[] read(long pOffset) throws SQLException {
-
-        short blockType;
         short offset = (short) (pOffset & 0xFF);
 
-        if (offset == 0xFF) {
-            blockType = SINGLE_BLOCK;
-        } else {
-            blockType = SUB_BLOCK;
-        }
+//        if (offset == 0xFF) {
+//            blockType = SINGLE_BLOCK;
+//        } else {
+//            blockType = SUB_BLOCK;
+//        }
 
         int blockNum = getBlockNum(pOffset);
         if (!isParsed) {
             open();
             parse();
         }
-        return getData(blockNum, blockType, offset);
+        return getData(blockNum, offset);
     }
 
     public boolean isParsed() {
@@ -155,13 +153,13 @@ public class BlobTable extends AbstractTable {
         return (idx & 0x0F) * 0xF + (idx & 0xF0) >> 4;
     }
 
-    private byte[] getData(int blockNum, short blockType, short offset) throws SQLException {
+    private byte[] getData(int blockNum, short offset) throws SQLException {
         ClobBlock block = cache.get(blockNum, offset);
         if (block != null) {
             return block.getValue();
         }
         try {
-            block = readBlock(blockNum, blockType, offset);
+            block = readBlock(blockNum, offset);
         } catch (Exception x) {
             throw new SQLException("Read clob error", SQLStates.LOAD_DATA, x);
         }
@@ -171,7 +169,7 @@ public class BlobTable extends AbstractTable {
         return block.getValue();
     }
 
-    private ClobBlock readBlock(int blockNum, short blockType, short offset) throws Exception {
+    private ClobBlock readBlock(int blockNum, short offset) throws SQLException {
         List<ClobBlock> nextBlocks = new ArrayList<ClobBlock>(1);
         while (readNextBlock(nextBlocks)) {
             cache.add(nextBlocks);

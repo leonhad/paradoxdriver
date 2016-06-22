@@ -206,6 +206,7 @@ public class ViewData {
                             ViewData.parseExpression(field, types[loop]);
                         }
                     }
+
                     // Extra Line
                     line = reader.readLine();
                     if (line == null) {
