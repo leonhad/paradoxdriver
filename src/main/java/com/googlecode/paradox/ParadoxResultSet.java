@@ -1176,7 +1176,7 @@ public class ParadoxResultSet implements ResultSet {
     @Override
     public Clob getClob(final int columnIndex) throws SQLException {
         if (clobs == null) {
-            clobs = new HashMap(1);
+            clobs = new HashMap<Integer, Clob>(1);
         }
         if (clobs.containsKey(columnIndex)) {
             return clobs.get(columnIndex);
@@ -1680,7 +1680,6 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return Utils.unwrap(this, iface);
     }

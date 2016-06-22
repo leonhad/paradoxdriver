@@ -21,16 +21,13 @@ import com.googlecode.paradox.metadata.BlobTable;
 public class ParadoxClob implements Clob {
 
     private long length;
-    private final long fieldLength;
     private long offset;
-    private short modificator;
     private byte[] value;
     private BlobTable blob = null;
     private boolean parsed = false;
 
     public ParadoxClob(final ClobDescriptor descriptor) {
         length = 0;
-        fieldLength = descriptor.getLength();
         value = null;
         offset = -1;
         // If MB_Offset = 0 then the entire blob is contained in the leader.
@@ -42,7 +39,6 @@ public class ParadoxClob implements Clob {
             parsed = true;
         } else {
             offset = descriptor.getOffset();
-            modificator = descriptor.getModificator();
             blob = descriptor.getFile();
         }
     }

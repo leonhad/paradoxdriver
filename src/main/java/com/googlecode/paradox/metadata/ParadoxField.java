@@ -157,15 +157,21 @@ public class ParadoxField {
     }
 
     /**
-     * @return the size
+     * Gets the field size.
+     * 
+     * @return the size.
      */
     public short getSize() {
         return size;
     }
 
     /**
+     * Sets the field size.
+     * 
      * @param size
      *            the size to set
+     * @throws SQLException
+     *             in case of wrong field type.
      */
     public void setSize(short size) throws SQLException {
         physicsSize = size;

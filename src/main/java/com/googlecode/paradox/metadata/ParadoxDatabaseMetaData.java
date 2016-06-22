@@ -1768,7 +1768,6 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return Utils.unwrap(this, iface);
     }

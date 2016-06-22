@@ -293,7 +293,6 @@ public class ParadoxStatement implements Statement {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return Utils.unwrap(this, iface);
     }

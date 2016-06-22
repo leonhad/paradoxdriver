@@ -183,7 +183,6 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return Utils.unwrap(this, iface);
     }

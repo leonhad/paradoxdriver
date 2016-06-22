@@ -12,7 +12,7 @@ import com.googlecode.paradox.utils.SQLStates;
  * Stores the database values in Java format.
  *
  * @author Leonardo Alves da Costa
- * @since 11/07/2014
+ * @since 1.0
  * @version 1.0
  */
 public class FieldValue {
@@ -33,7 +33,7 @@ public class FieldValue {
     private ParadoxField field;
 
     /**
-     * Store a database value already loaded in Java format
+     * Store a database value already loaded in Java format.
      *
      * @param value
      *            Java value
@@ -46,7 +46,10 @@ public class FieldValue {
     }
 
     /**
-     * Constructor used for NULL values
+     * Constructor used for NULL values.
+     * 
+     * @param type
+     *            field type.
      */
     public FieldValue(final int type) {
         this.type = type;

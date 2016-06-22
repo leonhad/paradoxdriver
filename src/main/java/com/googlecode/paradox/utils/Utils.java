@@ -7,7 +7,7 @@ import java.sql.Wrapper;
  * Driver utilities.
  *
  * @author Leonardo Alves da Costa
- * @since 22/06/2016
+ * @since 1.2
  * @version 1.0
  */
 public final class Utils {
@@ -63,6 +63,8 @@ public final class Utils {
      * true then calling <code>unwrap</code> with the same argument should
      * succeed.
      *
+     * @param wrapper
+     *            wrapper to test for.
      * @param iface
      *            a Class defining an interface.
      * @return true if this implements the interface or directly or indirectly

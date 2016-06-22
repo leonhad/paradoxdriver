@@ -37,7 +37,7 @@ import com.googlecode.paradox.utils.Utils;
  *
  * @author Leonardo Alves da Costa
  * @version 1.0
- * @since 14/03/2009
+ * @since 1.0
  */
 public class ParadoxConnection implements Connection {
 
@@ -95,13 +95,13 @@ public class ParadoxConnection implements Connection {
     private final boolean isDebugMode = true;
 
     /**
+     * Creates a new paradox connection.
      *
-     * @param dir
-     * @param url
-     * @param info
-     * @throws SQLException
+     * @param dir database directory.
+     * @param url connect URL.
+     * @param info connection properties.
+     * @throws SQLException in any connection fault.
      */
-
     public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
         this.url = url;
         this.dir = dir;
@@ -419,7 +419,6 @@ public class ParadoxConnection implements Connection {
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return Utils.unwrap(this, iface);
     }
