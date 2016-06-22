@@ -10,7 +10,7 @@ import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * Stores the database values in Java format.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @since 11/07/2014
  * @version 1.0
@@ -22,7 +22,7 @@ public class FieldValue {
 	private Object value;
 	/**
 	 * Value type in database
-	 * 
+	 *
 	 * @see Types
 	 */
 	private final int type;
@@ -31,9 +31,10 @@ public class FieldValue {
 	 * Reference on field
 	 */
 	private ParadoxField field;
+
 	/**
 	 * Store a database value already loaded in Java format
-	 * 
+	 *
 	 * @param value
 	 *            Java value
 	 * @param type
@@ -53,7 +54,7 @@ public class FieldValue {
 
 	/**
 	 * Return the field value in Java format
-	 * 
+	 *
 	 * @return the field value in Java format
 	 */
 	public Object getValue() {
@@ -62,24 +63,24 @@ public class FieldValue {
 
 	/**
 	 * The Java {@link Types} value.
-	 * 
+	 *
 	 * @return The Java {@link Types} value.
 	 */
 	public int getType() {
 		return type;
 	}
 
-
 	public ParadoxField getField() {
 		return field;
 	}
 
-	public void setField(ParadoxField newVal) {
-		this.field = newVal;
+	public void setField(final ParadoxField newVal) {
+		field = newVal;
 	}
+
 	/**
 	 * Check for null value
-	 * 
+	 *
 	 * @return true if this value is NULL
 	 */
 	public boolean isNull() {
@@ -88,7 +89,7 @@ public class FieldValue {
 
 	/**
 	 * Check for value type and return an Boolean value
-	 * 
+	 *
 	 * @return a valid Boolean value
 	 * @throws SQLDataException
 	 *             if this is not a Boolean value
@@ -102,7 +103,7 @@ public class FieldValue {
 
 	/**
 	 * Check for value type and return an Number value
-	 * 
+	 *
 	 * @return a valid Number value
 	 * @throws SQLDataException
 	 *             if this is not a numeric value
@@ -120,7 +121,7 @@ public class FieldValue {
 
 	/**
 	 * Check for value type and return an Time value
-	 * 
+	 *
 	 * @return a valid Time value
 	 * @throws SQLDataException
 	 *             if this is not a Time value
@@ -134,7 +135,7 @@ public class FieldValue {
 
 	/**
 	 * Check for value type and return an Date value
-	 * 
+	 *
 	 * @return a valid Date value
 	 * @throws SQLDataException
 	 *             if this is not a Date value

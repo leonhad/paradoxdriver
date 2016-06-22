@@ -5,36 +5,36 @@ package com.googlecode.paradox.utils;
  */
 public class ClobBlock {
 
-    private byte[] value;
-    private int num;
-    private short type;
-    private short offset;
+	private byte[] value;
+	private final int num;
+	private final short type;
+	private final short offset;
 
-    public ClobBlock(int num, short type, short offset) {
-        value = null;
-        this.num = num;
-        this.type = type;
-        this.offset = offset;
-    }
+	public ClobBlock(final int num, final short type, final short offset) {
+		value = null;
+		this.num = num;
+		this.type = type;
+		this.offset = offset;
+	}
 
-    public ClobBlock(int num, short type, short offset, byte[] value) {
-        this(num, type, offset);
-        this.value = value;
-    }
+	public ClobBlock(final int num, final short type, final short offset, final byte[] value) {
+		this(num, type, offset);
+		this.value = value;
+	}
 
-    public byte[] getValue() {
-        return value;
-    }
+	public byte[] getValue() {
+		return value;
+	}
 
-    public int getNum() {
-        return num;
-    }
+	public int getNum() {
+		return num;
+	}
 
-    public short getType() {
-        return type;
-    }
+	public short getType() {
+		return type;
+	}
 
-    public short getOffset() {
-        return offset;
-    }
+	public short getOffset() {
+		return offset;
+	}
 }

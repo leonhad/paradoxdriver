@@ -52,6 +52,7 @@ public class FieldNode extends SQLNode {
 		return tableName;
 	}
 
+	@Override
 	public String getAlias() {
 		return alias;
 	}

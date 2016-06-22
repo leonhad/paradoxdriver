@@ -8,19 +8,19 @@ import com.googlecode.paradox.procedures.CallableProcedure;
  */
 public class Count extends CallableProcedure {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return "count";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return "count";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getRemarks() {
-        return "Returns the row count";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getRemarks() {
+		return "Returns the row count";
+	}
 }

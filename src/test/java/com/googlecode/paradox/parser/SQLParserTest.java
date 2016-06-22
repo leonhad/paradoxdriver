@@ -118,7 +118,8 @@ public class SQLParserTest {
 
 	@Test
 	public void testJoin() throws Exception {
-		final SQLParser parser = new SQLParser("SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
+		final SQLParser parser = new SQLParser(
+				"SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
 		final ArrayList<StatementNode> list = parser.parse();
 		final SQLNode tree = list.get(0);
 

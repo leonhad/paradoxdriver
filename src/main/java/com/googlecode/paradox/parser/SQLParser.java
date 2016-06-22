@@ -129,13 +129,14 @@ public class SQLParser {
 						expect(TokenType.IDENTIFIER);
 					}
 					select.getFields().add(new NumericNode(fieldName, fieldAlias));
-				}else if (t.getType() == TokenType.ASTERISK) {
+				} else if (t.getType() == TokenType.ASTERISK) {
 					select.getFields().add(new AsteriskNode());
 					expect(TokenType.ASTERISK);
 				} else {
 					expect(TokenType.IDENTIFIER);
 
-					if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS || t.getType() == TokenType.PERIOD) {
+					if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS
+							|| t.getType() == TokenType.PERIOD) {
 						// If it has a Table Name
 						if (t.getType() == TokenType.PERIOD) {
 							expect(TokenType.PERIOD);
@@ -148,9 +149,9 @@ public class SQLParser {
 						if (t.getType() == TokenType.AS) {
 							expect(TokenType.AS);
 							fieldAlias = t.getValue();
-							// may be: 	select bebebe as name
-							//			select bebebe as "Name"
-							//			select bebebe as 'Name'
+							// may be: select bebebe as name
+							// select bebebe as "Name"
+							// select bebebe as 'Name'
 							expect(TokenType.CHARACTER, TokenType.IDENTIFIER);
 						} else if (t.getType() == TokenType.IDENTIFIER) {
 							// Field alias (without AS identifier)
@@ -354,9 +355,9 @@ public class SQLParser {
 		}
 	}
 
-	private void expect(final TokenType ... rparens) throws SQLException {
+	private void expect(final TokenType... rparens) throws SQLException {
 		boolean found = false;
-		for (TokenType rparen : rparens) {
+		for (final TokenType rparen : rparens) {
 			if (t.getType() == rparen) {
 				// Expected do not happen
 				found = true;
@@ -364,7 +365,8 @@ public class SQLParser {
 			}
 		}
 		if (!found) {
-			throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", t.getValue()), SQLStates.INVALID_SQL);
+			throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", t.getValue()),
+					SQLStates.INVALID_SQL);
 		}
 		if (scanner.hasNext()) {
 			t = scanner.nextToken();

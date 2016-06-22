@@ -32,7 +32,6 @@ public class TableFilter implements FileFilter {
 		this.extension = extension;
 	}
 
-
 	@Override
 	public boolean accept(final File pathname) {
 		final String name = pathname.getName();

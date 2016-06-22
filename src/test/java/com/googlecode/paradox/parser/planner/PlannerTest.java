@@ -2,14 +2,18 @@ package com.googlecode.paradox.parser.planner;
 
 import java.sql.DriverManager;
 
-import com.googlecode.paradox.planner.plan.SelectPlan;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.planner.Planner;
-import com.googlecode.paradox.integration.MainTest;
+import com.googlecode.paradox.planner.plan.SelectPlan;
 
 public class PlannerTest {
 	public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
@@ -36,7 +40,7 @@ public class PlannerTest {
 	public void tableTest() throws Exception {
 		final SQLParser parser = new SQLParser("select * from areacodes a");
 		final Planner planner = new Planner(conn);
-		SelectPlan plan = (SelectPlan)planner.create(parser.parse().get(0));
+		final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
 		Assert.assertNotNull("No columns", plan.getColumns());
 		Assert.assertEquals("Num of columns in table", 3, plan.getColumns().size());
 		Assert.assertEquals("First column not 'AC'", "AC", plan.getColumns().get(0).getName());

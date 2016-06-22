@@ -10,11 +10,11 @@ import org.junit.Test;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.integration.MainTest;
+import com.googlecode.paradox.metadata.ParadoxField;
 
 /**
- * 
+ *
  * @author 72330554168
  */
 public class ViewDataTest {

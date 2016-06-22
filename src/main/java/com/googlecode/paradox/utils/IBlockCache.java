@@ -7,7 +7,9 @@ import java.util.List;
  */
 public interface IBlockCache {
 
-    ClobBlock get(int num, short offset);
-    void add(List<ClobBlock> blocks);
-    void close();
+	ClobBlock get(int num, short offset);
+
+	void add(List<ClobBlock> blocks);
+
+	void close();
 }

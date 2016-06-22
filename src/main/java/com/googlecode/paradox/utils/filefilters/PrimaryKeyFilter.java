@@ -14,27 +14,27 @@ import com.googlecode.paradox.utils.Expressions;
  */
 public class PrimaryKeyFilter implements FileFilter {
 
-    private final String pkName;
+	private final String pkName;
 
-    public PrimaryKeyFilter() {
-        pkName = null;
-    }
+	public PrimaryKeyFilter() {
+		pkName = null;
+	}
 
-    public PrimaryKeyFilter(final String pkName) {
-        this.pkName = pkName;
-    }
+	public PrimaryKeyFilter(final String pkName) {
+		this.pkName = pkName;
+	}
 
-    @Override
-    public boolean accept(final File pathname) {
-        final String name = pathname.getName();
+	@Override
+	public boolean accept(final File pathname) {
+		final String name = pathname.getName();
 
-        if (Expressions.accept(name, "%.PX")) {
-            if (pkName != null) {
-                return Expressions.accept(name, pkName);
-            }
-            return true;
-        }
-        return false;
-    }
+		if (Expressions.accept(name, "%.PX")) {
+			if (pkName != null) {
+				return Expressions.accept(name, pkName);
+			}
+			return true;
+		}
+		return false;
+	}
 
 }

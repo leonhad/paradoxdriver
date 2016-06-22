@@ -12,11 +12,11 @@ import org.junit.Test;
  */
 public class PrimaryKeyFilterTest {
 
-    private PrimaryKeyFilter filter = new PrimaryKeyFilter();
+	private final PrimaryKeyFilter filter = new PrimaryKeyFilter();
 
-    @Test
-    public void testAccept() {
-        File file = new File("teste.px");
-        assertTrue(filter.accept(file));
-    }
+	@Test
+	public void testAccept() {
+		final File file = new File("teste.px");
+		assertTrue(filter.accept(file));
+	}
 }

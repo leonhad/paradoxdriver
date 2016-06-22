@@ -1,8 +1,8 @@
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.utils.StringUtils;
-
 import java.util.ArrayList;
+
+import com.googlecode.paradox.utils.StringUtils;
 
 public class TableNode extends SQLNode {
 
@@ -29,6 +29,7 @@ public class TableNode extends SQLNode {
 		return builder.toString();
 	};
 
+	@Override
 	public String getAlias() {
 		return alias;
 	}
