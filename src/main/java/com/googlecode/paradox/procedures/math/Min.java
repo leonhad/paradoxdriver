@@ -12,25 +12,19 @@ import java.util.List;
  */
 public class Min extends CallableProcedure {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "min";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getRemarks() {
         return "Returns the row minimum value";
-    }
-
-    @Override
-    public List<ParadoxField> getCols() {
-        final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
-
-        final ParadoxField field = new ParadoxField();
-        field.setName("field");
-        field.setType((byte)0xC);
-        ret.add(field);
-
-        return ret;
     }
 }

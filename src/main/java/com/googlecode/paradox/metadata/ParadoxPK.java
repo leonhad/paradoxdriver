@@ -37,6 +37,6 @@ public class ParadoxPK extends AbstractTable {
      */
     @Override
     public boolean isValid() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 }

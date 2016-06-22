@@ -1,9 +1,11 @@
 package com.googlecode.paradox.utils;
 
 /**
- * Set string's utilities
+ * Set string's utilities.
  *
- * Created by Andre on 09.12.2014.
+ * @author Andre
+ * @since 09/12/2014.
+ * @version 1.1
  */
 public class StringUtils {
 
@@ -16,7 +18,7 @@ public class StringUtils {
     }
 
     private static String removeSuffix(String name, String suffix) {
-        if (name.toUpperCase().endsWith("." + suffix.toUpperCase())) {
+        if (name != null && name.toUpperCase().endsWith("." + suffix.toUpperCase())) {
             name = name.substring(0, name.length() - 3);
         }
         return name;

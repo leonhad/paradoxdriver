@@ -6,11 +6,11 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Defines the paradox table default structure
+ * Defines the paradox table default structure.
  *
  * @author Leonardo Alves da Costa
  * @since 03/12/2009
- * @version 1.1
+ * @version 1.2
  */
 public abstract class AbstractTable {
 
@@ -40,6 +40,11 @@ public abstract class AbstractTable {
         this.name = StringUtils.removeDb(name);
     }
     
+    /**
+     * Get the integrity check.
+     * 
+     * @return if this file is valid.
+     */
     public abstract boolean isValid();
 
     public ParadoxField findField(String name) {
