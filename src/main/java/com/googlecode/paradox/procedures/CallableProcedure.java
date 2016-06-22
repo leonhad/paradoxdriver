@@ -1,20 +1,33 @@
 package com.googlecode.paradox.procedures;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.paradox.metadata.ParadoxField;
+import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
 
 /**
  *
- * @author 72330554168
+ * @author Leonardo Alves da Costa
  */
-public interface CallableProcedure {
+public abstract class CallableProcedure {
 
-    public String getName();
+    public abstract String getName();
 
-    public String getRemarks();
+    public abstract String getRemarks();
 
-    public ArrayList<ParadoxField> getCols();
+    public List<ParadoxField> getCols() {
+        final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
 
-    public int getReturnType();
+        final ParadoxField field = new ParadoxField();
+        field.setName("field");
+        field.setType((byte)0xC);
+        ret.add(field);
+
+        return ret;
+    }
+
+    public int getReturnType() {
+        return DatabaseMetaData.procedureReturnsResult;
+    }
 }

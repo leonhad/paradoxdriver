@@ -10,18 +10,17 @@ import com.googlecode.paradox.procedures.math.Sum;
 
 /**
  *
- * @author 72330554168
+ * @author Leonardo Alves da Costa
  */
-public class ProcedureAS {
+public final class ProcedureAS {
 
-    private static final ProcedureAS instance = new ProcedureAS();
+    private static final ProcedureAS INSTANCE = new ProcedureAS();
 
     public static ProcedureAS getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
-
-    private ArrayList<CallableProcedure> procedures = new ArrayList<CallableProcedure>();
+    private final ArrayList<CallableProcedure> procedures = new ArrayList<CallableProcedure>();
 
     private ProcedureAS() {
         register(new Averange());

@@ -1,36 +1,19 @@
 package com.googlecode.paradox.procedures.math;
 
-import java.sql.DatabaseMetaData;
-import java.util.ArrayList;
-
-import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.procedures.CallableProcedure;
 
 /**
  *
- * @author 72330554168
+ * @author Leonardo Alves da Costa
  */
-public class Averange implements CallableProcedure {
+public class Averange extends CallableProcedure {
 
+    @Override
     public String getName() {
         return "averange";
     }
 
-    public ArrayList<ParadoxField> getCols() {
-        final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
-
-        final ParadoxField field = new ParadoxField();
-        field.setName("field");
-        field.setType((byte)0xC);
-        ret.add(field);
-
-        return ret;
-    }
-
-    public int getReturnType() {
-        return DatabaseMetaData.procedureReturnsResult;
-    }
-
+    @Override
     public String getRemarks() {
         return "Returns the avarange values.";
     }
