@@ -57,6 +57,29 @@ public abstract class AbstractTable {
         }
         return null;
     }
+    
+    /**
+     * Check if the tables are equals based on table name.
+     *
+     * @param obj the table to compare.
+     * @return true if the tables have the same name.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof ParadoxTable) {
+            return getName().equals(((AbstractTable) obj).getName());
+        }
+        return false;
+    }
+
+    /**
+     * Gets the table name hash code.
+     * @return the table name hash code.
+     */
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 
     public String getName() {
         return name;

@@ -21,19 +21,6 @@ public class ParadoxIndex extends AbstractTable {
         super(file, name);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj instanceof ParadoxTable) {
-            return getName().equals(((AbstractTable) obj).getName());
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
-    }
-
     public ArrayList<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
         for (int loop = 0; loop < primaryFieldCount; loop++) {

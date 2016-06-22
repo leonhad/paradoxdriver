@@ -34,29 +34,6 @@ public class ParadoxTable extends AbstractTable {
         return getName();
     }
 
-    /**
-     * Check if the tables are equals based on table name.
-     *
-     * @param obj the table to compare.
-     * @return true if the tables have the same name.
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj instanceof ParadoxTable) {
-            return getName().equals(((AbstractTable) obj).getName());
-        }
-        return false;
-    }
-
-    /**
-     * Gets the table name hash code.
-     * @return the table name hash code.
-     */
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
-    }
-
     public ArrayList<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
         for (int loop = 0; loop < primaryFieldCount; loop++) {
