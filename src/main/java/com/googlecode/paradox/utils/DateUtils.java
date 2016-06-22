@@ -59,7 +59,7 @@ public final class DateUtils {
         return new java.sql.Date(calendar.getTime().getTime());
     }
 
-    public static long gregorianToSdn(final int inputYear, final int inputMonth, final int inputDay) {
+    public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
         long year;
         long month;
 
@@ -81,16 +81,16 @@ public final class DateUtils {
 
         /* Make year always a positive number. */
         if (inputYear < 0) {
-            year = inputYear + 4801;
+            year = inputYear + 4801L;
         } else {
-            year = inputYear + 4800;
+            year = inputYear + 4800L;
         }
 
         /* Adjust the start of the year. */
         if (inputMonth > 2) {
-            month = inputMonth - 3;
+            month = inputMonth - 3L;
         } else {
-            month = inputMonth + 9;
+            month = inputMonth + 9L;
             year--;
         }
 
