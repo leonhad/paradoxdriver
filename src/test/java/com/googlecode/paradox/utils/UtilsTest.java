@@ -16,6 +16,7 @@ import com.googlecode.paradox.integration.MainTest;
 
 public class UtilsTest {
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+
     @BeforeClass
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());

@@ -10,12 +10,34 @@ import java.sql.Wrapper;
  * @since 1.2
  * @version 1.0
  */
-public final class Utils {
+public abstract class Utils {
+
     /**
-     * Not for instantiation.
+     * Returns true if this either implements the interface argument or is
+     * directly or indirectly a wrapper for an object that does. Returns false
+     * otherwise. If this implements the interface then return true, else if
+     * this is a wrapper then return the result of recursively calling
+     * <code>isWrapperFor</code> on the wrapped object. If this does not
+     * implement the interface and is not a wrapper, return false. This method
+     * should be implemented as a low-cost operation compared to
+     * <code>unwrap</code> so that callers can use this method to avoid
+     * expensive <code>unwrap</code> calls that may fail. If this method returns
+     * true then calling <code>unwrap</code> with the same argument should
+     * succeed.
+     *
+     * @param wrapper
+     *            wrapper to test for.
+     * @param iface
+     *            a Class defining an interface.
+     * @return true if this implements the interface or directly or indirectly
+     *         wraps an object that does.
+     * @throws java.sql.SQLException
+     *             if an error occurs while determining whether this is a
+     *             wrapper for an object with the given interface.
+     * @since 1.2
      */
-    private Utils() {
-        // Not used.
+    public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iface) throws SQLException {
+        return wrapper.getClass().isAssignableFrom(iface);
     }
 
     /**
@@ -48,33 +70,5 @@ public final class Utils {
             return (T) wrapper;
         }
         throw new SQLException("Type not found.", SQLStates.TYPE_NOT_FOUND);
-    }
-
-    /**
-     * Returns true if this either implements the interface argument or is
-     * directly or indirectly a wrapper for an object that does. Returns false
-     * otherwise. If this implements the interface then return true, else if
-     * this is a wrapper then return the result of recursively calling
-     * <code>isWrapperFor</code> on the wrapped object. If this does not
-     * implement the interface and is not a wrapper, return false. This method
-     * should be implemented as a low-cost operation compared to
-     * <code>unwrap</code> so that callers can use this method to avoid
-     * expensive <code>unwrap</code> calls that may fail. If this method returns
-     * true then calling <code>unwrap</code> with the same argument should
-     * succeed.
-     *
-     * @param wrapper
-     *            wrapper to test for.
-     * @param iface
-     *            a Class defining an interface.
-     * @return true if this implements the interface or directly or indirectly
-     *         wraps an object that does.
-     * @throws java.sql.SQLException
-     *             if an error occurs while determining whether this is a
-     *             wrapper for an object with the given interface.
-     * @since 1.2
-     */
-    public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iface) throws SQLException {
-        return wrapper.getClass().isAssignableFrom(iface);
     }
 }

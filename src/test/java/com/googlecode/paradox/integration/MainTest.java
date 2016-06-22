@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 
@@ -15,6 +16,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 
 /**
  * Generic tests for Paradox Driver
@@ -263,6 +265,12 @@ public class MainTest {
                 stmt.close();
             }
         }
+    }
+
+    @Test
+    public void testValidConnection() throws SQLException {
+        Assert.assertTrue(conn.isWrapperFor(ParadoxConnection.class));
+        Assert.assertNotNull(conn.unwrap(ParadoxConnection.class));
     }
 
     @Test
