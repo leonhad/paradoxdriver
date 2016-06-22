@@ -19,7 +19,7 @@ import java.util.List;
  *
  * Created by Andre on 11.12.2014.
  */
-public class BlobTable extends AbstractTable {
+public class BlobTable extends ParadoxDataFile {
 
     private static final int HEADER_BLOCK_SIZE = 0x1000;
     private static final short SINGLE_BLOCK = 2;

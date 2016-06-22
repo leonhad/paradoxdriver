@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author 72330554168
  */
-public class ParadoxIndex extends AbstractTable {
+public class ParadoxIndex extends ParadoxDataFile {
     
     private String sortOrderID;
     private String fatherName;

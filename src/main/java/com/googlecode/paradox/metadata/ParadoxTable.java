@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @since 14/03/2009
  * @version 1.1
  */
-public class ParadoxTable extends AbstractTable {
+public class ParadoxTable extends ParadoxDataFile {
 
     private ArrayList<Short> fieldsOrder;
     private Charset charset = forName("Cp437");

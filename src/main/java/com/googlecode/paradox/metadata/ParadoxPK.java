@@ -4,7 +4,7 @@ package com.googlecode.paradox.metadata;
  *
  * @author 72330554168
  */
-public class ParadoxPK extends AbstractTable {
+public class ParadoxPK extends ParadoxDataFile {
     private int indexFieldNumber;
 
     public ParadoxPK() {

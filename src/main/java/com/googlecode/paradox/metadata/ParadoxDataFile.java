@@ -6,13 +6,13 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Defines the paradox table default structure.
+ * Defines the paradox default file structure.
  *
  * @author Leonardo Alves da Costa
  * @since 03/12/2009
  * @version 1.2
  */
-public abstract class AbstractTable {
+public abstract class ParadoxDataFile {
 
     protected int recordSize;
     protected int headerSize;
@@ -35,14 +35,14 @@ public abstract class AbstractTable {
     private final File file;
     private String name;
 
-    public AbstractTable(final File file, final String name) {
+    public ParadoxDataFile(final File file, final String name) {
         this.file = file;
         this.name = StringUtils.removeDb(name);
     }
-    
+
     /**
      * Get the integrity check.
-     * 
+     *
      * @return if this file is valid.
      */
     public abstract boolean isValid();
@@ -56,29 +56,6 @@ public abstract class AbstractTable {
             }
         }
         return null;
-    }
-    
-    /**
-     * Check if the tables are equals based on table name.
-     *
-     * @param obj the table to compare.
-     * @return true if the tables have the same name.
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj instanceof ParadoxTable) {
-            return getName().equals(((AbstractTable) obj).getName());
-        }
-        return false;
-    }
-
-    /**
-     * Gets the table name hash code.
-     * @return the table name hash code.
-     */
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
     }
 
     public String getName() {

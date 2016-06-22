@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @since 03/12/2009
  * @version 1.0
  */
-public class ParadoxView extends AbstractTable {
+public class ParadoxView extends ParadoxDataFile {
 
     private boolean valid = false;
     private ArrayList<ParadoxField> privateFields;
