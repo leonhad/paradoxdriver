@@ -15,7 +15,6 @@ import java.util.ArrayList;
  */
 public class ParadoxTable extends AbstractTable {
 
-    private ArrayList<ParadoxField> fields;
     private ArrayList<Short> fieldsOrder;
     private Charset charset = forName("Cp437");
 
@@ -71,25 +70,10 @@ public class ParadoxTable extends AbstractTable {
     }
 
     /**
-     * @return the fields
-     */
-    @Override
-    public ArrayList<ParadoxField> getFields() {
-        return fields;
-    }
-
-    /**
      * @return the fieldsOrder
      */
     public ArrayList<Short> getFieldsOrder() {
         return fieldsOrder;
-    }
-
-    /**
-     * @param fields the fields to set
-     */
-    public void setFields(ArrayList<ParadoxField> fields) {
-        this.fields = fields;
     }
 
     /**

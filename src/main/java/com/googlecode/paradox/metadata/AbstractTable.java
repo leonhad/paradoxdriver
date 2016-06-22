@@ -3,6 +3,7 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.utils.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public abstract class AbstractTable {
     protected int autoIncrementValue;
     protected int firstFreeBlock;
     protected byte referencialIntegrity;
+    protected ArrayList<ParadoxField> fields;
 
     private final File file;
     private String name;
@@ -41,11 +43,9 @@ public abstract class AbstractTable {
     
     public abstract boolean isValid();
 
-    public abstract List<ParadoxField> getFields();
-
     public ParadoxField findField(String name) {
-        if (getFields() != null) {
-            for (ParadoxField field : getFields()) {
+        if (fields != null) {
+            for (ParadoxField field : fields) {
                 if (field.getName().equalsIgnoreCase(name)) {
                     return field;
                 }
@@ -192,5 +192,13 @@ public abstract class AbstractTable {
 
     public void setReferencialIntegrity(byte referencialIntegrity) {
         this.referencialIntegrity = referencialIntegrity;
+    }
+
+    public ArrayList<ParadoxField> getFields() {
+        return fields;
+    }
+
+    public void setFields(ArrayList<ParadoxField> fields) {
+        this.fields = fields;
     }
 }

@@ -14,7 +14,6 @@ public class ParadoxIndex extends AbstractTable {
     
     private String sortOrderID;
     private String fatherName;
-    private ArrayList<ParadoxField> fields;
     private ArrayList<Short> fieldsOrder;
     private Charset charset = forName("Cp437");
 
@@ -77,13 +76,6 @@ public class ParadoxIndex extends AbstractTable {
         }
     }
     
-    /**
-     * @return the fields
-     */
-    @Override
-    public ArrayList<ParadoxField> getFields() {
-        return fields;
-    }
 
     /**
      * @return the fieldsOrder
@@ -132,13 +124,6 @@ public class ParadoxIndex extends AbstractTable {
      */
     public void setFatherName(String fatherName) {
         this.fatherName = fatherName;
-    }
-
-    /**
-     * @param fields the fields to set
-     */
-    public void setFields(ArrayList<ParadoxField> fields) {
-        this.fields = fields;
     }
 
     /**
