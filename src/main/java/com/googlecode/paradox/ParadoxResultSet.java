@@ -29,6 +29,7 @@ import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.Utils;
 
 /**
  *
@@ -163,7 +164,7 @@ public class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN);
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? false : lastValue.getBoolean().booleanValue();
+        return lastValue.isNull() ? false : lastValue.getBoolean();
     }
 
     /**
@@ -223,7 +224,7 @@ public class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN);
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? 0l : lastValue.getNumber().longValue();
+        return lastValue.isNull() ? 0L : lastValue.getNumber().longValue();
     }
 
     /**
@@ -258,6 +259,7 @@ public class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}
+     * @deprecated
      */
     @Deprecated
     @Override
@@ -327,6 +329,7 @@ public class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}
+     * @deprecated
      */
     @Deprecated
     @Override
@@ -421,6 +424,7 @@ public class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}
+     * @deprecated
      */
     @Deprecated
     @Override
@@ -470,6 +474,7 @@ public class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}
+     * @deprecated
      */
     @Deprecated
     @Override
@@ -1663,10 +1668,7 @@ public class ParadoxResultSet implements ResultSet {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
-        if (isWrapperFor(iface)) {
-            return (T) this;
-        }
-        throw new SQLException("Tipo não encontrado.", SQLStates.TYPE_NOT_FOUND);
+        return Utils.unwrap(this, iface);
     }
 
     /**
@@ -1674,7 +1676,7 @@ public class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return getClass().isAssignableFrom(iface);
+        return Utils.isWrapperFor(this, iface);
     }
 
     /**

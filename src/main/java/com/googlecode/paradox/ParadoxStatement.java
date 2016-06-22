@@ -17,6 +17,7 @@ import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.Utils;
 
 /**
  * Statement para o PARADOX
@@ -27,286 +28,291 @@ import com.googlecode.paradox.utils.SQLStates;
  */
 public class ParadoxStatement implements Statement {
 
-	private final ParadoxConnection conn;
-	private boolean closed = false;
-	private int maxFieldSize = 255;
-	private int maxRows = 0;
-	private SQLWarning warnings = null;
-	private boolean poolable = false;
-	private int fetchSize = 10;
-	private ParadoxResultSet rs = null;
-	private int fetchDirection = ResultSet.FETCH_FORWARD;
-	private int queryTimeout = 20;
-	String cursorName = "NO_NAME";
+    private final ParadoxConnection conn;
+    private boolean closed = false;
+    private int maxFieldSize = 255;
+    private int maxRows = 0;
+    private SQLWarning warnings = null;
+    private boolean poolable = false;
+    private int fetchSize = 10;
+    private ParadoxResultSet rs = null;
+    private int fetchDirection = ResultSet.FETCH_FORWARD;
+    private int queryTimeout = 20;
+    String cursorName = "NO_NAME";
 
-	public ParadoxStatement(final ParadoxConnection conn) {
-		this.conn = conn;
-	}
+    public ParadoxStatement(final ParadoxConnection conn) {
+        this.conn = conn;
+    }
 
-	@Override
-	public ResultSet executeQuery(final String sql) throws SQLException {
-		if (rs != null && !rs.isClosed()) {
-			rs.close();
-		}
-		final SQLParser parser = new SQLParser(sql);
-		final ArrayList<StatementNode> statementList = parser.parse();
-		if (statementList.size() > 1) {
-			throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
-		}
-		final StatementNode node = statementList.get(0);
-		if (!(node instanceof SelectNode)) {
-			throw new SQLFeatureNotSupportedException("Not a SELECT statement.", SQLStates.INVALID_SQL);
-		}
-		executeSelect((SelectNode) node);
-		return rs;
-	}
-
-	@Override
-	public int executeUpdate(final String sql) throws SQLException {
-		throw new SQLFeatureNotSupportedException();
-	}
-
-	@Override
-	public void close() throws SQLException {
-		if (rs != null && !rs.isClosed()) {
-			rs.close();
-		}
-		closed = true;
-	}
-
-	@Override
-	public int getMaxFieldSize() throws SQLException {
-		return maxFieldSize;
-	}
-
-	@Override
-	public void setMaxFieldSize(final int max) throws SQLException {
-		if (max > 255) {
-			throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER);
-		}
-		maxFieldSize = max;
-	}
-
-	@Override
-	public int getMaxRows() throws SQLException {
-		return maxRows;
-	}
-
-	@Override
-	public void setMaxRows(final int max) throws SQLException {
-		maxRows = max;
-	}
-
-	@Override
-	public void setEscapeProcessing(final boolean enable) throws SQLException {
-	}
-
-	@Override
-	public int getQueryTimeout() throws SQLException {
-		return queryTimeout;
-	}
-
-	@Override
-	public void setQueryTimeout(final int seconds) throws SQLException {
-		queryTimeout = seconds;
-	}
-
-	@Override
-	public void cancel() throws SQLException {
-	}
-
-        public void setWarnings(SQLWarning warning) {
-            this.warnings = warning;
+    @Override
+    public ResultSet executeQuery(final String sql) throws SQLException {
+        if (rs != null && !rs.isClosed()) {
+            rs.close();
         }
+        final SQLParser parser = new SQLParser(sql);
+        final ArrayList<StatementNode> statementList = parser.parse();
+        if (statementList.size() > 1) {
+            throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
+        }
+        final StatementNode node = statementList.get(0);
+        if (!(node instanceof SelectNode)) {
+            throw new SQLFeatureNotSupportedException("Not a SELECT statement.", SQLStates.INVALID_SQL);
+        }
+        executeSelect((SelectNode) node);
+        return rs;
+    }
 
-	@Override
-	public SQLWarning getWarnings() throws SQLException {
-		return warnings;
-	}
+    @Override
+    public int executeUpdate(final String sql) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
 
-	@Override
-	public void clearWarnings() throws SQLException {
-		warnings = null;
-	}
+    @Override
+    public void close() throws SQLException {
+        if (rs != null && !rs.isClosed()) {
+            rs.close();
+        }
+        closed = true;
+    }
 
-	@Override
-	public void setCursorName(final String name) throws SQLException {
-		cursorName = name;
-	}
+    @Override
+    public int getMaxFieldSize() throws SQLException {
+        return maxFieldSize;
+    }
 
-	@Override
-	public boolean execute(final String sql) throws SQLException {
-		if (rs != null && !rs.isClosed()) {
-			rs.close();
-		}
-		boolean select = false;
-		final SQLParser parser = new SQLParser(sql);
-		final ArrayList<StatementNode> statements = parser.parse();
-		for (final StatementNode statement : statements) {
-			if (statement instanceof SelectNode) {
-				executeSelect((SelectNode) statement);
-				select = true;
-			}
-		}
-		return select;
-	}
+    @Override
+    public void setMaxFieldSize(final int max) throws SQLException {
+        if (max > 255) {
+            throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER);
+        }
+        maxFieldSize = max;
+    }
 
-	private void executeSelect(final SelectNode node) throws SQLException {
-		final Planner planner = new Planner(conn);
-		final SelectPlan plan = (SelectPlan) planner.create(node);
-		plan.execute();
+    @Override
+    public int getMaxRows() throws SQLException {
+        return maxRows;
+    }
 
-		// FIXME result set
-		rs = new ParadoxResultSet(conn, this, plan.getValues(), plan.getColumns());
-	}
+    @Override
+    public void setMaxRows(final int max) throws SQLException {
+        maxRows = max;
+    }
 
-	@Override
-	public ResultSet getResultSet() throws SQLException {
-		return rs;
-	}
+    @Override
+    public void setEscapeProcessing(final boolean enable) throws SQLException {
+    }
 
-	@Override
-	public int getUpdateCount() throws SQLException {
-		return -1;
-	}
+    @Override
+    public int getQueryTimeout() throws SQLException {
+        return queryTimeout;
+    }
 
-	@Override
-	public boolean getMoreResults() throws SQLException {
-		return false;
-	}
+    @Override
+    public void setQueryTimeout(final int seconds) throws SQLException {
+        queryTimeout = seconds;
+    }
 
-	@Override
-	public void setFetchDirection(final int direction) throws SQLException {
-		if (direction != ResultSet.FETCH_FORWARD) {
-			throw new SQLException("O resultset somente pode ser ResultSet.FETCH_FORWARD", SQLStates.INVALID_PARAMETER);
-		}
-		fetchDirection = direction;
-	}
+    @Override
+    public void cancel() throws SQLException {
+    }
 
-	@Override
-	public int getFetchDirection() throws SQLException {
-		return fetchDirection;
-	}
+    public void setWarnings(SQLWarning warning) {
+        this.warnings = warning;
+    }
 
-	@Override
-	public void setFetchSize(final int rows) throws SQLException {
-		fetchSize = rows;
-	}
+    @Override
+    public SQLWarning getWarnings() throws SQLException {
+        return warnings;
+    }
 
-	@Override
-	public int getFetchSize() throws SQLException {
-		return fetchSize;
-	}
+    @Override
+    public void clearWarnings() throws SQLException {
+        warnings = null;
+    }
 
-	@Override
-	public int getResultSetConcurrency() throws SQLException {
-		return ResultSet.CONCUR_READ_ONLY;
-	}
+    @Override
+    public void setCursorName(final String name) throws SQLException {
+        cursorName = name;
+    }
 
-	@Override
-	public int getResultSetType() throws SQLException {
-		return ResultSet.TYPE_FORWARD_ONLY;
-	}
+    @Override
+    public boolean execute(final String sql) throws SQLException {
+        if (rs != null && !rs.isClosed()) {
+            rs.close();
+        }
+        boolean select = false;
+        final SQLParser parser = new SQLParser(sql);
+        final ArrayList<StatementNode> statements = parser.parse();
+        for (final StatementNode statement : statements) {
+            if (statement instanceof SelectNode) {
+                executeSelect((SelectNode) statement);
+                select = true;
+            }
+        }
+        return select;
+    }
 
-	@Override
-	public void addBatch(final String sql) throws SQLException {
-		throw new SQLFeatureNotSupportedException();
-	}
+    private void executeSelect(final SelectNode node) throws SQLException {
+        final Planner planner = new Planner(conn);
+        final SelectPlan plan = (SelectPlan) planner.create(node);
+        plan.execute();
 
-	@Override
-	public void clearBatch() throws SQLException {
-		throw new SQLFeatureNotSupportedException();
-	}
+        // FIXME result set
+        rs = new ParadoxResultSet(conn, this, plan.getValues(), plan.getColumns());
+    }
 
-	@Override
-	public int[] executeBatch() throws SQLException {
-		throw new SQLFeatureNotSupportedException();
-	}
+    @Override
+    public ResultSet getResultSet() throws SQLException {
+        return rs;
+    }
 
-	@Override
-	public Connection getConnection() throws SQLException {
-		return conn;
-	}
+    @Override
+    public int getUpdateCount() throws SQLException {
+        return -1;
+    }
 
-	@Override
-	public boolean getMoreResults(final int current) throws SQLException {
-		return false;
-	}
+    @Override
+    public boolean getMoreResults() throws SQLException {
+        return false;
+    }
 
-	@Override
-	public ResultSet getGeneratedKeys() throws SQLException {
-		return new ParadoxResultSet(conn, this, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
-	}
+    @Override
+    public void setFetchDirection(final int direction) throws SQLException {
+        if (direction != ResultSet.FETCH_FORWARD) {
+            throw new SQLException("O resultset somente pode ser ResultSet.FETCH_FORWARD", SQLStates.INVALID_PARAMETER);
+        }
+        fetchDirection = direction;
+    }
 
-	@Override
-	public int executeUpdate(final String sql, final int autoGeneratedKeys) throws SQLException {
-		return 0;
-	}
+    @Override
+    public int getFetchDirection() throws SQLException {
+        return fetchDirection;
+    }
 
-	@Override
-	public int executeUpdate(final String sql, final int[] columnIndexes) throws SQLException {
-		return 0;
-	}
+    @Override
+    public void setFetchSize(final int rows) throws SQLException {
+        fetchSize = rows;
+    }
 
-	@Override
-	public int executeUpdate(final String sql, final String[] columnNames) throws SQLException {
-		return 0;
-	}
+    @Override
+    public int getFetchSize() throws SQLException {
+        return fetchSize;
+    }
 
-	@Override
-	public boolean execute(final String sql, final int autoGeneratedKeys) throws SQLException {
-		return execute(sql);
-	}
+    @Override
+    public int getResultSetConcurrency() throws SQLException {
+        return ResultSet.CONCUR_READ_ONLY;
+    }
 
-	@Override
-	public boolean execute(final String sql, final int[] columnIndexes) throws SQLException {
-		return execute(sql);
-	}
+    @Override
+    public int getResultSetType() throws SQLException {
+        return ResultSet.TYPE_FORWARD_ONLY;
+    }
 
-	@Override
-	public boolean execute(final String sql, final String[] columnNames) throws SQLException {
-		return execute(sql);
-	}
+    @Override
+    public void addBatch(final String sql) throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
 
-	@Override
-	public int getResultSetHoldability() throws SQLException {
-		return conn.getHoldability();
-	}
+    @Override
+    public void clearBatch() throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
 
-	@Override
-	public boolean isClosed() throws SQLException {
-		return closed;
-	}
+    @Override
+    public int[] executeBatch() throws SQLException {
+        throw new SQLFeatureNotSupportedException();
+    }
 
-	@Override
-	public void setPoolable(final boolean poolable) throws SQLException {
-		this.poolable = poolable;
-	}
+    @Override
+    public Connection getConnection() throws SQLException {
+        return conn;
+    }
 
-	@Override
-	public boolean isPoolable() throws SQLException {
-		return poolable;
-	}
+    @Override
+    public boolean getMoreResults(final int current) throws SQLException {
+        return false;
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> T unwrap(final Class<T> iface) throws SQLException {
-		if (isWrapperFor(iface)) {
-			return (T) this;
-		}
-		throw new SQLException("Type not found.", SQLStates.TYPE_NOT_FOUND);
-	}
+    @Override
+    public ResultSet getGeneratedKeys() throws SQLException {
+        return new ParadoxResultSet(conn, this, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
+    }
 
-	@Override
-	public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-		return getClass().isAssignableFrom(iface);
-	}
+    @Override
+    public int executeUpdate(final String sql, final int autoGeneratedKeys) throws SQLException {
+        return 0;
+    }
 
-	public void closeOnCompletion() throws SQLException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+    @Override
+    public int executeUpdate(final String sql, final int[] columnIndexes) throws SQLException {
+        return 0;
+    }
 
-	public boolean isCloseOnCompletion() throws SQLException {
-		return true;
-	}
+    @Override
+    public int executeUpdate(final String sql, final String[] columnNames) throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public boolean execute(final String sql, final int autoGeneratedKeys) throws SQLException {
+        return execute(sql);
+    }
+
+    @Override
+    public boolean execute(final String sql, final int[] columnIndexes) throws SQLException {
+        return execute(sql);
+    }
+
+    @Override
+    public boolean execute(final String sql, final String[] columnNames) throws SQLException {
+        return execute(sql);
+    }
+
+    @Override
+    public int getResultSetHoldability() throws SQLException {
+        return conn.getHoldability();
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException {
+        return closed;
+    }
+
+    @Override
+    public void setPoolable(final boolean poolable) throws SQLException {
+        this.poolable = poolable;
+    }
+
+    @Override
+    public boolean isPoolable() throws SQLException {
+        return poolable;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T unwrap(final Class<T> iface) throws SQLException {
+        return Utils.unwrap(this, iface);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
+        return Utils.isWrapperFor(this, iface);
+    }
+
+    @Override
+    public void closeOnCompletion() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isCloseOnCompletion() throws SQLException {
+        return true;
+    }
 }

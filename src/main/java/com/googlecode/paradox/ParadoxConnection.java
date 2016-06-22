@@ -30,6 +30,7 @@ import java.util.concurrent.Executor;
 
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.Utils;
 
 /**
  * Conexão JDBC com o PARADOX.
@@ -231,6 +232,7 @@ public class ParadoxConnection implements Connection {
         return catalog;
     }
 
+    @Override
     public String getSchema() throws SQLException {
         return schema;
     }
@@ -407,36 +409,43 @@ public class ParadoxConnection implements Connection {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
-        if (isWrapperFor(iface)) {
-            return (T) this;
-        }
-        throw new SQLException("Type not found.", SQLStates.TYPE_NOT_FOUND);
+        return Utils.unwrap(this, iface);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return getClass().isAssignableFrom(iface);
+        return Utils.isWrapperFor(this, iface);
     }
 
     public File getDir() {
         return dir;
     }
 
+    @Override
     public void setSchema(final String schema) throws SQLException {
         this.schema = schema;
     }
 
+    @Override
     public void abort(final Executor executor) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
 
+    @Override
     public void setNetworkTimeout(final Executor executor, final int milliseconds) throws SQLException {
         networkTimeout = milliseconds;
     }
 
+    @Override
     public int getNetworkTimeout() throws SQLException {
         return networkTimeout;
     }

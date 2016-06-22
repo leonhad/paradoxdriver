@@ -21,7 +21,7 @@ import com.googlecode.paradox.procedures.ProcedureAS;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
-import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.Utils;
 
 /**
  *
@@ -1893,18 +1893,21 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T unwrap(final Class<T> iface) throws SQLException {
-        if (isWrapperFor(iface)) {
-            return (T) this;
-        }
-        throw new SQLException("Type not found.", SQLStates.TYPE_NOT_FOUND);
+        return Utils.unwrap(this, iface);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return getClass().isAssignableFrom(iface);
+        return Utils.isWrapperFor(this, iface);
     }
 
     /**
