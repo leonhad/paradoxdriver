@@ -10,13 +10,13 @@ import java.sql.Wrapper;
  * @since 1.2
  * @version 1.0
  */
-public class Utils {
+public final class Utils {
 
     /**
      * Utility class, not for use.
      */
     private Utils() {
-        throw new IllegalAccessError("Utility class");
+        // Not for use.
     }
 
     /**
