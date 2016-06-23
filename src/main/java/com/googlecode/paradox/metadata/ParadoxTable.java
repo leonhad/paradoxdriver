@@ -69,7 +69,7 @@ public class ParadoxTable extends ParadoxDataFile {
         return fieldsOrder;
     }
 
-    public ArrayList<ParadoxField> getPrimaryKeys() {
+    public List<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
         for (int loop = 0; loop < primaryFieldCount; loop++) {
             ret.add(fields.get(loop));
