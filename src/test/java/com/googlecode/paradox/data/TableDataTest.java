@@ -2,6 +2,7 @@ package com.googlecode.paradox.data;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +27,6 @@ public class TableDataTest {
         Class.forName(Driver.class.getName());
     }
 
-    @Before
-    public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
-    }
-
     @After
     public void closeConnection() throws Exception {
         if (conn != null) {
@@ -38,8 +34,18 @@ public class TableDataTest {
         }
     }
 
+    @Before
+    public void connect() throws SQLException {
+        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+    }
+
     @Test
-    public void testLoadAreaCodes() throws Exception {
+    public void testInvalidTable() throws SQLException {
+        Assert.assertEquals(0, TableData.listTables(conn, "not found.db").size());
+    }
+
+    @Test
+    public void testLoadAreaCodes() throws SQLException {
         final List<ParadoxTable> tables = TableData.listTables(conn, "areacodes.db");
         Assert.assertNotNull("List tables is null", tables);
         Assert.assertTrue("List tables is empty", tables.size() > 0);
@@ -49,7 +55,7 @@ public class TableDataTest {
     }
 
     @Test
-    public void testLoadContacts() throws Exception {
+    public void testLoadContacts() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "contacts.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));
@@ -57,7 +63,7 @@ public class TableDataTest {
     }
 
     @Test
-    public void testLoadCustomer() throws Exception {
+    public void testLoadCustomer() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "customer.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));
@@ -65,13 +71,13 @@ public class TableDataTest {
     }
 
     @Test
-    public void testLoadHercules() throws Exception {
+    public void testLoadHercules() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "hercules.db").get(0);
         TableData.loadData(conn, table, table.getFields());
     }
 
     @Test
-    public void testLoadOrders() throws Exception {
+    public void testLoadOrders() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "orders.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));
@@ -79,7 +85,7 @@ public class TableDataTest {
     }
 
     @Test
-    public void testLoadServer() throws Exception {
+    public void testLoadServer() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "server.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));

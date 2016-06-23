@@ -25,6 +25,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.DateUtils;
+import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.StringUtils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
@@ -71,9 +72,9 @@ public class TableData {
     }
 
     public static List<List<FieldValue>> loadData(final ParadoxConnection conn, final ParadoxTable table,
-            final Collection<ParadoxField> fields) throws IOException, SQLException {
+            final Collection<ParadoxField> fields) throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<List<FieldValue>>();
-        final FileInputStream fs = new FileInputStream(table.getFile());
+
         final int blockSize = table.getBlockSizeBytes();
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
@@ -81,7 +82,9 @@ public class TableData {
         final ByteBuffer valueString = ByteBuffer.allocate(Constants.MAX_STRING_SIZE);
         FileChannel channel = null;
 
+        FileInputStream fs = null;
         try {
+            fs = new FileInputStream(table.getFile());
             channel = fs.getChannel();
 
             if (table.getUsedBlocks() > 0) {
@@ -244,11 +247,23 @@ public class TableData {
                     }
                 } while (nextBlock != 0);
             }
+        } catch(final IOException e) {
+            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
         } finally {
             if (channel != null) {
-                channel.close();
+                try {
+                    channel.close();
+                } catch(final IOException e) {
+                    throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
+                }
             }
-            fs.close();
+            if (fs != null) {
+                try {
+                    fs.close();
+                } catch(final IOException e) {
+                    throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
+                }
+            }
         }
         return ret;
     }

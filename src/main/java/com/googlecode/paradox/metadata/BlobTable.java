@@ -25,16 +25,16 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
  */
 public class BlobTable extends ParadoxDataFile {
 
+    private static final short FREE_BLOCK = 4;
     private static final int HEADER_BLOCK_SIZE = 0x1000;
     private static final short SINGLE_BLOCK = 2;
     private static final short SUB_BLOCK = 3;
-    private static final short FREE_BLOCK = 4;
 
-    private boolean isParsed;
-    private boolean isEnd;
-    private FileInputStream fs;
-    private FileChannel channel = null;
     private final IBlockCache cache;
+    private FileChannel channel = null;
+    private FileInputStream fs;
+    private boolean isEnd;
+    private boolean isParsed;
     private int numBlock = 0;
 
     public BlobTable(final File file, final String name) {
@@ -44,92 +44,12 @@ public class BlobTable extends ParadoxDataFile {
         fields = Collections.emptyList();
     }
 
-    @Override
-    public boolean isValid() {
-        return false;
-    }
-
-    /**
-     * Read length bytes from offset position in mb file.
-     *
-     * @param pOffset
-     *            offset of the blob's data block in the MB file and an index
-     *            value.
-     * @return the data values.
-     * @throws SQLException
-     *             in case of parse errors.
-     */
-    public byte[] read(final long pOffset) throws SQLException {
-        final short offset = (short) (pOffset & 0xFF);
-
-        // if (offset == 0xFF) {
-        // blockType = SINGLE_BLOCK;
-        // } else {
-        // blockType = SUB_BLOCK;
-        // }
-
-        final int blockNum = getBlockNum(pOffset);
-        if (!isParsed) {
-            open();
-            parse();
-        }
-        return getData(blockNum, offset);
-    }
-
-    public boolean isParsed() {
-        return isEnd;
-    }
-
     public void close() throws SQLException {
         try {
             fs.close();
         } catch (final IOException ex) {
             throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
         }
-    }
-
-    private void open() throws SQLException {
-        try {
-            final File blobFile = openBlob();
-            fs = new FileInputStream(blobFile);
-            channel = fs.getChannel();
-        } catch (final IOException ex) {
-            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
-        }
-    }
-
-    private void parse() throws SQLException {
-        try {
-            // First block - always 4k bytes
-            channel.position(0);
-            final ByteBuffer buffer = ByteBuffer.allocate(1);
-            buffer.order(ByteOrder.LITTLE_ENDIAN);
-            buffer.clear();
-            channel.read(buffer);
-            buffer.flip();
-            final byte headerType = buffer.get();
-            if (headerType != 0) {
-                throw new SQLException("Invalid blob format for '" + getName() + "'", SQLStates.LOAD_DATA);
-            }
-            // No read header (while not necessary)
-            channel.position(HEADER_BLOCK_SIZE);
-            numBlock++;
-            isParsed = true;
-        } catch (final IOException ex) {
-            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
-        }
-    }
-
-    private File openBlob() throws SQLException {
-        final String name = StringUtils.removeDb(getFile().getName());
-        final File[] fileList = getFile().getParentFile().listFiles(new TableFilter(name, "mb"));
-        if (fileList == null || fileList.length == 0) {
-            throw new SQLException(String.format("Blob file not found for table '%s'", name), SQLStates.LOAD_DATA);
-        }
-        if (fileList.length > 1) {
-            throw new SQLException(String.format("Many blob files for table '%s'", name), SQLStates.LOAD_DATA);
-        }
-        return fileList[0];
     }
 
     /**
@@ -169,6 +89,86 @@ public class BlobTable extends ParadoxDataFile {
             throw new SQLException("Block " + blockNum + " not found. Invalid mb file", SQLStates.LOAD_DATA);
         }
         return block.getValue();
+    }
+
+    public boolean isParsed() {
+        return isEnd;
+    }
+
+    @Override
+    public boolean isValid() {
+        return false;
+    }
+
+    private void open() throws SQLException {
+        try {
+            final File blobFile = openBlob();
+            fs = new FileInputStream(blobFile);
+            channel = fs.getChannel();
+        } catch (final IOException ex) {
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
+        }
+    }
+
+    private File openBlob() throws SQLException {
+        final String name = StringUtils.removeDb(getFile().getName());
+        final File[] fileList = getFile().getParentFile().listFiles(new TableFilter(name, "mb"));
+        if (fileList == null || fileList.length == 0) {
+            throw new SQLException(String.format("Blob file not found for table '%s'", name), SQLStates.LOAD_DATA);
+        }
+        if (fileList.length > 1) {
+            throw new SQLException(String.format("Many blob files for table '%s'", name), SQLStates.LOAD_DATA);
+        }
+        return fileList[0];
+    }
+
+    private void parse() throws SQLException {
+        try {
+            // First block - always 4k bytes
+            channel.position(0);
+            final ByteBuffer buffer = ByteBuffer.allocate(1);
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+            buffer.clear();
+            channel.read(buffer);
+            buffer.flip();
+            final byte headerType = buffer.get();
+            if (headerType != 0) {
+                throw new SQLException("Invalid blob format for '" + getName() + "'", SQLStates.LOAD_DATA);
+            }
+            // No read header (while not necessary)
+            channel.position(HEADER_BLOCK_SIZE);
+            numBlock++;
+            isParsed = true;
+        } catch (final IOException ex) {
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
+        }
+    }
+
+    /**
+     * Read length bytes from offset position in mb file.
+     *
+     * @param pOffset
+     *            offset of the blob's data block in the MB file and an index
+     *            value.
+     * @return the data values.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    public byte[] read(final long pOffset) throws SQLException {
+        final short offset = (short) (pOffset & 0xFF);
+
+        // if (offset == 0xFF) {
+        // blockType = SINGLE_BLOCK;
+        // } else {
+        // blockType = SUB_BLOCK;
+        // }
+
+        final int blockNum = getBlockNum(pOffset);
+        if (!isParsed) {
+            open();
+            parse();
+        }
+        return getData(blockNum, offset);
     }
 
     private ClobBlock readBlock(final int blockNum, final short offset) throws SQLException {
@@ -231,16 +231,16 @@ public class BlobTable extends ParadoxDataFile {
                     channel.read(blockPointer);
                     blockPointer.flip();
                     final short offset = (short) (blockPointer.get() * 0x10); // Data
-                                                                              // offset
-                                                                              // divided
-                                                                              // by
-                                                                              // 16
+                    // offset
+                    // divided
+                    // by
+                    // 16
                     int ln = blockPointer.get() * 0x10; // Data length divided
-                                                        // by 16 (rounded up)
+                    // by 16 (rounded up)
                     blockPointer.getShort();
                     // This is reset to 1 by a table restructure.
                     final int mdl = blockPointer.get(); // Data length modulo
-                                                        // 16.
+                    // 16.
                     // If offset is zero, then the blob was deleted and
                     // the space has been reused for another blob
                     if (offset != 0) {
@@ -268,7 +268,7 @@ public class BlobTable extends ParadoxDataFile {
                 channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
                 numBlock++;
             } else {
-                throw new SQLException("Unsupported CLOB block type: " + headerType, SQLStates.CLOB_READ);
+                throw new SQLException("Unsupported CLOB block type: " + headerType, SQLStates.TYPE_NOT_FOUND);
             }
         } catch (final IOException ex) {
             throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
