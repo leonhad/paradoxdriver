@@ -30,10 +30,12 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 public class TableData {
 
-    public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
-            throws SQLException {
+    private TableData() {
+    }
+
+    public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
-        final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
+        final File[] fileList = conn.getDir().listFiles(new TableFilter());
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
@@ -49,9 +51,10 @@ public class TableData {
         return tables;
     }
 
-    public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
+    public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
+            throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
-        final File[] fileList = conn.getDir().listFiles(new TableFilter());
+        final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
@@ -167,7 +170,7 @@ public class TableData {
                                 } else if (v == -127) {
                                     fieldValue = new FieldValue(Boolean.TRUE, Types.BOOLEAN);
                                 } else if (v == -128) {
-                                    fieldValue = new FieldValue(Boolean.TRUE, Types.BOOLEAN);
+                                    fieldValue = new FieldValue(Boolean.FALSE, Types.BOOLEAN);
                                 } else {
                                     throw new SQLException("Invalid value " + v + ".");
                                 }
@@ -186,12 +189,9 @@ public class TableData {
                                 value.flip();
 
                                 buffer.order(ByteOrder.LITTLE_ENDIAN);
-                                final long offset = buffer.getInt();// &
-                                                                    // 0x7FFFFFFF;
-                                final long length = buffer.getInt();// &
-                                                                    // 0x7FFFFFFF;
-                                final short modificator = buffer.getShort();// &
-                                                                            // 0x7FFF;
+                                final long offset = buffer.getInt();
+                                final long length = buffer.getInt();
+                                final short modificator = buffer.getShort();
                                 buffer.order(ByteOrder.BIG_ENDIAN);
 
                                 final ClobDescriptor descriptor = new ClobDescriptor(table.getBlobTable());
@@ -377,8 +377,5 @@ public class TableData {
         buffer.flip();
         buffer.limit(length);
         return charset.decode(buffer).toString();
-    }
-
-    private TableData() {
     }
 }
