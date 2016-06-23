@@ -29,12 +29,13 @@ import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.StringUtils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
-public class TableData {
+public final class TableData {
 
     private TableData() {
+        // Utility class.
     }
 
-    public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
+    public static List<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter());
         if (fileList != null) {
@@ -52,9 +53,9 @@ public class TableData {
         return tables;
     }
 
-    public static ArrayList<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
+    public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
             throws SQLException {
-        final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
+        final List<ParadoxTable> tables = new ArrayList<ParadoxTable>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
         if (fileList != null) {
             for (final File file : fileList) {
@@ -107,7 +108,7 @@ public class TableData {
                     buffer.order(ByteOrder.BIG_ENDIAN);
 
                     for (int loop = 0; loop < rowsInBlock; loop++) {
-                        final ArrayList<FieldValue> row = new ArrayList<FieldValue>();
+                        final List<FieldValue> row = new ArrayList<FieldValue>();
 
                         for (final ParadoxField field : table.getFields()) {
                             FieldValue fieldValue = null;
@@ -315,7 +316,7 @@ public class TableData {
                 buffer.position(0x58);
             }
 
-            final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+            final List<ParadoxField> fields = new ArrayList<ParadoxField>();
             for (int loop = 0; loop < table.getFieldCount(); loop++) {
                 final ParadoxField field = new ParadoxField(loop + 1);
                 field.setType(buffer.get());
@@ -355,7 +356,7 @@ public class TableData {
             }
             table.setFields(fields);
 
-            final ArrayList<Short> fieldsOrder = new ArrayList<Short>();
+            final List<Short> fieldsOrder = new ArrayList<Short>();
             for (int loop = 0; loop < table.getFieldCount(); loop++) {
                 fieldsOrder.add(buffer.getShort());
             }

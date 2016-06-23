@@ -19,11 +19,54 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
-public class ViewData {
+public final class ViewData {
 
     private static final Charset CHARSET = Charset.forName("Cp1250");
 
     private ViewData() {
+        // Utility class.
+    }
+
+    private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
+        ParadoxField originalField = null;
+        for (final ParadoxField f : table.getFields()) {
+            if (f.getName().equals(name)) {
+                originalField = f;
+                break;
+            }
+        }
+        if (originalField == null) {
+            originalField = new ParadoxField();
+            originalField.setType((byte) 1);
+        }
+        return originalField;
+    }
+
+    private static ParadoxTable getTable(final ParadoxConnection conn, final String tableName) throws SQLException {
+        final List<ParadoxTable> tables = TableData.listTables(conn, tableName.trim());
+        if (!tables.isEmpty()) {
+            return tables.get(0);
+        }
+        throw new SQLException("Table " + tableName + " not found");
+    }
+
+    public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
+        final List<ParadoxView> views = new ArrayList<ParadoxView>();
+        final File[] fileList = conn.getDir().listFiles(new ViewFilter());
+        if (fileList != null) {
+            for (final File file : fileList) {
+                final ParadoxView view;
+                try {
+                    view = ViewData.loadView(conn, file);
+                } catch (final IOException ex) {
+                    throw new SQLException("Error loading Paradox views.", ex);
+                }
+                if (view.isValid()) {
+                    views.add(view);
+                }
+            }
+        }
+        return views;
     }
 
     public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName)
@@ -37,25 +80,6 @@ public class ViewData {
                     view = ViewData.loadView(conn, file);
                 } catch (final IOException ex) {
                     throw new SQLException("Error loading Paradox tables.", ex);
-                }
-                if (view.isValid()) {
-                    views.add(view);
-                }
-            }
-        }
-        return views;
-    }
-
-    public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
-        final List<ParadoxView> views = new ArrayList<ParadoxView>();
-        final File[] fileList = conn.getDir().listFiles(new ViewFilter());
-        if (fileList != null) {
-            for (final File file : fileList) {
-                final ParadoxView view;
-                try {
-                    view = ViewData.loadView(conn, file);
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox views.", ex);
                 }
                 if (view.isValid()) {
                     views.add(view);
@@ -234,34 +258,6 @@ public class ViewData {
         return view;
     }
 
-    private static String readLine(final BufferedReader reader) throws IOException {
-        final String line = reader.readLine();
-        return line != null ? line.trim() : null;
-    }
-
-    private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
-        ParadoxField originalField = null;
-        for (final ParadoxField f : table.getFields()) {
-            if (f.getName().equals(name)) {
-                originalField = f;
-                break;
-            }
-        }
-        if (originalField == null) {
-            originalField = new ParadoxField();
-            originalField.setType((byte) 1);
-        }
-        return originalField;
-    }
-
-    private static ParadoxTable getTable(final ParadoxConnection conn, final String tableName) throws SQLException {
-        final ArrayList<ParadoxTable> tables = TableData.listTables(conn, tableName.trim());
-        if (!tables.isEmpty()) {
-            return tables.get(0);
-        }
-        throw new SQLException("Table " + tableName + " not found");
-    }
-
     public static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
@@ -304,5 +300,10 @@ public class ViewData {
                 field.setChecked(true);
             }
         }
+    }
+
+    private static String readLine(final BufferedReader reader) throws IOException {
+        final String line = reader.readLine();
+        return line != null ? line.trim() : null;
     }
 }

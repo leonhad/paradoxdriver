@@ -2,7 +2,7 @@ package com.googlecode.paradox.planner;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
@@ -35,9 +35,9 @@ public class Planner {
 
     private Plan createSelect(final SelectNode statement) throws SQLException {
         final SelectPlan plan = new SelectPlan(conn);
-        final ArrayList<ParadoxTable> paradoxTables = TableData.listTables(conn);
+        final List<ParadoxTable> paradoxTables = TableData.listTables(conn);
 
-        // Load the table metadata
+        // Load the table metadata.
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
             for (final ParadoxTable paradoxTable : paradoxTables) {

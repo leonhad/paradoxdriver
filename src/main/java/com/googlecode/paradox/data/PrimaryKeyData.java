@@ -16,7 +16,11 @@ import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 
-public class PrimaryKeyData {
+public final class PrimaryKeyData {
+
+    private PrimaryKeyData() {
+        // Utility class.
+    }
 
     public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
         final String name = table.getName() + ".PX";
@@ -93,8 +97,5 @@ public class PrimaryKeyData {
             fs.close();
         }
         return pk;
-    }
-
-    private PrimaryKeyData() {
     }
 }

@@ -5,33 +5,68 @@ import static java.nio.charset.Charset.forName;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Load Table Data
+ * Represents a table data file.
  *
- * @author Leonardo Costa
- * @since 14/03/2009
- * @version 1.1
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.2
  */
 public class ParadoxTable extends ParadoxDataFile {
 
-    private ArrayList<Short> fieldsOrder;
-    private Charset charset = forName("Cp437");
-
     private BlobTable blobFile = null;
 
+    /**
+     * Table charset.
+     */
+    private Charset charset = forName("Cp437");
+
+    /**
+     * Fields order in file.
+     */
+    private List<Short> fieldsOrder;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param file table references file.
+     * @param name table name.
+     */
     public ParadoxTable(final File file, final String name) {
         super(file, name);
     }
 
+    public BlobTable getBlobTable() {
+        if (blobFile == null) {
+            blobFile = new BlobTable(getFile(), getName());
+        }
+        return blobFile;
+    }
+
     /**
-     * Gets the table name.
+     * Return the block size in bytes.
      *
-     * @return the table name.
+     * @return the block size in bytes.
      */
-    @Override
-    public String toString() {
-        return getName();
+    public int getBlockSizeBytes() {
+        // The blockSize is always in KiB
+        return blockSize * 1024;
+    }
+
+    /**
+     * @return the charset.
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    /**
+     * @return the fieldsOrder.
+     */
+    public List<Short> getFieldsOrder() {
+        return fieldsOrder;
     }
 
     public ArrayList<ParadoxField> getPrimaryKeys() {
@@ -43,19 +78,9 @@ public class ParadoxTable extends ParadoxDataFile {
     }
 
     /**
-     * Return the block size in bytes
+     * If this table is valid.
      *
-     * @return the block size in bytes
-     */
-    public int getBlockSizeBytes() {
-        // The blockSize is always in KiB
-        return blockSize * 1024;
-    }
-
-    /**
-     * If this table is valid
-     *
-     * @return true if this table is valid
+     * @return true if this table is valid.
      */
     @Override
     public boolean isValid() {
@@ -63,39 +88,32 @@ public class ParadoxTable extends ParadoxDataFile {
     }
 
     /**
-     * @return the fieldsOrder
-     */
-    public ArrayList<Short> getFieldsOrder() {
-        return fieldsOrder;
-    }
-
-    /**
-     * @param fieldsOrder
-     *            the fieldsOrder to set
-     */
-    public void setFieldsOrder(final ArrayList<Short> fieldsOrder) {
-        this.fieldsOrder = fieldsOrder;
-    }
-
-    /**
-     * @return the charset
-     */
-    public Charset getCharset() {
-        return charset;
-    }
-
-    /**
+     * Sets the charset.
+     *
      * @param charset
-     *            the charset to set
+     *            the charset to set.
      */
     public void setCharset(final Charset charset) {
         this.charset = charset;
     }
 
-    public BlobTable getBlobTable() {
-        if (blobFile == null) {
-            blobFile = new BlobTable(getFile(), getName());
-        }
-        return blobFile;
+    /**
+     * Sets the file order.
+     *
+     * @param fieldsOrder
+     *            the fieldsOrder to set.
+     */
+    public void setFieldsOrder(final List<Short> fieldsOrder) {
+        this.fieldsOrder = fieldsOrder;
+    }
+
+    /**
+     * Gets the table name.
+     *
+     * @return the table name.
+     */
+    @Override
+    public String toString() {
+        return getName();
     }
 }

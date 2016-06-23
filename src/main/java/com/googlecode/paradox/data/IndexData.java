@@ -17,7 +17,11 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
 
-public class IndexData {
+public final class IndexData {
+
+    private IndexData() {
+        // Utility class.
+    }
 
     public static ArrayList<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
             throws SQLException {
@@ -161,8 +165,5 @@ public class IndexData {
             fs.close();
         }
         return index;
-    }
-
-    private IndexData() {
     }
 }
