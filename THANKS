@@ -1,0 +1,37 @@
+Paradox Driver THANKS file
+
+Paradox Driver was originally written by Leonardo Alves da Costa.  It would
+not be what it is today without the invaluable help of these people,
+who have reported problems, suggested improvements, or submitted
+actual code.  Please help us keep this list complete and free from
+errors.  Also see the AUTHORS file for the list of people with
+contributions significant enough to warrant copyright assignment.
+
+Andre Mikhaylov				upgoto@gmail.com
+Luis Alberto Tofoli			luis.tofoli@sgisistemas.com.br
+Pedro Henrique de Oliveira Silva	pedrospsjc@gmail.com
+
+Many people are not named here because we lost track of them.  We
+thank them!  Please, help us keep this list up to date.
+
+================
+
+Local Variables:
+mode: text
+coding: utf-8
+End:
+
+Copyright (C) 2009 Leonardo Alves da Costa.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
