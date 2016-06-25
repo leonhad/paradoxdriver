@@ -1,22 +1,57 @@
+/*
+ * ViewData.java
+ *
+ * 06/20/2015
+ * Copyright (C) 2016 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.utils;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Wrapper;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Driver utilities.
  *
  * @author Leonardo Alves da Costa
  * @since 1.2
- * @version 1.0
+ * @version 1.1
  */
 public final class Utils {
 
+    private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
+
     /**
-     * Utility class, not for use.
+     * Utility class.
      */
     private Utils() {
-        // Not for use.
+        // Utility class.
+    }
+
+    public static void close(Closeable stream) {
+        try {
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (final IOException e) {
+            LOGGER.log(Level.FINER, e.getMessage(), e);
+        }
     }
 
     /**

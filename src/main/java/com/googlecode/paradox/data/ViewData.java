@@ -36,6 +36,8 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
 /**
@@ -100,12 +102,7 @@ public final class ViewData {
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
             for (final File file : fileList) {
-                final ParadoxView view;
-                try {
-                    view = ViewData.loadView(conn, file);
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox views.", ex);
-                }
+                final ParadoxView view = ViewData.loadView(conn, file);
                 if (view.isValid()) {
                     views.add(view);
                 }
@@ -115,15 +112,16 @@ public final class ViewData {
     }
 
     private static ParadoxView loadView(final ParadoxConnection conn, final File file)
-            throws IOException, SQLException {
+            throws SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(8192);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
-        final FileInputStream fs = new FileInputStream(file);
+        FileInputStream fs = null;
         final ParadoxView view = new ParadoxView(file, file.getName());
 
         try {
+            fs = new FileInputStream(file);
             channel = fs.getChannel();
             channel.read(buffer);
             buffer.flip();
@@ -220,11 +218,11 @@ public final class ViewData {
 
             view.setFields(fields);
             view.setValid(true);
+        } catch(final IOException e) {
+            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
         } finally {
-            if (channel != null) {
-                channel.close();
-            }
-            fs.close();
+            Utils.close(channel);
+            Utils.close(fs);
         }
         return view;
     }

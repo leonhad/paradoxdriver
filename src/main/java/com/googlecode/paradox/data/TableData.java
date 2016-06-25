@@ -46,6 +46,7 @@ import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.DateUtils;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 /**
@@ -69,13 +70,9 @@ public final class TableData {
         final File[] fileList = conn.getDir().listFiles(new TableFilter());
         if (fileList != null) {
             for (final File file : fileList) {
-                try {
-                    final ParadoxTable table = TableData.loadTableHeader(file);
-                    if (table.isValid()) {
-                        tables.add(table);
-                    }
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox tables.", ex);
+                final ParadoxTable table = TableData.loadTableHeader(file);
+                if (table.isValid()) {
+                    tables.add(table);
                 }
             }
         }
@@ -88,13 +85,9 @@ public final class TableData {
         final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
         if (fileList != null) {
             for (final File file : fileList) {
-                try {
-                    final ParadoxTable table = TableData.loadTableHeader(file);
-                    if (table.isValid()) {
-                        tables.add(table);
-                    }
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox tables.", ex);
+                final ParadoxTable table = TableData.loadTableHeader(file);
+                if (table.isValid()) {
+                    tables.add(table);
                 }
             }
         }
@@ -280,32 +273,21 @@ public final class TableData {
         } catch(final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
         } finally {
-            if (channel != null) {
-                try {
-                    channel.close();
-                } catch(final IOException e) {
-                    throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
-                }
-            }
-            if (fs != null) {
-                try {
-                    fs.close();
-                } catch(final IOException e) {
-                    throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
-                }
-            }
+            Utils.close(channel);
+            Utils.close(fs);
         }
         return ret;
     }
 
-    private static ParadoxTable loadTableHeader(final File file) throws IOException, SQLException {
-        final FileInputStream fs = new FileInputStream(file);
+    private static ParadoxTable loadTableHeader(final File file) throws SQLException {
         final ParadoxTable table = new ParadoxTable(file, file.getName());
         ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
+        FileInputStream fs = null;
 
         try {
+            fs = new FileInputStream(file);
             channel = fs.getChannel();
             channel.read(buffer);
             buffer.flip();
@@ -390,11 +372,11 @@ public final class TableData {
                 fieldsOrder.add(buffer.getShort());
             }
             table.setFieldsOrder(fieldsOrder);
+        } catch(final IOException e) {
+            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
         } finally {
-            if (channel != null) {
-                channel.close();
-            }
-            fs.close();
+            Utils.close(channel);
+            Utils.close(fs);
         }
         return table;
     }
