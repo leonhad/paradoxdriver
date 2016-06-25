@@ -6,10 +6,10 @@ import java.io.FileFilter;
 import com.googlecode.paradox.utils.Expressions;
 
 /**
- * Paradox View Filter
+ * Paradox View Filter.
  *
  * @author Leonardo Alves da Costa
- * @since 04/12/2009
+ * @since 1.0
  * @version 1.0
  */
 public class ViewFilter implements FileFilter {

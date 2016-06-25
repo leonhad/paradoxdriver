@@ -38,6 +38,13 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
+/**
+ * Read view files (structure).
+ *
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.1
+ */
 public final class ViewData {
 
     /**
@@ -67,6 +74,14 @@ public final class ViewData {
         return originalField;
     }
 
+    /**
+     * Get the {@link ParadoxTable} by name.
+     *
+     * @param conn the connection.
+     * @param tableName the table name.
+     * @return the {@link ParadoxTable}.
+     * @throws SQLException if the table doesn't exist.
+     */
     private static ParadoxTable getTable(final ParadoxConnection conn, final String tableName) throws SQLException {
         final List<ParadoxTable> tables = TableData.listTables(conn, tableName.trim());
         if (!tables.isEmpty()) {
