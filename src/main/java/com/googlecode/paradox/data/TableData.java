@@ -36,7 +36,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.googlecode.paradox.ParadoxConnection;
@@ -104,13 +103,8 @@ public final class TableData {
         final int headerSize = table.getHeaderSize();
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
         final ByteBuffer valueString = ByteBuffer.allocate(Constants.MAX_STRING_SIZE);
-        FileChannel channel = null;
 
-        FileInputStream fs = null;
-        try {
-            fs = new FileInputStream(table.getFile());
-            channel = fs.getChannel();
-
+        try (FileInputStream fs = new FileInputStream(table.getFile()); FileChannel channel = fs.getChannel()) {
             if (table.getUsedBlocks() > 0) {
                 long nextBlock = table.getFirstBlock();
                 do {
@@ -272,21 +266,6 @@ public final class TableData {
             }
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
-        } finally {
-            try {
-                if (channel != null) {
-                    channel.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.log(Level.FINER, e.getMessage(), e);
-            }
-            try {
-                if (fs != null) {
-                    fs.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.log(Level.FINER, e.getMessage(), e);
-            }
         }
         return ret;
     }
@@ -295,12 +274,8 @@ public final class TableData {
         final ParadoxTable table = new ParadoxTable(file, file.getName());
         ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        FileChannel channel = null;
-        FileInputStream fs = null;
 
-        try {
-            fs = new FileInputStream(file);
-            channel = fs.getChannel();
+        try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
 
@@ -386,21 +361,6 @@ public final class TableData {
             table.setFieldsOrder(fieldsOrder);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
-        } finally {
-            try {
-                if (channel != null) {
-                    channel.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.log(Level.FINER, e.getMessage(), e);
-            }
-            try {
-                if (fs != null) {
-                    fs.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.log(Level.FINER, e.getMessage(), e);
-            }
         }
         return table;
     }

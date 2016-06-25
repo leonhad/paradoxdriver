@@ -94,6 +94,13 @@ public final class ViewData {
         throw new SQLException("Table " + tableName + " not found");
     }
 
+    /**
+     * Returns all connections view.
+     *
+     * @param conn the connection.
+     * @return a list of all views.
+     * @throws SQLException in case of failures.
+     */
     public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
         return listViews(conn, null);
     }
