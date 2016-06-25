@@ -19,12 +19,8 @@
  */
 package com.googlecode.paradox.utils;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Wrapper;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Driver utilities.
@@ -35,23 +31,11 @@ import java.util.logging.Logger;
  */
 public final class Utils {
 
-    private static final Logger LOGGER = Logger.getLogger(Utils.class.getName());
-
     /**
      * Utility class.
      */
     private Utils() {
         // Utility class.
-    }
-
-    public static void close(Closeable stream) {
-        try {
-            if (stream != null) {
-                stream.close();
-            }
-        } catch (final IOException e) {
-            LOGGER.log(Level.FINER, e.getMessage(), e);
-        }
     }
 
     /**

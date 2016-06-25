@@ -31,13 +31,14 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
 /**
@@ -53,6 +54,8 @@ public final class ViewData {
      * Default charset.
      */
     private static final Charset CHARSET = Charset.forName("Cp1250");
+
+    private static final Logger LOGGER = Logger.getLogger(ViewData.class.getName());
 
     /**
      * Utility class.
@@ -221,8 +224,20 @@ public final class ViewData {
         } catch(final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
         } finally {
-            Utils.close(channel);
-            Utils.close(fs);
+            try {
+                if (channel != null) {
+                    channel.close();
+                }
+            } catch (final IOException e) {
+                LOGGER.log(Level.FINER, e.getMessage(), e);
+            }
+            try {
+                if (fs != null) {
+                    fs.close();
+                }
+            } catch (final IOException e) {
+                LOGGER.log(Level.FINER, e.getMessage(), e);
+            }
         }
         return view;
     }
