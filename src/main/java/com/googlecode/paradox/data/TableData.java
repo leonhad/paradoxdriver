@@ -1,3 +1,22 @@
+/*
+ * TableData.java
+ *
+ * 03/14/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.data;
 
 import java.io.File;
@@ -29,8 +48,18 @@ import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.StringUtils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
+/**
+ * Utility class for loading table files.
+ *
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.1
+ */
 public final class TableData {
 
+    /**
+     * Utility class.
+     */
     private TableData() {
         // Utility class.
     }
@@ -373,13 +402,13 @@ public final class TableData {
     /**
      * Convert the Paradox VARCHAR to Java String.
      *
-     * The paradox fill the entire buffer with zeros at end of VARCHAR literals
+     * The paradox fill the entire buffer with zeros at end of VARCHAR literals.
      *
      * @param buffer
-     *            VARCHAR Buffer to convert
+     *            VARCHAR Buffer to convert.
      * @param charset
-     *            Table Charset (in Java Format)
-     * @return a Java String
+     *            Table Charset (in Java Format).
+     * @return a string formatted.
      */
     private static String parseString(final ByteBuffer buffer, final Charset charset) {
         final byte[] value = buffer.array();
