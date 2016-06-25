@@ -1,3 +1,22 @@
+/*
+ * ViewData.java
+ *
+ * 03/14/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.data;
 
 import java.io.BufferedReader;
@@ -21,8 +40,14 @@ import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
 public final class ViewData {
 
+    /**
+     * Default charset.
+     */
     private static final Charset CHARSET = Charset.forName("Cp1250");
 
+    /**
+     * Utility class.
+     */
     private ViewData() {
         // Utility class.
     }
@@ -51,22 +76,7 @@ public final class ViewData {
     }
 
     public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
-        final List<ParadoxView> views = new ArrayList<ParadoxView>();
-        final File[] fileList = conn.getDir().listFiles(new ViewFilter());
-        if (fileList != null) {
-            for (final File file : fileList) {
-                final ParadoxView view;
-                try {
-                    view = ViewData.loadView(conn, file);
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox views.", ex);
-                }
-                if (view.isValid()) {
-                    views.add(view);
-                }
-            }
-        }
-        return views;
+        return listViews(conn, null);
     }
 
     public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName)
@@ -79,7 +89,7 @@ public final class ViewData {
                 try {
                     view = ViewData.loadView(conn, file);
                 } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox tables.", ex);
+                    throw new SQLException("Error loading Paradox views.", ex);
                 }
                 if (view.isValid()) {
                     views.add(view);
@@ -124,35 +134,7 @@ public final class ViewData {
                 if (line != null && line.startsWith("FIELDORDER: ")) {
                     line = line.substring("FIELDORDER: ".length());
 
-                    do {
-                        line += readLine(reader);
-                    } while (line.endsWith(","));
-
-                    ParadoxTable lastTable = null;
-                    final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
-                    final String[] cols = line.split("\\,");
-                    for (final String col : cols) {
-                        final String[] i = col.split("->");
-                        final ParadoxField field = new ParadoxField();
-
-                        if (i.length < 2) {
-                            if (lastTable == null) {
-                                throw new SQLException("Invalid table.");
-                            }
-                            // TODO review. Paradox looks the number after
-                            // columns (always calc fileds)
-                            // field.setName(getFieldByIndex(lastTable, i));
-                            continue;
-                        } else {
-                            lastTable = ViewData.getTable(conn, i[0]);
-                            field.setName(i[1].substring(1, i[1].length() - 1));
-                        }
-                        final ParadoxField originalField = ViewData.getFieldByName(lastTable, field.getName());
-
-                        field.setType(originalField.getType());
-                        field.setSize(originalField.getSize());
-                        fields.add(field);
-                    }
+                    final ArrayList<ParadoxField> fields = readFields(conn, reader);
                     view.setFieldsOrder(fields);
 
                     // Extra line
@@ -169,35 +151,7 @@ public final class ViewData {
                 if (line != null && line.startsWith("SORT: ")) {
                     line = line.substring("SORT: ".length());
 
-                    do {
-                        line += readLine(reader);
-                    } while (line.endsWith(","));
-
-                    ParadoxTable lastTable = null;
-                    final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
-                    final String[] cols = line.split("\\,");
-                    for (final String col : cols) {
-                        final String[] i = col.split("->");
-                        final ParadoxField field = new ParadoxField();
-
-                        if (i.length < 2) {
-                            if (lastTable == null) {
-                                throw new SQLException("Invalid table.");
-                            }
-                            // TODO review. Paradox looks the number after
-                            // columns (always calc fileds)
-                            // field.setName(getFieldByIndex(lastTable, i));
-                            continue;
-                        } else {
-                            lastTable = ViewData.getTable(conn, i[0]);
-                            field.setName(i[1].substring(1, i[1].length() - 1));
-                        }
-                        final ParadoxField originalField = ViewData.getFieldByName(lastTable, field.getName());
-
-                        field.setType(originalField.getType());
-                        field.setSize(originalField.getSize());
-                        fields.add(field);
-                    }
+                    final ArrayList<ParadoxField> fields = readFields(conn, reader);
                     view.setFieldsSort(fields);
 
                     // Extra Line
@@ -300,6 +254,41 @@ public final class ViewData {
                 field.setChecked(true);
             }
         }
+    }
+
+    private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader) throws IOException, SQLException {
+
+        String line = "";
+        do {
+            line += readLine(reader);
+        } while (line.endsWith(","));
+
+        ParadoxTable lastTable = null;
+        final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+        final String[] cols = line.split("\\,");
+        for (final String col : cols) {
+            final String[] i = col.split("->");
+            final ParadoxField field = new ParadoxField();
+
+            if (i.length < 2) {
+                if (lastTable == null) {
+                    throw new SQLException("Invalid table.");
+                }
+                // TODO review. Paradox looks the number after
+                // columns (always calc fileds)
+                // field.setName(getFieldByIndex(lastTable, i));
+                continue;
+            } else {
+                lastTable = ViewData.getTable(conn, i[0]);
+                field.setName(i[1].substring(1, i[1].length() - 1));
+            }
+            final ParadoxField originalField = ViewData.getFieldByName(lastTable, field.getName());
+
+            field.setType(originalField.getType());
+            field.setSize(originalField.getSize());
+            fields.add(field);
+        }
+        return fields;
     }
 
     private static String readLine(final BufferedReader reader) throws IOException {
