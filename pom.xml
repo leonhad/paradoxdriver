@@ -11,10 +11,10 @@
     <description>A Paradox Java Driver (using JDBC 4)</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.6</maven.compiler.source>
-        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.java.source>1.6</sonar.java.source>
+        <sonar.java.source>1.7</sonar.java.source>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <jacoco.outputDir>${project.build.directory}/</jacoco.outputDir>
         <jacoco.out.ut.file>jacoco.exec</jacoco.out.ut.file>

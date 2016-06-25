@@ -82,8 +82,7 @@ public final class TableData {
         return tables;
     }
 
-    public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
-            throws SQLException {
+    public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<ParadoxTable>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
         if (fileList != null) {
@@ -97,8 +96,7 @@ public final class TableData {
         return tables;
     }
 
-    public static List<List<FieldValue>> loadData(final ParadoxConnection conn, final ParadoxTable table,
-            final Collection<ParadoxField> fields) throws SQLException {
+    public static List<List<FieldValue>> loadData(final ParadoxConnection conn, final ParadoxTable table, final Collection<ParadoxField> fields) throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<List<FieldValue>>();
 
         final int blockSize = table.getBlockSizeBytes();
@@ -149,8 +147,7 @@ public final class TableData {
                                 for (int chars = 0; chars < field.getSize(); chars++) {
                                     valueString.put(buffer.get());
                                 }
-                                fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()),
-                                        Types.VARCHAR);
+                                fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()), Types.VARCHAR);
                                 break;
                             }
                             case 2: {
@@ -273,7 +270,7 @@ public final class TableData {
                     }
                 } while (nextBlock != 0);
             }
-        } catch(final IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
         } finally {
             try {
@@ -387,7 +384,7 @@ public final class TableData {
                 fieldsOrder.add(buffer.getShort());
             }
             table.setFieldsOrder(fieldsOrder);
-        } catch(final IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
         } finally {
             try {

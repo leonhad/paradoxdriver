@@ -135,8 +135,7 @@ public class SQLParser {
                 } else {
                     expect(TokenType.IDENTIFIER);
 
-                    if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS
-                            || t.getType() == TokenType.PERIOD) {
+                    if (t.getType() == TokenType.IDENTIFIER || t.getType() == TokenType.AS || t.getType() == TokenType.PERIOD) {
                         // If it has a Table Name
                         if (t.getType() == TokenType.PERIOD) {
                             expect(TokenType.PERIOD);
@@ -365,8 +364,7 @@ public class SQLParser {
             }
         }
         if (!found) {
-            throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", t.getValue()),
-                    SQLStates.INVALID_SQL);
+            throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", t.getValue()), SQLStates.INVALID_SQL);
         }
         if (scanner.hasNext()) {
             t = scanner.nextToken();

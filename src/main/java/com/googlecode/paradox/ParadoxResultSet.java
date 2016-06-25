@@ -75,8 +75,7 @@ public class ParadoxResultSet implements ResultSet {
     private final List<List<FieldValue>> values;
     private SQLWarning warnings = null;
 
-    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
-            final List<List<FieldValue>> values, final List<Column> columns) {
+    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement, final List<List<FieldValue>> values, final List<Column> columns) {
         this.statement = statement;
         this.values = values;
         this.columns = columns;
@@ -1188,8 +1187,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length)
-            throws SQLException {
+    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1245,8 +1243,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length)
-            throws SQLException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1254,8 +1251,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length)
-            throws SQLException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1279,8 +1275,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length)
-            throws SQLException {
+    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1304,8 +1299,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length)
-            throws SQLException {
+    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1393,8 +1387,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length)
-            throws SQLException {
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1402,8 +1395,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length)
-            throws SQLException {
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1563,8 +1555,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length)
-            throws SQLException {
+    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 

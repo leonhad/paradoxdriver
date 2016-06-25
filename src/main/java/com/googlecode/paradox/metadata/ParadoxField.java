@@ -158,7 +158,7 @@ public class ParadoxField {
 
     /**
      * Gets the field size.
-     * 
+     *
      * @return the size.
      */
     public short getSize() {
@@ -167,7 +167,7 @@ public class ParadoxField {
 
     /**
      * Sets the field size.
-     * 
+     *
      * @param size
      *            the size to set
      * @throws SQLException

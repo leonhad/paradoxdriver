@@ -49,20 +49,16 @@ public class BlobTest {
 
             Assert.assertTrue("First record not exists", rs.next());
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            Assert.assertEquals("Small comment (less 100 symbols)",
-                    rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()));
+            Assert.assertEquals("Small comment (less 100 symbols)", rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()));
             Assert.assertTrue("Second record not exists", rs.next());
             Assert.assertNotNull("Second comment is null", rs.getClob("comments"));
             Assert.assertEquals("2 row: Medium comment (about 500 symbols)", 518, rs.getClob("comments").length());
-            Assert.assertTrue("2 row: Start with:\tIf you define", rs.getClob("comments")
-                    .getSubString(1, (int) rs.getClob("comments").length()).startsWith("\tThe length of the"));
-            Assert.assertTrue("2 row: End with: later in this document.", rs.getClob("comments")
-                    .getSubString(1, (int) rs.getClob("comments").length()).endsWith("later in this document."));
+            Assert.assertTrue("2 row: Start with:\tIf you define", rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()).startsWith("\tThe length of the"));
+            Assert.assertTrue("2 row: End with: later in this document.", rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()).endsWith("later in this document."));
             Assert.assertTrue("Third record not exists", rs.next());
             Assert.assertNotNull("Third comment is null", rs.getClob("comments"));
             Assert.assertEquals("3 row: Medium comment (318 symbols)", 318, rs.getClob("comments").length());
-            Assert.assertTrue("3 row: Start with:mvn",
-                    rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()).startsWith("mvn"));
+            Assert.assertTrue("3 row: Start with:mvn", rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()).startsWith("mvn"));
 
             Assert.assertTrue("Fourth record not exists", rs.next());
             Assert.assertNotNull("Fourth comment is null", rs.getClob("comments"));
@@ -100,8 +96,7 @@ public class BlobTest {
             final String expected = "При разработке электронных сервисов необходимо придерживаться следующих спецификаций:\r\n"
                     + "\tспецификация универсального описания, поиска и интеграции электронных сервисов Universal Description "
                     + "Discovery and Integration (UDDI) версии 2.0 - стандарт Организации по развитию стандартов "
-                    + "структурированной информации Organization for the Advancement of Structured Information Standards "
-                    + "(OASIS) - спецификация носит обязательный характер;\r\n";
+                    + "структурированной информации Organization for the Advancement of Structured Information Standards " + "(OASIS) - спецификация носит обязательный характер;\r\n";
             // String expected = "Удивительное устройство USB-флешки Kingston
             // DataTraveler";
             final String real = c.getSubString(1, (int) c.length());

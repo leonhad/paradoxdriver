@@ -31,8 +31,6 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -54,8 +52,6 @@ public final class ViewData {
      * Default charset.
      */
     private static final Charset CHARSET = Charset.forName("Cp1250");
-
-    private static final Logger LOGGER = Logger.getLogger(ViewData.class.getName());
 
     /**
      * Utility class.
@@ -82,10 +78,13 @@ public final class ViewData {
     /**
      * Get the {@link ParadoxTable} by name.
      *
-     * @param conn the connection.
-     * @param tableName the table name.
+     * @param conn
+     *            the connection.
+     * @param tableName
+     *            the table name.
      * @return the {@link ParadoxTable}.
-     * @throws SQLException if the table doesn't exist.
+     * @throws SQLException
+     *             if the table doesn't exist.
      */
     private static ParadoxTable getTable(final ParadoxConnection conn, final String tableName) throws SQLException {
         final List<ParadoxTable> tables = TableData.listTables(conn, tableName.trim());
@@ -99,8 +98,7 @@ public final class ViewData {
         return listViews(conn, null);
     }
 
-    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName)
-            throws SQLException {
+    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
         final List<ParadoxView> views = new ArrayList<ParadoxView>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
@@ -114,18 +112,12 @@ public final class ViewData {
         return views;
     }
 
-    private static ParadoxView loadView(final ParadoxConnection conn, final File file)
-            throws SQLException {
+    private static ParadoxView loadView(final ParadoxConnection conn, final File file) throws SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(8192);
-
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        FileChannel channel = null;
-        FileInputStream fs = null;
         final ParadoxView view = new ParadoxView(file, file.getName());
 
-        try {
-            fs = new FileInputStream(file);
-            channel = fs.getChannel();
+        try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
 
@@ -221,23 +213,8 @@ public final class ViewData {
 
             view.setFields(fields);
             view.setValid(true);
-        } catch(final IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
-        } finally {
-            try {
-                if (channel != null) {
-                    channel.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.log(Level.FINER, e.getMessage(), e);
-            }
-            try {
-                if (fs != null) {
-                    fs.close();
-                }
-            } catch (final IOException e) {
-                LOGGER.log(Level.FINER, e.getMessage(), e);
-            }
         }
         return view;
     }

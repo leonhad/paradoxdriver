@@ -47,7 +47,7 @@ public class FieldValue {
 
     /**
      * Constructor used for NULL values.
-     * 
+     *
      * @param type
      *            field type.
      */

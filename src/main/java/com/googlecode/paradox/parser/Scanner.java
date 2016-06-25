@@ -95,7 +95,7 @@ public class Scanner {
         value.delete(0, value.length());
         boolean characters = false;
         while (hasNext()) {
-            char c = nextChar();
+            final char c = nextChar();
 
             // ignore separators
             if (isSeparator(c)) {

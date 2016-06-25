@@ -57,7 +57,7 @@ public class UtilsTest {
         Assert.assertTrue(Utils.isWrapperFor(conn, ParadoxConnection.class));
     }
 
-    @Test(expected=SQLException.class)
+    @Test(expected = SQLException.class)
     public void testUnwrapImpossive() throws Exception {
         Utils.unwrap(conn, Integer.class);
     }

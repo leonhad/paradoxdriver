@@ -31,8 +31,10 @@ public class ParadoxTable extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file table references file.
-     * @param name table name.
+     * @param file
+     *            table references file.
+     * @param name
+     *            table name.
      */
     public ParadoxTable(final File file, final String name) {
         super(file, name);

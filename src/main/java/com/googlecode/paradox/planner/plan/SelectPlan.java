@@ -68,9 +68,7 @@ public class SelectPlan implements Plan {
                 if (column.getTableName().equalsIgnoreCase(pTable.getName())) {
                     final ParadoxField field = pTable.findField(column.getName());
                     if (field == null) {
-                        throw new SQLException(
-                                "Column '" + column.getName() + "' not found in table '" + pTable.getName(),
-                                SQLStates.INVALID_FIELD_VALUE);
+                        throw new SQLException("Column '" + column.getName() + "' not found in table '" + pTable.getName(), SQLStates.INVALID_FIELD_VALUE);
                     }
                     // load table data
                     final List<List<FieldValue>> tableData = TableData.loadData(conn, pTable, pTable.getFields());

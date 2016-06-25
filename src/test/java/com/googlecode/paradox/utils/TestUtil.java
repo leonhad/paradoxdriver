@@ -15,9 +15,7 @@ public class TestUtil {
      * @param classReference
      *            utility class to verify.
      */
-    public static void assertUtilityClassWellDefined(final Class<?> classReference)
-            throws NoSuchMethodException, InvocationTargetException,
-            InstantiationException, IllegalAccessException {
+    public static void assertUtilityClassWellDefined(final Class<?> classReference) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Assert.assertTrue("class must be final", Modifier.isFinal(classReference.getModifiers()));
         Assert.assertEquals("There must be only one constructor", 1, classReference.getDeclaredConstructors().length);
         final Constructor<?> constructor = classReference.getDeclaredConstructor();
@@ -28,8 +26,7 @@ public class TestUtil {
         constructor.newInstance();
         constructor.setAccessible(false);
         for (final Method method : classReference.getMethods()) {
-            if (!Modifier.isStatic(method.getModifiers())
-                    && method.getDeclaringClass().equals(classReference)) {
+            if (!Modifier.isStatic(method.getModifiers()) && method.getDeclaringClass().equals(classReference)) {
                 Assert.fail("there exists a non-static method:" + method);
             }
         }

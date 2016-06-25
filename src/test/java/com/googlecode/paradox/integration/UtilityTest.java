@@ -27,10 +27,14 @@ public class UtilityTest {
     /**
      * Test for utilities classes.
      *
-     * @throws NoSuchMethodException in case of not well formed class.
-     * @throws InvocationTargetException in case of not well formed class.
-     * @throws InstantiationException in case of not well formed class.
-     * @throws IllegalAccessException in case of not well formed class.
+     * @throws NoSuchMethodException
+     *             in case of not well formed class.
+     * @throws InvocationTargetException
+     *             in case of not well formed class.
+     * @throws InstantiationException
+     *             in case of not well formed class.
+     * @throws IllegalAccessException
+     *             in case of not well formed class.
      */
     @Test
     public void testClassesIntegrity() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

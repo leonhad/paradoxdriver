@@ -23,8 +23,7 @@ public final class IndexData {
         // Utility class.
     }
 
-    public static ArrayList<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
-            throws SQLException {
+    public static ArrayList<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<ParadoxIndex>();
         final String indexNamePattern = tableName.substring(0, tableName.lastIndexOf('.')) + ".X??";
         final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
