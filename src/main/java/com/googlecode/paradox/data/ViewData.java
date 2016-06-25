@@ -113,13 +113,84 @@ public final class ViewData {
             channel.read(buffer);
             buffer.flip();
 
-            final BufferedReader reader = new BufferedReader(
-                    new StringReader(ViewData.CHARSET.decode(buffer).toString()));
+            final BufferedReader reader = new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));
+
             if ("Query".equals(reader.readLine())) {
-                // ANSWER
-                String line = reader.readLine();
+                return view;
+            }
+
+            // ANSWER
+            String line = reader.readLine();
+            if (line == null) {
+                return view;
+            }
+
+            // Extra Line
+            line = reader.readLine();
+            if (line == null) {
+                return view;
+            }
+
+            line = readLine(reader);
+
+            // FIELDORDER
+            if (line != null && line.startsWith("FIELDORDER: ")) {
+                line = line.substring("FIELDORDER: ".length());
+
+                final ArrayList<ParadoxField> fields = readFields(conn, reader);
+                view.setFieldsOrder(fields);
+
+                // Extra line
+                line = reader.readLine();
                 if (line == null) {
                     return view;
+                }
+
+                // New Line
+                line = reader.readLine().trim();
+            }
+
+            // SORT
+            if (line != null && line.startsWith("SORT: ")) {
+                line = line.substring("SORT: ".length());
+
+                final ArrayList<ParadoxField> fields = readFields(conn, reader);
+                view.setFieldsSort(fields);
+
+                // Extra Line
+                line = reader.readLine();
+                if (line == null) {
+                    return view;
+                }
+
+                // New Line
+                line = readLine(reader);
+            }
+
+            final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+            while (line != null && !"EndQuery".equals(line)) {
+                // Fields
+                final String[] flds = line.split("\\|");
+                final String table = flds[0].trim();
+
+                for (int loop = 1; loop < flds.length; loop++) {
+                    final String name = flds[loop].trim();
+                    final ParadoxField field = new ParadoxField();
+                    final ParadoxField original = ViewData.getFieldByName(ViewData.getTable(conn, table), name);
+
+                    field.setTableName(table);
+                    field.setName(name);
+                    field.setType(original.getType());
+                    field.setSize(original.getSize());
+                    fields.add(field);
+                }
+                line = reader.readLine();
+                final String[] types = line.split("\\|");
+                for (int loop = 1; loop < types.length; loop++) {
+                    if (types[loop].trim().length() > 0) {
+                        final ParadoxField field = fields.get(loop - 1);
+                        ViewData.parseExpression(field, types[loop]);
+                    }
                 }
 
                 // Extra Line
@@ -128,81 +199,12 @@ public final class ViewData {
                     return view;
                 }
 
+                // New Line
                 line = readLine(reader);
-
-                // FIELDORDER
-                if (line != null && line.startsWith("FIELDORDER: ")) {
-                    line = line.substring("FIELDORDER: ".length());
-
-                    final ArrayList<ParadoxField> fields = readFields(conn, reader);
-                    view.setFieldsOrder(fields);
-
-                    // Extra line
-                    line = reader.readLine();
-                    if (line == null) {
-                        return view;
-                    }
-
-                    // New Line
-                    line = reader.readLine().trim();
-                }
-
-                // SORT
-                if (line != null && line.startsWith("SORT: ")) {
-                    line = line.substring("SORT: ".length());
-
-                    final ArrayList<ParadoxField> fields = readFields(conn, reader);
-                    view.setFieldsSort(fields);
-
-                    // Extra Line
-                    line = reader.readLine();
-                    if (line == null) {
-                        return view;
-                    }
-
-                    // New Line
-                    line = readLine(reader);
-                }
-
-                final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
-                while (line != null && !"EndQuery".equals(line)) {
-                    // Fields
-                    final String[] flds = line.split("\\|");
-                    final String table = flds[0].trim();
-
-                    for (int loop = 1; loop < flds.length; loop++) {
-                        final String name = flds[loop].trim();
-                        final ParadoxField field = new ParadoxField();
-                        final ParadoxField original = ViewData.getFieldByName(ViewData.getTable(conn, table), name);
-
-                        field.setTableName(table);
-                        field.setName(name);
-                        field.setType(original.getType());
-                        field.setSize(original.getSize());
-                        fields.add(field);
-                    }
-                    line = reader.readLine();
-                    final String[] types = line.split("\\|");
-                    for (int loop = 1; loop < types.length; loop++) {
-                        if (types[loop].trim().length() > 0) {
-                            final ParadoxField field = fields.get(loop - 1);
-                            ViewData.parseExpression(field, types[loop]);
-                        }
-                    }
-
-                    // Extra Line
-                    line = reader.readLine();
-                    if (line == null) {
-                        return view;
-                    }
-
-                    // New Line
-                    line = readLine(reader);
-                }
-
-                view.setFields(fields);
-                view.setValid(true);
             }
+
+            view.setFields(fields);
+            view.setValid(true);
         } finally {
             if (channel != null) {
                 channel.close();
