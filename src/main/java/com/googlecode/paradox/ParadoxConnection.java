@@ -20,7 +20,6 @@
 package com.googlecode.paradox;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -91,11 +90,6 @@ public class ParadoxConnection implements Connection {
     private int holdability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
 
     /**
-     * Show debug message.
-     */
-    private final boolean isDebugMode = true;
-
-    /**
      * Holds the file lock used in transactions.
      */
     private FileLock lock;
@@ -120,7 +114,7 @@ public class ParadoxConnection implements Connection {
     /**
      * Holds the opened statements.
      */
-    private final ArrayList<Statement> statements = new ArrayList<Statement>();
+    private final ArrayList<Statement> statements = new ArrayList<>();
 
     /**
      * Store the transaction isolation mode.
@@ -160,24 +154,12 @@ public class ParadoxConnection implements Connection {
 
         if (info != null && info.size() > 0) {
             throw new SQLFeatureNotSupportedException("Change properties is not supported yet.");
+        } else if (!dir.exists() && !dir.isDirectory()) {
+            throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND);
         }
 
-        try {
-            if (!dir.exists() && !dir.isDirectory()) {
-                throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND);
-            }
-            lockFile = new RandomAccessFile(new File(dir.getAbsolutePath() + File.separator + "db.lock"), "rw");
-            final FileChannel channel = lockFile.getChannel();
-            lock = channel.tryLock();
-            if (lock == null || !lock.isValid() || lock.isShared()) {
-                throw new SQLException("Database is locked");
-            }
-            catalog = dir.getName();
-        } catch (final FileNotFoundException e) {
-            throw new SQLException(e);
-        } catch (final IOException e) {
-            throw new SQLException(e);
-        }
+        tryLock(dir);
+        catalog = dir.getName();
     }
 
     /**
@@ -309,16 +291,6 @@ public class ParadoxConnection implements Connection {
         return null;
     }
 
-    public void debug(final String message) {
-        if (isDebugMode) {
-            System.out.println(message);
-        }
-    }
-
-    public void debug(final String format, final Object... params) {
-        this.debug(String.format(format, params));
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -335,6 +307,11 @@ public class ParadoxConnection implements Connection {
         return catalog;
     }
 
+    /**
+     * Gets the catalog name.
+     *
+     * @return the catalog name.
+     */
     public String getCatalogName() {
         return catalog;
     }
@@ -355,6 +332,11 @@ public class ParadoxConnection implements Connection {
         return clientInfo.getProperty(name);
     }
 
+    /**
+     * Gets the current directory.
+     *
+     * @return the current directory.
+     */
     public File getDir() {
         return dir;
     }
@@ -407,6 +389,11 @@ public class ParadoxConnection implements Connection {
         return typeMap;
     }
 
+    /**
+     * Gets the URL connection.
+     *
+     * @return the URL connection
+     */
     public String getUrl() {
         return url;
     }
@@ -657,8 +644,17 @@ public class ParadoxConnection implements Connection {
         this.typeMap = typeMap;
     }
 
-    public void setWarnings(final SQLWarning warning) {
-        warnings = warning;
+    private void tryLock(final File dir) throws SQLException {
+        try {
+            lockFile = new RandomAccessFile(new File(dir.getAbsolutePath() + File.separator + "db.lock"), "rw");
+            final FileChannel channel = lockFile.getChannel();
+            lock = channel.tryLock();
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        }
+        if (lock == null || !lock.isValid() || lock.isShared()) {
+            throw new SQLException("Database is locked");
+        }
     }
 
     /**

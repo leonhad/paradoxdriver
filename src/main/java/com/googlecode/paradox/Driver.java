@@ -116,7 +116,7 @@ public class Driver implements java.sql.Driver {
         if (properties == null) {
             properties = new Properties();
         }
-        final ArrayList<DriverPropertyInfo> prop = new ArrayList<DriverPropertyInfo>();
+        final ArrayList<DriverPropertyInfo> prop = new ArrayList<>();
 
         if (info.getProperty("DBNAME") == null) {
             final DriverPropertyInfo dbProp = new DriverPropertyInfo("name", properties.getProperty("name"));
@@ -130,7 +130,7 @@ public class Driver implements java.sql.Driver {
             passwordProp.description = "Password to use for authentication";
             prop.add(passwordProp);
         }
-        final DriverPropertyInfo dpi[] = new DriverPropertyInfo[prop.size()];
+        final DriverPropertyInfo[] dpi = new DriverPropertyInfo[prop.size()];
         return prop.toArray(dpi);
     }
 
