@@ -24,99 +24,14 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
     private final List<Column> columns;
     private final ParadoxConnection conn;
 
+    /**
+     * Creates
+     * @param conn
+     * @param columns
+     */
     public ParadoxResultSetMetaData(final ParadoxConnection conn, final List<Column> columns) {
         this.columns = columns;
         this.conn = conn;
-    }
-
-    private Column getColumn(final int column) throws SQLException {
-        if (column < 1 || column > columns.size()) {
-            throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN);
-        }
-        return columns.get(column - 1);
-    }
-
-    @Override
-    public int getColumnCount() throws SQLException {
-        return columns.size();
-    }
-
-    @Override
-    public boolean isAutoIncrement(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isAutoIncrement();
-    }
-
-    @Override
-    public boolean isCaseSensitive(final int column) throws SQLException {
-        getColumn(column);
-        return false;
-    }
-
-    @Override
-    public boolean isSearchable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isSearchable();
-    }
-
-    @Override
-    public boolean isCurrency(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isCurrency();
-    }
-
-    @Override
-    public int isNullable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isNullable() ? ResultSetMetaData.columnNullable : ResultSetMetaData.columnNoNulls;
-    }
-
-    @Override
-    public boolean isSigned(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isSigned();
-    }
-
-    @Override
-    public int getColumnDisplaySize(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.getMaxSize();
-    }
-
-    @Override
-    public String getColumnLabel(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.getName();
-    }
-
-    @Override
-    public String getColumnName(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.getName();
-    }
-
-    @Override
-    public String getSchemaName(final int column) throws SQLException {
-        getColumn(column);
-        return conn.getSchema();
-    }
-
-    @Override
-    public int getPrecision(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.getPrecision();
-    }
-
-    @Override
-    public int getScale(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.getScale();
-    }
-
-    @Override
-    public String getTableName(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.getTableName();
     }
 
     @Override
@@ -125,34 +40,11 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
         return conn.getCatalog();
     }
 
-    @Override
-    public int getColumnType(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.getType();
-    }
-
-    @Override
-    public String getColumnTypeName(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return Column.getTypeName(dto.getType());
-    }
-
-    @Override
-    public boolean isReadOnly(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isReadOnly();
-    }
-
-    @Override
-    public boolean isWritable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isWriteable();
-    }
-
-    @Override
-    public boolean isDefinitelyWritable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
-        return dto.isWriteable();
+    private Column getColumn(final int column) throws SQLException {
+        if (column < 1 || column > columns.size()) {
+            throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN);
+        }
+        return columns.get(column - 1);
     }
 
     @Override
@@ -179,12 +71,111 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public <T> T unwrap(final Class<T> iface) throws SQLException {
-        return Utils.unwrap(this, iface);
+    public int getColumnCount() throws SQLException {
+        return columns.size();
+    }
+
+    @Override
+    public int getColumnDisplaySize(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.getMaxSize();
+    }
+
+    @Override
+    public String getColumnLabel(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.getName();
+    }
+
+    @Override
+    public String getColumnName(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.getName();
+    }
+
+    @Override
+    public int getColumnType(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.getType();
+    }
+
+    @Override
+    public String getColumnTypeName(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return Column.getTypeName(dto.getType());
+    }
+
+    @Override
+    public int getPrecision(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.getPrecision();
+    }
+
+    @Override
+    public int getScale(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.getScale();
+    }
+
+    @Override
+    public String getSchemaName(final int column) throws SQLException {
+        getColumn(column);
+        return conn.getSchema();
+    }
+
+    @Override
+    public String getTableName(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.getTableName();
+    }
+
+    @Override
+    public boolean isAutoIncrement(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isAutoIncrement();
+    }
+
+    @Override
+    public boolean isCaseSensitive(final int column) throws SQLException {
+        getColumn(column);
+        return false;
+    }
+
+    @Override
+    public boolean isCurrency(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isCurrency();
+    }
+
+    @Override
+    public boolean isDefinitelyWritable(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isWriteable();
+    }
+
+    @Override
+    public int isNullable(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isNullable() ? ResultSetMetaData.columnNullable : ResultSetMetaData.columnNoNulls;
+    }
+
+    @Override
+    public boolean isReadOnly(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isReadOnly();
+    }
+
+    @Override
+    public boolean isSearchable(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isSearchable();
+    }
+
+    @Override
+    public boolean isSigned(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isSigned();
     }
 
     /**
@@ -193,5 +184,19 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         return Utils.isWrapperFor(this, iface);
+    }
+
+    @Override
+    public boolean isWritable(final int column) throws SQLException {
+        final Column dto = getColumn(column);
+        return dto.isWriteable();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T unwrap(final Class<T> iface) throws SQLException {
+        return Utils.unwrap(this, iface);
     }
 }

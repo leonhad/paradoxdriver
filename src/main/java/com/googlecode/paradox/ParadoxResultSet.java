@@ -129,6 +129,7 @@ public class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void cancelRowUpdates() throws SQLException {
+        throw new UnsupportedOperationException();
     }
 
     private void clearClobs() {

@@ -492,15 +492,11 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     row.add(new FieldValue(conn.getCatalog(), Types.VARCHAR));
                     row.add(new FieldValue(primaryKeyIndex.getName(), Types.VARCHAR));
                     row.add(new FieldValue(DatabaseMetaData.tableIndexHashed));
-                    // FIXME get it from index file
                     row.add(new FieldValue(0, Types.INTEGER));
                     row.add(new FieldValue(pk.getName(), Types.VARCHAR));
                     row.add(new FieldValue("A", Types.VARCHAR));
-                    // FIXME get it from index file
                     row.add(new FieldValue(0, Types.INTEGER));
                     row.add(new FieldValue(0, Types.INTEGER));
-                    // row.add(String.valueOf(pk.getRowCount()));
-                    // row.add(String.valueOf(pk.getUsedBlocks()));
                     row.add(null);
 
                     values.add(row);
@@ -522,11 +518,8 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     row.add(new FieldValue(ordinal, Types.INTEGER));
                     row.add(new FieldValue(field.getName(), Types.VARCHAR));
                     row.add(new FieldValue(index.getOrder(), Types.VARCHAR));
-                    // FIXME get it from index file
                     row.add(new FieldValue(0, Types.INTEGER));
                     row.add(new FieldValue(0, Types.INTEGER));
-                    // row.add(String.valueOf(pk.getRowCount()));
-                    // row.add(String.valueOf(pk.getUsedBlocks()));
                     row.add(null);
 
                     values.add(row);
