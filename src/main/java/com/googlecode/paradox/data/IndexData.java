@@ -1,3 +1,22 @@
+/*
+ * IndexData.java
+ *
+ * 03/14/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.data;
 
 import static java.nio.ByteBuffer.allocate;
@@ -11,20 +30,31 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
 
+/**
+ * Reads index data files.
+ *
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.1
+ */
 public final class IndexData {
 
+    /**
+     * Utility class.
+     */
     private IndexData() {
         // Utility class.
     }
 
-    public static ArrayList<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
-        final ArrayList<ParadoxIndex> indexes = new ArrayList<ParadoxIndex>();
+    public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
+        final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = tableName.substring(0, tableName.lastIndexOf('.')) + ".X??";
         final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
         if (fileList != null) {
@@ -91,7 +121,7 @@ public final class IndexData {
                 buffer.position(0x58);
             }
 
-            final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+            final ArrayList<ParadoxField> fields = new ArrayList<>();
             for (int loop = 0; loop < index.getFieldCount(); loop++) {
                 final ParadoxField field = new ParadoxField(loop + 1);
                 field.setType(buffer.get());
@@ -124,7 +154,7 @@ public final class IndexData {
             }
             index.setFields(fields);
 
-            final ArrayList<Short> fieldsOrder = new ArrayList<Short>();
+            final ArrayList<Short> fieldsOrder = new ArrayList<>();
             for (int loop = 0; loop < index.getFieldCount(); loop++) {
                 fieldsOrder.add(buffer.getShort());
             }

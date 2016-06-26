@@ -36,7 +36,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.logging.Logger;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
@@ -58,8 +57,6 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
  */
 public final class TableData {
 
-    private static final Logger LOGGER = Logger.getLogger(TableData.class.getName());
-
     /**
      * Utility class.
      */
@@ -68,7 +65,7 @@ public final class TableData {
     }
 
     public static List<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
-        final ArrayList<ParadoxTable> tables = new ArrayList<ParadoxTable>();
+        final ArrayList<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter());
         if (fileList != null) {
             for (final File file : fileList) {
@@ -82,7 +79,7 @@ public final class TableData {
     }
 
     public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern) throws SQLException {
-        final List<ParadoxTable> tables = new ArrayList<ParadoxTable>();
+        final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
         if (fileList != null) {
             for (final File file : fileList) {
@@ -96,7 +93,7 @@ public final class TableData {
     }
 
     public static List<List<FieldValue>> loadData(final ParadoxConnection conn, final ParadoxTable table, final Collection<ParadoxField> fields) throws SQLException {
-        final List<List<FieldValue>> ret = new ArrayList<List<FieldValue>>();
+        final List<List<FieldValue>> ret = new ArrayList<>();
 
         final int blockSize = table.getBlockSizeBytes();
         final int recordSize = table.getRecordSize();
@@ -125,7 +122,7 @@ public final class TableData {
                     buffer.order(ByteOrder.BIG_ENDIAN);
 
                     for (int loop = 0; loop < rowsInBlock; loop++) {
-                        final List<FieldValue> row = new ArrayList<FieldValue>();
+                        final List<FieldValue> row = new ArrayList<>();
 
                         for (final ParadoxField field : table.getFields()) {
                             FieldValue fieldValue = null;
@@ -314,7 +311,7 @@ public final class TableData {
                 buffer.position(0x58);
             }
 
-            final List<ParadoxField> fields = new ArrayList<ParadoxField>();
+            final List<ParadoxField> fields = new ArrayList<>();
             for (int loop = 0; loop < table.getFieldCount(); loop++) {
                 final ParadoxField field = new ParadoxField(loop + 1);
                 field.setType(buffer.get());
@@ -354,7 +351,7 @@ public final class TableData {
             }
             table.setFields(fields);
 
-            final List<Short> fieldsOrder = new ArrayList<Short>();
+            final List<Short> fieldsOrder = new ArrayList<>();
             for (int loop = 0; loop < table.getFieldCount(); loop++) {
                 fieldsOrder.add(buffer.getShort());
             }

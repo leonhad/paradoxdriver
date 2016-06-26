@@ -59,6 +59,11 @@ public class ParadoxStatement implements Statement {
     private ParadoxResultSet rs = null;
     private SQLWarning warnings = null;
 
+    /**
+     * Creates a statement.
+     *
+     * @param conn the paradox connection.
+     */
     public ParadoxStatement(final ParadoxConnection conn) {
         this.conn = conn;
     }
@@ -191,8 +196,6 @@ public class ParadoxStatement implements Statement {
         final Planner planner = new Planner(conn);
         final SelectPlan plan = (SelectPlan) planner.create(node);
         plan.execute();
-
-        // FIXME result set
         rs = new ParadoxResultSet(conn, this, plan.getValues(), plan.getColumns());
     }
 
@@ -393,6 +396,7 @@ public class ParadoxStatement implements Statement {
      */
     @Override
     public void setEscapeProcessing(final boolean enable) throws SQLException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -447,10 +451,6 @@ public class ParadoxStatement implements Statement {
     @Override
     public void setQueryTimeout(final int seconds) throws SQLException {
         queryTimeout = seconds;
-    }
-
-    public void setWarnings(final SQLWarning warning) {
-        warnings = warning;
     }
 
     /**

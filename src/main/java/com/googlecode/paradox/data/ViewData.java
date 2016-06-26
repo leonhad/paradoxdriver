@@ -106,7 +106,7 @@ public final class ViewData {
     }
 
     public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
-        final List<ParadoxView> views = new ArrayList<ParadoxView>();
+        final List<ParadoxView> views = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
             for (final File file : fileList) {
@@ -182,7 +182,7 @@ public final class ViewData {
                 line = readLine(reader);
             }
 
-            final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+            final ArrayList<ParadoxField> fields = new ArrayList<>();
             while (line != null && !"EndQuery".equals(line)) {
                 // Fields
                 final String[] flds = line.split("\\|");
@@ -272,14 +272,14 @@ public final class ViewData {
 
     private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader) throws IOException, SQLException {
 
-        String line = "";
+        final StringBuilder line = new StringBuilder();
         do {
-            line += readLine(reader);
-        } while (line.endsWith(","));
+            line.append(readLine(reader));
+        } while (line.toString().endsWith(","));
 
         ParadoxTable lastTable = null;
-        final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
-        final String[] cols = line.split("\\,");
+        final ArrayList<ParadoxField> fields = new ArrayList<>();
+        final String[] cols = line.toString().split("\\,");
         for (final String col : cols) {
             final String[] i = col.split("->");
             final ParadoxField field = new ParadoxField();
@@ -288,9 +288,6 @@ public final class ViewData {
                 if (lastTable == null) {
                     throw new SQLException("Invalid table.");
                 }
-                // TODO review. Paradox looks the number after
-                // columns (always calc fileds)
-                // field.setName(getFieldByIndex(lastTable, i));
                 continue;
             } else {
                 lastTable = ViewData.getTable(conn, i[0]);

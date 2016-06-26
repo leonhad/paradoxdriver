@@ -1,3 +1,22 @@
+/*
+ * PrimaryKeyData.java
+ *
+ * 03/14/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.data;
 
 import static java.nio.ByteBuffer.allocate;
@@ -10,14 +29,25 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 
+/**
+ * Reads primary key data fiels.
+ *
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.1
+ */
 public final class PrimaryKeyData {
 
+    /**
+     * Utility class.
+     */
     private PrimaryKeyData() {
         // Utility class.
     }
@@ -42,8 +72,8 @@ public final class PrimaryKeyData {
         return null;
     }
 
-    public static ArrayList<ParadoxPK> listPrimaryKeys(final ParadoxConnection conn) throws SQLException {
-        final ArrayList<ParadoxPK> keys = new ArrayList<ParadoxPK>();
+    public static List<ParadoxPK> listPrimaryKeys(final ParadoxConnection conn) throws SQLException {
+        final ArrayList<ParadoxPK> keys = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter());
         if (fileList != null) {
             for (final File file : fileList) {

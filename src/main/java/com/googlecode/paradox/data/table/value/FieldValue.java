@@ -1,3 +1,22 @@
+/*
+ * FieldValue.java
+ *
+ * 03/14/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.data.table.value;
 
 import java.sql.Date;
@@ -16,34 +35,25 @@ import com.googlecode.paradox.utils.SQLStates;
  * @version 1.0
  */
 public class FieldValue {
+
+    private static final String ERROR_INVALID_TYPE = "Invalid field type.";
+
     /**
-     * Database value converted to Java
+     * Reference on field.
      */
-    private Object value;
+    private ParadoxField field;
+
     /**
-     * Value type in database
+     * Value type in database.
      *
      * @see Types
      */
     private final int type;
 
     /**
-     * Reference on field
+     * Database value converted to Java.
      */
-    private ParadoxField field;
-
-    /**
-     * Store a database value already loaded in Java format.
-     *
-     * @param value
-     *            Java value
-     * @param type
-     *            Database value type
-     */
-    public FieldValue(final Object value, final int type) {
-        this.type = type;
-        this.value = value;
-    }
+    private Object value;
 
     /**
      * Constructor used for NULL values.
@@ -56,12 +66,85 @@ public class FieldValue {
     }
 
     /**
-     * Return the field value in Java format
+     * Store a database value already loaded in Java format.
      *
-     * @return the field value in Java format
+     * @param value
+     *            Java value.
+     * @param type
+     *            Database value type.
      */
-    public Object getValue() {
-        return value;
+    public FieldValue(final Object value, final int type) {
+        this.type = type;
+        this.value = value;
+    }
+
+    /**
+     * Check for value type and return an Boolean value.
+     *
+     * @return a valid Boolean value.
+     * @throws SQLDataException
+     *             if this is not a Boolean value.
+     */
+    public Boolean getBoolean() throws SQLDataException {
+        if (type != Types.BOOLEAN) {
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+        }
+        return (Boolean) value;
+    }
+
+    /**
+     * Check for value type and return an Date value.
+     *
+     * @return a valid Date value.
+     * @throws SQLDataException
+     *             if this is not a Date value.
+     */
+    public Date getDate() throws SQLDataException {
+        if (type != Types.DATE) {
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+        }
+        return (Date) value;
+    }
+
+    /**
+     * Gets the Paradox field.
+     *
+     * @return the Paradox field.
+     */
+    public ParadoxField getField() {
+        return field;
+    }
+
+    /**
+     * Check for value type and return an Number value.
+     *
+     * @return a valid Number value.
+     * @throws SQLDataException
+     *             if this is not a numeric value.
+     */
+    public Number getNumber() throws SQLDataException {
+        switch (type) {
+        case Types.INTEGER:
+        case Types.BIGINT:
+        case Types.DOUBLE:
+            return (Number) value;
+        default:
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+        }
+    }
+
+    /**
+     * Check for value type and return an Time value.
+     *
+     * @return a valid Time value.
+     * @throws SQLDataException
+     *             if this is not a Time value.
+     */
+    public Time getTime() throws SQLDataException {
+        if (type != Types.TIME) {
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+        }
+        return (Time) value;
     }
 
     /**
@@ -73,80 +156,30 @@ public class FieldValue {
         return type;
     }
 
-    public ParadoxField getField() {
-        return field;
-    }
-
-    public void setField(final ParadoxField newVal) {
-        field = newVal;
+    /**
+     * Return the field value in Java format.
+     *
+     * @return the field value in Java format.
+     */
+    public Object getValue() {
+        return value;
     }
 
     /**
-     * Check for null value
+     * Check for null value.
      *
-     * @return true if this value is NULL
+     * @return true if this value is NULL.
      */
     public boolean isNull() {
         return value == null;
     }
 
     /**
-     * Check for value type and return an Boolean value
+     * Sets the Paradox field.
      *
-     * @return a valid Boolean value
-     * @throws SQLDataException
-     *             if this is not a Boolean value
+     * @param field the Paradox field.
      */
-    public Boolean getBoolean() throws SQLDataException {
-        if (type != Types.BOOLEAN) {
-            throw new SQLDataException("Invalid field type.", SQLStates.INVALID_FIELD_VALUE);
-        }
-        return (Boolean) value;
-    }
-
-    /**
-     * Check for value type and return an Number value
-     *
-     * @return a valid Number value
-     * @throws SQLDataException
-     *             if this is not a numeric value
-     */
-    public Number getNumber() throws SQLDataException {
-        switch (type) {
-        case Types.INTEGER:
-        case Types.BIGINT:
-        case Types.DOUBLE:
-            return (Number) value;
-        default:
-            throw new SQLDataException("Invalid field type.", SQLStates.INVALID_FIELD_VALUE);
-        }
-    }
-
-    /**
-     * Check for value type and return an Time value
-     *
-     * @return a valid Time value
-     * @throws SQLDataException
-     *             if this is not a Time value
-     */
-    public Time getTime() throws SQLDataException {
-        if (type != Types.TIME) {
-            throw new SQLDataException("Invalid field type.", SQLStates.INVALID_FIELD_VALUE);
-        }
-        return (Time) value;
-    }
-
-    /**
-     * Check for value type and return an Date value
-     *
-     * @return a valid Date value
-     * @throws SQLDataException
-     *             if this is not a Date value
-     */
-    public Date getDate() throws SQLDataException {
-        if (type != Types.DATE) {
-            throw new SQLDataException("Invalid field type.", SQLStates.INVALID_FIELD_VALUE);
-        }
-        return (Date) value;
+    public void setField(final ParadoxField field) {
+        this.field = field;
     }
 }
