@@ -16,6 +16,22 @@ import com.googlecode.paradox.metadata.ParadoxField;
 public abstract class CallableProcedure {
 
     /**
+     * Get the procedure columns.
+     *
+     * @return the procedure columns.
+     */
+    public List<ParadoxField> getCols() {
+        final ArrayList<ParadoxField> ret = new ArrayList<>();
+
+        final ParadoxField field = new ParadoxField();
+        field.setName("field");
+        field.setType((byte) 0xC);
+        ret.add(field);
+
+        return ret;
+    }
+
+    /**
      * Gets the procedure name.
      *
      * @return the procedure name.
@@ -30,21 +46,10 @@ public abstract class CallableProcedure {
     public abstract String getRemarks();
 
     /**
-     * Get the procedure columns.
+     * Gets the return type.
      *
-     * @return the procedure columns.
+     * @return the return type.
      */
-    public List<ParadoxField> getCols() {
-        final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
-
-        final ParadoxField field = new ParadoxField();
-        field.setName("field");
-        field.setType((byte) 0xC);
-        ret.add(field);
-
-        return ret;
-    }
-
     public int getReturnType() {
         return DatabaseMetaData.procedureReturnsResult;
     }

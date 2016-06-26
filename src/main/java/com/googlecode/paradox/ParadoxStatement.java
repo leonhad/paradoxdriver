@@ -129,7 +129,7 @@ public class ParadoxStatement implements Statement {
         }
         boolean select = false;
         final SQLParser parser = new SQLParser(sql);
-        final ArrayList<StatementNode> statements = parser.parse();
+        final List<StatementNode> statements = parser.parse();
         for (final StatementNode statement : statements) {
             if (statement instanceof SelectNode) {
                 executeSelect((SelectNode) statement);
@@ -180,7 +180,7 @@ public class ParadoxStatement implements Statement {
             rs.close();
         }
         final SQLParser parser = new SQLParser(sql);
-        final ArrayList<StatementNode> statementList = parser.parse();
+        final List<StatementNode> statementList = parser.parse();
         if (statementList.size() > 1) {
             throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
         }

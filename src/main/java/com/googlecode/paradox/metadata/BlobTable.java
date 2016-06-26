@@ -157,12 +157,6 @@ public class BlobTable extends ParadoxDataFile {
     public byte[] read(final long pOffset) throws SQLException {
         final short offset = (short) (pOffset & 0xFF);
 
-        // if (offset == 0xFF) {
-        // blockType = SINGLE_BLOCK;
-        // } else {
-        // blockType = SUB_BLOCK;
-        // }
-
         final int blockNum = getBlockNum(pOffset);
         if (!isParsed) {
             open();
@@ -172,7 +166,7 @@ public class BlobTable extends ParadoxDataFile {
     }
 
     private ClobBlock readBlock(final int blockNum, final short offset) throws SQLException {
-        final List<ClobBlock> nextBlocks = new ArrayList<ClobBlock>(1);
+        final List<ClobBlock> nextBlocks = new ArrayList<>(1);
         while (readNextBlock(nextBlocks)) {
             cache.add(nextBlocks);
             final ClobBlock next = cache.get(blockNum, offset);

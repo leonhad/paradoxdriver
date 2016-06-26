@@ -5,6 +5,7 @@ import static java.nio.charset.Charset.forName;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -12,21 +13,34 @@ import java.util.ArrayList;
  */
 public class ParadoxIndex extends ParadoxDataFile {
 
-    private String sortOrderID;
-    private String fatherName;
-    private ArrayList<Short> fieldsOrder;
     private Charset charset = forName("Cp437");
+    private String fatherName;
+    private List<Short> fieldsOrder;
+    private String sortOrderID;
 
     public ParadoxIndex(final File file, final String name) {
         super(file, name);
     }
 
-    public ArrayList<ParadoxField> getPrimaryKeys() {
-        final ArrayList<ParadoxField> ret = new ArrayList<ParadoxField>();
-        for (int loop = 0; loop < primaryFieldCount; loop++) {
-            ret.add(fields.get(loop));
-        }
-        return ret;
+    /**
+     * @return the charset
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    /**
+     * @return the fatherName
+     */
+    public String getFatherName() {
+        return fatherName;
+    }
+
+    /**
+     * @return the fieldsOrder
+     */
+    public List<Short> getFieldsOrder() {
+        return fieldsOrder;
     }
 
     public String getOrder() {
@@ -43,6 +57,21 @@ public class ParadoxIndex extends ParadoxDataFile {
         default:
             return "A";
         }
+    }
+
+    public List<ParadoxField> getPrimaryKeys() {
+        final ArrayList<ParadoxField> ret = new ArrayList<>();
+        for (int loop = 0; loop < primaryFieldCount; loop++) {
+            ret.add(fields.get(loop));
+        }
+        return ret;
+    }
+
+    /**
+     * @return the sortOrderID
+     */
+    public String getSortOrderID() {
+        return sortOrderID;
     }
 
     /**
@@ -64,47 +93,11 @@ public class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
-     * @return the fieldsOrder
-     */
-    public ArrayList<Short> getFieldsOrder() {
-        return fieldsOrder;
-    }
-
-    /**
-     * @return the charset
-     */
-    public Charset getCharset() {
-        return charset;
-    }
-
-    /**
      * @param charset
      *            the charset to set
      */
     public void setCharset(final Charset charset) {
         this.charset = charset;
-    }
-
-    /**
-     * @return the sortOrderID
-     */
-    public String getSortOrderID() {
-        return sortOrderID;
-    }
-
-    /**
-     * @param sortOrderID
-     *            the sortOrderID to set
-     */
-    public void setSortOrderID(final String sortOrderID) {
-        this.sortOrderID = sortOrderID;
-    }
-
-    /**
-     * @return the fatherName
-     */
-    public String getFatherName() {
-        return fatherName;
     }
 
     /**
@@ -119,7 +112,15 @@ public class ParadoxIndex extends ParadoxDataFile {
      * @param fieldsOrder
      *            the fieldsOrder to set
      */
-    public void setFieldsOrder(final ArrayList<Short> fieldsOrder) {
+    public void setFieldsOrder(final List<Short> fieldsOrder) {
         this.fieldsOrder = fieldsOrder;
+    }
+
+    /**
+     * @param sortOrderID
+     *            the sortOrderID to set
+     */
+    public void setSortOrderID(final String sortOrderID) {
+        this.sortOrderID = sortOrderID;
     }
 }

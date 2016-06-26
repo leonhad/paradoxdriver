@@ -92,7 +92,7 @@ public final class TableData {
         return tables;
     }
 
-    public static List<List<FieldValue>> loadData(final ParadoxConnection conn, final ParadoxTable table, final Collection<ParadoxField> fields) throws SQLException {
+    public static List<List<FieldValue>> loadData(final ParadoxTable table, final Collection<ParadoxField> fields) throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<>();
 
         final int blockSize = table.getBlockSizeBytes();

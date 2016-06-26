@@ -1,18 +1,67 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SelectNode extends StatementNode {
 
-    private boolean distinct;
-    private final ArrayList<SQLNode> fields = new ArrayList<SQLNode>();
-    private final ArrayList<TableNode> tables = new ArrayList<TableNode>();
-    private final ArrayList<IdentifierNode> groups = new ArrayList<IdentifierNode>();
-    private final ArrayList<IdentifierNode> order = new ArrayList<IdentifierNode>();
     private ArrayList<SQLNode> conditions;
+    private boolean distinct;
+    private final ArrayList<SQLNode> fields = new ArrayList<>();
+    private final ArrayList<IdentifierNode> groups = new ArrayList<>();
+    private final ArrayList<IdentifierNode> order = new ArrayList<>();
+    private final ArrayList<TableNode> tables = new ArrayList<>();
 
     public SelectNode() {
         super("SELECT");
+    }
+
+    public void addField(final SQLNode field) {
+        fields.add(field);
+    }
+
+    public void addGroupBy(final IdentifierNode indentifier) {
+        groups.add(indentifier);
+    }
+
+    public void addOrderBy(final IdentifierNode indentifier) {
+        order.add(indentifier);
+    }
+
+    public void addTable(final TableNode table) {
+        tables.add(table);
+    }
+
+    public List<SQLNode> getConditions() {
+        return conditions;
+    }
+
+    public List<SQLNode> getFields() {
+        return fields;
+    }
+
+    public List<IdentifierNode> getGroups() {
+        return groups;
+    }
+
+    public List<IdentifierNode> getOrder() {
+        return order;
+    }
+
+    public List<TableNode> getTables() {
+        return tables;
+    }
+
+    public boolean isDistinct() {
+        return distinct;
+    }
+
+    public void setConditions(final ArrayList<SQLNode> conditions) {
+        this.conditions = conditions;
+    }
+
+    public void setDistinct(final boolean distinct) {
+        this.distinct = distinct;
     }
 
     @Override
@@ -42,7 +91,7 @@ public class SelectNode extends StatementNode {
                 builder.append(table);
             }
         }
-        if (conditions != null && conditions.size() > 0) {
+        if (conditions != null && conditions.isEmpty()) {
             builder.append(" WHERE ");
             first = true;
             for (final SQLNode cond : conditions) {
@@ -54,7 +103,7 @@ public class SelectNode extends StatementNode {
                 builder.append(cond);
             }
         }
-        if (groups.size() > 0) {
+        if (groups.isEmpty()) {
             builder.append(" GROUP BY ");
             first = true;
             for (final IdentifierNode group : groups) {
@@ -66,7 +115,7 @@ public class SelectNode extends StatementNode {
                 builder.append(group);
             }
         }
-        if (order.size() > 0) {
+        if (order.isEmpty()) {
             builder.append(" ORDER BY ");
             first = true;
             for (final IdentifierNode ident : order) {
@@ -79,53 +128,5 @@ public class SelectNode extends StatementNode {
             }
         }
         return builder.toString();
-    }
-
-    public boolean isDistinct() {
-        return distinct;
-    }
-
-    public void setDistinct(final boolean distinct) {
-        this.distinct = distinct;
-    }
-
-    public void addField(final SQLNode field) {
-        fields.add(field);
-    }
-
-    public void addTable(final TableNode table) {
-        tables.add(table);
-    }
-
-    public void addGroupBy(final IdentifierNode indentifier) {
-        groups.add(indentifier);
-    }
-
-    public void addOrderBy(final IdentifierNode indentifier) {
-        order.add(indentifier);
-    }
-
-    public void setConditions(final ArrayList<SQLNode> conditions) {
-        this.conditions = conditions;
-    }
-
-    public ArrayList<SQLNode> getFields() {
-        return fields;
-    }
-
-    public ArrayList<TableNode> getTables() {
-        return tables;
-    }
-
-    public ArrayList<IdentifierNode> getGroups() {
-        return groups;
-    }
-
-    public ArrayList<IdentifierNode> getOrder() {
-        return order;
-    }
-
-    public ArrayList<SQLNode> getConditions() {
-        return conditions;
     }
 }

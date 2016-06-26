@@ -7,32 +7,58 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
 
 /**
- * Armazena os campos de uma tabela
+ * Stores a field from a table.
  *
  * @author Leonardo Alves da Costa
  * @version 1.0
- * @since 16/03/2009
+ * @since 1.0
  */
 public class ParadoxField {
 
-    private String name;
-    private byte type;
-    private short size;
-    private short physicsSize;
-    private ParadoxTable table;
-    private String tableName;
     private String alias;
-    private String joinName;
     private boolean checked;
     private String expression;
-    private final int orderNum; // order of field in table/view (with 1)
+    private String joinName;
+    private String name;
+
+    /**
+     * Order of field in table/view (with 1)
+     */
+    private final int orderNum;
+    private short physicsSize;
+    private short size;
+    private ParadoxTable table;
+    private String tableName;
+    private byte type;
+
+    public ParadoxField() {
+        this(1);
+    }
 
     public ParadoxField(final int orderNum) {
         this.orderNum = orderNum;
     }
 
-    public ParadoxField() {
-        this(1);
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ParadoxField other = (ParadoxField) obj;
+        return !(name == null ? other.name != null : !name.equals(other.name));
+    }
+
+    /**
+     * @return the alias
+     */
+    public String getAlias() {
+        if (alias == null) {
+            return name;
+        }
+        return alias;
     }
 
     public Column getColumn() throws SQLException {
@@ -52,36 +78,42 @@ public class ParadoxField {
         return dto;
     }
 
-    @Override
-    public String toString() {
+    /**
+     * @return the expression
+     */
+    public String getExpression() {
+        return expression;
+    }
+
+    /**
+     * @return the joinName
+     */
+    public String getJoinName() {
+        return joinName;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ParadoxField other = (ParadoxField) obj;
-        return !(name == null ? other.name != null : !name.equals(other.name));
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 17 * hash + (name != null ? name.hashCode() : 0);
-        return hash;
     }
 
     public int getOrderNum() {
         return orderNum;
     }
 
-    public boolean isAutoIncrement() {
-        return type == 0x16;
+    public short getPhysicsSize() {
+        return physicsSize;
+    }
+
+    /**
+     * Gets the field size.
+     *
+     * @return the size.
+     */
+    public short getSize() {
+        return size;
     }
 
     public int getSqlType() throws SQLException {
@@ -122,23 +154,11 @@ public class ParadoxField {
         return table;
     }
 
-    public void setTable(final ParadoxTable table) {
-        this.table = table;
-    }
-
     /**
-     * @return the name
+     * @return the table
      */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *            the name to set
-     */
-    public void setName(final String name) {
-        this.name = name;
+    public String getTableName() {
+        return tableName;
     }
 
     /**
@@ -148,21 +168,62 @@ public class ParadoxField {
         return type;
     }
 
-    /**
-     * @param type
-     *            the type to set
-     */
-    public void setType(final byte type) {
-        this.type = type;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (name != null ? name.hashCode() : 0);
+        return hash;
+    }
+
+    public boolean isAutoIncrement() {
+        return type == 0x16;
     }
 
     /**
-     * Gets the field size.
-     *
-     * @return the size.
+     * @return the checked
      */
-    public short getSize() {
-        return size;
+    public boolean isChecked() {
+        return checked;
+    }
+
+    /**
+     * @param alias
+     *            the alias to set
+     */
+    public void setAlias(final String alias) {
+        this.alias = alias;
+    }
+
+    /**
+     * @param checked
+     *            the checked to set
+     */
+    public void setChecked(final boolean checked) {
+        this.checked = checked;
+    }
+
+    /**
+     * @param expression
+     *            the expression to set
+     */
+    public void setExpression(final String expression) {
+        this.expression = expression;
+    }
+
+    /**
+     * @param joinName
+     *            the joinName to set
+     */
+    public void setJoinName(final String joinName) {
+        this.joinName = joinName;
+    }
+
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(final String name) {
+        this.name = name;
     }
 
     /**
@@ -181,15 +242,8 @@ public class ParadoxField {
         this.size = size;
     }
 
-    public short getPhysicsSize() {
-        return physicsSize;
-    }
-
-    /**
-     * @return the table
-     */
-    public String getTableName() {
-        return tableName;
+    public void setTable(final ParadoxTable table) {
+        this.table = table;
     }
 
     /**
@@ -201,65 +255,15 @@ public class ParadoxField {
     }
 
     /**
-     * @return the alias
+     * @param type
+     *            the type to set
      */
-    public String getAlias() {
-        if (alias == null) {
-            return name;
-        }
-        return alias;
+    public void setType(final byte type) {
+        this.type = type;
     }
 
-    /**
-     * @param alias
-     *            the alias to set
-     */
-    public void setAlias(final String alias) {
-        this.alias = alias;
-    }
-
-    /**
-     * @return the joinName
-     */
-    public String getJoinName() {
-        return joinName;
-    }
-
-    /**
-     * @param joinName
-     *            the joinName to set
-     */
-    public void setJoinName(final String joinName) {
-        this.joinName = joinName;
-    }
-
-    /**
-     * @return the checked
-     */
-    public boolean isChecked() {
-        return checked;
-    }
-
-    /**
-     * @param checked
-     *            the checked to set
-     */
-    public void setChecked(final boolean checked) {
-        this.checked = checked;
-    }
-
-    /**
-     * @return the expression
-     */
-    public String getExpression() {
-        return expression;
-    }
-
-    /**
-     * @param expression
-     *            the expression to set
-     */
-    public void setExpression(final String expression) {
-        this.expression = expression;
+    @Override
+    public String toString() {
+        return name;
     }
 }

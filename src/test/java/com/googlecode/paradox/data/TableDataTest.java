@@ -50,7 +50,7 @@ public class TableDataTest {
         Assert.assertNotNull("List tables is null", tables);
         Assert.assertTrue("List tables is empty", tables.size() > 0);
         final ParadoxTable table = tables.get(0);
-        final List<List<FieldValue>> data = TableData.loadData(conn, table, table.getFields());
+        final List<List<FieldValue>> data = TableData.loadData(table, table.getFields());
         Assert.assertEquals(table.getRowCount(), data.size());
     }
 
@@ -59,7 +59,7 @@ public class TableDataTest {
         final ParadoxTable table = TableData.listTables(conn, "contacts.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(conn, table, fields);
+        TableData.loadData(table, fields);
     }
 
     @Test
@@ -67,13 +67,13 @@ public class TableDataTest {
         final ParadoxTable table = TableData.listTables(conn, "customer.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(conn, table, fields);
+        TableData.loadData(table, fields);
     }
 
     @Test
     public void testLoadHercules() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "hercules.db").get(0);
-        TableData.loadData(conn, table, table.getFields());
+        TableData.loadData(table, table.getFields());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class TableDataTest {
         final ParadoxTable table = TableData.listTables(conn, "orders.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(conn, table, fields);
+        TableData.loadData(table, fields);
     }
 
     @Test
@@ -89,6 +89,6 @@ public class TableDataTest {
         final ParadoxTable table = TableData.listTables(conn, "server.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(conn, table, fields);
+        TableData.loadData(table, fields);
     }
 }
