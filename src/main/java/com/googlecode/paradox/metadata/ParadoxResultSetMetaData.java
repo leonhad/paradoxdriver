@@ -20,6 +20,7 @@
 package com.googlecode.paradox.metadata;
 
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -35,7 +36,7 @@ import com.googlecode.paradox.utils.Utils;
  * Paradox Result Set Meta Data
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public class ParadoxResultSetMetaData implements ResultSetMetaData {
@@ -44,9 +45,10 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
     private final ParadoxConnection conn;
 
     /**
-     * Creates
-     * @param conn
-     * @param columns
+     * Creates a new {@link ResultSetMetaData}.
+     *
+     * @param conn the Paradox connection.
+     * @param columns columns in {@link ResultSet}.
      */
     public ParadoxResultSetMetaData(final ParadoxConnection conn, final List<Column> columns) {
         this.columns = columns;
