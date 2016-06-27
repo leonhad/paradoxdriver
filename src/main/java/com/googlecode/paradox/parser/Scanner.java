@@ -34,13 +34,39 @@ import com.googlecode.paradox.utils.SQLStates;
  */
 public class Scanner {
 
+    /**
+     * Separators char.
+     */
     private static final char[] SEPARATORS = { ' ', '\t', '\n', '\0', '\r' };
+
+    /**
+     * Special chars.
+     */
     private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=', ';' };
+
+    /**
+     * Character buffer used to parse the SQL.
+     */
     private final CharBuffer buffer;
+
+    /**
+     * Read tokens.
+     */
     private final ArrayList<Token> tokens = new ArrayList<>();
 
+    /**
+     * Value buffer.
+     */
     private final StringBuilder value = new StringBuilder(299);
 
+    /**
+     * Creates a new instance.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     public Scanner(final String buffer) throws SQLException {
         if (buffer == null) {
             throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL);
@@ -48,6 +74,13 @@ public class Scanner {
         this.buffer = CharBuffer.wrap(buffer.trim());
     }
 
+    /**
+     * Creates a token by value.
+     * 
+     * @param value
+     *            to convert.
+     * @return a new {@link Token}.
+     */
     private Token getToken(final String value) {
         final TokenType token = TokenType.get(value.toUpperCase());
         if (token != null) {
@@ -56,10 +89,24 @@ public class Scanner {
         return new Token(TokenType.IDENTIFIER, value);
     }
 
+    /**
+     * If buffer has tokens.
+     * 
+     * @return true if the buffer still have tokens.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     public boolean hasNext() throws SQLException {
         return !tokens.isEmpty() || buffer.hasRemaining();
     }
 
+    /**
+     * If the char is a separator.
+     * 
+     * @param value
+     *            the char to identify.
+     * @return true if the char is a separator.
+     */
     private boolean isSeparator(final char value) {
         for (final char c : Scanner.SEPARATORS) {
             if (c == value) {
@@ -69,6 +116,13 @@ public class Scanner {
         return false;
     }
 
+    /**
+     * if the value is a special char.
+     * 
+     * @param value
+     *            the value to identify.
+     * @return true if the value is a special char.
+     */
     private boolean isSpecial(final char value) {
         for (final char c : Scanner.SPECIAL) {
             if (c == value) {
@@ -78,10 +132,24 @@ public class Scanner {
         return false;
     }
 
+    /**
+     * Gets the next value in buffer.
+     * 
+     * @return the next char.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     private char nextChar() throws SQLException {
         return buffer.get();
     }
 
+    /**
+     * Gets the next {@link Token} in buffer.
+     * 
+     * @return the next {@link Token}.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     public Token nextToken() throws SQLException {
         final int size = tokens.size();
         if (size > 0) {
@@ -126,6 +194,14 @@ public class Scanner {
         return null;
     }
 
+    /**
+     * Parses a numeric char.
+     * 
+     * @param c
+     *            the char to start of.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     private void parseNumber(char c) throws SQLException {
         boolean numeric = false;
         int dotcount = 0;
@@ -151,6 +227,14 @@ public class Scanner {
         }
     }
 
+    /**
+     * Parses a {@link String} value.
+     * 
+     * @param type
+     *            the string type (special char used).
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     private void parseString(final char type) throws SQLException {
         char c;
         do {
@@ -179,10 +263,19 @@ public class Scanner {
         } while (c != type);
     }
 
-    private void pushBack() throws SQLException {
+    /**
+     * Push back the read char.
+     */
+    private void pushBack() {
         buffer.position(buffer.position() - 1);
     }
 
+    /**
+     * Push back the given token in buffer.
+     * 
+     * @param token
+     *            the token to push back.
+     */
     public void pushBack(final Token token) {
         tokens.add(token);
     }

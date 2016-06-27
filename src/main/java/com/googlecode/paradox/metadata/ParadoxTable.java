@@ -1,3 +1,22 @@
+/*
+ * ParadoxTable.java
+ *
+ * 03/12/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.metadata;
 
 import static java.nio.charset.Charset.forName;
@@ -8,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a table data file.
+ * Stores a table data file.
  *
  * @author Leonardo Alves da Costa
  * @since 1.0
@@ -16,6 +35,9 @@ import java.util.List;
  */
 public class ParadoxTable extends ParadoxDataFile {
 
+    /**
+     * The blob instance used to read the file.
+     */
     private BlobTable blobFile = null;
 
     /**
@@ -40,6 +62,11 @@ public class ParadoxTable extends ParadoxDataFile {
         super(file, name);
     }
 
+    /**
+     * Gets the blob table.
+     * 
+     * @return the blob table.
+     */
     public BlobTable getBlobTable() {
         if (blobFile == null) {
             blobFile = new BlobTable(getFile(), getName());
@@ -71,6 +98,11 @@ public class ParadoxTable extends ParadoxDataFile {
         return fieldsOrder;
     }
 
+    /**
+     * Gets the primary keys list.
+     * 
+     * @return the primary keys list.
+     */
     public List<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
         for (int loop = 0; loop < primaryFieldCount; loop++) {
