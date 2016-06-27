@@ -19,8 +19,9 @@
  */
 package com.googlecode.paradox.data.table.value;
 
-import com.googlecode.paradox.metadata.BlobTable;
 import java.nio.charset.Charset;
+
+import com.googlecode.paradox.metadata.BlobTable;
 
 /**
  * Describe a CLOB file.
@@ -31,7 +32,7 @@ import java.nio.charset.Charset;
  * @version 1.1
  */
 public class ClobDescriptor extends BlobDescriptor {
-    
+
     /**
      * the clob charset.
      */

@@ -19,12 +19,6 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.metadata.ParadoxView;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.filefilters.ViewFilter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +32,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.filefilters.ViewFilter;
+
 /**
  * Read view files (structure).
  *
@@ -46,7 +47,7 @@ import java.util.List;
  * @version 1.1
  */
 public final class ViewData {
-    
+
     /**
      * Default charset.
      */
@@ -126,8 +127,7 @@ public final class ViewData {
      * @throws SQLException
      *             in case of reading errors.
      */
-    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName)
-            throws SQLException {
+    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
         final List<ParadoxView> views = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
@@ -161,8 +161,7 @@ public final class ViewData {
             channel.read(buffer);
             buffer.flip();
 
-            final BufferedReader reader = new BufferedReader(
-                    new StringReader(ViewData.CHARSET.decode(buffer).toString()));
+            final BufferedReader reader = new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));
 
             if ("Query".equals(reader.readLine())) {
                 return view;
@@ -325,9 +324,8 @@ public final class ViewData {
      * @throws SQLException
      *             in case of syntax errors.
      */
-    private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader)
-            throws IOException, SQLException {
-        
+    private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader) throws IOException, SQLException {
+
         final StringBuilder line = new StringBuilder();
         do {
             line.append(readLine(reader));

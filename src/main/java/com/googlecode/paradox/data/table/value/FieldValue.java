@@ -19,12 +19,13 @@
  */
 package com.googlecode.paradox.data.table.value;
 
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.utils.SQLStates;
 import java.sql.Date;
 import java.sql.SQLDataException;
 import java.sql.Time;
 import java.sql.Types;
+
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * Stores the database values in Java format.
@@ -34,29 +35,29 @@ import java.sql.Types;
  * @version 1.0
  */
 public class FieldValue {
-    
+
     /**
      * Invalid field message error.
      */
     private static final String ERROR_INVALID_TYPE = "Invalid field type.";
-    
+
     /**
      * Reference on field.
      */
     private ParadoxField field;
-    
+
     /**
      * Value type in database.
      *
      * @see Types
      */
     private final int type;
-    
+
     /**
      * Database value converted to Java.
      */
     private Object value;
-    
+
     /**
      * Constructor used for NULL values.
      *
@@ -66,7 +67,7 @@ public class FieldValue {
     public FieldValue(final int type) {
         this.type = type;
     }
-    
+
     /**
      * Store a database value already loaded in Java format.
      *
@@ -79,7 +80,7 @@ public class FieldValue {
         this.type = type;
         this.value = value;
     }
-    
+
     /**
      * Check for value type and return an Boolean value.
      *
@@ -93,7 +94,7 @@ public class FieldValue {
         }
         return (Boolean) value;
     }
-    
+
     /**
      * Check for value type and return an Date value.
      *
@@ -107,7 +108,7 @@ public class FieldValue {
         }
         return (Date) value;
     }
-    
+
     /**
      * Gets the Paradox field.
      *
@@ -116,7 +117,7 @@ public class FieldValue {
     public ParadoxField getField() {
         return field;
     }
-    
+
     /**
      * Check for value type and return an Number value.
      *
@@ -134,7 +135,7 @@ public class FieldValue {
             throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
         }
     }
-    
+
     /**
      * Check for value type and return an Time value.
      *
@@ -148,7 +149,7 @@ public class FieldValue {
         }
         return (Time) value;
     }
-    
+
     /**
      * The Java {@link Types} value.
      *
@@ -157,7 +158,7 @@ public class FieldValue {
     public int getType() {
         return type;
     }
-    
+
     /**
      * Return the field value in Java format.
      *
@@ -166,7 +167,7 @@ public class FieldValue {
     public Object getValue() {
         return value;
     }
-    
+
     /**
      * Check for null value.
      *
@@ -175,7 +176,7 @@ public class FieldValue {
     public boolean isNull() {
         return value == null;
     }
-    
+
     /**
      * Sets the Paradox field.
      *

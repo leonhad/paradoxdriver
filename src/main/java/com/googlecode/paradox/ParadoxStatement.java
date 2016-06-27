@@ -62,7 +62,8 @@ public class ParadoxStatement implements Statement {
     /**
      * Creates a statement.
      *
-     * @param conn the paradox connection.
+     * @param conn
+     *            the paradox connection.
      */
     public ParadoxStatement(final ParadoxConnection conn) {
         this.conn = conn;

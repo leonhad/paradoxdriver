@@ -20,10 +20,7 @@
 package com.googlecode.paradox.data;
 
 import static java.nio.ByteBuffer.allocate;
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxPK;
-import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +31,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxPK;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
+
 /**
  * Reads primary key data fields.
  *
@@ -42,7 +44,7 @@ import java.util.List;
  * @version 1.1
  */
 public final class PrimaryKeyData {
-    
+
     /**
      * Utility class.
      */

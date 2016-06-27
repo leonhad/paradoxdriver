@@ -19,16 +19,6 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
-import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.DateUtils;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.StringUtils;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -47,6 +37,17 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.ClobDescriptor;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.utils.Constants;
+import com.googlecode.paradox.utils.DateUtils;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.filefilters.TableFilter;
+
 /**
  * Utility class for loading table files.
  *
@@ -55,7 +56,7 @@ import java.util.List;
  * @version 1.1
  */
 public final class TableData {
-    
+
     /**
      * Utility class.
      */
@@ -97,8 +98,7 @@ public final class TableData {
      * @throws SQLException
      *             in case of failures.
      */
-    public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
-            throws SQLException {
+    public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
         if (fileList != null) {
@@ -123,8 +123,7 @@ public final class TableData {
      * @throws SQLException
      *             in case of failures.
      */
-    public static List<List<FieldValue>> loadData(final ParadoxTable table, final Collection<ParadoxField> fields)
-            throws SQLException {
+    public static List<List<FieldValue>> loadData(final ParadoxTable table, final Collection<ParadoxField> fields) throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<>();
 
         final int blockSize = table.getBlockSizeBytes();
@@ -170,8 +169,7 @@ public final class TableData {
                                 for (int chars = 0; chars < field.getSize(); chars++) {
                                     valueString.put(buffer.get());
                                 }
-                                fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()),
-                                        Types.VARCHAR);
+                                fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()), Types.VARCHAR);
                                 break;
                             }
                             case 2: {
@@ -405,9 +403,8 @@ public final class TableData {
     }
 
     /**
-     * Convert the Paradox VARCHAR to {@link String}.
-     *
-     * The paradox fill the entire buffer with zeros at end of VARCHAR literals.
+     * Convert the Paradox VARCHAR to {@link String}. The paradox fill the entire buffer with zeros at end of VARCHAR
+     * literals.
      *
      * @param buffer
      *            VARCHAR Buffer to convert.

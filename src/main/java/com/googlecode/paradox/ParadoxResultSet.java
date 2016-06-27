@@ -19,13 +19,6 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
-import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
-import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.rowset.ParadoxClob;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.Utils;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -52,6 +45,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.googlecode.paradox.data.table.value.ClobDescriptor;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
+import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.rowset.ParadoxClob;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.Utils;
+
 /**
  * JDBC ResultSet implementation.
  *
@@ -60,27 +61,27 @@ import java.util.Map;
  * @version 1.1
  */
 public class ParadoxResultSet implements ResultSet {
-    
+
     /**
      * If this connection is invalid.
      */
     private static final String ERROR_INVALID_COLUMN = "Invalid column.";
-    
+
     /**
      * Clob fields mapping.
      */
     private Map<Integer, Clob> clobs;
-    
+
     /**
      * If this {@link ResultSet} is closed.
      */
     private boolean closed = false;
-    
+
     /**
      * {@link ResultSet} columns.
      */
     private final List<Column> columns;
-    
+
     /**
      * The connection used in this {@link ResultSet}.
      */
@@ -105,12 +106,12 @@ public class ParadoxResultSet implements ResultSet {
      * This {@link ResultSet} {@link Statement}.
      */
     private final ParadoxStatement statement;
-    
+
     /**
      * The list of all {@link ResultSet} rows.
      */
     private final List<List<FieldValue>> values;
-    
+
     /**
      * The execution warnings.
      */
@@ -128,8 +129,7 @@ public class ParadoxResultSet implements ResultSet {
      * @param columns
      *            the columns name.
      */
-    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
-            final List<List<FieldValue>> values, final List<Column> columns) {
+    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement, final List<List<FieldValue>> values, final List<Column> columns) {
         this.statement = statement;
         this.values = values;
         this.columns = columns;
@@ -1244,8 +1244,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length)
-            throws SQLException {
+    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1301,8 +1300,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length)
-            throws SQLException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1310,8 +1308,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length)
-            throws SQLException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1335,8 +1332,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length)
-            throws SQLException {
+    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1360,8 +1356,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length)
-            throws SQLException {
+    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1449,8 +1444,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length)
-            throws SQLException {
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1458,8 +1452,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length)
-            throws SQLException {
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -1619,8 +1612,7 @@ public class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length)
-            throws SQLException {
+    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) throws SQLException {
         throw new UnsupportedOperationException();
     }
 

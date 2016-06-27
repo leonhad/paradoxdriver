@@ -64,8 +64,7 @@ public final class IndexData {
      * @throws SQLException
      *             in case of reading failures.
      */
-    public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
-            throws SQLException {
+    public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = tableName.substring(0, tableName.lastIndexOf('.')) + ".X??";
         final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
@@ -100,7 +99,6 @@ public final class IndexData {
         final ByteBuffer buffer = allocate(2048);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-
 
         final ParadoxIndex index = new ParadoxIndex(file, file.getName());
 

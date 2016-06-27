@@ -19,7 +19,6 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.utils.Constants;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,6 +30,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.googlecode.paradox.utils.Constants;
+
 /**
  * PARADOX JDBC Driver type 4.
  *
@@ -39,7 +40,7 @@ import java.util.logging.Logger;
  * @since 1.0
  */
 public class Driver implements java.sql.Driver {
-    
+
     /**
      * Logger instance for this class.
      */

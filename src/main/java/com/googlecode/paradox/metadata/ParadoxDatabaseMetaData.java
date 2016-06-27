@@ -510,7 +510,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
                     row.add(new FieldValue(conn.getCatalog(), Types.VARCHAR));
                     row.add(new FieldValue(conn.getSchema(), Types.VARCHAR));
-                    row.add(new FieldValue(index.getFatherName(), Types.VARCHAR));
+                    row.add(new FieldValue(index.getParentName(), Types.VARCHAR));
                     row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
                     row.add(new FieldValue(conn.getCatalog(), Types.VARCHAR));
                     row.add(new FieldValue(index.getName(), Types.VARCHAR));

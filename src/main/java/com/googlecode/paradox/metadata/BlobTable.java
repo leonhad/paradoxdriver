@@ -19,12 +19,6 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.utils.AllBlockCache;
-import com.googlecode.paradox.utils.ClobBlock;
-import com.googlecode.paradox.utils.IBlockCache;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.StringUtils;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,6 +31,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.googlecode.paradox.utils.AllBlockCache;
+import com.googlecode.paradox.utils.ClobBlock;
+import com.googlecode.paradox.utils.IBlockCache;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.filefilters.TableFilter;
+
 /**
  * Read from LOB file of PARADOX format.
  *
@@ -46,17 +47,17 @@ import java.util.List;
  * @version 1.1
  */
 public class BlobTable extends ParadoxDataFile {
-    
+
     /**
      * Free block value.
      */
     private static final short FREE_BLOCK = 4;
-    
+
     /**
      * Default header block size.
      */
     private static final int HEADER_BLOCK_SIZE = 0x1000;
-    
+
     /**
      * Single block value.
      */
@@ -66,12 +67,12 @@ public class BlobTable extends ParadoxDataFile {
      * Sub block value.
      */
     private static final short SUB_BLOCK = 3;
-    
+
     /**
      * Block cache.
      */
     private final IBlockCache cache;
-    
+
     /**
      * Channel to read of.
      */
@@ -81,16 +82,16 @@ public class BlobTable extends ParadoxDataFile {
      * This LOB {@link InputStream}.
      */
     private FileInputStream fs;
-    
-    /**
-     * If this LOB is already parsed.
-     */
-    private boolean parsed;
-    
+
     /**
      * Number of LOB blocks.
      */
     private int numBlock = 0;
+
+    /**
+     * If this LOB is already parsed.
+     */
+    private boolean parsed;
 
     /**
      * Creates a new instance.
@@ -123,19 +124,12 @@ public class BlobTable extends ParadoxDataFile {
     }
 
     /**
-     * Calculate block type.
-     *
-     * We'll refer to the first four bytes after the leader as MB_Offset.
-     * MB_Offset is used to locate the blob data.
-     *
-     * If MB_Offset = 0 then the entire blob is contained in the leader. Take
-     * the low-order byte from MB_Offset and call it MB_Index. Change the
-     * low-order byte of MB_Offset to zero. If MB_Index is FFh, then MB_Offset
-     * contains the offset of a type 02 (SINGLE_BLOCK) block in the MB file.
-     *
-     * Otherwise, MB_Offset contains the offset of a type 03 (SUB_BLOCK) block
-     * in the MB file. MB_Index contains the index of an entry in the Blob
-     * Pointer Array in the type 03 block.
+     * Calculate block type. We'll refer to the first four bytes after the leader as MB_Offset. MB_Offset is used to
+     * locate the blob data. If MB_Offset = 0 then the entire blob is contained in the leader. Take the low-order byte
+     * from MB_Offset and call it MB_Index. Change the low-order byte of MB_Offset to zero. If MB_Index is FFh, then
+     * MB_Offset contains the offset of a type 02 (SINGLE_BLOCK) block in the MB file. Otherwise, MB_Offset contains the
+     * offset of a type 03 (SUB_BLOCK) block in the MB file. MB_Index contains the index of an entry in the Blob Pointer
+     * Array in the type 03 block.
      *
      * @param offset
      *            offset to read on.
@@ -257,8 +251,7 @@ public class BlobTable extends ParadoxDataFile {
      * Read length bytes from offset position in MB file.
      *
      * @param pOffset
-     *            offset of the blob's data block in the MB file and an index
-     *            value.
+     *            offset of the blob's data block in the MB file and an index value.
      * @return the data values.
      * @throws SQLException
      *             in case of parse errors.
@@ -273,15 +266,14 @@ public class BlobTable extends ParadoxDataFile {
         }
         return getData(blockNum, offset);
     }
-    
+
     /**
      * Read a single block.
      *
      * @param blockNum
      *            block reference to read.
      * @param offset
-     *            offset of the blob's data block in the MB file and an index
-     *            value.
+     *            offset of the blob's data block in the MB file and an index value.
      * @return the CLOB block.
      * @throws SQLException
      *             in case of parse errors.

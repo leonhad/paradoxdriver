@@ -30,7 +30,7 @@ import com.googlecode.paradox.metadata.BlobTable;
  * @version 1.1
  */
 public class BlobDescriptor {
-    
+
     /**
      * The blob table.
      */
@@ -45,7 +45,7 @@ public class BlobDescriptor {
      * Blob modifier.
      */
     private short modifier = 0;
-    
+
     /**
      * Blob file offset.
      */
