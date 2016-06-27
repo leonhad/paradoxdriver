@@ -53,6 +53,14 @@ public final class IndexData {
         // Utility class.
     }
 
+    /**
+     * List the indexes in a database file.
+     *
+     * @param conn the Paradox connection.
+     * @param tableName the table name.
+     * @return a list of {@link ParadoxIndex}.
+     * @throws SQLException in case of reading failures.
+     */
     public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = tableName.substring(0, tableName.lastIndexOf('.')) + ".X??";
@@ -109,7 +117,7 @@ public final class IndexData {
             index.setFirstFreeBlock(buffer.getShort());
 
             buffer.position(0x55);
-            index.setReferencialIntegrity(buffer.get());
+            index.setReferentialIntegrity(buffer.get());
 
             if (index.getVersionId() > 4) {
                 // Set the charset

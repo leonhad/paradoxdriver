@@ -299,7 +299,7 @@ public final class TableData {
             table.setFirstFreeBlock(buffer.getShort());
 
             buffer.position(0x55);
-            table.setReferencialIntegrity(buffer.get());
+            table.setReferentialIntegrity(buffer.get());
 
             if (table.getVersionId() > 4) {
                 // Set the charset

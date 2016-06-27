@@ -44,7 +44,7 @@ public class ParadoxIndex extends ParadoxDataFile {
     }
 
     public String getOrder() {
-        switch (referencialIntegrity) {
+        switch (referentialIntegrity) {
         case 0:
         case 1:
         case 0x20:
