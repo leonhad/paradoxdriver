@@ -21,10 +21,7 @@ package com.googlecode.paradox.data;
 
 import static java.nio.ByteBuffer.allocate;
 import static java.nio.charset.Charset.forName;
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxIndex;
-import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,6 +32,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxIndex;
+import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
+
 /**
  * Reads index data files.
  *
@@ -43,7 +45,7 @@ import java.util.List;
  * @version 1.1
  */
 public final class IndexData {
-    
+
     /**
      * Utility class.
      */
@@ -98,12 +100,11 @@ public final class IndexData {
         final ByteBuffer buffer = allocate(2048);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        FileChannel channel = null;
-        final FileInputStream fs = new FileInputStream(file);
+
+
         final ParadoxIndex index = new ParadoxIndex(file, file.getName());
 
-        try {
-            channel = fs.getChannel();
+        try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
 
@@ -207,12 +208,6 @@ public final class IndexData {
             if (tempName.length() != 0) {
                 index.setName(tempName);
             }
-
-        } finally {
-            if (channel != null) {
-                channel.close();
-            }
-            fs.close();
         }
         return index;
     }
