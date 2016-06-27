@@ -66,9 +66,6 @@ public class SelectPlan implements Plan {
     public void addColumn(String name, final String alias) throws SQLException {
         final ParadoxField field = findField(name);
         if (field == null) {
-            if (alias != null && !alias.isEmpty()) {
-                name += " " + alias;
-            }
             throw new SQLException(String.format("Invalid column name: '%s'", name), SQLStates.INVALID_COLUMN);
         }
         columns.add(field.getColumn());
@@ -168,7 +165,7 @@ public class SelectPlan implements Plan {
                 }
             }
         }
-        if (fields.isEmpty()) {
+        if (!fields.isEmpty()) {
             if (fields.size() > 1) {
                 throw new SQLException("Column '" + name + "' ambiguously defined", SQLStates.COLUMN_AMBIQUOUS);
             } else {
