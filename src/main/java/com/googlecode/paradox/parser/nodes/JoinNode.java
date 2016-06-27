@@ -1,18 +1,141 @@
+/*
+ * JoinNode.java
+ *
+ * 03/12/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.parser.nodes;
 
-import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Stores a join node.
+ * 
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.1
+ */
 public class JoinNode extends SQLNode {
 
-    private JoinType type = JoinType.CROSS_JOIN;
-    private String tableName;
-    private String tableAlias;
-    private ArrayList<SQLNode> conditions;
+    /**
+     * The condition list.
+     */
+    private List<SQLNode> conditions;
 
+    /**
+     * The table alias.
+     */
+    private String tableAlias;
+
+    /**
+     * The table name.
+     */
+    private String tableName;
+
+    /**
+     * The join type.
+     */
+    private JoinType type = JoinType.CROSS_JOIN;
+
+    /**
+     * Create a new instance.
+     */
     public JoinNode() {
         super("JOIN");
     }
 
+    /**
+     * Gets the conditions.
+     * 
+     * @return the conditions.
+     */
+    public List<SQLNode> getConditions() {
+        return conditions;
+    }
+
+    /**
+     * Gets the table alias.
+     * 
+     * @return the table alias.
+     */
+    public String getTableAlias() {
+        return tableAlias;
+    }
+
+    /**
+     * Gets the table name.
+     * 
+     * @return the table name.
+     */
+    public String getTableName() {
+        return tableName;
+    }
+
+    /**
+     * Gets the join type.
+     * 
+     * @return the join type.
+     */
+    public JoinType getType() {
+        return type;
+    }
+
+    /**
+     * Sets the condition list.
+     * 
+     * @param conditions
+     *            the condition list.
+     */
+    public void setConditions(final List<SQLNode> conditions) {
+        this.conditions = conditions;
+    }
+
+    /**
+     * Sets the table alias.
+     * 
+     * @param tableAlias
+     *            the table alias.
+     */
+    public void setTableAlias(final String tableAlias) {
+        this.tableAlias = tableAlias;
+    }
+
+    /**
+     * Sets the table name.
+     * 
+     * @param tableName
+     *            the table name.
+     */
+    public void setTableName(final String tableName) {
+        this.tableName = tableName;
+    }
+
+    /**
+     * Sets the join type.
+     * 
+     * @param type
+     *            the join type.
+     */
+    public void setType(final JoinType type) {
+        this.type = type;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
@@ -29,38 +152,6 @@ public class JoinNode extends SQLNode {
             builder.append(" ");
         }
         return builder.toString();
-    }
-
-    public String getTableAlias() {
-        return tableAlias;
-    }
-
-    public void setTableAlias(final String tableAlias) {
-        this.tableAlias = tableAlias;
-    }
-
-    public JoinType getType() {
-        return type;
-    }
-
-    public void setType(final JoinType type) {
-        this.type = type;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(final String tableName) {
-        this.tableName = tableName;
-    }
-
-    public ArrayList<SQLNode> getConditions() {
-        return conditions;
-    }
-
-    public void setConditions(final ArrayList<SQLNode> conditions) {
-        this.conditions = conditions;
     }
 
 }
