@@ -57,13 +57,11 @@ public class SelectPlan implements Plan {
      * Add column from select list.
      *
      * @param name
-     *            column name
-     * @param alias
-     *            column alias (id as key)
+     *            column name.
      * @throws SQLException
-     *             - search column exception
+     *             search column exception.
      */
-    public void addColumn(String name, final String alias) throws SQLException {
+    public void addColumn(String name) throws SQLException {
         final ParadoxField field = findField(name);
         if (field == null) {
             throw new SQLException(String.format("Invalid column name: '%s'", name), SQLStates.INVALID_COLUMN);
@@ -176,6 +174,11 @@ public class SelectPlan implements Plan {
         return null;
     }
 
+    /**
+     * Gets the columns in SELECT statement.
+     *
+     * @return the columns in SELECT statement.
+     */
     public List<Column> getColumns() {
         return columns;
     }

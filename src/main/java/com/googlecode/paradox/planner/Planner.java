@@ -33,6 +33,13 @@ public class Planner {
         }
     }
 
+    /**
+     * Creates an SELECT plan.
+     *
+     * @param statement the statement to parse.
+     * @return the SELECT plan.
+     * @throws SQLException in case of syntax error.
+     */
     private Plan createSelect(final SelectNode statement) throws SQLException {
         final SelectPlan plan = new SelectPlan(conn);
         final List<ParadoxTable> paradoxTables = TableData.listTables(conn);
@@ -62,11 +69,10 @@ public class Planner {
                     plan.addColumnFromTable(table.getTable());
                 }
             } else {
-                final String alias = field.getAlias();
                 if (name == null || name.isEmpty()) {
                     throw new SQLException("Column name is empty");
                 }
-                plan.addColumn(name, alias);
+                plan.addColumn(name);
             }
         }
         if (plan.getColumns().isEmpty()) {
