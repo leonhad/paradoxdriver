@@ -1,8 +1,34 @@
+/*
+ * BlobTable.java
+ *
+ * 12/22/2014
+ * Copyright (C) 2014 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.utils.AllBlockCache;
+import com.googlecode.paradox.utils.ClobBlock;
+import com.googlecode.paradox.utils.IBlockCache;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.filefilters.TableFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -11,41 +37,85 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.googlecode.paradox.utils.AllBlockCache;
-import com.googlecode.paradox.utils.ClobBlock;
-import com.googlecode.paradox.utils.IBlockCache;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.StringUtils;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
-
 /**
- * Read from clob/blob file of PARADOX format.
+ * Read from LOB file of PARADOX format.
  *
- * Created by Andre on 11.12.2014.
+ * @author Leonardo Alves da Costa
+ * @author Andre Mikhaylov
+ * @since 1.2
+ * @version 1.1
  */
 public class BlobTable extends ParadoxDataFile {
-
+    
+    /**
+     * Free block value.
+     */
     private static final short FREE_BLOCK = 4;
+    
+    /**
+     * Default header block size.
+     */
     private static final int HEADER_BLOCK_SIZE = 0x1000;
+    
+    /**
+     * Single block value.
+     */
     private static final short SINGLE_BLOCK = 2;
-    private static final short SUB_BLOCK = 3;
 
+    /**
+     * Sub block value.
+     */
+    private static final short SUB_BLOCK = 3;
+    
+    /**
+     * Block cache.
+     */
     private final IBlockCache cache;
+    
+    /**
+     * Channel to read of.
+     */
     private FileChannel channel = null;
+
+    /**
+     * This LOB {@link InputStream}.
+     */
     private FileInputStream fs;
-    private boolean isEnd;
-    private boolean isParsed;
+    
+    /**
+     * If this LOB is already parsed.
+     */
+    private boolean parsed;
+    
+    /**
+     * Number of LOB blocks.
+     */
     private int numBlock = 0;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param file
+     *            the file to read of.
+     * @param name
+     *            the LOBs name.
+     */
     public BlobTable(final File file, final String name) {
         super(file, StringUtils.removeMb(name));
         cache = new AllBlockCache();
-        isEnd = isParsed = false;
+        parsed = false;
         fields = Collections.emptyList();
     }
 
+    /**
+     * Close this LOB reference.
+     *
+     * @throws SQLException
+     *             in case of I/O errors.
+     */
     public void close() throws SQLException {
         try {
+            channel.close();
             fs.close();
         } catch (final IOException ex) {
             throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
@@ -68,13 +138,25 @@ public class BlobTable extends ParadoxDataFile {
      * Pointer Array in the type 03 block.
      *
      * @param offset
-     * @return
+     *            offset to read on.
+     * @return number of blocks read.
      */
     private int getBlockNum(final long offset) {
         final int idx = (int) (offset & 0x0000FF00) >> 8;
         return (idx & 0x0F) * 0xF + (idx & 0xF0) >> 4;
     }
 
+    /**
+     * Gets the data from LOB file.
+     *
+     * @param blockNum
+     *            block reference.
+     * @param offset
+     *            offset to read of.
+     * @return the data array.
+     * @throws SQLException
+     *             in case of reading failures.
+     */
     private byte[] getData(final int blockNum, final short offset) throws SQLException {
         ClobBlock block = cache.get(blockNum, offset);
         if (block != null) {
@@ -91,15 +173,29 @@ public class BlobTable extends ParadoxDataFile {
         return block.getValue();
     }
 
+    /**
+     * If this block is already parsed.
+     *
+     * @return true if this block is already parsed.
+     */
     public boolean isParsed() {
-        return isEnd;
+        return parsed;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isValid() {
         return false;
     }
 
+    /**
+     * Open this LOB to reading.
+     *
+     * @throws SQLException
+     *             in case of failures.
+     */
     private void open() throws SQLException {
         try {
             final File blobFile = openBlob();
@@ -110,6 +206,13 @@ public class BlobTable extends ParadoxDataFile {
         }
     }
 
+    /**
+     * Open this LOB to reading.
+     *
+     * @return the {@link File} to read of.
+     * @throws SQLException
+     *             in case of failures.
+     */
     private File openBlob() throws SQLException {
         final String name = StringUtils.removeDb(getFile().getName());
         final File[] fileList = getFile().getParentFile().listFiles(new TableFilter(name, "mb"));
@@ -122,6 +225,12 @@ public class BlobTable extends ParadoxDataFile {
         return fileList[0];
     }
 
+    /**
+     * Parse this LOB file.
+     *
+     * @throws SQLException
+     *             in case of reading failures.
+     */
     private void parse() throws SQLException {
         try {
             // First block - always 4k bytes
@@ -138,14 +247,14 @@ public class BlobTable extends ParadoxDataFile {
             // No read header (while not necessary)
             channel.position(HEADER_BLOCK_SIZE);
             numBlock++;
-            isParsed = true;
+            parsed = true;
         } catch (final IOException ex) {
             throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
         }
     }
 
     /**
-     * Read length bytes from offset position in mb file.
+     * Read length bytes from offset position in MB file.
      *
      * @param pOffset
      *            offset of the blob's data block in the MB file and an index
@@ -158,13 +267,25 @@ public class BlobTable extends ParadoxDataFile {
         final short offset = (short) (pOffset & 0xFF);
 
         final int blockNum = getBlockNum(pOffset);
-        if (!isParsed) {
+        if (!parsed) {
             open();
             parse();
         }
         return getData(blockNum, offset);
     }
-
+    
+    /**
+     * Read a single block.
+     *
+     * @param blockNum
+     *            block reference to read.
+     * @param offset
+     *            offset of the blob's data block in the MB file and an index
+     *            value.
+     * @return the CLOB block.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     private ClobBlock readBlock(final int blockNum, final short offset) throws SQLException {
         final List<ClobBlock> nextBlocks = new ArrayList<>(1);
         while (readNextBlock(nextBlocks)) {
@@ -174,10 +295,18 @@ public class BlobTable extends ParadoxDataFile {
                 return next;
             }
         }
-        isEnd = true;
         return null;
     }
 
+    /**
+     * Read the next block in the list.
+     *
+     * @param blocks
+     *            blocks reference.
+     * @return true if has no errors.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     private boolean readNextBlock(final List<ClobBlock> blocks) throws SQLException {
         try {
             if (channel.position() == channel.size()) {

@@ -11,14 +11,15 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.utils.Constants;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,8 +31,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.googlecode.paradox.utils.Constants;
-
 /**
  * PARADOX JDBC Driver type 4.
  *
@@ -40,14 +39,14 @@ import com.googlecode.paradox.utils.Constants;
  * @since 1.0
  */
 public class Driver implements java.sql.Driver {
-
+    
     /**
      * Logger instance for this class.
      */
     private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
 
     /**
-     * Driver properties, if has some.
+     * Driver properties.
      */
     private Properties properties = null;
 

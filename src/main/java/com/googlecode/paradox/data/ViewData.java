@@ -11,14 +11,20 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.filefilters.ViewFilter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,13 +38,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.metadata.ParadoxView;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.filefilters.ViewFilter;
-
 /**
  * Read view files (structure).
  *
@@ -47,7 +46,7 @@ import com.googlecode.paradox.utils.filefilters.ViewFilter;
  * @version 1.1
  */
 public final class ViewData {
-
+    
     /**
      * Default charset.
      */
@@ -60,6 +59,15 @@ public final class ViewData {
         // Utility class.
     }
 
+    /**
+     * Gets a field by name.
+     *
+     * @param table
+     *            the fields table.
+     * @param name
+     *            the field name.
+     * @return the {@link ParadoxField}.
+     */
     private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
         ParadoxField originalField = null;
         for (final ParadoxField f : table.getFields()) {
@@ -97,15 +105,29 @@ public final class ViewData {
     /**
      * Returns all connections view.
      *
-     * @param conn the connection.
+     * @param conn
+     *            the connection.
      * @return a list of all views.
-     * @throws SQLException in case of failures.
+     * @throws SQLException
+     *             in case of failures.
      */
     public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
         return listViews(conn, null);
     }
 
-    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws SQLException {
+    /**
+     * Gets all view filtered by name.
+     *
+     * @param conn
+     *            the database connection.
+     * @param tableName
+     *            the name filter.
+     * @return all {@link ParadoxView} filtered by name.
+     * @throws SQLException
+     *             in case of reading errors.
+     */
+    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName)
+            throws SQLException {
         final List<ParadoxView> views = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
@@ -119,6 +141,17 @@ public final class ViewData {
         return views;
     }
 
+    /**
+     * Gets a {@link ParadoxView} by {@link File}.
+     *
+     * @param conn
+     *            the database connection.
+     * @param file
+     *            the {@link File} to read.
+     * @return the {@link ParadoxView}.
+     * @throws SQLException
+     *             in case of reading errors.
+     */
     private static ParadoxView loadView(final ParadoxConnection conn, final File file) throws SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(8192);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -128,7 +161,8 @@ public final class ViewData {
             channel.read(buffer);
             buffer.flip();
 
-            final BufferedReader reader = new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));
+            final BufferedReader reader = new BufferedReader(
+                    new StringReader(ViewData.CHARSET.decode(buffer).toString()));
 
             if ("Query".equals(reader.readLine())) {
                 return view;
@@ -226,6 +260,14 @@ public final class ViewData {
         return view;
     }
 
+    /**
+     * Parse a view Paradox expression.
+     *
+     * @param field
+     *            the expression field.
+     * @param expression
+     *            the expression to parse.
+     */
     public static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
@@ -270,8 +312,22 @@ public final class ViewData {
         }
     }
 
-    private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader) throws IOException, SQLException {
-
+    /**
+     * Read fields from buffer.
+     *
+     * @param conn
+     *            the database connection.
+     * @param reader
+     *            the buffer to read of.
+     * @return the field list.
+     * @throws IOException
+     *             in case of I/O errors.
+     * @throws SQLException
+     *             in case of syntax errors.
+     */
+    private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader)
+            throws IOException, SQLException {
+        
         final StringBuilder line = new StringBuilder();
         do {
             line.append(readLine(reader));
@@ -302,6 +358,15 @@ public final class ViewData {
         return fields;
     }
 
+    /**
+     * Read a line from buffer.
+     * 
+     * @param reader
+     *            the buffer to read of.
+     * @return a new line.
+     * @throws IOException
+     *             in case of I/O exception.
+     */
     private static String readLine(final BufferedReader reader) throws IOException {
         final String line = reader.readLine();
         return line != null ? line.trim() : null;

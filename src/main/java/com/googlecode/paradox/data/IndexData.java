@@ -11,17 +11,20 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.data;
 
 import static java.nio.ByteBuffer.allocate;
 import static java.nio.charset.Charset.forName;
-
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxIndex;
+import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,11 +35,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxIndex;
-import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
-
 /**
  * Reads index data files.
  *
@@ -45,7 +43,7 @@ import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
  * @version 1.1
  */
 public final class IndexData {
-
+    
     /**
      * Utility class.
      */
@@ -56,12 +54,16 @@ public final class IndexData {
     /**
      * List the indexes in a database file.
      *
-     * @param conn the Paradox connection.
-     * @param tableName the table name.
+     * @param conn
+     *            the Paradox connection.
+     * @param tableName
+     *            the table name.
      * @return a list of {@link ParadoxIndex}.
-     * @throws SQLException in case of reading failures.
+     * @throws SQLException
+     *             in case of reading failures.
      */
-    public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName) throws SQLException {
+    public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
+            throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = tableName.substring(0, tableName.lastIndexOf('.')) + ".X??";
         final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
@@ -81,6 +83,17 @@ public final class IndexData {
         return indexes;
     }
 
+    /**
+     * Loads the database file header.
+     *
+     * @param file
+     *            the database {@link File}.
+     * @return the {@link ParadoxIndex} reference.
+     * @throws IOException
+     *             if case of I/O exceptions.
+     * @throws SQLException
+     *             in case of database errors.
+     */
     private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
         final ByteBuffer buffer = allocate(2048);
 
@@ -120,7 +133,7 @@ public final class IndexData {
             index.setReferentialIntegrity(buffer.get());
 
             if (index.getVersionId() > 4) {
-                // Set the charset
+                // Set the charset.
                 buffer.position(0x6A);
                 index.setCharset(forName("cp" + buffer.getShort()));
 

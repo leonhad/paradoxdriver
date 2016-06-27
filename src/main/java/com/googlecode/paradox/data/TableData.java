@@ -11,14 +11,24 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.ClobDescriptor;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.utils.Constants;
+import com.googlecode.paradox.utils.DateUtils;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.filefilters.TableFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,17 +47,6 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
-import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.DateUtils;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.StringUtils;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
-
 /**
  * Utility class for loading table files.
  *
@@ -56,7 +55,7 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
  * @version 1.1
  */
 public final class TableData {
-
+    
     /**
      * Utility class.
      */
@@ -64,6 +63,15 @@ public final class TableData {
         // Utility class.
     }
 
+    /**
+     * List all database tables.
+     *
+     * @param conn
+     *            the database connection.
+     * @return all {@link ParadoxTable}.
+     * @throws SQLException
+     *             in case of failures.
+     */
     public static List<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter());
@@ -78,7 +86,19 @@ public final class TableData {
         return tables;
     }
 
-    public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern) throws SQLException {
+    /**
+     * Gets all tables within a pattern.
+     *
+     * @param conn
+     *            the database connection.
+     * @param pattern
+     *            the pattern.
+     * @return the tables filtered.
+     * @throws SQLException
+     *             in case of failures.
+     */
+    public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
+            throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
         if (fileList != null) {
@@ -92,7 +112,19 @@ public final class TableData {
         return tables;
     }
 
-    public static List<List<FieldValue>> loadData(final ParadoxTable table, final Collection<ParadoxField> fields) throws SQLException {
+    /**
+     * Load the table data from file.
+     *
+     * @param table
+     *            the table to read.
+     * @param fields
+     *            the fields to read.
+     * @return the row values.
+     * @throws SQLException
+     *             in case of failures.
+     */
+    public static List<List<FieldValue>> loadData(final ParadoxTable table, final Collection<ParadoxField> fields)
+            throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<>();
 
         final int blockSize = table.getBlockSizeBytes();
@@ -138,7 +170,8 @@ public final class TableData {
                                 for (int chars = 0; chars < field.getSize(); chars++) {
                                     valueString.put(buffer.get());
                                 }
-                                fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()), Types.VARCHAR);
+                                fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()),
+                                        Types.VARCHAR);
                                 break;
                             }
                             case 2: {
@@ -208,7 +241,7 @@ public final class TableData {
                                 buffer.order(ByteOrder.LITTLE_ENDIAN);
                                 final long offset = buffer.getInt();
                                 final long length = buffer.getInt();
-                                final short modificator = buffer.getShort();
+                                final short modifier = buffer.getShort();
                                 buffer.order(ByteOrder.BIG_ENDIAN);
 
                                 final ClobDescriptor descriptor = new ClobDescriptor(table.getBlobTable());
@@ -216,7 +249,7 @@ public final class TableData {
                                 descriptor.setLeader(TableData.parseString(value, table.getCharset()));
                                 descriptor.setLength(length);
                                 descriptor.setOffset(offset);
-                                descriptor.setModificator(modificator);
+                                descriptor.setModifier(modifier);
 
                                 fieldValue = new FieldValue(descriptor, Types.CLOB);
 
@@ -267,6 +300,15 @@ public final class TableData {
         return ret;
     }
 
+    /**
+     * Gets the table header from a file.
+     *
+     * @param file
+     *            the {@link File} to read.
+     * @return the {@link ParadoxTable}.
+     * @throws SQLException
+     *             in case of reading errors.
+     */
     private static ParadoxTable loadTableHeader(final File file) throws SQLException {
         final ParadoxTable table = new ParadoxTable(file, file.getName());
         ByteBuffer buffer = ByteBuffer.allocate(2048);
@@ -363,15 +405,15 @@ public final class TableData {
     }
 
     /**
-     * Convert the Paradox VARCHAR to Java String.
+     * Convert the Paradox VARCHAR to {@link String}.
      *
      * The paradox fill the entire buffer with zeros at end of VARCHAR literals.
      *
      * @param buffer
      *            VARCHAR Buffer to convert.
      * @param charset
-     *            Table Charset (in Java Format).
-     * @return a string formatted.
+     *            Table Charset.
+     * @return a formatted {@link String}.
      */
     private static String parseString(final ByteBuffer buffer, final Charset charset) {
         final byte[] value = buffer.array();
