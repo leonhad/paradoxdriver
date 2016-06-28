@@ -41,9 +41,18 @@ import com.googlecode.paradox.utils.SQLStates;
  */
 public class SelectPlan implements Plan {
 
+    /**
+     * The columns in this plan.
+     */
     private final List<Column> columns = new ArrayList<>();
+    /**
+     * The tables in this plan.
+     */
     private final List<PlanTableNode> tables = new ArrayList<>();
-    private List<List<FieldValue>> values = null;
+    /**
+     * The data values.
+     */
+    private final List<List<FieldValue>> values = new ArrayList<>();
 
     /**
      * Creates a SELECT plan.
@@ -107,30 +116,60 @@ public class SelectPlan implements Plan {
             for (final PlanTableNode table : tables) {
                 final ParadoxTable pTable = table.getTable();
                 if (column.getTableName().equalsIgnoreCase(pTable.getName())) {
-                    final ParadoxField field = pTable.findField(column.getName());
-                    if (field == null) {
-                        throw new SQLException("Column '" + column.getName() + "' not found in table '" + pTable.getName(), SQLStates.INVALID_FIELD_VALUE.getValue());
-                    }
-                    // load table data
-                    final List<List<FieldValue>> tableData = TableData.loadData(pTable, pTable.getFields());
-                    // search column index
-                    if (field.getOrderNum() > tableData.size() || field.getOrderNum() < 1) {
-                        throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
-                    }
-                    if (values == null) {
-                        values = new ArrayList<>();
-                    }
-                    final int p = field.getOrderNum() - 1;
-                    List<FieldValue> resultRow;
-                    for (int j = 0; j < tableData.size(); j++) {
-                        if (j == values.size()) {
-                            resultRow = new ArrayList<>();
-                            values.add(resultRow);
-                        } else {
-                            resultRow = values.get(j);
-                        }
-                        resultRow.add(tableData.get(j).get(p));
-                    }
+                    loadTableData(column, pTable);
+                }
+            }
+        }
+    }
+
+    /**
+     * Fill the result row with a field order.
+     * 
+     * @param tableData
+     *            the table data load from.
+     * @param fieldOrder
+     *            the field order.
+     */
+    private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) {
+        for (int j = 0; j < tableData.size(); j++) {
+            List<FieldValue> resultRow;
+            if (j == values.size()) {
+                resultRow = new ArrayList<>();
+                values.add(resultRow);
+            } else {
+                resultRow = values.get(j);
+            }
+            resultRow.add(tableData.get(j).get(fieldOrder));
+        }
+    }
+
+    /**
+     * Finds a single column in the table list.
+     * 
+     * @param fieldName
+     *            the field name.
+     * @param fields
+     *            the field list.
+     * @param prefix
+     *            the field prefix.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private void findColumn(final String fieldName, final List<ParadoxField> fields, final String prefix) throws SQLException {
+        for (final PlanTableNode table : tables) {
+            if (table.getTable() == null) {
+                throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
+            }
+
+            if (prefix != null && table.getAlias() != null && !prefix.equalsIgnoreCase(table.getAlias())) {
+                continue;
+            }
+
+            for (final ParadoxField field : table.getTable().getFields()) {
+                if (field.getName().equalsIgnoreCase(fieldName)) {
+                    fields.add(field);
+                    // Unique column in table
+                    break;
                 }
             }
         }
@@ -145,39 +184,20 @@ public class SelectPlan implements Plan {
      * @throws SQLException
      *             in case of find errors.
      */
-    private ParadoxField findField(String name) throws SQLException {
+    private ParadoxField findField(final String name) throws SQLException {
+        String newName = name;
         final List<ParadoxField> fields = new ArrayList<>(1);
         String prefix = null;
-        final int p = name.indexOf('.');
+        final int p = newName.indexOf('.');
         if (p > -1) {
-            prefix = name.substring(0, p - 1);
-            name = name.substring(p);
+            prefix = newName.substring(0, p - 1);
+            newName = newName.substring(p);
         }
 
-        // Find column in table list
-        //
-        // select a.id from table a - true select id from table - true select id
-        // from table1, table2 - exception (if id exists in table1 and table2)
-        for (final PlanTableNode table : tables) {
-            if (table.getTable() == null) {
-                throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
-            }
-
-            if (prefix != null && table.getAlias() != null && !prefix.equalsIgnoreCase(table.getAlias())) {
-                continue;
-            }
-
-            for (final ParadoxField field : table.getTable().getFields()) {
-                if (field.getName().equalsIgnoreCase(name)) {
-                    fields.add(field);
-                    // Unique column in table
-                    break;
-                }
-            }
-        }
+        findColumn(newName, fields, prefix);
         if (!fields.isEmpty()) {
             if (fields.size() > 1) {
-                throw new SQLException("Column '" + name + "' ambiguously defined", SQLStates.COLUMN_AMBIQUOUS.getValue());
+                throw new SQLException("Column '" + newName + "' ambiguously defined", SQLStates.COLUMN_AMBIQUOUS.getValue());
             } else {
                 return fields.get(0);
             }
@@ -211,5 +231,31 @@ public class SelectPlan implements Plan {
      */
     public List<List<FieldValue>> getValues() {
         return values;
+    }
+
+    /**
+     * Load the table data form a table.
+     * 
+     * @param column
+     *            the column to load.
+     * @param table
+     *            the table to load.
+     * @throws SQLException
+     *             in case of execution errors.
+     */
+    private void loadTableData(final Column column, final ParadoxTable table) throws SQLException {
+        final ParadoxField field = table.findField(column.getName());
+        if (field == null) {
+            throw new SQLException("Column '" + column.getName() + "' not found in table '" + table.getName(), SQLStates.INVALID_FIELD_VALUE.getValue());
+        }
+        // load table data
+        final List<List<FieldValue>> tableData = TableData.loadData(table, table.getFields());
+        // search column index
+        if (field.getOrderNum() > tableData.size() || field.getOrderNum() < 1) {
+            throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
+        }
+
+        final int p = field.getOrderNum() - 1;
+        fillResultValues(tableData, p);
     }
 }
