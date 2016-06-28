@@ -1,3 +1,22 @@
+/*
+ * SQLParserTest.java
+ *
+ * 03/12/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.parser;
 
 import java.util.List;
@@ -15,8 +34,21 @@ import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 
+/**
+ * Unit test for {@link SQLParser}.
+ * 
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.1
+ */
 public class SQLParserTest {
 
+    /**
+     * Test for column values.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testColumnValue() throws Exception {
         final SQLParser parser = new SQLParser("SELECT 'test', 123 as number FROM client");
@@ -38,6 +70,12 @@ public class SQLParserTest {
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
 
+    /**
+     * Test for join token.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testJoin() throws Exception {
         final SQLParser parser = new SQLParser("SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
@@ -55,6 +93,12 @@ public class SQLParserTest {
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
 
+    /**
+     * Test for SELECT token.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testSelect() throws Exception {
         final SQLParser parser = new SQLParser("SELECT * FROM client");
@@ -72,6 +116,12 @@ public class SQLParserTest {
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
 
+    /**
+     * Test for tables.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testTable() throws Exception {
         final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
@@ -89,6 +139,12 @@ public class SQLParserTest {
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
 
+    /**
+     * Test a SELECT with two tables.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testTwoTable() throws Exception {
         final SQLParser parser = new SQLParser("select CODIGO as código, estado.NOME nome FROM cliente, estado");
@@ -112,6 +168,12 @@ public class SQLParserTest {
         Assert.assertEquals("estado", select.getTables().get(1).getName());
     }
 
+    /**
+     * Test tables with alias.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testTwoTableWithAlias() throws Exception {
         final SQLParser parser = new SQLParser("select *, name FROM client as cli, state STATE");
@@ -133,6 +195,12 @@ public class SQLParserTest {
         Assert.assertEquals("STATE", select.getTables().get(1).getAlias());
     }
 
+    /**
+     * Test for where token.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testWhere() throws Exception {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b and c <> t");
@@ -160,6 +228,12 @@ public class SQLParserTest {
         Assert.assertEquals("t", ((NotEqualsNode) select.getConditions().get(2)).getLast().getName());
     }
 
+    /**
+     * Test a where with alias.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testWhereWithAlias() throws Exception {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE test.a = c.b");

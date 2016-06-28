@@ -35,7 +35,7 @@ import com.googlecode.paradox.utils.AllBlockCache;
 import com.googlecode.paradox.utils.ClobBlock;
 import com.googlecode.paradox.utils.IBlockCache;
 import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 /**
@@ -102,7 +102,7 @@ public class BlobTable extends ParadoxDataFile {
      *            the LOBs name.
      */
     public BlobTable(final File file, final String name) {
-        super(file, StringUtils.removeMb(name));
+        super(file, Utils.removeMb(name));
         cache = new AllBlockCache();
         parsed = false;
         fields = Collections.emptyList();
@@ -208,7 +208,7 @@ public class BlobTable extends ParadoxDataFile {
      *             in case of failures.
      */
     private File openBlob() throws SQLException {
-        final String name = StringUtils.removeDb(getFile().getName());
+        final String name = Utils.removeDb(getFile().getName());
         final File[] fileList = getFile().getParentFile().listFiles(new TableFilter(name, "mb"));
         if (fileList == null || fileList.length == 0) {
             throw new SQLException(String.format("Blob file not found for table '%s'", name), SQLStates.LOAD_DATA.getValue());

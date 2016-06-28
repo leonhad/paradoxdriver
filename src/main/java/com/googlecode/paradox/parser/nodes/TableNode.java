@@ -22,7 +22,7 @@ package com.googlecode.paradox.parser.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.Utils;
 
 /**
  * Stores a table node.
@@ -52,7 +52,7 @@ public class TableNode extends SQLNode {
      *            the table alias.
      */
     public TableNode(final String name, final String alias) {
-        super(StringUtils.removeDb(name));
+        super(Utils.removeDb(name));
         this.alias = alias;
     }
 

@@ -1,5 +1,5 @@
 /*
- * ViewData.java
+ * Utils.java
  *
  * 06/20/2015
  * Copyright (C) 2016 Leonardo Alves da Costa
@@ -59,6 +59,44 @@ public final class Utils {
      */
     public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iface) throws SQLException {
         return wrapper.getClass().isAssignableFrom(iface);
+    }
+
+    /**
+     * Remove the DB suffix from a {@link String}.
+     * 
+     * @param name
+     *            the {@link String} to format.
+     * @return the formatted {@link String}.
+     */
+    public static String removeDb(final String name) {
+        return removeSuffix(name, "DB");
+    }
+
+    /**
+     * Remove the MB suffix from a {@link String}.
+     * 
+     * @param name
+     *            the {@link String} to format.
+     * @return the formatted {@link String}.
+     */
+    public static String removeMb(final String name) {
+        return removeSuffix(name, "MB");
+    }
+
+    /**
+     * Remove a given suffix from {@link String}.
+     * 
+     * @param name
+     *            the {@link String} to format.
+     * @param suffix
+     *            the suffix.
+     * @return the formatted {@link String}.
+     */
+    private static String removeSuffix(String name, final String suffix) {
+        if (name != null && name.toUpperCase().endsWith("." + suffix.toUpperCase())) {
+            name = name.substring(0, name.length() - 3);
+        }
+        return name;
     }
 
     /**

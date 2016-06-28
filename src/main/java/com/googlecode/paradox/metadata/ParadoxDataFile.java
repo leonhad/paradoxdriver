@@ -22,7 +22,7 @@ package com.googlecode.paradox.metadata;
 import java.io.File;
 import java.util.List;
 
-import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.Utils;
 
 /**
  * Defines the paradox default file structure.
@@ -138,7 +138,7 @@ public abstract class ParadoxDataFile {
      */
     public ParadoxDataFile(final File file, final String name) {
         this.file = file;
-        this.name = StringUtils.removeDb(name);
+        this.name = Utils.removeDb(name);
     }
 
     /**

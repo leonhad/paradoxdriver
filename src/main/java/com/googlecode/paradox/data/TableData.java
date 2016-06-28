@@ -45,7 +45,7 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.DateUtils;
 import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.StringUtils;
+import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 /**
@@ -100,7 +100,7 @@ public final class TableData {
      */
     public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
-        final File[] fileList = conn.getDir().listFiles(new TableFilter(StringUtils.removeDb(pattern)));
+        final File[] fileList = conn.getDir().listFiles(new TableFilter(Utils.removeDb(pattern)));
         if (fileList != null) {
             for (final File file : fileList) {
                 final ParadoxTable table = TableData.loadTableHeader(file);

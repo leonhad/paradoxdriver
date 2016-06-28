@@ -1,3 +1,22 @@
+/*
+ * MainTest.java
+ *
+ * 03/12/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.integration;
 
 import java.sql.Connection;
@@ -20,7 +39,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
 
 /**
- * Generic tests for Paradox Driver
+ * Generic integration tests for Paradox Driver.
  *
  * @author Leonardo Alves da Costa
  * @since 1.0
@@ -29,14 +48,33 @@ import com.googlecode.paradox.utils.Utils;
 @Category(IntegrationTest.class)
 public class MainTest {
 
+    /**
+     * The connection string used in this tests.
+     */
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+
+    /**
+     * The database connection.
+     */
     private Connection conn;
 
+    /**
+     * Register the database driver.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @BeforeClass
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
+    /**
+     * Close the test conneciton.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @After
     public void closeConnection() throws Exception {
         if (conn != null) {
@@ -44,11 +82,23 @@ public class MainTest {
         }
     }
 
+    /**
+     * Connect to the test database.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Before
     public void connect() throws Exception {
         conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
 
+    /**
+     * Test for the catalog metadata.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testCatalog() throws Exception {
         ResultSet rs = null;
@@ -68,6 +118,12 @@ public class MainTest {
         }
     }
 
+    /**
+     * Test for the index info metadata.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testIndexInfo() throws Exception {
         ResultSet rs = null;
@@ -120,6 +176,12 @@ public class MainTest {
         }
     }
 
+    /**
+     * Test for primary key metadata.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testPrimaryKey() throws Exception {
         ResultSet rs = null;
@@ -143,6 +205,12 @@ public class MainTest {
         }
     }
 
+    /**
+     * Test for {@link ResultSet} execution.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testResultSet() throws Exception {
         Statement stmt = null;
@@ -167,8 +235,14 @@ public class MainTest {
         }
     }
 
+    /**
+     * Test for {@link ResultSet} with multiple values.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
-    public void testResultSet2() throws Exception {
+    public void testResultSetMultipleValues() throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
 
@@ -196,6 +270,12 @@ public class MainTest {
         }
     }
 
+    /**
+     * Test {@link ResultSet} with one column.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testResultSetOneColumn() throws Exception {
         Statement stmt = null;
@@ -227,6 +307,12 @@ public class MainTest {
         }
     }
 
+    /**
+     * Test {@link ResultSet} with two columns.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testResultSetTwoColumn() throws Exception {
         Statement stmt = null;
@@ -264,17 +350,35 @@ public class MainTest {
         }
     }
 
+    /**
+     * Test for unwrap impossible.
+     * 
+     * @throws Exception
+     *             if test succeed.
+     */
     @Test(expected = SQLException.class)
     public void testUnwrapImpossive() throws Exception {
         Utils.unwrap(conn, Integer.class);
     }
 
+    /**
+     * Test for a valid conneciton.
+     * 
+     * @throws SQLException
+     *             in case of failures.
+     */
     @Test
     public void testValidConnection() throws SQLException {
         Assert.assertTrue(conn.isWrapperFor(ParadoxConnection.class));
         Assert.assertNotNull(conn.unwrap(ParadoxConnection.class));
     }
 
+    /**
+     * Test for view coluns metadata.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
     @Test
     public void testViewColumns() throws Exception {
         ResultSet rs = null;
@@ -285,24 +389,15 @@ public class MainTest {
             rs = meta.getColumns("db", "APP", "CONTASAPAGAR.QBE", "%");
             while (rs.next()) {
                 /*
-                 * System.out.println("TABLE_CAT: " +
-                 * rs.getString("TABLE_CAT")); System.out.println(
-                 * "TABLE_SCHEM: " + rs.getString("TABLE_SCHEM"));
-                 * System.out.println("TABLE_NAME: " +
-                 * rs.getString("TABLE_NAME")); System.out.println(
-                 * "NON_UNIQUE: " + rs.getString("NON_UNIQUE"));
-                 * System.out.println("INDEX_QUALIFIER: " +
-                 * rs.getString("INDEX_QUALIFIER")); System.out.println(
-                 * "INDEX_NAME: " + rs.getString("INDEX_NAME"));
-                 * System.out.println("TYPE: " + rs.getString("TYPE"));
-                 * System.out.println("ORDINAL_POSITION: " +
-                 * rs.getString("ORDINAL_POSITION")); System.out.println(
-                 * "COLUMN_NAME: " + rs.getString("COLUMN_NAME"));
-                 * System.out.println("ASC_OR_DESC: " +
-                 * rs.getString("ASC_OR_DESC")); System.out.println(
-                 * "CARDINALITY: " + rs.getString("CARDINALITY"));
-                 * System.out.println("PAGES: " + rs.getString("PAGES"));
-                 * System.out.println("FILTER_CONDITION: " +
+                 * FIXME read columns. System.out.println("TABLE_CAT: " + rs.getString("TABLE_CAT"));
+                 * System.out.println( "TABLE_SCHEM: " + rs.getString("TABLE_SCHEM")); System.out.println("TABLE_NAME: "
+                 * + rs.getString("TABLE_NAME")); System.out.println( "NON_UNIQUE: " + rs.getString("NON_UNIQUE"));
+                 * System.out.println( "INDEX_QUALIFIER: " + rs.getString("INDEX_QUALIFIER")); System.out.println(
+                 * "INDEX_NAME: " + rs.getString("INDEX_NAME")); System.out.println("TYPE: " + rs.getString("TYPE"));
+                 * System.out.println( "ORDINAL_POSITION: " + rs.getString("ORDINAL_POSITION")); System.out.println(
+                 * "COLUMN_NAME: " + rs.getString("COLUMN_NAME")); System.out.println("ASC_OR_DESC: " +
+                 * rs.getString("ASC_OR_DESC")); System.out.println( "CARDINALITY: " + rs.getString("CARDINALITY"));
+                 * System.out.println("PAGES: " + rs.getString("PAGES")); System.out.println("FILTER_CONDITION: " +
                  * rs.getString("FILTER_CONDITION"));
                  */
             }
