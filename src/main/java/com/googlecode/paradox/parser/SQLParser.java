@@ -407,7 +407,7 @@ public class SQLParser {
     
     /**
      * Parse the field list in SELECT statement.
-     * 
+     *
      * @param select
      *            the select node.
      * @throws SQLException
@@ -522,8 +522,11 @@ public class SQLParser {
      * @throws SQLException
      *             in case of parse errors.
      */
-    private void parseIdentifier(final SelectNode select, String tableName, String fieldName) throws SQLException {
+    private void parseIdentifier(final SelectNode select, final String tableName, final String fieldName)
+            throws SQLException {
         String fieldAlias = fieldName;
+        String newTableName = tableName;
+        String newFieldName = fieldName;
         expect(TokenType.IDENTIFIER);
 
         if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.AS
@@ -531,9 +534,9 @@ public class SQLParser {
             // If it has a Table Name
             if (token.getType() == TokenType.PERIOD) {
                 expect(TokenType.PERIOD);
-                tableName = fieldName;
+                newTableName = fieldName;
                 fieldAlias = fieldName;
-                fieldName = token.getValue();
+                newFieldName = token.getValue();
                 expect(TokenType.IDENTIFIER);
             }
             // Field alias (with AS identifier)
@@ -550,6 +553,6 @@ public class SQLParser {
                 expect(TokenType.IDENTIFIER);
             }
         }
-        select.getFields().add(new FieldNode(tableName, fieldName, fieldAlias));
+        select.getFields().add(new FieldNode(newTableName, newFieldName, fieldAlias));
     }
 }
