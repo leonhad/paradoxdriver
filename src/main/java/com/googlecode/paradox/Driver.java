@@ -19,6 +19,7 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.utils.Constants;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,8 +31,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.googlecode.paradox.utils.Constants;
-
 /**
  * PARADOX JDBC Driver type 4.
  *
@@ -39,18 +38,18 @@ import com.googlecode.paradox.utils.Constants;
  * @version 2.2
  * @since 1.0
  */
-public class Driver implements java.sql.Driver {
-
+public class Driver implements IParadoxDriver {
+    
     /**
      * Logger instance for this class.
      */
     private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
-
+    
     /**
      * Driver properties.
      */
     private Properties properties = null;
-
+    
     /**
      * Register the drive into JDBC API.
      */
@@ -63,7 +62,7 @@ public class Driver implements java.sql.Driver {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -71,7 +70,7 @@ public class Driver implements java.sql.Driver {
     public boolean acceptsURL(final String url) throws SQLException {
         return url.startsWith(Constants.URL_PREFIX);
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -83,7 +82,7 @@ public class Driver implements java.sql.Driver {
         }
         return null;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -91,7 +90,7 @@ public class Driver implements java.sql.Driver {
     public int getMajorVersion() {
         return Constants.MAJOR_VERSION;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -99,7 +98,7 @@ public class Driver implements java.sql.Driver {
     public int getMinorVersion() {
         return Constants.MINOR_VERSION;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -107,7 +106,7 @@ public class Driver implements java.sql.Driver {
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return Driver.LOGGER;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -117,7 +116,7 @@ public class Driver implements java.sql.Driver {
             properties = new Properties();
         }
         final ArrayList<DriverPropertyInfo> prop = new ArrayList<>();
-
+        
         if (info.getProperty("DBNAME") == null) {
             final DriverPropertyInfo dbProp = new DriverPropertyInfo("name", properties.getProperty("name"));
             dbProp.required = false;
@@ -133,7 +132,7 @@ public class Driver implements java.sql.Driver {
         final DriverPropertyInfo[] dpi = new DriverPropertyInfo[prop.size()];
         return prop.toArray(dpi);
     }
-
+    
     /**
      * {@inheritDoc}
      */
