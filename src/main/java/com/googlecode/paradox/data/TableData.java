@@ -65,6 +65,28 @@ public final class TableData {
     }
 
     /**
+     * Fix the buffer position based on file version ID.
+     * 
+     * @param table
+     *            the Paradox table.
+     * @param buffer
+     *            the buffer to fix.
+     * @param fieldsSize
+     *            the field list.
+     */
+    private static void fixTablePositionByVersion(final ParadoxTable table, final ByteBuffer buffer, final int fieldsSize) {
+        if (table.getVersionId() > 4) {
+            if (table.getVersionId() == 0xC) {
+                buffer.position(0x78 + 261 + 4 + 6 * fieldsSize);
+            } else {
+                buffer.position(0x78 + 83 + 6 * fieldsSize);
+            }
+        } else {
+            buffer.position(0x58 + 83 + 6 * fieldsSize);
+        }
+    }
+
+    /**
      * List all database tables.
      *
      * @param conn
@@ -341,61 +363,20 @@ public final class TableData {
             buffer.position(0x55);
             table.setReferentialIntegrity(buffer.get());
 
-            if (table.getVersionId() > 4) {
-                // Set the charset
-                buffer.position(0x6A);
-                table.setCharset(Charset.forName("cp" + buffer.getShort()));
+            parseTableVersionID(table, buffer);
 
-                buffer.position(0x78);
-            } else {
-                buffer.position(0x58);
-            }
-
-            final List<ParadoxField> fields = new ArrayList<>();
-            for (int loop = 0; loop < table.getFieldCount(); loop++) {
-                final ParadoxField field = new ParadoxField(loop + 1);
-                field.setType(buffer.get());
-                field.setSize((short) (buffer.get() & 0xff));
-                field.setTableName(table.getName());
-                field.setTable(table);
-                fields.add(field);
-            }
+            final List<ParadoxField> fields = parseTableFields(table, buffer);
 
             // Restart the buffer with all table header
             channel.position(0);
             buffer = ByteBuffer.allocate(table.getHeaderSize());
             channel.read(buffer);
 
-            if (table.getVersionId() > 4) {
-                if (table.getVersionId() == 0xC) {
-                    buffer.position(0x78 + 261 + 4 + 6 * fields.size());
-                } else {
-                    buffer.position(0x78 + 83 + 6 * fields.size());
-                }
-            } else {
-                buffer.position(0x58 + 83 + 6 * fields.size());
-            }
+            fixTablePositionByVersion(table, buffer, fields.size());
 
-            for (int loop = 0; loop < table.getFieldCount(); loop++) {
-                final ByteBuffer name = ByteBuffer.allocate(261);
+            parseTableFieldsName(table, buffer, fields);
 
-                while (true) {
-                    final byte c = buffer.get();
-                    if (c == 0) {
-                        break;
-                    }
-                    name.put(c);
-                }
-                name.flip();
-                fields.get(loop).setName(table.getCharset().decode(name).toString());
-            }
-            table.setFields(fields);
-
-            final List<Short> fieldsOrder = new ArrayList<>();
-            for (int loop = 0; loop < table.getFieldCount(); loop++) {
-                fieldsOrder.add(buffer.getShort());
-            }
-            table.setFieldsOrder(fieldsOrder);
+            parseTableFieldsOrder(table, buffer);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
@@ -409,7 +390,7 @@ public final class TableData {
      * @param buffer
      *            VARCHAR Buffer to convert.
      * @param charset
-     *            Table Charset.
+     *            Table charset.
      * @return a formatted {@link String}.
      */
     private static String parseString(final ByteBuffer buffer, final Charset charset) {
@@ -424,5 +405,92 @@ public final class TableData {
         buffer.flip();
         buffer.limit(length);
         return charset.decode(buffer).toString();
+    }
+
+    /**
+     * Read fields attributes.
+     * 
+     * @param table
+     *            the Paradox table.
+     * @param buffer
+     *            the buffer to read of.
+     * @return the Paradox field list.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private static List<ParadoxField> parseTableFields(final ParadoxTable table, final ByteBuffer buffer) throws SQLException {
+        final List<ParadoxField> fields = new ArrayList<>();
+        for (int loop = 0; loop < table.getFieldCount(); loop++) {
+            final ParadoxField field = new ParadoxField(loop + 1);
+            field.setType(buffer.get());
+            field.setSize((short) (buffer.get() & 0xff));
+            field.setTableName(table.getName());
+            field.setTable(table);
+            fields.add(field);
+        }
+        return fields;
+    }
+
+    /**
+     * Parse the Paradox fields name.
+     * 
+     * @param table
+     *            the Paradox table.
+     * @param buffer
+     *            the buffer to read of.
+     * @param fields
+     *            the field list.
+     */
+    private static void parseTableFieldsName(final ParadoxTable table, final ByteBuffer buffer, final List<ParadoxField> fields) {
+        for (int loop = 0; loop < table.getFieldCount(); loop++) {
+            final ByteBuffer name = ByteBuffer.allocate(261);
+
+            while (true) {
+                final byte c = buffer.get();
+                if (c == 0) {
+                    break;
+                }
+                name.put(c);
+            }
+            name.flip();
+            fields.get(loop).setName(table.getCharset().decode(name).toString());
+        }
+        table.setFields(fields);
+    }
+
+    /**
+     * Parse the fields order.
+     * 
+     * @param table
+     *            the Paradox table.
+     * @param buffer
+     *            the buffer to read of.
+     */
+    private static void parseTableFieldsOrder(final ParadoxTable table, final ByteBuffer buffer) {
+        final List<Short> fieldsOrder = new ArrayList<>();
+        for (int loop = 0; loop < table.getFieldCount(); loop++) {
+            fieldsOrder.add(buffer.getShort());
+        }
+        table.setFieldsOrder(fieldsOrder);
+    }
+
+    /**
+     * Parse the table version ID.
+     * 
+     * @param table
+     *            the Paradox table.
+     * @param buffer
+     *            the buffer to read of.
+     */
+    private static void parseTableVersionID(final ParadoxTable table, final ByteBuffer buffer) {
+        if (table.getVersionId() > 4) {
+            // Set the charset
+            buffer.position(0x6A);
+            table.setCharset(Charset.forName("cp" + buffer.getShort()));
+
+            buffer.position(0x78);
+        } else {
+            buffer.position(0x58);
+        }
     }
 }

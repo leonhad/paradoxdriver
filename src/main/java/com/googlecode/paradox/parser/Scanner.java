@@ -197,12 +197,13 @@ public class Scanner {
     /**
      * Parses a numeric char.
      * 
-     * @param c
+     * @param start
      *            the char to start of.
      * @throws SQLException
      *             in case of parse errors.
      */
-    private void parseNumber(char c) throws SQLException {
+    private void parseNumber(final char start) throws SQLException {
+        char c = start;
         boolean numeric = false;
         int dotcount = 0;
         while (!isSeparator(c) && (numeric && c == '.' || !isSpecial(c))) {
