@@ -92,9 +92,9 @@ public final class Utils {
      *            the suffix.
      * @return the formatted {@link String}.
      */
-    private static String removeSuffix(String name, final String suffix) {
+    private static String removeSuffix(final String name, final String suffix) {
         if (name != null && name.toUpperCase().endsWith("." + suffix.toUpperCase())) {
-            name = name.substring(0, name.length() - 3);
+            return name.substring(0, name.length() - 3);
         }
         return name;
     }
