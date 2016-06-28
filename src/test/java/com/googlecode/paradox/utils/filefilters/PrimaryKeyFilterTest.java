@@ -7,13 +7,15 @@ import java.io.File;
 import org.junit.Test;
 
 /**
- *
  * @author 72330554168
  */
 public class PrimaryKeyFilterTest {
 
     private final PrimaryKeyFilter filter = new PrimaryKeyFilter();
 
+    /**
+     * Test for acceptance.
+     */
     @Test
     public void testAccept() {
         final File file = new File("teste.px");
