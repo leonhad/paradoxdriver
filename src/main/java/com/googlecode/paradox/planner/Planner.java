@@ -1,3 +1,22 @@
+/*
+ * Planner.java
+ *
+ * 03/12/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.planner;
 
 import java.sql.SQLException;
@@ -17,14 +36,39 @@ import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.SQLStates;
 
+/**
+ * Creates a SQL execution plan.
+ * 
+ * @author Leonardo Alves da Costa
+ * @since 1.1
+ * @version 1.1
+ */
 public class Planner {
 
+    /**
+     * The database connection.
+     */
     private final ParadoxConnection conn;
 
+    /**
+     * Create a new instance.
+     * 
+     * @param conn
+     *            the database connection.
+     */
     public Planner(final ParadoxConnection conn) {
         this.conn = conn;
     }
 
+    /**
+     * Create a plan from given statement.
+     * 
+     * @param statement
+     *            the statement to plan.
+     * @return the execution plan.
+     * @throws SQLException
+     *             in case of plan errors.
+     */
     public Plan create(final StatementNode statement) throws SQLException {
         if (statement instanceof SelectNode) {
             return createSelect((SelectNode) statement);
@@ -36,9 +80,11 @@ public class Planner {
     /**
      * Creates an SELECT plan.
      *
-     * @param statement the statement to parse.
+     * @param statement
+     *            the statement to parse.
      * @return the SELECT plan.
-     * @throws SQLException in case of syntax error.
+     * @throws SQLException
+     *             in case of syntax error.
      */
     private Plan createSelect(final SelectNode statement) throws SQLException {
         final SelectPlan plan = new SelectPlan(conn);

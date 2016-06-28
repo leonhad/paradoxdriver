@@ -1,3 +1,22 @@
+/*
+ * ParadoxDataFile.java
+ *
+ * 03/12/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.results;
 
 import java.sql.SQLException;
@@ -8,15 +27,131 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.utils.SQLStates;
 
 /**
- * Column Values from a ResultSet
+ * Column values from a ResultSet.
  *
  * @author Leonardo Alves da Costa
- * @since 02/12/2009
+ * @since 1.0
  * @version 1.0
  * @see ParadoxResultSet
  */
 public class Column {
 
+    /**
+     * If this column is auto incremented.
+     */
+    private boolean autoIncrement = false;
+
+    /**
+     * If this column is currency type.
+     */
+    private boolean currency = false;
+
+    /**
+     * The paradox field associated to this field.
+     */
+    private ParadoxField field;
+
+    /**
+     * Column index
+     */
+    private int index;
+
+    /**
+     * The column max value.
+     */
+    private int maxSize = 255;
+
+    /**
+     * Column Name
+     */
+    private String name;
+
+    /**
+     * If this field can be null.
+     */
+    private boolean nullable = true;
+
+    /**
+     * The field precision.
+     */
+    private int precision = 0;
+
+    /**
+     * If this field is read only.
+     */
+    private boolean readOnly = false;
+
+    /**
+     * The field scale.
+     */
+    private int scale = 0;
+
+    /**
+     * If this field is searchable.
+     */
+    private boolean searchable = true;
+
+    /**
+     * If this field has sign.
+     */
+    private boolean signed = false;
+
+    /**
+     * The tables name.
+     */
+    private String tableName;
+
+    /**
+     * The SQL data type.
+     *
+     * @see Types
+     */
+    private int type;
+
+    /**
+     * If this field is writable.
+     */
+    private boolean writable = false;
+
+    /**
+     * Create a new instance.
+     */
+    public Column() {
+        // No need to change a field.
+    }
+
+    /**
+     * Create a new instance.
+     * 
+     * @param field
+     *            the paradox field.
+     */
+    public Column(final ParadoxField field) {
+        this.field = field;
+    }
+
+    /**
+     * Create a new instance.
+     * 
+     * @param name
+     *            the field name.
+     * @param type
+     *            the field type.
+     */
+    public Column(final String name, final int type) {
+        this.name = name;
+        this.type = type;
+    }
+
+    /**
+     * Gets the field type description.
+     * 
+     * @param type
+     *            the field type.
+     * @return the type description.
+     * @throws SQLException
+     *             if is an invalid type.
+     */
     public static String getTypeName(final int type) throws SQLException {
         switch (type) {
         case Types.VARCHAR:
@@ -44,261 +179,289 @@ public class Column {
         }
     }
 
-    private ParadoxField field;
     /**
-     * Column index
+     * Gets the paradox field.
+     * 
+     * @return the paradox field.
      */
-    private int index;
-    /**
-     * Column Name
-     */
-    private String name;
-    /**
-     * The SQL Data Type
-     *
-     * @see Types
-     */
-    private int type;
-    private boolean autoIncrement = false;
-    private int scale = 0;
-    private int precision = 0;
-    private String tableName;
-    private boolean currency = false;
-    private boolean nullable = true;
-    private boolean readOnly = false;
-    private boolean searchable = true;
-    private boolean signed = false;
-    private boolean writeable = false;
-    private int maxSize = 255;
-
-    public Column() {
-    }
-
-    public Column(final ParadoxField field) {
-        this.field = field;
-    }
-
-    public Column(final String name, final int type) {
-        this.name = name;
-        this.type = type;
-    }
-
     public ParadoxField getField() {
         return field;
     }
 
-    public void setField(final ParadoxField field) {
-        this.field = field;
-    }
-
     /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *            the name to set
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the type
-     */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * @param type
-     *            the type to set
-     */
-    public void setType(final int type) {
-        this.type = type;
-    }
-
-    /**
-     * @return the index
+     * Gets the field index.
+     * 
+     * @return the field index.
      */
     public int getIndex() {
         return index;
     }
 
     /**
-     * @param index
-     *            the index to set
-     */
-    public void setIndex(final int index) {
-        this.index = index;
-    }
-
-    /**
-     * @return the autoIncrement
-     */
-    public boolean isAutoIncrement() {
-        return autoIncrement;
-    }
-
-    /**
-     * @param autoIncrement
-     *            the autoIncrement to set
-     */
-    public void setAutoIncrement(final boolean autoIncrement) {
-        this.autoIncrement = autoIncrement;
-    }
-
-    /**
-     * @return the scale
-     */
-    public int getScale() {
-        return scale;
-    }
-
-    /**
-     * @param scale
-     *            the scale to set
-     */
-    public void setScale(final int scale) {
-        this.scale = scale;
-    }
-
-    /**
-     * @return the precision
-     */
-    public int getPrecision() {
-        return precision;
-    }
-
-    /**
-     * @param precision
-     *            the precision to set
-     */
-    public void setPrecision(final int precision) {
-        this.precision = precision;
-    }
-
-    /**
-     * @return the tableName
-     */
-    public String getTableName() {
-        return tableName;
-    }
-
-    /**
-     * @param tableName
-     *            the tableName to set
-     */
-    public void setTableName(final String tableName) {
-        this.tableName = tableName;
-    }
-
-    /**
-     * @return the currency
-     */
-    public boolean isCurrency() {
-        return currency;
-    }
-
-    /**
-     * @param currency
-     *            the currency to set
-     */
-    public void setCurrency(final boolean currency) {
-        this.currency = currency;
-    }
-
-    /**
-     * @return the nullable
-     */
-    public boolean isNullable() {
-        return nullable;
-    }
-
-    /**
-     * @param nullable
-     *            the nullable to set
-     */
-    public void setNullable(final boolean nullable) {
-        this.nullable = nullable;
-    }
-
-    /**
-     * @return the readOnly
-     */
-    public boolean isReadOnly() {
-        return readOnly;
-    }
-
-    /**
-     * @param readOnly
-     *            the readOnly to set
-     */
-    public void setReadOnly(final boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
-    /**
-     * @return the searchable
-     */
-    public boolean isSearchable() {
-        return searchable;
-    }
-
-    /**
-     * @param searchable
-     *            the searchable to set
-     */
-    public void setSearchable(final boolean searchable) {
-        this.searchable = searchable;
-    }
-
-    /**
-     * @return the signed
-     */
-    public boolean isSigned() {
-        return signed;
-    }
-
-    /**
-     * @param signed
-     *            the signed to set
-     */
-    public void setSigned(final boolean signed) {
-        this.signed = signed;
-    }
-
-    /**
-     * @return the writeable
-     */
-    public boolean isWriteable() {
-        return writeable;
-    }
-
-    /**
-     * @param writeable
-     *            the writeable to set
-     */
-    public void setWriteable(final boolean writeable) {
-        this.writeable = writeable;
-    }
-
-    /**
-     * @return the maxSize
+     * Gets the field max size.
+     * 
+     * @return the field max size.
      */
     public int getMaxSize() {
         return maxSize;
     }
 
     /**
+     * Gets the field name.
+     * 
+     * @return the field name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the field precision.
+     * 
+     * @return the field precision.
+     */
+    public int getPrecision() {
+        return precision;
+    }
+
+    /**
+     * Gets the field scale.
+     * 
+     * @return the field scale.
+     */
+    public int getScale() {
+        return scale;
+    }
+
+    /**
+     * Gets the tables name.
+     * 
+     * @return the tables name.
+     */
+    public String getTableName() {
+        return tableName;
+    }
+
+    /**
+     * Gets the field type.
+     * 
+     * @return the field type.
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Gets if this field is auto increment.
+     * 
+     * @return true if this field is auto incremented.
+     */
+    public boolean isAutoIncrement() {
+        return autoIncrement;
+    }
+
+    /**
+     * Gets if this field is a currency.
+     * 
+     * @return true if this field is a current.
+     */
+    public boolean isCurrency() {
+        return currency;
+    }
+
+    /**
+     * Gets if this field can be null.
+     * 
+     * @return true if this field can be null.
+     */
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    /**
+     * Gets if this field is read only.
+     * 
+     * @return true if this field is read only.
+     */
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    /**
+     * Gets if this field can be search.
+     * 
+     * @return true if this field can be search.
+     */
+    public boolean isSearchable() {
+        return searchable;
+    }
+
+    /**
+     * Gets if this field have sign.
+     * 
+     * @return true if this field have sign.
+     */
+    public boolean isSigned() {
+        return signed;
+    }
+
+    /**
+     * Gets if this field is writable.
+     * 
+     * @return true if this field is writable.
+     */
+    public boolean isWritable() {
+        return writable;
+    }
+
+    /**
+     * Sets the auto increment value.
+     * 
+     * @param autoIncrement
+     *            the auto increment value to set.
+     */
+    public void setAutoIncrement(final boolean autoIncrement) {
+        this.autoIncrement = autoIncrement;
+    }
+
+    /**
+     * Sets if this field is a current.
+     * 
+     * @param currency
+     *            the currency to set.
+     */
+    public void setCurrency(final boolean currency) {
+        this.currency = currency;
+    }
+
+    /**
+     * Sets the paradox field.
+     * 
+     * @param field
+     *            the paradox field to set.
+     */
+    public void setField(final ParadoxField field) {
+        this.field = field;
+    }
+
+    /**
+     * Sets the field index.
+     * 
+     * @param index
+     *            the index to set.
+     */
+    public void setIndex(final int index) {
+        this.index = index;
+    }
+
+    /**
+     * Sets the field max size.
+     * 
      * @param maxSize
-     *            the maxSize to set
+     *            the max size to set.
      */
     public void setMaxSize(final int maxSize) {
         this.maxSize = maxSize;
+    }
+
+    /**
+     * Sets the field name
+     * 
+     * @param name
+     *            the field name to set.
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets if this field can be null.
+     * 
+     * @param nullable
+     *            the nullable to set.
+     */
+    public void setNullable(final boolean nullable) {
+        this.nullable = nullable;
+    }
+
+    /**
+     * Sets the field precision.
+     * 
+     * @param precision
+     *            the precision to set.
+     */
+    public void setPrecision(final int precision) {
+        this.precision = precision;
+    }
+
+    /**
+     * Sets if this field is read only.
+     * 
+     * @param readOnly
+     *            the read only to set.
+     */
+    public void setReadOnly(final boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    /**
+     * Sets the field scale.
+     * 
+     * @param scale
+     *            the scale to set.
+     */
+    public void setScale(final int scale) {
+        this.scale = scale;
+    }
+
+    /**
+     * Sets if this field is searchable.
+     * 
+     * @param searchable
+     *            the searchable to set.
+     */
+    public void setSearchable(final boolean searchable) {
+        this.searchable = searchable;
+    }
+
+    /**
+     * Sets if this field has sign.
+     * 
+     * @param signed
+     *            the signed to set.
+     */
+    public void setSigned(final boolean signed) {
+        this.signed = signed;
+    }
+
+    /**
+     * Sets the tables name
+     * 
+     * @param tableName
+     *            the tables name to set.
+     */
+    public void setTableName(final String tableName) {
+        this.tableName = tableName;
+    }
+
+    /**
+     * Sets the field type.
+     * 
+     * @param type
+     *            the field type to set.
+     */
+    public void setType(final int type) {
+        this.type = type;
+    }
+
+    /**
+     * Sets if this field is writable.
+     * 
+     * @param writable
+     *            the writable to set.
+     */
+    public void setWritable(final boolean writable) {
+        this.writable = writable;
     }
 
 }

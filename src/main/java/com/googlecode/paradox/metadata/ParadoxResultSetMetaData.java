@@ -238,7 +238,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public boolean isDefinitelyWritable(final int column) throws SQLException {
         final Column dto = getColumn(column);
-        return dto.isWriteable();
+        return dto.isWritable();
     }
 
     /**
@@ -291,7 +291,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public boolean isWritable(final int column) throws SQLException {
         final Column dto = getColumn(column);
-        return dto.isWriteable();
+        return dto.isWritable();
     }
 
     /**

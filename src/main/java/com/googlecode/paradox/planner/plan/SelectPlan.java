@@ -48,7 +48,8 @@ public class SelectPlan implements Plan {
     /**
      * Creates a SELECT plan.
      *
-     * @param conn the Paradox connection.
+     * @param conn
+     *            the Paradox connection.
      */
     public SelectPlan(final ParadoxConnection conn) {
     }
@@ -61,7 +62,7 @@ public class SelectPlan implements Plan {
      * @throws SQLException
      *             search column exception.
      */
-    public void addColumn(String name) throws SQLException {
+    public void addColumn(final String name) throws SQLException {
         final ParadoxField field = findField(name);
         if (field == null) {
             throw new SQLException(String.format("Invalid column name: '%s'", name), SQLStates.INVALID_COLUMN);
@@ -72,8 +73,10 @@ public class SelectPlan implements Plan {
     /**
      * Associate all columns from a table.
      *
-     * @param table the table to scan.
-     * @throws SQLException in case of wrong SQL type.
+     * @param table
+     *            the table to scan.
+     * @throws SQLException
+     *             in case of wrong SQL type.
      */
     public void addColumnFromTable(final ParadoxTable table) throws SQLException {
         for (final ParadoxField field : table.getFields()) {
@@ -84,7 +87,8 @@ public class SelectPlan implements Plan {
     /**
      * Adds a table to this plan.
      *
-     * @param table the table.
+     * @param table
+     *            the table.
      */
     public void addTable(final PlanTableNode table) {
         tables.add(table);
@@ -132,6 +136,15 @@ public class SelectPlan implements Plan {
         }
     }
 
+    /**
+     * Find a paradox field by its name.
+     * 
+     * @param name
+     *            the field name.
+     * @return the paradox field.
+     * @throws SQLException
+     *             in case of find errors.
+     */
     private ParadoxField findField(String name) throws SQLException {
         final List<ParadoxField> fields = new ArrayList<>(1);
         String prefix = null;
@@ -140,12 +153,11 @@ public class SelectPlan implements Plan {
             prefix = name.substring(0, p - 1);
             name = name.substring(p);
         }
-        /*
-         * Find column in table list
-         *
-         * select a.id from table a - true select id from table - true select id
-         * from table1, table2 - exception (if id exists in table1 and table2)
-         */
+
+        // Find column in table list
+        //
+        // select a.id from table a - true select id from table - true select id
+        // from table1, table2 - exception (if id exists in table1 and table2)
         for (final PlanTableNode table : tables) {
             if (table.getTable() == null) {
                 throw new SQLException("Empty table", SQLStates.INVALID_TABLE);
