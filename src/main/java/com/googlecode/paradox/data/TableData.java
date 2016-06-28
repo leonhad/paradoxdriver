@@ -293,7 +293,7 @@ public final class TableData {
                 } while (nextBlock != 0);
             }
         } catch (final IOException e) {
-            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
+            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
         return ret;
     }
@@ -397,7 +397,7 @@ public final class TableData {
             }
             table.setFieldsOrder(fieldsOrder);
         } catch (final IOException e) {
-            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
+            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
         return table;
     }

@@ -69,7 +69,7 @@ public class Scanner {
      */
     public Scanner(final String buffer) throws SQLException {
         if (buffer == null) {
-            throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL);
+            throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL.getValue());
         }
         this.buffer = CharBuffer.wrap(buffer.trim());
     }
@@ -158,7 +158,7 @@ public class Scanner {
             return token;
         }
         if (!hasNext()) {
-            throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL);
+            throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL.getValue());
         }
         value.delete(0, value.length());
         boolean characters = false;
@@ -213,7 +213,7 @@ public class Scanner {
                 dotcount++;
                 // Only one dot per numeric value
                 if (dotcount > 1) {
-                    throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL);
+                    throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL.getValue());
                 }
             }
             if (hasNext()) {

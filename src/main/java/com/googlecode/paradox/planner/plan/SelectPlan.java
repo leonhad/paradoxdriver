@@ -65,7 +65,7 @@ public class SelectPlan implements Plan {
     public void addColumn(final String name) throws SQLException {
         final ParadoxField field = findField(name);
         if (field == null) {
-            throw new SQLException(String.format("Invalid column name: '%s'", name), SQLStates.INVALID_COLUMN);
+            throw new SQLException(String.format("Invalid column name: '%s'", name), SQLStates.INVALID_COLUMN.getValue());
         }
         columns.add(field.getColumn());
     }
@@ -109,13 +109,13 @@ public class SelectPlan implements Plan {
                 if (column.getTableName().equalsIgnoreCase(pTable.getName())) {
                     final ParadoxField field = pTable.findField(column.getName());
                     if (field == null) {
-                        throw new SQLException("Column '" + column.getName() + "' not found in table '" + pTable.getName(), SQLStates.INVALID_FIELD_VALUE);
+                        throw new SQLException("Column '" + column.getName() + "' not found in table '" + pTable.getName(), SQLStates.INVALID_FIELD_VALUE.getValue());
                     }
                     // load table data
                     final List<List<FieldValue>> tableData = TableData.loadData(pTable, pTable.getFields());
                     // search column index
                     if (field.getOrderNum() > tableData.size() || field.getOrderNum() < 1) {
-                        throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE);
+                        throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
                     }
                     if (values == null) {
                         values = new ArrayList<>();
@@ -160,7 +160,7 @@ public class SelectPlan implements Plan {
         // from table1, table2 - exception (if id exists in table1 and table2)
         for (final PlanTableNode table : tables) {
             if (table.getTable() == null) {
-                throw new SQLException("Empty table", SQLStates.INVALID_TABLE);
+                throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
             }
 
             if (prefix != null && table.getAlias() != null && !prefix.equalsIgnoreCase(table.getAlias())) {
@@ -177,7 +177,7 @@ public class SelectPlan implements Plan {
         }
         if (!fields.isEmpty()) {
             if (fields.size() > 1) {
-                throw new SQLException("Column '" + name + "' ambiguously defined", SQLStates.COLUMN_AMBIQUOUS);
+                throw new SQLException("Column '" + name + "' ambiguously defined", SQLStates.COLUMN_AMBIQUOUS.getValue());
             } else {
                 return fields.get(0);
             }

@@ -100,7 +100,7 @@ public class Planner {
                 }
             }
             if (node.getTable() == null) {
-                throw new SQLException("Table " + table.getName() + " not found.", SQLStates.INVALID_SQL);
+                throw new SQLException("Table " + table.getName() + " not found.", SQLStates.INVALID_SQL.getValue());
             }
             if (!table.getName().equals(table.getAlias())) {
                 node.setAlias(table.getAlias());
@@ -122,7 +122,7 @@ public class Planner {
             }
         }
         if (plan.getColumns().isEmpty()) {
-            throw new SQLException("Empty column list", SQLStates.INVALID_SQL);
+            throw new SQLException("Empty column list", SQLStates.INVALID_SQL.getValue());
         }
 
         return plan;

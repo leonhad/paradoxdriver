@@ -119,7 +119,7 @@ public class BlobTable extends ParadoxDataFile {
             channel.close();
             fs.close();
         } catch (final IOException ex) {
-            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA.getValue(), ex);
         }
     }
 
@@ -159,10 +159,10 @@ public class BlobTable extends ParadoxDataFile {
         try {
             block = readBlock(blockNum, offset);
         } catch (final Exception x) {
-            throw new SQLException("Read clob error", SQLStates.LOAD_DATA, x);
+            throw new SQLException("Read clob error", SQLStates.LOAD_DATA.getValue(), x);
         }
         if (block == null) {
-            throw new SQLException("Block " + blockNum + " not found. Invalid mb file", SQLStates.LOAD_DATA);
+            throw new SQLException("Block " + blockNum + " not found. Invalid mb file", SQLStates.LOAD_DATA.getValue());
         }
         return block.getValue();
     }
@@ -196,7 +196,7 @@ public class BlobTable extends ParadoxDataFile {
             fs = new FileInputStream(blobFile);
             channel = fs.getChannel();
         } catch (final IOException ex) {
-            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA.getValue(), ex);
         }
     }
 
@@ -211,10 +211,10 @@ public class BlobTable extends ParadoxDataFile {
         final String name = StringUtils.removeDb(getFile().getName());
         final File[] fileList = getFile().getParentFile().listFiles(new TableFilter(name, "mb"));
         if (fileList == null || fileList.length == 0) {
-            throw new SQLException(String.format("Blob file not found for table '%s'", name), SQLStates.LOAD_DATA);
+            throw new SQLException(String.format("Blob file not found for table '%s'", name), SQLStates.LOAD_DATA.getValue());
         }
         if (fileList.length > 1) {
-            throw new SQLException(String.format("Many blob files for table '%s'", name), SQLStates.LOAD_DATA);
+            throw new SQLException(String.format("Many blob files for table '%s'", name), SQLStates.LOAD_DATA.getValue());
         }
         return fileList[0];
     }
@@ -236,14 +236,14 @@ public class BlobTable extends ParadoxDataFile {
             buffer.flip();
             final byte headerType = buffer.get();
             if (headerType != 0) {
-                throw new SQLException("Invalid blob format for '" + getName() + "'", SQLStates.LOAD_DATA);
+                throw new SQLException("Invalid blob format for '" + getName() + "'", SQLStates.LOAD_DATA.getValue());
             }
             // No read header (while not necessary)
             channel.position(HEADER_BLOCK_SIZE);
             numBlock++;
             parsed = true;
         } catch (final IOException ex) {
-            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA.getValue(), ex);
         }
     }
 
@@ -383,10 +383,10 @@ public class BlobTable extends ParadoxDataFile {
                 channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
                 numBlock++;
             } else {
-                throw new SQLException("Unsupported CLOB block type: " + headerType, SQLStates.TYPE_NOT_FOUND);
+                throw new SQLException("Unsupported CLOB block type: " + headerType, SQLStates.TYPE_NOT_FOUND.getValue());
             }
         } catch (final IOException ex) {
-            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA, ex);
+            throw new SQLException(ex.getMessage(), SQLStates.LOAD_DATA.getValue(), ex);
         }
         return true;
     }

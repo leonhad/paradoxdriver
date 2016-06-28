@@ -175,7 +175,7 @@ public class Column {
         case Types.BINARY:
             return "BINARY";
         default:
-            throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND);
+            throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND.getValue());
         }
     }
 

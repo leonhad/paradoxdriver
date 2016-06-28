@@ -183,11 +183,11 @@ public class ParadoxStatement implements Statement {
         final SQLParser parser = new SQLParser(sql);
         final List<StatementNode> statementList = parser.parse();
         if (statementList.size() > 1) {
-            throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL);
+            throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL.getValue());
         }
         final StatementNode node = statementList.get(0);
         if (!(node instanceof SelectNode)) {
-            throw new SQLFeatureNotSupportedException("Not a SELECT statement.", SQLStates.INVALID_SQL);
+            throw new SQLFeatureNotSupportedException("Not a SELECT statement.", SQLStates.INVALID_SQL.getValue());
         }
         executeSelect((SelectNode) node);
         return rs;
@@ -406,7 +406,7 @@ public class ParadoxStatement implements Statement {
     @Override
     public void setFetchDirection(final int direction) throws SQLException {
         if (direction != ResultSet.FETCH_FORWARD) {
-            throw new SQLException("O resultset somente pode ser ResultSet.FETCH_FORWARD", SQLStates.INVALID_PARAMETER);
+            throw new SQLException("O resultset somente pode ser ResultSet.FETCH_FORWARD", SQLStates.INVALID_PARAMETER.getValue());
         }
         fetchDirection = direction;
     }
@@ -425,7 +425,7 @@ public class ParadoxStatement implements Statement {
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
         if (max > 255) {
-            throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER);
+            throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER.getValue());
         }
         maxFieldSize = max;
     }

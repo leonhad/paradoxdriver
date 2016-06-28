@@ -248,7 +248,7 @@ public class ParadoxField {
         case 0x17:
             return Types.BINARY;
         default:
-            throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND);
+            throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
         }
     }
 

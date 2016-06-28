@@ -84,7 +84,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
      */
     private Column getColumn(final int column) throws SQLException {
         if (column < 1 || column > columns.size()) {
-            throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN);
+            throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN.getValue());
         }
         return columns.get(column - 1);
     }
@@ -112,7 +112,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
         case Types.BOOLEAN:
             return Boolean.class.getName();
         default:
-            throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND);
+            throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND.getValue());
         }
     }
 

@@ -254,7 +254,7 @@ public final class ViewData {
             view.setFields(fields);
             view.setValid(true);
         } catch (final IOException e) {
-            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO, e);
+            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
         return view;
     }

@@ -1,20 +1,75 @@
+/*
+ * DateUtils.java
+ *
+ * 03/12/2009
+ * Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.utils;
 
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+/**
+ * Utility class for date formats.
+ * 
+ * @author Leonardo Alves da Costa
+ * @since 1.0
+ * @version 1.0
+ */
 public final class DateUtils {
 
+    /**
+     * Amount of days in four years.
+     */
     private static final int DAYS_PER_4_YEARS = 1461;
+
+    /**
+     * Amount of days in 400 years.
+     */
     private static final int DAYS_PER_400_YEARS = 146097;
+
+    /**
+     * Amount of days in 5 months.
+     */
     private static final int DAYS_PER_5_MONTHS = 153;
+
+    /**
+     * Days offset in Paradox format.
+     */
     private static final int SDN_OFFSET = 32045;
 
+    /**
+     * Utility class.
+     */
     private DateUtils() {
         // Utility class, not for use.
     }
 
+    /**
+     * Convert the Gregorian date to Paradox format.
+     * 
+     * @param inputYear
+     *            the year to convert.
+     * @param inputMonth
+     *            the month to convert.
+     * @param inputDay
+     *            the day to convert.
+     * @return the Paradox date.
+     */
     public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
         long year;
         long month;
@@ -52,6 +107,13 @@ public final class DateUtils {
         return year / 100 * DAYS_PER_400_YEARS / 4 + year % 100 * DAYS_PER_4_YEARS / 4 + (month * DAYS_PER_5_MONTHS + 2) / 5 + inputDay - SDN_OFFSET;
     }
 
+    /**
+     * Convert the Paradox date to Gregorian format.
+     * 
+     * @param sdn
+     *            the Paradox date to convert.
+     * @return the Java {@link Date}.
+     */
     public static Date sdnToGregorian(final long sdn) {
         long century;
         long year;

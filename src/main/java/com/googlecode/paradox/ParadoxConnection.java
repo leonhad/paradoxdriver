@@ -155,7 +155,7 @@ public class ParadoxConnection implements Connection {
         if (info != null && info.size() > 0) {
             throw new SQLFeatureNotSupportedException("Change properties is not supported yet.");
         } else if (!dir.exists() && !dir.isDirectory()) {
-            throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND);
+            throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
         }
 
         tryLock(dir);
@@ -192,7 +192,7 @@ public class ParadoxConnection implements Connection {
             try {
                 lock.release();
             } catch (final IOException ex) {
-                throw new SQLException("Error unlocking database.", SQLStates.INVALID_STATE, ex);
+                throw new SQLException("Error unlocking database.", SQLStates.INVALID_STATE.getValue(), ex);
             }
             lock = null;
         }
@@ -200,7 +200,7 @@ public class ParadoxConnection implements Connection {
             try {
                 lockFile.close();
             } catch (final IOException ex) {
-                throw new SQLException("Can't release lock file.", SQLStates.INVALID_STATE, ex);
+                throw new SQLException("Can't release lock file.", SQLStates.INVALID_STATE.getValue(), ex);
             }
         }
         closed = true;
@@ -552,7 +552,7 @@ public class ParadoxConnection implements Connection {
      */
     @Override
     public void setCatalog(final String catalog) throws SQLException {
-        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED);
+        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
     }
 
     /**
@@ -577,7 +577,7 @@ public class ParadoxConnection implements Connection {
     @Override
     public void setHoldability(final int holdability) throws SQLException {
         if (holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT && holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
-            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER);
+            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
         }
         this.holdability = holdability;
     }

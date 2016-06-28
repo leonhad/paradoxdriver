@@ -101,7 +101,7 @@ public class SQLParser {
             }
         }
         if (!found) {
-            throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", token.getValue()), SQLStates.INVALID_SQL);
+            throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", token.getValue()), SQLStates.INVALID_SQL.getValue());
         }
         if (scanner.hasNext()) {
             token = scanner.nextToken();
@@ -122,7 +122,7 @@ public class SQLParser {
      */
     private void expect(final TokenType rparen, final String message) throws SQLException {
         if (token.getType() != rparen) {
-            throw new SQLException(message, SQLStates.INVALID_SQL);
+            throw new SQLException(message, SQLStates.INVALID_SQL.getValue());
         }
         if (scanner.hasNext()) {
             token = scanner.nextToken();
@@ -153,17 +153,17 @@ public class SQLParser {
                 statementList.add(parseSelect());
                 break;
             case INSERT:
-                throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL);
+                throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL.getValue());
             case DELETE:
-                throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL);
+                throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL.getValue());
             case UPDATE:
-                throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL);
+                throw new SQLFeatureNotSupportedException("Not supported yet.", SQLStates.INVALID_SQL.getValue());
             default:
-                throw new SQLException("Invalid SQL: " + sql, SQLStates.INVALID_SQL);
+                throw new SQLException("Invalid SQL: " + sql, SQLStates.INVALID_SQL.getValue());
             }
             return statementList;
         }
-        throw new SQLException("Invalid SQL: " + sql, SQLStates.INVALID_SQL);
+        throw new SQLException("Invalid SQL: " + sql, SQLStates.INVALID_SQL.getValue());
     }
 
     /**
@@ -188,7 +188,7 @@ public class SQLParser {
                 expect(TokenType.XOR);
                 return new XORNode(null);
             default:
-                throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL);
+                throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL.getValue());
             }
         } else if (token.getType() == TokenType.LPAREN) {
             expect(TokenType.RPAREN, "Right parentesis expected");
@@ -235,7 +235,7 @@ public class SQLParser {
                 return new GreaterThanNode(firstField, value);
             }
             default:
-                throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL);
+                throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL.getValue());
             }
         }
         return null;
@@ -448,7 +448,7 @@ public class SQLParser {
                 }
             }
         } else {
-            throw new SQLException("FROM expected.", SQLStates.INVALID_SQL);
+            throw new SQLException("FROM expected.", SQLStates.INVALID_SQL.getValue());
         }
         return select;
     }

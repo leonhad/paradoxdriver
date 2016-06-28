@@ -90,7 +90,7 @@ public class FieldValue {
      */
     public Boolean getBoolean() throws SQLDataException {
         if (type != Types.BOOLEAN) {
-            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());
         }
         return (Boolean) value;
     }
@@ -104,7 +104,7 @@ public class FieldValue {
      */
     public Date getDate() throws SQLDataException {
         if (type != Types.DATE) {
-            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());
         }
         return (Date) value;
     }
@@ -132,7 +132,7 @@ public class FieldValue {
         case Types.DOUBLE:
             return (Number) value;
         default:
-            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());
         }
     }
 
@@ -145,7 +145,7 @@ public class FieldValue {
      */
     public Time getTime() throws SQLDataException {
         if (type != Types.TIME) {
-            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE);
+            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());
         }
         return (Time) value;
     }
