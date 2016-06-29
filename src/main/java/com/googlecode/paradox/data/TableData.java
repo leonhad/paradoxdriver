@@ -152,7 +152,6 @@ public final class TableData {
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
-        final ByteBuffer valueString = ByteBuffer.allocate(Constants.MAX_STRING_SIZE);
 
         try (FileInputStream fs = new FileInputStream(table.getFile()); FileChannel channel = fs.getChannel()) {
             if (table.getUsedBlocks() == 0) {
@@ -177,7 +176,7 @@ public final class TableData {
                 buffer.order(ByteOrder.BIG_ENDIAN);
 
                 for (int loop = 0; loop < rowsInBlock; loop++) {
-                    ret.add(readRow(table, fields, buffer, valueString));
+                    ret.add(readRow(table, fields, buffer));
                 }
             } while (nextBlock != 0);
         } catch (final IOException e) {
@@ -249,6 +248,13 @@ public final class TableData {
         return table;
     }
 
+    /**
+     * Parses the auto increment field.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @return the field value.
+     */
     private static FieldValue parseAutoIncrement(final ByteBuffer buffer) {
         FieldValue fieldValue;
         final int v = buffer.getInt() & 0x0FFFFFFF;
@@ -256,6 +262,15 @@ public final class TableData {
         return fieldValue;
     }
 
+    /**
+     * Parses a boolean value.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @return the field value.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
     private static FieldValue parseBoolean(final ByteBuffer buffer) throws SQLException {
         final byte v = buffer.get();
         if (v == 0) {
@@ -269,6 +284,13 @@ public final class TableData {
         }
     }
 
+    /**
+     * Parses the date value.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @return the field value.
+     */
     private static FieldValue parseDate(final ByteBuffer buffer) {
         FieldValue fieldValue;
         final int a1 = 0x000000FF & buffer.get();
@@ -286,6 +308,13 @@ public final class TableData {
         return fieldValue;
     }
 
+    /**
+     * Parses the integer value.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @return the field value.
+     */
     private static FieldValue parseInt(final ByteBuffer buffer) {
         FieldValue fieldValue;
         final int v = buffer.getInt() & 0x7FFF;
@@ -293,6 +322,13 @@ public final class TableData {
         return fieldValue;
     }
 
+    /**
+     * Parses a long value.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @return the field value.
+     */
     private static FieldValue parseLong(final ByteBuffer buffer) {
         FieldValue fieldValue;
         long l = buffer.getInt();
@@ -301,6 +337,17 @@ public final class TableData {
         return fieldValue;
     }
 
+    /**
+     * Parses the memo field.
+     * 
+     * @param table
+     *            the tables memo.
+     * @param buffer
+     *            the buffer to read of.
+     * @param field
+     *            the memo field.
+     * @return the field value.
+     */
     private static FieldValue parseMemo(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         FieldValue fieldValue;
         final ByteBuffer value = ByteBuffer.allocate(field.getSize());
@@ -328,6 +375,13 @@ public final class TableData {
         return fieldValue;
     }
 
+    /**
+     * Parses the number value.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @return the field value.
+     */
     private static FieldValue parseNumber(final ByteBuffer buffer) {
         FieldValue fieldValue;
         final double v = buffer.getDouble() * -1;
@@ -450,6 +504,13 @@ public final class TableData {
         }
     }
 
+    /**
+     * Parses the time value.
+     * 
+     * @param buffer
+     *            the buffer to read of.
+     * @return the field value.
+     */
     private static FieldValue parseTime(final ByteBuffer buffer) {
         FieldValue fieldValue;
         final int a1 = 0x000000FF & buffer.get();
@@ -469,10 +530,22 @@ public final class TableData {
         return fieldValue;
     }
 
-    private static FieldValue parseVarchar(final ParadoxTable table, final ByteBuffer buffer, final ByteBuffer valueString, final ParadoxField field) {
+    /**
+     * Parse the VARCHAR value.
+     * 
+     * @param table
+     *            the field table.
+     * @param buffer
+     *            the buffer to read of.
+     * @param field
+     *            the field to read.
+     * @return the field value.
+     */
+    private static FieldValue parseVarchar(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+        final ByteBuffer valueString = ByteBuffer.allocate(Constants.MAX_STRING_SIZE);
+
         FieldValue fieldValue;
         // reset buffer to zeros
-        valueString.clear();
         Arrays.fill(valueString.array(), (byte) 0);
 
         for (int chars = 0; chars < field.getSize(); chars++) {
@@ -482,7 +555,20 @@ public final class TableData {
         return fieldValue;
     }
 
-    private static List<FieldValue> readRow(final ParadoxTable table, final Collection<ParadoxField> fields, final ByteBuffer buffer, final ByteBuffer valueString) throws SQLException {
+    /**
+     * Read a entire row.
+     * 
+     * @param table
+     *            the table to read of.
+     * @param fields
+     *            the fields to read.
+     * @param buffer
+     *            the buffer to read of.
+     * @return the row.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private static List<FieldValue> readRow(final ParadoxTable table, final Collection<ParadoxField> fields, final ByteBuffer buffer) throws SQLException {
         final List<FieldValue> row = new ArrayList<>();
 
         for (final ParadoxField field : table.getFields()) {
@@ -491,7 +577,7 @@ public final class TableData {
             switch (field.getType()) {
             case 1:
                 // VARCHAR type
-                fieldValue = parseVarchar(table, buffer, valueString, field);
+                fieldValue = parseVarchar(table, buffer, field);
                 break;
             case 2:
                 // DATE type
@@ -516,8 +602,6 @@ public final class TableData {
                 // Memo type
                 fieldValue = parseMemo(table, buffer, field);
                 break;
-            case 0xD:
-                throw new SQLException("Field type unsupported.", SQLStates.TYPE_NOT_FOUND.getValue());
             case 0x14:
                 fieldValue = parseTime(buffer);
                 break;
@@ -525,8 +609,9 @@ public final class TableData {
                 // Autoincrement
                 fieldValue = parseAutoIncrement(buffer);
                 break;
+            case 0xD:
             default:
-                throw new SQLException("Type " + field.getType() + " not found.", SQLStates.TYPE_NOT_FOUND.getValue());
+                throw new SQLException("Field type unsupported.", SQLStates.TYPE_NOT_FOUND.getValue());
             }
             // Field filter
             if (fields.contains(field) && fieldValue != null) {
