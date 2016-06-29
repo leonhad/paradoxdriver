@@ -43,17 +43,36 @@ public class ParadoxFieldTest {
         last.setName("Field");
         Assert.assertTrue(first.equals(last));
     }
-
+    
     /**
-     * Test for {@link ParadoxField#getSize()} method.
+     * Test for {@link ParadoxField#equals(Object)} method with null value.
      */
     @Test
-    public void testSizeClob() {
+    public void testEqualsNull() {
+        final ParadoxField field = new ParadoxField();
+        field.setName("Field");
+        Assert.assertFalse(field.equals(null));
+    }
+    
+    /**
+     * Test for {@link ParadoxField#equals(Object)} method with a different
+     * class.
+     */
+    @Test
+    public void testEqualsDifferent() {
         final ParadoxField first = new ParadoxField();
         first.setName("Field");
-        final ParadoxField last = new ParadoxField();
-        last.setName("Field");
-        Assert.assertTrue(first.equals(last));
+        Assert.assertFalse(first.equals("String"));
+    }
+
+    /**
+     * Test for empty alias.
+     */
+    @Test
+    public void testEmptyAlias() {
+        final ParadoxField field = new ParadoxField();
+        field.setName("Field");
+        Assert.assertEquals("Field", field.getAlias());
     }
     
     /**
@@ -63,26 +82,36 @@ public class ParadoxFieldTest {
      *             in case of errors.
      */
     @Test
-    public void testToString() throws SQLException {
+    public void testSizeClob() throws SQLException {
         final ParadoxField field = new ParadoxField();
-
+        
         field.setType((byte) 0xC);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
-
+        
         field.setType((byte) 0xD);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
-
+        
         field.setType((byte) 0xF);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
-
+        
         field.setType((byte) 0x18);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
     }
-
+    
+    /**
+     * Test for {@link ParadoxField#toString()} method.
+     */
+    @Test
+    public void testToString() {
+        final ParadoxField first = new ParadoxField();
+        first.setName("Field");
+        Assert.assertEquals("Field", first.toString());
+    }
+    
     /**
      * Test for {@link ParadoxField#getSize()} and
      * {@link ParadoxField#setSize(short)} method.
@@ -98,7 +127,7 @@ public class ParadoxFieldTest {
         field.setSize((short) 10);
         Assert.assertEquals(10, field.getSize());
     }
-    
+
     /**
      * Test for getters and setters.
      */
@@ -112,7 +141,7 @@ public class ParadoxFieldTest {
         field.setName("name");
         field.setTableName("tablename");
         field.setTable(null);
-
+        
         Assert.assertEquals("alias", field.getAlias());
         Assert.assertEquals(false, field.isChecked());
         Assert.assertEquals("expression", field.getExpression());
@@ -121,7 +150,7 @@ public class ParadoxFieldTest {
         Assert.assertEquals("tablename", field.getTableName());
         Assert.assertEquals(null, field.getTable());
     }
-    
+
     /**
      * Test for {@link ParadoxField#hashCode()} method.
      */
@@ -129,9 +158,19 @@ public class ParadoxFieldTest {
     public void testHashCode() {
         final ParadoxField field = new ParadoxField();
         field.setName("Field");
-        Assert.assertEquals(67875153, field.hashCode());
+        Assert.assertEquals(7 * 17 + "Field".hashCode(), field.hashCode());
     }
-
+    
+    /**
+     * Test for {@link ParadoxField#hashCode()} method variant.
+     */
+    @Test
+    public void testHashCodeVariant() {
+        final ParadoxField field = new ParadoxField();
+        field.setName(null);
+        Assert.assertEquals(7 * 17, field.hashCode());
+    }
+    
     /**
      * Test for default order.
      */
@@ -140,22 +179,24 @@ public class ParadoxFieldTest {
         final ParadoxField field = new ParadoxField();
         Assert.assertEquals(1, field.getOrderNum());
     }
-    
+
     /**
      * Test for not auto increment.
      */
     @Test
     public void testNotAutoIncrement() {
-        final ParadoxField first = new ParadoxField(1);
-        Assert.assertFalse(first.isAutoIncrement());
+        final ParadoxField field = new ParadoxField();
+        field.setType((byte) 1);
+        Assert.assertFalse(field.isAutoIncrement());
     }
-
+    
     /**
      * Test for auto increment.
      */
     @Test
     public void testAutoIncrement() {
-        final ParadoxField first = new ParadoxField(0x16);
-        Assert.assertFalse(first.isAutoIncrement());
+        final ParadoxField field = new ParadoxField();
+        field.setType((byte) 0x16);
+        Assert.assertTrue(field.isAutoIncrement());
     }
 }
