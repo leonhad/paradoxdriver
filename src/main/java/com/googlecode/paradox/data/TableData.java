@@ -155,165 +155,31 @@ public final class TableData {
         final ByteBuffer valueString = ByteBuffer.allocate(Constants.MAX_STRING_SIZE);
 
         try (FileInputStream fs = new FileInputStream(table.getFile()); FileChannel channel = fs.getChannel()) {
-            if (table.getUsedBlocks() > 0) {
-                long nextBlock = table.getFirstBlock();
-                do {
-                    buffer.order(ByteOrder.LITTLE_ENDIAN);
-                    channel.position(headerSize + (nextBlock - 1) * blockSize);
-
-                    buffer.clear();
-                    channel.read(buffer);
-                    buffer.flip();
-
-                    nextBlock = buffer.getShort();
-                    // The block number.
-                    buffer.getShort();
-
-                    final int addDataSize = buffer.getShort() & 0xFFFF;
-                    final int rowsInBlock = addDataSize / recordSize + 1;
-
-                    buffer.order(ByteOrder.BIG_ENDIAN);
-
-                    for (int loop = 0; loop < rowsInBlock; loop++) {
-                        final List<FieldValue> row = new ArrayList<>();
-
-                        for (final ParadoxField field : table.getFields()) {
-                            FieldValue fieldValue = null;
-
-                            switch (field.getType()) {
-                            case 1: {
-                                // VARCHAR type
-
-                                // reset buffer to zeros
-                                valueString.clear();
-                                Arrays.fill(valueString.array(), (byte) 0);
-
-                                for (int chars = 0; chars < field.getSize(); chars++) {
-                                    valueString.put(buffer.get());
-                                }
-                                fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()), Types.VARCHAR);
-                                break;
-                            }
-                            case 2: {
-                                // DATE type
-                                final int a1 = 0x000000FF & buffer.get();
-                                final int a2 = 0x000000FF & buffer.get();
-                                final int a3 = 0x000000FF & buffer.get();
-                                final int a4 = 0x000000FF & buffer.get();
-                                final long days = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
-
-                                if ((a1 & 0xB0) != 0) {
-                                    final Date date = DateUtils.sdnToGregorian(days + 1721425);
-                                    fieldValue = new FieldValue(date, Types.DATE);
-                                } else {
-                                    fieldValue = new FieldValue(Types.DATE);
-                                }
-                                break;
-                            }
-                            case 3: {
-                                final int v = buffer.getInt() & 0x7FFF;
-                                fieldValue = new FieldValue(v, Types.INTEGER);
-                                break;
-                            }
-                            case 4: {
-                                long l = buffer.getInt();
-                                l &= 0x7FFFFFFF;
-                                fieldValue = new FieldValue(l, Types.BIGINT);
-                                break;
-                            }
-                            case 5: // Currency
-                            case 6: {
-                                // Number
-                                final double v = buffer.getDouble() * -1;
-                                if (Double.compare(Double.NEGATIVE_INFINITY, 1 / v) == 0) {
-                                    fieldValue = new FieldValue(Types.DOUBLE);
-                                } else {
-                                    fieldValue = new FieldValue(v, Types.DOUBLE);
-                                }
-                                break;
-                            }
-                            case 9: {
-                                // Logical
-                                final byte v = buffer.get();
-                                if (v == 0) {
-                                    fieldValue = new FieldValue(Types.BOOLEAN);
-                                } else if (v == -127) {
-                                    fieldValue = new FieldValue(Boolean.TRUE, Types.BOOLEAN);
-                                } else if (v == -128) {
-                                    fieldValue = new FieldValue(Boolean.FALSE, Types.BOOLEAN);
-                                } else {
-                                    throw new SQLException("Invalid value " + v + ".");
-                                }
-                                break;
-                            }
-                            case 0xC: {
-                                /*
-                                 * Memo type
-                                 */
-                                final ByteBuffer value = ByteBuffer.allocate(field.getSize());
-                                Arrays.fill(value.array(), (byte) 0);
-
-                                for (int chars = 0; chars < field.getSize(); chars++) {
-                                    value.put(buffer.get());
-                                }
-                                value.flip();
-
-                                buffer.order(ByteOrder.LITTLE_ENDIAN);
-                                final long offset = buffer.getInt();
-                                final long length = buffer.getInt();
-                                final short modifier = buffer.getShort();
-                                buffer.order(ByteOrder.BIG_ENDIAN);
-
-                                final ClobDescriptor descriptor = new ClobDescriptor(table.getBlobTable());
-                                descriptor.setCharset(table.getCharset());
-                                descriptor.setLeader(TableData.parseString(value, table.getCharset()));
-                                descriptor.setLength(length);
-                                descriptor.setOffset(offset);
-                                descriptor.setModifier(modifier);
-
-                                fieldValue = new FieldValue(descriptor, Types.CLOB);
-
-                                break;
-                            }
-                            case 0xD: {
-                                break;
-                            }
-                            case 0x14: {
-                                final int a1 = 0x000000FF & buffer.get();
-                                final int a2 = 0x000000FF & buffer.get();
-                                final int a3 = 0x000000FF & buffer.get();
-                                final int a4 = 0x000000FF & buffer.get();
-                                final long timeInMillis = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
-
-                                if ((a1 & 0xB0) != 0) {
-                                    final Calendar calendar = new GregorianCalendar(1, 0, 0);
-                                    calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
-                                    final Time time = new Time(calendar.getTimeInMillis());
-                                    fieldValue = new FieldValue(time, Types.TIME);
-                                } else {
-                                    fieldValue = new FieldValue(Types.TIME);
-                                }
-                                break;
-                            }
-                            case 0x16: {
-                                // Autoincrement
-                                final int v = buffer.getInt() & 0x0FFFFFFF;
-                                fieldValue = new FieldValue(v, Types.INTEGER);
-                                break;
-                            }
-                            default:
-                                throw new SQLException("Type " + field.getType() + " not found.");
-                            }
-                            // Field filter
-                            if (fields.contains(field) && fieldValue != null) {
-                                fieldValue.setField(field);
-                                row.add(fieldValue);
-                            }
-                        }
-                        ret.add(row);
-                    }
-                } while (nextBlock != 0);
+            if (table.getUsedBlocks() == 0) {
+                return ret;
             }
+            long nextBlock = table.getFirstBlock();
+            do {
+                buffer.order(ByteOrder.LITTLE_ENDIAN);
+                channel.position(headerSize + (nextBlock - 1) * blockSize);
+
+                buffer.clear();
+                channel.read(buffer);
+                buffer.flip();
+
+                nextBlock = buffer.getShort();
+                // The block number.
+                buffer.getShort();
+
+                final int addDataSize = buffer.getShort() & 0xFFFF;
+                final int rowsInBlock = addDataSize / recordSize + 1;
+
+                buffer.order(ByteOrder.BIG_ENDIAN);
+
+                for (int loop = 0; loop < rowsInBlock; loop++) {
+                    ret.add(readRow(table, fields, buffer, valueString));
+                }
+            } while (nextBlock != 0);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
@@ -381,6 +247,96 @@ public final class TableData {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
         return table;
+    }
+
+    private static FieldValue parseAutoIncrement(final ByteBuffer buffer) {
+        FieldValue fieldValue;
+        final int v = buffer.getInt() & 0x0FFFFFFF;
+        fieldValue = new FieldValue(v, Types.INTEGER);
+        return fieldValue;
+    }
+
+    private static FieldValue parseBoolean(final ByteBuffer buffer) throws SQLException {
+        final byte v = buffer.get();
+        if (v == 0) {
+            return new FieldValue(Types.BOOLEAN);
+        } else if (v == -127) {
+            return new FieldValue(Boolean.TRUE, Types.BOOLEAN);
+        } else if (v == -128) {
+            return new FieldValue(Boolean.FALSE, Types.BOOLEAN);
+        } else {
+            throw new SQLException("Invalid value " + v + ".");
+        }
+    }
+
+    private static FieldValue parseDate(final ByteBuffer buffer) {
+        FieldValue fieldValue;
+        final int a1 = 0x000000FF & buffer.get();
+        final int a2 = 0x000000FF & buffer.get();
+        final int a3 = 0x000000FF & buffer.get();
+        final int a4 = 0x000000FF & buffer.get();
+        final long days = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
+
+        if ((a1 & 0xB0) != 0) {
+            final Date date = DateUtils.sdnToGregorian(days + 1721425);
+            fieldValue = new FieldValue(date, Types.DATE);
+        } else {
+            fieldValue = new FieldValue(Types.DATE);
+        }
+        return fieldValue;
+    }
+
+    private static FieldValue parseInt(final ByteBuffer buffer) {
+        FieldValue fieldValue;
+        final int v = buffer.getInt() & 0x7FFF;
+        fieldValue = new FieldValue(v, Types.INTEGER);
+        return fieldValue;
+    }
+
+    private static FieldValue parseLong(final ByteBuffer buffer) {
+        FieldValue fieldValue;
+        long l = buffer.getInt();
+        l &= 0x7FFFFFFF;
+        fieldValue = new FieldValue(l, Types.BIGINT);
+        return fieldValue;
+    }
+
+    private static FieldValue parseMemo(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+        FieldValue fieldValue;
+        final ByteBuffer value = ByteBuffer.allocate(field.getSize());
+        Arrays.fill(value.array(), (byte) 0);
+
+        for (int chars = 0; chars < field.getSize(); chars++) {
+            value.put(buffer.get());
+        }
+        value.flip();
+
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        final long offset = buffer.getInt();
+        final long length = buffer.getInt();
+        final short modifier = buffer.getShort();
+        buffer.order(ByteOrder.BIG_ENDIAN);
+
+        final ClobDescriptor descriptor = new ClobDescriptor(table.getBlobTable());
+        descriptor.setCharset(table.getCharset());
+        descriptor.setLeader(TableData.parseString(value, table.getCharset()));
+        descriptor.setLength(length);
+        descriptor.setOffset(offset);
+        descriptor.setModifier(modifier);
+
+        fieldValue = new FieldValue(descriptor, Types.CLOB);
+        return fieldValue;
+    }
+
+    private static FieldValue parseNumber(final ByteBuffer buffer) {
+        FieldValue fieldValue;
+        final double v = buffer.getDouble() * -1;
+        if (Double.compare(Double.NEGATIVE_INFINITY, 1 / v) == 0) {
+            fieldValue = new FieldValue(Types.DOUBLE);
+        } else {
+            fieldValue = new FieldValue(v, Types.DOUBLE);
+        }
+        return fieldValue;
     }
 
     /**
@@ -492,5 +448,92 @@ public final class TableData {
         } else {
             buffer.position(0x58);
         }
+    }
+
+    private static FieldValue parseTime(final ByteBuffer buffer) {
+        FieldValue fieldValue;
+        final int a1 = 0x000000FF & buffer.get();
+        final int a2 = 0x000000FF & buffer.get();
+        final int a3 = 0x000000FF & buffer.get();
+        final int a4 = 0x000000FF & buffer.get();
+        final long timeInMillis = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
+
+        if ((a1 & 0xB0) != 0) {
+            final Calendar calendar = new GregorianCalendar(1, 0, 0);
+            calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
+            final Time time = new Time(calendar.getTimeInMillis());
+            fieldValue = new FieldValue(time, Types.TIME);
+        } else {
+            fieldValue = new FieldValue(Types.TIME);
+        }
+        return fieldValue;
+    }
+
+    private static FieldValue parseVarchar(final ParadoxTable table, final ByteBuffer buffer, final ByteBuffer valueString, final ParadoxField field) {
+        FieldValue fieldValue;
+        // reset buffer to zeros
+        valueString.clear();
+        Arrays.fill(valueString.array(), (byte) 0);
+
+        for (int chars = 0; chars < field.getSize(); chars++) {
+            valueString.put(buffer.get());
+        }
+        fieldValue = new FieldValue(TableData.parseString(valueString, table.getCharset()), Types.VARCHAR);
+        return fieldValue;
+    }
+
+    private static List<FieldValue> readRow(final ParadoxTable table, final Collection<ParadoxField> fields, final ByteBuffer buffer, final ByteBuffer valueString) throws SQLException {
+        final List<FieldValue> row = new ArrayList<>();
+
+        for (final ParadoxField field : table.getFields()) {
+            FieldValue fieldValue;
+
+            switch (field.getType()) {
+            case 1:
+                // VARCHAR type
+                fieldValue = parseVarchar(table, buffer, valueString, field);
+                break;
+            case 2:
+                // DATE type
+                fieldValue = parseDate(buffer);
+                break;
+            case 3:
+                fieldValue = parseInt(buffer);
+                break;
+            case 4:
+                fieldValue = parseLong(buffer);
+                break;
+            case 5: // Currency
+            case 6:
+                // Number
+                fieldValue = parseNumber(buffer);
+                break;
+            case 9:
+                // Logical
+                fieldValue = parseBoolean(buffer);
+                break;
+            case 0xC:
+                // Memo type
+                fieldValue = parseMemo(table, buffer, field);
+                break;
+            case 0xD:
+                throw new SQLException("Field type unsupported.", SQLStates.TYPE_NOT_FOUND.getValue());
+            case 0x14:
+                fieldValue = parseTime(buffer);
+                break;
+            case 0x16:
+                // Autoincrement
+                fieldValue = parseAutoIncrement(buffer);
+                break;
+            default:
+                throw new SQLException("Type " + field.getType() + " not found.", SQLStates.TYPE_NOT_FOUND.getValue());
+            }
+            // Field filter
+            if (fields.contains(field) && fieldValue != null) {
+                fieldValue.setField(field);
+                row.add(fieldValue);
+            }
+        }
+        return row;
     }
 }
