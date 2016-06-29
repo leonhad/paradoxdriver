@@ -19,6 +19,8 @@
  */
 package com.googlecode.paradox.utils;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -81,7 +83,25 @@ public class DateUtilsTest {
     @Test
     public void testGregorianToSdnYearLimit() {
         Assert.assertEquals(0, DateUtils.gregorianToSdn(-4714, 11, 24));
-        Assert.assertEquals(0, DateUtils.gregorianToSdn(-4714, 10, 25));
+        Assert.assertEquals(1, DateUtils.gregorianToSdn(-4714, 10, 26));
+        Assert.assertEquals(0, DateUtils.gregorianToSdn(-4714, 10, 24));
+    }
+
+    /**
+     * Test utility class.
+     * 
+     * @throws IllegalAccessException
+     *             in case of errors.
+     * @throws InstantiationException
+     *             in case of errors.
+     * @throws InvocationTargetException
+     *             in case of errors.
+     * @throws NoSuchMethodException
+     *             in case of errors.
+     */
+    @Test
+    public void testSanity() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        TestUtil.assertUtilityClassWellDefined(DateUtils.class);
     }
 
     /**
