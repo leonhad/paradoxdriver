@@ -43,7 +43,7 @@ public class ParadoxFieldTest {
         last.setName("Field");
         Assert.assertTrue(first.equals(last));
     }
-
+    
     /**
      * Test for {@link ParadoxField#equals(Object)} method different values.
      */
@@ -54,8 +54,20 @@ public class ParadoxFieldTest {
         final ParadoxField last = new ParadoxField();
         last.setName("Field 2");
         Assert.assertFalse(first.equals(last));
+
+        first.setName(null);
+        last.setName("Field 2");
+        Assert.assertFalse(first.equals(last));
+
+        first.setName("Field");
+        last.setName(null);
+        Assert.assertFalse(first.equals(last));
+
+        first.setName(null);
+        last.setName(null);
+        Assert.assertTrue(first.equals(last));
     }
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method with null value.
      */
@@ -65,7 +77,7 @@ public class ParadoxFieldTest {
         field.setName("Field");
         Assert.assertFalse(field.equals(null));
     }
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method with a different
      * class.
@@ -76,7 +88,7 @@ public class ParadoxFieldTest {
         first.setName("Field");
         Assert.assertFalse(first.equals("String"));
     }
-
+    
     /**
      * Test for empty alias.
      */
@@ -86,7 +98,7 @@ public class ParadoxFieldTest {
         field.setName("Field");
         Assert.assertEquals("Field", field.getAlias());
     }
-    
+
     /**
      * Test for {@link ParadoxField#toString()} method.
      *
@@ -96,33 +108,33 @@ public class ParadoxFieldTest {
     @Test
     public void testSizeClob() throws SQLException {
         final ParadoxField field = new ParadoxField();
-        
+
         field.setType((byte) 0xC);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
-        
+
         field.setType((byte) 0xD);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
-        
+
         field.setType((byte) 0xF);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
-        
+
         field.setType((byte) 0x18);
         field.setSize((short) 20);
         Assert.assertEquals(10, field.getSize());
-        
+
         // Not changed by type
         field.setType((byte) 0xF);
         field.setSize((short) 20);
         Assert.assertEquals(20, field.getPhysicsSize());
-        
+
         field.setType((byte) 0x1);
         field.setSize((short) 20);
         Assert.assertEquals(20, field.getPhysicsSize());
     }
-    
+
     /**
      * Test for {@link ParadoxField#toString()} method.
      */
@@ -132,7 +144,7 @@ public class ParadoxFieldTest {
         first.setName("Field");
         Assert.assertEquals("Field", first.toString());
     }
-    
+
     /**
      * Test for {@link ParadoxField#getSize()} and
      * {@link ParadoxField#setSize(short)} method.
@@ -148,7 +160,7 @@ public class ParadoxFieldTest {
         field.setSize((short) 10);
         Assert.assertEquals(10, field.getSize());
     }
-
+    
     /**
      * Test for getters and setters.
      */
@@ -162,7 +174,7 @@ public class ParadoxFieldTest {
         field.setName("name");
         field.setTableName("tablename");
         field.setTable(null);
-        
+
         Assert.assertEquals("alias", field.getAlias());
         Assert.assertEquals(false, field.isChecked());
         Assert.assertEquals("expression", field.getExpression());
@@ -171,7 +183,7 @@ public class ParadoxFieldTest {
         Assert.assertEquals("tablename", field.getTableName());
         Assert.assertEquals(null, field.getTable());
     }
-
+    
     /**
      * Test for {@link ParadoxField#hashCode()} method.
      */
@@ -181,7 +193,7 @@ public class ParadoxFieldTest {
         field.setName("Field");
         Assert.assertEquals(7 * 17 + "Field".hashCode(), field.hashCode());
     }
-    
+
     /**
      * Test for {@link ParadoxField#hashCode()} method variant.
      */
@@ -191,7 +203,7 @@ public class ParadoxFieldTest {
         field.setName(null);
         Assert.assertEquals(7 * 17, field.hashCode());
     }
-    
+
     /**
      * Test for default order.
      */
@@ -200,7 +212,7 @@ public class ParadoxFieldTest {
         final ParadoxField field = new ParadoxField();
         Assert.assertEquals(1, field.getOrderNum());
     }
-
+    
     /**
      * Test for not auto increment.
      */
@@ -210,7 +222,7 @@ public class ParadoxFieldTest {
         field.setType((byte) 1);
         Assert.assertFalse(field.isAutoIncrement());
     }
-    
+
     /**
      * Test for auto increment.
      */
