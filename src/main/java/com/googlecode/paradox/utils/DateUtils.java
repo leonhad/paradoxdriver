@@ -56,7 +56,7 @@ public final class DateUtils {
      * Utility class.
      */
     private DateUtils() {
-        // Utility class, not for use.\\\\\
+        // Utility class, not for use.
     }
 
     /**

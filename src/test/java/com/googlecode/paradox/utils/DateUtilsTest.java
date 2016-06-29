@@ -81,6 +81,23 @@ public class DateUtilsTest {
     @Test
     public void testGregorianToSdnYearLimit() {
         Assert.assertEquals(0, DateUtils.gregorianToSdn(-4714, 11, 24));
-        Assert.assertEquals(1, DateUtils.gregorianToSdn(-4714, 11, 25));
+        Assert.assertEquals(0, DateUtils.gregorianToSdn(-4714, 10, 25));
+    }
+
+    /**
+     * Test low SDN.
+     */
+    @Test
+    public void testSdnToGregorian() {
+        Assert.assertEquals("4715-11-25", DateUtils.sdnToGregorian(1).toString());
+    }
+
+    /**
+     * Test invalid SDN.
+     */
+    @Test
+    public void testSdnToGregorianInvalid() {
+        Assert.assertNull(DateUtils.sdnToGregorian(0));
+        Assert.assertNull(DateUtils.sdnToGregorian(-1));
     }
 }
