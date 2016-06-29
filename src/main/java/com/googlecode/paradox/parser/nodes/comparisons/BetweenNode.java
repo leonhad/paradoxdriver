@@ -11,11 +11,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.parser.nodes.comparisons;
 
@@ -23,40 +23,40 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 
 /**
  * Stores the between node.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @since 1.1
  * @version 1.1
  */
 public class BetweenNode extends AbstractComparisonNode {
-
+    
     /**
-     * The middle node.
+     * The field node.
      */
-    private final FieldNode middle;
+    private final FieldNode field;
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param first
      *            the first node.
-     * @param middle
+     * @param field
      *            the middle node.
      * @param last
      *            the last node.
      */
-    public BetweenNode(final FieldNode first, final FieldNode middle, final FieldNode last) {
+    public BetweenNode(final FieldNode field, final FieldNode first, final FieldNode last) {
         super("BETWEEN", first, last);
-        this.middle = middle;
+        this.field = field;
     }
 
     /**
-     * Gets the middle node.
-     * 
-     * @return the middle node.
+     * Gets the field node.
+     *
+     * @return the field node.
      */
-    public FieldNode getMiddle() {
-        return middle;
+    public FieldNode getField() {
+        return field;
     }
 
     /**
@@ -64,7 +64,7 @@ public class BetweenNode extends AbstractComparisonNode {
      */
     @Override
     public String toString() {
-        return middle + " BETWEEN " + getFirst() + " AND " + getLast();
+        return field + " BETWEEN " + getFirst() + " AND " + getLast();
     }
 
 }
