@@ -27,7 +27,7 @@ package com.googlecode.paradox.utils;
  * @version 1.0
  */
 public final class Constants {
-    
+
     /**
      * Driver Name
      */
@@ -37,6 +37,16 @@ public final class Constants {
      * Driver String Version
      */
     public static final String DRIVER_VERSION = Constants.MAJOR_VERSION + "." + Constants.MINOR_VERSION;
+
+    /**
+     * Invalid input date.
+     */
+    public static final String ERROR_INVALID_DATE = "Invalid input date.";
+
+    /**
+     * Unsupported operation.
+     */
+    public static final String ERROR_UNSUPPORTED_OPERATION = "Unsupported operation.";
 
     /**
      * Major version of the Driver
@@ -57,9 +67,4 @@ public final class Constants {
      * Driver prefix
      */
     public static final String URL_PREFIX = "jdbc:paradox:";
-
-    /**
-     * Unsupported operation.
-     */
-    public static final String ERROR_UNSUPPORTED_OPERATION = "Unsupported operation.";
 }

@@ -22,6 +22,8 @@ package com.googlecode.paradox.utils;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class for date formats.
@@ -48,6 +50,11 @@ public final class DateUtils {
     private static final int DAYS_PER_5_MONTHS = 153;
 
     /**
+     * Used for debug purposes
+     */
+    private static final Logger LOGGER = Logger.getLogger(DateUtils.class.getName());
+
+    /**
      * Days offset in Paradox format.
      */
     private static final int SDN_OFFSET = 32045;
@@ -57,6 +64,71 @@ public final class DateUtils {
      */
     private DateUtils() {
         // Utility class, not for use.
+    }
+
+    /**
+     * Check for valid date boundaries.
+     * 
+     * @param inputYear
+     *            the year to validate.
+     * @param inputMonth
+     *            the month to validate.
+     * @param inputDay
+     *            the day to validate.
+     */
+    private static void checkForDateBoundaries(final long inputYear, final long inputMonth, final long inputDay) {
+        // Check for invalid year.
+        if (inputYear == 0 || inputYear < -4714) {
+            throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+        }
+        // Check for invalid month.
+        if (inputMonth <= 0 || inputMonth > 12) {
+            throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+        }
+        // Check for invalid day.
+        if (inputDay <= 0 || inputDay > 31) {
+            throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+        }
+    }
+
+    /**
+     * Check for dates before SDN 1 (November 25, 4714 B.C.).
+     * 
+     * @param inputYear
+     *            the year to check.
+     * @param inputMonth
+     *            the month to check.
+     * @param inputDay
+     *            the day to check.
+     * @throws IllegalArgumentException
+     *             in case of invalid date.
+     */
+    private static void checkYearBounds(final long inputYear, final long inputMonth, final long inputDay) {
+        if (inputYear == -4714) {
+            if (inputMonth < 11) {
+                throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+            }
+            if (inputMonth == 11 && inputDay < 25) {
+                throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+            }
+        }
+    }
+
+    /**
+     * Check for the year bounds.
+     * 
+     * @param inputYear
+     *            the year to test of.
+     * @return the corrected year.
+     */
+    private static long fixYearBounds(final long inputYear) {
+        long year;
+        if (inputYear < 0) {
+            year = inputYear + 4801L;
+        } else {
+            year = inputYear + 4800L;
+        }
+        return year;
     }
 
     /**
@@ -71,31 +143,18 @@ public final class DateUtils {
      * @return the Paradox date.
      */
     public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
-        long year;
-        long month;
-
-        // check for invalid year
-        if (inputYear == 0 || inputYear < -4714 || inputMonth <= 0 || inputMonth > 12 || inputDay <= 0 || inputDay > 31) {
+        try {
+            checkForDateBoundaries(inputYear, inputMonth, inputDay);
+            checkYearBounds(inputYear, inputMonth, inputDay);
+        } catch (final IllegalArgumentException e) {
+            LOGGER.log(Level.FINER, e.getMessage(), e);
             return 0;
         }
 
-        // Check for dates before SDN 1 (Nov 25, 4714 B.C.).
-        if (inputYear == -4714) {
-            if (inputMonth < 11) {
-                return 0;
-            }
-            if (inputMonth == 11 && inputDay < 25) {
-                return 0;
-            }
-        }
-
         // Make year always a positive number.
-        if (inputYear < 0) {
-            year = inputYear + 4801L;
-        } else {
-            year = inputYear + 4800L;
-        }
+        long year = fixYearBounds(inputYear);
 
+        long month;
         // Adjust the start of the year.
         if (inputMonth > 2) {
             month = inputMonth - 3L;
