@@ -56,7 +56,7 @@ public final class DateUtils {
      * Utility class.
      */
     private DateUtils() {
-        // Utility class, not for use.
+        // Utility class, not for use.\\\\\
     }
 
     /**
@@ -74,12 +74,12 @@ public final class DateUtils {
         long year;
         long month;
 
-        /* check for invalid dates */
+        // check for invalid year
         if (inputYear == 0 || inputYear < -4714 || inputMonth <= 0 || inputMonth > 12 || inputDay <= 0 || inputDay > 31) {
             return 0;
         }
 
-        /* check for dates before SDN 1 (Nov 25, 4714 B.C.) */
+        // Check for dates before SDN 1 (Nov 25, 4714 B.C.).
         if (inputYear == -4714) {
             if (inputMonth < 11) {
                 return 0;
@@ -89,14 +89,14 @@ public final class DateUtils {
             }
         }
 
-        /* Make year always a positive number. */
+        // Make year always a positive number.
         if (inputYear < 0) {
             year = inputYear + 4801L;
         } else {
             year = inputYear + 4800L;
         }
 
-        /* Adjust the start of the year. */
+        // Adjust the start of the year.
         if (inputMonth > 2) {
             month = inputMonth - 3L;
         } else {

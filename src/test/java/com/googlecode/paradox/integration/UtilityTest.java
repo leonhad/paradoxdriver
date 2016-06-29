@@ -28,7 +28,7 @@ import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
-import com.googlecode.paradox.utils.DateUtils;
+import com.googlecode.paradox.utils.DateUtilsTest;
 import com.googlecode.paradox.utils.TestUtil;
 import com.googlecode.paradox.utils.Utils;
 
@@ -57,7 +57,7 @@ public class UtilityTest {
     @Test
     public void testClassesIntegrity() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         TestUtil.assertUtilityClassWellDefined(Utils.class);
-        TestUtil.assertUtilityClassWellDefined(DateUtils.class);
+        TestUtil.assertUtilityClassWellDefined(DateUtilsTest.class);
         TestUtil.assertUtilityClassWellDefined(TableData.class);
         TestUtil.assertUtilityClassWellDefined(ViewData.class);
         TestUtil.assertUtilityClassWellDefined(IndexData.class);
