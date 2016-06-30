@@ -1,5 +1,5 @@
 /*
- * ParadoxDataFile.java
+ * SelectNode.java
  *
  * 03/12/2009
  * Copyright (C) 2009 Leonardo Alves da Costa
@@ -156,7 +156,7 @@ public class SelectNode extends StatementNode {
      */
     private void buildGroupBy(final StringBuilder builder) {
         boolean first;
-        if (groups.isEmpty()) {
+        if (!groups.isEmpty()) {
             builder.append(" GROUP BY ");
             first = true;
             for (final IdentifierNode group : groups) {
@@ -178,7 +178,7 @@ public class SelectNode extends StatementNode {
      */
     private void buildOrderBy(final StringBuilder builder) {
         boolean first;
-        if (order.isEmpty()) {
+        if (!order.isEmpty()) {
             builder.append(" ORDER BY ");
             first = true;
             for (final IdentifierNode ident : order) {
