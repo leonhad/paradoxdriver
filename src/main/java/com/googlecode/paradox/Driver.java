@@ -25,7 +25,6 @@ import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -108,28 +107,15 @@ public class Driver implements IParadoxDriver {
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) throws SQLException {
-        final ArrayList<DriverPropertyInfo> prop = new ArrayList<>();
+        final DriverPropertyInfo dbProp = new DriverPropertyInfo("DBNAME", info.getProperty("DBNAME"));
+        dbProp.required = false;
+        dbProp.description = "Database name";
 
-        // TODO associate with connection.
-        try (Connection c = connect(url, info)) {
-            if (info != null) {
-                if (info.getProperty("DBNAME") == null) {
-                    final DriverPropertyInfo dbProp = new DriverPropertyInfo("name", info.getProperty("DBNAME"));
-                    dbProp.required = false;
-                    dbProp.description = "Database name";
-                    // prop.add(dbProp);
-                }
-                if (info.getProperty("password") == null) {
-                    final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", "");
-                    passwordProp.required = false;
-                    passwordProp.description = "Password to use for authentication";
-                    // prop.add(passwordProp);
-                }
+        final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", info.getProperty("password"));
+        passwordProp.required = false;
+        passwordProp.description = "Password to use for authentication";
 
-            }
-        }
-        final DriverPropertyInfo[] dpi = new DriverPropertyInfo[prop.size()];
-        return prop.toArray(dpi);
+        return new DriverPropertyInfo[] { dbProp, passwordProp };
     }
 
     /**
