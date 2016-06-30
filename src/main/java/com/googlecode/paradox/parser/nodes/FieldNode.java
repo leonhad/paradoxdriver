@@ -82,7 +82,7 @@ public class FieldNode extends SQLNode {
             builder.append(".");
         }
         builder.append(getName());
-        if (!getName().equals(alias)) {
+        if (alias != null && !getName().equals(alias)) {
             builder.append(" AS ");
             builder.append(alias);
         }

@@ -200,7 +200,7 @@ public class SelectNode extends StatementNode {
      */
     private void buildWhere(final StringBuilder builder) {
         boolean first;
-        if (conditions != null && conditions.isEmpty()) {
+        if (conditions != null && !conditions.isEmpty()) {
             builder.append(" WHERE ");
             first = true;
             for (final SQLNode cond : conditions) {

@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
+
 /**
  * Unit test for {@link SelectNode}.
  * 
@@ -117,7 +120,13 @@ public class SelectNodeTest {
         node.addGroupBy(new IdentifierNode("f2"));
         node.addOrderBy(new IdentifierNode("f"));
         node.addOrderBy(new IdentifierNode("f2"));
-        Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b GROUP BY f1, f2 ORDER BY f, f2", node.toString());
+
+        final ArrayList<SQLNode> conditions = new ArrayList<>();
+        conditions.add(new EqualsNode(new FieldNode("t", "field", null), new FieldNode("t", "field2", null)));
+        conditions.add(new NotEqualsNode(new FieldNode("t", "field", null), new FieldNode("t", "field2", null)));
+        node.setConditions(conditions);
+
+        Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b WHERE t.field = t.field2 t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2", node.toString());
     }
 
     /**

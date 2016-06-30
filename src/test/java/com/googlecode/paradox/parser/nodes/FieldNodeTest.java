@@ -30,7 +30,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class FieldNodeTest {
-    
+
     /**
      * Test for {@link FieldNode#toString()} method.
      */
@@ -38,6 +38,15 @@ public class FieldNodeTest {
     public void testToString() {
         final FieldNode node = new FieldNode("table", "field", "alias");
         Assert.assertEquals("table.field AS alias", node.toString());
+    }
+
+    /**
+     * Test for {@link FieldNode#toString()} method with null alias.
+     */
+    @Test
+    public void testToStringWithNullAlias() {
+        final FieldNode node = new FieldNode("table", "field", null);
+        Assert.assertEquals("table.field", node.toString());
     }
 
     /**
