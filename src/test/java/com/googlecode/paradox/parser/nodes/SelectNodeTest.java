@@ -20,6 +20,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -127,6 +128,19 @@ public class SelectNodeTest {
         node.setConditions(conditions);
 
         Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b WHERE t.field = t.field2 t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2", node.toString());
+    }
+
+    /**
+     * Test for {@link SelectNode#toString()} method with empty where.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testToStringEmptyWhere() {
+        final SelectNode node = new SelectNode();
+        node.addField(new FieldNode("t", "field", "f"));
+        node.addField(new FieldNode("b", "field2", "f2"));
+        node.setConditions(Collections.EMPTY_LIST);
+        Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 
     /**
