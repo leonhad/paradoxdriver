@@ -19,7 +19,6 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.utils.Constants;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,6 +30,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.googlecode.paradox.utils.Constants;
+
 /**
  * PARADOX JDBC Driver type 4.
  *
@@ -39,17 +40,12 @@ import java.util.logging.Logger;
  * @since 1.0
  */
 public class Driver implements IParadoxDriver {
-    
+
     /**
      * Logger instance for this class.
      */
     private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
-    
-    /**
-     * Driver properties.
-     */
-    private Properties properties = null;
-    
+
     /**
      * Register the drive into JDBC API.
      */
@@ -62,15 +58,15 @@ public class Driver implements IParadoxDriver {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean acceptsURL(final String url) throws SQLException {
-        return url.startsWith(Constants.URL_PREFIX);
+        return url != null && url.startsWith(Constants.URL_PREFIX);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -82,7 +78,7 @@ public class Driver implements IParadoxDriver {
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -90,7 +86,7 @@ public class Driver implements IParadoxDriver {
     public int getMajorVersion() {
         return Constants.MAJOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -98,7 +94,7 @@ public class Driver implements IParadoxDriver {
     public int getMinorVersion() {
         return Constants.MINOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -106,33 +102,36 @@ public class Driver implements IParadoxDriver {
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return Driver.LOGGER;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) throws SQLException {
-        if (properties == null) {
-            properties = new Properties();
-        }
         final ArrayList<DriverPropertyInfo> prop = new ArrayList<>();
-        
-        if (info.getProperty("DBNAME") == null) {
-            final DriverPropertyInfo dbProp = new DriverPropertyInfo("name", properties.getProperty("name"));
-            dbProp.required = false;
-            dbProp.description = "Database name";
-            prop.add(dbProp);
-        }
-        if (info.getProperty("password") == null) {
-            final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", "");
-            passwordProp.required = false;
-            passwordProp.description = "Password to use for authentication";
-            prop.add(passwordProp);
+
+        // TODO associate with connection.
+        try (Connection c = connect(url, info)) {
+            if (info != null) {
+                if (info.getProperty("DBNAME") == null) {
+                    final DriverPropertyInfo dbProp = new DriverPropertyInfo("name", info.getProperty("DBNAME"));
+                    dbProp.required = false;
+                    dbProp.description = "Database name";
+                    // prop.add(dbProp);
+                }
+                if (info.getProperty("password") == null) {
+                    final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", "");
+                    passwordProp.required = false;
+                    passwordProp.description = "Password to use for authentication";
+                    // prop.add(passwordProp);
+                }
+
+            }
         }
         final DriverPropertyInfo[] dpi = new DriverPropertyInfo[prop.size()];
         return prop.toArray(dpi);
     }
-    
+
     /**
      * {@inheritDoc}
      */
