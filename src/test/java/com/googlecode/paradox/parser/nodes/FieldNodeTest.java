@@ -50,6 +50,15 @@ public class FieldNodeTest {
     }
 
     /**
+     * Test {@link FieldNode#toString()} with null table.
+     */
+    @Test
+    public void testToStringWithNullTable() {
+        final FieldNode node = new FieldNode(null, "field", null);
+        Assert.assertEquals("field", node.toString());
+    }
+
+    /**
      * Test for {@link FieldNode#toString()} method without alias.
      */
     @Test
