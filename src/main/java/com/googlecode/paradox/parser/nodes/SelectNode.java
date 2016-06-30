@@ -109,6 +109,112 @@ public class SelectNode extends StatementNode {
     }
 
     /**
+     * Build the fields description.
+     * 
+     * @param builder
+     *            builder to append fields.
+     */
+    private void buildFields(final StringBuilder builder) {
+        boolean first = true;
+        for (final SQLNode field : fields) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(", ");
+            }
+            builder.append(field);
+        }
+    }
+
+    /**
+     * Build the FROM description.
+     * 
+     * @param builder
+     *            builder to append FROM tables.
+     */
+    private void buildFrom(final StringBuilder builder) {
+        boolean first;
+        if (!tables.isEmpty()) {
+            builder.append(" FROM ");
+            first = true;
+            for (final TableNode table : tables) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(table);
+            }
+        }
+    }
+
+    /**
+     * Build the grouping fields.
+     * 
+     * @param builder
+     *            builder to GROUP BY fields.
+     */
+    private void buildGroupBy(final StringBuilder builder) {
+        boolean first;
+        if (groups.isEmpty()) {
+            builder.append(" GROUP BY ");
+            first = true;
+            for (final IdentifierNode group : groups) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(group);
+            }
+        }
+    }
+
+    /**
+     * Build the fields order.
+     * 
+     * @param builder
+     *            builder to ORDER BY fields.
+     */
+    private void buildOrderBy(final StringBuilder builder) {
+        boolean first;
+        if (order.isEmpty()) {
+            builder.append(" ORDER BY ");
+            first = true;
+            for (final IdentifierNode ident : order) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(ident);
+            }
+        }
+    }
+
+    /**
+     * Build the WHERE conditions.
+     * 
+     * @param builder
+     *            builder to WHERE conditions.
+     */
+    private void buildWhere(final StringBuilder builder) {
+        boolean first;
+        if (conditions != null && conditions.isEmpty()) {
+            builder.append(" WHERE ");
+            first = true;
+            for (final SQLNode cond : conditions) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(" ");
+                }
+                builder.append(cond);
+            }
+        }
+    }
+
+    /**
      * Gets the condition list.
      * 
      * @return the condition list.
@@ -183,7 +289,7 @@ public class SelectNode extends StatementNode {
     }
 
     /**
-     * {@inheritDoc}
+     * Show this node SELECT.
      */
     @Override
     public String toString() {
@@ -191,63 +297,11 @@ public class SelectNode extends StatementNode {
         builder.append(getName());
         builder.append(" ");
 
-        boolean first = true;
-        for (final SQLNode field : fields) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(", ");
-            }
-            builder.append(field);
-        }
-        if (!tables.isEmpty()) {
-            builder.append(" FROM ");
-            first = true;
-            for (final TableNode table : tables) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(table);
-            }
-        }
-        if (conditions != null && conditions.isEmpty()) {
-            builder.append(" WHERE ");
-            first = true;
-            for (final SQLNode cond : conditions) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(" ");
-                }
-                builder.append(cond);
-            }
-        }
-        if (groups.isEmpty()) {
-            builder.append(" GROUP BY ");
-            first = true;
-            for (final IdentifierNode group : groups) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(group);
-            }
-        }
-        if (order.isEmpty()) {
-            builder.append(" ORDER BY ");
-            first = true;
-            for (final IdentifierNode ident : order) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(ident);
-            }
-        }
+        buildFields(builder);
+        buildFrom(builder);
+        buildWhere(builder);
+        buildGroupBy(builder);
+        buildOrderBy(builder);
         return builder.toString();
     }
 }
