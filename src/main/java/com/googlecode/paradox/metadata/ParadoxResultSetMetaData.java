@@ -106,7 +106,6 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
         case Types.TIME:
             return Time.class.getName();
         case Types.DOUBLE:
-            return Double.class.getName();
         case Types.NUMERIC:
             return Double.class.getName();
         case Types.BOOLEAN:
