@@ -144,30 +144,19 @@ public class MainTest {
             Assert.assertEquals("CUSTOMER.X06", names[1]);
 
             while (rs.next()) {
-                // System.out.println("TABLE_CAT: " +
-                // rs.getString("TABLE_CAT"));
-                // System.out.println("TABLE_SCHEM: " +
-                // rs.getString("TABLE_SCHEM"));
-                // System.out.println("TABLE_NAME: " +
-                // rs.getString("TABLE_NAME"));
-                // System.out.println("NON_UNIQUE: " +
-                // rs.getString("NON_UNIQUE"));
-                // System.out.println("INDEX_QUALIFIER: " +
-                // rs.getString("INDEX_QUALIFIER"));
-                // System.out.println("INDEX_NAME: " +
-                // rs.getString("INDEX_NAME"));
-                // System.out.println("TYPE: " + rs.getString("TYPE"));
-                // System.out.println("ORDINAL_POSITION: " +
-                // rs.getString("ORDINAL_POSITION"));
-                // System.out.println("COLUMN_NAME: " +
-                // rs.getString("COLUMN_NAME"));
-                // System.out.println("ASC_OR_DESC: " +
-                // rs.getString("ASC_OR_DESC"));
-                // System.out.println("CARDINALITY: " +
-                // rs.getString("CARDINALITY"));
-                // System.out.println("PAGES: " + rs.getString("PAGES"));
-                // System.out.println("FILTER_CONDITION: " +
-                // rs.getString("FILTER_CONDITION"));
+                Assert.assertEquals("db", rs.getString("TABLE_CAT"));
+                Assert.assertEquals("APP", rs.getString("TABLE_SCHEM"));
+                Assert.assertEquals(null, rs.getString("TABLE_NAME"));
+                Assert.assertEquals("false", rs.getString("NON_UNIQUE"));
+                Assert.assertEquals("db", rs.getString("INDEX_QUALIFIER"));
+                Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
+                Assert.assertEquals("2", rs.getString("TYPE"));
+                Assert.assertEquals("0", rs.getString("ORDINAL_POSITION"));
+                Assert.assertEquals("City", rs.getString("COLUMN_NAME"));
+                Assert.assertEquals("A", rs.getString("ASC_OR_DESC"));
+                Assert.assertEquals("0", rs.getString("CARDINALITY"));
+                Assert.assertEquals("0", rs.getString("PAGES"));
+                Assert.assertEquals(null, rs.getString("FILTER_CONDITION"));
             }
         } finally {
             if (rs != null) {
@@ -197,7 +186,7 @@ public class MainTest {
             Assert.assertEquals("CustNo", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("0", rs.getString("KEY_SEQ"));
             Assert.assertEquals("CustNo", rs.getString("PK_NAME"));
-            // Assert.assertFalse(rs.next());
+            Assert.assertFalse(rs.next());
         } finally {
             if (rs != null) {
                 rs.close();

@@ -96,6 +96,19 @@ public final class Expressions {
         return index > limit;
     }
 
+    /**
+     * Fix index based on % position.
+     * 
+     * @param exp
+     *            the expression to test.
+     * @param limit
+     *            the expression max size.
+     * @param offset
+     *            the offset to start of.
+     * @param next
+     *            the next char on criteria.
+     * @return new index.
+     */
     private static int fixIndex(final char[] exp, final int limit, final int offset, final char next) {
         int index = offset;
         while (index <= limit && next != exp[index]) {

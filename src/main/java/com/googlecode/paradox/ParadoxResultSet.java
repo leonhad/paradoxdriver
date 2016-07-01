@@ -1099,8 +1099,8 @@ public class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean next() throws SQLException {
+        position++;
         if (hasNext()) {
-            position++;
             clearClobs();
             return true;
         }
