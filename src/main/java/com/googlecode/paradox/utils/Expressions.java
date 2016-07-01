@@ -27,7 +27,7 @@ package com.googlecode.paradox.utils;
  * @since 1.1
  * @version 1.0
  */
-public class Expressions {
+public final class Expressions {
 
     /**
      * Utility class.
@@ -61,8 +61,8 @@ public class Expressions {
      * @return true if the expression is valid.
      */
     public static boolean accept(final String expression, final String criteria, final boolean caseSensitive) {
-        final char[] crit = caseSensitive ? criteria.toCharArray() : criteria.toUpperCase().toCharArray();
-        final char[] exp = caseSensitive ? expression.toCharArray() : expression.toUpperCase().toCharArray();
+        final char[] crit = getCharArrayWithCase(criteria, caseSensitive);
+        final char[] exp = getCharArrayWithCase(expression, caseSensitive);
         final int limit = exp.length - 1;
         int index = 0;
 
@@ -72,33 +72,48 @@ public class Expressions {
             }
             final char c = crit[loop];
 
-            switch (c) {
-            case '?':
+            if (c == '?') {
                 index++;
-                break;
-            case '%':
+            } else if (c == '%') {
                 // Has others chars
                 if (loop + 1 < crit.length) {
                     final char next = crit[loop + 1];
-                    while (index <= limit && next != exp[index]) {
-                        index++;
-                    }
+                    index = fixIndex(exp, limit, index, next);
                     if (index > limit || next != exp[index]) {
                         return false;
                     }
                 } else {
                     return true;
                 }
-                break;
-            default:
+            } else {
                 if (c == exp[index]) {
                     index++;
                 } else {
                     return false;
                 }
-                break;
             }
         }
         return index > limit;
+    }
+
+    private static int fixIndex(final char[] exp, final int limit, final int offset, final char next) {
+        int index = offset;
+        while (index <= limit && next != exp[index]) {
+            index++;
+        }
+        return index;
+    }
+
+    /**
+     * Gets a char array with case option.
+     * 
+     * @param str
+     *            the string to convert.
+     * @param caseSensitive
+     *            if use case sensitive option.
+     * @return the char array.
+     */
+    private static char[] getCharArrayWithCase(final String str, final boolean caseSensitive) {
+        return caseSensitive ? str.toCharArray() : str.toUpperCase().toCharArray();
     }
 }

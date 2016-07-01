@@ -23,6 +23,8 @@ import static com.googlecode.paradox.utils.Expressions.accept;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.junit.Test;
 
 /**
@@ -72,6 +74,23 @@ public class ExpressionsTest {
     @Test
     public void testNotEquals() {
         assertFalse(accept("TABLE", "table", true));
+    }
+
+    /**
+     * Test for sanity.
+     * 
+     * @throws IllegalAccessException
+     *             in case of errors.
+     * @throws InstantiationException
+     *             in case of errors.
+     * @throws InvocationTargetException
+     *             in case of errors.
+     * @throws NoSuchMethodException
+     *             in case of errors.
+     */
+    @Test
+    public void testSanity() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        TestUtil.assertUtilityClassWellDefined(Expressions.class);
     }
 
     /**
