@@ -145,11 +145,6 @@ public class SQLParser {
             token = scanner.nextToken();
 
             switch (token.getType()) {
-            case SEMI:
-                if (statementList.isEmpty()) {
-                    throw new SQLException("Unexpected semicolon");
-                }
-                break;
             case SELECT:
                 statementList.add(parseSelect());
                 break;
@@ -157,6 +152,10 @@ public class SQLParser {
             case DELETE:
             case UPDATE:
                 throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
+            case SEMI:
+                if (!statementList.isEmpty()) {
+                    break;
+                }
             default:
                 throw new SQLException(SQLStates.INVALID_SQL.getValue());
             }
@@ -324,23 +323,31 @@ public class SQLParser {
      */
     private SQLNode parseFieldNode() throws SQLException {
         final FieldNode firstField = parseField();
+        SQLNode node;
 
         switch (token.getType()) {
         case BETWEEN:
-            return parseBetween(firstField);
+            node = parseBetween(firstField);
+            break;
         case EQUALS:
-            return parseEquals(firstField);
+            node = parseEquals(firstField);
+            break;
         case NOTEQUALS:
-            return parseNotEquals(firstField);
+            node = parseNotEquals(firstField);
+            break;
         case NOTEQUALS2:
-            return parseNotEqualsVariant(firstField);
+            node = parseNotEqualsVariant(firstField);
+            break;
         case LESS:
-            return parseLess(firstField);
+            node = parseLess(firstField);
+            break;
         case MORE:
-            return parseMore(firstField);
+            node = parseMore(firstField);
+            break;
         default:
             throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL.getValue());
         }
+        return node;
     }
 
     /**
