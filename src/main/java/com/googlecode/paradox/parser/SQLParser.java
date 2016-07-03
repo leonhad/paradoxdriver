@@ -154,9 +154,7 @@ public class SQLParser {
                 statementList.add(parseSelect());
                 break;
             case INSERT:
-                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             case DELETE:
-                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             case UPDATE:
                 throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             default:
@@ -178,6 +176,23 @@ public class SQLParser {
     private void parseAsterisk(final SelectNode select) throws SQLException {
         select.getFields().add(new AsteriskNode());
         expect(TokenType.ASTERISK);
+    }
+
+    /**
+     * Parses between token.
+     * 
+     * @param field
+     *            the between field.
+     * @return the between node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private BetweenNode parseBetween(final FieldNode field) throws SQLException {
+        expect(TokenType.BETWEEN);
+        final FieldNode left = parseField();
+        expect(TokenType.AND, "AND expected.");
+        final FieldNode right = parseField();
+        return new BetweenNode(field, left, right);
     }
 
     /**
@@ -217,66 +232,13 @@ public class SQLParser {
         if (token.getType() == TokenType.NOT) {
             return new NOTNode(parseCondition());
         } else if (token.isOperator()) {
-            switch (token.getType()) {
-            case AND:
-                expect(TokenType.AND);
-                return new ANDNode(null);
-            case OR:
-                expect(TokenType.OR);
-                return new ORNode(null);
-            case XOR:
-                expect(TokenType.XOR);
-                return new XORNode(null);
-            default:
-                throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL.getValue());
-            }
+            return parseOperators();
         } else if (token.getType() == TokenType.LPAREN) {
             expect(TokenType.RPAREN, "Right parentesis expected");
         } else if (token.getType() == TokenType.EXISTS) {
-            expect(TokenType.EXISTS);
-            expect(TokenType.LPAREN, "Left parentesis expected.");
-            final SelectNode select = parseSelect();
-            expect(TokenType.RPAREN, "Left parentesis expected.");
-            return new ExistsNode(select);
+            return parseExists();
         } else {
-            final FieldNode firstField = parseField();
-
-            switch (token.getType()) {
-            case BETWEEN: {
-                expect(TokenType.BETWEEN);
-                final FieldNode left = parseField();
-                expect(TokenType.AND, "AND expected.");
-                final FieldNode right = parseField();
-                return new BetweenNode(firstField, left, right);
-            }
-            case EQUALS: {
-                expect(TokenType.EQUALS);
-                final FieldNode value = parseField();
-                return new EqualsNode(firstField, value);
-            }
-            case NOTEQUALS: {
-                expect(TokenType.NOTEQUALS);
-                final FieldNode value = parseField();
-                return new NotEqualsNode(firstField, value);
-            }
-            case NOTEQUALS2: {
-                expect(TokenType.NOTEQUALS2);
-                final FieldNode value = parseField();
-                return new NotEqualsNode(firstField, value);
-            }
-            case LESS: {
-                expect(TokenType.LESS);
-                final FieldNode value = parseField();
-                return new LessThanNode(firstField, value);
-            }
-            case MORE: {
-                expect(TokenType.MORE);
-                final FieldNode value = parseField();
-                return new GreaterThanNode(firstField, value);
-            }
-            default:
-                throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL.getValue());
-            }
+            return parseFieldNode();
         }
         return null;
     }
@@ -300,6 +262,43 @@ public class SQLParser {
         return conditions;
     }
 
+    /**
+     * Parses the equals tokens.
+     * 
+     * @param field
+     *            the left field token.
+     * @return the equals node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private EqualsNode parseEquals(final FieldNode field) throws SQLException {
+        expect(TokenType.EQUALS);
+        final FieldNode value = parseField();
+        return new EqualsNode(field, value);
+    }
+
+    /**
+     * Parses the exists token.
+     * 
+     * @return the exists node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private ExistsNode parseExists() throws SQLException {
+        expect(TokenType.EXISTS);
+        expect(TokenType.LPAREN, "Left parentesis expected.");
+        final SelectNode select = parseSelect();
+        expect(TokenType.RPAREN, "Left parentesis expected.");
+        return new ExistsNode(select);
+    }
+
+    /**
+     * Parses the table join fields.
+     * 
+     * @return the field node.
+     * @throws SQLException
+     *             in case of errors.
+     */
     private FieldNode parseField() throws SQLException {
         String tableName = null;
         String fieldName = token.getValue();
@@ -314,6 +313,34 @@ public class SQLParser {
             expect(TokenType.IDENTIFIER);
         }
         return new FieldNode(tableName, fieldName, fieldName);
+    }
+
+    /**
+     * Parses the field node.
+     * 
+     * @return the field node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private SQLNode parseFieldNode() throws SQLException {
+        final FieldNode firstField = parseField();
+
+        switch (token.getType()) {
+        case BETWEEN:
+            return parseBetween(firstField);
+        case EQUALS:
+            return parseEquals(firstField);
+        case NOTEQUALS:
+            return parseNotEquals(firstField);
+        case NOTEQUALS2:
+            return parseNotEqualsVariant(firstField);
+        case LESS:
+            return parseLess(firstField);
+        case MORE:
+            return parseMore(firstField);
+        default:
+            throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL.getValue());
+        }
     }
 
     /**
@@ -356,6 +383,35 @@ public class SQLParser {
     }
 
     /**
+     * Parse table field names from WHERE.
+     * 
+     * @param oldAlias
+     *            the old alias name.
+     * @return the new alias.
+     * @throws SQLException
+     *             in case of errors.
+     */
+    private String parseFields(final String oldAlias) throws SQLException {
+        String tableAlias = oldAlias;
+        if (scanner.hasNext()) {
+            expect(TokenType.IDENTIFIER);
+            if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.AS) {
+                // Field alias (with AS identifier)
+                if (token.getType() == TokenType.AS) {
+                    expect(TokenType.AS);
+                    tableAlias = token.getValue();
+                    expect(TokenType.IDENTIFIER);
+                } else if (token.getType() == TokenType.IDENTIFIER) {
+                    // Field alias (without AS identifier)
+                    tableAlias = token.getValue();
+                    expect(TokenType.IDENTIFIER);
+                }
+            }
+        }
+        return tableAlias;
+    }
+
+    /**
      * Parse the FROM keyword.
      *
      * @param select
@@ -379,11 +435,9 @@ public class SQLParser {
             }
         } while (scanner.hasNext());
 
-        if (scanner.hasNext()) {
-            if (token.getType() == TokenType.WHERE) {
-                expect(TokenType.WHERE);
-                select.setConditions(parseConditionList());
-            }
+        if (scanner.hasNext() && token.getType() == TokenType.WHERE) {
+            expect(TokenType.WHERE);
+            select.setConditions(parseConditionList());
         }
     }
 
@@ -432,34 +486,14 @@ public class SQLParser {
     }
 
     /**
-     * Parse the tables name after a from keyword.
-     *
-     * @param select
-     *            the select node.
+     * Parses the join tokens.
+     * 
+     * @param table
+     *            the table.
      * @throws SQLException
-     *             in case of parse errors.
+     *             in case of errors.
      */
-    private void parseJoinTable(final SelectNode select) throws SQLException {
-        final String tableName = token.getValue();
-        String tableAlias = tableName;
-
-        if (scanner.hasNext()) {
-            expect(TokenType.IDENTIFIER);
-            if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.AS) {
-                // Field alias (with AS identifier)
-                if (token.getType() == TokenType.AS) {
-                    expect(TokenType.AS);
-                    tableAlias = token.getValue();
-                    expect(TokenType.IDENTIFIER);
-                } else if (token.getType() == TokenType.IDENTIFIER) {
-                    // Field alias (without AS identifier)
-                    tableAlias = token.getValue();
-                    expect(TokenType.IDENTIFIER);
-                }
-            }
-        }
-
-        final TableNode table = new TableNode(tableName, tableAlias);
+    private void parseJoin(final TableNode table) throws SQLException {
         while (scanner.hasNext() && token.getType() != TokenType.COMMA && token.getType() != TokenType.WHERE) {
             final JoinNode join = new JoinNode();
 
@@ -492,8 +526,86 @@ public class SQLParser {
             join.setConditions(parseConditionList());
             table.addJoin(join);
         }
+    }
+
+    /**
+     * Parse the tables name after a from keyword.
+     *
+     * @param select
+     *            the select node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private void parseJoinTable(final SelectNode select) throws SQLException {
+        final String tableName = token.getValue();
+        String tableAlias = tableName;
+
+        tableAlias = parseFields(tableAlias);
+
+        final TableNode table = new TableNode(tableName, tableAlias);
+        parseJoin(table);
 
         select.getTables().add(table);
+    }
+
+    /**
+     * Parses less token.
+     * 
+     * @param field
+     *            the left token field.
+     * @return the less token.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private LessThanNode parseLess(final FieldNode field) throws SQLException {
+        expect(TokenType.LESS);
+        final FieldNode value = parseField();
+        return new LessThanNode(field, value);
+    }
+
+    /**
+     * Parses more token.
+     * 
+     * @param firstField
+     *            the left more token field.
+     * @return the grater than node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private GreaterThanNode parseMore(final FieldNode firstField) throws SQLException {
+        expect(TokenType.MORE);
+        final FieldNode value = parseField();
+        return new GreaterThanNode(firstField, value);
+    }
+
+    /**
+     * Parses a not equals token.
+     * 
+     * @param firstField
+     *            the left not equals field.
+     * @return the not equals node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private NotEqualsNode parseNotEquals(final FieldNode firstField) throws SQLException {
+        expect(TokenType.NOTEQUALS);
+        final FieldNode value = parseField();
+        return new NotEqualsNode(firstField, value);
+    }
+
+    /**
+     * Parses a not equals token variant (2).
+     * 
+     * @param firstField
+     *            the left not equals field.
+     * @return the not equals node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private NotEqualsNode parseNotEqualsVariant(final FieldNode firstField) throws SQLException {
+        expect(TokenType.NOTEQUALS2);
+        final FieldNode value = parseField();
+        return new NotEqualsNode(firstField, value);
     }
 
     /**
@@ -521,6 +633,29 @@ public class SQLParser {
             expect(TokenType.IDENTIFIER);
         }
         select.getFields().add(new NumericNode(fieldName, fieldAlias));
+    }
+
+    /**
+     * Parses the operators token.
+     * 
+     * @return the conditional operator node.
+     * @throws SQLException
+     *             in case or errors.
+     */
+    private SQLNode parseOperators() throws SQLException {
+        switch (token.getType()) {
+        case AND:
+            expect(TokenType.AND);
+            return new ANDNode(null);
+        case OR:
+            expect(TokenType.OR);
+            return new ORNode(null);
+        case XOR:
+            expect(TokenType.XOR);
+            return new XORNode(null);
+        default:
+            throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL.getValue());
+        }
     }
 
     /**
