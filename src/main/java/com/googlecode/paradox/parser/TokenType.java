@@ -233,6 +233,11 @@ public enum TokenType {
     XOR;
 
     /**
+     * Stores the conditional break values.
+     */
+    public static final TokenType[] CONDITIONAL_BREAKS = { ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN };
+
+    /**
      * Token value.
      */
     private String value;
@@ -268,6 +273,22 @@ public enum TokenType {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets if this token is a conditional break.
+     * 
+     * @param tokenType
+     *            the type to test of.
+     * @return true if this token is a conditional break.
+     */
+    public static boolean isConditionalBreak(final TokenType tokenType) {
+        for (final TokenType token : CONDITIONAL_BREAKS) {
+            if (token.equals(tokenType)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

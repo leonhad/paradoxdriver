@@ -75,8 +75,7 @@ public class Token {
      * @return true if this token is a conditional break.
      */
     public boolean isConditionBreak() {
-        return type == TokenType.ORDER || type == TokenType.HAVING || type == TokenType.RPAREN || type == TokenType.LEFT || type == TokenType.RIGHT || type == TokenType.OUTER
-                || type == TokenType.INNER || type == TokenType.JOIN;
+        return TokenType.isConditionalBreak(type);
     }
 
     /**
