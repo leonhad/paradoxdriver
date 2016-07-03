@@ -19,6 +19,11 @@
  */
 package com.googlecode.paradox.parser;
 
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.JoinNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
@@ -41,10 +46,6 @@ import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parses a SQL statement.
@@ -54,7 +55,7 @@ import java.util.List;
  * @version 1.1
  */
 public class SQLParser {
-    
+
     /**
      * The scanner used to read tokens.
      */
@@ -101,8 +102,7 @@ public class SQLParser {
             }
         }
         if (!found) {
-            throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", token.getValue()),
-                    SQLStates.INVALID_SQL.getValue());
+            throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", token.getValue()), SQLStates.INVALID_SQL.getValue());
         }
         if (scanner.hasNext()) {
             token = scanner.nextToken();
@@ -154,20 +154,56 @@ public class SQLParser {
                 statementList.add(parseSelect());
                 break;
             case INSERT:
-                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION,
-                        SQLStates.INVALID_SQL.getValue());
+                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             case DELETE:
-                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION,
-                        SQLStates.INVALID_SQL.getValue());
+                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             case UPDATE:
-                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION,
-                        SQLStates.INVALID_SQL.getValue());
+                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             default:
                 throw new SQLException(SQLStates.INVALID_SQL.getValue());
             }
             return statementList;
         }
         throw new SQLException(sql, SQLStates.INVALID_SQL.getValue());
+    }
+
+    /**
+     * Parse the asterisk token.
+     *
+     * @param select
+     *            the select node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private void parseAsterisk(final SelectNode select) throws SQLException {
+        select.getFields().add(new AsteriskNode());
+        expect(TokenType.ASTERISK);
+    }
+
+    /**
+     * Parse the character token.
+     *
+     * @param select
+     *            the select node.
+     * @param fieldName
+     *            the field name.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private void parseCharacter(final SelectNode select, final String fieldName) throws SQLException {
+        String fieldAlias = fieldName;
+        expect(TokenType.CHARACTER);
+        // Field alias (with AS identifier)
+        if (token.getType() == TokenType.AS) {
+            expect(TokenType.AS);
+            fieldAlias = token.getValue();
+            expect(TokenType.IDENTIFIER);
+        } else if (token.getType() == TokenType.IDENTIFIER) {
+            // Field alias (without AS identifier)
+            fieldAlias = token.getValue();
+            expect(TokenType.IDENTIFIER);
+        }
+        select.getFields().add(new CharacterNode(fieldName, fieldAlias));
     }
 
     /**
@@ -281,33 +317,44 @@ public class SQLParser {
     }
 
     /**
-     * Parse a Select Statement.
+     * Parse the field list in SELECT statement.
      *
-     * @return a select statement node.
+     * @param select
+     *            the select node.
      * @throws SQLException
      *             in case of parse errors.
      */
-    private SelectNode parseSelect() throws SQLException {
-        final SelectNode select = new SelectNode();
-        expect(TokenType.SELECT);
+    private void parseFields(final SelectNode select) throws SQLException {
+        boolean firstField = true;
+        while (scanner.hasNext()) {
+            if (token.getType() == TokenType.DISTINCT) {
+                throw new SQLException("Invalid statement.");
+            }
 
-        // Allowed only in the beginning of Select Statement
-        if (token.getType() == TokenType.DISTINCT) {
-            select.setDistinct(true);
-            expect(TokenType.DISTINCT);
+            if (token.getType() != TokenType.FROM) {
+                // Field Name
+                if (!firstField) {
+                    expect(TokenType.COMMA, "Missing comma.");
+                }
+                final String tableName = null;
+                final String fieldName = token.getValue();
+
+                if (token.getType() == TokenType.CHARACTER) {
+                    parseCharacter(select, fieldName);
+                } else if (token.getType() == TokenType.NUMERIC) {
+                    parseNumeric(select, fieldName);
+                } else if (token.getType() == TokenType.ASTERISK) {
+                    parseAsterisk(select);
+                } else {
+                    parseIdentifier(select, tableName, fieldName);
+                }
+                firstField = false;
+            } else {
+                break;
+            }
         }
-
-        // Field loop
-        parseFields(select);
-
-        if (token.getType() == TokenType.FROM) {
-            parseFrom(select);
-        } else {
-            throw new SQLException("FROM expected.", SQLStates.INVALID_SQL.getValue());
-        }
-        return select;
     }
-    
+
     /**
      * Parse the FROM keyword.
      *
@@ -339,7 +386,51 @@ public class SQLParser {
             }
         }
     }
-    
+
+    /**
+     * Parse the identifier token associated with a field.
+     *
+     * @param select
+     *            the select node.
+     * @param tableName
+     *            the table name.
+     * @param fieldName
+     *            the field name.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private void parseIdentifier(final SelectNode select, final String tableName, final String fieldName) throws SQLException {
+        String fieldAlias = fieldName;
+        String newTableName = tableName;
+        String newFieldName = fieldName;
+        expect(TokenType.IDENTIFIER);
+
+        if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.AS || token.getType() == TokenType.PERIOD) {
+            // If it has a Table Name
+            if (token.getType() == TokenType.PERIOD) {
+                expect(TokenType.PERIOD);
+                newTableName = fieldName;
+                fieldAlias = fieldName;
+                newFieldName = token.getValue();
+                expect(TokenType.IDENTIFIER);
+            }
+            // Field alias (with AS identifier)
+            if (token.getType() == TokenType.AS) {
+                expect(TokenType.AS);
+                fieldAlias = token.getValue();
+                // may be: select field as name
+                // select field as "Name"
+                // select field as 'Name'
+                expect(TokenType.CHARACTER, TokenType.IDENTIFIER);
+            } else if (token.getType() == TokenType.IDENTIFIER) {
+                // Field alias (without AS identifier)
+                fieldAlias = token.getValue();
+                expect(TokenType.IDENTIFIER);
+            }
+        }
+        select.getFields().add(new FieldNode(newTableName, newFieldName, fieldAlias));
+    }
+
     /**
      * Parse the tables name after a from keyword.
      *
@@ -387,14 +478,14 @@ public class SQLParser {
             }
             expect(TokenType.JOIN);
             join.setTableName(token.getValue());
-            join.setTableAlias(token.getValue());
+            join.setAlias(token.getValue());
             expect(TokenType.IDENTIFIER);
             if (token.getType() == TokenType.AS) {
                 expect(TokenType.AS);
-                join.setTableAlias(token.getValue());
+                join.setAlias(token.getValue());
                 expect(TokenType.IDENTIFIER);
             } else if (token.getType() != TokenType.ON) {
-                join.setTableAlias(token.getValue());
+                join.setAlias(token.getValue());
                 expect(TokenType.IDENTIFIER);
             }
             expect(TokenType.ON);
@@ -404,72 +495,7 @@ public class SQLParser {
 
         select.getTables().add(table);
     }
-    
-    /**
-     * Parse the field list in SELECT statement.
-     *
-     * @param select
-     *            the select node.
-     * @throws SQLException
-     *             in case of parse errors.
-     */
-    private void parseFields(final SelectNode select) throws SQLException {
-        boolean firstField = true;
-        while (scanner.hasNext()) {
-            if (token.getType() == TokenType.DISTINCT) {
-                throw new SQLException("Invalid statement.");
-            }
 
-            if (token.getType() != TokenType.FROM) {
-                // Field Name
-                if (!firstField) {
-                    expect(TokenType.COMMA, "Missing comma.");
-                }
-                final String tableName = null;
-                final String fieldName = token.getValue();
-
-                if (token.getType() == TokenType.CHARACTER) {
-                    parseCharacter(select, fieldName);
-                } else if (token.getType() == TokenType.NUMERIC) {
-                    parseNumeric(select, fieldName);
-                } else if (token.getType() == TokenType.ASTERISK) {
-                    parseAsterisk(select);
-                } else {
-                    parseIdentifier(select, tableName, fieldName);
-                }
-                firstField = false;
-            } else {
-                break;
-            }
-        }
-    }
-    
-    /**
-     * Parse the character token.
-     *
-     * @param select
-     *            the select node.
-     * @param fieldName
-     *            the field name.
-     * @throws SQLException
-     *             in case of parse errors.
-     */
-    private void parseCharacter(final SelectNode select, final String fieldName) throws SQLException {
-        String fieldAlias = fieldName;
-        expect(TokenType.CHARACTER);
-        // Field alias (with AS identifier)
-        if (token.getType() == TokenType.AS) {
-            expect(TokenType.AS);
-            fieldAlias = token.getValue();
-            expect(TokenType.IDENTIFIER);
-        } else if (token.getType() == TokenType.IDENTIFIER) {
-            // Field alias (without AS identifier)
-            fieldAlias = token.getValue();
-            expect(TokenType.IDENTIFIER);
-        }
-        select.getFields().add(new CharacterNode(fieldName, fieldAlias));
-    }
-    
     /**
      * Parse the numeric token.
      *
@@ -496,63 +522,32 @@ public class SQLParser {
         }
         select.getFields().add(new NumericNode(fieldName, fieldAlias));
     }
-    
-    /**
-     * Parse the asterisk token.
-     *
-     * @param select
-     *            the select node.
-     * @throws SQLException
-     *             in case of parse errors.
-     */
-    private void parseAsterisk(final SelectNode select) throws SQLException {
-        select.getFields().add(new AsteriskNode());
-        expect(TokenType.ASTERISK);
-    }
-    
-    /**
-     * Parse the identifier token associated with a field.
-     *
-     * @param select
-     *            the select node.
-     * @param tableName
-     *            the table name.
-     * @param fieldName
-     *            the field name.
-     * @throws SQLException
-     *             in case of parse errors.
-     */
-    private void parseIdentifier(final SelectNode select, final String tableName, final String fieldName)
-            throws SQLException {
-        String fieldAlias = fieldName;
-        String newTableName = tableName;
-        String newFieldName = fieldName;
-        expect(TokenType.IDENTIFIER);
 
-        if (token.getType() == TokenType.IDENTIFIER || token.getType() == TokenType.AS
-                || token.getType() == TokenType.PERIOD) {
-            // If it has a Table Name
-            if (token.getType() == TokenType.PERIOD) {
-                expect(TokenType.PERIOD);
-                newTableName = fieldName;
-                fieldAlias = fieldName;
-                newFieldName = token.getValue();
-                expect(TokenType.IDENTIFIER);
-            }
-            // Field alias (with AS identifier)
-            if (token.getType() == TokenType.AS) {
-                expect(TokenType.AS);
-                fieldAlias = token.getValue();
-                // may be: select field as name
-                // select field as "Name"
-                // select field as 'Name'
-                expect(TokenType.CHARACTER, TokenType.IDENTIFIER);
-            } else if (token.getType() == TokenType.IDENTIFIER) {
-                // Field alias (without AS identifier)
-                fieldAlias = token.getValue();
-                expect(TokenType.IDENTIFIER);
-            }
+    /**
+     * Parse a Select Statement.
+     *
+     * @return a select statement node.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private SelectNode parseSelect() throws SQLException {
+        final SelectNode select = new SelectNode();
+        expect(TokenType.SELECT);
+
+        // Allowed only in the beginning of Select Statement
+        if (token.getType() == TokenType.DISTINCT) {
+            select.setDistinct(true);
+            expect(TokenType.DISTINCT);
         }
-        select.getFields().add(new FieldNode(newTableName, newFieldName, fieldAlias));
+
+        // Field loop
+        parseFields(select);
+
+        if (token.getType() == TokenType.FROM) {
+            parseFrom(select);
+        } else {
+            throw new SQLException("FROM expected.", SQLStates.INVALID_SQL.getValue());
+        }
+        return select;
     }
 }

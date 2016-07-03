@@ -36,11 +36,6 @@ public class JoinNode extends SQLNode {
     private List<SQLNode> conditions;
 
     /**
-     * The table alias.
-     */
-    private String tableAlias;
-
-    /**
      * The table name.
      */
     private String tableName;
@@ -64,15 +59,6 @@ public class JoinNode extends SQLNode {
      */
     public List<SQLNode> getConditions() {
         return conditions;
-    }
-
-    /**
-     * Gets the table alias.
-     * 
-     * @return the table alias.
-     */
-    public String getTableAlias() {
-        return tableAlias;
     }
 
     /**
@@ -104,16 +90,6 @@ public class JoinNode extends SQLNode {
     }
 
     /**
-     * Sets the table alias.
-     * 
-     * @param tableAlias
-     *            the table alias.
-     */
-    public void setTableAlias(final String tableAlias) {
-        this.tableAlias = tableAlias;
-    }
-
-    /**
      * Sets the table name.
      * 
      * @param tableName
@@ -142,9 +118,9 @@ public class JoinNode extends SQLNode {
         builder.append(type);
         builder.append(" JOIN ");
         builder.append(tableName);
-        if (!tableName.equals(tableAlias)) {
+        if (!tableName.equals(getAlias())) {
             builder.append(" AS ");
-            builder.append(tableAlias);
+            builder.append(getAlias());
         }
         builder.append(" ON ");
         for (final SQLNode condition : conditions) {

@@ -34,6 +34,16 @@ import org.junit.Test;
 public class JoinNodeTest {
 
     /**
+     * Test for alias.
+     */
+    @Test
+    public void testAlias() {
+        final JoinNode node = new JoinNode();
+        node.setAlias("alias");
+        Assert.assertEquals("alias", node.getAlias());
+    }
+
+    /**
      * Test conditions.
      */
     @Test

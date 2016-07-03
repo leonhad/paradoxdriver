@@ -82,8 +82,9 @@ public class SQLNode {
      * 
      * @return the childhood.
      */
-    public Collection<? extends SQLNode> getChildren() {
-        return children;
+    @SuppressWarnings("unchecked")
+    public Collection<SQLNode> getChildren() {
+        return (Collection<SQLNode>) children;
     }
 
     /**
@@ -93,6 +94,16 @@ public class SQLNode {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Sets the node alias.
+     * 
+     * @param alias
+     *            the alias name.
+     */
+    public void setAlias(final String alias) {
+        this.alias = alias;
     }
 
     /**
