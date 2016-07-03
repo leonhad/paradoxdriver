@@ -118,14 +118,16 @@ public class JoinNode extends SQLNode {
         builder.append(type);
         builder.append(" JOIN ");
         builder.append(tableName);
-        if (!tableName.equals(getAlias())) {
+        if (getAlias() != null && !tableName.equals(getAlias())) {
             builder.append(" AS ");
             builder.append(getAlias());
         }
-        builder.append(" ON ");
-        for (final SQLNode condition : conditions) {
-            builder.append(condition);
-            builder.append(" ");
+        if (conditions != null) {
+            builder.append(" ON ");
+            for (final SQLNode condition : conditions) {
+                builder.append(condition);
+                builder.append(" ");
+            }
         }
         return builder.toString();
     }

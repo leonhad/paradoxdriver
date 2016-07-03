@@ -20,9 +20,12 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
 
 /**
  * Unit test {@link JoinNode} class.
@@ -71,5 +74,40 @@ public class JoinNodeTest {
         final JoinNode node = new JoinNode();
         node.setTableName("name");
         Assert.assertEquals("name", node.getTableName());
+    }
+
+    /**
+     * Test for {@link JoinNode#toString()} method.
+     */
+    @Test
+    public void testToString() {
+        final JoinNode node = new JoinNode();
+        node.setTableName("table");
+        node.setAlias("alias");
+        Assert.assertEquals("CROSS_JOIN JOIN table AS alias", node.toString());
+    }
+
+    /**
+     * Test for {@link JoinNode#toString()} method with conditions.
+     */
+    @Test
+    public void testToStringWithConditions() {
+        final JoinNode node = new JoinNode();
+        node.setTableName("table");
+        final List<SQLNode> list = new ArrayList<>();
+        list.add(new EqualsNode(new FieldNode(null, "a", null), new FieldNode(null, "b", null)));
+        node.setConditions(list);
+        Assert.assertEquals("CROSS_JOIN JOIN table ON a = b ", node.toString());
+    }
+
+    /**
+     * Test for {@link JoinNode#toString()} method with no alias.
+     */
+    @Test
+    public void testToStringWithoutAlias() {
+        final JoinNode node = new JoinNode();
+        node.setTableName("table");
+        node.setAlias("table");
+        Assert.assertEquals("CROSS_JOIN JOIN table", node.toString());
     }
 }
