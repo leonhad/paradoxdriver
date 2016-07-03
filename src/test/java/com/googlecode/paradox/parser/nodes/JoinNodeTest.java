@@ -34,16 +34,6 @@ import org.junit.Test;
 public class JoinNodeTest {
 
     /**
-     * Test for alias.
-     */
-    @Test
-    public void testAlias() {
-        final JoinNode node = new JoinNode();
-        node.setAlias("alias");
-        Assert.assertEquals("alias", node.getAlias());
-    }
-
-    /**
      * Test conditions.
      */
     @Test
@@ -61,5 +51,25 @@ public class JoinNodeTest {
     public void testInstance() {
         final JoinNode node = new JoinNode();
         Assert.assertEquals("JOIN", node.getName());
+    }
+
+    /**
+     * Test join type.
+     */
+    @Test
+    public void testJoinType() {
+        final JoinNode node = new JoinNode();
+        node.setType(JoinType.LEFT_JOIN);
+        Assert.assertEquals(JoinType.LEFT_JOIN, node.getType());
+    }
+
+    /**
+     * Test for table name.
+     */
+    @Test
+    public void testName() {
+        final JoinNode node = new JoinNode();
+        node.setTableName("name");
+        Assert.assertEquals("name", node.getTableName());
     }
 }
