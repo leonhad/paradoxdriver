@@ -94,6 +94,19 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for columns.
+     * 
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testColumns() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getColumns("db", null, "*", "*")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
      * Test for deletes autodetectes.
      * 
      * @throws SQLException
@@ -149,6 +162,19 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testProcedureCallable() throws SQLException {
         Assert.assertFalse(conn.getMetaData().allProceduresAreCallable());
+    }
+
+    /**
+     * Test for procedure columns.
+     * 
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testProcedureColumns() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getProcedureColumns("db", null, "*", "*")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
     }
 
     /**
