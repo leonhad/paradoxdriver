@@ -31,12 +31,12 @@ public class Token {
     /**
      * The token type.
      */
-    private TokenType type;
+    private final TokenType type;
 
     /**
      * The token value.
      */
-    private String value;
+    private final String value;
 
     /**
      * Creates a new instance.
@@ -85,26 +85,6 @@ public class Token {
      */
     public boolean isOperator() {
         return TokenType.isOperator(type);
-    }
-
-    /**
-     * Sets the token type.
-     * 
-     * @param type
-     *            the token type to set.
-     */
-    void setType(final TokenType type) {
-        this.type = type;
-    }
-
-    /**
-     * Sets the token value.
-     * 
-     * @param value
-     *            the token value to set.
-     */
-    void setValue(final String value) {
-        this.value = value;
     }
 
     /**
