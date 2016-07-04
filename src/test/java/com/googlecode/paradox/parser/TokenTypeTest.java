@@ -85,6 +85,22 @@ public class TokenTypeTest {
     }
 
     /**
+     * Test for null conditional break.
+     */
+    @Test
+    public void testNullConditional() {
+        Assert.assertFalse(TokenType.isConditionalBreak(null));
+    }
+
+    /**
+     * Test for null operator.
+     */
+    @Test
+    public void testNullOperatos() {
+        Assert.assertFalse(TokenType.isOperator(null));
+    }
+
+    /**
      * Test for operators.
      */
     @Test
