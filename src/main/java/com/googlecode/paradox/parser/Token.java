@@ -84,7 +84,7 @@ public class Token {
      * @return true if this token is an operator.
      */
     public boolean isOperator() {
-        return type == TokenType.AND || type == TokenType.OR || type == TokenType.XOR;
+        return TokenType.isOperator(type);
     }
 
     /**

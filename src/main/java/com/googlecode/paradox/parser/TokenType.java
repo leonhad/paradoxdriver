@@ -235,7 +235,12 @@ public enum TokenType {
     /**
      * Stores the conditional break values.
      */
-    public static final TokenType[] CONDITIONAL_BREAKS = { ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN };
+    private static final TokenType[] CONDITIONAL_BREAKS = { ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN };
+
+    /**
+     * Stores the operator values.
+     */
+    private static final TokenType[] OPERATORS = { AND, OR, XOR };
 
     /**
      * Token value.
@@ -263,7 +268,7 @@ public enum TokenType {
      * Gets the token by value.
      * 
      * @param value
-     *            the value to search on the token list.
+     *            the value to search in the token list.
      * @return the token by value.
      */
     public static TokenType get(final String value) {
@@ -276,7 +281,7 @@ public enum TokenType {
     }
 
     /**
-     * Gets if this token is a conditional break.
+     * Gets if the token is a conditional break.
      * 
      * @param tokenType
      *            the type to test of.
@@ -291,4 +296,19 @@ public enum TokenType {
         return false;
     }
 
+    /**
+     * Gets if the token for operator types.
+     * 
+     * @param tokenType
+     *            the type to test of.
+     * @return true if this token is an operator.
+     */
+    public static boolean isOperator(final TokenType tokenType) {
+        for (final TokenType token : OPERATORS) {
+            if (token.equals(tokenType)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
