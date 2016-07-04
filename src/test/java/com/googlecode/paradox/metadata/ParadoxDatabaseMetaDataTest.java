@@ -178,6 +178,32 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for procedures.
+     * 
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testProcedures() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getProcedures("db", null, "*")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for schemas.
+     * 
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testSchemas() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getSchemas()) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
      * Test for table selectable.
      * 
      * @throws SQLException
