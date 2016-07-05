@@ -61,6 +61,23 @@ public final class ViewData {
     }
 
     /**
+     * Fix the view extra line.
+     * 
+     * @param reader
+     *            the view reader.
+     * @return the line fixed.
+     * @throws IOException
+     *             in case of reading errors.
+     */
+    private static String fixExtraLine(final BufferedReader reader) throws IOException {
+        String line = reader.readLine();
+        if (line != null && line.trim().isEmpty()) {
+            line = readLine(reader);
+        }
+        return line;
+    }
+
+    /**
      * Gets a field by name.
      *
      * @param table
@@ -174,82 +191,17 @@ public final class ViewData {
             }
 
             // Extra Line
-            line = reader.readLine();
-            if (line == null) {
-                return view;
-            }
+            line = fixExtraLine(reader);
 
             line = readLine(reader);
 
-            // FIELDORDER
-            if (line != null && line.startsWith("FIELDORDER: ")) {
-                line = line.substring("FIELDORDER: ".length());
+            // FIELDORDER.
+            line = parseFileOrder(conn, view, reader, line);
 
-                final ArrayList<ParadoxField> fields = readFields(conn, reader);
-                view.setFieldsOrder(fields);
+            // SORT.
+            line = parseSort(conn, view, reader, line);
 
-                // Extra line
-                line = reader.readLine();
-                if (line == null) {
-                    return view;
-                }
-
-                // New Line
-                line = reader.readLine().trim();
-            }
-
-            // SORT
-            if (line != null && line.startsWith("SORT: ")) {
-                line = line.substring("SORT: ".length());
-
-                final ArrayList<ParadoxField> fields = readFields(conn, reader);
-                view.setFieldsSort(fields);
-
-                // Extra Line
-                line = reader.readLine();
-                if (line == null) {
-                    return view;
-                }
-
-                // New Line
-                line = readLine(reader);
-            }
-
-            final ArrayList<ParadoxField> fields = new ArrayList<>();
-            while (line != null && !"EndQuery".equals(line)) {
-                // Fields
-                final String[] flds = line.split("\\|");
-                final String table = flds[0].trim();
-
-                for (int loop = 1; loop < flds.length; loop++) {
-                    final String name = flds[loop].trim();
-                    final ParadoxField field = new ParadoxField();
-                    final ParadoxField original = ViewData.getFieldByName(ViewData.getTable(conn, table), name);
-
-                    field.setTableName(table);
-                    field.setName(name);
-                    field.setType(original.getType());
-                    field.setSize(original.getSize());
-                    fields.add(field);
-                }
-                line = reader.readLine();
-                final String[] types = line.split("\\|");
-                for (int loop = 1; loop < types.length; loop++) {
-                    if (types[loop].trim().length() > 0) {
-                        final ParadoxField field = fields.get(loop - 1);
-                        ViewData.parseExpression(field, types[loop]);
-                    }
-                }
-
-                // Extra Line
-                line = reader.readLine();
-                if (line == null) {
-                    return view;
-                }
-
-                // New Line
-                line = readLine(reader);
-            }
+            final ArrayList<ParadoxField> fields = parseFields(conn, reader, line);
 
             view.setFields(fields);
             view.setValid(true);
@@ -257,6 +209,21 @@ public final class ViewData {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
         return view;
+    }
+
+    /**
+     * Parses check token.
+     * 
+     * @param field
+     *            the field associated.
+     * @param builder
+     *            the builder reader.
+     */
+    private static void parseCheck(final ParadoxField field, final StringBuilder builder) {
+        if (builder.indexOf("Check") == 0) {
+            builder.delete(0, "Check".length() + 1);
+            field.setChecked(true);
+        }
     }
 
     /**
@@ -270,27 +237,12 @@ public final class ViewData {
     public static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
-        if (builder.indexOf("Check") == 0) {
-            builder.delete(0, "Check".length() + 1);
-            field.setChecked(true);
-        }
+        parseCheck(field, builder);
         if (builder.length() == 0) {
             return;
         }
 
-        if (builder.charAt(0) == '_') {
-            final StringBuilder temp = new StringBuilder(builder.length());
-
-            for (final char c : builder.toString().toCharArray()) {
-                if (c == ' ' || c == ',') {
-                    break;
-                }
-                temp.append(c);
-            }
-            final String name = temp.toString();
-            builder.delete(0, name.length());
-            field.setJoinName(name);
-        }
+        parseJoinName(field, builder);
         final String typeTest = builder.toString().trim();
         if (typeTest.toUpperCase().startsWith("AS")) {
             field.setAlias(typeTest.substring(3).trim());
@@ -309,6 +261,137 @@ public final class ViewData {
                 field.setChecked(true);
             }
         }
+    }
+
+    /**
+     * Parses the view fields.
+     * 
+     * @param conn
+     *            the connection.
+     * @param reader
+     *            the reader to load fields.
+     * @param oldLine
+     *            the old line.
+     * @return the paradox field list.
+     * @throws SQLException
+     *             in case of porse errors.
+     * @throws IOException
+     *             in case of I/O errors.
+     */
+    private static ArrayList<ParadoxField> parseFields(final ParadoxConnection conn, final BufferedReader reader, final String oldLine) throws SQLException, IOException {
+        String line = oldLine;
+        final ArrayList<ParadoxField> fields = new ArrayList<>();
+        while (line != null && !"EndQuery".equals(line)) {
+            // Fields
+            final String[] flds = line.split("\\|");
+            final String table = flds[0].trim();
+
+            for (int loop = 1; loop < flds.length; loop++) {
+                final String name = flds[loop].trim();
+                final ParadoxField field = new ParadoxField();
+                final ParadoxField original = ViewData.getFieldByName(ViewData.getTable(conn, table), name);
+
+                field.setTableName(table);
+                field.setName(name);
+                field.setType(original.getType());
+                field.setSize(original.getSize());
+                fields.add(field);
+            }
+            line = reader.readLine();
+            final String[] types = line.split("\\|");
+            for (int loop = 1; loop < types.length; loop++) {
+                if (types[loop].trim().length() > 0) {
+                    final ParadoxField field = fields.get(loop - 1);
+                    ViewData.parseExpression(field, types[loop]);
+                }
+            }
+
+            // Extra Line
+            line = fixExtraLine(reader);
+        }
+        return fields;
+    }
+
+    /**
+     * Parses the file order token.
+     * 
+     * @param conn
+     *            the connection.
+     * @param view
+     *            the paradox view.
+     * @param reader
+     *            the reader to load order.
+     * @param oldLine
+     *            the old line to validate.
+     * @return the current line.
+     * @throws IOException
+     *             in case of I/O errors.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private static String parseFileOrder(final ParadoxConnection conn, final ParadoxView view, final BufferedReader reader, final String oldLine) throws IOException, SQLException {
+        String line = oldLine;
+        if (line != null && line.startsWith("FIELDORDER: ")) {
+            final ArrayList<ParadoxField> fields = readFields(conn, reader);
+            view.setFieldsOrder(fields);
+
+            // Extra line.
+            line = fixExtraLine(reader);
+        }
+        return line;
+    }
+
+    /**
+     * Parses the table join names
+     * 
+     * @param field
+     *            the field associated.
+     * @param builder
+     *            the build to read of.
+     */
+    private static void parseJoinName(final ParadoxField field, final StringBuilder builder) {
+        if (builder.charAt(0) == '_') {
+            final StringBuilder temp = new StringBuilder(builder.length());
+
+            for (final char c : builder.toString().toCharArray()) {
+                if (c == ' ' || c == ',') {
+                    break;
+                }
+                temp.append(c);
+            }
+            final String name = temp.toString();
+            builder.delete(0, name.length());
+            field.setJoinName(name);
+        }
+    }
+
+    /**
+     * Parses the sort token.
+     * 
+     * @param conn
+     *            the connection.
+     * @param view
+     *            the view.
+     * @param reader
+     *            the reader to load sort order.
+     * @param oldLine
+     *            the old line to validate.
+     * @return the new line.
+     * @throws IOException
+     *             in case of I/O errors.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private static String parseSort(final ParadoxConnection conn, final ParadoxView view, final BufferedReader reader, final String oldLine) throws IOException, SQLException {
+        String line = oldLine;
+        if (line != null && line.startsWith("SORT: ")) {
+            final ArrayList<ParadoxField> fields = readFields(conn, reader);
+            view.setFieldsSort(fields);
+
+            // Extra Line.
+            line = fixExtraLine(reader);
+        }
+        return line;
     }
 
     /**
