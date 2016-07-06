@@ -248,6 +248,118 @@ public class BlobTable extends ParadoxDataFile {
     }
 
     /**
+     * Parses free blocks.
+     * 
+     * @param blocks
+     *            the list of CLOB blocks.
+     * @param startBlockAddress
+     *            the start block address.
+     * @param headerType
+     *            the header type.
+     * @param blockSize
+     *            the block size.
+     * @throws IOException
+     *             in case of reading errors.
+     */
+    private void parseFreeBlock(final List<ClobBlock> blocks, final long startBlockAddress, final byte headerType, final short blockSize) throws IOException {
+        blocks.add(new ClobBlock(numBlock, headerType, (short) 0));
+        channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
+        numBlock++;
+    }
+
+    /**
+     * Parses a single block.
+     * 
+     * @param blocks
+     *            the CLOB block list.
+     * @param startBlockAddress
+     *            the start block address.
+     * @param headerType
+     *            the header type.
+     * @param blockSize
+     *            the block size.
+     * @throws IOException
+     *             in case of reading errors.
+     */
+    private void parseSingleBlock(final List<ClobBlock> blocks, final long startBlockAddress, final byte headerType, final short blockSize) throws IOException {
+        final ByteBuffer sblockHead = ByteBuffer.allocate(6);
+        sblockHead.order(ByteOrder.LITTLE_ENDIAN);
+        sblockHead.clear();
+        channel.read(sblockHead);
+        sblockHead.flip();
+        final int blobLength = sblockHead.getInt();
+        // Modifier.
+        sblockHead.getShort();
+
+        final ByteBuffer sblockData = ByteBuffer.allocate(blobLength);
+        sblockData.order(ByteOrder.LITTLE_ENDIAN);
+        sblockData.clear();
+        channel.read(sblockData);
+        sblockData.flip();
+        final byte[] values = new byte[blobLength];
+        sblockData.get(values);
+        blocks.add(new ClobBlock(numBlock, headerType, (short) 0xFF, values));
+        numBlock++;
+        channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
+    }
+
+    /**
+     * Parses a sub block.
+     * 
+     * @param blocks
+     *            the CLOB block list.
+     * @param startBlockAddress
+     *            the start block address.
+     * @param headerType
+     *            the header type.
+     * @throws IOException
+     *             in case of reading errors.
+     */
+    private void parseSubBlock(final List<ClobBlock> blocks, final long startBlockAddress, final byte headerType) throws IOException {
+        // There are nine more bytes in the header. I have no idea
+        // what they contain.
+        channel.position(channel.position() + 9);
+        // 0 - this is header block
+        short n = 0;
+        while (n < 64) {
+            final ByteBuffer blockPointer = ByteBuffer.allocate(5);
+            blockPointer.order(ByteOrder.LITTLE_ENDIAN);
+            blockPointer.clear();
+            channel.read(blockPointer);
+            blockPointer.flip();
+            // Data offset divided by 16.
+            final short offset = (short) (blockPointer.get() * 0x10);
+            // Data length divided by 16 (rounded up).
+            int ln = blockPointer.get() * 0x10;
+            blockPointer.getShort();
+            // This is reset to 1 by a table restructure.
+            // Data length modulo 16.
+            final int mdl = blockPointer.get();
+            // If offset is zero, then the blob was deleted and
+            // the space has been reused for another blob.
+            if (offset != 0) {
+                final long position = channel.position();
+                final long start = offset + startBlockAddress;
+                ln = ln - 0x10 + mdl;
+                final ByteBuffer sblockData = ByteBuffer.allocate(ln);
+                sblockData.order(ByteOrder.LITTLE_ENDIAN);
+                sblockData.clear();
+                channel.position(start);
+                channel.read(sblockData);
+                sblockData.flip();
+                final byte[] values = new byte[ln];
+                sblockData.get(values);
+
+                blocks.add(new ClobBlock(numBlock, headerType, n, values));
+                channel.position(position);
+            }
+            n++;
+        }
+        channel.position(startBlockAddress + HEADER_BLOCK_SIZE);
+        numBlock++;
+    }
+
+    /**
      * Read length bytes from offset position in MB file.
      *
      * @param pOffset
@@ -313,75 +425,12 @@ public class BlobTable extends ParadoxDataFile {
             final byte headerType = header.get();
             final short blockSize = header.getShort();
 
-            byte[] values;
             if (headerType == SINGLE_BLOCK) {
-                final ByteBuffer sblockHead = ByteBuffer.allocate(6);
-                sblockHead.order(ByteOrder.LITTLE_ENDIAN);
-                sblockHead.clear();
-                channel.read(sblockHead);
-                sblockHead.flip();
-                final int blobLength = sblockHead.getInt();
-                // Modificator
-                sblockHead.getShort();
-
-                final ByteBuffer sblockData = ByteBuffer.allocate(blobLength);
-                sblockData.order(ByteOrder.LITTLE_ENDIAN);
-                sblockData.clear();
-                channel.read(sblockData);
-                sblockData.flip();
-                values = new byte[blobLength];
-                sblockData.get(values);
-                blocks.add(new ClobBlock(numBlock, headerType, (short) 0xFF, values));
-                numBlock++;
-                channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
+                parseSingleBlock(blocks, startBlockAddress, headerType, blockSize);
             } else if (headerType == SUB_BLOCK) {
-                // There are nine more bytes in the header. I have no idea
-                // what they contain.
-                channel.position(channel.position() + 9);
-                short n = 0; // 0 - this is header block
-                while (n < 64) {
-                    final ByteBuffer blockPointer = ByteBuffer.allocate(5);
-                    blockPointer.order(ByteOrder.LITTLE_ENDIAN);
-                    blockPointer.clear();
-                    channel.read(blockPointer);
-                    blockPointer.flip();
-                    final short offset = (short) (blockPointer.get() * 0x10); // Data
-                    // offset
-                    // divided
-                    // by
-                    // 16
-                    int ln = blockPointer.get() * 0x10; // Data length divided
-                    // by 16 (rounded up)
-                    blockPointer.getShort();
-                    // This is reset to 1 by a table restructure.
-                    final int mdl = blockPointer.get(); // Data length modulo
-                    // 16.
-                    // If offset is zero, then the blob was deleted and
-                    // the space has been reused for another blob
-                    if (offset != 0) {
-                        final long position = channel.position();
-                        final long start = offset + startBlockAddress;
-                        ln = ln - 0x10 + mdl;
-                        final ByteBuffer sblockData = ByteBuffer.allocate(ln);
-                        sblockData.order(ByteOrder.LITTLE_ENDIAN);
-                        sblockData.clear();
-                        channel.position(start);
-                        channel.read(sblockData);
-                        sblockData.flip();
-                        values = new byte[ln];
-                        sblockData.get(values);
-
-                        blocks.add(new ClobBlock(numBlock, headerType, n, values));
-                        channel.position(position);
-                    }
-                    n++;
-                }
-                channel.position(startBlockAddress + HEADER_BLOCK_SIZE);
-                numBlock++;
+                parseSubBlock(blocks, startBlockAddress, headerType);
             } else if (headerType == FREE_BLOCK) {
-                blocks.add(new ClobBlock(numBlock, headerType, (short) 0));
-                channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
-                numBlock++;
+                parseFreeBlock(blocks, startBlockAddress, headerType, blockSize);
             } else {
                 throw new SQLException("Unsupported CLOB block type: " + headerType, SQLStates.TYPE_NOT_FOUND.getValue());
             }
