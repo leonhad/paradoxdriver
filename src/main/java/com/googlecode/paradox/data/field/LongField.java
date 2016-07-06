@@ -31,7 +31,7 @@ import java.sql.Types;
  *
  * @author Leonardo Alves da Costa
  * @since 1.3
- * @version1.0
+ * @version 1.0
  */
 public class LongField implements FieldParser {
     
@@ -42,7 +42,7 @@ public class LongField implements FieldParser {
     public boolean match(final int type) {
         return type == 4;
     }
-
+    
     /**
      * {@inheritDoc}
      */

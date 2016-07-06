@@ -29,10 +29,10 @@ import java.sql.Types;
 
 /**
  * Parses boolean fields.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @since 1.3
- * @version1.0
+ * @version 1.0
  */
 public class BooleanField implements FieldParser {
     
@@ -43,7 +43,7 @@ public class BooleanField implements FieldParser {
     public boolean match(final int type) {
         return type == 9;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -61,5 +61,5 @@ public class BooleanField implements FieldParser {
             throw new SQLException("Invalid value " + v + ".");
         }
     }
-
+    
 }
