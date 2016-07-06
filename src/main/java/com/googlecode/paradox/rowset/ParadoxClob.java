@@ -19,6 +19,8 @@
  */
 package com.googlecode.paradox.rowset;
 
+import com.googlecode.paradox.data.table.value.ClobDescriptor;
+import com.googlecode.paradox.metadata.BlobTable;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,9 +31,6 @@ import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
 
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
-import com.googlecode.paradox.metadata.BlobTable;
-
 /**
  * CLOB for paradox file (MB).
  *
@@ -41,7 +40,7 @@ import com.googlecode.paradox.metadata.BlobTable;
  * @version 1.1
  */
 public class ParadoxClob implements Clob {
-
+    
     /**
      * The blob table.
      */
@@ -69,7 +68,7 @@ public class ParadoxClob implements Clob {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param descriptor
      *            the blob descriptor.
      */
@@ -158,7 +157,6 @@ public class ParadoxClob implements Clob {
         }
 
         try {
-            // FIXME: fix the bounds checking
             return new String(value, (int) pos - 1, length, Charset.forName("cp1251"));
         } catch (final StringIndexOutOfBoundsException e) {
             throw new SQLException(e);
@@ -167,7 +165,7 @@ public class ParadoxClob implements Clob {
 
     /**
      * Check for the blob validate.
-     * 
+     *
      * @throws SQLException
      *             in case of invalid descriptor.
      */
@@ -189,7 +187,7 @@ public class ParadoxClob implements Clob {
 
     /**
      * Parse the blob.
-     * 
+     *
      * @throws SQLException
      *             in case of parse errors.
      */
@@ -253,19 +251,16 @@ public class ParadoxClob implements Clob {
      * {@inheritDoc}
      */
     @Override
-    public void truncate(long len) throws SQLException {
+    public void truncate(final long len) throws SQLException {
         parse();
         isValid();
         if (length > len) {
             throw new SQLException("Length more than what can be truncated");
         } else {
-            len = length;
-            // re-size the buffer
-
-            if (len == 0) {
+            if (length == 0) {
                 value = new byte[] {};
             } else {
-                value = getSubString(1, (int) len).getBytes();
+                value = getSubString(1, (int) length).getBytes();
             }
         }
     }
