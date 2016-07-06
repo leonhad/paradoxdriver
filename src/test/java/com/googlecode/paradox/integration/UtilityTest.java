@@ -28,6 +28,7 @@ import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.DateUtils;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.TestUtil;
@@ -64,5 +65,6 @@ public class UtilityTest {
         TestUtil.assertUtilityClassWellDefined(Expressions.class);
         TestUtil.assertUtilityClassWellDefined(IndexData.class);
         TestUtil.assertUtilityClassWellDefined(PrimaryKeyData.class);
+        TestUtil.assertUtilityClassWellDefined(Constants.class);
     }
 }

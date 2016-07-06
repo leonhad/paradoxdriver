@@ -67,4 +67,11 @@ public final class Constants {
      * Driver prefix
      */
     public static final String URL_PREFIX = "jdbc:paradox:";
+
+    /**
+     * Utility class.
+     */
+    private Constants() {
+        // Utility class.
+    }
 }
