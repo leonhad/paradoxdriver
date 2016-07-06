@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2016-07-06 Fixed minor bugs and added unit tests.
 2016-06-27 Added JavaDoc documentation.
 2016-06-22 New 1.2 release with memo file type support.
 
