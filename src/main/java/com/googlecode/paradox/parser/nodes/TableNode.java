@@ -11,28 +11,27 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.paradox.utils.Utils;
-
 /**
  * Stores a table node.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @since 1.0
  * @version 1.1
  */
 public class TableNode extends SQLNode {
-
+    
     /**
      * The table alias.
      */
@@ -45,7 +44,7 @@ public class TableNode extends SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param name
      *            the table name.
      * @param alias
@@ -58,7 +57,7 @@ public class TableNode extends SQLNode {
 
     /**
      * Adds the join table.
-     * 
+     *
      * @param join
      *            the join table.
      */
@@ -76,7 +75,7 @@ public class TableNode extends SQLNode {
 
     /**
      * Gets the join tables.
-     * 
+     *
      * @return the join tables.
      */
     public List<JoinNode> getJoins() {
@@ -84,11 +83,9 @@ public class TableNode extends SQLNode {
     }
 
     /**
-     * Sets the table alias.
-     * 
-     * @param alias
-     *            the table alias.
+     * {@inheritDoc}
      */
+    @Override
     public void setAlias(final String alias) {
         this.alias = alias;
     }
