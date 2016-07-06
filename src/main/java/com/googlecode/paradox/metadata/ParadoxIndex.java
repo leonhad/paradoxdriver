@@ -88,19 +88,10 @@ public class ParadoxIndex extends ParadoxDataFile {
      * @return the index order.
      */
     public String getOrder() {
-        switch (referentialIntegrity) {
-        case 0:
-        case 1:
-        case 0x20:
-        case 0x21:
-            return "A";
-        case 0x10:
-        case 0x11:
-        case 0x30:
+        if (referentialIntegrity == 0x10 || referentialIntegrity == 0x11 || referentialIntegrity == 0x30) {
             return "D";
-        default:
-            return "A";
         }
+        return "A";
     }
 
     /**
