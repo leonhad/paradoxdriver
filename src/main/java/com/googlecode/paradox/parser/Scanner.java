@@ -75,6 +75,20 @@ public class Scanner {
     }
 
     /**
+     * Checks for maximum number dots allowed.
+     * 
+     * @param dotCount
+     *            the dot count.
+     * @throws SQLException
+     *             in case of invalid dot count.
+     */
+    private void checkDotCount(final int dotCount) throws SQLException {
+        if (dotCount > 1) {
+            throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL.getValue());
+        }
+    }
+
+    /**
      * Creates a token by value.
      * 
      * @param value
@@ -82,6 +96,9 @@ public class Scanner {
      * @return a new {@link Token}.
      */
     private Token getToken(final String value) {
+        if (value.isEmpty()) {
+            return null;
+        }
         final TokenType token = TokenType.get(value.toUpperCase());
         if (token != null) {
             return new Token(token, value);
@@ -161,7 +178,23 @@ public class Scanner {
             throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL.getValue());
         }
         value.delete(0, value.length());
-        boolean characters = false;
+        final boolean characters = parseIdentifier();
+        if (characters) {
+            return new Token(TokenType.CHARACTER, value.toString());
+        } else if (Character.isDigit(value.charAt(0))) {
+            return new Token(TokenType.NUMERIC, value.toString());
+        }
+        return getToken(value.toString());
+    }
+
+    /**
+     * Parses identifier tokens.
+     * 
+     * @return if this token is an character token.
+     * @throws SQLException
+     *             in case of parser errors.
+     */
+    private boolean parseIdentifier() throws SQLException {
         while (hasNext()) {
             final char c = nextChar();
 
@@ -170,28 +203,22 @@ public class Scanner {
                 continue;
             } else if (isSpecial(c)) {
                 value.append(c);
-                break;
+                return false;
             } else if (c == '"' || c == '\'') {
                 // identifiers with special chars
+                boolean characters = false;
                 if (c == '\'') {
                     // characters
                     characters = true;
                 }
                 parseString(c);
-                break;
+                return characters;
             } else {
                 parseNumber(c);
-                break;
+                return false;
             }
         }
-        if (characters) {
-            return new Token(TokenType.CHARACTER, value.toString());
-        } else if (Character.isDigit(value.charAt(0))) {
-            return new Token(TokenType.NUMERIC, value.toString());
-        } else if (value.length() > 0) {
-            return getToken(value.toString());
-        }
-        return null;
+        return false;
     }
 
     /**
@@ -212,10 +239,9 @@ public class Scanner {
                 numeric = Character.isDigit(value.charAt(0));
             } else if (c == '.') {
                 dotcount++;
+
                 // Only one dot per numeric value
-                if (dotcount > 1) {
-                    throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL.getValue());
-                }
+                checkDotCount(dotcount);
             }
             if (hasNext()) {
                 c = nextChar();
@@ -242,13 +268,13 @@ public class Scanner {
             if (hasNext()) {
                 c = nextChar();
             } else {
-                break;
+                return;
             }
             if (c == type) {
                 if (hasNext()) {
                     c = nextChar();
                 } else {
-                    break;
+                    return;
                 }
                 if (c == type) {
                     value.append(c);
@@ -256,7 +282,7 @@ public class Scanner {
                     c = ' ';
                 } else {
                     pushBack();
-                    break;
+                    return;
                 }
             } else {
                 value.append(c);

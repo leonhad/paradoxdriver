@@ -148,16 +148,12 @@ public class SQLParser {
             case SELECT:
                 statementList.add(parseSelect());
                 break;
-            case INSERT:
-            case DELETE:
-            case UPDATE:
-                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             case SEMI:
                 if (!statementList.isEmpty()) {
                     break;
                 }
             default:
-                throw new SQLException(SQLStates.INVALID_SQL.getValue());
+                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION, SQLStates.INVALID_SQL.getValue());
             }
             return statementList;
         }
