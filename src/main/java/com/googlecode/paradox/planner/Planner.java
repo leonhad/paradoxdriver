@@ -91,6 +91,55 @@ public class Planner {
         final List<ParadoxTable> paradoxTables = TableData.listTables(conn);
 
         // Load the table metadata.
+        parseTableMetaData(statement, plan, paradoxTables);
+        parseColumns(statement, plan);
+
+        if (plan.getColumns().isEmpty()) {
+            throw new SQLException("Empty column list", SQLStates.INVALID_SQL.getValue());
+        }
+
+        return plan;
+    }
+
+    /**
+     * Parses the table columns.
+     * 
+     * @param statement
+     *            the SELECT statement.
+     * @param plan
+     *            the SELECT execution plan.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
+        for (final SQLNode field : statement.getFields()) {
+            final String name = field.getName();
+            if (field instanceof AsteriskNode) {
+                for (final PlanTableNode table : plan.getTables()) {
+                    plan.addColumnFromTable(table.getTable());
+                }
+            } else {
+                if (name == null || name.isEmpty()) {
+                    throw new SQLException("Column name is empty");
+                }
+                plan.addColumn(name);
+            }
+        }
+    }
+
+    /**
+     * Parses the table metadata.
+     * 
+     * @param statement
+     *            the SELECT statement.
+     * @param plan
+     *            the select execution plan.
+     * @param paradoxTables
+     *            the tables list.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    private void parseTableMetaData(final SelectNode statement, final SelectPlan plan, final List<ParadoxTable> paradoxTables) throws SQLException {
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
             for (final ParadoxTable paradoxTable : paradoxTables) {
@@ -107,24 +156,5 @@ public class Planner {
             }
             plan.addTable(node);
         }
-
-        for (final SQLNode field : statement.getFields()) {
-            final String name = field.getName();
-            if (field instanceof AsteriskNode) {
-                for (final PlanTableNode table : plan.getTables()) {
-                    plan.addColumnFromTable(table.getTable());
-                }
-            } else {
-                if (name == null || name.isEmpty()) {
-                    throw new SQLException("Column name is empty");
-                }
-                plan.addColumn(name);
-            }
-        }
-        if (plan.getColumns().isEmpty()) {
-            throw new SQLException("Empty column list", SQLStates.INVALID_SQL.getValue());
-        }
-
-        return plan;
     }
 }
