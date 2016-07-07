@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.results.ParadoxFieldType;
 
 /**
  * Stores a field from a table.
@@ -85,7 +85,7 @@ public class ParadoxField {
     private String tableName;
 
     /**
-     * Field type.
+     * Paradox field type.
      */
     private byte type;
 
@@ -143,7 +143,7 @@ public class ParadoxField {
     public Column getColumn() throws SQLException {
         final Column dto = new Column(this);
         dto.setName(name.toUpperCase());
-        dto.setType(type);
+        dto.setType(getSqlType());
         dto.setTableName(tableName);
         return dto;
     }
@@ -210,37 +210,7 @@ public class ParadoxField {
      *             in case of type not found.
      */
     public int getSqlType() throws SQLException {
-        switch (type) {
-        case 1:
-        case 0xE:
-            return Types.VARCHAR;
-        case 2:
-            return Types.DATE;
-        case 3:
-        case 4:
-        case 0x16:
-            return Types.INTEGER;
-        case 5:
-            return Types.DOUBLE;
-        case 6:
-            return Types.NUMERIC;
-        case 9:
-            return Types.BOOLEAN;
-        case 0xC:
-            return Types.CLOB;
-        case 0xD:
-        case 0xF:
-        case 0x18:
-            return Types.BLOB;
-        case 0x14:
-            return Types.TIME;
-        case 0x15:
-            return Types.TIMESTAMP;
-        case 0x17:
-            return Types.BINARY;
-        default:
-            throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
-        }
+        return ParadoxFieldType.getSQLType(type);
     }
 
     /**

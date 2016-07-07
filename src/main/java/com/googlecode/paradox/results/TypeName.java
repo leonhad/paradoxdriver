@@ -93,37 +93,37 @@ public enum TypeName {
     /**
      * The SQL Type.
      */
-    private final int type;
+    private final int sqlType;
 
     /**
      * Creates a new instance.
      * 
-     * @param type
+     * @param sqlType
      *            the SQL type.
      * @param name
      *            the type name.
      */
-    private TypeName(final int type, final String name) {
-        this.type = type;
+    private TypeName(final int sqlType, final String name) {
+        this.sqlType = sqlType;
         this.name = name;
     }
 
     /**
-     * Gets the field name by its type.
+     * Gets the field name by its SQL type.
      * 
-     * @param type
-     *            the type value.
+     * @param sqlType
+     *            the SQL type value.
      * @return the field type name.
      * @throws SQLException
      *             in case of invalid type.
      */
-    public static String getName(final int type) throws SQLException {
+    public static String getName(final int sqlType) throws SQLException {
         for (final TypeName typeName : VALUES) {
-            if (typeName.getType() == type) {
+            if (typeName.getSQLType() == sqlType) {
                 return typeName.getName();
             }
         }
-        throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
+        throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
     }
 
     /**
@@ -140,7 +140,7 @@ public enum TypeName {
      * 
      * @return the SQL type.
      */
-    public int getType() {
-        return type;
+    public int getSQLType() {
+        return sqlType;
     }
 }

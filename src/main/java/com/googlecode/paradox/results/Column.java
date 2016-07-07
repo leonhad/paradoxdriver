@@ -220,9 +220,9 @@ public class Column {
     }
 
     /**
-     * Gets the field type.
+     * Gets the field SQL type.
      * 
-     * @return the field type.
+     * @return the field SQL type.
      */
     public int getType() {
         return type;
@@ -422,10 +422,10 @@ public class Column {
     }
 
     /**
-     * Sets the field type.
+     * Sets the field SQL type.
      * 
      * @param type
-     *            the field type to set.
+     *            the field SQL type to set.
      */
     public void setType(final int type) {
         this.type = type;
