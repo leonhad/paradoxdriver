@@ -19,16 +19,14 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Types;
 import java.util.List;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.TypeName;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
@@ -94,25 +92,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getColumnClassName(final int column) throws SQLException {
-        final int type = getColumnType(column);
-        switch (type) {
-        case Types.CHAR:
-        case Types.VARCHAR:
-            return String.class.getName();
-        case Types.INTEGER:
-            return Integer.class.getName();
-        case Types.DATE:
-            return Date.class.getName();
-        case Types.TIME:
-            return Time.class.getName();
-        case Types.DOUBLE:
-        case Types.NUMERIC:
-            return Double.class.getName();
-        case Types.BOOLEAN:
-            return Boolean.class.getName();
-        default:
-            throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND.getValue());
-        }
+        return TypeName.getClassName(getColumnType(column));
     }
 
     /**

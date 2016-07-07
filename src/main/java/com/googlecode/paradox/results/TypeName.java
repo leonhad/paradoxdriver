@@ -19,7 +19,11 @@
  */
 package com.googlecode.paradox.results;
 
+import java.io.InputStream;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.sql.Types;
 
 import com.googlecode.paradox.utils.SQLStates;
@@ -29,61 +33,66 @@ import com.googlecode.paradox.utils.SQLStates;
  * 
  * @author Leonardo Alves da Costa
  * @since 1.3
- * @version 1.0
+ * @version 1.1
  */
 public enum TypeName {
 
     /**
      * The binary type.
      */
-    BINARY(Types.BINARY, "BINARY"),
+    BINARY(Types.BINARY, "BINARY", InputStream.class.getName()),
 
     /**
      * The BLOB type.
      */
-    BLOB(Types.BLOB, "BLOB"),
+    BLOB(Types.BLOB, "BLOB", InputStream.class.getName()),
 
     /**
      * The boolean type.
      */
-    BOOLEAN(Types.BOOLEAN, "BOOLEAN"),
+    BOOLEAN(Types.BOOLEAN, "BOOLEAN", Boolean.class.getName()),
 
     /**
      * The date type.
      */
-    DATE(Types.DATE, "DATE"),
+    DATE(Types.DATE, "DATE", Date.class.getName()),
 
     /**
      * The double type.
      */
-    DOUBLE(Types.DOUBLE, "DOUBLE"),
+    DOUBLE(Types.DOUBLE, "DOUBLE", Double.class.getName()),
 
     /**
      * The integer type.
      */
-    INTEGER(Types.INTEGER, "INTEGER"),
+    INTEGER(Types.INTEGER, "INTEGER", Integer.class.getName()),
 
     /**
      * The numeric type.
      */
-    NUMERIC(Types.NUMERIC, "NUMERIC"),
+    NUMERIC(Types.NUMERIC, "NUMERIC", Number.class.getName()),
 
     /**
      * The time type.
      */
-    TIME(Types.TIME, "TIME"),
+    TIME(Types.TIME, "TIME", Time.class.getName()),
 
     /**
      * The TIMESTAMP type.
      */
-    TIMESTAMP(Types.TIMESTAMP, "TIMESTAMP"),
+    TIMESTAMP(Types.TIMESTAMP, "TIMESTAMP", Timestamp.class.getName()),
 
     /**
      * The VARCHAR type.
      */
-    VARCHAR(Types.VARCHAR, "VARCHAR");
+    VARCHAR(Types.VARCHAR, "VARCHAR", String.class.getName());
 
     private static final TypeName[] VALUES = values();
+
+    /**
+     * The class name.
+     */
+    private final String className;
 
     /**
      * The type name.
@@ -103,9 +112,28 @@ public enum TypeName {
      * @param name
      *            the type name.
      */
-    private TypeName(final int sqlType, final String name) {
+    private TypeName(final int sqlType, final String name, final String className) {
         this.sqlType = sqlType;
         this.name = name;
+        this.className = className;
+    }
+
+    /**
+     * Gets the class name by its SQL type.
+     * 
+     * @param sqlType
+     *            the SQL type value.
+     * @return the class type name.
+     * @throws SQLException
+     *             in case of invalid type.
+     */
+    public static String getClassName(final int sqlType) throws SQLException {
+        for (final TypeName typeName : VALUES) {
+            if (typeName.getSQLType() == sqlType) {
+                return typeName.getClassName();
+            }
+        }
+        throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
     }
 
     /**
@@ -127,6 +155,15 @@ public enum TypeName {
     }
 
     /**
+     * Gets the class name.
+     * 
+     * @return the class name.
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
      * Gets the type name.
      * 
      * @return the type name.
@@ -143,4 +180,5 @@ public enum TypeName {
     public int getSQLType() {
         return sqlType;
     }
+
 }
