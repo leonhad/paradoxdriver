@@ -19,10 +19,11 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.utils.SQLStates;
 import java.sql.SQLException;
 import java.sql.Types;
+
+import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * Stores a field from a table.
@@ -32,69 +33,69 @@ import java.sql.Types;
  * @since 1.0
  */
 public class ParadoxField {
-    
+
     /**
      * Stores the field alias.
      */
     private String alias;
-    
+
     /**
      * If this field is checked.
      */
     private boolean checked;
-    
+
     /**
      * This field expression.
      */
     private String expression;
-    
+
     /**
      * The JOIN name.
      */
     private String joinName;
-    
+
     /**
      * Field name.
      */
     private String name;
-    
+
     /**
      * Order of field in table/view. The first value is one.
      */
     private final int orderNum;
-    
+
     /**
      * The the field order.
      */
     private short physicsSize;
-    
+
     /**
      * The field size.
      */
     private short size;
-    
+
     /**
      * The fields owner.
      */
     private ParadoxTable table;
-    
+
     /**
      * The field table name.
      */
     private String tableName;
-    
+
     /**
      * Field type.
      */
     private byte type;
-    
+
     /**
      * Creates a new instance. it starts with {@link #orderNum} with one.
      */
     public ParadoxField() {
         this(1);
     }
-    
+
     /**
      * Creates a new instance.
      *
@@ -104,7 +105,7 @@ public class ParadoxField {
     public ParadoxField(final int orderNum) {
         this.orderNum = orderNum;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -119,7 +120,7 @@ public class ParadoxField {
         final ParadoxField other = (ParadoxField) obj;
         return !(name == null ? other.name != null : !name.equals(other.name));
     }
-    
+
     /**
      * Gets the field alias.
      *
@@ -131,7 +132,7 @@ public class ParadoxField {
         }
         return alias;
     }
-    
+
     /**
      * The field column reference.
      *
@@ -142,19 +143,11 @@ public class ParadoxField {
     public Column getColumn() throws SQLException {
         final Column dto = new Column(this);
         dto.setName(name.toUpperCase());
-        dto.setType(getSqlType());
-        dto.setAutoIncrement(type == 0x16);
-        dto.setCurrency(type == 5);
+        dto.setType(type);
         dto.setTableName(tableName);
-        // FIXME move to Column
-        if (type == 6) {
-            dto.setScale(2);
-        } else if (type == 5 || type == 0x16) {
-            dto.setPrecision(9);
-        }
         return dto;
     }
-    
+
     /**
      * Gets the field expression.
      *
@@ -163,7 +156,7 @@ public class ParadoxField {
     public String getExpression() {
         return expression;
     }
-    
+
     /**
      * Gets the join name.
      *
@@ -172,7 +165,7 @@ public class ParadoxField {
     public String getJoinName() {
         return joinName;
     }
-    
+
     /**
      * Gets the field name.
      *
@@ -181,7 +174,7 @@ public class ParadoxField {
     public String getName() {
         return name;
     }
-    
+
     /**
      * Gets the field order.
      *
@@ -190,7 +183,7 @@ public class ParadoxField {
     public int getOrderNum() {
         return orderNum;
     }
-    
+
     /**
      * Gets the file size in file.
      *
@@ -199,7 +192,7 @@ public class ParadoxField {
     public short getPhysicsSize() {
         return physicsSize;
     }
-    
+
     /**
      * Gets the field size.
      *
@@ -208,7 +201,7 @@ public class ParadoxField {
     public short getSize() {
         return size;
     }
-    
+
     /**
      * Gets the SQL field type.
      *
@@ -249,7 +242,7 @@ public class ParadoxField {
             throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
         }
     }
-    
+
     /**
      * Gets the field table.
      *
@@ -258,7 +251,7 @@ public class ParadoxField {
     public ParadoxTable getTable() {
         return table;
     }
-    
+
     /**
      * Gets the tables name.
      *
@@ -267,7 +260,7 @@ public class ParadoxField {
     public String getTableName() {
         return tableName;
     }
-    
+
     /**
      * Gets the field type.
      *
@@ -276,7 +269,7 @@ public class ParadoxField {
     public byte getType() {
         return type;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -286,7 +279,7 @@ public class ParadoxField {
         hash = 17 * hash + (name != null ? name.hashCode() : 0);
         return hash;
     }
-    
+
     /**
      * Gets the field auto increment status.
      *
@@ -295,7 +288,7 @@ public class ParadoxField {
     public boolean isAutoIncrement() {
         return type == 0x16;
     }
-    
+
     /**
      * Gets field checked status.
      *
@@ -304,7 +297,7 @@ public class ParadoxField {
     public boolean isChecked() {
         return checked;
     }
-    
+
     /**
      * Sets the field alias.
      *
@@ -314,7 +307,7 @@ public class ParadoxField {
     public void setAlias(final String alias) {
         this.alias = alias;
     }
-    
+
     /**
      * Sets the field checked status.
      *
@@ -324,7 +317,7 @@ public class ParadoxField {
     public void setChecked(final boolean checked) {
         this.checked = checked;
     }
-    
+
     /**
      * Sets this field expression.
      *
@@ -334,7 +327,7 @@ public class ParadoxField {
     public void setExpression(final String expression) {
         this.expression = expression;
     }
-    
+
     /**
      * Sets the field join name.
      *
@@ -344,7 +337,7 @@ public class ParadoxField {
     public void setJoinName(final String joinName) {
         this.joinName = joinName;
     }
-    
+
     /**
      * Sets the field name.
      *
@@ -354,7 +347,7 @@ public class ParadoxField {
     public void setName(final String name) {
         this.name = name;
     }
-    
+
     /**
      * Sets the field size.
      *
@@ -371,7 +364,7 @@ public class ParadoxField {
             this.size = size;
         }
     }
-    
+
     /**
      * Sets the table reference.
      *
@@ -381,7 +374,7 @@ public class ParadoxField {
     public void setTable(final ParadoxTable table) {
         this.table = table;
     }
-    
+
     /**
      * Sets the table name.
      *
@@ -391,7 +384,7 @@ public class ParadoxField {
     public void setTableName(final String tableName) {
         this.tableName = tableName;
     }
-    
+
     /**
      * Sets the field type.
      *
@@ -401,7 +394,7 @@ public class ParadoxField {
     public void setType(final byte type) {
         this.type = type;
     }
-    
+
     /**
      * {@inheritDoc}
      */

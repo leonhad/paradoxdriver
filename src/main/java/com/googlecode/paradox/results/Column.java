@@ -24,7 +24,6 @@ import java.sql.Types;
 
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * Column values from a ResultSet.
@@ -127,6 +126,7 @@ public class Column {
      *            the paradox field.
      */
     public Column(final ParadoxField field) {
+        this(field.getName(), field.getType());
         this.field = field;
     }
 
@@ -140,7 +140,7 @@ public class Column {
      */
     public Column(final String name, final int type) {
         this.name = name;
-        this.type = type;
+        setType(type);
     }
 
     /**
@@ -153,30 +153,7 @@ public class Column {
      *             if is an invalid type.
      */
     public static String getTypeName(final int type) throws SQLException {
-        switch (type) {
-        case Types.VARCHAR:
-            return "VARCHAR";
-        case Types.DATE:
-            return "DATE";
-        case Types.INTEGER:
-            return "INTEGER";
-        case Types.DOUBLE:
-            return "DOUBLE";
-        case Types.NUMERIC:
-            return "NUMERIC";
-        case Types.BOOLEAN:
-            return "BOOLEAN";
-        case Types.BLOB:
-            return "BLOB";
-        case Types.TIME:
-            return "TIME";
-        case Types.TIMESTAMP:
-            return "TIMESTAMP";
-        case Types.BINARY:
-            return "BINARY";
-        default:
-            throw new SQLException("Type Unknown", SQLStates.TYPE_NOT_FOUND.getValue());
-        }
+        return TypeName.getName(type);
     }
 
     /**
@@ -452,6 +429,16 @@ public class Column {
      */
     public void setType(final int type) {
         this.type = type;
+
+        if (type == 6) {
+            scale = 2;
+        } else if (type == 5) {
+            currency = true;
+            precision = 9;
+        } else if (type == 0x16) {
+            autoIncrement = true;
+            precision = 9;
+        }
     }
 
     /**
