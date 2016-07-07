@@ -20,6 +20,10 @@
  */
 package com.googlecode.paradox.utils;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Utility class to parse SQL expressions.
  * 
@@ -28,6 +32,11 @@ package com.googlecode.paradox.utils;
  * @version 1.0
  */
 public final class Expressions {
+
+    /**
+     * The class logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(Expressions.class.getName());
 
     /**
      * Utility class.
@@ -61,6 +70,28 @@ public final class Expressions {
      * @return true if the expression is valid.
      */
     public static boolean accept(final String expression, final String criteria, final boolean caseSensitive) {
+        try {
+            acceptExpression(expression, criteria, caseSensitive);
+        } catch (final SQLException e) {
+            LOGGER.log(Level.FINER, e.getMessage(), e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Test for an expression.
+     * 
+     * @param expression
+     *            the expression to test for.
+     * @param criteria
+     *            the criteria to use.
+     * @param caseSensitive
+     *            true if this validation processes is case sensitive.
+     * @throws SQLException
+     *             in case of invalid expression.
+     */
+    private static void acceptExpression(final String expression, final String criteria, final boolean caseSensitive) throws SQLException {
         final char[] crit = getCharArrayWithCase(criteria, caseSensitive);
         final char[] exp = getCharArrayWithCase(expression, caseSensitive);
         final int limit = exp.length - 1;
@@ -68,7 +99,7 @@ public final class Expressions {
 
         for (int loop = 0; loop < crit.length; loop++) {
             if (index > limit) {
-                return false;
+                throw new SQLException();
             }
             final char c = crit[loop];
 
@@ -79,21 +110,56 @@ public final class Expressions {
                 if (loop + 1 < crit.length) {
                     final char next = crit[loop + 1];
                     index = fixIndex(exp, limit, index, next);
-                    if (index > limit || next != exp[index]) {
-                        return false;
-                    }
+                    checkBounds(exp, limit, index, next);
                 } else {
-                    return true;
+                    return;
                 }
             } else {
-                if (c == exp[index]) {
-                    index++;
-                } else {
-                    return false;
-                }
+                checkIndexBoundaries(exp, index, c);
+                ++index;
             }
         }
-        return index > limit;
+        if (index <= limit) {
+            throw new SQLException();
+        }
+    }
+
+    /**
+     * Check for expressions limit boundaries.
+     * 
+     * @param exp
+     *            the expression to check.
+     * @param limit
+     *            the value limits.
+     * @param index
+     *            the current index.
+     * @param next
+     *            the next char in criteria.
+     * @throws SQLException
+     *             in case of invalid expression.
+     */
+    private static void checkBounds(final char[] exp, final int limit, final int index, final char next) throws SQLException {
+        if (index > limit || next != exp[index]) {
+            throw new SQLException();
+        }
+    }
+
+    /**
+     * Check for index boundaries.
+     * 
+     * @param exp
+     *            the expression to check.
+     * @param index
+     *            the current index.
+     * @param c
+     *            the current char in expression.
+     * @throws SQLException
+     *             in case of invalid expression.
+     */
+    private static void checkIndexBoundaries(final char[] exp, final int index, final char c) throws SQLException {
+        if (c != exp[index]) {
+            throw new SQLException();
+        }
     }
 
     /**
