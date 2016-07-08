@@ -19,16 +19,17 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import com.googlecode.paradox.data.FieldParser;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
 
 /**
  * Parses time fields.
@@ -38,7 +39,7 @@ import java.util.GregorianCalendar;
  * @version 1.0
  */
 public class TimeField implements FieldParser {
-    
+
     /**
      * {@inheritDoc}
      */
@@ -51,15 +52,14 @@ public class TimeField implements FieldParser {
      * {@inheritDoc}
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
-            throws SQLException {
-        final int a1 = 0x000000FF & buffer.get();
-        final int a2 = 0x000000FF & buffer.get();
-        final int a3 = 0x000000FF & buffer.get();
-        final int a4 = 0x000000FF & buffer.get();
-        final long timeInMillis = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) throws SQLException {
+        final int a1 = buffer.get();
+        final int a2 = buffer.get();
+        final int a3 = buffer.get();
+        final int a4 = buffer.get();
+        final long timeInMillis = a1 << 24 | a2 << 16 | a3 << 8 | a4;
 
-        if ((a1 & 0xB0) != 0) {
+        if (timeInMillis != 0) {
             final Calendar calendar = new GregorianCalendar(1, 0, 0);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
             final Time time = new Time(calendar.getTimeInMillis());
