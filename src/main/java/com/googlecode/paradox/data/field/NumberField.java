@@ -49,7 +49,7 @@ public class NumberField implements FieldParser {
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final double v = buffer.getDouble();
+        final double v = buffer.getDouble() * 1;
         return new FieldValue(v, Types.DOUBLE);
     }
 }
