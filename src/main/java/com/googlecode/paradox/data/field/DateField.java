@@ -19,14 +19,15 @@
  */
 package com.googlecode.paradox.data.field;
 
+import java.nio.ByteBuffer;
+import java.sql.Date;
+import java.sql.Types;
+
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.DateUtils;
-import java.nio.ByteBuffer;
-import java.sql.Date;
-import java.sql.Types;
 
 /**
  * Parses date fields.
@@ -36,7 +37,7 @@ import java.sql.Types;
  * @version 1.0
  */
 public class DateField implements FieldParser {
-    
+
     /**
      * {@inheritDoc}
      */
@@ -44,7 +45,7 @@ public class DateField implements FieldParser {
     public boolean match(final int type) {
         return type == 2;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -55,11 +56,8 @@ public class DateField implements FieldParser {
         final int a3 = 0x000000FF & buffer.get();
         final int a4 = 0x000000FF & buffer.get();
         final long days = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
-        
-        if ((a1 & 0xB0) != 0) {
-            final Date date = DateUtils.sdnToGregorian(days + 1721425);
-            return new FieldValue(date, Types.DATE);
-        }
-        return new FieldValue(Types.DATE);
+
+        final Date date = DateUtils.sdnToGregorian(days + 1721425);
+        return new FieldValue(date, Types.DATE);
     }
 }
