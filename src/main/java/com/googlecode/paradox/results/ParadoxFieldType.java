@@ -122,7 +122,7 @@ public enum ParadoxFieldType {
     /**
      * The Paradox type.
      */
-    private final int type;
+    private final byte type;
 
     /**
      * Creates a new instance.
@@ -133,7 +133,7 @@ public enum ParadoxFieldType {
      *            the SQL type.
      */
     private ParadoxFieldType(final int type, final int sqlType) {
-        this.type = type;
+        this.type = (byte) type;
         this.sqlType = sqlType;
     }
 
@@ -169,7 +169,7 @@ public enum ParadoxFieldType {
      * 
      * @return the Paradox type.
      */
-    public int getType() {
+    public byte getType() {
         return type;
     }
 }
