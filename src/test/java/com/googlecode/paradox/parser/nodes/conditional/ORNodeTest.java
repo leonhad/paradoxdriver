@@ -50,6 +50,6 @@ public class ORNodeTest {
     @Test
     public void testName() {
         final ORNode node = new ORNode(null);
-        Assert.assertEquals("AND", node.getName());
+        Assert.assertEquals("OR", node.getName());
     }
 }
