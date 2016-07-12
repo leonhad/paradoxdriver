@@ -33,6 +33,11 @@ import com.googlecode.paradox.utils.SQLStates;
  */
 public enum ParadoxFieldType {
     /**
+     * The auto increment type.
+     */
+    AUTO_INCREMENT(0x16, Types.INTEGER),
+
+    /**
      * The binary type.
      */
     BINARY(0x17, Types.BINARY),
@@ -81,11 +86,6 @@ public enum ParadoxFieldType {
      * The integer type. Variant 2.
      */
     INTEGER2(4, Types.INTEGER),
-
-    /**
-     * The integer type. Variant 3.
-     */
-    INTEGER3(0x16, Types.INTEGER),
 
     /**
      * The numeric type.

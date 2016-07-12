@@ -430,12 +430,12 @@ public class Column {
     public void setType(final int type) {
         this.type = type;
 
-        if (type == 6) {
+        if (type == ParadoxFieldType.NUMERIC.getType()) {
             scale = 2;
-        } else if (type == 5) {
+        } else if (type == ParadoxFieldType.DOUBLE.getType()) {
             currency = true;
             precision = 9;
-        } else if (type == 0x16) {
+        } else if (type == ParadoxFieldType.AUTO_INCREMENT.getType()) {
             autoIncrement = true;
             precision = 9;
         }
