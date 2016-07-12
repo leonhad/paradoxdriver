@@ -19,6 +19,8 @@
  */
 package com.googlecode.paradox.results;
 
+import java.sql.SQLException;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -73,6 +75,19 @@ public class ColumnTest {
         column.setType(ParadoxFieldType.DOUBLE.getType());
         Assert.assertEquals(9d, column.getPrecision(), 0);
         Assert.assertTrue(column.isCurrency());
+    }
+
+    /**
+     * Test field.
+     */
+    @Test
+    public void testField() {
+        final ParadoxField field = new ParadoxField();
+        field.setType(ParadoxFieldType.INTEGER.getType());
+        field.setName("field");
+        final Column column = new Column();
+        column.setField(field);
+        Assert.assertEquals(field, column.getField());
     }
 
     /**
@@ -217,6 +232,17 @@ public class ColumnTest {
         final Column column = new Column();
         column.setType(1);
         Assert.assertEquals(1, column.getType());
+    }
+
+    /**
+     * Test for type name.
+     * 
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testTypeName() throws SQLException {
+        Assert.assertEquals(TypeName.BOOLEAN.getName(), Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
     }
 
     /**
