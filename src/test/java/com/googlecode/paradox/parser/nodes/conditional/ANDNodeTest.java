@@ -47,6 +47,7 @@ public class ANDNodeTest {
     /**
      * Test for name.
      */
+    @Test
     public void testName() {
         final ANDNode node = new ANDNode(null);
         Assert.assertEquals("AND", node.getName());

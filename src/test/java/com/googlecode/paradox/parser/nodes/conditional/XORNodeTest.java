@@ -1,5 +1,5 @@
 /*
- * ORNodeTest.java
+ * XORNodeTest.java
  *
  * 07/11/2016
  * Copyright (C) 2016 Leonardo Alves da Costa
@@ -25,13 +25,13 @@ import org.junit.Test;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
- * Unit test for {@link ORNode} class.
+ * Unit test {@link XORNode} class.
  * 
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */
-public class ORNodeTest {
+public class XORNodeTest {
 
     /**
      * Test for childhood.
@@ -39,7 +39,7 @@ public class ORNodeTest {
     @Test
     public void testChildhood() {
         final SQLNode node = new SQLNode("node");
-        final ORNode and = new ORNode(node);
+        final XORNode and = new XORNode(node);
         Assert.assertEquals(1, and.getChildren().size());
         Assert.assertEquals(node, and.getChildren().iterator().next());
     }
@@ -49,7 +49,7 @@ public class ORNodeTest {
      */
     @Test
     public void testName() {
-        final ORNode node = new ORNode(null);
-        Assert.assertEquals("AND", node.getName());
+        final XORNode node = new XORNode(null);
+        Assert.assertEquals("XOR", node.getName());
     }
 }

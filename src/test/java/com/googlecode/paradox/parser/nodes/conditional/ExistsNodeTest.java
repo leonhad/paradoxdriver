@@ -1,5 +1,5 @@
 /*
- * ORNodeTest.java
+ * ExistsNodeTest.java
  *
  * 07/11/2016
  * Copyright (C) 2016 Leonardo Alves da Costa
@@ -22,24 +22,23 @@ package com.googlecode.paradox.parser.nodes.conditional;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.SelectNode;
 
 /**
- * Unit test for {@link ORNode} class.
+ * Unit test for {@link ExistsNode} class.
  * 
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */
-public class ORNodeTest {
-
+public class ExistsNodeTest {
     /**
      * Test for childhood.
      */
     @Test
     public void testChildhood() {
-        final SQLNode node = new SQLNode("node");
-        final ORNode and = new ORNode(node);
+        final SelectNode node = new SelectNode();
+        final ExistsNode and = new ExistsNode(node);
         Assert.assertEquals(1, and.getChildren().size());
         Assert.assertEquals(node, and.getChildren().iterator().next());
     }
@@ -49,7 +48,7 @@ public class ORNodeTest {
      */
     @Test
     public void testName() {
-        final ORNode node = new ORNode(null);
-        Assert.assertEquals("AND", node.getName());
+        final ExistsNode node = new ExistsNode(null);
+        Assert.assertEquals("EXISTS", node.getName());
     }
 }
