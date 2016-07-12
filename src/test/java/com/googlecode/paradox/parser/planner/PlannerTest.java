@@ -20,6 +20,8 @@
 package com.googlecode.paradox.parser.planner;
 
 import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -31,6 +33,8 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.parser.SQLParser;
+import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 
@@ -104,6 +108,31 @@ public class PlannerTest {
         Assert.assertEquals("First column not 'AC'", "AC", plan.getColumns().get(0).getName());
         Assert.assertEquals("Second column not 'State'", "STATE", plan.getColumns().get(1).getName());
         Assert.assertEquals("Third column not 'Cities'", "CITIES", plan.getColumns().get(2).getName());
+    }
 
+    /**
+     * Test for a invalid node.
+     * 
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test(expected = SQLFeatureNotSupportedException.class)
+    public void testInvalid() throws SQLException {
+        final StatementNode node = new StatementNode("node");
+        final Planner planner = new Planner(conn);
+        planner.create(node);
+    }
+
+    /**
+     * Test for SELECT plan without columns.
+     * 
+     * @throws SQLException
+     *             em caso de falhas.
+     */
+    @Test(expected = SQLException.class)
+    public void testSelectWithoutColumns() throws SQLException {
+        final SelectNode node = new SelectNode();
+        final Planner planner = new Planner(conn);
+        planner.create(node);
     }
 }

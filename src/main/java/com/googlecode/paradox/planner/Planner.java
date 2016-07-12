@@ -95,7 +95,7 @@ public class Planner {
         parseColumns(statement, plan);
 
         if (plan.getColumns().isEmpty()) {
-            throw new SQLException("Empty column list", SQLStates.INVALID_SQL.getValue());
+            throw new SQLException("Empty column list.", SQLStates.INVALID_SQL.getValue());
         }
 
         return plan;
