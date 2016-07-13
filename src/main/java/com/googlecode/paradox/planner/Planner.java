@@ -120,7 +120,7 @@ public class Planner {
                 }
             } else {
                 if (name == null || name.isEmpty()) {
-                    throw new SQLException("Column name is empty");
+                    throw new SQLException("Column name is empty.");
                 }
                 plan.addColumn(name);
             }

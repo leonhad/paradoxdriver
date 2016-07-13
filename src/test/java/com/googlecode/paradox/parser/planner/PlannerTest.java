@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,11 +31,10 @@ import org.junit.Test;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
-import com.googlecode.paradox.parser.SQLParser;
+import com.googlecode.paradox.parser.nodes.IdentifierNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
-import com.googlecode.paradox.planner.plan.SelectPlan;
 
 /**
  * Unit test for {@link Planner}.
@@ -93,34 +91,44 @@ public class PlannerTest {
     }
 
     /**
-     * Test for a SELECT plan.
+     * Test for empty column name.
      * 
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException
+     *             if there is no errors.
      */
-    @Test
-    public void tableTest() throws Exception {
-        final SQLParser parser = new SQLParser("select * from areacodes a");
+    @Test(expected = SQLException.class)
+    public void testEmptyColumnName() throws SQLException {
+        final SelectNode selectNode = new SelectNode();
+        selectNode.addField(new IdentifierNode(""));
         final Planner planner = new Planner(conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
-        Assert.assertNotNull("No columns", plan.getColumns());
-        Assert.assertEquals("Num of columns in table", 3, plan.getColumns().size());
-        Assert.assertEquals("First column not 'AC'", "AC", plan.getColumns().get(0).getName());
-        Assert.assertEquals("Second column not 'State'", "STATE", plan.getColumns().get(1).getName());
-        Assert.assertEquals("Third column not 'Cities'", "CITIES", plan.getColumns().get(2).getName());
+        planner.create(selectNode);
     }
 
     /**
      * Test for a invalid node.
      * 
      * @throws SQLException
-     *             in case of errors.
+     *             if there is no errors.
      */
     @Test(expected = SQLFeatureNotSupportedException.class)
     public void testInvalid() throws SQLException {
         final StatementNode node = new StatementNode("node");
         final Planner planner = new Planner(conn);
         planner.create(node);
+    }
+
+    /**
+     * Test for null column name.
+     * 
+     * @throws SQLException
+     *             if there is no errors.
+     */
+    @Test(expected = SQLException.class)
+    public void testNullColumnName() throws SQLException {
+        final SelectNode selectNode = new SelectNode();
+        selectNode.addField(new IdentifierNode(null));
+        final Planner planner = new Planner(conn);
+        planner.create(selectNode);
     }
 
     /**
