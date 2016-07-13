@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,10 +32,12 @@ import org.junit.Test;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
+import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.IdentifierNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
+import com.googlecode.paradox.planner.plan.SelectPlan;
 
 /**
  * Unit test for {@link Planner}.
@@ -88,6 +91,21 @@ public class PlannerTest {
     @Before
     public void connect() throws Exception {
         conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+    }
+
+    /**
+     * Test for valid column name.
+     * 
+     * @throws SQLException
+     *             if there is no errors.
+     */
+    @Test
+    public void testColumnName() throws SQLException {
+        final SQLParser parser = new SQLParser("select ac from areacodes a");
+        final Planner planner = new Planner(conn);
+        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+        Assert.assertEquals("Test the column size.", 1, plan.getColumns().size());
+        Assert.assertEquals("Test the column name.", "AC", plan.getColumns().get(0).getName());
     }
 
     /**
