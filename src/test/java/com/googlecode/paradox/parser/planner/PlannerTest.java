@@ -94,6 +94,24 @@ public class PlannerTest {
     }
 
     /**
+     * Test for a asterisk node plan.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
+    @Test
+    public void testAsterisk() throws Exception {
+        final SQLParser parser = new SQLParser("select * from areacodes a");
+        final Planner planner = new Planner(conn);
+        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+        Assert.assertNotNull("No columns.", plan.getColumns());
+        Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
+        Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
+        Assert.assertEquals("Second column not 'State'.", "STATE", plan.getColumns().get(1).getName());
+        Assert.assertEquals("Third column not 'Cities'.", "CITIES", plan.getColumns().get(2).getName());
+    }
+
+    /**
      * Test for valid column name.
      * 
      * @throws SQLException
@@ -133,6 +151,19 @@ public class PlannerTest {
         final StatementNode node = new StatementNode("node");
         final Planner planner = new Planner(conn);
         planner.create(node);
+    }
+
+    /**
+     * Test for an invalid table.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
+    @Test(expected = SQLException.class)
+    public void testInvalidTable() throws Exception {
+        final SQLParser parser = new SQLParser("select * from invalid");
+        final Planner planner = new Planner(conn);
+        planner.create(parser.parse().get(0));
     }
 
     /**

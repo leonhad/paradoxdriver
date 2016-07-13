@@ -1,6 +1,7 @@
 package com.googlecode.paradox.integration;
 
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -71,13 +72,26 @@ public class PlannerTest {
     }
 
     /**
+     * Test for an invalid table.
+     * 
+     * @throws Exception
+     *             in case of failures.
+     */
+    @Test(expected = SQLException.class)
+    public void testInvalidTable() throws Exception {
+        final SQLParser parser = new SQLParser("select * from invalid");
+        final Planner planner = new Planner(conn);
+        planner.create(parser.parse().get(0));
+    }
+
+    /**
      * Test for a SELECT plan.
      * 
      * @throws Exception
      *             in case of failures.
      */
     @Test
-    public void tableTest() throws Exception {
+    public void testSelect() throws Exception {
         final SQLParser parser = new SQLParser("select * from areacodes a");
         final Planner planner = new Planner(conn);
         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
