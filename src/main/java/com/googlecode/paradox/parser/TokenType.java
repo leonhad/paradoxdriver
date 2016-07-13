@@ -250,7 +250,7 @@ public enum TokenType {
     /**
      * Creates a new instance.
      */
-    private TokenType() {
+    TokenType() {
         value = name();
     }
 
@@ -260,7 +260,7 @@ public enum TokenType {
      * @param value
      *            the token value.
      */
-    private TokenType(final String value) {
+    TokenType(final String value) {
         this.value = value;
     }
 

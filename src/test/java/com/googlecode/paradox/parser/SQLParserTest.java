@@ -157,11 +157,11 @@ public class SQLParserTest {
 
         Assert.assertEquals(2, select.getFields().size());
         Assert.assertEquals("CODIGO", select.getFields().get(0).getName());
-        Assert.assertEquals("código", ((FieldNode) select.getFields().get(0)).getAlias());
+        Assert.assertEquals("código", select.getFields().get(0).getAlias());
 
         Assert.assertEquals("estado", ((FieldNode) select.getFields().get(1)).getTableName());
         Assert.assertEquals("NOME", select.getFields().get(1).getName());
-        Assert.assertEquals("nome", ((FieldNode) select.getFields().get(1)).getAlias());
+        Assert.assertEquals("nome", select.getFields().get(1).getAlias());
 
         Assert.assertEquals(2, select.getTables().size());
         Assert.assertEquals("cliente", select.getTables().get(0).getName());

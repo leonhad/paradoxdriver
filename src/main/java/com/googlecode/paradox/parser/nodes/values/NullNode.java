@@ -23,10 +23,10 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
  * Stores the NULL node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public class NullNode extends SQLNode {
 
@@ -36,5 +36,4 @@ public class NullNode extends SQLNode {
     public NullNode() {
         super("NULL");
     }
-
 }

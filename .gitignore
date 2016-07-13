@@ -4,4 +4,8 @@
 
 .settings/
 
+*.iml
+
+.idea
+
 /target/

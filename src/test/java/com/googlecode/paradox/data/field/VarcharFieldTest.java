@@ -59,7 +59,7 @@ public class VarcharFieldTest {
         final ParadoxTable table = new ParadoxTable(null, null);
         table.setCharset(Charset.forName("ISO-8859-1"));
         final ParadoxField paradoxField = new ParadoxField();
-        paradoxField.setType((byte) ParadoxFieldType.VARCHAR.getType());
+        paradoxField.setType(ParadoxFieldType.VARCHAR.getType());
         paradoxField.setSize((short) "test".length());
         final VarcharField field = new VarcharField();
         final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));

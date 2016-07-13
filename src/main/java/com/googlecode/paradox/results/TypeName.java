@@ -112,7 +112,7 @@ public enum TypeName {
      * @param name
      *            the type name.
      */
-    private TypeName(final int sqlType, final String name, final String className) {
+    TypeName(final int sqlType, final String name, final String className) {
         this.sqlType = sqlType;
         this.name = name;
         this.className = className;

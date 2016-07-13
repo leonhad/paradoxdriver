@@ -116,7 +116,7 @@ public enum SQLStates {
      * @param value
      *            the constant code.
      */
-    private SQLStates(final String value) {
+    SQLStates(final String value) {
         this.value = value;
     }
 
