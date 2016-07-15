@@ -23,6 +23,7 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.utils.TestUtil;
 import org.junit.*;
 
 import java.sql.DatabaseMetaData;
@@ -73,6 +74,16 @@ public class ViewDataTest {
     @Before
     public void connect() throws Exception {
         conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+    }
+
+    /**
+     * Test for class sanity.
+     *
+     * @throws Exception in case of errors.
+     */
+    @Test
+    public void testSanity() throws Exception {
+        TestUtil.assertUtilityClassWellDefined(ViewData.class);
     }
 
     /**
