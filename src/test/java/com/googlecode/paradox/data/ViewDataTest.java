@@ -19,25 +19,22 @@
  */
 package com.googlecode.paradox.data;
 
-import java.sql.DriverManager;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
+import org.junit.*;
+
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 
 /**
  * Unit test for {@link ViewData}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class ViewDataTest {
 
@@ -48,9 +45,8 @@ public class ViewDataTest {
 
     /**
      * Register the driver.
-     * 
-     * @throws ClassNotFoundException
-     *             in case of connection errors.
+     *
+     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
     public static void setUp() throws ClassNotFoundException {
@@ -59,9 +55,8 @@ public class ViewDataTest {
 
     /**
      * Used to close the test connection.
-     * 
-     * @throws Exception
-     *             in case closing of errors.
+     *
+     * @throws Exception in case closing of errors.
      */
     @After
     public void closeConnection() throws Exception {
@@ -72,9 +67,8 @@ public class ViewDataTest {
 
     /**
      * Connect to test database.
-     * 
-     * @throws Exception
-     *             in case of connection errors.
+     *
+     * @throws Exception in case of connection errors.
      */
     @Before
     public void connect() throws Exception {
@@ -83,9 +77,8 @@ public class ViewDataTest {
 
     /**
      * Test for list views.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testListViews() throws Exception {
@@ -94,9 +87,8 @@ public class ViewDataTest {
 
     /**
      * Test for parse view.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testParseExpression() throws Exception {
@@ -108,5 +100,23 @@ public class ViewDataTest {
         Assert.assertEquals("CUSTOTOTAL", field.getAlias());
 
         Assert.assertTrue(field.isChecked());
+    }
+
+    /**
+     * Test for view file reading.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testViewFileReading() throws Exception {
+        final DatabaseMetaData meta = conn.getMetaData();
+
+        try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
+            // This view have 3 fields.
+            Assert.assertTrue(rs.next());
+            Assert.assertTrue(rs.next());
+            Assert.assertTrue(rs.next());
+            Assert.assertFalse(rs.next());
+        }
     }
 }

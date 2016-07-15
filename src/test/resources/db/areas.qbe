@@ -1,0 +1,11 @@
+Query
+ANSWER: :PRIV:ANSWER.DB
+
+FIELDORDER: areacodes.db->"AC", areacodes.db->"State", areacodes.db->"Cities"
+
+SORT: areacodes.db->"AC", areacodes.db->"State", areacodes.db->"Cities"
+
+areacodes.db | AC    | State | Cities |
+             | Check | Check | Check  |
+
+EndQuery

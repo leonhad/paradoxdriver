@@ -19,31 +19,21 @@
  */
 package com.googlecode.paradox.integration;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
+import org.junit.*;
+import org.junit.experimental.categories.Category;
+
+import java.sql.*;
+import java.util.Arrays;
 
 /**
  * Generic integration tests for Paradox Driver.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 @Category(IntegrationTest.class)
 public class MainTest {
@@ -60,9 +50,8 @@ public class MainTest {
 
     /**
      * Register the database driver.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
@@ -71,9 +60,8 @@ public class MainTest {
 
     /**
      * Close the test conneciton.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -84,9 +72,8 @@ public class MainTest {
 
     /**
      * Connect to the test database.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Before
     public void connect() throws Exception {
@@ -95,9 +82,8 @@ public class MainTest {
 
     /**
      * Test for the catalog metadata.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testCatalog() throws Exception {
@@ -120,9 +106,8 @@ public class MainTest {
 
     /**
      * Test for the index info metadata.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testIndexInfo() throws Exception {
@@ -167,9 +152,8 @@ public class MainTest {
 
     /**
      * Test for primary key metadata.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testPrimaryKey() throws Exception {
@@ -196,9 +180,8 @@ public class MainTest {
 
     /**
      * Test for {@link ResultSet} execution.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSet() throws Exception {
@@ -226,9 +209,8 @@ public class MainTest {
 
     /**
      * Test for {@link ResultSet} with multiple values.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSetMultipleValues() throws Exception {
@@ -261,9 +243,8 @@ public class MainTest {
 
     /**
      * Test {@link ResultSet} with one column.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSetOneColumn() throws Exception {
@@ -298,9 +279,8 @@ public class MainTest {
 
     /**
      * Test {@link ResultSet} with two columns.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSetTwoColumn() throws Exception {
@@ -341,9 +321,8 @@ public class MainTest {
 
     /**
      * Test for unwrap impossible.
-     * 
-     * @throws Exception
-     *             if test succeed.
+     *
+     * @throws Exception if test succeed.
      */
     @Test(expected = SQLException.class)
     public void testUnwrapImpossive() throws Exception {
@@ -352,9 +331,8 @@ public class MainTest {
 
     /**
      * Test for a valid conneciton.
-     * 
-     * @throws SQLException
-     *             in case of failures.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testValidConnection() throws SQLException {
@@ -363,37 +341,57 @@ public class MainTest {
     }
 
     /**
-     * Test for view coluns metadata.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     * Test for view columns metadata.
+     *
+     * @throws Exception in case of failures.
      */
     @Test
     public void testViewColumns() throws Exception {
-        ResultSet rs = null;
+        final DatabaseMetaData meta = conn.getMetaData();
 
-        try {
-            final DatabaseMetaData meta = conn.getMetaData();
+        try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
 
-            rs = meta.getColumns("db", "APP", "CONTASAPAGAR.QBE", "%");
-            while (rs.next()) {
-                /*
-                 * FIXME read columns. System.out.println("TABLE_CAT: " + rs.getString("TABLE_CAT"));
-                 * System.out.println( "TABLE_SCHEM: " + rs.getString("TABLE_SCHEM")); System.out.println("TABLE_NAME: "
-                 * + rs.getString("TABLE_NAME")); System.out.println( "NON_UNIQUE: " + rs.getString("NON_UNIQUE"));
-                 * System.out.println( "INDEX_QUALIFIER: " + rs.getString("INDEX_QUALIFIER")); System.out.println(
-                 * "INDEX_NAME: " + rs.getString("INDEX_NAME")); System.out.println("TYPE: " + rs.getString("TYPE"));
-                 * System.out.println( "ORDINAL_POSITION: " + rs.getString("ORDINAL_POSITION")); System.out.println(
-                 * "COLUMN_NAME: " + rs.getString("COLUMN_NAME")); System.out.println("ASC_OR_DESC: " +
-                 * rs.getString("ASC_OR_DESC")); System.out.println( "CARDINALITY: " + rs.getString("CARDINALITY"));
-                 * System.out.println("PAGES: " + rs.getString("PAGES")); System.out.println("FILTER_CONDITION: " +
-                 * rs.getString("FILTER_CONDITION"));
-                 */
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
+            // Test for AC field.
+            Assert.assertTrue(rs.next());
+            Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table name.", "areas.qbe", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for column name.", "AC", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
+            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
+            Assert.assertEquals("Testing for column size.", 5, rs.getInt("COLUMN_SIZE"));
+            Assert.assertEquals("Testing for nullable.", null, rs.getString("NULLABLE"));
+            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
+            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
+
+            // Test for State field.
+            Assert.assertTrue(rs.next());
+            Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table name.", "areas.qbe", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for column name.", "State", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
+            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
+            Assert.assertEquals("Testing for column size.", 3, rs.getInt("COLUMN_SIZE"));
+            Assert.assertEquals("Testing for nullable.", null, rs.getString("NULLABLE"));
+            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
+            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
+
+            // Test for Cities field.
+            Assert.assertTrue(rs.next());
+            Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table name.", "areas.qbe", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for column name.", "Cities", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
+            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
+            Assert.assertEquals("Testing for column size.", 157, rs.getInt("COLUMN_SIZE"));
+            Assert.assertEquals("Testing for nullable.", null, rs.getString("NULLABLE"));
+            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
+            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
+
+            // No more results.
+            Assert.assertFalse(rs.next());
         }
     }
 }
