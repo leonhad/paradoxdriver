@@ -1,7 +1,7 @@
 /*
- * BetweenNodeTest.java
+ * NotEqualsNodeTest.java
  *
- * 06/29/2009
+ * 07/17/2009
  * Copyright (C) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify
@@ -11,11 +11,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.parser.nodes.comparisons;
 
@@ -23,34 +23,23 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 import org.junit.Assert;
 import org.junit.Test;
 
+
 /**
- * Unit test for {@link BetweenNode} class.
+ * Unit test for {@link NotEqualsNode} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
-public class BetweenNodeTest {
-    
-    /**
-     * Test the field node.
-     */
-    @Test
-    public void testField() {
-        final FieldNode field = new FieldNode("table", "field", "alias");
-        final BetweenNode node = new BetweenNode(field, null, null);
-        Assert.assertEquals(field, node.getField());
-    }
-
+public class NotEqualsNodeTest {
     /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final FieldNode field = new FieldNode("table", "field", "field");
         final FieldNode first = new FieldNode("table", "first", "first");
         final FieldNode last = new FieldNode("table", "last", "last");
-        final BetweenNode node = new BetweenNode(field, first, last);
-        Assert.assertEquals("table.field BETWEEN table.first AND table.last", node.toString());
+        final NotEqualsNode node = new NotEqualsNode(first, last);
+        Assert.assertEquals("table.first <> table.last", node.toString());
     }
 }
