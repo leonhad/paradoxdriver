@@ -350,7 +350,6 @@ public class MainTest {
         final DatabaseMetaData meta = conn.getMetaData();
 
         try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
-
             // Test for AC field.
             Assert.assertTrue(rs.next());
             Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));

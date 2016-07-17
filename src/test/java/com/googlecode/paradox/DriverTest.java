@@ -32,10 +32,10 @@ import com.googlecode.paradox.utils.Constants;
 
 /**
  * Unit test for {@link Driver}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class DriverTest {
 
@@ -50,9 +50,8 @@ public class DriverTest {
 
     /**
      * Test for invalid connection.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testInvalidConnection() throws SQLException {
@@ -62,9 +61,8 @@ public class DriverTest {
 
     /**
      * Test an invalid URL.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testInvalidURL() throws SQLException {
@@ -74,9 +72,8 @@ public class DriverTest {
 
     /**
      * Test for driver logger.
-     * 
-     * @throws SQLFeatureNotSupportedException
-     *             in case of errors.
+     *
+     * @throws SQLFeatureNotSupportedException in case of errors.
      */
     @Test
     public void testLogger() throws SQLFeatureNotSupportedException {
@@ -86,9 +83,8 @@ public class DriverTest {
 
     /**
      * Test for the Major Version.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testMajorVersion() throws SQLException {
@@ -98,9 +94,8 @@ public class DriverTest {
 
     /**
      * Test for the Minor Version.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testMinorVersion() throws SQLException {
@@ -110,9 +105,8 @@ public class DriverTest {
 
     /**
      * Test for null properties.
-     * 
-     * @throws SQLException
-     *             if there is no errors.
+     *
+     * @throws SQLException if there is no errors.
      */
     public void testNullProperty() throws SQLException {
         final Driver driver = new Driver();
@@ -121,9 +115,8 @@ public class DriverTest {
 
     /**
      * Test for null property info.
-     * 
-     * @throws SQLException
-     *             if there is no errors.
+     *
+     * @throws SQLException if there is no errors.
      */
     public void testNullPropertyInfo() throws SQLException {
         final Driver driver = new Driver();
@@ -132,9 +125,8 @@ public class DriverTest {
 
     /**
      * Test for property info.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testPropertyInfo() throws SQLException {
@@ -147,9 +139,8 @@ public class DriverTest {
 
     /**
      * Test for properties with invalid URL.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test(expected = NullPointerException.class)
     public void testPropertyInfoInvalidURL() throws SQLException {
@@ -159,9 +150,8 @@ public class DriverTest {
 
     /**
      * Test for a valid connection.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testValidConnection() throws SQLException {
@@ -173,9 +163,8 @@ public class DriverTest {
 
     /**
      * Test a valid URL.
-     * 
-     * @throws SQLException
-     *             in case of errors.
+     *
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testValidURL() throws SQLException {
