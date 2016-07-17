@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.results;
 
+import com.googlecode.paradox.utils.SQLStates;
+
 import java.sql.SQLException;
 import java.sql.Types;
-
-import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * Stores the Paradox field types and SQL Types.
@@ -132,7 +132,7 @@ public enum ParadoxFieldType {
      * @param sqlType
      *            the SQL type.
      */
-    ParadoxFieldType(final int type, final int sqlType) {
+    private ParadoxFieldType(final int type, final int sqlType) {
         this.type = (byte) type;
         this.sqlType = sqlType;
     }
