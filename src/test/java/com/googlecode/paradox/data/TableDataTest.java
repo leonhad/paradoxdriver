@@ -19,30 +19,27 @@
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.integration.MainTest;
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.utils.TestUtil;
+import org.junit.*;
+
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.integration.MainTest;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
-
 /**
  * Unit test for {@link TableData}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class TableDataTest {
 
@@ -53,9 +50,9 @@ public class TableDataTest {
 
     /**
      * Register the driver.
-     * 
+     *
      * @throws ClassNotFoundException
-     *             in case of connection errors.
+     *         in case of connection errors.
      */
     @BeforeClass
     public static void setUp() throws ClassNotFoundException {
@@ -64,9 +61,9 @@ public class TableDataTest {
 
     /**
      * Used to close the test connection.
-     * 
+     *
      * @throws Exception
-     *             in case closing of errors.
+     *         in case closing of errors.
      */
     @After
     public void closeConnection() throws Exception {
@@ -77,9 +74,9 @@ public class TableDataTest {
 
     /**
      * Connect to test database.
-     * 
+     *
      * @throws Exception
-     *             in case of connection errors.
+     *         in case of connection errors.
      */
     @Before
     public void connect() throws Exception {
@@ -87,10 +84,28 @@ public class TableDataTest {
     }
 
     /**
+     * Test for class sanity.
+     *
+     * @throws NoSuchMethodException
+     *         in case of errors.
+     * @throws InstantiationException
+     *         in case of errors.
+     * @throws IllegalAccessException
+     *         in case of errors.
+     * @throws InvocationTargetException
+     *         in case of errors.
+     */
+    @Test
+    public void testSanity() throws NoSuchMethodException, InstantiationException, IllegalAccessException,
+            InvocationTargetException {
+        TestUtil.assertUtilityClassWellDefined(TableData.class);
+    }
+
+    /**
      * Test for invalid table
-     * 
+     *
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testInvalidTable() throws SQLException {
@@ -99,9 +114,9 @@ public class TableDataTest {
 
     /**
      * Test for table area codes.
-     * 
+     *
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testLoadAreaCodes() throws SQLException {
@@ -115,9 +130,9 @@ public class TableDataTest {
 
     /**
      * Test for contact table.
-     * 
+     *
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testLoadContacts() throws SQLException {
@@ -129,9 +144,9 @@ public class TableDataTest {
 
     /**
      * Test for customer table.
-     * 
+     *
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testLoadCustomer() throws SQLException {
@@ -143,9 +158,9 @@ public class TableDataTest {
 
     /**
      * Test for Hercules table.
-     * 
+     *
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testLoadHercules() throws SQLException {
@@ -155,9 +170,9 @@ public class TableDataTest {
 
     /**
      * Test for orders table.
-     * 
+     *
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testLoadOrders() throws SQLException {
@@ -169,9 +184,9 @@ public class TableDataTest {
 
     /**
      * Test for server table.
-     * 
+     *
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testLoadServer() throws SQLException {
