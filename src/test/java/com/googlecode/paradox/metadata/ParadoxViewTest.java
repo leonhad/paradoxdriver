@@ -19,19 +19,20 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * Unit test for {@link ParadoxView} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class ParadoxViewTest {
-    
+
     /**
      * Test for field order.
      */
@@ -53,7 +54,7 @@ public class ParadoxViewTest {
         view.setFieldsSort(list);
         Assert.assertEquals(list, view.getFieldsSort());
     }
-    
+
     /**
      * Test for fields.
      */
@@ -63,15 +64,5 @@ public class ParadoxViewTest {
         final ParadoxView view = new ParadoxView(null, null);
         view.setFields(list);
         Assert.assertEquals(list, view.getFields());
-    }
-
-    /**
-     * Test for valid.
-     */
-    @Test
-    public void testValid() {
-        final ParadoxView view = new ParadoxView(null, null);
-        view.setValid(true);
-        Assert.assertTrue(view.isValid());
     }
 }

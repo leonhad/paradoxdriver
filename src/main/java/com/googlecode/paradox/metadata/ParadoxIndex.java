@@ -19,12 +19,12 @@
  */
 package com.googlecode.paradox.metadata;
 
-import static java.nio.charset.Charset.forName;
-
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.Charset.forName;
 
 /**
  * Stores index data.
@@ -74,6 +74,16 @@ public class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
+     * Sets the charset.
+     *
+     * @param charset
+     *            the charset to set.
+     */
+    public void setCharset(final Charset charset) {
+        this.charset = charset;
+    }
+
+    /**
      * Gets the file orders.
      *
      * @return the file orders.
@@ -83,8 +93,18 @@ public class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
+     * Sets the fields order.
+     *
+     * @param fieldsOrder
+     *            the fields order to set.
+     */
+    public void setFieldsOrder(final List<Short> fieldsOrder) {
+        this.fieldsOrder = fieldsOrder;
+    }
+
+    /**
      * Gets the index order.
-     * 
+     *
      * @return the index order.
      */
     public String getOrder() {
@@ -96,7 +116,7 @@ public class ParadoxIndex extends ParadoxDataFile {
 
     /**
      * Gets the parent name.
-     * 
+     *
      * @return the parent name.
      */
     public String getParentName() {
@@ -104,8 +124,18 @@ public class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
+     * Sets the parent name.
+     *
+     * @param parentName
+     *            the parent name to set.
+     */
+    public void setParentName(final String parentName) {
+        this.parentName = parentName;
+    }
+
+    /**
      * Gets the primary key.
-     * 
+     *
      * @return the primary key.
      */
     public List<ParadoxField> getPrimaryKeys() {
@@ -118,59 +148,11 @@ public class ParadoxIndex extends ParadoxDataFile {
 
     /**
      * Gets the sorter order id.
-     * 
+     *
      * @return the sorter order id.
      */
     public String getSortOrderID() {
         return sortOrderID;
-    }
-
-    /**
-     * If this table is valid.
-     *
-     * @return true if this table is valid.
-     */
-    @Override
-    public boolean isValid() {
-        switch (type) {
-        case 3:
-        case 5:
-        case 6:
-        case 8:
-            return true;
-        default:
-            return false;
-        }
-    }
-
-    /**
-     * Sets the charset.
-     * 
-     * @param charset
-     *            the charset to set.
-     */
-    public void setCharset(final Charset charset) {
-        this.charset = charset;
-    }
-
-    /**
-     * Sets the fields order.
-     * 
-     * @param fieldsOrder
-     *            the fields order to set.
-     */
-    public void setFieldsOrder(final List<Short> fieldsOrder) {
-        this.fieldsOrder = fieldsOrder;
-    }
-
-    /**
-     * Sets the parent name.
-     * 
-     * @param parentName
-     *            the parent name to set.
-     */
-    public void setParentName(final String parentName) {
-        this.parentName = parentName;
     }
 
     /**

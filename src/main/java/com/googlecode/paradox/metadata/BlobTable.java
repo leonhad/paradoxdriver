@@ -173,14 +173,6 @@ public class BlobTable extends ParadoxDataFile {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isValid() {
-        return false;
-    }
-
-    /**
      * Open this LOB to reading.
      *
      * @throws SQLException

@@ -19,12 +19,11 @@
  */
 package com.googlecode.paradox.data;
 
-import static java.nio.ByteBuffer.allocate;
-import static java.nio.charset.Charset.forName;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,15 +34,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.ByteBuffer.allocate;
+import static java.nio.charset.Charset.forName;
+
 /**
  * Reads index data files.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public final class IndexData {
-    
+
     /**
      * Utility class.
      */
@@ -55,12 +57,12 @@ public final class IndexData {
      * List the indexes in a database file.
      *
      * @param conn
-     *            the Paradox connection.
+     *         the Paradox connection.
      * @param tableName
-     *            the table name.
+     *         the table name.
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException
-     *             in case of reading failures.
+     *         in case of reading failures.
      */
     public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
             throws SQLException {
@@ -75,9 +77,7 @@ public final class IndexData {
                 } catch (final IOException ex) {
                     throw new SQLException("Error loading Paradox index.", ex);
                 }
-                if (index.isValid()) {
-                    indexes.add(index);
-                }
+                indexes.add(index);
             }
         }
         return indexes;
@@ -87,12 +87,12 @@ public final class IndexData {
      * Loads the database file header.
      *
      * @param file
-     *            the database {@link File}.
+     *         the database {@link File}.
      * @return the {@link ParadoxIndex} reference.
      * @throws IOException
-     *             if case of I/O exceptions.
+     *         if case of I/O exceptions.
      * @throws SQLException
-     *             in case of database errors.
+     *         in case of database errors.
      */
     private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
         final ByteBuffer buffer = allocate(2048);
@@ -144,11 +144,11 @@ public final class IndexData {
      * Parse fields in index header.
      *
      * @param buffer
-     *            the buffer to parse.
+     *         the buffer to parse.
      * @param index
-     *            the paradox index.
+     *         the paradox index.
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
     private static void parseFields(final ByteBuffer buffer, final ParadoxIndex index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
@@ -195,9 +195,9 @@ public final class IndexData {
      * Parse and handle the version ID.
      *
      * @param buffer
-     *            the buffer to parse.
+     *         the buffer to parse.
      * @param index
-     *            the paradox index.
+     *         the paradox index.
      */
     private static void parseVersionID(final ByteBuffer buffer, final ParadoxIndex index) {
         if (index.getVersionId() > 4) {
@@ -215,9 +215,9 @@ public final class IndexData {
      * Parse the sort order ID.
      *
      * @param buffer
-     *            the buffer to parse.
+     *         the buffer to parse.
      * @param index
-     *            the paradox index.
+     *         the paradox index.
      */
     private static void parseSortID(final ByteBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer sortOrderID = allocate(26);
@@ -234,11 +234,11 @@ public final class IndexData {
 
     /**
      * Parse the index names.
-     * 
+     *
      * @param buffer
-     *            the buffer to parse.
+     *         the buffer to parse.
      * @param index
-     *            the paradox index.
+     *         the paradox index.
      */
     private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer name = allocate(26);

@@ -26,6 +26,7 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,30 +43,30 @@ import java.util.List;
  * Utility class for loading table files.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public final class TableData {
-    
+
     /**
      * Utility class.
      */
     private TableData() {
         // Utility class.
     }
-    
+
     /**
      * Fix the buffer position based on file version ID.
      *
      * @param table
-     *            the Paradox table.
+     *         the Paradox table.
      * @param buffer
-     *            the buffer to fix.
+     *         the buffer to fix.
      * @param fieldsSize
-     *            the field list.
+     *         the field list.
      */
     private static void fixTablePositionByVersion(final ParadoxTable table, final ByteBuffer buffer,
-            final int fieldsSize) {
+                                                  final int fieldsSize) {
         if (table.getVersionId() > 4) {
             if (table.getVersionId() == 0xC) {
                 buffer.position(0x78 + 261 + 4 + 6 * fieldsSize);
@@ -76,15 +77,15 @@ public final class TableData {
             buffer.position(0x58 + 83 + 6 * fieldsSize);
         }
     }
-    
+
     /**
      * List all database tables.
      *
      * @param conn
-     *            the database connection.
+     *         the database connection.
      * @return all {@link ParadoxTable}.
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     public static List<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<>();
@@ -92,24 +93,22 @@ public final class TableData {
         if (fileList != null) {
             for (final File file : fileList) {
                 final ParadoxTable table = TableData.loadTableHeader(file);
-                if (table.isValid()) {
-                    tables.add(table);
-                }
+                tables.add(table);
             }
         }
         return tables;
     }
-    
+
     /**
      * Gets all tables within a pattern.
      *
      * @param conn
-     *            the database connection.
+     *         the database connection.
      * @param pattern
-     *            the pattern.
+     *         the pattern.
      * @return the tables filtered.
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
             throws SQLException {
@@ -118,34 +117,32 @@ public final class TableData {
         if (fileList != null) {
             for (final File file : fileList) {
                 final ParadoxTable table = TableData.loadTableHeader(file);
-                if (table.isValid()) {
-                    tables.add(table);
-                }
+                tables.add(table);
             }
         }
         return tables;
     }
-    
+
     /**
      * Load the table data from file.
      *
      * @param table
-     *            the table to read.
+     *         the table to read.
      * @param fields
-     *            the fields to read.
+     *         the fields to read.
      * @return the row values.
      * @throws SQLException
-     *             in case of failures.
+     *         in case of failures.
      */
     public static List<List<FieldValue>> loadData(final ParadoxTable table, final Collection<ParadoxField> fields)
             throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<>();
-        
+
         final int blockSize = table.getBlockSizeBytes();
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
-        
+
         try (FileInputStream fs = new FileInputStream(table.getFile()); FileChannel channel = fs.getChannel()) {
             if (table.getUsedBlocks() == 0) {
                 return ret;
@@ -154,20 +151,20 @@ public final class TableData {
             do {
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
                 channel.position(headerSize + (nextBlock - 1) * blockSize);
-                
+
                 buffer.clear();
                 channel.read(buffer);
                 buffer.flip();
-                
+
                 nextBlock = buffer.getShort();
                 // The block number.
                 buffer.getShort();
-                
+
                 final int addDataSize = buffer.getShort() & 0xFFFF;
                 final int rowsInBlock = addDataSize / recordSize + 1;
-                
+
                 buffer.order(ByteOrder.BIG_ENDIAN);
-                
+
                 for (int loop = 0; loop < rowsInBlock; loop++) {
                     ret.add(readRow(table, fields, buffer));
                 }
@@ -177,25 +174,25 @@ public final class TableData {
         }
         return ret;
     }
-    
+
     /**
      * Gets the table header from a file.
      *
      * @param file
-     *            the {@link File} to read.
+     *         the {@link File} to read.
      * @return the {@link ParadoxTable}.
      * @throws SQLException
-     *             in case of reading errors.
+     *         in case of reading errors.
      */
     private static ParadoxTable loadTableHeader(final File file) throws SQLException {
         final ParadoxTable table = new ParadoxTable(file, file.getName());
         ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        
+
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
-            
+
             table.setRecordSize(buffer.getShort());
             table.setHeaderSize(buffer.getShort());
             table.setType(buffer.get());
@@ -205,52 +202,52 @@ public final class TableData {
             table.setTotalBlocks(buffer.getShort());
             table.setFirstBlock(buffer.getShort());
             table.setLastBlock(buffer.getShort());
-            
+
             buffer.position(0x21);
             table.setFieldCount(buffer.getShort());
             table.setPrimaryFieldCount(buffer.getShort());
-            
+
             buffer.position(0x38);
             table.setWriteProtected(buffer.get());
             table.setVersionId(buffer.get());
-            
+
             buffer.position(0x49);
             table.setAutoIncrementValue(buffer.getInt());
             table.setFirstFreeBlock(buffer.getShort());
-            
+
             buffer.position(0x55);
             table.setReferentialIntegrity(buffer.get());
-            
+
             parseTableVersionID(table, buffer);
-            
+
             final List<ParadoxField> fields = parseTableFields(table, buffer);
-            
+
             // Restart the buffer with all table header
             channel.position(0);
             buffer = ByteBuffer.allocate(table.getHeaderSize());
             channel.read(buffer);
-            
+
             fixTablePositionByVersion(table, buffer, fields.size());
-            
+
             parseTableFieldsName(table, buffer, fields);
-            
+
             parseTableFieldsOrder(table, buffer);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
         return table;
     }
-    
+
     /**
      * Read fields attributes.
      *
      * @param table
-     *            the Paradox table.
+     *         the Paradox table.
      * @param buffer
-     *            the buffer to read of.
+     *         the buffer to read of.
      * @return the Paradox field list.
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
     private static List<ParadoxField> parseTableFields(final ParadoxTable table, final ByteBuffer buffer)
             throws SQLException {
@@ -265,22 +262,22 @@ public final class TableData {
         }
         return fields;
     }
-    
+
     /**
      * Parse the Paradox fields name.
      *
      * @param table
-     *            the Paradox table.
+     *         the Paradox table.
      * @param buffer
-     *            the buffer to read of.
+     *         the buffer to read of.
      * @param fields
-     *            the field list.
+     *         the field list.
      */
     private static void parseTableFieldsName(final ParadoxTable table, final ByteBuffer buffer,
-            final List<ParadoxField> fields) {
+                                             final List<ParadoxField> fields) {
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
             final ByteBuffer name = ByteBuffer.allocate(261);
-            
+
             while (true) {
                 final byte c = buffer.get();
                 if (c == 0) {
@@ -293,14 +290,14 @@ public final class TableData {
         }
         table.setFields(fields);
     }
-    
+
     /**
      * Parse the fields order.
      *
      * @param table
-     *            the Paradox table.
+     *         the Paradox table.
      * @param buffer
-     *            the buffer to read of.
+     *         the buffer to read of.
      */
     private static void parseTableFieldsOrder(final ParadoxTable table, final ByteBuffer buffer) {
         final List<Short> fieldsOrder = new ArrayList<>();
@@ -309,21 +306,21 @@ public final class TableData {
         }
         table.setFieldsOrder(fieldsOrder);
     }
-    
+
     /**
      * Parse the table version ID.
      *
      * @param table
-     *            the Paradox table.
+     *         the Paradox table.
      * @param buffer
-     *            the buffer to read of.
+     *         the buffer to read of.
      */
     private static void parseTableVersionID(final ParadoxTable table, final ByteBuffer buffer) {
         if (table.getVersionId() > 4) {
             // Set the charset
             buffer.position(0x6A);
             table.setCharset(Charset.forName("cp" + buffer.getShort()));
-            
+
             buffer.position(0x78);
         } else {
             buffer.position(0x58);
@@ -334,22 +331,22 @@ public final class TableData {
      * Read a entire row.
      *
      * @param table
-     *            the table to read of.
+     *         the table to read of.
      * @param fields
-     *            the fields to read.
+     *         the fields to read.
      * @param buffer
-     *            the buffer to read of.
+     *         the buffer to read of.
      * @return the row.
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
     private static List<FieldValue> readRow(final ParadoxTable table, final Collection<ParadoxField> fields,
-            final ByteBuffer buffer) throws SQLException {
+                                            final ByteBuffer buffer) throws SQLException {
         final List<FieldValue> row = new ArrayList<>();
 
         for (final ParadoxField field : table.getFields()) {
             final FieldValue fieldValue = FieldFactory.parse(table, buffer, field);
-            
+
             // Field filter
             if (fields.contains(field) && fieldValue != null) {
                 fieldValue.setField(field);

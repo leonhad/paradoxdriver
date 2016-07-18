@@ -40,11 +40,6 @@ public class ParadoxView extends ParadoxDataFile {
      * Stores the field list sort.
      */
     private List<ParadoxField> fieldsSort;
-
-    /**
-     * Stores if this view is valid.
-     */
-    private boolean valid = false;
     
     /**
      * Creates a new instance.
@@ -68,23 +63,6 @@ public class ParadoxView extends ParadoxDataFile {
     }
     
     /**
-     * Gets the fields sort.
-     *
-     * @return the fieldsSort the fields sort.
-     */
-    public List<ParadoxField> getFieldsSort() {
-        return fieldsSort;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isValid() {
-        return valid;
-    }
-    
-    /**
      * Sets the fields order.
      *
      * @param fieldsOrder
@@ -92,6 +70,15 @@ public class ParadoxView extends ParadoxDataFile {
      */
     public void setFieldsOrder(final List<ParadoxField> fieldsOrder) {
         this.fieldsOrder = fieldsOrder;
+    }
+
+    /**
+     * Gets the fields sort.
+     *
+     * @return the fieldsSort the fields sort.
+     */
+    public List<ParadoxField> getFieldsSort() {
+        return fieldsSort;
     }
     
     /**
@@ -102,15 +89,5 @@ public class ParadoxView extends ParadoxDataFile {
      */
     public void setFieldsSort(final List<ParadoxField> fieldsSort) {
         this.fieldsSort = fieldsSort;
-    }
-    
-    /**
-     * Sets if this view is valid.
-     *
-     * @param valid
-     *            the valid to set.
-     */
-    public void setValid(final boolean valid) {
-        this.valid = valid;
     }
 }

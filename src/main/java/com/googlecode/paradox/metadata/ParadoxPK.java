@@ -61,28 +61,20 @@ public class ParadoxPK extends ParadoxDataFile {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isValid() {
-        return true;
-    }
-
-    /**
      * Sets the index field number.
-     * 
+     *
      * @param indexFieldNumber
      *            the index field number.
      */
     public void setIndexFieldNumber(final int indexFieldNumber) {
         this.indexFieldNumber = indexFieldNumber;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
     }
 }

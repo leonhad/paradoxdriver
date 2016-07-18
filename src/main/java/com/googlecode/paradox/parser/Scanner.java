@@ -19,11 +19,11 @@
  */
 package com.googlecode.paradox.parser;
 
+import com.googlecode.paradox.utils.SQLStates;
+
 import java.nio.CharBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import com.googlecode.paradox.utils.SQLStates;
 
 /**
  * SQL Scanner (read tokens from SQL String).
@@ -198,9 +198,9 @@ public class Scanner {
         while (hasNext()) {
             final char c = nextChar();
 
-            // ignore separators
+            // Ignore separators.
             if (isSeparator(c)) {
-                continue;
+                // Go to next char.
             } else if (isSpecial(c)) {
                 value.append(c);
                 return false;

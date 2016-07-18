@@ -19,12 +19,12 @@
  */
 package com.googlecode.paradox.metadata;
 
-import static java.nio.charset.Charset.forName;
-
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.Charset.forName;
 
 /**
  * Stores a table data file.
@@ -92,36 +92,6 @@ public class ParadoxTable extends ParadoxDataFile {
     }
 
     /**
-     * @return the fieldsOrder.
-     */
-    public List<Short> getFieldsOrder() {
-        return fieldsOrder;
-    }
-
-    /**
-     * Gets the primary keys list.
-     * 
-     * @return the primary keys list.
-     */
-    public List<ParadoxField> getPrimaryKeys() {
-        final ArrayList<ParadoxField> ret = new ArrayList<>();
-        for (int loop = 0; loop < primaryFieldCount; loop++) {
-            ret.add(fields.get(loop));
-        }
-        return ret;
-    }
-
-    /**
-     * If this table is valid.
-     *
-     * @return true if this table is valid.
-     */
-    @Override
-    public boolean isValid() {
-        return type == 0 || type == 2;
-    }
-
-    /**
      * Sets the charset.
      *
      * @param charset
@@ -132,6 +102,13 @@ public class ParadoxTable extends ParadoxDataFile {
     }
 
     /**
+     * @return the fieldsOrder.
+     */
+    public List<Short> getFieldsOrder() {
+        return fieldsOrder;
+    }
+
+    /**
      * Sets the file order.
      *
      * @param fieldsOrder
@@ -139,6 +116,19 @@ public class ParadoxTable extends ParadoxDataFile {
      */
     public void setFieldsOrder(final List<Short> fieldsOrder) {
         this.fieldsOrder = fieldsOrder;
+    }
+
+    /**
+     * Gets the primary keys list.
+     *
+     * @return the primary keys list.
+     */
+    public List<ParadoxField> getPrimaryKeys() {
+        final ArrayList<ParadoxField> ret = new ArrayList<>();
+        for (int loop = 0; loop < primaryFieldCount; loop++) {
+            ret.add(fields.get(loop));
+        }
+        return ret;
     }
 
     /**

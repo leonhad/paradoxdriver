@@ -19,7 +19,10 @@
  */
 package com.googlecode.paradox.data;
 
-import static java.nio.ByteBuffer.allocate;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxPK;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,17 +34,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxPK;
-import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
+import static java.nio.ByteBuffer.allocate;
 
 /**
  * Reads primary key data fields.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public final class PrimaryKeyData {
 
@@ -56,12 +56,12 @@ public final class PrimaryKeyData {
      * Gets the primary keys from the database file.
      *
      * @param conn
-     *            the database connection.
+     *         the database connection.
      * @param table
-     *            the tables primary key.
+     *         the tables primary key.
      * @return the primary keys.
      * @throws SQLException
-     *             in case of load failures.
+     *         in case of load failures.
      */
     public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
         final String name = table.getName() + ".PX";
@@ -75,9 +75,7 @@ public final class PrimaryKeyData {
                 } catch (final IOException ex) {
                     throw new SQLException("Error loading Paradox tables.", ex);
                 }
-                if (key.isValid()) {
-                    return key;
-                }
+                return key;
             }
         }
         return null;
@@ -87,10 +85,10 @@ public final class PrimaryKeyData {
      * Gets all primary keys from the database.
      *
      * @param conn
-     *            the database connection.
+     *         the database connection.
      * @return a list of primary keys.
      * @throws SQLException
-     *             in case of load failures.
+     *         in case of load failures.
      */
     public static List<ParadoxPK> listPrimaryKeys(final ParadoxConnection conn) throws SQLException {
         final ArrayList<ParadoxPK> keys = new ArrayList<>();
@@ -103,9 +101,7 @@ public final class PrimaryKeyData {
                 } catch (final IOException ex) {
                     throw new SQLException("Error loading Paradox tables.", ex);
                 }
-                if (key.isValid()) {
-                    keys.add(key);
-                }
+                keys.add(key);
             }
         }
         return keys;
@@ -115,10 +111,10 @@ public final class PrimaryKeyData {
      * Gets the {@link ParadoxPK} from a PK file.
      *
      * @param file
-     *            the file to read.
+     *         the file to read.
      * @return the {@link ParadoxPK}.
      * @throws IOException
-     *             in case of I/O exceptions.
+     *         in case of I/O exceptions.
      */
     private static ParadoxPK loadPKHeader(final File file) throws IOException {
         final ByteBuffer buffer = allocate(2048);

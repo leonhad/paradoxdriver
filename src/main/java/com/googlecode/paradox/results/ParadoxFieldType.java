@@ -132,7 +132,7 @@ public enum ParadoxFieldType {
      * @param sqlType
      *            the SQL type.
      */
-    private ParadoxFieldType(final int type, final int sqlType) {
+    ParadoxFieldType(final int type, final int sqlType) {
         this.type = (byte) type;
         this.sqlType = sqlType;
     }
