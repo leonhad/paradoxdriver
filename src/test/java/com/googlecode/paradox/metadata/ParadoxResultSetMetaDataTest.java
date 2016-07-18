@@ -113,13 +113,13 @@ public class ParadoxResultSetMetaDataTest {
     }
 
     /**
-     * Test for invalid column with hight value.
+     * Test for invalid column with high value.
      *
      * @throws SQLException
      *         in case of errors.
      */
     @Test(expected = SQLException.class)
-    public void testInvalidColumnHightValue() throws SQLException {
+    public void testInvalidColumnHighValue() throws SQLException {
         ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
                 Collections.<Column>emptyList());
         metaData.getColumnName(5);
@@ -147,8 +147,7 @@ public class ParadoxResultSetMetaDataTest {
         column.setSearchable(true);
         column.setSigned(true);
         column.setScale(2);
-        List<Column> columns = Arrays.asList(column);
-        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn, columns);
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn, Arrays.asList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", TypeName.INTEGER.getClassName(), metaData.getColumnClassName(1));
         Assert.assertEquals("Testing for catalog name.", "db", metaData.getCatalogName(1));
@@ -167,10 +166,27 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertFalse("Testing for currency.", metaData.isCurrency(1));
         Assert.assertFalse("Testing for writable.", metaData.isWritable(1));
         Assert.assertFalse("Testing for definitely writable.", metaData.isDefinitelyWritable(1));
-        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
         Assert.assertTrue("Testing for read only.", metaData.isReadOnly(1));
         Assert.assertTrue("Testing for searchable.", metaData.isSearchable(1));
         Assert.assertTrue("Testing for sign.", metaData.isSigned(1));
+
+        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
+    }
+
+
+    /**
+     * Test for null column metadata.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testNullColumn() throws SQLException {
+        Column column = new Column();
+        column.setName("name");
+        column.setNullable(true);
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn, Arrays.asList(column));
+        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNullable, metaData.isNullable(1));
     }
 
     /**
