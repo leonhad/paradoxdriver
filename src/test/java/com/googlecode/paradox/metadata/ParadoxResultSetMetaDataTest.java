@@ -147,7 +147,8 @@ public class ParadoxResultSetMetaDataTest {
         column.setSearchable(true);
         column.setSigned(true);
         column.setScale(2);
-        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn, Arrays.asList(column));
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
+                Arrays.asList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", TypeName.INTEGER.getClassName(), metaData.getColumnClassName(1));
         Assert.assertEquals("Testing for catalog name.", "db", metaData.getCatalogName(1));
@@ -173,7 +174,6 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
     }
 
-
     /**
      * Test for null column metadata.
      *
@@ -185,7 +185,8 @@ public class ParadoxResultSetMetaDataTest {
         Column column = new Column();
         column.setName("name");
         column.setNullable(true);
-        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn, Arrays.asList(column));
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
+                Arrays.asList(column));
         Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNullable, metaData.isNullable(1));
     }
 
