@@ -100,16 +100,29 @@ public class ParadoxResultSetMetaDataTest {
     }
 
     /**
-     * Test for invalid column.
+     * Test for invalid column with low value.
      *
      * @throws SQLException
      *         in case of errors.
      */
     @Test(expected = SQLException.class)
-    public void testInvalidColumn() throws SQLException {
+    public void testInvalidColumnLowValue() throws SQLException {
         ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
                 Collections.<Column>emptyList());
-        metaData.getColumnName(1);
+        metaData.getColumnName(0);
+    }
+
+    /**
+     * Test for invalid column with hight value.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test(expected = SQLException.class)
+    public void testInvalidColumnHightValue() throws SQLException {
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
+                Collections.<Column>emptyList());
+        metaData.getColumnName(5);
     }
 
     /**
