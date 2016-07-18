@@ -19,14 +19,13 @@
  */
 package com.googlecode.paradox.procedures;
 
-import java.sql.DatabaseMetaData;
-import java.util.List;
-
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.procedures.math.Average;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.procedures.math.Averange;
+import java.sql.DatabaseMetaData;
+import java.util.List;
 
 /**
  * Unit test for {@link CallableProcedure}.
@@ -40,7 +39,7 @@ public class CallableProcedureTest {
     /**
      * The object to test.
      */
-    private final CallableProcedure call = new Averange();
+    private final CallableProcedure call = new Average();
 
     /**
      * Test for default field.

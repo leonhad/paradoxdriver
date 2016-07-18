@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.parser;
 
-import java.sql.SQLException;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link Scanner}.
@@ -71,7 +71,7 @@ public class ScannerTest {
      */
     @Test
     public void testHasNext() throws Exception {
-        final Scanner scanner = new Scanner("(SELECT * FROM Teste) ");
+        final Scanner scanner = new Scanner("(SELECT * FROM Test) ");
         for (int loop = 0; loop < 6; loop++) {
             Assert.assertTrue(scanner.hasNext());
             scanner.nextToken();
@@ -133,7 +133,7 @@ public class ScannerTest {
     @Test
     public void testPushBack() throws Exception {
         Token token = null;
-        final Scanner scanner = new Scanner("(SELECT * from Teste) ");
+        final Scanner scanner = new Scanner("(SELECT * from Test) ");
         while (scanner.hasNext()) {
             token = scanner.nextToken();
         }

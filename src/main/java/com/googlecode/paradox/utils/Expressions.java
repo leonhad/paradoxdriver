@@ -92,23 +92,23 @@ public final class Expressions {
      *             in case of invalid expression.
      */
     private static void acceptExpression(final String expression, final String criteria, final boolean caseSensitive) throws SQLException {
-        final char[] crit = getCharArrayWithCase(criteria, caseSensitive);
+        final char[] criterion = getCharArrayWithCase(criteria, caseSensitive);
         final char[] exp = getCharArrayWithCase(expression, caseSensitive);
         final int limit = exp.length - 1;
         int index = 0;
 
-        for (int loop = 0; loop < crit.length; loop++) {
+        for (int loop = 0; loop < criterion.length; loop++) {
             if (index > limit) {
                 throw new SQLException();
             }
-            final char c = crit[loop];
+            final char c = criterion[loop];
 
             if (c == '?') {
                 index++;
             } else if (c == '%') {
                 // Has others chars
-                if (loop + 1 < crit.length) {
-                    final char next = crit[loop + 1];
+                if (loop + 1 < criterion.length) {
+                    final char next = criterion[loop + 1];
                     index = fixIndex(exp, limit, index, next);
                     checkBounds(exp, limit, index, next);
                 } else {

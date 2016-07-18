@@ -19,20 +19,11 @@
  */
 package com.googlecode.paradox.integration;
 
-import java.sql.Clob;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import com.googlecode.paradox.ParadoxConnection;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 
-import com.googlecode.paradox.ParadoxConnection;
+import java.sql.*;
 
 /**
  * Integration test for BLOB type.
@@ -160,7 +151,7 @@ public class BlobTest {
             // String expected = "Удивительное устройство USB-флешки Kingston
             // DataTraveler";
             final String real = c.getSubString(1, (int) c.length());
-            Assert.assertEquals("Unexpect cp1251 text", expected, real);
+            Assert.assertEquals("Unexpected cp1251 text", expected, real);
 
         } finally {
             if (rs != null) {

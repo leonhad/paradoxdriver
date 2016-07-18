@@ -19,13 +19,13 @@
  */
 package com.googlecode.paradox.utils;
 
-import static com.googlecode.paradox.utils.Expressions.accept;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.junit.Test;
+import static com.googlecode.paradox.utils.Expressions.accept;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link Expressions}.
@@ -49,7 +49,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testExtra() {
-        assertFalse(accept("TESTE.QBE~", "%.QBE"));
+        assertFalse(accept("TEST.QBE~", "%.QBE"));
     }
 
     /**
@@ -65,7 +65,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testMix() {
-        assertTrue(accept("TESTE.X02", "%.X??"));
+        assertTrue(accept("TEST.X02", "%.X??"));
     }
 
     /**

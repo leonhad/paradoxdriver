@@ -19,14 +19,10 @@
  */
 package com.googlecode.paradox.procedures;
 
+import com.googlecode.paradox.procedures.math.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.googlecode.paradox.procedures.math.Averange;
-import com.googlecode.paradox.procedures.math.Count;
-import com.googlecode.paradox.procedures.math.Max;
-import com.googlecode.paradox.procedures.math.Min;
-import com.googlecode.paradox.procedures.math.Sum;
 
 /**
  * Stores the procedures in this driver.
@@ -51,7 +47,7 @@ public final class ProcedureAS {
      * Register the default procedures.
      */
     private ProcedureAS() {
-        register(new Averange());
+        register(new Average());
         register(new Count());
         register(new Max());
         register(new Min());

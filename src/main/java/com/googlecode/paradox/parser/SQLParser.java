@@ -215,7 +215,7 @@ public class SQLParser {
         } else if (token.isOperator()) {
             return parseOperators();
         } else if (token.getType() == TokenType.LPAREN) {
-            expect(TokenType.RPAREN, "Right parentesis expected");
+            expect(TokenType.RPAREN, "Right parenthesis expected");
         } else if (token.getType() == TokenType.EXISTS) {
             return parseExists();
         } else {
@@ -267,9 +267,9 @@ public class SQLParser {
      */
     private ExistsNode parseExists() throws SQLException {
         expect(TokenType.EXISTS);
-        expect(TokenType.LPAREN, "Left parentesis expected.");
+        expect(TokenType.LPAREN, "Left parenthesis expected.");
         final SelectNode select = parseSelect();
-        expect(TokenType.RPAREN, "Left parentesis expected.");
+        expect(TokenType.RPAREN, "Left parenthesis expected.");
         return new ExistsNode(select);
     }
 

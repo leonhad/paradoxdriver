@@ -19,16 +19,15 @@
  */
 package com.googlecode.paradox.data;
 
-import java.sql.DriverManager;
-
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.integration.MainTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
+import java.sql.DriverManager;
 
 /**
  * Unit test for {@link IndexData}.
@@ -87,6 +86,6 @@ public class IndexDataTest {
      */
     @Test
     public void testListIndexes() throws Exception {
-        IndexData.listIndexes(conn, "CLIENTE.db");
+        IndexData.listIndexes(conn, "Client.db");
     }
 }

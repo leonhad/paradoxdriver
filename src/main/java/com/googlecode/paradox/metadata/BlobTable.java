@@ -19,6 +19,9 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.utils.*;
+import com.googlecode.paradox.utils.filefilters.TableFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,13 +33,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import com.googlecode.paradox.utils.AllBlockCache;
-import com.googlecode.paradox.utils.ClobBlock;
-import com.googlecode.paradox.utils.IBlockCache;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.Utils;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 /**
  * Read from LOB file of PARADOX format.
@@ -282,14 +278,14 @@ public class BlobTable extends ParadoxDataFile {
      *             in case of reading errors.
      */
     private void parseSingleBlock(final List<ClobBlock> blocks, final long startBlockAddress, final byte headerType, final short blockSize) throws IOException {
-        final ByteBuffer sblockHead = ByteBuffer.allocate(6);
-        sblockHead.order(ByteOrder.LITTLE_ENDIAN);
-        sblockHead.clear();
-        channel.read(sblockHead);
-        sblockHead.flip();
-        final int blobLength = sblockHead.getInt();
+        final ByteBuffer blockHead = ByteBuffer.allocate(6);
+        blockHead.order(ByteOrder.LITTLE_ENDIAN);
+        blockHead.clear();
+        channel.read(blockHead);
+        blockHead.flip();
+        final int blobLength = blockHead.getInt();
         // Modifier.
-        sblockHead.getShort();
+        blockHead.getShort();
 
         final ByteBuffer sblockData = ByteBuffer.allocate(blobLength);
         sblockData.order(ByteOrder.LITTLE_ENDIAN);

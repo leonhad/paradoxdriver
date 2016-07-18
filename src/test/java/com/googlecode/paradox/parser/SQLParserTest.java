@@ -19,11 +19,6 @@
  */
 package com.googlecode.paradox.parser;
 
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
@@ -33,6 +28,10 @@ import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.List;
 
 /**
  * Unit test for {@link SQLParser}.
@@ -147,7 +146,7 @@ public class SQLParserTest {
      */
     @Test
     public void testTwoTable() throws Exception {
-        final SQLParser parser = new SQLParser("select CODIGO as código, estado.NOME nome FROM cliente, estado");
+        final SQLParser parser = new SQLParser("select CODE as cod, state.NAME name FROM client, state");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -156,16 +155,16 @@ public class SQLParserTest {
         final SelectNode select = (SelectNode) tree;
 
         Assert.assertEquals(2, select.getFields().size());
-        Assert.assertEquals("CODIGO", select.getFields().get(0).getName());
-        Assert.assertEquals("código", select.getFields().get(0).getAlias());
+        Assert.assertEquals("CODE", select.getFields().get(0).getName());
+        Assert.assertEquals("cod", select.getFields().get(0).getAlias());
 
-        Assert.assertEquals("estado", ((FieldNode) select.getFields().get(1)).getTableName());
-        Assert.assertEquals("NOME", select.getFields().get(1).getName());
-        Assert.assertEquals("nome", select.getFields().get(1).getAlias());
+        Assert.assertEquals("state", ((FieldNode) select.getFields().get(1)).getTableName());
+        Assert.assertEquals("NAME", select.getFields().get(1).getName());
+        Assert.assertEquals("name", select.getFields().get(1).getAlias());
 
         Assert.assertEquals(2, select.getTables().size());
-        Assert.assertEquals("cliente", select.getTables().get(0).getName());
-        Assert.assertEquals("estado", select.getTables().get(1).getName());
+        Assert.assertEquals("client", select.getTables().get(0).getName());
+        Assert.assertEquals("state", select.getTables().get(1).getName());
     }
 
     /**

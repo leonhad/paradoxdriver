@@ -1,5 +1,5 @@
 /*
- * Averange.java
+ * Average.java
  *
  * 03/12/2009
  * Copyright (C) 2009 Leonardo Alves da Costa
@@ -22,20 +22,20 @@ package com.googlecode.paradox.procedures.math;
 import com.googlecode.paradox.procedures.CallableProcedure;
 
 /**
- * The avarange procedure.
+ * The avarage procedure.
  * 
  * @author Leonardo Alves da Costa
  * @since 1.1
  * @version 1.0
  */
-public class Averange extends CallableProcedure {
+public class Average extends CallableProcedure {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String getName() {
-        return "averange";
+        return "average";
     }
 
     /**
@@ -43,6 +43,6 @@ public class Averange extends CallableProcedure {
      */
     @Override
     public String getRemarks() {
-        return "Returns the avarange values.";
+        return "Returns the avarage values.";
     }
 }

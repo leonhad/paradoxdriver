@@ -32,34 +32,29 @@ import java.util.List;
 public class SelectNode extends StatementNode {
 
     /**
-     * The conditions list.
-     */
-    private List<SQLNode> conditions;
-
-    /**
-     * If has a distinct token.
-     */
-    private boolean distinct;
-
-    /**
      * The field list (SELECT).
      */
     private final ArrayList<SQLNode> fields = new ArrayList<>();
-
     /**
      * Group by values.
      */
     private final ArrayList<IdentifierNode> groups = new ArrayList<>();
-
     /**
      * Order by values.
      */
     private final ArrayList<IdentifierNode> order = new ArrayList<>();
-
     /**
      * The tables in from token.
      */
     private final ArrayList<TableNode> tables = new ArrayList<>();
+    /**
+     * The conditions list.
+     */
+    private List<SQLNode> conditions;
+    /**
+     * If has a distinct token.
+     */
+    private boolean distinct;
 
     /**
      * Create a new instance.
@@ -80,22 +75,22 @@ public class SelectNode extends StatementNode {
 
     /**
      * Adds the group by identifier.
-     * 
-     * @param indentifier
+     *
+     * @param identifier
      *            the group by identifier to add.
      */
-    public void addGroupBy(final IdentifierNode indentifier) {
-        groups.add(indentifier);
+    public void addGroupBy(final IdentifierNode identifier) {
+        groups.add(identifier);
     }
 
     /**
      * Adds the order by identifier.
-     * 
-     * @param indentifier
+     *
+     * @param identifier
      *            the order by identifier to add.
      */
-    public void addOrderBy(final IdentifierNode indentifier) {
-        order.add(indentifier);
+    public void addOrderBy(final IdentifierNode identifier) {
+        order.add(identifier);
     }
 
     /**
@@ -181,13 +176,13 @@ public class SelectNode extends StatementNode {
         if (!order.isEmpty()) {
             builder.append(" ORDER BY ");
             first = true;
-            for (final IdentifierNode ident : order) {
+            for (final IdentifierNode identifier : order) {
                 if (first) {
                     first = false;
                 } else {
                     builder.append(", ");
                 }
-                builder.append(ident);
+                builder.append(identifier);
             }
         }
     }
@@ -224,8 +219,18 @@ public class SelectNode extends StatementNode {
     }
 
     /**
+     * Sets the condition list.
+     *
+     * @param conditions
+     *            the condition list.
+     */
+    public void setConditions(final List<SQLNode> conditions) {
+        this.conditions = conditions;
+    }
+
+    /**
      * Gets the field list.
-     * 
+     *
      * @return the field list.
      */
     public List<SQLNode> getFields() {
@@ -234,7 +239,7 @@ public class SelectNode extends StatementNode {
 
     /**
      * Gets the group list.
-     * 
+     *
      * @return the group list.
      */
     public List<IdentifierNode> getGroups() {
@@ -243,7 +248,7 @@ public class SelectNode extends StatementNode {
 
     /**
      * Gets the order by list.
-     * 
+     *
      * @return the order by list.
      */
     public List<IdentifierNode> getOrder() {
@@ -252,7 +257,7 @@ public class SelectNode extends StatementNode {
 
     /**
      * Gets the table list.
-     * 
+     *
      * @return the table list.
      */
     public List<TableNode> getTables() {
@@ -261,21 +266,11 @@ public class SelectNode extends StatementNode {
 
     /**
      * Get if this select has a distinct token.
-     * 
+     *
      * @return true if this select has a distinct token.
      */
     public boolean isDistinct() {
         return distinct;
-    }
-
-    /**
-     * Sets the condition list.
-     * 
-     * @param conditions
-     *            the condition list.
-     */
-    public void setConditions(final List<SQLNode> conditions) {
-        this.conditions = conditions;
     }
 
     /**
