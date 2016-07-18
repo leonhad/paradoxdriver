@@ -204,6 +204,31 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for the catalog metadata.
+     *
+     * @throws Exception
+     *             in case of failures.
+     */
+    @Test
+    public void testCatalog() throws Exception {
+        ResultSet rs = null;
+
+        final DatabaseMetaData meta = conn.getMetaData();
+        try {
+            rs = meta.getCatalogs();
+            if (rs.next()) {
+                Assert.assertEquals("db", rs.getString("TABLE_CAT"));
+            } else {
+                Assert.fail("No catalog selected.");
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+        }
+    }
+
+    /**
      * Test for table selectable.
      * 
      * @throws SQLException

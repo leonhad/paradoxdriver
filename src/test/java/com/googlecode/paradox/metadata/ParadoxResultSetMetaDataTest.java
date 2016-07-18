@@ -19,27 +19,26 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.util.Arrays;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.integration.MainTest;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.TypeName;
+import com.googlecode.paradox.utils.Utils;
+import org.junit.*;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Unit test for {@link ParadoxResultSetMetaData} class.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class ParadoxResultSetMetaDataTest {
     /**
@@ -54,9 +53,9 @@ public class ParadoxResultSetMetaDataTest {
 
     /**
      * Register the database driver.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
@@ -64,10 +63,10 @@ public class ParadoxResultSetMetaDataTest {
     }
 
     /**
-     * Close the test conneciton.
-     * 
+     * Close the test connection.
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -78,113 +77,112 @@ public class ParadoxResultSetMetaDataTest {
 
     /**
      * Connect to the test database.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @Before
     public void connect() throws Exception {
-        conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        conn = DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**
-     * Test for the catalog metadata.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     * Test for instance.
+     *
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
-    public void testCatalog() throws Exception {
-        ResultSet rs = null;
-
-        final DatabaseMetaData meta = conn.getMetaData();
-        try {
-            rs = meta.getCatalogs();
-            if (rs.next()) {
-                Assert.assertEquals("db", rs.getString("TABLE_CAT"));
-            } else {
-                Assert.fail("No catalog selected.");
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-        }
+    public void testInstance() throws SQLException {
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
+                Collections.<Column>emptyList());
+        Assert.assertEquals("Testing for column size.", 0, metaData.getColumnCount());
     }
 
     /**
-     * Test for the index info metadata.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     * Test for invalid column.
+     *
+     * @throws SQLException
+     *         in case of errors.
      */
-    @Test
-    public void testIndexInfo() throws Exception {
-        ResultSet rs = null;
-
-        try {
-            final String[] names = new String[2];
-            final DatabaseMetaData meta = conn.getMetaData();
-
-            rs = meta.getIndexInfo("db", "APP", "customer.db", true, true);
-            Assert.assertTrue(rs.next());
-            names[0] = rs.getString("INDEX_NAME");
-            Assert.assertTrue(rs.next());
-            names[1] = rs.getString("INDEX_NAME");
-            Assert.assertTrue(rs.next());
-
-            Arrays.sort(names);
-            Assert.assertEquals("CUSTOMER.PX", names[0]);
-            Assert.assertEquals("CUSTOMER.X06", names[1]);
-
-            while (rs.next()) {
-                Assert.assertEquals("db", rs.getString("TABLE_CAT"));
-                Assert.assertEquals("APP", rs.getString("TABLE_SCHEM"));
-                Assert.assertEquals(null, rs.getString("TABLE_NAME"));
-                Assert.assertEquals("false", rs.getString("NON_UNIQUE"));
-                Assert.assertEquals("db", rs.getString("INDEX_QUALIFIER"));
-                Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
-                Assert.assertEquals("2", rs.getString("TYPE"));
-                Assert.assertEquals("0", rs.getString("ORDINAL_POSITION"));
-                Assert.assertEquals("City", rs.getString("COLUMN_NAME"));
-                Assert.assertEquals("A", rs.getString("ASC_OR_DESC"));
-                Assert.assertEquals("0", rs.getString("CARDINALITY"));
-                Assert.assertEquals("0", rs.getString("PAGES"));
-                Assert.assertEquals(null, rs.getString("FILTER_CONDITION"));
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-        }
+    @Test(expected = SQLException.class)
+    public void testInvalidColumn() throws SQLException {
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
+                Collections.<Column>emptyList());
+        metaData.getColumnName(1);
     }
 
     /**
-     * Test for primary key metadata.
-     * 
-     * @throws Exception
-     *             in case of failures.
+     * Test for column metadata.
+     *
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
-    public void testPrimaryKey() throws Exception {
-        ResultSet rs = null;
+    public void testColumn() throws SQLException {
+        Column column = new Column();
+        column.setName("name");
+        column.setMaxSize(255);
+        column.setType(ParadoxFieldType.INTEGER.getSQLType());
+        column.setPrecision(0);
+        column.setTableName("table");
+        column.setAutoIncrement(false);
+        column.setCurrency(false);
+        column.setWritable(false);
+        column.setNullable(false);
+        column.setReadOnly(true);
+        column.setSearchable(true);
+        column.setSigned(true);
+        column.setScale(2);
+        List<Column> columns = Arrays.asList(column);
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn, columns);
+        Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
+        Assert.assertEquals("Testing for class name.", TypeName.INTEGER.getClassName(), metaData.getColumnClassName(1));
+        Assert.assertEquals("Testing for catalog name.", "db", metaData.getCatalogName(1));
+        Assert.assertEquals("Testing for schema name.", "APP", metaData.getSchemaName(1));
+        Assert.assertEquals("Testing for column display size.", 255, metaData.getColumnDisplaySize(1));
+        Assert.assertEquals("Testing for column label.", "name", metaData.getColumnLabel(1));
+        Assert.assertEquals("Testing for column name.", "name", metaData.getColumnName(1));
+        Assert.assertEquals("Testing for column type.", ParadoxFieldType.INTEGER.getSQLType(),
+                metaData.getColumnType(1));
+        Assert.assertEquals("Testing for column type name.", TypeName.INTEGER.getName(), metaData.getColumnTypeName(1));
+        Assert.assertEquals("Testing for column precision.", 0, metaData.getPrecision(1));
+        Assert.assertEquals("Testing for column scale.", 2, metaData.getScale(1));
+        Assert.assertEquals("Testing for table name.", "table", metaData.getTableName(1));
+        Assert.assertFalse("Testing for auto increment value.", metaData.isAutoIncrement(1));
+        Assert.assertFalse("Testing for case sensitivity.", metaData.isCaseSensitive(1));
+        Assert.assertFalse("Testing for currency.", metaData.isCurrency(1));
+        Assert.assertFalse("Testing for writable.", metaData.isWritable(1));
+        Assert.assertFalse("Testing for definitely writable.", metaData.isDefinitelyWritable(1));
+        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
+        Assert.assertTrue("Testing for read only.", metaData.isReadOnly(1));
+        Assert.assertTrue("Testing for searchable.", metaData.isSearchable(1));
+        Assert.assertTrue("Testing for sign.", metaData.isSigned(1));
+    }
 
-        try {
-            final DatabaseMetaData meta = conn.getMetaData();
+    /**
+     * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
+     *
+     * @throws Exception
+     *         in case of failures.
+     */
+    @Test
+    public void testIsWrapFor() throws Exception {
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
+                Collections.<Column>emptyList());
+        Assert.assertTrue(metaData.isWrapperFor(ParadoxResultSetMetaData.class));
+    }
 
-            rs = meta.getPrimaryKeys("db", "APP", "CUSTOMER.db");
-            Assert.assertTrue(rs.next());
-            Assert.assertEquals("db", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("APP", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("CUSTOMER", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("CustNo", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("0", rs.getString("KEY_SEQ"));
-            Assert.assertEquals("CustNo", rs.getString("PK_NAME"));
-            Assert.assertFalse(rs.next());
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-        }
+    /**
+     * Test for unwrap.
+     *
+     * @throws Exception
+     *         in case of failures.
+     */
+    @Test
+    public void testUnwrap() throws Exception {
+        ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
+                Collections.<Column>emptyList());
+        Assert.assertNotNull(metaData.unwrap(ParadoxResultSetMetaData.class));
     }
 }

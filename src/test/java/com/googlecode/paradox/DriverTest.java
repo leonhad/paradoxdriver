@@ -51,7 +51,8 @@ public class DriverTest {
     /**
      * Test for invalid connection.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testInvalidConnection() throws SQLException {
@@ -62,7 +63,8 @@ public class DriverTest {
     /**
      * Test an invalid URL.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testInvalidURL() throws SQLException {
@@ -73,7 +75,8 @@ public class DriverTest {
     /**
      * Test for driver logger.
      *
-     * @throws SQLFeatureNotSupportedException in case of errors.
+     * @throws SQLFeatureNotSupportedException
+     *         in case of errors.
      */
     @Test
     public void testLogger() throws SQLFeatureNotSupportedException {
@@ -84,7 +87,8 @@ public class DriverTest {
     /**
      * Test for the Major Version.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testMajorVersion() throws SQLException {
@@ -95,7 +99,8 @@ public class DriverTest {
     /**
      * Test for the Minor Version.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testMinorVersion() throws SQLException {
@@ -106,8 +111,10 @@ public class DriverTest {
     /**
      * Test for null properties.
      *
-     * @throws SQLException if there is no errors.
+     * @throws SQLException
+     *         if there is no errors.
      */
+    @Test(expected = NullPointerException.class)
     public void testNullProperty() throws SQLException {
         final Driver driver = new Driver();
         Assert.assertEquals(0, driver.getPropertyInfo(null, null).length);
@@ -116,17 +123,20 @@ public class DriverTest {
     /**
      * Test for null property info.
      *
-     * @throws SQLException if there is no errors.
+     * @throws SQLException
+     *         if there is no errors.
      */
+    @Test(expected = NullPointerException.class)
     public void testNullPropertyInfo() throws SQLException {
         final Driver driver = new Driver();
-        Assert.assertEquals(0, driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null));
+        driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null);
     }
 
     /**
      * Test for property info.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testPropertyInfo() throws SQLException {
@@ -140,7 +150,8 @@ public class DriverTest {
     /**
      * Test for properties with invalid URL.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test(expected = NullPointerException.class)
     public void testPropertyInfoInvalidURL() throws SQLException {
@@ -151,7 +162,8 @@ public class DriverTest {
     /**
      * Test for a valid connection.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testValidConnection() throws SQLException {
@@ -164,7 +176,8 @@ public class DriverTest {
     /**
      * Test a valid URL.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testValidURL() throws SQLException {

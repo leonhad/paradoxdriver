@@ -36,10 +36,10 @@ import com.googlecode.paradox.integration.MainTest;
 
 /**
  * Unit test for {@link Utils}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
 public class UtilsTest {
     /**
@@ -54,9 +54,9 @@ public class UtilsTest {
 
     /**
      * Register the driver.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
@@ -65,9 +65,9 @@ public class UtilsTest {
 
     /**
      * Close the test connection.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -78,9 +78,9 @@ public class UtilsTest {
 
     /**
      * Connect to the test database.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @Before
     public void connect() throws Exception {
@@ -89,26 +89,27 @@ public class UtilsTest {
 
     /**
      * Test if the constructor is private.
-     * 
+     *
      * @throws NoSuchMethodException
-     *             in case of failures.
+     *         in case of failures.
      * @throws IllegalAccessException
-     *             in case of failures.
+     *         in case of failures.
      * @throws InvocationTargetException
-     *             in case of failures.
+     *         in case of failures.
      * @throws InstantiationException
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
-    public void testConstructorIsPrivate() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public void testConstructorIsPrivate()
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         TestUtil.assertUtilityClassWellDefined(Utils.class);
     }
 
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)} method with invalid value.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testIsNotWrapFor() throws Exception {
@@ -117,34 +118,34 @@ public class UtilsTest {
 
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testIsWrapFor() throws Exception {
-        Utils.unwrap(conn, ParadoxConnection.class);
-    }
-
-    /**
-     * Test for unwap.
-     * 
-     * @throws Exception
-     *             in case of failures.
-     */
-    @Test
-    public void testUnwrap() throws Exception {
         Assert.assertTrue(Utils.isWrapperFor(conn, ParadoxConnection.class));
     }
 
     /**
-     * Test for a unwrap with wrong class.
-     * 
+     * Test for unwrap.
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
+     */
+    @Test
+    public void testUnwrap() throws Exception {
+        Assert.assertNotNull(Utils.unwrap(conn, ParadoxConnection.class));
+    }
+
+    /**
+     * Test for a unwrap with wrong class.
+     *
+     * @throws Exception
+     *         in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testUnwrapImpossive() throws Exception {
+    public void testUnwrapImpossible() throws Exception {
         Utils.unwrap(conn, Integer.class);
     }
 }
