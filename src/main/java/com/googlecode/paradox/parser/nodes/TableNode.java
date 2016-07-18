@@ -20,6 +20,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.utils.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +34,13 @@ import java.util.List;
 public class TableNode extends SQLNode {
     
     /**
-     * The table alias.
-     */
-    private String alias;
-
-    /**
      * The table joins.
      */
     private final List<JoinNode> joins = new ArrayList<>();
+    /**
+     * The table alias.
+     */
+    private String alias;
 
     /**
      * Create a new instance.
@@ -80,14 +80,6 @@ public class TableNode extends SQLNode {
      */
     public List<JoinNode> getJoins() {
         return joins;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setAlias(final String alias) {
-        this.alias = alias;
     }
 
     /**

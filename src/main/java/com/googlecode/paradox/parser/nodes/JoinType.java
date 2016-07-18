@@ -30,15 +30,15 @@ public enum JoinType {
     /**
      * Cross join type.
      */
-    CROSS_JOIN,
+    CROSS,
 
     /**
      * Left join type.
      */
-    LEFT_JOIN,
+    LEFT,
 
     /**
      * Right join type.
      */
-    RIGHT_JOIN
+    RIGHT
 }

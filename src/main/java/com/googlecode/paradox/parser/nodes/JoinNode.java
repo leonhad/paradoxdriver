@@ -43,7 +43,7 @@ public class JoinNode extends SQLNode {
     /**
      * The join type.
      */
-    private JoinType type = JoinType.CROSS_JOIN;
+    private JoinType type = JoinType.CROSS;
 
     /**
      * Create a new instance.
@@ -62,26 +62,8 @@ public class JoinNode extends SQLNode {
     }
 
     /**
-     * Gets the table name.
-     * 
-     * @return the table name.
-     */
-    public String getTableName() {
-        return tableName;
-    }
-
-    /**
-     * Gets the join type.
-     * 
-     * @return the join type.
-     */
-    public JoinType getType() {
-        return type;
-    }
-
-    /**
      * Sets the condition list.
-     * 
+     *
      * @param conditions
      *            the condition list.
      */
@@ -90,13 +72,31 @@ public class JoinNode extends SQLNode {
     }
 
     /**
+     * Gets the table name.
+     *
+     * @return the table name.
+     */
+    public String getTableName() {
+        return tableName;
+    }
+
+    /**
      * Sets the table name.
-     * 
+     *
      * @param tableName
      *            the table name.
      */
     public void setTableName(final String tableName) {
         this.tableName = tableName;
+    }
+
+    /**
+     * Gets the join type.
+     *
+     * @return the join type.
+     */
+    public JoinType getType() {
+        return type;
     }
 
     /**

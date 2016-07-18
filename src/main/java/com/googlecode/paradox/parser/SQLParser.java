@@ -19,33 +19,19 @@
  */
 package com.googlecode.paradox.parser;
 
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.parser.nodes.JoinNode;
-import com.googlecode.paradox.parser.nodes.JoinType;
-import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.SelectNode;
-import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.parser.nodes.TableNode;
-import com.googlecode.paradox.parser.nodes.comparisons.BetweenNode;
-import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
-import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
-import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
-import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
-import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
-import com.googlecode.paradox.parser.nodes.conditional.ExistsNode;
-import com.googlecode.paradox.parser.nodes.conditional.NOTNode;
-import com.googlecode.paradox.parser.nodes.conditional.ORNode;
-import com.googlecode.paradox.parser.nodes.conditional.XORNode;
+import com.googlecode.paradox.parser.nodes.*;
+import com.googlecode.paradox.parser.nodes.comparisons.*;
+import com.googlecode.paradox.parser.nodes.conditional.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
+
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Parses a SQL statement.
@@ -502,10 +488,10 @@ public class SQLParser {
 
             // Inner join
             if (token.getType() == TokenType.LEFT) {
-                join.setType(JoinType.LEFT_JOIN);
+                join.setType(JoinType.LEFT);
                 expect(TokenType.LEFT);
             } else if (token.getType() == TokenType.RIGHT) {
-                join.setType(JoinType.RIGHT_JOIN);
+                join.setType(JoinType.RIGHT);
                 expect(TokenType.RIGHT);
             }
             if (token.getType() == TokenType.INNER) {
