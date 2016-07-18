@@ -72,6 +72,6 @@ public class TableNodeTest {
         join.setConditions(list);
 
         node.addJoin(join);
-        Assert.assertEquals("table AS alias CROSS JOIN table2 ON a = b ", 1, node.toString());
+        Assert.assertEquals("Testing for toString().", "table AS alias CROSS JOIN table2 ON a = b ", node.toString());
     }
 }
