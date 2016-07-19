@@ -18,10 +18,10 @@ import com.googlecode.paradox.integration.MainTest;
 
 /**
  * Unit test for {@link ParadoxDatabaseMetaData} class.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class ParadoxDatabaseMetaDataTest {
     /**
@@ -36,9 +36,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Register the database driver.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
@@ -47,9 +47,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Close the test conneciton.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -60,9 +60,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Connect to the test database.
-     * 
+     *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @Before
     public void connect() throws Exception {
@@ -71,9 +71,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for attributes.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testAttributes() throws SQLException {
@@ -84,9 +84,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for commit failure closes results.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testAutocommitFailureClosesResult() throws SQLException {
@@ -94,23 +94,45 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
-     * Test for columns.
-     * 
+     * Test for database definition causes transaction commit.
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
+     */
+    @Test
+    public void testDatabaseDefinitionsCausesCommit() throws SQLException {
+        Assert.assertTrue(conn.getMetaData().dataDefinitionCausesTransactionCommit());
+    }
+
+    /**
+     * Test for columns.
+     *
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testColumns() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getColumns("db", null, "*", "*")) {
+        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
 
     /**
-     * Test for deletes autodetectes.
-     * 
+     * Test for connection.
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
+     */
+    @Test
+    public void testConnection() throws SQLException {
+        Assert.assertSame("Testing for connection.", conn, conn.getMetaData().getConnection());
+    }
+
+    /**
+     * Test for deletes autodetectes.
+     *
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testDeleteAutoDetects() throws SQLException {
@@ -119,9 +141,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for imported keys.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testImportedKeys() throws SQLException {
@@ -132,9 +154,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for JDBC version.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testJDBCVersion() throws SQLException {
@@ -144,9 +166,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for max rows include blobs.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testMaxRowsIncludesBlob() throws SQLException {
@@ -155,9 +177,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for procedures callable.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testProcedureCallable() throws SQLException {
@@ -166,9 +188,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for procedure columns.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testProcedureColumns() throws SQLException {
@@ -179,9 +201,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for procedures.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testProcedures() throws SQLException {
@@ -192,9 +214,9 @@ public class ParadoxDatabaseMetaDataTest {
 
     /**
      * Test for schemas.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testSchemas() throws SQLException {
@@ -207,32 +229,25 @@ public class ParadoxDatabaseMetaDataTest {
      * Test for the catalog metadata.
      *
      * @throws Exception
-     *             in case of failures.
+     *         in case of failures.
      */
     @Test
     public void testCatalog() throws Exception {
-        ResultSet rs = null;
-
         final DatabaseMetaData meta = conn.getMetaData();
-        try {
-            rs = meta.getCatalogs();
+        try (ResultSet rs = meta.getCatalogs()) {
             if (rs.next()) {
                 Assert.assertEquals("db", rs.getString("TABLE_CAT"));
             } else {
                 Assert.fail("No catalog selected.");
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
             }
         }
     }
 
     /**
      * Test for table selectable.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testTableSelectable() throws SQLException {

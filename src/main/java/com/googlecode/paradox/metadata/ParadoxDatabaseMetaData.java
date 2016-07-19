@@ -126,7 +126,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
-        return false;
+        return true;
     }
 
     /**

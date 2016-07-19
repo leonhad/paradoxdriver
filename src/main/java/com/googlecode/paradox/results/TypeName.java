@@ -48,6 +48,11 @@ public enum TypeName {
     BLOB(Types.BLOB, "BLOB", InputStream.class.getName()),
 
     /**
+     * The BLOB type.
+     */
+    CLOB(Types.CLOB, "CLOB", String.class.getName()),
+
+    /**
      * The boolean type.
      */
     BOOLEAN(Types.BOOLEAN, "BOOLEAN", Boolean.class.getName()),
