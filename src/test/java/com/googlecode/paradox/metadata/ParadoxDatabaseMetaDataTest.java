@@ -270,6 +270,32 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for index info.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testIndexInfo() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getIndexInfo("db", "%", "%", false, false)) {
+            Assert.assertTrue("Test for ResultSet.", rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for primary keys.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testPrimaryKeys() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getPrimaryKeys("db", "%", "%")) {
+            Assert.assertTrue("Test for ResultSet.", rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
      * Test for table types.
      *
      * @throws SQLException
@@ -358,7 +384,8 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testJDBCVersion() throws SQLException {
         final DatabaseMetaData meta = conn.getMetaData();
-        meta.getJDBCMajorVersion();
+        Assert.assertEquals("Test for major version", 4, meta.getJDBCMajorVersion());
+        Assert.assertEquals("Test for minor version", 0, meta.getJDBCMinorVersion());
     }
 
     /**

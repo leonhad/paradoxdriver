@@ -22,6 +22,7 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
+import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
 
 import java.io.File;
@@ -67,7 +68,7 @@ public final class IndexData {
     public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
             throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
-        final String indexNamePattern = tableName.substring(0, tableName.lastIndexOf('.')) + ".X??";
+        final String indexNamePattern = Utils.removeDb(tableName) + ".X??";
         final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {
