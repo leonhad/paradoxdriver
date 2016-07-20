@@ -777,7 +777,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getNumericFunctions() throws SQLException {
-        return "AVERANGE,SUM";
+        return "AVERAGE,SUM";
     }
 
     /**

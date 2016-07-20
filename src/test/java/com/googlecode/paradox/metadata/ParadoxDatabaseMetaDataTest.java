@@ -424,6 +424,19 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for procedure columns with invalid pattern.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testProcedureColumnsWithInvalidPattern() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getProcedureColumns("db", "%", "invalid_procedure", "%")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
      * Test for procedures.
      *
      * @throws SQLException
@@ -445,6 +458,58 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testSchemas() throws SQLException {
         try (ResultSet rs = conn.getMetaData().getSchemas()) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for cross references.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testCrossReference() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getCrossReference("db", "%", "%", "db", "%", "%")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for exported keys.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testExportedKeys() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getExportedKeys("db", "%", "%")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for function columns.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testFunctionColumns() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getFunctionColumns("db", "%", "%", "%")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for functions.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testFunctions() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getFunctions("db", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
@@ -476,5 +541,329 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testTableSelectable() throws SQLException {
         Assert.assertTrue(conn.getMetaData().allTablesAreSelectable());
+    }
+
+    /**
+     * Test for database product name.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDatabaseProductName() throws SQLException {
+        Assert.assertEquals("Testing for database product name.", "Paradox",
+                conn.getMetaData().getDatabaseProductName());
+    }
+
+    /**
+     * Test for extra name chars.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testExtraNameChars() throws SQLException {
+        Assert.assertEquals("Testing for extra name chars.", "", conn.getMetaData().getExtraNameCharacters());
+    }
+
+    /**
+     * Test for  max binary literal length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxBinaryLiteralLength() throws SQLException {
+        Assert.assertEquals("Testing for max binary literal length.", 8,
+                conn.getMetaData().getMaxBinaryLiteralLength());
+    }
+
+    /**
+     * Test for  max catalog name length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxCatalogNameLength() throws SQLException {
+        Assert.assertEquals("Testing for max catalog name length.", 255,
+                conn.getMetaData().getMaxCatalogNameLength());
+    }
+
+    /**
+     * Test for  max column name length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxColumnNameLength() throws SQLException {
+        Assert.assertEquals("Testing for max column name length.", 8, conn.getMetaData().getMaxColumnNameLength());
+    }
+
+    /**
+     * Test for  max column in group by.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxColumnInGroupBy() throws SQLException {
+        Assert.assertEquals("Testing for max column in group by.", 255,
+                conn.getMetaData().getMaxColumnsInGroupBy());
+    }
+
+    /**
+     * Test for  max column in index.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxColumnInIndex() throws SQLException {
+        Assert.assertEquals("Testing for max column in index.", 255,
+                conn.getMetaData().getMaxColumnsInIndex());
+    }
+
+    /**
+     * Test for  max column in order by.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxColumnInOrderBy() throws SQLException {
+        Assert.assertEquals("Testing for max column in order by.", 255,
+                conn.getMetaData().getMaxColumnsInOrderBy());
+    }
+
+    /**
+     * Test for  max column in select.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxColumnInSelect() throws SQLException {
+        Assert.assertEquals("Testing for max column in select.", 255,
+                conn.getMetaData().getMaxColumnsInSelect());
+    }
+
+    /**
+     * Test for  max column in table.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxColumnInTable() throws SQLException {
+        Assert.assertEquals("Testing for max column in table.", 255,
+                conn.getMetaData().getMaxColumnsInTable());
+    }
+
+    /**
+     * Test for  max cursor name length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxCursorNameLength() throws SQLException {
+        Assert.assertEquals("Testing for max cursor name length.", 255,
+                conn.getMetaData().getMaxCursorNameLength());
+    }
+
+    /**
+     * Test for max index length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxIndexLength() throws SQLException {
+        Assert.assertEquals("Testing for max index length.", 255,
+                conn.getMetaData().getMaxIndexLength());
+    }
+
+    /**
+     * Test for max procedure name length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxProcedureNameLength() throws SQLException {
+        Assert.assertEquals("Testing for max procedure name length.", 255,
+                conn.getMetaData().getMaxProcedureNameLength());
+    }
+
+    /**
+     * Test for max row size.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxRowSize() throws SQLException {
+        Assert.assertEquals("Testing for max row size.", 255, conn.getMetaData().getMaxRowSize());
+    }
+
+    /**
+     * Test for max statement length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxStatementLength() throws SQLException {
+        Assert.assertEquals("Testing for max statement length.", Integer.MAX_VALUE,
+                conn.getMetaData().getMaxStatementLength());
+    }
+
+    /**
+     * Test for max user name length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxUserNameLength() throws SQLException {
+        Assert.assertEquals("Testing for max user name length.", 255, conn.getMetaData().getMaxUserNameLength());
+    }
+
+    /**
+     * Test for numeric functions.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testNumericFunctions() throws SQLException {
+        Assert.assertEquals("Testing for numeric functions.", "AVERAGE,SUM", conn.getMetaData().getNumericFunctions());
+    }
+
+    /**
+     * Test for max tables in select.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxTableInSelect() throws SQLException {
+        Assert.assertEquals("Testing for max column in table.", 255, conn.getMetaData().getMaxTablesInSelect());
+    }
+
+    /**
+     * Test for max table name length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxTableNameLength() throws SQLException {
+        Assert.assertEquals("Testing for max table name length.", 255,
+                conn.getMetaData().getMaxTableNameLength());
+    }
+
+    /**
+     * Test for max statements.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxStatements() throws SQLException {
+        Assert.assertEquals("Testing for max column in table.", Integer.MAX_VALUE,
+                conn.getMetaData().getMaxStatements());
+    }
+
+    /**
+     * Test for  max connections.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxConnections() throws SQLException {
+        Assert.assertEquals("Testing for max connections.", 1, conn.getMetaData().getMaxConnections());
+    }
+
+    /**
+     * Test for identifier quote string.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testIdentifierQuoteString() throws SQLException {
+        Assert.assertEquals("Testing for extra name chars.", "\"", conn.getMetaData().getIdentifierQuoteString());
+    }
+
+    /**
+     * Test for database product version.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDatabaseProductVersion() throws SQLException {
+        Assert.assertEquals("Testing for database product version.", "Paradox 1.3",
+                conn.getMetaData().getDatabaseProductVersion());
+    }
+
+    /**
+     * Test for driver major version.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDriverMajorVersion() throws SQLException {
+        Assert.assertEquals("Testing for driver major version.", 1, conn.getMetaData().getDriverMajorVersion());
+    }
+
+    /**
+     * Test for driver name.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDriverName() throws SQLException {
+        Assert.assertEquals("Testing for driver name.", "Paradox", conn.getMetaData().getDriverName());
+    }
+
+    /**
+     * Test for driver version.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDriverVersion() throws SQLException {
+        Assert.assertEquals("Testing for driver version.", "1.3", conn.getMetaData().getDriverVersion());
+    }
+
+    /**
+     * Test for driver minor version.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDriverMinorVersion() throws SQLException {
+        Assert.assertEquals("Testing for driver minor version.", 3, conn.getMetaData().getDriverMinorVersion());
+    }
+
+    /**
+     * Test for default transaction isolation.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDefaultTransactionIsolation() throws SQLException {
+        Assert.assertEquals("Testing for default transaction isolation.", Connection.TRANSACTION_NONE,
+                conn.getMetaData().getDefaultTransactionIsolation());
     }
 }

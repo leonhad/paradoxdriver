@@ -31,38 +31,31 @@ public final class Constants {
     /**
      * Driver Name
      */
-    public static final String DRIVER_NAME = "Paradox (OpenParadox)";
-
-    /**
-     * Driver String Version
-     */
-    public static final String DRIVER_VERSION = Constants.MAJOR_VERSION + "." + Constants.MINOR_VERSION;
-
+    public static final String DRIVER_NAME = "Paradox";
     /**
      * Invalid input date.
      */
     public static final String ERROR_INVALID_DATE = "Invalid input date.";
-
     /**
      * Unsupported operation.
      */
     public static final String ERROR_UNSUPPORTED_OPERATION = "Unsupported operation.";
-
     /**
      * Major version of the Driver
      */
     public static final int MAJOR_VERSION = 1;
-
     /**
      * Paradox max string size
      */
     public static final int MAX_STRING_SIZE = 255;
-
     /**
      * Minor version of the Driver
      */
-    public static final int MINOR_VERSION = 1;
-
+    public static final int MINOR_VERSION = 3;
+    /**
+     * Driver String Version
+     */
+    public static final String DRIVER_VERSION = Constants.MAJOR_VERSION + "." + Constants.MINOR_VERSION;
     /**
      * Driver prefix
      */
