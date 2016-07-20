@@ -2,7 +2,6 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxResultSet;
-import com.googlecode.paradox.integration.MainTest;
 import org.junit.*;
 
 import java.sql.*;
@@ -57,7 +56,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        conn = DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**
