@@ -418,7 +418,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedureColumns() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getProcedureColumns("db", null, "*", "*")) {
+        try (ResultSet rs = conn.getMetaData().getProcedureColumns("db", "%", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
@@ -431,7 +431,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedures() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getProcedures("db", null, "*")) {
+        try (ResultSet rs = conn.getMetaData().getProcedures("db", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
