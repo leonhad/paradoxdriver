@@ -754,6 +754,17 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for max char literal length.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testMaxCharLiteralLength() throws SQLException {
+        Assert.assertEquals("Testing for max char literal name.", 255, conn.getMetaData().getMaxCharLiteralLength());
+    }
+
+    /**
      * Test for max table name length.
      *
      * @throws SQLException
