@@ -1,20 +1,11 @@
 package com.googlecode.paradox.metadata;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.integration.MainTest;
+import org.junit.*;
+
+import java.sql.*;
 
 /**
  * Unit test for {@link ParadoxDatabaseMetaData} class.
@@ -105,6 +96,28 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for catalog separator.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testCatalogSeparator() throws SQLException {
+        Assert.assertEquals("Testing for catalog separator.", ".", conn.getMetaData().getCatalogSeparator());
+    }
+
+    /**
+     * Test for catalog term.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testCatalogTerm() throws SQLException {
+        Assert.assertEquals("Testing for catalog term.", "CATALOG", conn.getMetaData().getCatalogTerm());
+    }
+
+    /**
      * Test for columns.
      *
      * @throws SQLException
@@ -114,6 +127,164 @@ public class ParadoxDatabaseMetaDataTest {
     public void testColumns() throws SQLException {
         try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for tables.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testTables() throws SQLException {
+        String[] types = {"TABLE", "VIEW"};
+
+        try (ResultSet rs = conn.getMetaData().getTables("db", "%", "%", types)) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for tables with null type.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testTablesWithNullType() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getTables("db", "%", "%", null)) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for columns with null table pattern.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testColumnsWithNullTablePattern() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", null, "%")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for columns with invalid table pattern.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testColumnsWithInvalidTablePattern() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "invalid_table", "%")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for client info properties.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testClientInfoProperties() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getClientInfoProperties()) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for column privileges.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testColumnPrivileges() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getColumnPrivileges("db", "%", "%", "%")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for best row identifier.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testBestRowIdentifier() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getBestRowIdentifier("db", "%", "%", 0, false)) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for data definition ignored in transactions.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDataDefinitionIgnoredInTransactions() throws SQLException {
+        Assert.assertFalse("Testing for data definition ignored in transactions.",
+                conn.getMetaData().dataDefinitionIgnoredInTransactions());
+    }
+
+    /**
+     * Test for database major version.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDatabaseMajorVersion() throws SQLException {
+        Assert.assertEquals("Testing for database major version.", 7, conn.getMetaData().getDatabaseMajorVersion());
+    }
+
+    /**
+     * Test for database minor version.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testDatabaseMinorVersion() throws SQLException {
+        Assert.assertEquals("Testing for database minor version.", 0, conn.getMetaData().getDatabaseMinorVersion());
+    }
+
+    /**
+     * Test for generated key always returned.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testGeneratedKeyAlwaysReturned() throws SQLException {
+        Assert.assertTrue("Testing for data definition ignored in transactions.",
+                conn.getMetaData().generatedKeyAlwaysReturned());
+    }
+
+    /**
+     * Test for table types.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testTableTypes() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getTableTypes()) {
+            Assert.assertTrue("Get first result.", rs.next());
+            Assert.assertEquals("Testing for table type.", "TABLE", rs.getString(1));
+            Assert.assertTrue("Get second result.", rs.next());
+            Assert.assertEquals("Testing for view type.", "VIEW", rs.getString(1));
+            Assert.assertTrue("Get third result.", rs.next());
+            Assert.assertEquals("Testing for system table type.", "SYSTEM TABLE", rs.getString(1));
+            Assert.assertFalse("no more results.", rs.next());
         }
     }
 

@@ -33,13 +33,9 @@ import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -1082,12 +1078,10 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column("TABLE_TYPE", Types.VARCHAR));
 
-        final ArrayList<FieldValue> row = new ArrayList<>(1);
-        final List<List<FieldValue>> values = new ArrayList<>(1);
-        row.add(new FieldValue(TABLE, Types.VARCHAR));
-        row.add(new FieldValue("VIEW", Types.VARCHAR));
-        row.add(new FieldValue("SYSTEM TABLE", Types.VARCHAR));
-        values.add(row);
+        final List<List<FieldValue>> values = new ArrayList<>(3);
+        values.add(Arrays.asList(new FieldValue(TABLE, Types.VARCHAR)));
+        values.add(Arrays.asList(new FieldValue("VIEW", Types.VARCHAR)));
+        values.add(Arrays.asList(new FieldValue("SYSTEM TABLE", Types.VARCHAR)));
 
         return new ParadoxResultSet(conn, null, values, columns);
     }
