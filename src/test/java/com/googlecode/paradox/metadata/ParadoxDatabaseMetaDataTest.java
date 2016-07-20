@@ -118,6 +118,32 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
+     * Test for columns without column pattern.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testColumnsWithoutColumnPattern() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", null)) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
+     * Test for columns with invalid pattern.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testColumnsInvaidPattern() throws SQLException {
+        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", "invalid_column")) {
+            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        }
+    }
+
+    /**
      * Test for connection.
      *
      * @throws SQLException
