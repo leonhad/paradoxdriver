@@ -19,36 +19,20 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.Utils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Savepoint;
-import java.sql.Statement;
-import java.sql.Struct;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
-
-import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
-import com.googlecode.paradox.utils.SQLStates;
-import com.googlecode.paradox.utils.Utils;
 
 /**
  * JDBC Paradox connection implementation.
@@ -60,77 +44,62 @@ import com.googlecode.paradox.utils.Utils;
 public class ParadoxConnection implements Connection {
 
     /**
-     * Auto Commit flag.
-     */
-    private boolean autocommit = true;
-
-    /**
      * Database catalog.
      */
     private final String catalog;
-
-    /**
-     * Connection properties info.
-     */
-    private Properties clientInfo = new Properties();
-
-    /**
-     * If this connection is closed.
-     */
-    private boolean closed = false;
-
     /**
      * Store the connection directory reference.
      */
     private final File dir;
-
-    /**
-     * This connection holdability.
-     */
-    private int holdability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
-
-    /**
-     * Stores the file lock used in transactions.
-     */
-    private FileLock lock;
-
-    private RandomAccessFile lockFile;
-
-    /**
-     * Default timeout
-     */
-    private int networkTimeout = 0;
-
-    /**
-     * If this connection is readonly.
-     */
-    private boolean readonly = true;
-
-    /**
-     * Selected Schema.
-     */
-    private String schema = "APP";
-
     /**
      * Stores the opened statements.
      */
     private final ArrayList<Statement> statements = new ArrayList<>();
-
-    /**
-     * Stores the transaction isolation mode.
-     */
-    private int transactionIsolation = Connection.TRANSACTION_NONE;
-
-    /**
-     * Stores the JDBC type mapping.
-     */
-    private Map<String, Class<?>> typeMap;
-
     /**
      * Driver URL.
      */
     private final String url;
-
+    /**
+     * Auto Commit flag.
+     */
+    private boolean autocommit = true;
+    /**
+     * Connection properties info.
+     */
+    private Properties clientInfo = new Properties();
+    /**
+     * If this connection is closed.
+     */
+    private boolean closed = false;
+    /**
+     * This connection holdability.
+     */
+    private int holdability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
+    /**
+     * Stores the file lock used in transactions.
+     */
+    private FileLock lock;
+    private RandomAccessFile lockFile;
+    /**
+     * Default timeout
+     */
+    private int networkTimeout = 0;
+    /**
+     * If this connection is readonly.
+     */
+    private boolean readonly = true;
+    /**
+     * Selected Schema.
+     */
+    private String schema = "APP";
+    /**
+     * Stores the transaction isolation mode.
+     */
+    private int transactionIsolation = Connection.TRANSACTION_NONE;
+    /**
+     * Stores the JDBC type mapping.
+     */
+    private Map<String, Class<?>> typeMap;
     /**
      * SQL warnings for this connection.
      */
@@ -163,7 +132,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void abort(final Executor executor) throws SQLException {
@@ -171,7 +140,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void clearWarnings() throws SQLException {
@@ -179,7 +148,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void close() throws SQLException {
@@ -207,7 +176,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void commit() throws SQLException {
@@ -215,7 +184,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Array createArrayOf(final String typeName, final Object[] elements) throws SQLException {
@@ -223,7 +192,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Blob createBlob() throws SQLException {
@@ -231,7 +200,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Clob createClob() throws SQLException {
@@ -239,7 +208,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public NClob createNClob() throws SQLException {
@@ -247,7 +216,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public SQLXML createSQLXML() throws SQLException {
@@ -255,7 +224,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Statement createStatement() throws SQLException {
@@ -265,7 +234,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency) throws SQLException {
@@ -273,7 +242,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
@@ -281,7 +250,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Struct createStruct(final String typeName, final Object[] attributes) throws SQLException {
@@ -289,7 +258,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean getAutoCommit() throws SQLException {
@@ -297,7 +266,15 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setAutoCommit(final boolean autoCommit) throws SQLException {
+        autocommit = autoCommit;
+    }
+
+    /**
+     * {@inheritDoc}.
      */
     @Override
     public String getCatalog() throws SQLException {
@@ -305,16 +282,15 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * Gets the catalog name.
-     *
-     * @return the catalog name.
+     * {@inheritDoc}.
      */
-    public String getCatalogName() {
-        return catalog;
+    @Override
+    public void setCatalog(final String catalog) throws SQLException {
+        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Properties getClientInfo() throws SQLException {
@@ -322,7 +298,15 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setClientInfo(final Properties clientInfo) throws SQLClientInfoException {
+        this.clientInfo = clientInfo;
+    }
+
+    /**
+     * {@inheritDoc}.
      */
     @Override
     public String getClientInfo(final String name) throws SQLException {
@@ -339,7 +323,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getHoldability() throws SQLException {
@@ -347,7 +331,18 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setHoldability(final int holdability) throws SQLException {
+        if (holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT && holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
+            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
+        }
+        this.holdability = holdability;
+    }
+
+    /**
+     * {@inheritDoc}.
      */
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
@@ -355,7 +350,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getNetworkTimeout() throws SQLException {
@@ -363,7 +358,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getSchema() throws SQLException {
@@ -371,7 +366,15 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setSchema(final String schema) throws SQLException {
+        this.schema = schema;
+    }
+
+    /**
+     * {@inheritDoc}.
      */
     @Override
     public int getTransactionIsolation() throws SQLException {
@@ -379,11 +382,30 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setTransactionIsolation(final int level) throws SQLException {
+        if (Connection.TRANSACTION_NONE != level) {
+            throw new SQLException("Invalid level.");
+        }
+        transactionIsolation = level;
+    }
+
+    /**
+     * {@inheritDoc}.
      */
     @Override
     public Map<String, Class<?>> getTypeMap() throws SQLException {
         return typeMap;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setTypeMap(final Map<String, Class<?>> typeMap) throws SQLException {
+        this.typeMap = typeMap;
     }
 
     /**
@@ -396,7 +418,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public SQLWarning getWarnings() throws SQLException {
@@ -404,7 +426,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean isClosed() throws SQLException {
@@ -412,7 +434,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean isReadOnly() throws SQLException {
@@ -420,178 +442,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isValid(final int timeout) throws SQLException {
-        return !closed;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return Utils.isWrapperFor(this, iface);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String nativeSQL(final String sql) throws SQLException {
-        return sql;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CallableStatement prepareCall(final String sql) throws SQLException {
-        throw new SQLException("No Callable Statement");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
-        return prepareCall(sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
-        return prepareCall(sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PreparedStatement prepareStatement(final String sql) throws SQLException {
-        throw new SQLException("No Prepared Statement");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PreparedStatement prepareStatement(final String sql, final int autoGeneratedKeys) throws SQLException {
-        return prepareStatement(sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
-        return prepareStatement(sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
-        return prepareStatement(sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PreparedStatement prepareStatement(final String sql, final int[] columnIndexes) throws SQLException {
-        return prepareStatement(sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PreparedStatement prepareStatement(final String sql, final String[] columnNames) throws SQLException {
-        return prepareStatement(sql);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void releaseSavepoint(final Savepoint savepoint) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void rollback() throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void rollback(final Savepoint savepoint) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setAutoCommit(final boolean autoCommit) throws SQLException {
-        autocommit = autoCommit;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setCatalog(final String catalog) throws SQLException {
-        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setClientInfo(final Properties clientInfo) throws SQLClientInfoException {
-        this.clientInfo = clientInfo;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setClientInfo(final String name, final String value) throws SQLClientInfoException {
-        clientInfo.put(name, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setHoldability(final int holdability) throws SQLException {
-        if (holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT && holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
-            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
-        }
-        this.holdability = holdability;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setNetworkTimeout(final Executor executor, final int milliseconds) throws SQLException {
-        networkTimeout = milliseconds;
-    }
-
-    /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void setReadOnly(final boolean readOnly) throws SQLException {
@@ -599,7 +450,143 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
+     */
+    @Override
+    public boolean isValid(final int timeout) throws SQLException {
+        return !closed;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
+        return Utils.isWrapperFor(this, iface);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public String nativeSQL(final String sql) throws SQLException {
+        return sql;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public CallableStatement prepareCall(final String sql) throws SQLException {
+        throw new SQLException("No Callable Statement");
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
+        return prepareCall(sql);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
+        return prepareCall(sql);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PreparedStatement prepareStatement(final String sql) throws SQLException {
+        throw new SQLException("No Prepared Statement");
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PreparedStatement prepareStatement(final String sql, final int autoGeneratedKeys) throws SQLException {
+        return prepareStatement(sql);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
+        return prepareStatement(sql);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
+        return prepareStatement(sql);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PreparedStatement prepareStatement(final String sql, final int[] columnIndexes) throws SQLException {
+        return prepareStatement(sql);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public PreparedStatement prepareStatement(final String sql, final String[] columnNames) throws SQLException {
+        return prepareStatement(sql);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void releaseSavepoint(final Savepoint savepoint) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void rollback() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void rollback(final Savepoint savepoint) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setClientInfo(final String name, final String value) throws SQLClientInfoException {
+        clientInfo.put(name, value);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setNetworkTimeout(final Executor executor, final int milliseconds) throws SQLException {
+        networkTimeout = milliseconds;
+    }
+
+    /**
+     * {@inheritDoc}.
      */
     @Override
     public Savepoint setSavepoint() throws SQLException {
@@ -607,38 +594,11 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Savepoint setSavepoint(final String name) throws SQLException {
         throw new SQLFeatureNotSupportedException();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setSchema(final String schema) throws SQLException {
-        this.schema = schema;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setTransactionIsolation(final int level) throws SQLException {
-        if (Connection.TRANSACTION_NONE != level) {
-            throw new SQLException("Invalid level.");
-        }
-        transactionIsolation = level;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setTypeMap(final Map<String, Class<?>> typeMap) throws SQLException {
-        this.typeMap = typeMap;
     }
 
     /**
@@ -663,7 +623,7 @@ public class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
