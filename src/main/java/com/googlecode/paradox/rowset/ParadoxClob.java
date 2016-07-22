@@ -21,12 +21,8 @@ package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.BlobTable;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -36,11 +32,11 @@ import java.sql.SQLException;
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
 public class ParadoxClob implements Clob {
-    
+
     /**
      * The blob table.
      */
@@ -70,7 +66,7 @@ public class ParadoxClob implements Clob {
      * Create a new instance.
      *
      * @param descriptor
-     *            the blob descriptor.
+     *         the blob descriptor.
      */
     public ParadoxClob(final ClobDescriptor descriptor) {
         length = 0;
@@ -107,7 +103,9 @@ public class ParadoxClob implements Clob {
      */
     @Override
     public InputStream getAsciiStream() throws SQLException {
-        return null;
+        parse();
+        isValid();
+        return new ByteArrayInputStream(value);
     }
 
     /**
@@ -127,18 +125,14 @@ public class ParadoxClob implements Clob {
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
         parse();
         isValid();
-        if (pos < 1 || pos > length) {
+        if (pos < 1 || pos > this.length) {
             throw new SQLException("Invalid position in Clob object set");
-        }
-
-        if (pos - 1 + length > length) {
+        } else if (pos - 1 + length > this.length) {
             throw new SQLException("Invalid position and substring length");
-        }
-        if (length <= 0) {
+        } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-
-        return new InputStreamReader(new ByteArrayInputStream(value, (int) pos, (int) length));
+        return new InputStreamReader(new ByteArrayInputStream(value, (int) pos - 1, (int) length));
     }
 
     /**
@@ -148,26 +142,21 @@ public class ParadoxClob implements Clob {
     public String getSubString(final long pos, final int length) throws SQLException {
         parse();
         isValid();
-        if (pos < 1 || pos > length()) {
+        if (pos < 1 || pos > this.length) {
             throw new SQLException("Invalid position '" + pos + "' in Clob object set");
-        }
-
-        if (pos - 1 + length > length()) {
+        } else if (pos - 1 + length > this.length) {
             throw new SQLException("Invalid position and substring length");
+        } else if (length <= 0) {
+            throw new SQLException("Invalid length specified");
         }
-
-        try {
-            return new String(value, (int) pos - 1, length, Charset.forName("cp1251"));
-        } catch (final StringIndexOutOfBoundsException e) {
-            throw new SQLException(e);
-        }
+        return new String(value, (int) pos - 1, length, Charset.forName("cp1251"));
     }
 
     /**
      * Check for the blob validate.
      *
      * @throws SQLException
-     *             in case of invalid descriptor.
+     *         in case of invalid descriptor.
      */
     private void isValid() throws SQLException {
         if (!parsed && blob == null) {
@@ -189,7 +178,7 @@ public class ParadoxClob implements Clob {
      * Parse the blob.
      *
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
     private void parse() throws SQLException {
         if (!parsed) {
@@ -251,17 +240,17 @@ public class ParadoxClob implements Clob {
      * {@inheritDoc}
      */
     @Override
-    public void truncate(final long len) throws SQLException {
+    public void truncate(final long length) throws SQLException {
         parse();
         isValid();
-        if (length > len) {
+        if (length > this.length) {
             throw new SQLException("Length more than what can be truncated");
-        } else {
-            if (length == 0) {
-                value = new byte[] {};
-            } else {
-                value = getSubString(1, (int) length).getBytes();
-            }
         }
+        if (length == 0) {
+            value = new byte[]{};
+        } else {
+            value = getSubString(1, (int) length).getBytes();
+        }
+        this.length = value.length;
     }
 }
