@@ -45,6 +45,31 @@ public class FieldValueTest {
         FieldValue fieldValue = new FieldValue(Boolean.TRUE, Types.BOOLEAN);
         Assert.assertEquals("Invalid type.", Types.BOOLEAN, fieldValue.getType());
         Assert.assertTrue("Invalid value.", fieldValue.getBoolean());
+        Assert.assertNull("Testing for invalid field.", fieldValue.getField());
+    }
+
+    /**
+     * Test for null value.
+     *
+     * @throws SQLDataException
+     *         in case of errors.
+     */
+    @Test
+    public void testNullValue() throws SQLDataException {
+        FieldValue fieldValue = new FieldValue(null, Types.BOOLEAN);
+        Assert.assertTrue("Testing for invalid null value.", fieldValue.isNull());
+    }
+
+    /**
+     * Test for not null value.
+     *
+     * @throws SQLDataException
+     *         in case of errors.
+     */
+    @Test
+    public void testNotNullValue() throws SQLDataException {
+        FieldValue fieldValue = new FieldValue(Boolean.FALSE, Types.BOOLEAN);
+        Assert.assertFalse("Testing for invalid null value.", fieldValue.isNull());
     }
 
     /**
@@ -69,5 +94,29 @@ public class FieldValueTest {
     public void testInvalidDate() throws SQLDataException {
         FieldValue fieldValue = new FieldValue("test value", Types.VARCHAR);
         fieldValue.getDate();
+    }
+
+    /**
+     * Test for invalid {@link Number} value.
+     *
+     * @throws SQLDataException
+     *         in there are no errors.
+     */
+    @Test(expected = SQLDataException.class)
+    public void testInvalidNumber() throws SQLDataException {
+        FieldValue fieldValue = new FieldValue("test value", Types.VARCHAR);
+        fieldValue.getNumber();
+    }
+
+    /**
+     * Test for invalid {@link java.sql.Time} value.
+     *
+     * @throws SQLDataException
+     *         in there are no errors.
+     */
+    @Test(expected = SQLDataException.class)
+    public void testInvalidTime() throws SQLDataException {
+        FieldValue fieldValue = new FieldValue("test value", Types.VARCHAR);
+        fieldValue.getTime();
     }
 }
