@@ -19,8 +19,6 @@
  */
 package com.googlecode.paradox.data.table.value;
 
-import java.nio.charset.Charset;
-
 import com.googlecode.paradox.metadata.BlobTable;
 
 /**
@@ -28,15 +26,10 @@ import com.googlecode.paradox.metadata.BlobTable;
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
 public class ClobDescriptor extends BlobDescriptor {
-
-    /**
-     * the clob charset.
-     */
-    private Charset charset;
 
     /**
      * The clob leader.
@@ -47,19 +40,10 @@ public class ClobDescriptor extends BlobDescriptor {
      * Creates a new instance.
      *
      * @param file
-     *            blob file reference.
+     *         blob file reference.
      */
     public ClobDescriptor(final BlobTable file) {
         super(file);
-    }
-
-    /**
-     * Gets the clob charset.
-     *
-     * @return the clob charset.
-     */
-    public Charset getCharset() {
-        return charset;
     }
 
     /**
@@ -72,20 +56,10 @@ public class ClobDescriptor extends BlobDescriptor {
     }
 
     /**
-     * Sets the clob charset.
-     *
-     * @param charset
-     *            the clob charset.
-     */
-    public void setCharset(final Charset charset) {
-        this.charset = charset;
-    }
-
-    /**
      * Sets the clob leader.
-     * 
+     *
      * @param leader
-     *            the clob leader.
+     *         the clob leader.
      */
     public void setLeader(final String leader) {
         this.leader = leader;

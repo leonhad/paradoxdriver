@@ -25,6 +25,7 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Utils;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.sql.SQLException;
@@ -35,11 +36,11 @@ import java.util.Arrays;
  * Parses memo fields.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class MemoField implements FieldParser {
-    
+
     /**
      * {@inheritDoc}
      */
@@ -56,26 +57,26 @@ public class MemoField implements FieldParser {
             throws SQLException {
         final ByteBuffer value = ByteBuffer.allocate(field.getSize());
         Arrays.fill(value.array(), (byte) 0);
-        
+
         for (int chars = 0; chars < field.getSize(); chars++) {
             value.put(buffer.get());
         }
         value.flip();
-        
+
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final long offset = buffer.getInt();
-        final long length = buffer.getInt();
-        final short modifier = buffer.getShort();
+        // Length
+        buffer.getInt();
+        // Modifier
+        buffer.getShort();
         buffer.order(ByteOrder.BIG_ENDIAN);
-        
+
         final ClobDescriptor descriptor = new ClobDescriptor(table.getBlobTable());
-        descriptor.setCharset(table.getCharset());
         descriptor.setLeader(Utils.parseString(value, table.getCharset()));
-        descriptor.setLength(length);
+
         descriptor.setOffset(offset);
-        descriptor.setModifier(modifier);
-        
+
         return new FieldValue(descriptor, Types.CLOB);
     }
-    
+
 }

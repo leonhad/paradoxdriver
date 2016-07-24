@@ -26,25 +26,15 @@ import com.googlecode.paradox.metadata.BlobTable;
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
-public class BlobDescriptor {
+class BlobDescriptor {
 
     /**
      * The blob table.
      */
     private BlobTable file = null;
-
-    /**
-     * The blob length.
-     */
-    private long length = 0;
-
-    /**
-     * Blob modifier.
-     */
-    private short modifier = 0;
 
     /**
      * Blob file offset.
@@ -55,9 +45,9 @@ public class BlobDescriptor {
      * Creates a new instance.
      *
      * @param file
-     *            the blob file reference.
+     *         the blob file reference.
      */
-    public BlobDescriptor(final BlobTable file) {
+    BlobDescriptor(final BlobTable file) {
         setFile(file);
     }
 
@@ -71,21 +61,13 @@ public class BlobDescriptor {
     }
 
     /**
-     * Gets the blob length.
+     * Sets the blob table file.
      *
-     * @return the blob length.
+     * @param file
+     *         the blob table file.
      */
-    public long getLength() {
-        return length;
-    }
-
-    /**
-     * Gets the blob modifier.
-     *
-     * @return the blob modifier.
-     */
-    public short getModifier() {
-        return modifier;
+    public void setFile(final BlobTable file) {
+        this.file = file;
     }
 
     /**
@@ -98,40 +80,10 @@ public class BlobDescriptor {
     }
 
     /**
-     * Sets the blob table file.
-     *
-     * @param file
-     *            the blob table file.
-     */
-    public void setFile(final BlobTable file) {
-        this.file = file;
-    }
-
-    /**
-     * Sets the blob length.
-     *
-     * @param length
-     *            the blob length.
-     */
-    public void setLength(final long length) {
-        this.length = length;
-    }
-
-    /**
-     * Sets the blob modifier.
-     * 
-     * @param modifier
-     *            the blob modifier.
-     */
-    public void setModifier(final short modifier) {
-        this.modifier = modifier;
-    }
-
-    /**
      * Sets the blob offset.
      *
      * @param offset
-     *            the blob offset.
+     *         the blob offset.
      */
     public void setOffset(final long offset) {
         this.offset = offset;
