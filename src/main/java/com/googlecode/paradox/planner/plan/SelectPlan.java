@@ -19,10 +19,6 @@
  */
 package com.googlecode.paradox.planner.plan;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.table.value.FieldValue;
@@ -31,6 +27,10 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates a SELECT plan for execution.
@@ -190,8 +190,8 @@ public class SelectPlan implements Plan {
         String prefix = null;
         final int p = newName.indexOf('.');
         if (p > -1) {
-            prefix = newName.substring(0, p - 1);
-            newName = newName.substring(p);
+            prefix = newName.substring(0, p);
+            newName = newName.substring(p + 1);
         }
 
         findColumn(newName, fields, prefix);

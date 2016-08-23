@@ -12,6 +12,9 @@ import org.junit.Test;
  */
 public class PlanTableNodeTest {
 
+    /**
+     * Test for instance sanity.
+     */
     @Test
     public void testInstance() {
         PlanTableNode node = new PlanTableNode();
