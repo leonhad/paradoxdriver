@@ -21,12 +21,12 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxFieldType;
 import org.junit.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -135,5 +135,85 @@ public class ParadoxResultSetTest {
             Assert.assertFalse("There is one first row", rs.next());
             Assert.assertFalse("There is one first row", rs.first());
         }
+    }
+
+    /**
+     * Test for {@link ParadoxResultSet#absolute(int)} method with empty values.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testAbsoluteEmpty() throws SQLException {
+        List<Column> columns = new ArrayList<>();
+        List<List<FieldValue>> values = new ArrayList<>();
+        ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) conn);
+        ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) conn, stmt, values, columns);
+        Assert.assertTrue("Invalid absolute value.", rs.absolute(0));
+    }
+
+    /**
+     * Test for {@link ParadoxResultSet#absolute(int)} method with high row number.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testAbsoluteInvalidRow() throws SQLException {
+        List<Column> columns = new ArrayList<>();
+        List<List<FieldValue>> values = new ArrayList<>();
+        ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) conn);
+        ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) conn, stmt, values, columns);
+        Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
+    }
+
+    /**
+     * Test for {@link ParadoxResultSet#absolute(int)} method with low row number.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testAbsoluteLowRowValue() throws SQLException {
+        List<Column> columns = new ArrayList<>();
+        List<List<FieldValue>> values = new ArrayList<>();
+        ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) conn);
+        ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) conn, stmt, values, columns);
+        Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
+    }
+
+    /**
+     * Test for {@link ParadoxResultSet#absolute(int)} method with negative row value.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testAbsoluteNegativeRowValue() throws SQLException {
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column());
+        List<List<FieldValue>> values = new ArrayList<>();
+        values.add(Arrays.asList(new FieldValue("Teste", Types.VARCHAR)));
+        ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) conn);
+        ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) conn, stmt, values, columns);
+        Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
+    }
+
+    /**
+     * Test for {@link ParadoxResultSet#afterLast()} method.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
+    @Test
+    public void testAfterLast() throws SQLException {
+        List<Column> columns = new ArrayList<>();
+        columns.add(new Column());
+        List<List<FieldValue>> values = new ArrayList<>();
+        values.add(Arrays.asList(new FieldValue("Teste", Types.VARCHAR)));
+        ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) conn);
+        ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) conn, stmt, values, columns);
+        rs.afterLast();
+        Assert.assertTrue("Testing for invalid position.", rs.isAfterLast());
     }
 }
