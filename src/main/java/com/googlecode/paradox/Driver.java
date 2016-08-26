@@ -19,17 +19,13 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.utils.Constants;
+
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
+import java.sql.*;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.googlecode.paradox.utils.Constants;
 
 /**
  * PARADOX JDBC Driver type 4.
@@ -45,9 +41,7 @@ public class Driver implements IParadoxDriver {
      */
     private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
 
-    /**
-     * Register the drive into JDBC API.
-     */
+    //  Register the drive into JDBC API.
     static {
         try {
             // Register The Paradox Driver
@@ -115,7 +109,7 @@ public class Driver implements IParadoxDriver {
         passwordProp.required = false;
         passwordProp.description = "Password to use for authentication";
 
-        return new DriverPropertyInfo[] { dbProp, passwordProp };
+        return new DriverPropertyInfo[]{dbProp, passwordProp};
     }
 
     /**

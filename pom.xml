@@ -82,7 +82,7 @@
                 </dependencies>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <argLine>-noverify -Xmx1G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled ${jacoco.agent.ut.arg}</argLine>
+                    <argLine>-noverify -Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled ${jacoco.agent.ut.arg}</argLine>
                     <includes>
                         <include>**/*.class</include>
                     </includes>
@@ -94,7 +94,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.12.4</version>
                 <configuration>
-                    <argLine>-Xmx1G -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled ${jacoco.agent.it.arg}</argLine>
+                    <argLine>-Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled ${jacoco.agent.it.arg}</argLine>
                     <includes>
                         <include>**/*.class</include>
                     </includes>

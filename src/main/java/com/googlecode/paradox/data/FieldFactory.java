@@ -51,9 +51,7 @@ public final class FieldFactory {
      */
     private static final List<FieldParser> ALL_PARSES = new ArrayList<>();
     
-    /**
-     * Initialize the parsers.
-     */
+    // Initialize the parsers.
     static {
         ALL_PARSES.add(new AutoIncrementField());
         ALL_PARSES.add(new BooleanField());
