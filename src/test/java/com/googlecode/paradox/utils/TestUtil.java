@@ -19,19 +19,19 @@
  */
 package com.googlecode.paradox.utils;
 
+import org.junit.Assert;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.junit.Assert;
-
 /**
  * Utility class for test utility class sanity.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.2
  * @version 1.0
+ * @since 1.2
  */
 public class TestUtil {
 
@@ -39,30 +39,33 @@ public class TestUtil {
      * Verifies that a utility class is well defined.
      *
      * @param classReference
-     *            utility class to verify.
+     *         utility class to verify.
+     * @return true if there are no errors.
      * @throws NoSuchMethodException
-     *             in case of sanity failures.
+     *         in case of sanity failures.
      * @throws InvocationTargetException
-     *             in case of sanity failures.
+     *         in case of sanity failures.
      * @throws InstantiationException
-     *             in case of sanity failures.
+     *         in case of sanity failures.
      * @throws IllegalAccessException
-     *             in case of sanity failures.
+     *         in case of sanity failures.
      */
-    public static void assertUtilityClassWellDefined(final Class<?> classReference) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static boolean assertUtilityClassWellDefined(final Class<?> classReference) throws NoSuchMethodException,
+            InvocationTargetException, InstantiationException, IllegalAccessException {
         Assert.assertTrue("class must be final", Modifier.isFinal(classReference.getModifiers()));
         Assert.assertEquals("There must be only one constructor", 1, classReference.getDeclaredConstructors().length);
         final Constructor<?> constructor = classReference.getDeclaredConstructor();
         if (constructor.isAccessible() || !Modifier.isPrivate(constructor.getModifiers())) {
-            Assert.fail("constructor is not private");
+            return false;
         }
         constructor.setAccessible(true);
         constructor.newInstance();
         constructor.setAccessible(false);
         for (final Method method : classReference.getMethods()) {
             if (!Modifier.isStatic(method.getModifiers()) && method.getDeclaringClass().equals(classReference)) {
-                Assert.fail("there exists a non-static method:" + method);
+                return false;
             }
         }
+        return true;
     }
 }

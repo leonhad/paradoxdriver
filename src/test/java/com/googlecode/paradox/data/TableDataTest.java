@@ -98,7 +98,7 @@ public class TableDataTest {
     @Test
     public void testSanity() throws NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
-        TestUtil.assertUtilityClassWellDefined(TableData.class);
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(TableData.class));
     }
 
     /**

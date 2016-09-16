@@ -26,19 +26,11 @@ import org.junit.Test;
  * Unit test for {@link ClobBlock} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class ClobBlockTest {
-    
-    /**
-     * Test for instantiation.
-     */
-    @Test
-    public void testInstance() {
-        new ClobBlock(1, (short) 1, (short) 0);
-    }
-    
+
     /**
      * Test for getters.
      */

@@ -19,17 +19,17 @@
  */
 package com.googlecode.paradox.utils;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Unit test for {@link DateUtils}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class DateUtilsTest {
 
@@ -90,19 +90,20 @@ public class DateUtilsTest {
 
     /**
      * Test utility class.
-     * 
+     *
      * @throws IllegalAccessException
-     *             in case of errors.
+     *         in case of errors.
      * @throws InstantiationException
-     *             in case of errors.
+     *         in case of errors.
      * @throws InvocationTargetException
-     *             in case of errors.
+     *         in case of errors.
      * @throws NoSuchMethodException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
-    public void testSanity() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        TestUtil.assertUtilityClassWellDefined(DateUtils.class);
+    public void testSanity() throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+            IllegalAccessException {
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(DateUtils.class));
     }
 
     /**

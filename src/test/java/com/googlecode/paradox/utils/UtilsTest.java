@@ -19,20 +19,15 @@
  */
 package com.googlecode.paradox.utils;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.integration.MainTest;
+import org.junit.*;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
 
 /**
  * Unit test for {@link Utils}.
@@ -102,7 +97,7 @@ public class UtilsTest {
     @Test
     public void testConstructorIsPrivate()
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        TestUtil.assertUtilityClassWellDefined(Utils.class);
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Utils.class));
     }
 
     /**

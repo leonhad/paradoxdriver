@@ -19,6 +19,7 @@
  */
 package com.googlecode.paradox.utils;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,10 +30,10 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link Expressions}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.1
+ * @since 1.1
  */
 public class ExpressionsTest {
 
@@ -78,19 +79,20 @@ public class ExpressionsTest {
 
     /**
      * Test for sanity.
-     * 
+     *
      * @throws IllegalAccessException
-     *             in case of errors.
+     *         in case of errors.
      * @throws InstantiationException
-     *             in case of errors.
+     *         in case of errors.
      * @throws InvocationTargetException
-     *             in case of errors.
+     *         in case of errors.
      * @throws NoSuchMethodException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
-    public void testSanity() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        TestUtil.assertUtilityClassWellDefined(Expressions.class);
+    public void testSanity() throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+            IllegalAccessException {
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Expressions.class));
     }
 
     /**

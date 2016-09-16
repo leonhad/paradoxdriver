@@ -21,6 +21,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.utils.TestUtil;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -50,7 +51,7 @@ public class FieldFactoryTest {
     @Test
     public void testSanity() throws NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
-        TestUtil.assertUtilityClassWellDefined(FieldFactory.class);
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(FieldFactory.class));
     }
 
     /**

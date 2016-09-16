@@ -22,10 +22,7 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.sql.DriverManager;
 
@@ -86,6 +83,6 @@ public class IndexDataTest {
      */
     @Test
     public void testListIndexes() throws Exception {
-        IndexData.listIndexes(conn, "Client.db");
+        Assert.assertNotEquals("Empty indexes.", 0, IndexData.listIndexes(conn, "Client.db"));
     }
 }
