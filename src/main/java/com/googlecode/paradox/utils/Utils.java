@@ -28,57 +28,43 @@ import java.sql.Wrapper;
  * Driver utilities.
  *
  * @author Leonardo Alves da Costa
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
 public final class Utils {
-    
+
     /**
      * Utility class.
      */
     private Utils() {
         // Utility class.
     }
-    
+
     /**
      * Returns true if this either implements the interface argument or is
-     * directly or indirectly a wrapper for an
-     * object that does. Returns false otherwise. If this implements the
-     * interface then return true, else if this is a
-     * wrapper then return the result of recursively calling
-     * <code>isWrapperFor</code> on the wrapped object. If this
-     * does not implement the interface and is not a wrapper, return false. This
-     * method should be implemented as a
-     * low-cost operation compared to <code>unwrap</code> so that callers can
-     * use this method to avoid expensive
-     * <code>unwrap</code> calls that may fail. If this method returns true then
-     * calling <code>unwrap</code> with the
-     * same argument should succeed.
+     * directly or indirectly a wrapper for an object that does. Returns false otherwise..
      *
      * @param wrapper
-     *            wrapper to test for.
+     *         wrapper to test for.
      * @param iface
-     *            a Class defining an interface.
-     * @return true if this implements the interface or directly or indirectly
-     *         wraps an object that does.
+     *         a Class defining an interface.
+     * @return true if this implements the interface or directly or indirectly wraps an object that does.
      * @throws java.sql.SQLException
-     *             if an error occurs while determining whether this is a
-     *             wrapper for an object with the given
-     *             interface.
+     *         if an error occurs while determining whether this is a wrapper for an object with the given interface.
      * @since 1.2
      */
     public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iface) throws SQLException {
         return wrapper.getClass().isAssignableFrom(iface);
     }
-    
+
     /**
      * Convert the Paradox VARCHAR to {@link String}. The paradox fill the
      * entire buffer with zeros at end of VARCHAR literals.
      *
      * @param buffer
-     *            VARCHAR Buffer to convert.
+     *         VARCHAR Buffer to convert.
      * @param charset
-     *            Table charset.
+     *         Table charset.
      * @return a formatted {@link String}.
      */
     public static String parseString(final ByteBuffer buffer, final Charset charset) {
@@ -94,36 +80,36 @@ public final class Utils {
         buffer.limit(length);
         return charset.decode(buffer).toString();
     }
-    
+
     /**
      * Remove the DB suffix from a {@link String}.
      *
      * @param name
-     *            the {@link String} to format.
+     *         the {@link String} to format.
      * @return the formatted {@link String}.
      */
     public static String removeDb(final String name) {
         return removeSuffix(name, "DB");
     }
-    
+
     /**
      * Remove the MB suffix from a {@link String}.
      *
      * @param name
-     *            the {@link String} to format.
+     *         the {@link String} to format.
      * @return the formatted {@link String}.
      */
     public static String removeMb(final String name) {
         return removeSuffix(name, "MB");
     }
-    
+
     /**
      * Remove a given suffix from {@link String}.
      *
      * @param name
-     *            the {@link String} to format.
+     *         the {@link String} to format.
      * @param suffix
-     *            the suffix.
+     *         the suffix.
      * @return the formatted {@link String}.
      */
     private static String removeSuffix(final String name, final String suffix) {
@@ -135,28 +121,17 @@ public final class Utils {
 
     /**
      * Returns an object that implements the given interface to allow access to
-     * non-standard methods, or standard
-     * methods not exposed by the proxy. If the receiver implements the
-     * interface then the result is the receiver or a
-     * proxy for the receiver. If the receiver is a wrapper and the wrapped
-     * object implements the interface then the
-     * result is the wrapped object or a proxy for the wrapped object. Otherwise
-     * return the the result of calling
-     * <code>unwrap</code> recursively on the wrapped object or a proxy for that
-     * result. If the receiver is not a
-     * wrapper and does not implement the interface, then an
-     * <code>SQLException</code> is thrown.
+     * non-standard methods, or standard methods not exposed by the proxy.
      *
      * @param <T>
-     *            the type of the class modeled by this Class object.
+     *         the type of the class modeled by this Class object.
      * @param wrapper
-     *            the wrapper class.
+     *         the wrapper class.
      * @param iface
-     *            A Class defining an interface that the result must implement.
-     * @return an object that implements the interface. May be a proxy for the
-     *         actual implementing object.
+     *         A Class defining an interface that the result must implement.
+     * @return an object that implements the interface. May be a proxy for the actual implementing object.
      * @throws java.sql.SQLException
-     *             If no object found that implements the interface.
+     *         If no object found that implements the interface.
      * @since 1.2
      */
     @SuppressWarnings("unchecked")
