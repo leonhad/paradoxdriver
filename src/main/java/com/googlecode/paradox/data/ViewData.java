@@ -83,18 +83,31 @@ public final class ViewData {
      * @return the {@link ParadoxField}.
      */
     private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
-        ParadoxField originalField = null;
-        for (final ParadoxField f : table.getFields()) {
-            if (f.getName().equals(name)) {
-                originalField = f;
-                break;
-            }
-        }
+        final ParadoxField originalField = getField(table, name);
         if (originalField == null) {
-            originalField = new ParadoxField();
-            originalField.setType((byte) 1);
+            final ParadoxField newField = new ParadoxField();
+            newField.setType((byte) 1);
+            return newField;
         }
         return originalField;
+    }
+
+    /**
+     * Get a field by its name.
+     *
+     * @param table
+     *         the Paradox table.
+     * @param name
+     *         the field name.
+     * @return the Paradox field.
+     */
+    private static ParadoxField getField(final ParadoxTable table, final String name) {
+        for (final ParadoxField f : table.getFields()) {
+            if (f.getName().equals(name)) {
+                return f;
+            }
+        }
+        return null;
     }
 
     /**
