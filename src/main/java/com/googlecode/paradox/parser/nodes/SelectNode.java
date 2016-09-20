@@ -20,6 +20,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -228,8 +229,8 @@ public class SelectNode extends StatementNode {
      * @param conditions
      *         the condition list.
      */
-    public final void setConditions(final List<SQLNode> conditions) {
-        this.conditions = conditions;
+    public final void setConditions(final Collection<SQLNode> conditions) {
+        this.conditions = new ArrayList<>(conditions);
     }
 
     /**
@@ -273,7 +274,7 @@ public class SelectNode extends StatementNode {
      *
      * @return true if this select has a distinct token.
      */
-    public boolean isDistinct() {
+    public final boolean isDistinct() {
         return distinct;
     }
 
@@ -283,7 +284,7 @@ public class SelectNode extends StatementNode {
      * @param distinct
      *         the distinct key present.
      */
-    public void setDistinct(final boolean distinct) {
+    public final void setDistinct(final boolean distinct) {
         this.distinct = distinct;
     }
 
@@ -291,10 +292,10 @@ public class SelectNode extends StatementNode {
      * Show this node SELECT.
      */
     @Override
-    public String toString() {
+    public final String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append(getName());
-        builder.append(" ");
+        builder.append(' ');
 
         buildFields(builder);
         buildFrom(builder);
