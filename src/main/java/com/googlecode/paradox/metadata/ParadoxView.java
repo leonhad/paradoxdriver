@@ -26,11 +26,11 @@ import java.util.List;
  * Stores the paradox view data.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
-public class ParadoxView extends ParadoxDataFile {
-    
+public final class ParadoxView extends ParadoxDataFile {
+
     /**
      * Stores the field list order.
      */
@@ -40,19 +40,19 @@ public class ParadoxView extends ParadoxDataFile {
      * Stores the field list sort.
      */
     private List<ParadoxField> fieldsSort;
-    
+
     /**
      * Creates a new instance.
      *
      * @param file
-     *            the file to read of.
+     *         the file to read of.
      * @param name
-     *            the view name.
+     *         the view name.
      */
     public ParadoxView(final File file, final String name) {
         super(file, name);
     }
-    
+
     /**
      * Gets the field order.
      *
@@ -61,12 +61,12 @@ public class ParadoxView extends ParadoxDataFile {
     public List<ParadoxField> getFieldsOrder() {
         return fieldsOrder;
     }
-    
+
     /**
      * Sets the fields order.
      *
      * @param fieldsOrder
-     *            the fields order to set.
+     *         the fields order to set.
      */
     public void setFieldsOrder(final List<ParadoxField> fieldsOrder) {
         this.fieldsOrder = fieldsOrder;
@@ -80,12 +80,12 @@ public class ParadoxView extends ParadoxDataFile {
     public List<ParadoxField> getFieldsSort() {
         return fieldsSort;
     }
-    
+
     /**
      * Sets the fields sort.
      *
      * @param fieldsSort
-     *            the fields sort to set.
+     *         the fields sort to set.
      */
     public void setFieldsSort(final List<ParadoxField> fieldsSort) {
         this.fieldsSort = fieldsSort;

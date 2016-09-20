@@ -19,15 +19,6 @@
  */
 package com.googlecode.paradox;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SelectNode;
@@ -38,6 +29,15 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * JDBC statement implementation.
  *
@@ -47,9 +47,9 @@ import com.googlecode.paradox.utils.Utils;
  */
 public class ParadoxStatement implements Statement {
 
-    private boolean closed = false;
     private final ParadoxConnection conn;
     String cursorName = "NO_NAME";
+    private boolean closed = false;
     private int fetchDirection = ResultSet.FETCH_FORWARD;
     private int fetchSize = 10;
     private int maxFieldSize = 255;
@@ -63,7 +63,7 @@ public class ParadoxStatement implements Statement {
      * Creates a statement.
      *
      * @param conn
-     *            the paradox connection.
+     *         the paradox connection.
      */
     public ParadoxStatement(final ParadoxConnection conn) {
         this.conn = conn;
@@ -406,7 +406,8 @@ public class ParadoxStatement implements Statement {
     @Override
     public void setFetchDirection(final int direction) throws SQLException {
         if (direction != ResultSet.FETCH_FORWARD) {
-            throw new SQLException("O resultset somente pode ser ResultSet.FETCH_FORWARD", SQLStates.INVALID_PARAMETER.getValue());
+            throw new SQLException("O resultset somente pode ser ResultSet.FETCH_FORWARD",
+                    SQLStates.INVALID_PARAMETER.getValue());
         }
         fetchDirection = direction;
     }

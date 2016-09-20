@@ -19,7 +19,11 @@
  */
 package com.googlecode.paradox.procedures;
 
-import com.googlecode.paradox.procedures.math.*;
+import com.googlecode.paradox.procedures.math.Average;
+import com.googlecode.paradox.procedures.math.Count;
+import com.googlecode.paradox.procedures.math.Max;
+import com.googlecode.paradox.procedures.math.Min;
+import com.googlecode.paradox.procedures.math.Sum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +32,8 @@ import java.util.List;
  * Stores the procedures in this driver.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public final class ProcedureAS {
 
@@ -66,7 +70,8 @@ public final class ProcedureAS {
     /**
      * Gets the procedure by name.
      *
-     * @param name the procedure name.
+     * @param name
+     *         the procedure name.
      * @return the procedure.
      */
     public CallableProcedure get(final String name) {
@@ -90,7 +95,8 @@ public final class ProcedureAS {
     /**
      * Registers a new procedure.
      *
-     * @param procedure the procedure to register.
+     * @param procedure
+     *         the procedure to register.
      */
     public void register(final CallableProcedure procedure) {
         procedures.add(procedure);

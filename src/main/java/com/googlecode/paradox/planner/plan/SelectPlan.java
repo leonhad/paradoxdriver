@@ -36,8 +36,8 @@ import java.util.List;
  * Creates a SELECT plan for execution.
  *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.1
+ * @since 1.1
  */
 public class SelectPlan implements Plan {
 
@@ -58,7 +58,7 @@ public class SelectPlan implements Plan {
      * Creates a SELECT plan.
      *
      * @param conn
-     *            the Paradox connection.
+     *         the Paradox connection.
      */
     public SelectPlan(final ParadoxConnection conn) {
     }
@@ -67,14 +67,15 @@ public class SelectPlan implements Plan {
      * Add column from select list.
      *
      * @param name
-     *            column name.
+     *         column name.
      * @throws SQLException
-     *             search column exception.
+     *         search column exception.
      */
     public void addColumn(final String name) throws SQLException {
         final ParadoxField field = findField(name);
         if (field == null) {
-            throw new SQLException(String.format("Invalid column name: '%s'", name), SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(String.format("Invalid column name: '%s'", name),
+                    SQLStates.INVALID_COLUMN.getValue());
         }
         columns.add(field.getColumn());
     }
@@ -83,9 +84,9 @@ public class SelectPlan implements Plan {
      * Associate all columns from a table.
      *
      * @param table
-     *            the table to scan.
+     *         the table to scan.
      * @throws SQLException
-     *             in case of wrong SQL type.
+     *         in case of wrong SQL type.
      */
     public void addColumnFromTable(final ParadoxTable table) throws SQLException {
         for (final ParadoxField field : table.getFields()) {
@@ -97,7 +98,7 @@ public class SelectPlan implements Plan {
      * Adds a table to this plan.
      *
      * @param table
-     *            the table.
+     *         the table.
      */
     public void addTable(final PlanTableNode table) {
         tables.add(table);
@@ -124,11 +125,11 @@ public class SelectPlan implements Plan {
 
     /**
      * Fill the result row with a field order.
-     * 
+     *
      * @param tableData
-     *            the table data load from.
+     *         the table data load from.
      * @param fieldOrder
-     *            the field order.
+     *         the field order.
      */
     private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) {
         for (int j = 0; j < tableData.size(); j++) {
@@ -145,17 +146,18 @@ public class SelectPlan implements Plan {
 
     /**
      * Finds a single column in the table list.
-     * 
+     *
      * @param fieldName
-     *            the field name.
+     *         the field name.
      * @param fields
-     *            the field list.
+     *         the field list.
      * @param prefix
-     *            the field prefix.
+     *         the field prefix.
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
-    private void findColumn(final String fieldName, final List<ParadoxField> fields, final String prefix) throws SQLException {
+    private void findColumn(final String fieldName, final List<ParadoxField> fields, final String prefix) throws
+            SQLException {
         for (final PlanTableNode table : tables) {
             if (table.getTable() == null) {
                 throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
@@ -177,12 +179,12 @@ public class SelectPlan implements Plan {
 
     /**
      * Find a paradox field by its name.
-     * 
+     *
      * @param name
-     *            the field name.
+     *         the field name.
      * @return the paradox field.
      * @throws SQLException
-     *             in case of find errors.
+     *         in case of find errors.
      */
     private ParadoxField findField(final String name) throws SQLException {
         String newName = name;
@@ -197,7 +199,8 @@ public class SelectPlan implements Plan {
         findColumn(newName, fields, prefix);
         if (!fields.isEmpty()) {
             if (fields.size() > 1) {
-                throw new SQLException("Column '" + newName + "' ambiguously defined", SQLStates.COLUMN_AMBIQUOUS.getValue());
+                throw new SQLException("Column '" + newName + "' ambiguously defined",
+                        SQLStates.COLUMN_AMBIQUOUS.getValue());
             } else {
                 return fields.get(0);
             }
@@ -235,18 +238,19 @@ public class SelectPlan implements Plan {
 
     /**
      * Load the table data form a table.
-     * 
+     *
      * @param column
-     *            the column to load.
+     *         the column to load.
      * @param table
-     *            the table to load.
+     *         the table to load.
      * @throws SQLException
-     *             in case of execution errors.
+     *         in case of execution errors.
      */
     private void loadTableData(final Column column, final ParadoxTable table) throws SQLException {
         final ParadoxField field = table.findField(column.getName());
         if (field == null) {
-            throw new SQLException("Column '" + column.getName() + "' not found in table '" + table.getName(), SQLStates.INVALID_FIELD_VALUE.getValue());
+            throw new SQLException("Column '" + column.getName() + "' not found in table '" + table.getName(),
+                    SQLStates.INVALID_FIELD_VALUE.getValue());
         }
         // load table data
         final List<List<FieldValue>> tableData = TableData.loadData(table, table.getFields());

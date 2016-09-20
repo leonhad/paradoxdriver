@@ -23,10 +23,10 @@ import java.util.List;
 
 /**
  * Stores a join node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class JoinNode extends SQLNode {
 
@@ -54,7 +54,7 @@ public class JoinNode extends SQLNode {
 
     /**
      * Gets the conditions.
-     * 
+     *
      * @return the conditions.
      */
     public List<SQLNode> getConditions() {
@@ -65,7 +65,7 @@ public class JoinNode extends SQLNode {
      * Sets the condition list.
      *
      * @param conditions
-     *            the condition list.
+     *         the condition list.
      */
     public void setConditions(final List<SQLNode> conditions) {
         this.conditions = conditions;
@@ -84,7 +84,7 @@ public class JoinNode extends SQLNode {
      * Sets the table name.
      *
      * @param tableName
-     *            the table name.
+     *         the table name.
      */
     public void setTableName(final String tableName) {
         this.tableName = tableName;
@@ -101,9 +101,9 @@ public class JoinNode extends SQLNode {
 
     /**
      * Sets the join type.
-     * 
+     *
      * @param type
-     *            the join type.
+     *         the join type.
      */
     public void setType(final JoinType type) {
         this.type = type;

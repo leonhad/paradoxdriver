@@ -28,10 +28,10 @@ import static java.nio.charset.Charset.forName;
 
 /**
  * Stores index data.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class ParadoxIndex extends ParadoxDataFile {
 
@@ -56,9 +56,9 @@ public class ParadoxIndex extends ParadoxDataFile {
      * Creates a new instance.
      *
      * @param file
-     *            the file to read of.
+     *         the file to read of.
      * @param name
-     *            index name.
+     *         index name.
      */
     public ParadoxIndex(final File file, final String name) {
         super(file, name);
@@ -77,7 +77,7 @@ public class ParadoxIndex extends ParadoxDataFile {
      * Sets the charset.
      *
      * @param charset
-     *            the charset to set.
+     *         the charset to set.
      */
     public void setCharset(final Charset charset) {
         this.charset = charset;
@@ -96,7 +96,7 @@ public class ParadoxIndex extends ParadoxDataFile {
      * Sets the fields order.
      *
      * @param fieldsOrder
-     *            the fields order to set.
+     *         the fields order to set.
      */
     public void setFieldsOrder(final List<Short> fieldsOrder) {
         this.fieldsOrder = fieldsOrder;
@@ -127,7 +127,7 @@ public class ParadoxIndex extends ParadoxDataFile {
      * Sets the parent name.
      *
      * @param parentName
-     *            the parent name to set.
+     *         the parent name to set.
      */
     public void setParentName(final String parentName) {
         this.parentName = parentName;
@@ -157,9 +157,9 @@ public class ParadoxIndex extends ParadoxDataFile {
 
     /**
      * Sets the sort order ID.
-     * 
+     *
      * @param sortOrderID
-     *            the sort order ID to set.
+     *         the sort order ID to set.
      */
     public void setSortOrderID(final String sortOrderID) {
         this.sortOrderID = sortOrderID;

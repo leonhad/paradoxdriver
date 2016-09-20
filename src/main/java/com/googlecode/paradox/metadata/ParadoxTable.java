@@ -30,8 +30,8 @@ import static java.nio.charset.Charset.forName;
  * Stores a table data file.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.2
+ * @since 1.0
  */
 public class ParadoxTable extends ParadoxDataFile {
 
@@ -54,9 +54,9 @@ public class ParadoxTable extends ParadoxDataFile {
      * Creates a new instance.
      *
      * @param file
-     *            table references file.
+     *         table references file.
      * @param name
-     *            table name.
+     *         table name.
      */
     public ParadoxTable(final File file, final String name) {
         super(file, name);
@@ -64,7 +64,7 @@ public class ParadoxTable extends ParadoxDataFile {
 
     /**
      * Gets the blob table.
-     * 
+     *
      * @return the blob table.
      */
     public BlobTable getBlobTable() {
@@ -95,7 +95,7 @@ public class ParadoxTable extends ParadoxDataFile {
      * Sets the charset.
      *
      * @param charset
-     *            the charset to set.
+     *         the charset to set.
      */
     public void setCharset(final Charset charset) {
         this.charset = charset;
@@ -112,7 +112,7 @@ public class ParadoxTable extends ParadoxDataFile {
      * Sets the file order.
      *
      * @param fieldsOrder
-     *            the fieldsOrder to set.
+     *         the fieldsOrder to set.
      */
     public void setFieldsOrder(final List<Short> fieldsOrder) {
         this.fieldsOrder = fieldsOrder;

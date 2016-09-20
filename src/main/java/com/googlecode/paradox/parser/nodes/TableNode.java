@@ -28,11 +28,11 @@ import java.util.List;
  * Stores a table node.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class TableNode extends SQLNode {
-    
+
     /**
      * The table joins.
      */
@@ -46,9 +46,9 @@ public class TableNode extends SQLNode {
      * Create a new instance.
      *
      * @param name
-     *            the table name.
+     *         the table name.
      * @param alias
-     *            the table alias.
+     *         the table alias.
      */
     public TableNode(final String name, final String alias) {
         super(Utils.removeDb(name));
@@ -59,7 +59,7 @@ public class TableNode extends SQLNode {
      * Adds the join table.
      *
      * @param join
-     *            the join table.
+     *         the join table.
      */
     public void addJoin(final JoinNode join) {
         joins.add(join);

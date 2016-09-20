@@ -21,11 +21,11 @@ package com.googlecode.paradox.utils;
 
 /**
  * Stores the CLOB block.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
 public class ClobBlock {
 
@@ -51,13 +51,13 @@ public class ClobBlock {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param num
-     *            the CLOB number.
+     *         the CLOB number.
      * @param type
-     *            the CLOB type.
+     *         the CLOB type.
      * @param offset
-     *            the CLOB offset.
+     *         the CLOB offset.
      */
     public ClobBlock(final int num, final short type, final short offset) {
         this(num, type, offset, null);
@@ -65,15 +65,15 @@ public class ClobBlock {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param num
-     *            the CLOB number.
+     *         the CLOB number.
      * @param type
-     *            the CLOB type.
+     *         the CLOB type.
      * @param offset
-     *            the CLOB offset.
+     *         the CLOB offset.
      * @param value
-     *            the CLOB data.
+     *         the CLOB data.
      */
     public ClobBlock(final int num, final short type, final short offset, final byte[] value) {
         this.num = num;
@@ -84,7 +84,7 @@ public class ClobBlock {
 
     /**
      * Gets the CLOB number.
-     * 
+     *
      * @return the CLOB number.
      */
     public int getNum() {
@@ -93,7 +93,7 @@ public class ClobBlock {
 
     /**
      * Gets the CLOB offset.
-     * 
+     *
      * @return the CLOB offset.
      */
     public short getOffset() {
@@ -102,7 +102,7 @@ public class ClobBlock {
 
     /**
      * Gets the CLOB type.
-     * 
+     *
      * @return the CLOB type.
      */
     public short getType() {
@@ -111,7 +111,7 @@ public class ClobBlock {
 
     /**
      * Gets the CLOB data value.
-     * 
+     *
      * @return the CLOB data value.
      */
     public byte[] getValue() {

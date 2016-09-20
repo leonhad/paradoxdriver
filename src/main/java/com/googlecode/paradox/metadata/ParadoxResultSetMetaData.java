@@ -19,16 +19,16 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.List;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.TypeName;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Paradox {@link ResultSetMetaData}.
@@ -53,9 +53,9 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
      * Creates a new {@link ResultSetMetaData}.
      *
      * @param conn
-     *            the Paradox connection.
+     *         the Paradox connection.
      * @param columns
-     *            columns in {@link ResultSet}.
+     *         columns in {@link ResultSet}.
      */
     public ParadoxResultSetMetaData(final ParadoxConnection conn, final List<Column> columns) {
         this.columns = columns;
@@ -73,12 +73,12 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
 
     /**
      * Get an column.
-     * 
+     *
      * @param column
-     *            the column index.
+     *         the column index.
      * @return the column.
      * @throws SQLException
-     *             in case of invalid type.
+     *         in case of invalid type.
      */
     private Column getColumn(final int column) throws SQLException {
         if (column < 1 || column > columns.size()) {

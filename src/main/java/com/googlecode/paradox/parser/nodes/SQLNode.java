@@ -23,33 +23,31 @@ import java.util.Collection;
 
 /**
  * Stores a SQL node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class SQLNode {
 
     /**
+     * The node name.
+     */
+    private final String name;
+    /**
      * The node alias.
      */
     private String alias;
-
     /**
      * Node childhood.
      */
     private Collection<? extends SQLNode> children;
 
     /**
-     * The node name.
-     */
-    private final String name;
-
-    /**
      * Create a new instance.
-     * 
+     *
      * @param name
-     *            the node name.
+     *         the node name.
      */
     public SQLNode(final String name) {
         this.name = name;
@@ -57,11 +55,11 @@ public class SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param name
-     *            the node name.
+     *         the node name.
      * @param alias
-     *            the node alias.
+     *         the node alias.
      */
     public SQLNode(final String name, final String alias) {
         this.name = name;
@@ -70,7 +68,7 @@ public class SQLNode {
 
     /**
      * Gets the node alias.
-     * 
+     *
      * @return the node alias.
      */
     public String getAlias() {
@@ -79,7 +77,7 @@ public class SQLNode {
 
     /**
      * Gets the childhood.
-     * 
+     *
      * @return the childhood.
      */
     @SuppressWarnings("unchecked")
@@ -89,7 +87,7 @@ public class SQLNode {
 
     /**
      * Gets the node name.
-     * 
+     *
      * @return the node name.
      */
     public String getName() {
@@ -98,9 +96,9 @@ public class SQLNode {
 
     /**
      * Sets the node alias.
-     * 
+     *
      * @param alias
-     *            the alias name.
+     *         the alias name.
      */
     public void setAlias(final String alias) {
         this.alias = alias;
@@ -108,9 +106,9 @@ public class SQLNode {
 
     /**
      * Sets the childhood.
-     * 
+     *
      * @param children
-     *            the childhood.
+     *         the childhood.
      */
     public void setChildren(final Collection<? extends SQLNode> children) {
         this.children = children;

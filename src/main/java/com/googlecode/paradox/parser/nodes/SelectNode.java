@@ -24,10 +24,10 @@ import java.util.List;
 
 /**
  * Stores a select node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class SelectNode extends StatementNode {
 
@@ -65,11 +65,11 @@ public class SelectNode extends StatementNode {
 
     /**
      * Adds the field in the list.
-     * 
+     *
      * @param field
-     *            the field to add.
+     *         the field to add.
      */
-    public void addField(final SQLNode field) {
+    public final void addField(final SQLNode field) {
         fields.add(field);
     }
 
@@ -77,9 +77,9 @@ public class SelectNode extends StatementNode {
      * Adds the group by identifier.
      *
      * @param identifier
-     *            the group by identifier to add.
+     *         the group by identifier to add.
      */
-    public void addGroupBy(final IdentifierNode identifier) {
+    public final void addGroupBy(final IdentifierNode identifier) {
         groups.add(identifier);
     }
 
@@ -87,27 +87,27 @@ public class SelectNode extends StatementNode {
      * Adds the order by identifier.
      *
      * @param identifier
-     *            the order by identifier to add.
+     *         the order by identifier to add.
      */
-    public void addOrderBy(final IdentifierNode identifier) {
+    public final void addOrderBy(final IdentifierNode identifier) {
         order.add(identifier);
     }
 
     /**
      * Adds the table in list.
-     * 
+     *
      * @param table
-     *            the table to add
+     *         the table to add
      */
-    public void addTable(final TableNode table) {
+    public final void addTable(final TableNode table) {
         tables.add(table);
     }
 
     /**
      * Build the fields description.
-     * 
+     *
      * @param builder
-     *            builder to append fields.
+     *         builder to append fields.
      */
     private void buildFields(final StringBuilder builder) {
         boolean first = true;
@@ -123,9 +123,9 @@ public class SelectNode extends StatementNode {
 
     /**
      * Build the FROM description.
-     * 
+     *
      * @param builder
-     *            builder to append FROM tables.
+     *         builder to append FROM tables.
      */
     private void buildFrom(final StringBuilder builder) {
         boolean first;
@@ -145,9 +145,9 @@ public class SelectNode extends StatementNode {
 
     /**
      * Build the grouping fields.
-     * 
+     *
      * @param builder
-     *            builder to GROUP BY fields.
+     *         builder to GROUP BY fields.
      */
     private void buildGroupBy(final StringBuilder builder) {
         boolean first;
@@ -167,9 +167,9 @@ public class SelectNode extends StatementNode {
 
     /**
      * Build the fields order.
-     * 
+     *
      * @param builder
-     *            builder to ORDER BY fields.
+     *         builder to ORDER BY fields.
      */
     private void buildOrderBy(final StringBuilder builder) {
         boolean first;
@@ -189,9 +189,9 @@ public class SelectNode extends StatementNode {
 
     /**
      * Build the WHERE conditions.
-     * 
+     *
      * @param builder
-     *            builder to WHERE conditions.
+     *         builder to WHERE conditions.
      */
     private void buildWhere(final StringBuilder builder) {
         boolean first;
@@ -202,7 +202,7 @@ public class SelectNode extends StatementNode {
                 if (first) {
                     first = false;
                 } else {
-                    builder.append(" ");
+                    builder.append(' ');
                 }
                 builder.append(cond);
             }
@@ -211,10 +211,10 @@ public class SelectNode extends StatementNode {
 
     /**
      * Gets the condition list.
-     * 
+     *
      * @return the condition list.
      */
-    public List<SQLNode> getConditions() {
+    public final List<SQLNode> getConditions() {
         return conditions;
     }
 
@@ -222,9 +222,9 @@ public class SelectNode extends StatementNode {
      * Sets the condition list.
      *
      * @param conditions
-     *            the condition list.
+     *         the condition list.
      */
-    public void setConditions(final List<SQLNode> conditions) {
+    public final void setConditions(final List<SQLNode> conditions) {
         this.conditions = conditions;
     }
 
@@ -233,7 +233,7 @@ public class SelectNode extends StatementNode {
      *
      * @return the field list.
      */
-    public List<SQLNode> getFields() {
+    public final List<SQLNode> getFields() {
         return fields;
     }
 
@@ -242,7 +242,7 @@ public class SelectNode extends StatementNode {
      *
      * @return the group list.
      */
-    public List<IdentifierNode> getGroups() {
+    public final List<IdentifierNode> getGroups() {
         return groups;
     }
 
@@ -251,7 +251,7 @@ public class SelectNode extends StatementNode {
      *
      * @return the order by list.
      */
-    public List<IdentifierNode> getOrder() {
+    public final List<IdentifierNode> getOrder() {
         return order;
     }
 
@@ -260,7 +260,7 @@ public class SelectNode extends StatementNode {
      *
      * @return the table list.
      */
-    public List<TableNode> getTables() {
+    public final List<TableNode> getTables() {
         return tables;
     }
 
@@ -269,17 +269,17 @@ public class SelectNode extends StatementNode {
      *
      * @return true if this select has a distinct token.
      */
-    public boolean isDistinct() {
+    public final boolean isDistinct() {
         return distinct;
     }
 
     /**
      * Sets the distinct key present.
-     * 
+     *
      * @param distinct
-     *            the distinct key present.
+     *         the distinct key present.
      */
-    public void setDistinct(final boolean distinct) {
+    public final void setDistinct(final boolean distinct) {
         this.distinct = distinct;
     }
 
@@ -287,10 +287,10 @@ public class SelectNode extends StatementNode {
      * Show this node SELECT.
      */
     @Override
-    public String toString() {
+    public final String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append(getName());
-        builder.append(" ");
+        builder.append(' ');
 
         buildFields(builder);
         buildFrom(builder);

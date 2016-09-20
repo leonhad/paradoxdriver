@@ -28,7 +28,23 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
@@ -109,13 +125,13 @@ public class ParadoxConnection implements Connection {
      * Creates a new paradox connection.
      *
      * @param dir
-     *            database directory.
+     *         database directory.
      * @param url
-     *            connect URL.
+     *         connect URL.
      * @param info
-     *            connection properties.
+     *         connection properties.
      * @throws SQLException
-     *             in any connection fault.
+     *         in any connection fault.
      */
     public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
         this.url = url;
@@ -245,7 +261,9 @@ public class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
+    public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int
+            resultSetHoldability) throws
+            SQLException {
         return createStatement();
     }
 
@@ -485,7 +503,9 @@ public class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency)
+            throws
+            SQLException {
         return prepareCall(sql);
     }
 
@@ -493,7 +513,9 @@ public class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency,
+                                         final int resultSetHoldability) throws
+            SQLException {
         return prepareCall(sql);
     }
 
@@ -517,7 +539,9 @@ public class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int
+            resultSetConcurrency) throws
+            SQLException {
         return prepareStatement(sql);
     }
 
@@ -525,7 +549,9 @@ public class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int
+            resultSetConcurrency, final int resultSetHoldability) throws
+            SQLException {
         return prepareStatement(sql);
     }
 
@@ -605,9 +631,9 @@ public class ParadoxConnection implements Connection {
      * Try to locj this connection.
      *
      * @param dir
-     *            database directory.
+     *         database directory.
      * @throws SQLException
-     *             if this can't lock the connection.
+     *         if this can't lock the connection.
      */
     private void tryLock(final File dir) throws SQLException {
         try {
