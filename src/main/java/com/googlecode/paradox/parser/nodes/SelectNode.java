@@ -215,7 +215,7 @@ public class SelectNode extends StatementNode {
      * @return the condition list.
      */
     public final List<SQLNode> getConditions() {
-        return new ArrayList<>(conditions);
+        return conditions;
     }
 
     /**
@@ -234,7 +234,7 @@ public class SelectNode extends StatementNode {
      * @return the field list.
      */
     public final List<SQLNode> getFields() {
-        return new ArrayList<>(fields);
+        return fields;
     }
 
     /**
@@ -243,7 +243,7 @@ public class SelectNode extends StatementNode {
      * @return the group list.
      */
     public final List<IdentifierNode> getGroups() {
-        return new ArrayList<>(groups);
+        return groups;
     }
 
     /**
@@ -252,7 +252,7 @@ public class SelectNode extends StatementNode {
      * @return the order by list.
      */
     public final List<IdentifierNode> getOrder() {
-        return new ArrayList<>(order);
+        return order;
     }
 
     /**
@@ -261,7 +261,7 @@ public class SelectNode extends StatementNode {
      * @return the table list.
      */
     public final List<TableNode> getTables() {
-        return new ArrayList<>(tables);
+        return tables;
     }
 
     /**
@@ -269,7 +269,7 @@ public class SelectNode extends StatementNode {
      *
      * @return true if this select has a distinct token.
      */
-    public final boolean isDistinct() {
+    public boolean isDistinct() {
         return distinct;
     }
 
@@ -279,7 +279,7 @@ public class SelectNode extends StatementNode {
      * @param distinct
      *         the distinct key present.
      */
-    public final void setDistinct(final boolean distinct) {
+    public void setDistinct(final boolean distinct) {
         this.distinct = distinct;
     }
 
@@ -287,10 +287,10 @@ public class SelectNode extends StatementNode {
      * Show this node SELECT.
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append(getName());
-        builder.append(' ');
+        builder.append(" ");
 
         buildFields(builder);
         buildFrom(builder);
