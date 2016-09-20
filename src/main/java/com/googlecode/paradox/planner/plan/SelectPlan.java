@@ -39,16 +39,18 @@ import java.util.List;
  * @version 1.1
  * @since 1.1
  */
-public class SelectPlan implements Plan {
+public final class SelectPlan implements Plan {
 
     /**
      * The columns in this plan.
      */
     private final List<Column> columns = new ArrayList<>();
+
     /**
      * The tables in this plan.
      */
     private final List<PlanTableNode> tables = new ArrayList<>();
+
     /**
      * The data values.
      */
@@ -105,7 +107,7 @@ public class SelectPlan implements Plan {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void execute() throws SQLException {
