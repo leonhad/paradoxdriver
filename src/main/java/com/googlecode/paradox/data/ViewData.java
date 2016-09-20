@@ -38,6 +38,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Read view files (structure).
@@ -260,14 +261,14 @@ public final class ViewData {
             if (typeTest.startsWith(",")) {
                 builder.delete(0, 1);
             }
-            final int index = builder.toString().toUpperCase().lastIndexOf("AS");
-            if (index != -1) {
+            final int index = builder.toString().toUpperCase(Locale.US).lastIndexOf("AS");
+            if (index > -1) {
                 field.setExpression(builder.substring(0, index).trim());
                 field.setAlias(builder.substring(index + 3).trim());
             } else {
                 field.setExpression(builder.toString().trim());
             }
-            if (field.getExpression().toUpperCase().startsWith("CALC")) {
+            if (field.getExpression().toUpperCase(Locale.US).startsWith("CALC")) {
                 field.setChecked(true);
             }
         }
@@ -292,14 +293,14 @@ public final class ViewData {
                                                        final String oldLine) throws
             SQLException, IOException {
         String line = oldLine;
-        final ArrayList<ParadoxField> fields = new ArrayList<>();
+        final ArrayList<ParadoxField> fieldList = new ArrayList<>();
         while (line != null && !"EndQuery".equals(line)) {
             // Fields
-            final String[] flds = line.split("\\|");
-            final String table = flds[0].trim();
+            final String[] fields = line.split("\\|");
+            final String table = fields[0].trim();
 
-            for (int loop = 1; loop < flds.length; loop++) {
-                final String name = flds[loop].trim();
+            for (int loop = 1; loop < fields.length; loop++) {
+                final String name = fields[loop].trim();
                 final ParadoxField field = new ParadoxField();
                 final ParadoxField original = ViewData.getFieldByName(ViewData.getTable(conn, table), name);
 
@@ -307,13 +308,13 @@ public final class ViewData {
                 field.setName(name);
                 field.setType(original.getType());
                 field.setSize(original.getSize());
-                fields.add(field);
+                fieldList.add(field);
             }
             line = reader.readLine();
             final String[] types = line.split("\\|");
             for (int loop = 1; loop < types.length; loop++) {
                 if (types[loop].trim().length() > 0) {
-                    final ParadoxField field = fields.get(loop - 1);
+                    final ParadoxField field = fieldList.get(loop - 1);
                     ViewData.parseExpression(field, types[loop]);
                 }
             }
@@ -321,7 +322,7 @@ public final class ViewData {
             // Extra Line
             line = fixExtraLine(reader);
         }
-        return fields;
+        return fieldList;
     }
 
     /**
