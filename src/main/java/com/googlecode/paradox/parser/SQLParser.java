@@ -19,9 +19,23 @@
  */
 package com.googlecode.paradox.parser;
 
-import com.googlecode.paradox.parser.nodes.*;
-import com.googlecode.paradox.parser.nodes.comparisons.*;
-import com.googlecode.paradox.parser.nodes.conditional.*;
+import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.parser.nodes.JoinNode;
+import com.googlecode.paradox.parser.nodes.JoinType;
+import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.StatementNode;
+import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.parser.nodes.comparisons.BetweenNode;
+import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
+import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
+import com.googlecode.paradox.parser.nodes.conditional.ExistsNode;
+import com.googlecode.paradox.parser.nodes.conditional.NOTNode;
+import com.googlecode.paradox.parser.nodes.conditional.ORNode;
+import com.googlecode.paradox.parser.nodes.conditional.XORNode;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
@@ -157,7 +171,7 @@ public class SQLParser {
      *         in case of parse errors.
      */
     private void parseAsterisk(final SelectNode select) throws SQLException {
-        select.getFields().add(new AsteriskNode());
+        select.addField(new AsteriskNode());
         expect(TokenType.ASTERISK);
     }
 
@@ -201,7 +215,7 @@ public class SQLParser {
             fieldAlias = token.getValue();
             expect(TokenType.IDENTIFIER);
         }
-        select.getFields().add(new CharacterNode(fieldName, fieldAlias));
+        select.addField(new CharacterNode(fieldName, fieldAlias));
     }
 
     /**
@@ -475,7 +489,7 @@ public class SQLParser {
                 expect(TokenType.IDENTIFIER);
             }
         }
-        select.getFields().add(new FieldNode(newTableName, newFieldName, fieldAlias));
+        select.addField(new FieldNode(newTableName, newFieldName, fieldAlias));
     }
 
     /**
@@ -538,7 +552,7 @@ public class SQLParser {
         final TableNode table = new TableNode(tableName, tableAlias);
         parseJoin(table);
 
-        select.getTables().add(table);
+        select.addTable(table);
     }
 
     /**
@@ -625,7 +639,7 @@ public class SQLParser {
             fieldAlias = token.getValue();
             expect(TokenType.IDENTIFIER);
         }
-        select.getFields().add(new NumericNode(fieldName, fieldAlias));
+        select.addField(new NumericNode(fieldName, fieldAlias));
     }
 
     /**

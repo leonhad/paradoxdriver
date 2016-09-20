@@ -19,14 +19,13 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
+import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
-import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Unit test for {@link SelectNode}.
@@ -43,7 +42,7 @@ public class SelectNodeTest {
     @Test
     public void testConditionList() {
         final SelectNode node = new SelectNode();
-        Assert.assertNull(node.getConditions());
+        Assert.assertEquals("List not empty.", 0, node.getConditions().size());
         node.setConditions(new ArrayList<SQLNode>());
         Assert.assertEquals(0, node.getConditions().size());
     }

@@ -20,6 +20,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -215,7 +216,10 @@ public class SelectNode extends StatementNode {
      * @return the condition list.
      */
     public final List<SQLNode> getConditions() {
-        return conditions;
+        if (conditions != null) {
+            return Collections.unmodifiableList(conditions);
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -234,7 +238,7 @@ public class SelectNode extends StatementNode {
      * @return the field list.
      */
     public final List<SQLNode> getFields() {
-        return fields;
+        return Collections.unmodifiableList(fields);
     }
 
     /**
@@ -243,7 +247,7 @@ public class SelectNode extends StatementNode {
      * @return the group list.
      */
     public final List<IdentifierNode> getGroups() {
-        return groups;
+        return Collections.unmodifiableList(groups);
     }
 
     /**
@@ -252,7 +256,7 @@ public class SelectNode extends StatementNode {
      * @return the order by list.
      */
     public final List<IdentifierNode> getOrder() {
-        return order;
+        return Collections.unmodifiableList(order);
     }
 
     /**
@@ -261,7 +265,7 @@ public class SelectNode extends StatementNode {
      * @return the table list.
      */
     public final List<TableNode> getTables() {
-        return tables;
+        return Collections.unmodifiableList(tables);
     }
 
     /**
