@@ -50,27 +50,27 @@ public final class ParadoxClob implements Clob {
     /**
      * The blob table.
      */
-    private transient BlobTable blob;
+    private BlobTable blob;
 
     /**
      * The blob length.
      */
-    private transient long length;
+    private long length;
 
     /**
      * The blob offset.
      */
-    private transient long offset;
+    private long offset;
 
     /**
      * If this blob is already parsed.
      */
-    private transient boolean parsed;
+    private boolean parsed;
 
     /**
      * The blob data.
      */
-    private transient byte[] value;
+    private byte[] value;
 
     /**
      * Create a new instance.
