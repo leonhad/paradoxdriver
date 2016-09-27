@@ -197,7 +197,7 @@ public final class ParadoxClob implements Clob {
      * {@inheritDoc}.
      */
     @Override
-    public long position(final Clob searchstr, final long start) throws SQLException {
+    public long position(final Clob search, final long start) {
         return 0;
     }
 
@@ -205,7 +205,7 @@ public final class ParadoxClob implements Clob {
      * {@inheritDoc}.
      */
     @Override
-    public long position(final String searchstr, final long start) throws SQLException {
+    public long position(final String search, final long start) {
         return 0;
     }
 
@@ -213,7 +213,7 @@ public final class ParadoxClob implements Clob {
      * {@inheritDoc}.
      */
     @Override
-    public OutputStream setAsciiStream(final long pos) throws SQLException {
+    public OutputStream setAsciiStream(final long pos) {
         return null;
     }
 
@@ -221,7 +221,7 @@ public final class ParadoxClob implements Clob {
      * {@inheritDoc}.
      */
     @Override
-    public Writer setCharacterStream(final long pos) throws SQLException {
+    public Writer setCharacterStream(final long pos) {
         return null;
     }
 
@@ -229,7 +229,7 @@ public final class ParadoxClob implements Clob {
      * {@inheritDoc}.
      */
     @Override
-    public int setString(final long pos, final String str) throws SQLException {
+    public int setString(final long pos, final String str) {
         return 0;
     }
 
@@ -237,7 +237,7 @@ public final class ParadoxClob implements Clob {
      * {@inheritDoc}.
      */
     @Override
-    public int setString(final long pos, final String str, final int offset, final int len) throws SQLException {
+    public int setString(final long pos, final String str, final int offset, final int len) {
         return 0;
     }
 
