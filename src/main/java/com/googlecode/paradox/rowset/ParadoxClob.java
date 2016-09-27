@@ -40,7 +40,7 @@ import java.sql.SQLException;
  * @version 1.2
  * @since 1.2
  */
-public class ParadoxClob implements Clob {
+public final class ParadoxClob implements Clob {
 
     /**
      * The default clob charset.
