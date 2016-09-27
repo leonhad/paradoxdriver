@@ -22,7 +22,12 @@ package com.googlecode.paradox.rowset;
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.BlobTable;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -32,35 +37,40 @@ import java.sql.SQLException;
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @version 1.1
+ * @version 1.2
  * @since 1.2
  */
 public class ParadoxClob implements Clob {
 
     /**
+     * The default clob charset.
+     */
+    private static final Charset DEFAULT_CHARSET = Charset.forName("cp1251");
+
+    /**
      * The blob table.
      */
-    private BlobTable blob = null;
+    private transient BlobTable blob;
 
     /**
      * The blob length.
      */
-    private long length;
+    private transient long length;
 
     /**
      * The blob offset.
      */
-    private long offset;
+    private transient long offset;
 
     /**
      * If this blob is already parsed.
      */
-    private boolean parsed = false;
+    private transient boolean parsed;
 
     /**
      * The blob data.
      */
-    private byte[] value;
+    private transient byte[] value;
 
     /**
      * Create a new instance.
@@ -69,13 +79,11 @@ public class ParadoxClob implements Clob {
      *         the blob descriptor.
      */
     public ParadoxClob(final ClobDescriptor descriptor) {
-        length = 0;
-        value = null;
         offset = -1;
         // If MB_Offset = 0 then the entire blob is contained in the leader.
         if (descriptor.getOffset() == 0) {
             if (descriptor.getLeader() != null) {
-                value = descriptor.getLeader().getBytes();
+                value = descriptor.getLeader().getBytes(DEFAULT_CHARSET);
                 length = value.length;
             }
             parsed = true;
@@ -86,20 +94,17 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void free() throws SQLException {
-        if (value != null) {
-            value = null;
-        }
         if (blob != null) {
             blob.close();
         }
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public InputStream getAsciiStream() throws SQLException {
@@ -109,17 +114,17 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Reader getCharacterStream() throws SQLException {
         parse();
         isValid();
-        return new InputStreamReader(new ByteArrayInputStream(value));
+        return new InputStreamReader(new ByteArrayInputStream(value), DEFAULT_CHARSET);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
@@ -132,11 +137,11 @@ public class ParadoxClob implements Clob {
         } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-        return new InputStreamReader(new ByteArrayInputStream(value, (int) pos - 1, (int) length));
+        return new InputStreamReader(new ByteArrayInputStream(value, (int) pos - 1, (int) length), DEFAULT_CHARSET);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getSubString(final long pos, final int length) throws SQLException {
@@ -149,7 +154,7 @@ public class ParadoxClob implements Clob {
         } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-        return new String(value, (int) pos - 1, length, Charset.forName("cp1251"));
+        return new String(value, (int) pos - 1, length, DEFAULT_CHARSET);
     }
 
     /**
@@ -165,7 +170,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public long length() throws SQLException {
@@ -189,7 +194,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public long position(final Clob searchstr, final long start) throws SQLException {
@@ -197,7 +202,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public long position(final String searchstr, final long start) throws SQLException {
@@ -205,7 +210,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public OutputStream setAsciiStream(final long pos) throws SQLException {
@@ -213,7 +218,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Writer setCharacterStream(final long pos) throws SQLException {
@@ -221,7 +226,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int setString(final long pos, final String str) throws SQLException {
@@ -229,7 +234,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int setString(final long pos, final String str, final int offset, final int len) throws SQLException {
@@ -237,7 +242,7 @@ public class ParadoxClob implements Clob {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public void truncate(final long length) throws SQLException {
@@ -249,7 +254,7 @@ public class ParadoxClob implements Clob {
         if (length == 0) {
             value = new byte[]{};
         } else {
-            value = getSubString(1, (int) length).getBytes();
+            value = getSubString(1, (int) length).getBytes(DEFAULT_CHARSET);
         }
         this.length = value.length;
     }
