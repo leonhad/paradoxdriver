@@ -6,6 +6,7 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,7 +46,7 @@ public class SelectPlanTest {
     }
 
     /**
-     * Close the test conneciton.
+     * Close the test connection.
      *
      * @throws Exception
      *         in case of failures.
@@ -143,6 +144,7 @@ public class SelectPlanTest {
         plan.addTable(tableNode);
 
         plan.addColumn("ac");
+        Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
 
     /**
