@@ -99,6 +99,7 @@ public class SelectPlanTest {
         plan.addTable(tableNode);
 
         plan.addColumn("test.ac");
+        Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
 
     /**
