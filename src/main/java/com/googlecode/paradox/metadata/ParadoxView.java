@@ -20,6 +20,8 @@
 package com.googlecode.paradox.metadata;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,7 +61,7 @@ public final class ParadoxView extends ParadoxDataFile {
      * @return the fieldsOrder the field order.
      */
     public List<ParadoxField> getFieldsOrder() {
-        return fieldsOrder;
+        return Collections.unmodifiableList(fieldsOrder);
     }
 
     /**
@@ -69,7 +71,7 @@ public final class ParadoxView extends ParadoxDataFile {
      *         the fields order to set.
      */
     public void setFieldsOrder(final List<ParadoxField> fieldsOrder) {
-        this.fieldsOrder = fieldsOrder;
+        this.fieldsOrder = new ArrayList<>(fieldsOrder);
     }
 
     /**
@@ -78,7 +80,7 @@ public final class ParadoxView extends ParadoxDataFile {
      * @return the fieldsSort the fields sort.
      */
     public List<ParadoxField> getFieldsSort() {
-        return fieldsSort;
+        return Collections.unmodifiableList(fieldsSort);
     }
 
     /**
@@ -88,6 +90,6 @@ public final class ParadoxView extends ParadoxDataFile {
      *         the fields sort to set.
      */
     public void setFieldsSort(final List<ParadoxField> fieldsSort) {
-        this.fieldsSort = fieldsSort;
+        this.fieldsSort = new ArrayList<>(fieldsSort);
     }
 }
