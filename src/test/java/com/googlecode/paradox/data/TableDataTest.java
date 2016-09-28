@@ -25,7 +25,11 @@ import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.TestUtil;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Driver;
@@ -55,7 +59,7 @@ public class TableDataTest {
      *         in case of connection errors.
      */
     @BeforeClass
-    public static void setUp() throws ClassNotFoundException {
+    public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
 
@@ -109,7 +113,7 @@ public class TableDataTest {
      */
     @Test
     public void testInvalidTable() throws SQLException {
-        Assert.assertEquals(0, TableData.listTables(conn, "not found.db").size());
+        Assert.assertEquals("Failed in count invalid tables.", 0, TableData.listTables(conn, "not found.db").size());
     }
 
     /**
@@ -125,7 +129,7 @@ public class TableDataTest {
         Assert.assertTrue("List tables is empty", tables.size() > 0);
         final ParadoxTable table = tables.get(0);
         final List<List<FieldValue>> data = TableData.loadData(table, table.getFields());
-        Assert.assertEquals(table.getRowCount(), data.size());
+        Assert.assertEquals("Error in load table.", table.getRowCount(), data.size());
     }
 
     /**
@@ -137,9 +141,9 @@ public class TableDataTest {
     @Test
     public void testLoadContacts() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "contacts.db").get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+        final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(table, fields);
+        Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
 
     /**
@@ -151,9 +155,9 @@ public class TableDataTest {
     @Test
     public void testLoadCustomer() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "customer.db").get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+        final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(table, fields);
+        Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
 
     /**
@@ -165,7 +169,7 @@ public class TableDataTest {
     @Test
     public void testLoadHercules() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "hercules.db").get(0);
-        TableData.loadData(table, table.getFields());
+        Assert.assertNotNull("Error loading table list.", TableData.loadData(table, table.getFields()));
     }
 
     /**
@@ -177,9 +181,9 @@ public class TableDataTest {
     @Test
     public void testLoadOrders() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "orders.db").get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+        final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(table, fields);
+        Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
 
     /**
@@ -191,8 +195,8 @@ public class TableDataTest {
     @Test
     public void testLoadServer() throws SQLException {
         final ParadoxTable table = TableData.listTables(conn, "server.db").get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<ParadoxField>();
+        final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
-        TableData.loadData(table, fields);
+        Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
 }

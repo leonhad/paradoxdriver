@@ -40,7 +40,7 @@ public class SelectPlanTest {
      *         in case of failures.
      */
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void initClass() throws Exception {
         Class.forName(Driver.class.getName());
     }
 

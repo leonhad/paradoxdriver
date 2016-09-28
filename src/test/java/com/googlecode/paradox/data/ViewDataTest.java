@@ -51,7 +51,7 @@ public class ViewDataTest {
      *         in case of connection errors.
      */
     @BeforeClass
-    public static void setUp() throws ClassNotFoundException {
+    public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
 
@@ -98,7 +98,7 @@ public class ViewDataTest {
      */
     @Test
     public void testListViews() throws Exception {
-        ViewData.listViews(conn);
+        Assert.assertNotNull("Invalid views", ViewData.listViews(conn));
     }
 
     /**
@@ -111,10 +111,10 @@ public class ViewDataTest {
     public void testParseExpression() throws Exception {
         final ParadoxField field = new ParadoxField();
         ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
-        Assert.assertEquals(true, field.isChecked());
-        Assert.assertEquals("_PC", field.getJoinName());
-        Assert.assertEquals("CALC _PC*_QTD", field.getExpression());
-        Assert.assertEquals("CUSTOTOTAL", field.getAlias());
+        Assert.assertEquals("Field is not checked.", true, field.isChecked());
+        Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());
+        Assert.assertEquals("Invalid field name.", "CALC _PC*_QTD", field.getExpression());
+        Assert.assertEquals("Invalid field name.", "CUSTOTOTAL", field.getAlias());
 
         Assert.assertTrue(field.isChecked());
     }
@@ -131,10 +131,10 @@ public class ViewDataTest {
 
         try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
             // This view have 3 fields.
-            Assert.assertTrue(rs.next());
-            Assert.assertTrue(rs.next());
-            Assert.assertTrue(rs.next());
-            Assert.assertFalse(rs.next());
+            Assert.assertTrue("Invalid result set.", rs.next());
+            Assert.assertTrue("Invalid result set.", rs.next());
+            Assert.assertTrue("Invalid result set.", rs.next());
+            Assert.assertFalse("Invalid result set.", rs.next());
         }
     }
 }
