@@ -26,7 +26,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +37,7 @@ import java.util.logging.Logger;
  * @version 2.2
  * @since 1.0
  */
-public class Driver implements IParadoxDriver {
+public final class Driver implements IParadoxDriver {
 
     /**
      * Logger instance for this class.
@@ -60,7 +59,7 @@ public class Driver implements IParadoxDriver {
      * {@inheritDoc}
      */
     @Override
-    public boolean acceptsURL(final String url) throws SQLException {
+    public boolean acceptsURL(final String url) {
         return url != null && url.startsWith(Constants.URL_PREFIX);
     }
 
@@ -96,7 +95,7 @@ public class Driver implements IParadoxDriver {
      * {@inheritDoc}
      */
     @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    public Logger getParentLogger() {
         return Driver.LOGGER;
     }
 

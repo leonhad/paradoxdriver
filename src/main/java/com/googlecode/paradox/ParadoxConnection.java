@@ -162,7 +162,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void clearWarnings() throws SQLException {
+    public void clearWarnings() {
         warnings = null;
     }
 
@@ -206,7 +206,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Array createArrayOf(final String typeName, final Object[] elements) throws SQLException {
+    public Array createArrayOf(final String typeName, final Object[] elements) {
         return null;
     }
 
@@ -214,7 +214,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Blob createBlob() throws SQLException {
+    public Blob createBlob() {
         return null;
     }
 
@@ -222,7 +222,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Clob createClob() throws SQLException {
+    public Clob createClob() {
         return null;
     }
 
@@ -230,7 +230,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public NClob createNClob() throws SQLException {
+    public NClob createNClob() {
         return null;
     }
 
@@ -282,7 +282,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public boolean getAutoCommit() throws SQLException {
+    public boolean getAutoCommit() {
         return autocommit;
     }
 
@@ -290,7 +290,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setAutoCommit(final boolean autoCommit) throws SQLException {
+    public void setAutoCommit(final boolean autoCommit) {
         autocommit = autoCommit;
     }
 
@@ -298,7 +298,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public String getCatalog() throws SQLException {
+    public String getCatalog() {
         return catalog;
     }
 
@@ -314,7 +314,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Properties getClientInfo() throws SQLException {
+    public Properties getClientInfo() {
         return clientInfo;
     }
 
@@ -322,7 +322,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setClientInfo(final Properties clientInfo) throws SQLClientInfoException {
+    public void setClientInfo(final Properties clientInfo) {
         this.clientInfo = clientInfo;
     }
 
@@ -330,7 +330,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public String getClientInfo(final String name) throws SQLException {
+    public String getClientInfo(final String name) {
         return clientInfo.getProperty(name);
     }
 
@@ -347,7 +347,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public int getHoldability() throws SQLException {
+    public int getHoldability() {
         return holdability;
     }
 
