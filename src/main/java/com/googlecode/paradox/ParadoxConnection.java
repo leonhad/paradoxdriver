@@ -57,7 +57,7 @@ import java.util.concurrent.Executor;
  * @version 1.0
  * @since 1.0
  */
-public class ParadoxConnection implements Connection {
+public final class ParadoxConnection implements Connection {
 
     /**
      * Database catalog.
@@ -95,11 +95,14 @@ public class ParadoxConnection implements Connection {
      * Stores the file lock used in transactions.
      */
     private FileLock lock;
+    /**
+     * Stores the database lock file.
+     */
     private RandomAccessFile lockFile;
     /**
      * Default timeout
      */
-    private int networkTimeout = 0;
+    private int networkTimeout;
     /**
      * If this connection is readonly.
      */
@@ -119,7 +122,7 @@ public class ParadoxConnection implements Connection {
     /**
      * SQL warnings for this connection.
      */
-    private SQLWarning warnings = null;
+    private SQLWarning warnings;
 
     /**
      * Creates a new paradox connection.
