@@ -30,6 +30,7 @@ import com.googlecode.paradox.utils.SQLStates;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -217,7 +218,7 @@ public final class SelectPlan implements Plan {
      * @return the columns in SELECT statement.
      */
     public List<Column> getColumns() {
-        return columns;
+        return Collections.unmodifiableList(columns);
     }
 
     /**
@@ -226,7 +227,7 @@ public final class SelectPlan implements Plan {
      * @return the tables in this plan.
      */
     public List<PlanTableNode> getTables() {
-        return tables;
+        return Collections.unmodifiableList(tables);
     }
 
     /**
@@ -235,7 +236,7 @@ public final class SelectPlan implements Plan {
      * @return array of array of values/ Can be null (empty result set);
      */
     public List<List<FieldValue>> getValues() {
-        return values;
+        return Collections.unmodifiableList(values);
     }
 
     /**
