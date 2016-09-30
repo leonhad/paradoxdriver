@@ -27,7 +27,7 @@ import java.sql.SQLException;
 
 /**
  * Unit test for {@link Column} class.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
@@ -235,13 +235,13 @@ public class ColumnTest {
 
     /**
      * Test for type name.
-     * 
+     *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testTypeName() throws SQLException {
-        Assert.assertEquals(TypeName.BOOLEAN.getTypeName(), Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
+        Assert.assertEquals(TypeName.BOOLEAN.getName(), Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
     }
 
     /**

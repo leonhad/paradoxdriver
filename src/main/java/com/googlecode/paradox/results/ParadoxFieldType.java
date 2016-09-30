@@ -26,10 +26,10 @@ import java.sql.Types;
 
 /**
  * Stores the Paradox field types and SQL Types.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public enum ParadoxFieldType {
     /**
@@ -126,11 +126,11 @@ public enum ParadoxFieldType {
 
     /**
      * Creates a new instance.
-     * 
+     *
      * @param type
-     *            the Paradox type.
+     *         the Paradox type.
      * @param sqlType
-     *            the SQL type.
+     *         the SQL type.
      */
     ParadoxFieldType(final int type, final int sqlType) {
         this.type = (byte) type;
@@ -139,17 +139,17 @@ public enum ParadoxFieldType {
 
     /**
      * Gets the field name by its type.
-     * 
+     *
      * @param type
-     *            the type value.
+     *         the type value.
      * @return the field type name.
      * @throws SQLException
-     *             in case of invalid type.
+     *         in case of invalid type.
      */
     public static int getSQLTypeByType(final int type) throws SQLException {
         for (final ParadoxFieldType typeName : VALUES) {
             if (typeName.getType() == type) {
-                return typeName.getSQLTypeByType();
+                return typeName.getSQLType();
             }
         }
         throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
@@ -157,16 +157,16 @@ public enum ParadoxFieldType {
 
     /**
      * Gets the SQL type.
-     * 
+     *
      * @return the SQL type.
      */
-    public int getSQLTypeByType() {
+    public int getSQLType() {
         return sqlType;
     }
 
     /**
      * Gets the Paradox type.
-     * 
+     *
      * @return the Paradox type.
      */
     public byte getType() {

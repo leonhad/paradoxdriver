@@ -141,7 +141,7 @@ public class ParadoxResultSetMetaDataTest {
         Column column = new Column();
         column.setName("name");
         column.setMaxSize(255);
-        column.setType(ParadoxFieldType.INTEGER.getSQLTypeByType());
+        column.setType(ParadoxFieldType.INTEGER.getSQLType());
         column.setPrecision(0);
         column.setTableName("table");
         column.setAutoIncrement(false);
@@ -161,9 +161,9 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertEquals("Testing for column display size.", 255, metaData.getColumnDisplaySize(1));
         Assert.assertEquals("Testing for column label.", "name", metaData.getColumnLabel(1));
         Assert.assertEquals("Testing for column name.", "name", metaData.getColumnName(1));
-        Assert.assertEquals("Testing for column type.", ParadoxFieldType.INTEGER.getSQLTypeByType(),
+        Assert.assertEquals("Testing for column type.", ParadoxFieldType.INTEGER.getSQLType(),
                 metaData.getColumnType(1));
-        Assert.assertEquals("Testing for column type name.", TypeName.INTEGER.getTypeName(),
+        Assert.assertEquals("Testing for column type name.", TypeName.INTEGER.getName(),
                 metaData.getColumnTypeName(1));
         Assert.assertEquals("Testing for column precision.", 0, metaData.getPrecision(1));
         Assert.assertEquals("Testing for column scale.", 2, metaData.getScale(1));

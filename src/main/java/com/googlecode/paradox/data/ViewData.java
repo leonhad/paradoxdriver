@@ -311,12 +311,14 @@ public final class ViewData {
                 fieldList.add(field);
             }
             line = reader.readLine();
-            final String[] types = line.split("\\|");
-            for (int loop = 1; loop < types.length; loop++) {
-                final String type = types[loop].trim();
-                if (type.length() > 0) {
-                    final ParadoxField field = fieldList.get(loop - 1);
-                    ViewData.parseExpression(field, type);
+            if (line != null) {
+                final String[] types = line.split("\\|");
+                for (int loop = 1; loop < types.length; loop++) {
+                    final String type = types[loop].trim();
+                    if (type.length() > 0) {
+                        final ParadoxField field = fieldList.get(loop - 1);
+                        ViewData.parseExpression(field, type);
+                    }
                 }
             }
 

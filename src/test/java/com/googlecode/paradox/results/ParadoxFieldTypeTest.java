@@ -36,18 +36,20 @@ public class ParadoxFieldTypeTest {
     /**
      * Test for SQL type.
      *
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     @Test
     public void testSQLType() throws SQLException {
-        Assert.assertEquals("Test for get SQL type.", ParadoxFieldType.AUTO_INCREMENT.getSQLTypeByType(),
+        Assert.assertEquals("Test for get SQL type.", ParadoxFieldType.AUTO_INCREMENT.getSQLType(),
                 ParadoxFieldType.getSQLTypeByType(ParadoxFieldType.AUTO_INCREMENT.getType()));
     }
 
     /**
      * Test for invalid type.
      *
-     * @throws SQLException if there is no errors.
+     * @throws SQLException
+     *         if there is no errors.
      */
     @Test(expected = SQLException.class)
     public void getType() throws SQLException {

@@ -153,7 +153,7 @@ public enum TypeName {
     public static String getTypeName(final int sqlType) throws SQLException {
         for (final TypeName typeName : VALUES) {
             if (typeName.getSQLType() == sqlType) {
-                return typeName.getTypeName();
+                return typeName.getName();
             }
         }
         throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
@@ -173,7 +173,7 @@ public enum TypeName {
      *
      * @return the type name.
      */
-    public String getTypeName() {
+    public String getName() {
         return name;
     }
 
