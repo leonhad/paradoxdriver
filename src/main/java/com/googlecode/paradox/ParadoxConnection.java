@@ -136,7 +136,7 @@ public final class ParadoxConnection implements Connection {
      * @throws SQLException
      *         in any connection fault.
      */
-    public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
+    public ParadoxConnection(final File dir, final String url, final Map<Object, Object> info) throws SQLException {
         this.url = url;
         this.dir = dir;
 

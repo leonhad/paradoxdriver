@@ -19,11 +19,11 @@
  */
 package com.googlecode.paradox.results;
 
-import java.sql.SQLException;
-import java.sql.Types;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Unit test for {@link TypeName} class.
@@ -64,7 +64,7 @@ public class TypeNameTest {
      */
     @Test
     public void testFieldName() throws SQLException {
-        Assert.assertEquals("BINARY", TypeName.getName(Types.BINARY));
+        Assert.assertEquals("BINARY", TypeName.getTypeName(Types.BINARY));
     }
 
     /**
@@ -75,7 +75,7 @@ public class TypeNameTest {
      */
     @Test(expected = SQLException.class)
     public void testNameUnsupported() throws SQLException {
-        TypeName.getName(99);
+        TypeName.getTypeName(99);
     }
 
     /**

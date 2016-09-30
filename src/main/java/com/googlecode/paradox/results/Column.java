@@ -153,7 +153,7 @@ public final class Column {
      *         if is an invalid type.
      */
     public static String getTypeName(final int type) throws SQLException {
-        return TypeName.getName(type);
+        return TypeName.getTypeName(type);
     }
 
     /**

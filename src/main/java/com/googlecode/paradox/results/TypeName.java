@@ -19,6 +19,8 @@
  */
 package com.googlecode.paradox.results;
 
+import com.googlecode.paradox.utils.SQLStates;
+
 import java.io.InputStream;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -26,14 +28,12 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-import com.googlecode.paradox.utils.SQLStates;
-
 /**
  * Stores the SQL type names.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.1
+ * @since 1.3
  */
 public enum TypeName {
 
@@ -111,11 +111,11 @@ public enum TypeName {
 
     /**
      * Creates a new instance.
-     * 
+     *
      * @param sqlType
-     *            the SQL type.
+     *         the SQL type.
      * @param name
-     *            the type name.
+     *         the type name.
      */
     TypeName(final int sqlType, final String name, final String className) {
         this.sqlType = sqlType;
@@ -125,12 +125,12 @@ public enum TypeName {
 
     /**
      * Gets the class name by its SQL type.
-     * 
+     *
      * @param sqlType
-     *            the SQL type value.
+     *         the SQL type value.
      * @return the class type name.
      * @throws SQLException
-     *             in case of invalid type.
+     *         in case of invalid type.
      */
     public static String getClassName(final int sqlType) throws SQLException {
         for (final TypeName typeName : VALUES) {
@@ -143,17 +143,17 @@ public enum TypeName {
 
     /**
      * Gets the field name by its SQL type.
-     * 
+     *
      * @param sqlType
-     *            the SQL type value.
+     *         the SQL type value.
      * @return the field type name.
      * @throws SQLException
-     *             in case of invalid type.
+     *         in case of invalid type.
      */
-    public static String getName(final int sqlType) throws SQLException {
+    public static String getTypeName(final int sqlType) throws SQLException {
         for (final TypeName typeName : VALUES) {
             if (typeName.getSQLType() == sqlType) {
-                return typeName.getName();
+                return typeName.getTypeName();
             }
         }
         throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
@@ -161,7 +161,7 @@ public enum TypeName {
 
     /**
      * Gets the class name.
-     * 
+     *
      * @return the class name.
      */
     public String getClassName() {
@@ -170,16 +170,16 @@ public enum TypeName {
 
     /**
      * Gets the type name.
-     * 
+     *
      * @return the type name.
      */
-    public String getName() {
+    public String getTypeName() {
         return name;
     }
 
     /**
      * Gets the SQL type.
-     * 
+     *
      * @return the SQL type.
      */
     public int getSQLType() {

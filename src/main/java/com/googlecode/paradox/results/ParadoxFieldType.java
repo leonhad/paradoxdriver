@@ -146,10 +146,10 @@ public enum ParadoxFieldType {
      * @throws SQLException
      *             in case of invalid type.
      */
-    public static int getSQLType(final int type) throws SQLException {
+    public static int getSQLTypeByType(final int type) throws SQLException {
         for (final ParadoxFieldType typeName : VALUES) {
             if (typeName.getType() == type) {
-                return typeName.getSQLType();
+                return typeName.getSQLTypeByType();
             }
         }
         throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
@@ -160,7 +160,7 @@ public enum ParadoxFieldType {
      * 
      * @return the SQL type.
      */
-    public int getSQLType() {
+    public int getSQLTypeByType() {
         return sqlType;
     }
 

@@ -19,12 +19,11 @@
  */
 package com.googlecode.paradox.results;
 
-import java.sql.SQLException;
-
+import com.googlecode.paradox.metadata.ParadoxField;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.googlecode.paradox.metadata.ParadoxField;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link Column} class.
@@ -242,7 +241,7 @@ public class ColumnTest {
      */
     @Test
     public void testTypeName() throws SQLException {
-        Assert.assertEquals(TypeName.BOOLEAN.getName(), Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
+        Assert.assertEquals(TypeName.BOOLEAN.getTypeName(), Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
     }
 
     /**

@@ -291,10 +291,7 @@ public class ParadoxResultSet implements ResultSet {
         verifyRow();
 
         final BigDecimal value = getBigDecimal(columnIndex);
-        if (value != null) {
-            return value.setScale(scale);
-        }
-        return null;
+        return value.setScale(scale);
     }
 
     /**

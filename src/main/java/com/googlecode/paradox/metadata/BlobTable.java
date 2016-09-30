@@ -56,7 +56,7 @@ public class BlobTable extends ParadoxDataFile {
     /**
      * Default header block size.
      */
-    private static final int HEADER_BLOCK_SIZE = 0x1000;
+    private static final long HEADER_BLOCK_SIZE = 0x1000;
 
     /**
      * Single block value.
@@ -101,7 +101,7 @@ public class BlobTable extends ParadoxDataFile {
      * @param name
      *         the LOBs name.
      */
-    public BlobTable(final File file, final String name) {
+    BlobTable(final File file, final String name) {
         super(file, Utils.removeMb(name));
         cache = new AllBlockCache();
         parsed = false;
