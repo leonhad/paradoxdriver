@@ -40,7 +40,7 @@ public class TableNode extends SQLNode {
     /**
      * The table alias.
      */
-    private String alias;
+    private final String alias;
 
     /**
      * Create a new instance.

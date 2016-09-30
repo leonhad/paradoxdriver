@@ -108,7 +108,8 @@ public class ParadoxIndex extends ParadoxDataFile {
      * @return the index order.
      */
     public String getOrder() {
-        if (referentialIntegrity == 0x10 || referentialIntegrity == 0x11 || referentialIntegrity == 0x30) {
+        final int referential = getReferentialIntegrity();
+        if (referential == 0x10 || referential == 0x11 || referential == 0x30) {
             return "D";
         }
         return "A";
@@ -119,7 +120,7 @@ public class ParadoxIndex extends ParadoxDataFile {
      *
      * @return the parent name.
      */
-    public String getParentName() {
+    String getParentName() {
         return parentName;
     }
 
@@ -140,7 +141,7 @@ public class ParadoxIndex extends ParadoxDataFile {
      */
     public List<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
-        for (int loop = 0; loop < primaryFieldCount; loop++) {
+        for (int loop = 0; loop < getPrimaryFieldCount(); loop++) {
             ret.add(fields.get(loop));
         }
         return ret;

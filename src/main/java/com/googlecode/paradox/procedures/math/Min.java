@@ -19,7 +19,7 @@
  */
 package com.googlecode.paradox.procedures.math;
 
-import com.googlecode.paradox.procedures.CallableProcedure;
+import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 
 /**
  * The MIN function.
@@ -28,7 +28,7 @@ import com.googlecode.paradox.procedures.CallableProcedure;
  * @since 1.1
  * @version 1.0
  */
-public class Min extends CallableProcedure {
+public class Min extends AbstractCallableProcedure {
 
     /**
      * {@inheritDoc}

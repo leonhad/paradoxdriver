@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * @version 1.2
  * @since 1.0
  */
-public class Scanner {
+class Scanner {
 
     /**
      * Separators char.
@@ -67,7 +67,7 @@ public class Scanner {
      * @throws SQLException
      *         in case of parse errors.
      */
-    public Scanner(final String buffer) throws SQLException {
+    Scanner(final String buffer) throws SQLException {
         if (buffer == null) {
             throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL.getValue());
         }
@@ -110,10 +110,8 @@ public class Scanner {
      * If buffer has tokens.
      *
      * @return true if the buffer still have tokens.
-     * @throws SQLException
-     *         in case of parse errors.
      */
-    public boolean hasNext() throws SQLException {
+    boolean hasNext() {
         return !tokens.isEmpty() || buffer.hasRemaining();
     }
 
@@ -153,10 +151,8 @@ public class Scanner {
      * Gets the next value in buffer.
      *
      * @return the next char.
-     * @throws SQLException
-     *         in case of parse errors.
      */
-    private char nextChar() throws SQLException {
+    private char nextChar() {
         return buffer.get();
     }
 
@@ -167,7 +163,7 @@ public class Scanner {
      * @throws SQLException
      *         in case of parse errors.
      */
-    public Token nextToken() throws SQLException {
+    Token nextToken() throws SQLException {
         final int size = tokens.size();
         if (size > 0) {
             final Token token = tokens.get(size - 1);

@@ -19,7 +19,7 @@
  */
 package com.googlecode.paradox.procedures.math;
 
-import com.googlecode.paradox.procedures.CallableProcedure;
+import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 
 /**
  * The average procedure.
@@ -28,7 +28,7 @@ import com.googlecode.paradox.procedures.CallableProcedure;
  * @version 1.0
  * @since 1.1
  */
-public class Average extends CallableProcedure {
+public class Average extends AbstractCallableProcedure {
 
     /**
      * {@inheritDoc}

@@ -45,7 +45,7 @@ public final class ProcedureAS {
     /**
      * All registered procedures.
      */
-    private final ArrayList<CallableProcedure> procedures = new ArrayList<>();
+    private final ArrayList<AbstractCallableProcedure> procedures = new ArrayList<>();
 
     /**
      * Register the default procedures.
@@ -74,8 +74,8 @@ public final class ProcedureAS {
      *         the procedure name.
      * @return the procedure.
      */
-    public CallableProcedure get(final String name) {
-        for (final CallableProcedure procedure : procedures) {
+    public AbstractCallableProcedure get(final String name) {
+        for (final AbstractCallableProcedure procedure : procedures) {
             if (procedure.getName().equalsIgnoreCase(name)) {
                 return procedure;
             }
@@ -88,7 +88,7 @@ public final class ProcedureAS {
      *
      * @return the procedures list.
      */
-    public List<CallableProcedure> list() {
+    public List<AbstractCallableProcedure> list() {
         return procedures;
     }
 
@@ -98,7 +98,7 @@ public final class ProcedureAS {
      * @param procedure
      *         the procedure to register.
      */
-    public void register(final CallableProcedure procedure) {
+    private void register(final AbstractCallableProcedure procedure) {
         procedures.add(procedure);
     }
 }

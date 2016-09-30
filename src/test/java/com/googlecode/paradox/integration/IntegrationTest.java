@@ -26,5 +26,5 @@ package com.googlecode.paradox.integration;
  * @since 1.2
  * @version 1.0
  */
-public interface IntegrationTest {
+interface IntegrationTest {
 }

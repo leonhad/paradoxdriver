@@ -34,73 +34,73 @@ import java.util.List;
 public class ParadoxDataFile {
 
     /**
-     * The field with auto increment value.
-     */
-    protected int autoIncrementValue;
-    /**
-     * Block file size.
-     */
-    protected byte blockSize;
-    /**
-     * File count in this file.
-     */
-    protected int fieldCount;
-    /**
      * Fields in this file.
      */
     protected List<ParadoxField> fields;
     /**
+     * The field with auto increment value.
+     */
+    private int autoIncrementValue;
+    /**
+     * Block file size.
+     */
+    private byte blockSize;
+    /**
+     * File count in this file.
+     */
+    private int fieldCount;
+    /**
      * The first block in the file.
      */
-    protected int firstBlock;
+    private int firstBlock;
     /**
      * The first free block in the file.
      */
-    protected int firstFreeBlock;
+    private int firstFreeBlock;
     /**
      * Size of file header.
      */
-    protected int headerSize;
+    private int headerSize;
     /**
      * The last block in the file.
      */
-    protected int lastBlock;
+    private int lastBlock;
     /**
      * Primary key field count.
      */
-    protected int primaryFieldCount;
+    private int primaryFieldCount;
     /**
      * Size of one record.
      */
-    protected int recordSize;
+    private int recordSize;
     /**
      * Referential integrity used in index files.
      */
-    protected byte referentialIntegrity;
+    private byte referentialIntegrity;
     /**
      * Total rows in this file.
      */
-    protected int rowCount;
+    private int rowCount;
     /**
      * Total blocks in this file.
      */
-    protected int totalBlocks;
+    private int totalBlocks;
     /**
      * The file type.
      */
-    protected byte type = -1;
+    private byte type = -1;
     /**
      * Used blocks in this file.
      */
-    protected int usedBlocks;
+    private int usedBlocks;
     /**
      * Version ID of this file.
      */
-    protected byte versionId;
+    private byte versionId;
     /**
      * If this file has an write protected lock.
      */
-    protected byte writeProtected;
+    private byte writeProtected;
     /**
      * Java file used to read the database.
      */
@@ -111,13 +111,6 @@ public class ParadoxDataFile {
     private String name;
 
     /**
-     * Create a new instance.
-     */
-    private ParadoxDataFile() {
-        // Not used.
-    }
-
-    /**
      * Creates a new instance.
      *
      * @param file
@@ -125,7 +118,7 @@ public class ParadoxDataFile {
      * @param name
      *         the file name.
      */
-    public ParadoxDataFile(final File file, final String name) {
+    protected ParadoxDataFile(final File file, final String name) {
         this.file = file;
         this.name = Utils.removeDb(name);
     }

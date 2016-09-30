@@ -49,7 +49,7 @@ public class SQLNode {
      * @param name
      *         the node name.
      */
-    public SQLNode(final String name) {
+    protected SQLNode(final String name) {
         this.name = name;
     }
 
@@ -61,7 +61,7 @@ public class SQLNode {
      * @param alias
      *         the node alias.
      */
-    public SQLNode(final String name, final String alias) {
+    protected SQLNode(final String name, final String alias) {
         this.name = name;
         this.alias = alias;
     }

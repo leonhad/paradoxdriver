@@ -26,7 +26,7 @@ import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.procedures.CallableProcedure;
+import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 import com.googlecode.paradox.procedures.ProcedureAS;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.Constants;
@@ -40,7 +40,7 @@ import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -864,7 +864,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         final List<List<FieldValue>> values = new ArrayList<>();
 
-        for (final CallableProcedure procedure : ProcedureAS.getInstance().list()) {
+        for (final AbstractCallableProcedure procedure : ProcedureAS.getInstance().list()) {
             if (Expressions.accept(procedure.getName(), procedureNamePattern)) {
                 for (final ParadoxField field : procedure.getCols()) {
                     final ArrayList<FieldValue> row = new ArrayList<>();
@@ -915,7 +915,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         final List<List<FieldValue>> values = new ArrayList<>();
 
-        for (final CallableProcedure procedure : ProcedureAS.getInstance().list()) {
+        for (final AbstractCallableProcedure procedure : ProcedureAS.getInstance().list()) {
             final ArrayList<FieldValue> row = new ArrayList<>();
             row.add(new FieldValue(conn.getCatalog(), Types.VARCHAR));
             row.add(new FieldValue(conn.getSchema(), Types.VARCHAR));
@@ -1102,9 +1102,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("TABLE_TYPE", Types.VARCHAR));
 
         final List<List<FieldValue>> values = new ArrayList<>(3);
-        values.add(Arrays.asList(new FieldValue(TABLE, Types.VARCHAR)));
-        values.add(Arrays.asList(new FieldValue("VIEW", Types.VARCHAR)));
-        values.add(Arrays.asList(new FieldValue("SYSTEM TABLE", Types.VARCHAR)));
+        values.add(Collections.singletonList(new FieldValue(TABLE, Types.VARCHAR)));
+        values.add(Collections.singletonList(new FieldValue("VIEW", Types.VARCHAR)));
+        values.add(Collections.singletonList(new FieldValue("SYSTEM TABLE", Types.VARCHAR)));
 
         return new ParadoxResultSet(conn, null, values, columns);
     }

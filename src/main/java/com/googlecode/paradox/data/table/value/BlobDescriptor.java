@@ -48,7 +48,7 @@ class BlobDescriptor {
      *         the blob file reference.
      */
     BlobDescriptor(final BlobTable file) {
-        setFile(file);
+        this.file = file;
     }
 
     /**
@@ -58,16 +58,6 @@ class BlobDescriptor {
      */
     public final BlobTable getFile() {
         return file;
-    }
-
-    /**
-     * Sets the blob table file.
-     *
-     * @param file
-     *         the blob table file.
-     */
-    public final void setFile(final BlobTable file) {
-        this.file = file;
     }
 
     /**

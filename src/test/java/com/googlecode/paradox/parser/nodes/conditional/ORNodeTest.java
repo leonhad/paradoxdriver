@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
+import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.StatementNode;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
  * Unit test for {@link ORNode} class.
@@ -38,7 +38,7 @@ public class ORNodeTest {
      */
     @Test
     public void testChildhood() {
-        final SQLNode node = new SQLNode("node");
+        final SQLNode node = new StatementNode(null);
         final ORNode and = new ORNode(node);
         Assert.assertEquals(1, and.getChildren().size());
         Assert.assertEquals(node, and.getChildren().iterator().next());

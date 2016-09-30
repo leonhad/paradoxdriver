@@ -29,7 +29,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @since 1.1
  * @version 1.1
  */
-public abstract class AbstractComparisonNode extends SQLNode {
+abstract class AbstractComparisonNode extends SQLNode {
 
     /**
      * The first node.
@@ -51,7 +51,7 @@ public abstract class AbstractComparisonNode extends SQLNode {
      * @param last
      *            the last node.
      */
-    public AbstractComparisonNode(final String name, final FieldNode first, final FieldNode last) {
+    AbstractComparisonNode(final String name, final FieldNode first, final FieldNode last) {
         super(name);
         this.first = first;
         this.last = last;

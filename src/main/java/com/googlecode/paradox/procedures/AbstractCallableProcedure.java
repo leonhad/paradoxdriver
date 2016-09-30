@@ -19,27 +19,27 @@
  */
 package com.googlecode.paradox.procedures;
 
+import com.googlecode.paradox.metadata.ParadoxField;
+
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.googlecode.paradox.metadata.ParadoxField;
 
 /**
  * Abstract class used to create any callable procedure.
  *
  * @author Leonardo Alves da Costa
- * @since 1.1.
  * @version 1.1
+ * @since 1.1
  */
-public abstract class CallableProcedure {
+public abstract class AbstractCallableProcedure {
 
     /**
      * Get the procedure columns.
      *
      * @return the procedure columns.
      */
-    public List<ParadoxField> getCols() {
+    public final List<ParadoxField> getCols() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
 
         final ParadoxField field = new ParadoxField();
@@ -69,7 +69,7 @@ public abstract class CallableProcedure {
      *
      * @return the return type.
      */
-    public int getReturnType() {
+    public final int getReturnType() {
         return DatabaseMetaData.procedureReturnsResult;
     }
 }

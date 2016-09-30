@@ -2,9 +2,17 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxResultSet;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link ParadoxDatabaseMetaData} class.
@@ -17,7 +25,7 @@ public class ParadoxDatabaseMetaDataTest {
     /**
      * The connection string used in this tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.

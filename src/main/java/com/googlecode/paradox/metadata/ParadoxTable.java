@@ -81,7 +81,7 @@ public class ParadoxTable extends ParadoxDataFile {
      */
     public int getBlockSizeBytes() {
         // The blockSize is always in KiB
-        return blockSize * 1024;
+        return getBlockSize() * 1024;
     }
 
     /**
@@ -125,8 +125,8 @@ public class ParadoxTable extends ParadoxDataFile {
      */
     public List<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
-        for (int loop = 0; loop < primaryFieldCount; loop++) {
-            ret.add(fields.get(loop));
+        for (int loop = 0; loop < getPrimaryFieldCount(); loop++) {
+            ret.add(getFields().get(loop));
         }
         return ret;
     }

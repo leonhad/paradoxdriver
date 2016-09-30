@@ -45,13 +45,16 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-public final class ParadoxStatement implements Statement {
+final class ParadoxStatement implements Statement {
 
     /**
      * The Paradox connection.
      */
     private final ParadoxConnection conn;
 
+    /**
+     * The cursor name.
+     */
     private String cursorName = "NO_NAME";
 
     /**

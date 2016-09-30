@@ -46,15 +46,15 @@ public final class Utils {
      *
      * @param wrapper
      *         wrapper to test for.
-     * @param iface
+     * @param iFace
      *         a Class defining an interface.
      * @return true if this implements the interface or directly or indirectly wraps an object that does.
      * @throws java.sql.SQLException
      *         if an error occurs while determining whether this is a wrapper for an object with the given interface.
      * @since 1.2
      */
-    public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iface) throws SQLException {
-        return wrapper.getClass().isAssignableFrom(iface);
+    public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iFace) {
+        return wrapper.getClass().isAssignableFrom(iFace);
     }
 
     /**

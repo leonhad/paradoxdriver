@@ -32,6 +32,7 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.SQLStates;
+
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,16 +42,16 @@ import java.util.List;
  * Handles field parsers.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
-public final class FieldFactory {
-    
+final class FieldFactory {
+
     /**
      * Stores all available parsers.
      */
     private static final List<FieldParser> ALL_PARSES = new ArrayList<>();
-    
+
     // Initialize the parsers.
     static {
         ALL_PARSES.add(new AutoIncrementField());
@@ -70,19 +71,19 @@ public final class FieldFactory {
     private FieldFactory() {
         // Utility class.
     }
-    
+
     /**
      * Parses the filter;
      *
      * @param table
-     *            the paradox tables.
+     *         the paradox tables.
      * @param buffer
-     *            the buffer to read of.
+     *         the buffer to read of.
      * @param field
-     *            the paradox field.
+     *         the paradox field.
      * @return the parsed value.
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
     public static FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException {

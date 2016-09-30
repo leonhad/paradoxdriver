@@ -49,7 +49,7 @@ public class ParadoxResultSetMetaDataTest {
     /**
      * The connection string used in this tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.

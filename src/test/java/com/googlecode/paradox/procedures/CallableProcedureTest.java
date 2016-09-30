@@ -28,7 +28,7 @@ import java.sql.DatabaseMetaData;
 import java.util.List;
 
 /**
- * Unit test for {@link CallableProcedure}.
+ * Unit test for {@link AbstractCallableProcedure}.
  * 
  * @author Leonardo Alves da Costa
  * @since 1.3
@@ -39,7 +39,7 @@ public class CallableProcedureTest {
     /**
      * The object to test.
      */
-    private final CallableProcedure call = new Average();
+    private final AbstractCallableProcedure call = new Average();
 
     /**
      * Test for default field.

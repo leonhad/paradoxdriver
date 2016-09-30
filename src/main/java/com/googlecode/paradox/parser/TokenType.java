@@ -245,7 +245,7 @@ public enum TokenType {
     /**
      * Token value.
      */
-    private String value;
+    private final String value;
 
     /**
      * Creates a new instance.

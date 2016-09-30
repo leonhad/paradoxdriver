@@ -26,5 +26,5 @@ package com.googlecode.paradox;
  * @since 1.3
  * @version 1.0
  */
-public interface IParadoxDriver extends java.sql.Driver {
+interface IParadoxDriver extends java.sql.Driver {
 }
