@@ -311,7 +311,7 @@ public final class ViewData {
                 fieldList.add(field);
             }
             line = reader.readLine();
-            if (line != null) {
+            if (line == null) {
                 break;
             }
             final String[] types = line.split("\\|");
