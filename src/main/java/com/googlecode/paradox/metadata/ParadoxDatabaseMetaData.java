@@ -50,7 +50,7 @@ import java.util.List;
  * @version 1.1
  * @since 1.0
  */
-public class ParadoxDatabaseMetaData implements DatabaseMetaData {
+public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
     /**
      * The column name field.
@@ -87,6 +87,9 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     private static final String TYPE_NAME = "TYPE_NAME";
 
+    /**
+     * The database connection.
+     */
     private final ParadoxConnection conn;
 
     /**
@@ -100,7 +103,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean allProceduresAreCallable() throws SQLException {
@@ -108,7 +111,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean allTablesAreSelectable() throws SQLException {
@@ -116,7 +119,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
@@ -124,7 +127,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
@@ -132,7 +135,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
@@ -140,7 +143,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean deletesAreDetected(final int type) throws SQLException {
@@ -148,7 +151,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
@@ -276,7 +279,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean generatedKeyAlwaysReturned() throws SQLException {
@@ -284,7 +287,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getAttributes(final String catalog, final String schemaPattern, final String typeNamePattern,
@@ -293,7 +296,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getBestRowIdentifier(final String catalog, final String schema, final String table,
@@ -302,7 +305,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getCatalogs() throws SQLException {
@@ -318,7 +321,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getCatalogSeparator() throws SQLException {
@@ -326,7 +329,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getCatalogTerm() throws SQLException {
@@ -334,7 +337,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getClientInfoProperties() throws SQLException {
@@ -342,7 +345,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getColumnPrivileges(final String catalog, final String schema, final String table,
@@ -351,7 +354,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getColumns(final String catalog, final String schemaPattern, final String tableNamePattern,
@@ -400,7 +403,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Connection getConnection() throws SQLException {
@@ -408,7 +411,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getCrossReference(final String primaryCatalog, final String primarySchema,
@@ -419,7 +422,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getDatabaseMajorVersion() throws SQLException {
@@ -427,7 +430,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getDatabaseMinorVersion() throws SQLException {
@@ -435,7 +438,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getDatabaseProductName() throws SQLException {
@@ -443,7 +446,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getDatabaseProductVersion() throws SQLException {
@@ -451,7 +454,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getDefaultTransactionIsolation() throws SQLException {
@@ -459,7 +462,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getDriverMajorVersion() {
@@ -467,7 +470,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getDriverMinorVersion() {
@@ -475,7 +478,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getDriverName() throws SQLException {
@@ -483,7 +486,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getDriverVersion() throws SQLException {
@@ -491,7 +494,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getExportedKeys(final String catalog, final String schema, final String table)
@@ -500,7 +503,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getExtraNameCharacters() throws SQLException {
@@ -508,7 +511,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getFunctionColumns(final String catalog, final String schemaPattern,
@@ -518,7 +521,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern)
@@ -527,7 +530,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getIdentifierQuoteString() throws SQLException {
@@ -535,7 +538,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getImportedKeys(final String catalog, final String schema, final String table)
@@ -544,7 +547,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getIndexInfo(final String catalog, final String schema, final String tableNamePattern,
@@ -619,7 +622,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getJDBCMajorVersion() throws SQLException {
@@ -627,7 +630,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getJDBCMinorVersion() throws SQLException {
@@ -635,7 +638,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxBinaryLiteralLength() throws SQLException {
@@ -643,7 +646,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxCatalogNameLength() throws SQLException {
@@ -651,7 +654,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxCharLiteralLength() throws SQLException {
@@ -659,7 +662,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxColumnNameLength() throws SQLException {
@@ -667,7 +670,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxColumnsInGroupBy() throws SQLException {
@@ -675,7 +678,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxColumnsInIndex() throws SQLException {
@@ -683,7 +686,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxColumnsInOrderBy() throws SQLException {
@@ -691,7 +694,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxColumnsInSelect() throws SQLException {
@@ -699,7 +702,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxColumnsInTable() throws SQLException {
@@ -707,7 +710,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxConnections() throws SQLException {
@@ -715,7 +718,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxCursorNameLength() throws SQLException {
@@ -723,7 +726,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxIndexLength() throws SQLException {
@@ -731,7 +734,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxProcedureNameLength() throws SQLException {
@@ -739,7 +742,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxRowSize() throws SQLException {
@@ -747,7 +750,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxSchemaNameLength() throws SQLException {
@@ -755,7 +758,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxStatementLength() throws SQLException {
@@ -763,7 +766,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxStatements() throws SQLException {
@@ -771,7 +774,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxTableNameLength() throws SQLException {
@@ -779,7 +782,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxTablesInSelect() throws SQLException {
@@ -787,7 +790,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMaxUserNameLength() throws SQLException {
@@ -795,7 +798,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getNumericFunctions() throws SQLException {
@@ -803,7 +806,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getPrimaryKeys(final String catalog, final String schema, final String tableNamePattern)
@@ -835,7 +838,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getProcedureColumns(final String catalog, final String schemaPattern,
@@ -897,7 +900,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getProcedures(final String catalog, final String schemaPattern, final String procedureNamePattern)
@@ -933,7 +936,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getProcedureTerm() throws SQLException {
@@ -941,7 +944,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getPseudoColumns(final String catalog, final String schemaPattern, final String tableNamePattern,
@@ -950,7 +953,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getResultSetHoldability() throws SQLException {
@@ -958,7 +961,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public RowIdLifetime getRowIdLifetime() throws SQLException {
@@ -966,7 +969,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getSchemas() throws SQLException {
@@ -984,7 +987,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) throws SQLException {
@@ -996,7 +999,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getSchemaTerm() throws SQLException {
@@ -1004,7 +1007,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getSearchStringEscape() throws SQLException {
@@ -1012,32 +1015,41 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getSQLKeywords() throws SQLException {
         return "SELECT";
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public int getSQLStateType() throws SQLException {
         return 0;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getStringFunctions() throws SQLException {
         return "";
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public ResultSet getSuperTables(final String catalog, final String schemaPattern, final String tableNamePattern)
             throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public ResultSet getSuperTypes(final String catalog, final String schemaPattern, final String typeNamePattern)
             throws SQLException {
@@ -1045,7 +1057,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getSystemFunctions() throws SQLException {
@@ -1053,7 +1065,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getTablePrivileges(final String catalog, final String schemaPattern, final String tableNamePattern)
@@ -1062,7 +1074,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getTables(final String catalog, final String schemaPattern, final String tableNamePattern,
@@ -1094,7 +1106,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getTableTypes() throws SQLException {
@@ -1110,7 +1122,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getTimeDateFunctions() throws SQLException {
@@ -1118,7 +1130,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getTypeInfo() throws SQLException {
@@ -1126,7 +1138,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getUDTs(final String catalog, final String schemaPattern, final String typeNamePattern,
@@ -1135,7 +1147,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getURL() throws SQLException {
@@ -1143,7 +1155,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getUserName() throws SQLException {
@@ -1151,7 +1163,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public ResultSet getVersionColumns(final String catalog, final String schema, final String table)
@@ -1160,7 +1172,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean insertsAreDetected(final int type) throws SQLException {
@@ -1168,7 +1180,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean isCatalogAtStart() throws SQLException {
@@ -1176,7 +1188,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean isReadOnly() throws SQLException {
@@ -1185,20 +1197,23 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         return Utils.isWrapperFor(this, iface);
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public boolean locatorsUpdateCopy() throws SQLException {
         return false;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean nullPlusNonNullIsNull() throws SQLException {
@@ -1206,7 +1221,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean nullsAreSortedAtEnd() throws SQLException {
@@ -1214,7 +1229,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean nullsAreSortedAtStart() throws SQLException {
@@ -1222,7 +1237,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean nullsAreSortedHigh() throws SQLException {
@@ -1230,7 +1245,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean nullsAreSortedLow() throws SQLException {
@@ -1238,7 +1253,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean othersDeletesAreVisible(final int type) throws SQLException {
@@ -1246,7 +1261,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean othersInsertsAreVisible(final int type) throws SQLException {
@@ -1254,7 +1269,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean othersUpdatesAreVisible(final int type) throws SQLException {
@@ -1262,7 +1277,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean ownDeletesAreVisible(final int type) throws SQLException {
@@ -1270,7 +1285,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean ownInsertsAreVisible(final int type) throws SQLException {
@@ -1278,7 +1293,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean ownUpdatesAreVisible(final int type) throws SQLException {
@@ -1286,7 +1301,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean storesLowerCaseIdentifiers() throws SQLException {
@@ -1294,7 +1309,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
@@ -1302,7 +1317,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean storesMixedCaseIdentifiers() throws SQLException {
@@ -1310,7 +1325,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {
@@ -1318,7 +1333,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean storesUpperCaseIdentifiers() throws SQLException {
@@ -1326,7 +1341,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {
@@ -1334,7 +1349,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsAlterTableWithAddColumn() throws SQLException {
@@ -1342,7 +1357,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsAlterTableWithDropColumn() throws SQLException {
@@ -1350,7 +1365,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsANSI92EntryLevelSQL() throws SQLException {
@@ -1358,7 +1373,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsANSI92FullSQL() throws SQLException {
@@ -1366,7 +1381,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsANSI92IntermediateSQL() throws SQLException {
@@ -1374,7 +1389,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsBatchUpdates() throws SQLException {
@@ -1382,7 +1397,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsCatalogsInDataManipulation() throws SQLException {
@@ -1390,7 +1405,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsCatalogsInIndexDefinitions() throws SQLException {
@@ -1398,7 +1413,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsCatalogsInPrivilegeDefinitions() throws SQLException {
@@ -1406,7 +1421,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsCatalogsInProcedureCalls() throws SQLException {
@@ -1414,7 +1429,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsCatalogsInTableDefinitions() throws SQLException {
@@ -1422,7 +1437,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsColumnAliasing() throws SQLException {
@@ -1430,7 +1445,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsConvert() throws SQLException {
@@ -1438,7 +1453,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsConvert(final int fromType, final int toType) throws SQLException {
@@ -1446,7 +1461,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsCoreSQLGrammar() throws SQLException {
@@ -1454,7 +1469,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsCorrelatedSubqueries() throws SQLException {
@@ -1462,7 +1477,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsDataDefinitionAndDataManipulationTransactions() throws SQLException {
@@ -1470,7 +1485,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsDataManipulationTransactionsOnly() throws SQLException {
@@ -1478,7 +1493,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsDifferentTableCorrelationNames() throws SQLException {
@@ -1486,7 +1501,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsExpressionsInOrderBy() throws SQLException {
@@ -1494,7 +1509,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsExtendedSQLGrammar() throws SQLException {
@@ -1502,7 +1517,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsFullOuterJoins() throws SQLException {
@@ -1510,7 +1525,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsGetGeneratedKeys() throws SQLException {
@@ -1518,7 +1533,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsGroupBy() throws SQLException {
@@ -1526,7 +1541,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsGroupByBeyondSelect() throws SQLException {
@@ -1534,7 +1549,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsGroupByUnrelated() throws SQLException {
@@ -1542,7 +1557,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsIntegrityEnhancementFacility() throws SQLException {
@@ -1550,7 +1565,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsLikeEscapeClause() throws SQLException {
@@ -1558,7 +1573,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsLimitedOuterJoins() throws SQLException {
@@ -1566,7 +1581,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsMinimumSQLGrammar() throws SQLException {
@@ -1574,7 +1589,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsMixedCaseIdentifiers() throws SQLException {
@@ -1582,7 +1597,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsMixedCaseQuotedIdentifiers() throws SQLException {
@@ -1590,7 +1605,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsMultipleOpenResults() throws SQLException {
@@ -1598,7 +1613,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsMultipleResultSets() throws SQLException {
@@ -1606,20 +1621,23 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsMultipleTransactions() throws SQLException {
         return false;
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public boolean supportsNamedParameters() throws SQLException {
         return false;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsNonNullableColumns() throws SQLException {
@@ -1627,7 +1645,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
@@ -1635,7 +1653,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsOpenCursorsAcrossRollback() throws SQLException {
@@ -1643,7 +1661,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsOpenStatementsAcrossCommit() throws SQLException {
@@ -1651,7 +1669,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsOpenStatementsAcrossRollback() throws SQLException {
@@ -1659,7 +1677,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsOrderByUnrelated() throws SQLException {
@@ -1667,7 +1685,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsOuterJoins() throws SQLException {
@@ -1675,7 +1693,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsPositionedDelete() throws SQLException {
@@ -1683,7 +1701,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsPositionedUpdate() throws SQLException {
@@ -1691,7 +1709,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsResultSetConcurrency(final int type, final int concurrency) throws SQLException {
@@ -1699,7 +1717,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsResultSetHoldability(final int holdability) throws SQLException {
@@ -1707,7 +1725,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsResultSetType(final int type) throws SQLException {
@@ -1720,7 +1738,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSchemasInDataManipulation() throws SQLException {
@@ -1728,7 +1746,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSchemasInIndexDefinitions() throws SQLException {
@@ -1736,7 +1754,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSchemasInPrivilegeDefinitions() throws SQLException {
@@ -1744,7 +1762,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSchemasInProcedureCalls() throws SQLException {
@@ -1752,7 +1770,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSchemasInTableDefinitions() throws SQLException {
@@ -1760,7 +1778,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSelectForUpdate() throws SQLException {
@@ -1768,7 +1786,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsStatementPooling() throws SQLException {
@@ -1776,7 +1794,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException {
@@ -1784,7 +1802,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsStoredProcedures() throws SQLException {
@@ -1792,7 +1810,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSubqueriesInComparisons() throws SQLException {
@@ -1800,7 +1818,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSubqueriesInExists() throws SQLException {
@@ -1808,7 +1826,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSubqueriesInIns() throws SQLException {
@@ -1816,7 +1834,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsSubqueriesInQuantifieds() throws SQLException {
@@ -1824,7 +1842,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsTableCorrelationNames() throws SQLException {
@@ -1832,7 +1850,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsTransactionIsolationLevel(final int level) throws SQLException {
@@ -1840,7 +1858,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsTransactions() throws SQLException {
@@ -1848,7 +1866,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsUnion() throws SQLException {
@@ -1856,7 +1874,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean supportsUnionAll() throws SQLException {
@@ -1864,7 +1882,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
@@ -1872,7 +1890,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean updatesAreDetected(final int type) throws SQLException {
@@ -1880,7 +1898,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean usesLocalFilePerTable() throws SQLException {
@@ -1888,7 +1906,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean usesLocalFiles() throws SQLException {
