@@ -33,7 +33,12 @@ import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.RowIdLifetime;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +92,8 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * Creates an database metadata.
      *
-     * @param conn the database connection.
+     * @param conn
+     *         the database connection.
      */
     public ParadoxDatabaseMetaData(final ParadoxConnection conn) {
         this.conn = conn;
@@ -152,11 +158,16 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * Gets fields metadata.
      *
-     * @param columnNamePattern column pattern to search of.
-     * @param values            the table values.
-     * @param tableName         the table name.
-     * @param fields            the field list.
-     * @throws SQLException in case of erros.
+     * @param columnNamePattern
+     *         column pattern to search of.
+     * @param values
+     *         the table values.
+     * @param tableName
+     *         the table name.
+     * @param fields
+     *         the field list.
+     * @throws SQLException
+     *         in case of erros.
      */
     private void fieldMetadata(final String columnNamePattern, final List<List<FieldValue>> values,
                                final String tableName, final List<ParadoxField> fields) throws SQLException {
@@ -209,10 +220,13 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * Format a single row metadata.
      *
-     * @param name the row name.
-     * @param type the row type.
+     * @param name
+     *         the row name.
+     * @param type
+     *         the row type.
      * @return the row.
-     * @throws SQLException in case of errors.
+     * @throws SQLException
+     *         in case of errors.
      */
     private List<FieldValue> formatRow(final String name, final String type) throws SQLException {
         final ArrayList<FieldValue> row = new ArrayList<>(1);
@@ -232,9 +246,12 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * Format a table metadata.
      *
-     * @param tableNamePattern the table name pattern.
-     * @param values           the field values.
-     * @throws SQLException in case of errors.
+     * @param tableNamePattern
+     *         the table name pattern.
+     * @param values
+     *         the field values.
+     * @throws SQLException
+     *         in case of errors.
      */
     private void formatTable(final String tableNamePattern, final List<List<FieldValue>> values) throws SQLException {
         for (final ParadoxTable table : TableData.listTables(conn, tableNamePattern)) {
@@ -245,9 +262,12 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * Format a table view metadata.
      *
-     * @param tableNamePattern the table view name pattern.
-     * @param values           the table values.
-     * @throws SQLException in case of errors.
+     * @param tableNamePattern
+     *         the table view name pattern.
+     * @param values
+     *         the table values.
+     * @throws SQLException
+     *         in case of errors.
      */
     private void formatView(final String tableNamePattern, final List<List<FieldValue>> values) throws SQLException {
         for (final ParadoxView view : ViewData.listViews(conn, tableNamePattern)) {
@@ -392,7 +412,8 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getCrossReference(final String primaryCatalog, final String primarySchema,
-                                       final String primaryTable, final String foreignCatalog, final String foreignSchema,
+                                       final String primaryTable, final String foreignCatalog, final String
+                                               foreignSchema,
                                        final String foreignTable) throws SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
@@ -491,7 +512,8 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getFunctionColumns(final String catalog, final String schemaPattern,
-                                        final String functionNamePattern, final String columnNamePattern) throws SQLException {
+                                        final String functionNamePattern, final String columnNamePattern) throws
+            SQLException {
         return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
 
@@ -817,7 +839,8 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getProcedureColumns(final String catalog, final String schemaPattern,
-                                         final String procedureNamePattern, final String columnNamePattern) throws SQLException {
+                                         final String procedureNamePattern, final String columnNamePattern) throws
+            SQLException {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column("PROCEDURE_CAT", Types.VARCHAR));
         columns.add(new Column("PROCEDURE_SCHEM", Types.VARCHAR));

@@ -19,24 +19,24 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
-import java.util.Arrays;
-
 import com.googlecode.paradox.parser.nodes.SQLNode;
+
+import java.util.Arrays;
 
 /**
  * Stores the AND node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public class ANDNode extends SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param child
-     *            the child node.
+     *         the child node.
      */
     public ANDNode(final SQLNode child) {
         super("AND");

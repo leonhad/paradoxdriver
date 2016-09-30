@@ -196,12 +196,6 @@ public class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void close() throws SQLException {
-        if (columns != null) {
-            columns.clear();
-        }
-        if (values != null) {
-            values.clear();
-        }
         if (clobs != null) {
             for (final Clob clob : clobs.values()) {
                 clob.free();

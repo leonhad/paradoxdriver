@@ -56,7 +56,7 @@ class BlobDescriptor {
      *
      * @return the blob file.
      */
-    public BlobTable getFile() {
+    public final BlobTable getFile() {
         return file;
     }
 
@@ -66,7 +66,7 @@ class BlobDescriptor {
      * @param file
      *         the blob table file.
      */
-    public void setFile(final BlobTable file) {
+    public final void setFile(final BlobTable file) {
         this.file = file;
     }
 
@@ -75,7 +75,7 @@ class BlobDescriptor {
      *
      * @return the blob offset.
      */
-    public long getOffset() {
+    public final long getOffset() {
         return offset;
     }
 
@@ -85,7 +85,7 @@ class BlobDescriptor {
      * @param offset
      *         the blob offset.
      */
-    public void setOffset(final long offset) {
+    public final void setOffset(final long offset) {
         this.offset = offset;
     }
 }
