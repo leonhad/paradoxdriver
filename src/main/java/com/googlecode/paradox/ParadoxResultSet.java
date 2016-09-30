@@ -50,6 +50,7 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,10 +104,6 @@ public final class ParadoxResultSet implements ResultSet {
      * Row position.
      */
     private int position = -1;
-    /**
-     * The execution warnings.
-     */
-    private SQLWarning warnings = null;
 
     /**
      * Creates a new {@link ResultSet}.
@@ -123,8 +120,8 @@ public final class ParadoxResultSet implements ResultSet {
     public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement, final
     List<List<FieldValue>> values, final List<Column> columns) {
         this.statement = statement;
-        this.values = values;
-        this.columns = columns;
+        this.values = Collections.unmodifiableList(values);
+        this.columns = Collections.unmodifiableList(columns);
         this.conn = conn;
 
         // Fill column indexes
@@ -139,7 +136,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean absolute(final int row) throws SQLException {
+    public boolean absolute(final int row) {
         if (row < 0) {
             if (row + values.size() < 0) {
                 return false;
@@ -158,7 +155,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void afterLast() throws SQLException {
+    public void afterLast() {
         position = values.size();
     }
 
@@ -166,7 +163,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void beforeFirst() throws SQLException {
+    public void beforeFirst() {
         position = -1;
     }
 
@@ -174,11 +171,14 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void cancelRowUpdates() throws SQLException {
+    public void cancelRowUpdates() {
         throw new UnsupportedOperationException();
     }
 
-    private void clearClobs() {
+    /**
+     * Clear the current clob.
+     */
+    private void clearClob() {
         if (clobMap != null) {
             clobMap.clear();
         }
@@ -188,8 +188,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void clearWarnings() throws SQLException {
-        warnings = null;
+    public void clearWarnings() {
+        // Not used.
     }
 
     /**
@@ -201,7 +201,7 @@ public final class ParadoxResultSet implements ResultSet {
             for (final Clob clob : clobMap.values()) {
                 clob.free();
             }
-            clearClobs();
+            clearClob();
         }
         closed = true;
     }
@@ -210,7 +210,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void deleteRow() throws SQLException {
+    public void deleteRow() {
         throw new UnsupportedOperationException();
     }
 
@@ -231,12 +231,12 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean first() throws SQLException {
+    public boolean first() {
         if (values.isEmpty()) {
             return false;
         }
         position = 0;
-        clearClobs();
+        clearClob();
         return true;
     }
 
@@ -244,7 +244,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Array getArray(final int columnIndex) throws SQLException {
+    public Array getArray(final int columnIndex) {
         return null;
     }
 
@@ -252,7 +252,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Array getArray(final String columnLabel) throws SQLException {
+    public Array getArray(final String columnLabel) {
         return null;
     }
 
@@ -260,7 +260,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public InputStream getAsciiStream(final int columnIndex) throws SQLException {
+    public InputStream getAsciiStream(final int columnIndex) {
         return null;
     }
 
@@ -319,7 +319,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public InputStream getBinaryStream(final int columnIndex) throws SQLException {
+    public InputStream getBinaryStream(final int columnIndex) {
         return null;
     }
 
@@ -335,7 +335,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Blob getBlob(final int columnIndex) throws SQLException {
+    public Blob getBlob(final int columnIndex) {
         return null;
     }
 
@@ -343,7 +343,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Blob getBlob(final String columnLabel) throws SQLException {
+    public Blob getBlob(final String columnLabel) {
         return null;
     }
 
@@ -359,7 +359,10 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? false : lastValue.getBoolean();
+        if (!lastValue.isNull()) {
+            return lastValue.getBoolean();
+        }
+        return false;
     }
 
     /**
@@ -461,7 +464,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public int getConcurrency() throws SQLException {
+    public int getConcurrency() {
         return ResultSet.CONCUR_READ_ONLY;
     }
 
@@ -469,7 +472,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public String getCursorName() throws SQLException {
+    public String getCursorName() {
         return statement != null ? statement.cursorName : "NO_NAME";
     }
 
@@ -547,7 +550,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public int getFetchSize() throws SQLException {
+    public int getFetchSize() {
         return fetchSize;
     }
 
@@ -578,7 +581,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public int getHoldability() throws SQLException {
+    public int getHoldability() {
         return conn.getHoldability();
     }
 
@@ -632,7 +635,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
+    public ResultSetMetaData getMetaData() {
         return new ParadoxResultSetMetaData(conn, columns);
     }
 
@@ -640,7 +643,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Reader getNCharacterStream(final int columnIndex) throws SQLException {
+    public Reader getNCharacterStream(final int columnIndex) {
         return null;
     }
 
@@ -648,7 +651,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Reader getNCharacterStream(final String columnLabel) throws SQLException {
+    public Reader getNCharacterStream(final String columnLabel) {
         return null;
     }
 
@@ -656,7 +659,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public NClob getNClob(final int columnIndex) throws SQLException {
+    public NClob getNClob(final int columnIndex) {
         return null;
     }
 
@@ -664,7 +667,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public NClob getNClob(final String columnLabel) throws SQLException {
+    public NClob getNClob(final String columnLabel) {
         return null;
     }
 
@@ -672,7 +675,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public String getNString(final int columnIndex) throws SQLException {
+    public String getNString(final int columnIndex) {
         return null;
     }
 
@@ -680,7 +683,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public String getNString(final String columnLabel) throws SQLException {
+    public String getNString(final String columnLabel) {
         return null;
     }
 
@@ -703,7 +706,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
+    public <T> T getObject(final int columnIndex, final Class<T> type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -727,7 +730,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
+    public <T> T getObject(final String columnLabel, final Class<T> type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -743,7 +746,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Ref getRef(final int columnIndex) throws SQLException {
+    public Ref getRef(final int columnIndex) {
         return null;
     }
 
@@ -751,7 +754,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Ref getRef(final String columnLabel) throws SQLException {
+    public Ref getRef(final String columnLabel) {
         return null;
     }
 
@@ -759,7 +762,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public int getRow() throws SQLException {
+    public int getRow() {
         return position + 1;
     }
 
@@ -767,7 +770,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public RowId getRowId(final int columnIndex) throws SQLException {
+    public RowId getRowId(final int columnIndex) {
         return null;
     }
 
@@ -775,7 +778,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public RowId getRowId(final String columnLabel) throws SQLException {
+    public RowId getRowId(final String columnLabel) {
         return null;
     }
 
@@ -806,7 +809,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public SQLXML getSQLXML(final int columnIndex) throws SQLException {
+    public SQLXML getSQLXML(final int columnIndex) {
         return null;
     }
 
@@ -814,7 +817,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public SQLXML getSQLXML(final String columnLabel) throws SQLException {
+    public SQLXML getSQLXML(final String columnLabel) {
         return null;
     }
 
@@ -822,7 +825,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Statement getStatement() throws SQLException {
+    public Statement getStatement() {
         return statement;
     }
 
@@ -896,7 +899,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Timestamp getTimestamp(final int columnIndex) throws SQLException {
+    public Timestamp getTimestamp(final int columnIndex) {
         return null;
     }
 
@@ -928,8 +931,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public int getType() throws SQLException {
-        throw new SQLException("getType");
+    public int getType() {
+        return ResultSet.TYPE_FORWARD_ONLY;
     }
 
     /**
@@ -940,7 +943,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Deprecated
     @SuppressWarnings("squid:S1133")
     @Override
-    public InputStream getUnicodeStream(final int columnIndex) throws SQLException {
+    public InputStream getUnicodeStream(final int columnIndex) {
         return null;
     }
 
@@ -960,7 +963,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public URL getURL(final int columnIndex) throws SQLException {
+    public URL getURL(final int columnIndex) {
         return null;
     }
 
@@ -968,7 +971,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public URL getURL(final String columnLabel) throws SQLException {
+    public URL getURL(final String columnLabel) {
         return null;
     }
 
@@ -985,8 +988,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public SQLWarning getWarnings() throws SQLException {
-        return warnings;
+    public SQLWarning getWarnings() {
+        return null;
     }
 
     private boolean hasNext() {
@@ -997,7 +1000,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void insertRow() throws SQLException {
+    public void insertRow() {
         throw new UnsupportedOperationException();
     }
 
@@ -1005,7 +1008,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isAfterLast() throws SQLException {
+    public boolean isAfterLast() {
         return position >= values.size();
     }
 
@@ -1013,7 +1016,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isBeforeFirst() throws SQLException {
+    public boolean isBeforeFirst() {
         return position == -1;
     }
 
@@ -1021,7 +1024,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed() {
         return closed;
     }
 
@@ -1029,7 +1032,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isFirst() throws SQLException {
+    public boolean isFirst() {
         return position + 1 == 0;
     }
 
@@ -1037,7 +1040,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isLast() throws SQLException {
+    public boolean isLast() {
         return position + 1 == values.size();
     }
 
@@ -1045,20 +1048,20 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return Utils.isWrapperFor(this, iface);
+    public boolean isWrapperFor(final Class<?> iFace) throws SQLException {
+        return Utils.isWrapperFor(this, iFace);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public boolean last() throws SQLException {
+    public boolean last() {
         if (values.isEmpty()) {
             return false;
         }
         position = values.size() - 1;
-        clearClobs();
+        clearClob();
         return true;
     }
 
@@ -1066,7 +1069,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void moveToCurrentRow() throws SQLException {
+    public void moveToCurrentRow() {
         throw new UnsupportedOperationException();
     }
 
@@ -1074,7 +1077,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void moveToInsertRow() throws SQLException {
+    public void moveToInsertRow() {
         throw new UnsupportedOperationException();
     }
 
@@ -1082,10 +1085,10 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean next() throws SQLException {
+    public boolean next() {
         position++;
         if (hasNext()) {
-            clearClobs();
+            clearClob();
             return true;
         }
         return false;
@@ -1095,10 +1098,10 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean previous() throws SQLException {
+    public boolean previous() {
         if (position > -1) {
             position--;
-            clearClobs();
+            clearClob();
             return true;
         }
         return false;
@@ -1108,7 +1111,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void refreshRow() throws SQLException {
+    public void refreshRow() {
         throw new UnsupportedOperationException();
     }
 
@@ -1116,7 +1119,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean relative(final int rows) throws SQLException {
+    public boolean relative(final int rows) {
         return false;
     }
 
@@ -1124,7 +1127,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean rowDeleted() throws SQLException {
+    public boolean rowDeleted() {
         return false;
     }
 
@@ -1132,7 +1135,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean rowInserted() throws SQLException {
+    public boolean rowInserted() {
         return false;
     }
 
@@ -1140,7 +1143,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean rowUpdated() throws SQLException {
+    public boolean rowUpdated() {
         return false;
     }
 
@@ -1156,7 +1159,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void setFetchSize(final int rows) throws SQLException {
+    public void setFetchSize(final int rows) {
         fetchSize = rows;
     }
 
@@ -1164,15 +1167,15 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T unwrap(final Class<T> iface) throws SQLException {
-        return Utils.unwrap(this, iface);
+    public <T> T unwrap(final Class<T> iFace) throws SQLException {
+        return Utils.unwrap(this, iFace);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateArray(final int columnIndex, final Array x) throws SQLException {
+    public void updateArray(final int columnIndex, final Array x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1180,7 +1183,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateArray(final String columnLabel, final Array x) throws SQLException {
+    public void updateArray(final String columnLabel, final Array x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1188,7 +1191,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x) throws SQLException {
+    public void updateAsciiStream(final int columnIndex, final InputStream x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1196,7 +1199,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) throws SQLException {
+    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1204,7 +1207,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x, final long length) throws SQLException {
+    public void updateAsciiStream(final int columnIndex, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1212,7 +1215,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x) throws SQLException {
+    public void updateAsciiStream(final String columnLabel, final InputStream x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1220,7 +1223,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x, final int length) throws SQLException {
+    public void updateAsciiStream(final String columnLabel, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1228,8 +1231,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) throws
-            SQLException {
+    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1237,7 +1239,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBigDecimal(final int columnIndex, final BigDecimal x) throws SQLException {
+    public void updateBigDecimal(final int columnIndex, final BigDecimal x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1245,7 +1247,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBigDecimal(final String columnLabel, final BigDecimal x) throws SQLException {
+    public void updateBigDecimal(final String columnLabel, final BigDecimal x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1253,7 +1255,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x) throws SQLException {
+    public void updateBinaryStream(final int columnIndex, final InputStream x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1261,7 +1263,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x, final int length) throws SQLException {
+    public void updateBinaryStream(final int columnIndex, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1269,7 +1271,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x, final long length) throws SQLException {
+    public void updateBinaryStream(final int columnIndex, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1277,7 +1279,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x) throws SQLException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1285,8 +1287,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length) throws
-            SQLException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1294,8 +1295,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) throws
-            SQLException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1303,7 +1303,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final int columnIndex, final Blob x) throws SQLException {
+    public void updateBlob(final int columnIndex, final Blob x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1319,8 +1319,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) throws
-            SQLException {
+    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1328,7 +1327,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final String columnLabel, final Blob x) throws SQLException {
+    public void updateBlob(final String columnLabel, final Blob x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1336,7 +1335,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream) throws SQLException {
+    public void updateBlob(final String columnLabel, final InputStream inputStream) {
         throw new UnsupportedOperationException();
     }
 
@@ -1344,8 +1343,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) throws
-            SQLException {
+    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1353,7 +1351,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBoolean(final int columnIndex, final boolean x) throws SQLException {
+    public void updateBoolean(final int columnIndex, final boolean x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1361,7 +1359,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBoolean(final String columnLabel, final boolean x) throws SQLException {
+    public void updateBoolean(final String columnLabel, final boolean x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1369,7 +1367,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateByte(final int columnIndex, final byte x) throws SQLException {
+    public void updateByte(final int columnIndex, final byte x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1377,7 +1375,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateByte(final String columnLabel, final byte x) throws SQLException {
+    public void updateByte(final String columnLabel, final byte x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1385,7 +1383,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBytes(final int columnIndex, final byte[] x) throws SQLException {
+    public void updateBytes(final int columnIndex, final byte[] x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1393,7 +1391,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBytes(final String columnLabel, final byte[] x) throws SQLException {
+    public void updateBytes(final String columnLabel, final byte[] x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1401,7 +1399,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x) throws SQLException {
+    public void updateCharacterStream(final int columnIndex, final Reader x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1409,7 +1407,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x, final int length) throws SQLException {
+    public void updateCharacterStream(final int columnIndex, final Reader x, final int length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1417,7 +1415,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x, final long length) throws SQLException {
+    public void updateCharacterStream(final int columnIndex, final Reader x, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1425,7 +1423,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader) throws SQLException {
+    public void updateCharacterStream(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
 
@@ -1433,8 +1431,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length) throws
-            SQLException {
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1442,8 +1439,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) throws
-            SQLException {
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1451,7 +1447,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final int columnIndex, final Clob x) throws SQLException {
+    public void updateClob(final int columnIndex, final Clob x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1459,7 +1455,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final int columnIndex, final Reader reader) throws SQLException {
+    public void updateClob(final int columnIndex, final Reader reader) {
         throw new UnsupportedOperationException();
     }
 
@@ -1467,7 +1463,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final int columnIndex, final Reader reader, final long length) throws SQLException {
+    public void updateClob(final int columnIndex, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1475,7 +1471,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final String columnLabel, final Clob x) throws SQLException {
+    public void updateClob(final String columnLabel, final Clob x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1483,7 +1479,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final String columnLabel, final Reader reader) throws SQLException {
+    public void updateClob(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
 
@@ -1491,7 +1487,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final String columnLabel, final Reader reader, final long length) throws SQLException {
+    public void updateClob(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1499,7 +1495,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateDate(final int columnIndex, final Date x) throws SQLException {
+    public void updateDate(final int columnIndex, final Date x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1507,7 +1503,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateDate(final String columnLabel, final Date x) throws SQLException {
+    public void updateDate(final String columnLabel, final Date x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1515,7 +1511,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateDouble(final int columnIndex, final double x) throws SQLException {
+    public void updateDouble(final int columnIndex, final double x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1523,7 +1519,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateDouble(final String columnLabel, final double x) throws SQLException {
+    public void updateDouble(final String columnLabel, final double x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1531,7 +1527,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateFloat(final int columnIndex, final float x) throws SQLException {
+    public void updateFloat(final int columnIndex, final float x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1539,7 +1535,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateFloat(final String columnLabel, final float x) throws SQLException {
+    public void updateFloat(final String columnLabel, final float x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1547,7 +1543,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateInt(final int columnIndex, final int x) throws SQLException {
+    public void updateInt(final int columnIndex, final int x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1555,7 +1551,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateInt(final String columnLabel, final int x) throws SQLException {
+    public void updateInt(final String columnLabel, final int x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1563,7 +1559,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateLong(final int columnIndex, final long x) throws SQLException {
+    public void updateLong(final int columnIndex, final long x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1571,7 +1567,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateLong(final String columnLabel, final long x) throws SQLException {
+    public void updateLong(final String columnLabel, final long x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1579,7 +1575,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final int columnIndex, final Reader x) throws SQLException {
+    public void updateNCharacterStream(final int columnIndex, final Reader x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1587,7 +1583,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final int columnIndex, final Reader x, final long length) throws SQLException {
+    public void updateNCharacterStream(final int columnIndex, final Reader x, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1595,7 +1591,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader) throws SQLException {
+    public void updateNCharacterStream(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
 
@@ -1603,8 +1599,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) throws
-            SQLException {
+    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1612,7 +1607,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final int columnIndex, final NClob nClob) throws SQLException {
+    public void updateNClob(final int columnIndex, final NClob nClob) {
         throw new UnsupportedOperationException();
     }
 
@@ -1620,7 +1615,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final int columnIndex, final Reader reader) throws SQLException {
+    public void updateNClob(final int columnIndex, final Reader reader) {
         throw new UnsupportedOperationException();
     }
 
@@ -1628,7 +1623,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final int columnIndex, final Reader reader, final long length) throws SQLException {
+    public void updateNClob(final int columnIndex, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1636,7 +1631,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final String columnLabel, final NClob nClob) throws SQLException {
+    public void updateNClob(final String columnLabel, final NClob nClob) {
         throw new UnsupportedOperationException();
     }
 
@@ -1644,7 +1639,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final String columnLabel, final Reader reader) throws SQLException {
+    public void updateNClob(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
 
@@ -1652,7 +1647,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final String columnLabel, final Reader reader, final long length) throws SQLException {
+    public void updateNClob(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
 
@@ -1660,7 +1655,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNString(final int columnIndex, final String nString) throws SQLException {
+    public void updateNString(final int columnIndex, final String nString) {
         throw new UnsupportedOperationException();
     }
 
@@ -1668,7 +1663,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNString(final String columnLabel, final String nString) throws SQLException {
+    public void updateNString(final String columnLabel, final String nString) {
         throw new UnsupportedOperationException();
     }
 
@@ -1676,7 +1671,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNull(final int columnIndex) throws SQLException {
+    public void updateNull(final int columnIndex) {
         throw new UnsupportedOperationException();
     }
 
@@ -1684,7 +1679,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateNull(final String columnLabel) throws SQLException {
+    public void updateNull(final String columnLabel) {
         throw new UnsupportedOperationException();
     }
 
@@ -1692,7 +1687,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final int columnIndex, final Object x) throws SQLException {
+    public void updateObject(final int columnIndex, final Object x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1700,7 +1695,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final int columnIndex, final Object x, final int scaleOrLength) throws SQLException {
+    public void updateObject(final int columnIndex, final Object x, final int scaleOrLength) {
         throw new UnsupportedOperationException();
     }
 
@@ -1708,7 +1703,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final String columnLabel, final Object x) throws SQLException {
+    public void updateObject(final String columnLabel, final Object x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1716,7 +1711,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final String columnLabel, final Object x, final int scaleOrLength) throws SQLException {
+    public void updateObject(final String columnLabel, final Object x, final int scaleOrLength) {
         throw new UnsupportedOperationException();
     }
 
@@ -1724,7 +1719,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateRef(final int columnIndex, final Ref x) throws SQLException {
+    public void updateRef(final int columnIndex, final Ref x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1732,7 +1727,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateRef(final String columnLabel, final Ref x) throws SQLException {
+    public void updateRef(final String columnLabel, final Ref x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1740,7 +1735,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateRow() throws SQLException {
+    public void updateRow() {
         throw new UnsupportedOperationException();
     }
 
@@ -1748,7 +1743,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateRowId(final int columnIndex, final RowId x) throws SQLException {
+    public void updateRowId(final int columnIndex, final RowId x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1756,7 +1751,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateRowId(final String columnLabel, final RowId x) throws SQLException {
+    public void updateRowId(final String columnLabel, final RowId x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1764,7 +1759,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateShort(final int columnIndex, final short x) throws SQLException {
+    public void updateShort(final int columnIndex, final short x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1772,7 +1767,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateShort(final String columnLabel, final short x) throws SQLException {
+    public void updateShort(final String columnLabel, final short x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1780,7 +1775,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateSQLXML(final int columnIndex, final SQLXML xmlObject) throws SQLException {
+    public void updateSQLXML(final int columnIndex, final SQLXML xmlObject) {
         throw new UnsupportedOperationException();
     }
 
@@ -1788,7 +1783,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateSQLXML(final String columnLabel, final SQLXML xmlObject) throws SQLException {
+    public void updateSQLXML(final String columnLabel, final SQLXML xmlObject) {
         throw new UnsupportedOperationException();
     }
 
@@ -1796,7 +1791,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateString(final int columnIndex, final String x) throws SQLException {
+    public void updateString(final int columnIndex, final String x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1804,7 +1799,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateString(final String columnLabel, final String x) throws SQLException {
+    public void updateString(final String columnLabel, final String x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1812,7 +1807,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateTime(final int columnIndex, final Time x) throws SQLException {
+    public void updateTime(final int columnIndex, final Time x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1820,7 +1815,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateTime(final String columnLabel, final Time x) throws SQLException {
+    public void updateTime(final String columnLabel, final Time x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1828,7 +1823,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateTimestamp(final int columnIndex, final Timestamp x) throws SQLException {
+    public void updateTimestamp(final int columnIndex, final Timestamp x) {
         throw new UnsupportedOperationException();
     }
 
@@ -1836,7 +1831,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateTimestamp(final String columnLabel, final Timestamp x) throws SQLException {
+    public void updateTimestamp(final String columnLabel, final Timestamp x) {
         throw new UnsupportedOperationException();
     }
 
