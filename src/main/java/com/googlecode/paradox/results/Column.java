@@ -19,21 +19,21 @@
  */
 package com.googlecode.paradox.results;
 
-import java.sql.SQLException;
-import java.sql.Types;
-
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxField;
+
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Column values from a ResultSet.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
  * @see ParadoxResultSet
+ * @since 1.0
  */
-public class Column {
+public final class Column {
 
     /**
      * If this column is auto incremented.
@@ -121,9 +121,9 @@ public class Column {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param field
-     *            the paradox field.
+     *         the paradox field.
      */
     public Column(final ParadoxField field) {
         this(field.getName(), field.getType());
@@ -132,11 +132,11 @@ public class Column {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param name
-     *            the field name.
+     *         the field name.
      * @param type
-     *            the field type.
+     *         the field type.
      */
     public Column(final String name, final int type) {
         this.name = name;
@@ -145,12 +145,12 @@ public class Column {
 
     /**
      * Gets the field type description.
-     * 
+     *
      * @param type
-     *            the field type.
+     *         the field type.
      * @return the type description.
      * @throws SQLException
-     *             if is an invalid type.
+     *         if is an invalid type.
      */
     public static String getTypeName(final int type) throws SQLException {
         return TypeName.getName(type);
@@ -158,7 +158,7 @@ public class Column {
 
     /**
      * Gets the paradox field.
-     * 
+     *
      * @return the paradox field.
      */
     public ParadoxField getField() {
@@ -167,7 +167,7 @@ public class Column {
 
     /**
      * Gets the field index.
-     * 
+     *
      * @return the field index.
      */
     public int getIndex() {
@@ -176,7 +176,7 @@ public class Column {
 
     /**
      * Gets the field max size.
-     * 
+     *
      * @return the field max size.
      */
     public int getMaxSize() {
@@ -185,7 +185,7 @@ public class Column {
 
     /**
      * Gets the field name.
-     * 
+     *
      * @return the field name.
      */
     public String getName() {
@@ -194,7 +194,7 @@ public class Column {
 
     /**
      * Gets the field precision.
-     * 
+     *
      * @return the field precision.
      */
     public int getPrecision() {
@@ -203,7 +203,7 @@ public class Column {
 
     /**
      * Gets the field scale.
-     * 
+     *
      * @return the field scale.
      */
     public int getScale() {
@@ -212,7 +212,7 @@ public class Column {
 
     /**
      * Gets the tables name.
-     * 
+     *
      * @return the tables name.
      */
     public String getTableName() {
@@ -221,7 +221,7 @@ public class Column {
 
     /**
      * Gets the field SQL type.
-     * 
+     *
      * @return the field SQL type.
      */
     public int getType() {
@@ -230,7 +230,7 @@ public class Column {
 
     /**
      * Gets if this field is auto increment.
-     * 
+     *
      * @return true if this field is auto incremented.
      */
     public boolean isAutoIncrement() {
@@ -239,7 +239,7 @@ public class Column {
 
     /**
      * Gets if this field is a currency.
-     * 
+     *
      * @return true if this field is a current.
      */
     public boolean isCurrency() {
@@ -248,7 +248,7 @@ public class Column {
 
     /**
      * Gets if this field can be null.
-     * 
+     *
      * @return true if this field can be null.
      */
     public boolean isNullable() {
@@ -257,7 +257,7 @@ public class Column {
 
     /**
      * Gets if this field is read only.
-     * 
+     *
      * @return true if this field is read only.
      */
     public boolean isReadOnly() {
@@ -266,7 +266,7 @@ public class Column {
 
     /**
      * Gets if this field can be search.
-     * 
+     *
      * @return true if this field can be search.
      */
     public boolean isSearchable() {
@@ -275,7 +275,7 @@ public class Column {
 
     /**
      * Gets if this field have sign.
-     * 
+     *
      * @return true if this field have sign.
      */
     public boolean isSigned() {
@@ -284,7 +284,7 @@ public class Column {
 
     /**
      * Gets if this field is writable.
-     * 
+     *
      * @return true if this field is writable.
      */
     public boolean isWritable() {
@@ -293,9 +293,9 @@ public class Column {
 
     /**
      * Sets the auto increment value.
-     * 
+     *
      * @param autoIncrement
-     *            the auto increment value to set.
+     *         the auto increment value to set.
      */
     public void setAutoIncrement(final boolean autoIncrement) {
         this.autoIncrement = autoIncrement;
@@ -303,9 +303,9 @@ public class Column {
 
     /**
      * Sets if this field is a current.
-     * 
+     *
      * @param currency
-     *            the currency to set.
+     *         the currency to set.
      */
     public void setCurrency(final boolean currency) {
         this.currency = currency;
@@ -313,9 +313,9 @@ public class Column {
 
     /**
      * Sets the paradox field.
-     * 
+     *
      * @param field
-     *            the paradox field to set.
+     *         the paradox field to set.
      */
     public void setField(final ParadoxField field) {
         this.field = field;
@@ -323,9 +323,9 @@ public class Column {
 
     /**
      * Sets the field index.
-     * 
+     *
      * @param index
-     *            the index to set.
+     *         the index to set.
      */
     public void setIndex(final int index) {
         this.index = index;
@@ -333,9 +333,9 @@ public class Column {
 
     /**
      * Sets the field max size.
-     * 
+     *
      * @param maxSize
-     *            the max size to set.
+     *         the max size to set.
      */
     public void setMaxSize(final int maxSize) {
         this.maxSize = maxSize;
@@ -343,9 +343,9 @@ public class Column {
 
     /**
      * Sets the field name
-     * 
+     *
      * @param name
-     *            the field name to set.
+     *         the field name to set.
      */
     public void setName(final String name) {
         this.name = name;
@@ -353,9 +353,9 @@ public class Column {
 
     /**
      * Sets if this field can be null.
-     * 
+     *
      * @param nullable
-     *            the nullable to set.
+     *         the nullable to set.
      */
     public void setNullable(final boolean nullable) {
         this.nullable = nullable;
@@ -363,9 +363,9 @@ public class Column {
 
     /**
      * Sets the field precision.
-     * 
+     *
      * @param precision
-     *            the precision to set.
+     *         the precision to set.
      */
     public void setPrecision(final int precision) {
         this.precision = precision;
@@ -373,9 +373,9 @@ public class Column {
 
     /**
      * Sets if this field is read only.
-     * 
+     *
      * @param readOnly
-     *            the read only to set.
+     *         the read only to set.
      */
     public void setReadOnly(final boolean readOnly) {
         this.readOnly = readOnly;
@@ -383,9 +383,9 @@ public class Column {
 
     /**
      * Sets the field scale.
-     * 
+     *
      * @param scale
-     *            the scale to set.
+     *         the scale to set.
      */
     public void setScale(final int scale) {
         this.scale = scale;
@@ -393,9 +393,9 @@ public class Column {
 
     /**
      * Sets if this field is searchable.
-     * 
+     *
      * @param searchable
-     *            the searchable to set.
+     *         the searchable to set.
      */
     public void setSearchable(final boolean searchable) {
         this.searchable = searchable;
@@ -403,9 +403,9 @@ public class Column {
 
     /**
      * Sets if this field has sign.
-     * 
+     *
      * @param signed
-     *            the signed to set.
+     *         the signed to set.
      */
     public void setSigned(final boolean signed) {
         this.signed = signed;
@@ -413,9 +413,9 @@ public class Column {
 
     /**
      * Sets the tables name
-     * 
+     *
      * @param tableName
-     *            the tables name to set.
+     *         the tables name to set.
      */
     public void setTableName(final String tableName) {
         this.tableName = tableName;
@@ -423,9 +423,9 @@ public class Column {
 
     /**
      * Sets the field SQL type.
-     * 
+     *
      * @param type
-     *            the field SQL type to set.
+     *         the field SQL type to set.
      */
     public void setType(final int type) {
         this.type = type;
@@ -443,9 +443,9 @@ public class Column {
 
     /**
      * Sets if this field is writable.
-     * 
+     *
      * @param writable
-     *            the writable to set.
+     *         the writable to set.
      */
     public void setWritable(final boolean writable) {
         this.writable = writable;

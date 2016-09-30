@@ -19,19 +19,20 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link ParadoxField} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class ParadoxFieldTest {
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method.
      */
@@ -43,7 +44,7 @@ public class ParadoxFieldTest {
         last.setName("Field");
         Assert.assertTrue(first.equals(last));
     }
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method different values.
      */
@@ -88,7 +89,7 @@ public class ParadoxFieldTest {
         first.setName("Field");
         Assert.assertFalse(first.equals("String"));
     }
-    
+
     /**
      * Test for empty alias.
      */
@@ -103,7 +104,7 @@ public class ParadoxFieldTest {
      * Test for {@link ParadoxField#toString()} method.
      *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testSizeClob() throws SQLException {
@@ -150,7 +151,7 @@ public class ParadoxFieldTest {
      * {@link ParadoxField#setSize(short)} method.
      *
      * @throws SQLException
-     *             in case of errors.
+     *         in case of errors.
      */
     @Test
     public void testSize() throws SQLException {
@@ -160,7 +161,7 @@ public class ParadoxFieldTest {
         field.setSize((short) 10);
         Assert.assertEquals(10, field.getSize());
     }
-    
+
     /**
      * Test for getters and setters.
      */
@@ -176,14 +177,14 @@ public class ParadoxFieldTest {
         field.setTable(null);
 
         Assert.assertEquals("alias", field.getAlias());
-        Assert.assertEquals(false, field.isChecked());
+        Assert.assertFalse("Field is not checked.", field.isChecked());
         Assert.assertEquals("expression", field.getExpression());
         Assert.assertEquals("joinname", field.getJoinName());
         Assert.assertEquals("name", field.getName());
         Assert.assertEquals("tablename", field.getTableName());
         Assert.assertEquals(null, field.getTable());
     }
-    
+
     /**
      * Test for {@link ParadoxField#hashCode()} method.
      */
@@ -212,7 +213,7 @@ public class ParadoxFieldTest {
         final ParadoxField field = new ParadoxField();
         Assert.assertEquals(1, field.getOrderNum());
     }
-    
+
     /**
      * Test for not auto increment.
      */
