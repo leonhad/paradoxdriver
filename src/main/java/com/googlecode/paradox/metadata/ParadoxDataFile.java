@@ -34,10 +34,6 @@ import java.util.List;
 public class ParadoxDataFile {
 
     /**
-     * Java file used to read the database.
-     */
-    private final File file;
-    /**
      * The field with auto increment value.
      */
     protected int autoIncrementValue;
@@ -57,17 +53,14 @@ public class ParadoxDataFile {
      * The first block in the file.
      */
     protected int firstBlock;
-
     /**
      * The first free block in the file.
      */
     protected int firstFreeBlock;
-
     /**
      * Size of file header.
      */
     protected int headerSize;
-
     /**
      * The last block in the file.
      */
@@ -108,6 +101,10 @@ public class ParadoxDataFile {
      * If this file has an write protected lock.
      */
     protected byte writeProtected;
+    /**
+     * Java file used to read the database.
+     */
+    private File file;
     /**
      * The file name.
      */
