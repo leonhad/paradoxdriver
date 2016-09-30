@@ -86,7 +86,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Clob fields mapping.
      */
-    private Map<Integer, Clob> clobList;
+    private Map<Integer, Clob> clobMap;
     /**
      * If this {@link ResultSet} is closed.
      */
@@ -179,8 +179,8 @@ public final class ParadoxResultSet implements ResultSet {
     }
 
     private void clearClobs() {
-        if (clobList != null) {
-            clobList.clear();
+        if (clobMap != null) {
+            clobMap.clear();
         }
     }
 
@@ -197,8 +197,8 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void close() throws SQLException {
-        if (clobList != null) {
-            for (final Clob clob : clobList.values()) {
+        if (clobMap != null) {
+            for (final Clob clob : clobMap.values()) {
                 clob.free();
             }
             clearClobs();
@@ -430,17 +430,17 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Clob getClob(final int columnIndex) throws SQLException {
-        if (clobList == null) {
-            clobList = new HashMap<>(1);
+        if (clobMap == null) {
+            clobMap = new HashMap<>(1);
         }
-        if (clobList.containsKey(columnIndex)) {
-            return clobList.get(columnIndex);
+        if (clobMap.containsKey(columnIndex)) {
+            return clobMap.get(columnIndex);
         }
         final Object val = this.getObject(columnIndex);
         if (val != null) {
             if (val instanceof ClobDescriptor) {
                 final ParadoxClob clob = new ParadoxClob((ClobDescriptor) val);
-                clobList.put(columnIndex, clob);
+                clobMap.put(columnIndex, clob);
                 return clob;
             } else {
                 throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
