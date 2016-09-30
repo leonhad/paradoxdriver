@@ -289,13 +289,13 @@ public class BlobTable extends ParadoxDataFile {
         // Modifier.
         blockHead.getShort();
 
-        final ByteBuffer sblockData = ByteBuffer.allocate(blobLength);
-        sblockData.order(ByteOrder.LITTLE_ENDIAN);
-        sblockData.clear();
-        channel.read(sblockData);
-        sblockData.flip();
+        final ByteBuffer blockData = ByteBuffer.allocate(blobLength);
+        blockData.order(ByteOrder.LITTLE_ENDIAN);
+        blockData.clear();
+        channel.read(blockData);
+        blockData.flip();
         final byte[] values = new byte[blobLength];
-        sblockData.get(values);
+        blockData.get(values);
         blocks.add(new ClobBlock(numBlock, headerType, (short) 0xFF, values));
         numBlock++;
         channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
@@ -340,14 +340,14 @@ public class BlobTable extends ParadoxDataFile {
                 final long position = channel.position();
                 final long start = offset + startBlockAddress;
                 ln = ln - 0x10 + mdl;
-                final ByteBuffer sblockData = ByteBuffer.allocate(ln);
-                sblockData.order(ByteOrder.LITTLE_ENDIAN);
-                sblockData.clear();
+                final ByteBuffer blockData = ByteBuffer.allocate(ln);
+                blockData.order(ByteOrder.LITTLE_ENDIAN);
+                blockData.clear();
                 channel.position(start);
-                channel.read(sblockData);
-                sblockData.flip();
+                channel.read(blockData);
+                blockData.flip();
                 final byte[] values = new byte[ln];
-                sblockData.get(values);
+                blockData.get(values);
 
                 blocks.add(new ClobBlock(numBlock, headerType, n, values));
                 channel.position(position);

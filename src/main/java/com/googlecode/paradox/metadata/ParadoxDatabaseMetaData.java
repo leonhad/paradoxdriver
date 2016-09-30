@@ -80,7 +80,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * The table names schema field.
      */
-    private static final String TABLE_SCHEM = "TABLE_SCHEM";
+    private static final String TABLE_SCHEMA = "TABLE_SCHEM";
 
     /**
      * The type name field.
@@ -358,7 +358,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
                                 final String columnNamePattern) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column(TABLE_NAME, Types.VARCHAR));
         columns.add(new Column(COLUMN_NAME, Types.VARCHAR));
         columns.add(new Column("DATA_TYPE", Types.INTEGER));
@@ -551,7 +551,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
                                   final boolean unique, final boolean approximate) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column(TABLE_NAME, Types.VARCHAR));
         columns.add(new Column("NON_UNIQUE", Types.BOOLEAN));
         columns.add(new Column("INDEX_QUALIFIER", Types.VARCHAR));
@@ -810,7 +810,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
             throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column(TABLE_NAME, Types.VARCHAR));
         columns.add(new Column(COLUMN_NAME, Types.VARCHAR));
         columns.add(new Column("KEY_SEQ", Types.INTEGER));
@@ -971,7 +971,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getSchemas() throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>(1);
-        columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column("TABLE_CATALOG", Types.VARCHAR));
 
         final ArrayList<FieldValue> row = new ArrayList<>(1);
@@ -1069,7 +1069,7 @@ public class ParadoxDatabaseMetaData implements DatabaseMetaData {
                                final String[] types) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(TABLE_SCHEM, Types.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column("TABLE_NAME", Types.VARCHAR));
         columns.add(new Column("TABLE_TYPE", Types.VARCHAR));
         columns.add(new Column(REMARKS, Types.VARCHAR));

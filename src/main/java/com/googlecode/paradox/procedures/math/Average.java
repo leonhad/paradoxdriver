@@ -22,11 +22,11 @@ package com.googlecode.paradox.procedures.math;
 import com.googlecode.paradox.procedures.CallableProcedure;
 
 /**
- * The avarage procedure.
- * 
+ * The average procedure.
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public class Average extends CallableProcedure {
 

@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
-
-import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Paradox primary key file filter.
@@ -63,10 +63,7 @@ public class PrimaryKeyFilter implements FileFilter {
         final String name = pathname.getName();
 
         if (Expressions.accept(name, "%.PX")) {
-            if (pkName != null) {
-                return Expressions.accept(name, pkName);
-            }
-            return true;
+            return pkName == null || Expressions.accept(name, pkName);
         }
         return false;
     }

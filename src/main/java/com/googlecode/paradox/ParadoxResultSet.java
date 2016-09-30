@@ -30,6 +30,7 @@ import com.googlecode.paradox.utils.Utils;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
@@ -60,7 +61,7 @@ import java.util.Map;
  * @version 1.1
  * @since 1.0
  */
-public class ParadoxResultSet implements ResultSet {
+public final class ParadoxResultSet implements ResultSet {
 
     /**
      * If this connection is invalid.
@@ -85,11 +86,11 @@ public class ParadoxResultSet implements ResultSet {
     /**
      * Clob fields mapping.
      */
-    private Map<Integer, Clob> clobs;
+    private Map<Integer, Clob> clobList;
     /**
      * If this {@link ResultSet} is closed.
      */
-    private boolean closed = false;
+    private boolean closed;
     /**
      * The amount of rows fetched.
      */
@@ -178,8 +179,8 @@ public class ParadoxResultSet implements ResultSet {
     }
 
     private void clearClobs() {
-        if (clobs != null) {
-            clobs.clear();
+        if (clobList != null) {
+            clobList.clear();
         }
     }
 
@@ -196,8 +197,8 @@ public class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void close() throws SQLException {
-        if (clobs != null) {
-            for (final Clob clob : clobs.values()) {
+        if (clobList != null) {
+            for (final Clob clob : clobList.values()) {
                 clob.free();
             }
             clearClobs();
@@ -291,7 +292,7 @@ public class ParadoxResultSet implements ResultSet {
         verifyRow();
 
         final BigDecimal value = getBigDecimal(columnIndex);
-        return value.setScale(scale);
+        return value.setScale(scale, RoundingMode.HALF_DOWN);
     }
 
     /**
@@ -429,17 +430,17 @@ public class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Clob getClob(final int columnIndex) throws SQLException {
-        if (clobs == null) {
-            clobs = new HashMap<>(1);
+        if (clobList == null) {
+            clobList = new HashMap<>(1);
         }
-        if (clobs.containsKey(columnIndex)) {
-            return clobs.get(columnIndex);
+        if (clobList.containsKey(columnIndex)) {
+            return clobList.get(columnIndex);
         }
         final Object val = this.getObject(columnIndex);
         if (val != null) {
             if (val instanceof ClobDescriptor) {
                 final ParadoxClob clob = new ParadoxClob((ClobDescriptor) val);
-                clobs.put(columnIndex, clob);
+                clobList.put(columnIndex, clob);
                 return clob;
             } else {
                 throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
@@ -989,10 +990,7 @@ public class ParadoxResultSet implements ResultSet {
     }
 
     private boolean hasNext() {
-        if (values == null) {
-            return false;
-        }
-        return position < values.size();
+        return values != null && position < values.size();
     }
 
     /**

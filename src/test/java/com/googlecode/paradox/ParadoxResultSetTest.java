@@ -21,10 +21,18 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxFieldType;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

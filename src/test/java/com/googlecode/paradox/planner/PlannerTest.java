@@ -27,7 +27,11 @@ import com.googlecode.paradox.parser.nodes.IdentifierNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.plan.SelectPlan;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;

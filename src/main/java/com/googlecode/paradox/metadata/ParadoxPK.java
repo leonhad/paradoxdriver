@@ -23,8 +23,8 @@ package com.googlecode.paradox.metadata;
  * Stores a primary key definition..
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class ParadoxPK extends ParadoxDataFile {
 
@@ -45,15 +45,12 @@ public class ParadoxPK extends ParadoxDataFile {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof ParadoxPK) {
-            return getName().equals(((ParadoxPK) obj).getName());
-        }
-        return false;
+        return obj instanceof ParadoxPK && getName().equals(((ParadoxPK) obj).getName());
     }
 
     /**
      * Gets the index field number.
-     * 
+     *
      * @return the index field number.
      */
     public int getIndexFieldNumber() {
@@ -64,7 +61,7 @@ public class ParadoxPK extends ParadoxDataFile {
      * Sets the index field number.
      *
      * @param indexFieldNumber
-     *            the index field number.
+     *         the index field number.
      */
     public void setIndexFieldNumber(final int indexFieldNumber) {
         this.indexFieldNumber = indexFieldNumber;

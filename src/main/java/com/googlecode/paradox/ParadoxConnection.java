@@ -482,8 +482,8 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return Utils.isWrapperFor(this, iface);
+    public boolean isWrapperFor(final Class<?> iFace) throws SQLException {
+        return Utils.isWrapperFor(this, iFace);
     }
 
     /**
@@ -631,7 +631,7 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * Try to locj this connection.
+     * Try to lock this connection.
      *
      * @param dir
      *         database directory.
@@ -655,7 +655,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T unwrap(final Class<T> iface) throws SQLException {
-        return Utils.unwrap(this, iface);
+    public <T> T unwrap(final Class<T> iFace) throws SQLException {
+        return Utils.unwrap(this, iFace);
     }
 }

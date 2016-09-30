@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
-
-import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Paradox secondary key file filter (Index Key).
@@ -63,10 +63,7 @@ public class SecondaryIndexFilter implements FileFilter {
         final String name = pathname.getName();
 
         if (Expressions.accept(name, "%.X??")) {
-            if (indexName != null) {
-                return Expressions.accept(name, indexName);
-            }
-            return true;
+            return indexName == null || Expressions.accept(name, indexName);
         }
         return false;
     }

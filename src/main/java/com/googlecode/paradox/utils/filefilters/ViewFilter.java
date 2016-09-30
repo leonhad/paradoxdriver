@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
-
-import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Paradox view filter.
@@ -63,10 +63,7 @@ public class ViewFilter implements FileFilter {
         final String name = pathname.getName();
 
         if (Expressions.accept(name, "%.QBE")) {
-            if (viewName != null) {
-                return Expressions.accept(name, viewName);
-            }
-            return true;
+            return viewName == null || Expressions.accept(name, viewName);
         }
         return false;
     }
