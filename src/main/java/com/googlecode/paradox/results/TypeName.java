@@ -132,7 +132,7 @@ public enum TypeName {
      * @throws SQLException
      *         in case of invalid type.
      */
-    public static String getClassName(final int sqlType) throws SQLException {
+    public static String getClassNameByType(final int sqlType) throws SQLException {
         for (final TypeName typeName : VALUES) {
             if (typeName.getSQLType() == sqlType) {
                 return typeName.getClassName();

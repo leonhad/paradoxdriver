@@ -92,7 +92,7 @@ public class ParadoxResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getColumnClassName(final int column) throws SQLException {
-        return TypeName.getClassName(getColumnType(column));
+        return TypeName.getClassNameByType(getColumnType(column));
     }
 
     /**

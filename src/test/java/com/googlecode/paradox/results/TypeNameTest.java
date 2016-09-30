@@ -42,7 +42,7 @@ public class TypeNameTest {
      */
     @Test
     public void testClassName() throws SQLException {
-        Assert.assertEquals("java.io.InputStream", TypeName.getClassName(Types.BINARY));
+        Assert.assertEquals("java.io.InputStream", TypeName.getClassNameByType(Types.BINARY));
     }
 
     /**
@@ -53,7 +53,7 @@ public class TypeNameTest {
      */
     @Test(expected = SQLException.class)
     public void testClassNameUnsupported() throws SQLException {
-        TypeName.getClassName(99);
+        TypeName.getClassNameByType(99);
     }
 
     /**
