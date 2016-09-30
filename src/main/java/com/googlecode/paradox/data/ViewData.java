@@ -245,7 +245,7 @@ public final class ViewData {
      * @param expression
      *         the expression to parse.
      */
-    static void parseExpression(final ParadoxField field, final String expression) {
+    public static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
         parseCheck(field, builder);
@@ -255,10 +255,10 @@ public final class ViewData {
 
         parseJoinName(field, builder);
         final String typeTest = builder.toString().trim();
-        if (typeTest.toUpperCase().startsWith("AS")) {
+        if (typeTest.toUpperCase(Locale.US).startsWith("AS")) {
             field.setAlias(typeTest.substring(3).trim());
         } else {
-            if (typeTest.startsWith(",")) {
+            if (typeTest.charAt(0) == ',') {
                 builder.delete(0, 1);
             }
             final int index = builder.toString().toUpperCase(Locale.US).lastIndexOf("AS");

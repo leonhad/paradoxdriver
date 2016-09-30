@@ -25,6 +25,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
+
 import java.nio.ByteBuffer;
 import java.sql.Types;
 import java.util.Arrays;
@@ -33,11 +34,11 @@ import java.util.Arrays;
  * Parses a VARCHAR field.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
-public class VarcharField implements FieldParser {
-    
+public final class VarcharField implements FieldParser {
+
     /**
      * {@inheritDoc}
      */
@@ -45,7 +46,7 @@ public class VarcharField implements FieldParser {
     public boolean match(final int type) {
         return type == 1;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -61,5 +62,5 @@ public class VarcharField implements FieldParser {
         }
         return new FieldValue(Utils.parseString(valueString, table.getCharset()), Types.VARCHAR);
     }
-    
+
 }

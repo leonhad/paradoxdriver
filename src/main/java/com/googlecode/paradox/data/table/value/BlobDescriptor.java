@@ -34,12 +34,12 @@ class BlobDescriptor {
     /**
      * The blob table.
      */
-    private BlobTable file = null;
+    private BlobTable file;
 
     /**
      * Blob file offset.
      */
-    private long offset = 0;
+    private long offset;
 
     /**
      * Creates a new instance.

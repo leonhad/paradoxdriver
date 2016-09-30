@@ -19,24 +19,24 @@
  */
 package com.googlecode.paradox.data.field;
 
-import java.nio.ByteBuffer;
-import java.sql.Date;
-import java.sql.Types;
-
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.DateUtils;
 
+import java.nio.ByteBuffer;
+import java.sql.Date;
+import java.sql.Types;
+
 /**
  * Parses date fields.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
-public class DateField implements FieldParser {
+public final class DateField implements FieldParser {
 
     /**
      * {@inheritDoc}
@@ -51,13 +51,13 @@ public class DateField implements FieldParser {
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final int a1 = 0x000000FF & buffer.get();
-        final int a2 = 0x000000FF & buffer.get();
-        final int a3 = 0x000000FF & buffer.get();
-        final int a4 = 0x000000FF & buffer.get();
+        final int a1 = 0xFF & buffer.get();
+        final int a2 = 0xFF & buffer.get();
+        final int a3 = 0xFF & buffer.get();
+        final int a4 = 0xFF & buffer.get();
         final long days = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
 
-        final Date date = DateUtils.sdnToGregorian(days + 1721425);
+        final Date date = DateUtils.sdnToGregorian(days + 1_721_425);
         return new FieldValue(date, Types.DATE);
     }
 }

@@ -39,7 +39,7 @@ import java.util.Arrays;
  * @version 1.0
  * @since 1.3
  */
-public class MemoField implements FieldParser {
+public final class MemoField implements FieldParser {
 
     /**
      * {@inheritDoc}

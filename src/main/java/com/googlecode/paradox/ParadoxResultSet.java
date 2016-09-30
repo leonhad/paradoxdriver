@@ -99,7 +99,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Last got value.
      */
-    private FieldValue lastValue = null;
+    private FieldValue lastValue;
     /**
      * Row position.
      */
@@ -473,7 +473,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public String getCursorName() {
-        return statement != null ? statement.cursorName : "NO_NAME";
+        return statement != null ? statement.getCursorName() : "NO_NAME";
     }
 
     /**
@@ -527,7 +527,7 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? 0d : lastValue.getNumber().doubleValue();
+        return lastValue.isNull() ? 0D : lastValue.getNumber().doubleValue();
     }
 
     /**
@@ -566,7 +566,7 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? 0f : lastValue.getNumber().floatValue();
+        return lastValue.isNull() ? 0F : lastValue.getNumber().floatValue();
     }
 
     /**
@@ -981,7 +981,7 @@ public final class ParadoxResultSet implements ResultSet {
      * @return the row values.
      */
     public List<List<FieldValue>> getValues() {
-        return values;
+        return Collections.unmodifiableList(values);
     }
 
     /**
@@ -1835,6 +1835,12 @@ public final class ParadoxResultSet implements ResultSet {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Verify it there is more rows.
+     *
+     * @throws SQLException
+     *         in case of errors.
+     */
     private void verifyRow() throws SQLException {
         if (!hasNext()) {
             throw new SQLDataException("Result do not have more rows.", SQLStates.INVALID_ROW.getValue());

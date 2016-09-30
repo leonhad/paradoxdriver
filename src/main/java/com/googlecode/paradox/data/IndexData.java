@@ -31,12 +31,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.nio.ByteBuffer.allocate;
-import static java.nio.charset.Charset.forName;
 
 /**
  * Reads index data files.
@@ -96,7 +94,7 @@ public final class IndexData {
      *         in case of database errors.
      */
     private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
-        final ByteBuffer buffer = allocate(2048);
+        final ByteBuffer buffer = ByteBuffer.allocate(2048);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -171,7 +169,7 @@ public final class IndexData {
         }
 
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
-            final ByteBuffer name = allocate(261);
+            final ByteBuffer name = ByteBuffer.allocate(261);
 
             while (true) {
                 final byte c = buffer.get();
@@ -204,7 +202,7 @@ public final class IndexData {
         if (index.getVersionId() > 4) {
             // Set the charset.
             buffer.position(0x6A);
-            index.setCharset(forName("cp" + buffer.getShort()));
+            index.setCharset(Charset.forName("cp" + buffer.getShort()));
 
             buffer.position(0x78);
         } else {
@@ -221,7 +219,7 @@ public final class IndexData {
      *         the paradox index.
      */
     private static void parseSortID(final ByteBuffer buffer, final ParadoxIndex index) {
-        final ByteBuffer sortOrderID = allocate(26);
+        final ByteBuffer sortOrderID = ByteBuffer.allocate(26);
         while (true) {
             final byte c = buffer.get();
             if (c == 0) {
@@ -242,7 +240,7 @@ public final class IndexData {
      *         the paradox index.
      */
     private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
-        final ByteBuffer name = allocate(26);
+        final ByteBuffer name = ByteBuffer.allocate(26);
         while (true) {
             final byte c = buffer.get();
             if (c == 0) {

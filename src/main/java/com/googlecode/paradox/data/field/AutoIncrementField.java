@@ -23,6 +23,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -31,11 +32,11 @@ import java.sql.Types;
  * Parses auto increment fields.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
-public class AutoIncrementField implements FieldParser {
-    
+public final class AutoIncrementField implements FieldParser {
+
     /**
      * {@inheritDoc}
      */
@@ -43,7 +44,7 @@ public class AutoIncrementField implements FieldParser {
     public boolean match(final int type) {
         return type == 0x16;
     }
-    
+
     /**
      * {@inheritDoc}
      */

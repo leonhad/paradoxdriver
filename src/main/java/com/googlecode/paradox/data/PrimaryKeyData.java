@@ -34,8 +34,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.nio.ByteBuffer.allocate;
-
 /**
  * Reads primary key data fields.
  *
@@ -117,7 +115,7 @@ public final class PrimaryKeyData {
      *         in case of I/O exceptions.
      */
     private static ParadoxPK loadPKHeader(final File file) throws IOException {
-        final ByteBuffer buffer = allocate(2048);
+        final ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         FileChannel channel = null;
         final FileInputStream fs = new FileInputStream(file);

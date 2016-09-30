@@ -86,7 +86,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * If this connection is closed.
      */
-    private boolean closed = false;
+    private boolean closed;
     /**
      * This connection holdability.
      */
@@ -315,7 +315,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Properties getClientInfo() {
-        return clientInfo;
+        return new Properties(clientInfo);
     }
 
     /**
@@ -323,7 +323,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setClientInfo(final Properties clientInfo) {
-        this.clientInfo = clientInfo;
+        this.clientInfo = new Properties(clientInfo);
     }
 
     /**

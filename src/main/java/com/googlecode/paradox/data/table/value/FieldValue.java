@@ -19,40 +19,37 @@
  */
 package com.googlecode.paradox.data.table.value;
 
+import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.utils.SQLStates;
+
 import java.sql.Date;
 import java.sql.SQLDataException;
 import java.sql.Time;
 import java.sql.Types;
 
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.utils.SQLStates;
-
 /**
  * Stores the database values in Java format.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
-public class FieldValue {
+public final class FieldValue {
 
     /**
      * Invalid field message error.
      */
     private static final String ERROR_INVALID_TYPE = "Invalid field type.";
-
-    /**
-     * Reference on field.
-     */
-    private ParadoxField field;
-
     /**
      * Value type in database.
      *
      * @see Types
      */
     private final int type;
-
+    /**
+     * Reference on field.
+     */
+    private ParadoxField field;
     /**
      * Database value converted to Java.
      */
@@ -62,7 +59,7 @@ public class FieldValue {
      * Constructor used for NULL values.
      *
      * @param type
-     *            field type.
+     *         field type.
      */
     public FieldValue(final int type) {
         this.type = type;
@@ -72,9 +69,9 @@ public class FieldValue {
      * Store a database value already loaded in Java format.
      *
      * @param value
-     *            Java value.
+     *         Java value.
      * @param type
-     *            Database value type.
+     *         Database value type.
      */
     public FieldValue(final Object value, final int type) {
         this.type = type;
@@ -86,7 +83,7 @@ public class FieldValue {
      *
      * @return a valid Boolean value.
      * @throws SQLDataException
-     *             if this is not a Boolean value.
+     *         if this is not a Boolean value.
      */
     public Boolean getBoolean() throws SQLDataException {
         if (type != Types.BOOLEAN) {
@@ -100,7 +97,7 @@ public class FieldValue {
      *
      * @return a valid Date value.
      * @throws SQLDataException
-     *             if this is not a Date value.
+     *         if this is not a Date value.
      */
     public Date getDate() throws SQLDataException {
         if (type != Types.DATE) {
@@ -123,16 +120,16 @@ public class FieldValue {
      *
      * @return a valid Number value.
      * @throws SQLDataException
-     *             if this is not a numeric value.
+     *         if this is not a numeric value.
      */
     public Number getNumber() throws SQLDataException {
         switch (type) {
-        case Types.INTEGER:
-        case Types.BIGINT:
-        case Types.DOUBLE:
-            return (Number) value;
-        default:
-            throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());
+            case Types.INTEGER:
+            case Types.BIGINT:
+            case Types.DOUBLE:
+                return (Number) value;
+            default:
+                throw new SQLDataException(ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());
         }
     }
 
@@ -141,7 +138,7 @@ public class FieldValue {
      *
      * @return a valid Time value.
      * @throws SQLDataException
-     *             if this is not a Time value.
+     *         if this is not a Time value.
      */
     public Time getTime() throws SQLDataException {
         if (type != Types.TIME) {
@@ -181,7 +178,7 @@ public class FieldValue {
      * Sets the Paradox field.
      *
      * @param field
-     *            the Paradox field.
+     *         the Paradox field.
      */
     public void setField(final ParadoxField field) {
         this.field = field;

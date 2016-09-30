@@ -29,7 +29,7 @@ import com.googlecode.paradox.metadata.BlobTable;
  * @version 1.1
  * @since 1.2
  */
-public class ClobDescriptor extends BlobDescriptor {
+public final class ClobDescriptor extends BlobDescriptor {
 
     /**
      * The clob leader.
