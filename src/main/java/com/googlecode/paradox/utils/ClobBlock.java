@@ -79,7 +79,11 @@ public class ClobBlock {
         this.num = num;
         this.type = type;
         this.offset = offset;
-        this.value = value.clone();
+        if (value != null) {
+            this.value = value.clone();
+        } else {
+            this.value = null;
+        }
     }
 
     /**
@@ -115,6 +119,9 @@ public class ClobBlock {
      * @return the CLOB data value.
      */
     public byte[] getValue() {
-        return value.clone();
+        if (value != null) {
+            return value.clone();
+        }
+        return null;
     }
 }
