@@ -27,10 +27,10 @@ import java.util.logging.Logger;
 
 /**
  * Utility class for date formats.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
 public final class DateUtils {
 
@@ -50,7 +50,7 @@ public final class DateUtils {
     private static final int DAYS_PER_5_MONTHS = 153;
 
     /**
-     * Used for debug purposes
+     * Used for debug purposes.
      */
     private static final Logger LOGGER = Logger.getLogger(DateUtils.class.getName());
 
@@ -68,13 +68,13 @@ public final class DateUtils {
 
     /**
      * Check for valid date boundaries.
-     * 
+     *
      * @param inputYear
-     *            the year to validate.
+     *         the year to validate.
      * @param inputMonth
-     *            the month to validate.
+     *         the month to validate.
      * @param inputDay
-     *            the day to validate.
+     *         the day to validate.
      */
     private static void checkForDateBoundaries(final long inputYear, final long inputMonth, final long inputDay) {
         // Check for invalid year.
@@ -93,15 +93,15 @@ public final class DateUtils {
 
     /**
      * Check for dates before SDN 1 (November 25, 4714 B.C.).
-     * 
+     *
      * @param inputYear
-     *            the year to check.
+     *         the year to check.
      * @param inputMonth
-     *            the month to check.
+     *         the month to check.
      * @param inputDay
-     *            the day to check.
+     *         the day to check.
      * @throws IllegalArgumentException
-     *             in case of invalid date.
+     *         in case of invalid date.
      */
     private static void checkYearBounds(final long inputYear, final long inputMonth, final long inputDay) {
         if (inputYear == -4714) {
@@ -116,33 +116,33 @@ public final class DateUtils {
 
     /**
      * Check for the year bounds.
-     * 
+     *
      * @param inputYear
-     *            the year to test of.
+     *         the year to test of.
      * @return the corrected year.
      */
     private static long fixYearBounds(final long inputYear) {
         long year;
         if (inputYear < 0) {
-            year = inputYear + 4801L;
+            year = inputYear + 4_801L;
         } else {
-            year = inputYear + 4800L;
+            year = inputYear + 4_800L;
         }
         return year;
     }
 
     /**
      * Convert the Gregorian date to Paradox format.
-     * 
+     *
      * @param inputYear
-     *            the year to convert.
+     *         the year to convert.
      * @param inputMonth
-     *            the month to convert.
+     *         the month to convert.
      * @param inputDay
-     *            the day to convert.
+     *         the day to convert.
      * @return the Paradox date.
      */
-    public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
+    static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
         try {
             checkForDateBoundaries(inputYear, inputMonth, inputDay);
             checkYearBounds(inputYear, inputMonth, inputDay);
@@ -163,42 +163,37 @@ public final class DateUtils {
             year--;
         }
 
-        return year / 100 * DAYS_PER_400_YEARS / 4 + year % 100 * DAYS_PER_4_YEARS / 4 + (month * DAYS_PER_5_MONTHS + 2) / 5 + inputDay - SDN_OFFSET;
+        return year / 100 * DAYS_PER_400_YEARS / 4 + year % 100 * DAYS_PER_4_YEARS / 4 + (month * DAYS_PER_5_MONTHS +
+                2) / 5 + inputDay - SDN_OFFSET;
     }
 
     /**
      * Convert the Paradox date to Gregorian format.
-     * 
+     *
      * @param sdn
-     *            the Paradox date to convert.
+     *         the Paradox date to convert.
      * @return the Java {@link Date}.
      */
     public static Date sdnToGregorian(final long sdn) {
-        long century;
-        long year;
-        long month;
-        long day;
-        long temp;
-        long dayOfYear;
 
         if (sdn <= 0) {
             return null;
         }
 
-        temp = (sdn + SDN_OFFSET) * 4 - 1;
+        long temp = (sdn + SDN_OFFSET) * 4 - 1;
 
         /* Calculate the century (year/100). */
-        century = temp / DAYS_PER_400_YEARS;
+        final long century = temp / DAYS_PER_400_YEARS;
 
         /* Calculate the year and day of year (1 <= dayOfYear <= 366). */
         temp = temp % DAYS_PER_400_YEARS / 4 * 4 + 3;
-        year = century * 100 + temp / DAYS_PER_4_YEARS;
-        dayOfYear = temp % DAYS_PER_4_YEARS / 4 + 1;
+        long year = century * 100 + temp / DAYS_PER_4_YEARS;
+        final long dayOfYear = temp % DAYS_PER_4_YEARS / 4 + 1;
 
         /* Calculate the month and day of month. */
         temp = dayOfYear * 5 - 3;
-        month = temp / DAYS_PER_5_MONTHS;
-        day = temp % DAYS_PER_5_MONTHS / 5 + 1;
+        long month = temp / DAYS_PER_5_MONTHS;
+        final long day = temp % DAYS_PER_5_MONTHS / 5 + 1;
 
         /* Convert to the normal beginning of the year. */
         if (month < 10) {
@@ -214,6 +209,6 @@ public final class DateUtils {
             year--;
         }
         final Calendar calendar = new GregorianCalendar((int) year, (int) month - 1, (int) day);
-        return new java.sql.Date(calendar.getTime().getTime());
+        return new Date(calendar.getTime().getTime());
     }
 }

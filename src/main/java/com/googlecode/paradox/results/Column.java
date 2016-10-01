@@ -38,12 +38,12 @@ public final class Column {
     /**
      * If this column is auto incremented.
      */
-    private boolean autoIncrement = false;
+    private boolean autoIncrement;
 
     /**
      * If this column is currency type.
      */
-    private boolean currency = false;
+    private boolean currency;
 
     /**
      * The paradox field associated to this field.
@@ -51,7 +51,7 @@ public final class Column {
     private ParadoxField field;
 
     /**
-     * Column index
+     * Column index.
      */
     private int index;
 
@@ -61,7 +61,7 @@ public final class Column {
     private int maxSize = 255;
 
     /**
-     * Column Name
+     * Column Name.
      */
     private String name;
 
@@ -73,17 +73,17 @@ public final class Column {
     /**
      * The field precision.
      */
-    private int precision = 0;
+    private int precision;
 
     /**
      * If this field is read only.
      */
-    private boolean readOnly = false;
+    private boolean readOnly;
 
     /**
      * The field scale.
      */
-    private int scale = 0;
+    private int scale;
 
     /**
      * If this field is searchable.
@@ -93,7 +93,7 @@ public final class Column {
     /**
      * If this field has sign.
      */
-    private boolean signed = false;
+    private boolean signed;
 
     /**
      * The tables name.
@@ -110,7 +110,7 @@ public final class Column {
     /**
      * If this field is writable.
      */
-    private boolean writable = false;
+    private boolean writable;
 
     /**
      * Create a new instance.

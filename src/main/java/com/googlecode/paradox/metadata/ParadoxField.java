@@ -24,6 +24,7 @@ import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Locale;
 
 /**
  * Stores a field from a table.
@@ -32,41 +33,47 @@ import java.sql.Types;
  * @version 1.0
  * @since 1.0
  */
-public class ParadoxField {
+public final class ParadoxField {
 
     /**
      * Order of field in table/view. The first value is one.
      */
     private final int orderNum;
+
     /**
      * Stores the field alias.
      */
     private String alias;
+
     /**
      * If this field is checked.
      */
     private boolean checked;
+
     /**
      * This field expression.
      */
     private String expression;
+
     /**
      * The JOIN name.
      */
     private String joinName;
+
     /**
      * Field name.
      */
     private String name;
+
     /**
      * The the field order.
      */
-    private short physicsSize;
+    private int physicsSize;
 
     /**
      * The field size.
      */
-    private short size;
+    private int size;
 
     /**
      * The fields owner.
@@ -101,7 +108,7 @@ public class ParadoxField {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -112,7 +119,7 @@ public class ParadoxField {
             return false;
         }
         final ParadoxField other = (ParadoxField) obj;
-        return !(name == null ? other.name != null : !name.equals(other.name));
+        return !((name == null) ? (other.name != null) : !name.equals(other.name));
     }
 
     /**
@@ -136,7 +143,7 @@ public class ParadoxField {
      */
     public Column getColumn() throws SQLException {
         final Column dto = new Column(this);
-        dto.setName(name.toUpperCase());
+        dto.setName(name.toUpperCase(Locale.US));
         dto.setType(getSqlType());
         dto.setTableName(tableName);
         return dto;
@@ -183,7 +190,7 @@ public class ParadoxField {
      *
      * @return the file size in file.
      */
-    public short getPhysicsSize() {
+    int getPhysicsSize() {
         return physicsSize;
     }
 
@@ -192,7 +199,7 @@ public class ParadoxField {
      *
      * @return the size.
      */
-    public short getSize() {
+    public int getSize() {
         return size;
     }
 
@@ -203,7 +210,7 @@ public class ParadoxField {
      * @throws SQLException
      *         in case of type not found.
      */
-    public int getSqlType() throws SQLException {
+    int getSqlType() throws SQLException {
         return ParadoxFieldType.getSQLTypeByType(type);
     }
 
@@ -235,12 +242,12 @@ public class ParadoxField {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int hashCode() {
         final int hash = 7;
-        return 17 * hash + (name != null ? name.hashCode() : 0);
+        return 17 * hash + ((name != null) ? name.hashCode() : 0);
     }
 
     /**
@@ -248,7 +255,7 @@ public class ParadoxField {
      *
      * @return true if this field is auto increment.
      */
-    public boolean isAutoIncrement() {
+    boolean isAutoIncrement() {
         return type == 0x16;
     }
 
@@ -319,10 +326,10 @@ public class ParadoxField {
      * @throws SQLException
      *         in case of invalid field type.
      */
-    public void setSize(final short size) throws SQLException {
+    public void setSize(final int size) throws SQLException {
         physicsSize = size;
         if (getSqlType() == Types.CLOB || getSqlType() == Types.BLOB) {
-            this.size = (short) (size - 10);
+            this.size = size - 10;
         } else {
             this.size = size;
         }
@@ -359,7 +366,7 @@ public class ParadoxField {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {

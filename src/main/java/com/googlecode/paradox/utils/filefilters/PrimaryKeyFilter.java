@@ -28,10 +28,10 @@ import java.io.FileFilter;
  * Paradox primary key file filter.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
-public class PrimaryKeyFilter implements FileFilter {
+public final class PrimaryKeyFilter implements FileFilter {
 
     /**
      * The primary key name.
@@ -47,9 +47,9 @@ public class PrimaryKeyFilter implements FileFilter {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param pkName
-     *            the primary key name.
+     *         the primary key name.
      */
     public PrimaryKeyFilter(final String pkName) {
         this.pkName = pkName;
@@ -62,10 +62,7 @@ public class PrimaryKeyFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        if (Expressions.accept(name, "%.PX")) {
-            return pkName == null || Expressions.accept(name, pkName);
-        }
-        return false;
+        return Expressions.accept(name, "%.PX") && (pkName == null || Expressions.accept(name, pkName));
     }
 
 }

@@ -21,15 +21,16 @@
 package com.googlecode.paradox.utils;
 
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Utility class to parse SQL expressions.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public final class Expressions {
 
@@ -47,11 +48,11 @@ public final class Expressions {
 
     /**
      * Test for an expression.
-     * 
+     *
      * @param expression
-     *            the expression to test for.
+     *         the expression to test for.
      * @param criteria
-     *            the criteria to use.
+     *         the criteria to use.
      * @return true if the expression is valid.
      */
     public static boolean accept(final String expression, final String criteria) {
@@ -60,13 +61,13 @@ public final class Expressions {
 
     /**
      * Test for an expression.
-     * 
+     *
      * @param expression
-     *            the expression to test for.
+     *         the expression to test for.
      * @param criteria
-     *            the criteria to use.
+     *         the criteria to use.
      * @param caseSensitive
-     *            true if this validation processes is case sensitive.
+     *         true if this validation processes is case sensitive.
      * @return true if the expression is valid.
      */
     public static boolean accept(final String expression, final String criteria, final boolean caseSensitive) {
@@ -81,17 +82,19 @@ public final class Expressions {
 
     /**
      * Test for an expression.
-     * 
+     *
      * @param expression
-     *            the expression to test for.
+     *         the expression to test for.
      * @param criteria
-     *            the criteria to use.
+     *         the criteria to use.
      * @param caseSensitive
-     *            true if this validation processes is case sensitive.
+     *         true if this validation processes is case sensitive.
      * @throws SQLException
-     *             in case of invalid expression.
+     *         in case of invalid expression.
      */
-    private static void acceptExpression(final String expression, final String criteria, final boolean caseSensitive) throws SQLException {
+    private static void acceptExpression(final String expression, final String criteria, final boolean caseSensitive)
+            throws
+            SQLException {
         final char[] criterion = getCharArrayWithCase(criteria, caseSensitive);
         final char[] exp = getCharArrayWithCase(expression, caseSensitive);
         final int limit = exp.length - 1;
@@ -126,19 +129,20 @@ public final class Expressions {
 
     /**
      * Check for expressions limit boundaries.
-     * 
+     *
      * @param exp
-     *            the expression to check.
+     *         the expression to check.
      * @param limit
-     *            the value limits.
+     *         the value limits.
      * @param index
-     *            the current index.
+     *         the current index.
      * @param next
-     *            the next char in criteria.
+     *         the next char in criteria.
      * @throws SQLException
-     *             in case of invalid expression.
+     *         in case of invalid expression.
      */
-    private static void checkBounds(final char[] exp, final int limit, final int index, final char next) throws SQLException {
+    private static void checkBounds(final char[] exp, final int limit, final int index, final char next) throws
+            SQLException {
         if (index > limit || next != exp[index]) {
             throw new SQLException();
         }
@@ -146,15 +150,15 @@ public final class Expressions {
 
     /**
      * Check for index boundaries.
-     * 
+     *
      * @param exp
-     *            the expression to check.
+     *         the expression to check.
      * @param index
-     *            the current index.
+     *         the current index.
      * @param c
-     *            the current char in expression.
+     *         the current char in expression.
      * @throws SQLException
-     *             in case of invalid expression.
+     *         in case of invalid expression.
      */
     private static void checkIndexBoundaries(final char[] exp, final int index, final char c) throws SQLException {
         if (c != exp[index]) {
@@ -164,15 +168,15 @@ public final class Expressions {
 
     /**
      * Fix index based on % position.
-     * 
+     *
      * @param exp
-     *            the expression to test.
+     *         the expression to test.
      * @param limit
-     *            the expression max size.
+     *         the expression max size.
      * @param offset
-     *            the offset to start of.
+     *         the offset to start of.
      * @param next
-     *            the next char on criteria.
+     *         the next char on criteria.
      * @return new index.
      */
     private static int fixIndex(final char[] exp, final int limit, final int offset, final char next) {
@@ -185,14 +189,17 @@ public final class Expressions {
 
     /**
      * Gets a char array with case option.
-     * 
+     *
      * @param str
-     *            the string to convert.
+     *         the string to convert.
      * @param caseSensitive
-     *            if use case sensitive option.
+     *         if use case sensitive option.
      * @return the char array.
      */
     private static char[] getCharArrayWithCase(final String str, final boolean caseSensitive) {
-        return caseSensitive ? str.toCharArray() : str.toUpperCase().toCharArray();
+        if (caseSensitive) {
+            return str.toCharArray();
+        }
+        return str.toUpperCase(Locale.US).toCharArray();
     }
 }

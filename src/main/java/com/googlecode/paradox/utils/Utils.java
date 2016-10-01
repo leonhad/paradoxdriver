@@ -23,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.sql.Wrapper;
+import java.util.Locale;
 
 /**
  * Driver utilities.
@@ -111,7 +112,7 @@ public final class Utils {
      * @return the formatted {@link String}.
      */
     private static String removeSuffix(final String name, final String suffix) {
-        if (name != null && name.toUpperCase().endsWith("." + suffix.toUpperCase())) {
+        if (name != null && name.toUpperCase(Locale.US).endsWith("." + suffix.toUpperCase(Locale.US))) {
             return name.substring(0, name.length() - 3);
         }
         return name;

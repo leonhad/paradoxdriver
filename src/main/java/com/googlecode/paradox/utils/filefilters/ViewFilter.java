@@ -28,10 +28,10 @@ import java.io.FileFilter;
  * Paradox view filter.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
-public class ViewFilter implements FileFilter {
+public final class ViewFilter implements FileFilter {
 
     /**
      * The view name.
@@ -41,15 +41,15 @@ public class ViewFilter implements FileFilter {
     /**
      * Create a new instance;
      */
-    public ViewFilter() {
+    ViewFilter() {
         this(null);
     }
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param viewName
-     *            the view name.
+     *         the view name.
      */
     public ViewFilter(final String viewName) {
         this.viewName = viewName;
@@ -62,10 +62,7 @@ public class ViewFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        if (Expressions.accept(name, "%.QBE")) {
-            return viewName == null || Expressions.accept(name, viewName);
-        }
-        return false;
+        return Expressions.accept(name, "%.QBE") && (viewName == null || Expressions.accept(name, viewName));
     }
 
 }

@@ -36,10 +36,10 @@ public class ClobBlockTest {
      */
     @Test
     public void testGetters() {
-        final ClobBlock clob = new ClobBlock(2, (short) 1, (short) 0);
-        Assert.assertEquals(2, clob.getNum());
-        Assert.assertEquals(1, clob.getType());
-        Assert.assertEquals(0, clob.getOffset());
-        Assert.assertEquals(null, clob.getValue());
+        final ClobBlock clob = new ClobBlock(2, 1, (short) 0);
+        Assert.assertEquals("Invalid clob number.", 2, clob.getNum());
+        Assert.assertEquals("Invalid clob type.", 1, clob.getType());
+        Assert.assertEquals("Invalid clob offset.", 0, clob.getOffset());
+        Assert.assertNull("Invalid clob value.", clob.getValue());
     }
 }

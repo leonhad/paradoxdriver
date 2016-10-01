@@ -51,7 +51,7 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Free block value.
      */
-    private static final short FREE_BLOCK = 4;
+    private static final int FREE_BLOCK = 4;
 
     /**
      * Default header block size.
@@ -61,12 +61,12 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Single block value.
      */
-    private static final short SINGLE_BLOCK = 2;
+    private static final int SINGLE_BLOCK = 2;
 
     /**
      * Sub block value.
      */
-    private static final short SUB_BLOCK = 3;
+    private static final int SUB_BLOCK = 3;
 
     /**
      * Block cache.
@@ -121,7 +121,7 @@ public final class BlobTable extends ParadoxDataFile {
      * @return number of blocks read.
      */
     private static int getBlockNum(final long offset) {
-        final int idx = (int) (offset & 0x0000FF00) >> 8;
+        final int idx = (int) (offset & 0xFF00) >> 8;
         return (idx & 0x0F) * 0xF + (idx & 0xF0) >> 4;
     }
 
@@ -151,7 +151,7 @@ public final class BlobTable extends ParadoxDataFile {
      * @throws SQLException
      *         in case of reading failures.
      */
-    private byte[] getData(final int blockNum, final short offset) throws SQLException {
+    private byte[] getData(final int blockNum, final int offset) throws SQLException {
         ClobBlock block = cache.get(blockNum, offset);
         if (block != null) {
             return block.getValue();
@@ -256,9 +256,9 @@ public final class BlobTable extends ParadoxDataFile {
      *         in case of reading errors.
      */
     private void parseFreeBlock(final List<ClobBlock> blocks, final long startBlockAddress, final byte headerType,
-                                final short blockSize) throws
+                                final int blockSize) throws
             IOException {
-        blocks.add(new ClobBlock(numBlock, headerType, (short) 0));
+        blocks.add(new ClobBlock(numBlock, headerType, 0));
         channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
         numBlock++;
     }
@@ -278,7 +278,7 @@ public final class BlobTable extends ParadoxDataFile {
      *         in case of reading errors.
      */
     private void parseSingleBlock(final List<ClobBlock> blocks, final long startBlockAddress, final byte headerType,
-                                  final short blockSize) throws
+                                  final int blockSize) throws
             IOException {
         final ByteBuffer blockHead = ByteBuffer.allocate(6);
         blockHead.order(ByteOrder.LITTLE_ENDIAN);
@@ -296,7 +296,7 @@ public final class BlobTable extends ParadoxDataFile {
         blockData.flip();
         final byte[] values = new byte[blobLength];
         blockData.get(values);
-        blocks.add(new ClobBlock(numBlock, headerType, (short) 0xFF, values));
+        blocks.add(new ClobBlock(numBlock, headerType, 0xFF, values));
         numBlock++;
         channel.position(startBlockAddress + blockSize * HEADER_BLOCK_SIZE);
     }
@@ -319,7 +319,7 @@ public final class BlobTable extends ParadoxDataFile {
         // what they contain.
         channel.position(channel.position() + 9);
         // 0 - this is header block
-        short n = 0;
+        int n = 0;
         while (n < 64) {
             final ByteBuffer blockPointer = ByteBuffer.allocate(5);
             blockPointer.order(ByteOrder.LITTLE_ENDIAN);
@@ -327,7 +327,7 @@ public final class BlobTable extends ParadoxDataFile {
             channel.read(blockPointer);
             blockPointer.flip();
             // Data offset divided by 16.
-            final short offset = (short) (blockPointer.get() * 0x10);
+            final int offset = blockPointer.get() * 0x10;
             // Data length divided by 16 (rounded up).
             int ln = blockPointer.get() * 0x10;
             blockPointer.getShort();
@@ -368,14 +368,14 @@ public final class BlobTable extends ParadoxDataFile {
      *         in case of parse errors.
      */
     public byte[] read(final long pOffset) throws SQLException {
-        final short offset = (short) (pOffset & 0xFF);
+        final long offset = pOffset & 0xFF;
 
         final int blockNum = getBlockNum(pOffset);
         if (!parsed) {
             open();
             parse();
         }
-        return getData(blockNum, offset);
+        return getData(blockNum, (int) offset);
     }
 
     /**
@@ -389,7 +389,7 @@ public final class BlobTable extends ParadoxDataFile {
      * @throws SQLException
      *         in case of parse errors.
      */
-    private ClobBlock readBlock(final int blockNum, final short offset) throws SQLException {
+    private ClobBlock readBlock(final int blockNum, final int offset) throws SQLException {
         final List<ClobBlock> nextBlocks = new ArrayList<>(1);
         while (readNextBlock(nextBlocks)) {
             cache.add(nextBlocks);

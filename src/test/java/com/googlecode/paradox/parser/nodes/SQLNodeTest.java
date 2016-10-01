@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import java.util.ArrayList;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * Unit test for {@link SQLNode} class.
@@ -50,8 +50,8 @@ public class SQLNodeTest {
     public void testConditions() {
         final ArrayList<SQLNode> list = new ArrayList<>();
         final SQLNode node = new JoinNode();
-        node.setChildren(list);
-        Assert.assertEquals(list, node.getChildren());
+        node.setChildhood(list);
+        Assert.assertEquals(list, node.getChildhood());
     }
 
 }

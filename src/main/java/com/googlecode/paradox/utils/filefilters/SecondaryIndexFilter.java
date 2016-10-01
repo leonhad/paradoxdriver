@@ -28,10 +28,10 @@ import java.io.FileFilter;
  * Paradox secondary key file filter (Index Key).
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
-public class SecondaryIndexFilter implements FileFilter {
+public final class SecondaryIndexFilter implements FileFilter {
 
     /**
      * The index name.
@@ -41,15 +41,15 @@ public class SecondaryIndexFilter implements FileFilter {
     /**
      * Create a new instance.
      */
-    public SecondaryIndexFilter() {
+    SecondaryIndexFilter() {
         indexName = null;
     }
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param indexName
-     *            the index name.
+     *         the index name.
      */
     public SecondaryIndexFilter(final String indexName) {
         this.indexName = indexName;
@@ -62,10 +62,7 @@ public class SecondaryIndexFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        if (Expressions.accept(name, "%.X??")) {
-            return indexName == null || Expressions.accept(name, indexName);
-        }
-        return false;
+        return Expressions.accept(name, "%.X??") && (indexName == null || Expressions.accept(name, indexName));
     }
 
 }

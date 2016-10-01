@@ -19,29 +19,29 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
-import java.util.Arrays;
-
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 
+import java.util.Collections;
+
 /**
  * Stores the EXISTS node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public class ExistsNode extends SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param child
-     *            the child node.
+     *         the child node.
      */
     public ExistsNode(final SelectNode child) {
         super("EXISTS");
-        setChildren(Arrays.asList(child));
+        setChildhood(Collections.singletonList(child));
     }
 
 }

@@ -23,12 +23,12 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 
 /**
  * The MIN function.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
-public class Min extends AbstractCallableProcedure {
+public final class Min extends AbstractCallableProcedure {
 
     /**
      * {@inheritDoc}

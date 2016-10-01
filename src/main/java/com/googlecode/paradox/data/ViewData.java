@@ -245,7 +245,7 @@ public final class ViewData {
      * @param expression
      *         the expression to parse.
      */
-    public static void parseExpression(final ParadoxField field, final String expression) {
+    static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
         parseCheck(field, builder);
@@ -438,7 +438,7 @@ public final class ViewData {
 
         ParadoxTable lastTable = null;
         final ArrayList<ParadoxField> fields = new ArrayList<>();
-        final String[] cols = line.toString().split("\\,");
+        final String[] cols = line.toString().split(",");
         for (final String col : cols) {
             final String[] i = col.split("->");
             final ParadoxField field = new ParadoxField();

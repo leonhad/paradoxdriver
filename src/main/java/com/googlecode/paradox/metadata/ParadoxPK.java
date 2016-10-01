@@ -26,7 +26,7 @@ package com.googlecode.paradox.metadata;
  * @version 1.1
  * @since 1.0
  */
-public class ParadoxPK extends ParadoxDataFile {
+public final class ParadoxPK extends ParadoxDataFile {
 
     /**
      * The index field order.
@@ -45,7 +45,8 @@ public class ParadoxPK extends ParadoxDataFile {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof ParadoxPK && getName().equals(((ParadoxPK) obj).getName());
+        return obj == this || obj != null && this.getClass() == obj.getClass() && getName().equals(
+                ((ParadoxPK) obj).getName());
     }
 
     /**
@@ -68,7 +69,7 @@ public class ParadoxPK extends ParadoxDataFile {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int hashCode() {

@@ -19,6 +19,7 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ import java.util.List;
  * @version 1.1
  * @since 1.0
  */
-public class JoinNode extends SQLNode {
+public final class JoinNode extends SQLNode {
 
     /**
      * The condition list.
@@ -57,8 +58,8 @@ public class JoinNode extends SQLNode {
      *
      * @return the conditions.
      */
-    public List<SQLNode> getConditions() {
-        return conditions;
+    List<SQLNode> getConditions() {
+        return Collections.unmodifiableList(conditions);
     }
 
     /**
@@ -68,7 +69,7 @@ public class JoinNode extends SQLNode {
      *         the condition list.
      */
     public void setConditions(final List<SQLNode> conditions) {
-        this.conditions = conditions;
+        this.conditions = Collections.unmodifiableList(conditions);
     }
 
     /**
@@ -110,7 +111,7 @@ public class JoinNode extends SQLNode {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {
@@ -126,7 +127,7 @@ public class JoinNode extends SQLNode {
             builder.append(" ON ");
             for (final SQLNode condition : conditions) {
                 builder.append(condition);
-                builder.append(" ");
+                builder.append(' ');
             }
         }
         return builder.toString();

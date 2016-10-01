@@ -23,12 +23,12 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 
 /**
  * Stores the execution plan table node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
-public class PlanTableNode {
+public final class PlanTableNode {
 
     /**
      * The plan alias.
@@ -42,7 +42,7 @@ public class PlanTableNode {
 
     /**
      * Gets the plan alias.
-     * 
+     *
      * @return the plan alias.
      */
     public String getAlias() {
@@ -51,7 +51,7 @@ public class PlanTableNode {
 
     /**
      * Gets the table plan.
-     * 
+     *
      * @return the table plan.
      */
     public ParadoxTable getTable() {
@@ -60,9 +60,9 @@ public class PlanTableNode {
 
     /**
      * Sets the plan alias.
-     * 
+     *
      * @param alias
-     *            the plan alias to set.
+     *         the plan alias to set.
      */
     public void setAlias(final String alias) {
         this.alias = alias;
@@ -70,9 +70,9 @@ public class PlanTableNode {
 
     /**
      * Sets the plan table.
-     * 
+     *
      * @param table
-     *            the plan table to set.
+     *         the plan table to set.
      */
     public void setTable(final ParadoxTable table) {
         this.table = table;

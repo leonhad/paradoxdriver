@@ -24,8 +24,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.nio.charset.Charset.forName;
-
 /**
  * Stores index data.
  *
@@ -38,7 +36,7 @@ public class ParadoxIndex extends ParadoxDataFile {
     /**
      * Index charset.
      */
-    private Charset charset = forName("Cp437");
+    private Charset charset = Charset.forName("Cp437");
 
     private List<Short> fieldsOrder;
 

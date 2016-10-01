@@ -1732,6 +1732,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return false;
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
     public boolean supportsSavepoints() throws SQLException {
         return false;

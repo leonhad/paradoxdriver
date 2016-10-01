@@ -54,7 +54,7 @@ import java.util.List;
  * @version 1.2
  * @since 1.0
  */
-public class SQLParser {
+public final class SQLParser {
 
     /**
      * The scanner used to read tokens.
@@ -141,12 +141,12 @@ public class SQLParser {
      *         in case of parse errors.
      */
     public List<StatementNode> parse() throws SQLException {
-        final ArrayList<StatementNode> statementList = new ArrayList<>();
         if (!scanner.hasNext()) {
             throw new SQLException(sql, SQLStates.INVALID_SQL.getValue());
         }
         token = scanner.nextToken();
 
+        final ArrayList<StatementNode> statementList = new ArrayList<>();
         switch (token.getType()) {
             case SELECT:
                 statementList.add(parseSelect());

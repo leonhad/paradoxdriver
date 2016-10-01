@@ -21,12 +21,12 @@ package com.googlecode.paradox.parser;
 
 /**
  * Stores a token.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
-public class Token {
+public final class Token {
 
     /**
      * The token type.
@@ -40,20 +40,20 @@ public class Token {
 
     /**
      * Creates a new instance.
-     * 
+     *
      * @param type
-     *            the token type.
+     *         the token type.
      * @param value
-     *            the token value.
+     *         the token value.
      */
-    public Token(final TokenType type, final String value) {
+    Token(final TokenType type, final String value) {
         this.type = type;
         this.value = value;
     }
 
     /**
      * Gets the token type.
-     * 
+     *
      * @return the token type.
      */
     public TokenType getType() {
@@ -62,7 +62,7 @@ public class Token {
 
     /**
      * Gets the token value.
-     * 
+     *
      * @return the token value.
      */
     public String getValue() {
@@ -71,24 +71,24 @@ public class Token {
 
     /**
      * Gets if this token is a conditional break.
-     * 
+     *
      * @return true if this token is a conditional break.
      */
-    public boolean isConditionBreak() {
+    boolean isConditionBreak() {
         return TokenType.isConditionalBreak(type);
     }
 
     /**
      * Gets if this token is an operator.
-     * 
+     *
      * @return true if this token is an operator.
      */
-    public boolean isOperator() {
+    boolean isOperator() {
         return TokenType.isOperator(type);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {

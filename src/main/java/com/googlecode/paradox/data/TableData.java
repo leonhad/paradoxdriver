@@ -255,7 +255,7 @@ public final class TableData {
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
             field.setType(buffer.get());
-            field.setSize((short) (buffer.get() & 0xff));
+            field.setSize(buffer.get() & 0xff);
             field.setTableName(table.getName());
             field.setTable(table);
             fields.add(field);

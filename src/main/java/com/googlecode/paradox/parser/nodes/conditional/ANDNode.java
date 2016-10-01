@@ -40,7 +40,7 @@ public class ANDNode extends SQLNode {
      */
     public ANDNode(final SQLNode child) {
         super("AND");
-        setChildren(Arrays.asList(child));
+        setChildhood(Arrays.asList(child));
     }
 
 }

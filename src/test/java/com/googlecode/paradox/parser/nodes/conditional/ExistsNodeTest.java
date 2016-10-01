@@ -19,10 +19,9 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
+import com.googlecode.paradox.parser.nodes.SelectNode;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.googlecode.paradox.parser.nodes.SelectNode;
 
 /**
  * Unit test for {@link ExistsNode} class.
@@ -39,8 +38,8 @@ public class ExistsNodeTest {
     public void testChildhood() {
         final SelectNode node = new SelectNode();
         final ExistsNode and = new ExistsNode(node);
-        Assert.assertEquals(1, and.getChildren().size());
-        Assert.assertEquals(node, and.getChildren().iterator().next());
+        Assert.assertEquals(1, and.getChildhood().size());
+        Assert.assertEquals(node, and.getChildhood().iterator().next());
     }
 
     /**

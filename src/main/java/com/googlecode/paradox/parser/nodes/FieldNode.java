@@ -26,12 +26,7 @@ package com.googlecode.paradox.parser.nodes;
  * @version 1.1
  * @since 1.0
  */
-public class FieldNode extends SQLNode {
-
-    /**
-     * Field alias (after AS tokens).
-     */
-    private final String alias;
+public final class FieldNode extends SQLNode {
 
     /**
      * This field table name.
@@ -42,29 +37,20 @@ public class FieldNode extends SQLNode {
      * Stores field values (from select statements).
      *
      * @param tableName
-     *            the table name.
+     *         the table name.
      * @param fieldName
-     *            the field name.
+     *         the field name.
      * @param alias
-     *            the field name alias.
+     *         the field name alias.
      */
     public FieldNode(final String tableName, final String fieldName, final String alias) {
-        super(fieldName);
+        super(fieldName, alias);
         this.tableName = tableName;
-        this.alias = alias;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getAlias() {
-        return alias;
     }
 
     /**
      * Gets the table name.
-     * 
+     *
      * @return the table name.
      */
     public String getTableName() {
@@ -72,16 +58,17 @@ public class FieldNode extends SQLNode {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         if (tableName != null) {
             builder.append(tableName);
-            builder.append(".");
+            builder.append('.');
         }
         builder.append(getName());
+
         if (alias != null && !getName().equals(alias)) {
             builder.append(" AS ");
             builder.append(alias);

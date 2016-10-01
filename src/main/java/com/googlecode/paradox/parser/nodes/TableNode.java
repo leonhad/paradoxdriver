@@ -22,6 +22,7 @@ package com.googlecode.paradox.parser.nodes;
 import com.googlecode.paradox.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,16 +32,12 @@ import java.util.List;
  * @version 1.1
  * @since 1.0
  */
-public class TableNode extends SQLNode {
+public final class TableNode extends SQLNode {
 
     /**
      * The table joins.
      */
     private final List<JoinNode> joins = new ArrayList<>();
-    /**
-     * The table alias.
-     */
-    private final String alias;
 
     /**
      * Create a new instance.
@@ -51,8 +48,7 @@ public class TableNode extends SQLNode {
      *         the table alias.
      */
     public TableNode(final String name, final String alias) {
-        super(Utils.removeDb(name));
-        this.alias = alias;
+        super(Utils.removeDb(name), alias);
     }
 
     /**
@@ -66,20 +62,12 @@ public class TableNode extends SQLNode {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getAlias() {
-        return alias;
-    }
-
-    /**
      * Gets the join tables.
      *
      * @return the join tables.
      */
-    public List<JoinNode> getJoins() {
-        return joins;
+    List<JoinNode> getJoins() {
+        return Collections.unmodifiableList(joins);
     }
 
     /**
@@ -94,7 +82,7 @@ public class TableNode extends SQLNode {
             builder.append(alias);
         }
         for (final JoinNode join : joins) {
-            builder.append(" ");
+            builder.append(' ');
             builder.append(join);
         }
         return builder.toString();

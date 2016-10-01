@@ -19,16 +19,15 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.utils.Constants;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.googlecode.paradox.utils.Constants;
 
 /**
  * Unit test for {@link Driver}.
@@ -37,7 +36,7 @@ import com.googlecode.paradox.utils.Constants;
  * @version 1.0
  * @since 1.3
  */
-public class DriverTest {
+public final class DriverTest {
 
     /**
      * Test for JDBC compliance.
@@ -45,7 +44,7 @@ public class DriverTest {
     @Test
     public void testCompliance() {
         final Driver driver = new Driver();
-        Assert.assertFalse(driver.jdbcCompliant());
+        Assert.assertFalse("Driver not compliant.", driver.jdbcCompliant());
     }
 
     /**
@@ -57,7 +56,7 @@ public class DriverTest {
     @Test
     public void testInvalidConnection() throws SQLException {
         final Driver driver = new Driver();
-        Assert.assertNull(driver.connect(null, null));
+        Assert.assertNull("Connection can't be valid.", driver.connect(null, null));
     }
 
     /**
@@ -169,7 +168,7 @@ public class DriverTest {
     public void testValidConnection() throws SQLException {
         final Driver driver = new Driver();
         try (Connection c = driver.connect("jdbc:paradox:target/test-classes/", null)) {
-            Assert.assertNotNull(c.isValid(0));
+            Assert.assertNotNull("Connection is not valid.", c.isValid(0));
         }
     }
 

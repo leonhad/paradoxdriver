@@ -26,6 +26,7 @@ import com.googlecode.paradox.procedures.math.Min;
 import com.googlecode.paradox.procedures.math.Sum;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public final class ProcedureAS {
     /**
      * All registered procedures.
      */
-    private final ArrayList<AbstractCallableProcedure> procedures = new ArrayList<>();
+    private final List<AbstractCallableProcedure> procedures = new ArrayList<>();
 
     /**
      * Register the default procedures.
@@ -89,7 +90,7 @@ public final class ProcedureAS {
      * @return the procedures list.
      */
     public List<AbstractCallableProcedure> list() {
-        return procedures;
+        return Collections.unmodifiableList(procedures);
     }
 
     /**

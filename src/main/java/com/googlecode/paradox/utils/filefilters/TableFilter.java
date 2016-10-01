@@ -19,10 +19,10 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
-
-import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Paradox Table filters.
@@ -31,7 +31,7 @@ import com.googlecode.paradox.utils.Expressions;
  * @version 1.0
  * @since 1.0
  */
-public class TableFilter implements FileFilter {
+public final class TableFilter implements FileFilter {
 
     /**
      * The file extension.
@@ -52,9 +52,9 @@ public class TableFilter implements FileFilter {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param tableName
-     *            the table name.
+     *         the table name.
      */
     public TableFilter(final String tableName) {
         this(tableName, "db");
@@ -62,11 +62,11 @@ public class TableFilter implements FileFilter {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param tableName
-     *            the table name.
+     *         the table name.
      * @param extension
-     *            the table extension.
+     *         the table extension.
      */
     public TableFilter(final String tableName, final String extension) {
         this.tableName = tableName;
@@ -74,7 +74,7 @@ public class TableFilter implements FileFilter {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {

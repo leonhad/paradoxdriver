@@ -23,19 +23,19 @@ import java.util.List;
 
 /**
  * Used to store clob block caches.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
 public interface IBlockCache {
 
     /**
      * Adds a block to the cache.
-     * 
+     *
      * @param blocks
-     *            the blocks to add.
+     *         the blocks to add.
      */
     void add(List<ClobBlock> blocks);
 
@@ -46,12 +46,12 @@ public interface IBlockCache {
 
     /**
      * Gets the CLOB block in cache.
-     * 
+     *
      * @param num
-     *            the CLOB number.
+     *         the CLOB number.
      * @param offset
-     *            the CLOB offset.
+     *         the CLOB offset.
      * @return the block in cache.
      */
-    ClobBlock get(int num, short offset);
+    ClobBlock get(int num, int offset);
 }

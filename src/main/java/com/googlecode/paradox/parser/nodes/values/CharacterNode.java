@@ -21,25 +21,27 @@ package com.googlecode.paradox.parser.nodes.values;
 
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
+import java.util.Locale;
+
 /**
  * Stores the character node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
-public class CharacterNode extends SQLNode {
+public final class CharacterNode extends SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param value
-     *            the characters value.
+     *         the characters value.
      * @param alias
-     *            the characters alias.
+     *         the characters alias.
      */
     public CharacterNode(final String value, final String alias) {
-        super(value.toUpperCase(), alias.toUpperCase());
+        super(value.toUpperCase(Locale.US), alias.toUpperCase(Locale.US));
     }
 
 }

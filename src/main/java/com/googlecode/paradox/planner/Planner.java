@@ -19,10 +19,6 @@
  */
 package com.googlecode.paradox.planner;
 
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.List;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
@@ -36,12 +32,16 @@ import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.SQLStates;
 
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.List;
+
 /**
  * Creates a SQL execution plan.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.1
+ * @since 1.1
  */
 public class Planner {
 
@@ -52,24 +52,57 @@ public class Planner {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param conn
-     *            the database connection.
+     *         the database connection.
      */
     public Planner(final ParadoxConnection conn) {
         this.conn = conn;
     }
 
     /**
-     * Create a plan from given statement.
-     * 
+     * Parses the table metadata.
+     *
      * @param statement
-     *            the statement to plan.
+     *         the SELECT statement.
+     * @param plan
+     *         the select execution plan.
+     * @param paradoxTables
+     *         the tables list.
+     * @throws SQLException
+     *         in case of parse errors.
+     */
+    private static void parseTableMetaData(final SelectNode statement, final SelectPlan plan, final List<ParadoxTable>
+            paradoxTables) throws
+            SQLException {
+        for (final TableNode table : statement.getTables()) {
+            final PlanTableNode node = new PlanTableNode();
+            for (final ParadoxTable paradoxTable : paradoxTables) {
+                if (paradoxTable.getName().equalsIgnoreCase(table.getName())) {
+                    node.setTable(paradoxTable);
+                    break;
+                }
+            }
+            if (node.getTable() == null) {
+                throw new SQLException("Table " + table.getName() + " not found.", SQLStates.INVALID_SQL.getValue());
+            }
+            if (!table.getName().equals(table.getAlias())) {
+                node.setAlias(table.getAlias());
+            }
+            plan.addTable(node);
+        }
+    }
+
+    /**
+     * Create a plan from given statement.
+     *
+     * @param statement
+     *         the statement to plan.
      * @return the execution plan.
      * @throws SQLException
-     *             in case of plan errors.
+     *         in case of plan errors.
      */
-    public Plan create(final StatementNode statement) throws SQLException {
+    public final Plan create(final StatementNode statement) throws SQLException {
         if (statement instanceof SelectNode) {
             return createSelect((SelectNode) statement);
         } else {
@@ -81,10 +114,10 @@ public class Planner {
      * Creates an SELECT plan.
      *
      * @param statement
-     *            the statement to parse.
+     *         the statement to parse.
      * @return the SELECT plan.
      * @throws SQLException
-     *             in case of syntax error.
+     *         in case of syntax error.
      */
     private Plan createSelect(final SelectNode statement) throws SQLException {
         final SelectPlan plan = new SelectPlan(conn);
@@ -103,13 +136,13 @@ public class Planner {
 
     /**
      * Parses the table columns.
-     * 
+     *
      * @param statement
-     *            the SELECT statement.
+     *         the SELECT statement.
      * @param plan
-     *            the SELECT execution plan.
+     *         the SELECT execution plan.
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
     private void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
         for (final SQLNode field : statement.getFields()) {
@@ -124,37 +157,6 @@ public class Planner {
                 }
                 plan.addColumn(name);
             }
-        }
-    }
-
-    /**
-     * Parses the table metadata.
-     * 
-     * @param statement
-     *            the SELECT statement.
-     * @param plan
-     *            the select execution plan.
-     * @param paradoxTables
-     *            the tables list.
-     * @throws SQLException
-     *             in case of parse errors.
-     */
-    private void parseTableMetaData(final SelectNode statement, final SelectPlan plan, final List<ParadoxTable> paradoxTables) throws SQLException {
-        for (final TableNode table : statement.getTables()) {
-            final PlanTableNode node = new PlanTableNode();
-            for (final ParadoxTable paradoxTable : paradoxTables) {
-                if (paradoxTable.getName().equalsIgnoreCase(table.getName())) {
-                    node.setTable(paradoxTable);
-                    break;
-                }
-            }
-            if (node.getTable() == null) {
-                throw new SQLException("Table " + table.getName() + " not found.", SQLStates.INVALID_SQL.getValue());
-            }
-            if (!table.getName().equals(table.getAlias())) {
-                node.setAlias(table.getAlias());
-            }
-            plan.addTable(node);
         }
     }
 }

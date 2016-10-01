@@ -40,8 +40,8 @@ public class XORNodeTest {
     public void testChildhood() {
         final SQLNode node = new StatementNode(null);
         final XORNode and = new XORNode(node);
-        Assert.assertEquals(1, and.getChildren().size());
-        Assert.assertEquals(node, and.getChildren().iterator().next());
+        Assert.assertEquals(1, and.getChildhood().size());
+        Assert.assertEquals(node, and.getChildhood().iterator().next());
     }
 
     /**

@@ -24,6 +24,7 @@ import com.googlecode.paradox.utils.SQLStates;
 import java.nio.CharBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * SQL Scanner (read tokens from SQL String).
@@ -82,7 +83,7 @@ class Scanner {
      * @throws SQLException
      *         in case of invalid dot count.
      */
-    private void checkDotCount(final int dotCount) throws SQLException {
+    private static void checkDotCount(final int dotCount) throws SQLException {
         if (dotCount > 1) {
             throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL.getValue());
         }
@@ -95,24 +96,15 @@ class Scanner {
      *         to convert.
      * @return a new {@link Token}.
      */
-    private Token getToken(final String value) {
+    private static Token getToken(final String value) {
         if (value.isEmpty()) {
             return null;
         }
-        final TokenType token = TokenType.get(value.toUpperCase());
+        final TokenType token = TokenType.get(value.toUpperCase(Locale.US));
         if (token != null) {
             return new Token(token, value);
         }
         return new Token(TokenType.IDENTIFIER, value);
-    }
-
-    /**
-     * If buffer has tokens.
-     *
-     * @return true if the buffer still have tokens.
-     */
-    boolean hasNext() {
-        return !tokens.isEmpty() || buffer.hasRemaining();
     }
 
     /**
@@ -122,7 +114,7 @@ class Scanner {
      *         the char to identify.
      * @return true if the char is a separator.
      */
-    private boolean isSeparator(final char value) {
+    private static boolean isSeparator(final char value) {
         for (final char c : Scanner.SEPARATORS) {
             if (c == value) {
                 return true;
@@ -138,13 +130,22 @@ class Scanner {
      *         the value to identify.
      * @return true if the value is a special char.
      */
-    private boolean isSpecial(final char value) {
+    private static boolean isSpecial(final char value) {
         for (final char c : Scanner.SPECIAL) {
             if (c == value) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * If buffer has tokens.
+     *
+     * @return true if the buffer still have tokens.
+     */
+    boolean hasNext() {
+        return !tokens.isEmpty() || buffer.hasRemaining();
     }
 
     /**
@@ -195,23 +196,23 @@ class Scanner {
             final char c = nextChar();
 
             // Ignore separators.
-            if (isSeparator(c)) {
-                // Go to next char.
-            } else if (isSpecial(c)) {
-                value.append(c);
-                return false;
-            } else if (c == '"' || c == '\'') {
-                // identifiers with special chars
-                boolean characters = false;
-                if (c == '\'') {
-                    // characters
-                    characters = true;
+            if (!isSeparator(c)) {
+                if (isSpecial(c)) {
+                    value.append(c);
+                    return false;
+                } else if (c == '"' || c == '\'') {
+                    // identifiers with special chars
+                    boolean characters = false;
+                    if (c == '\'') {
+                        // characters
+                        characters = true;
+                    }
+                    parseString(c);
+                    return characters;
+                } else {
+                    parseNumber(c);
+                    return false;
                 }
-                parseString(c);
-                return characters;
-            } else {
-                parseNumber(c);
-                return false;
             }
         }
         return false;
@@ -299,7 +300,7 @@ class Scanner {
      * @param token
      *         the token to push back.
      */
-    public void pushBack(final Token token) {
+    void pushBack(final Token token) {
         tokens.add(token);
     }
 }

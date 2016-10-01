@@ -19,9 +19,9 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
-import java.util.Arrays;
-
 import com.googlecode.paradox.parser.nodes.SQLNode;
+
+import java.util.Arrays;
 
 /**
  * Store the NOT node.
@@ -40,7 +40,7 @@ public class NOTNode extends SQLNode {
      */
     public NOTNode(final SQLNode child) {
         super("NOT");
-        setChildren(Arrays.asList(child));
+        setChildhood(Arrays.asList(child));
     }
 
 }

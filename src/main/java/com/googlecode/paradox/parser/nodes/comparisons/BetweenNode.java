@@ -25,11 +25,11 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
  * Stores the between node.
  *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.1
+ * @since 1.1
  */
-public class BetweenNode extends AbstractComparisonNode {
-    
+public final class BetweenNode extends AbstractComparisonNode {
+
     /**
      * The field node.
      */
@@ -39,11 +39,11 @@ public class BetweenNode extends AbstractComparisonNode {
      * Create a new instance.
      *
      * @param first
-     *            the first node.
+     *         the first node.
      * @param field
-     *            the middle node.
+     *         the middle node.
      * @param last
-     *            the last node.
+     *         the last node.
      */
     public BetweenNode(final FieldNode field, final FieldNode first, final FieldNode last) {
         super("BETWEEN", first, last);
@@ -60,7 +60,7 @@ public class BetweenNode extends AbstractComparisonNode {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {
