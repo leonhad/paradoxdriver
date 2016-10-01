@@ -37,7 +37,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
@@ -100,7 +99,7 @@ public final class ParadoxConnection implements Connection {
      */
     private RandomAccessFile lockFile;
     /**
-     * Default timeout
+     * Default timeout.
      */
     private int networkTimeout;
     /**
@@ -198,7 +197,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void commit() throws SQLException {
+    public void commit() {
         throw new UnsupportedOperationException();
     }
 
@@ -274,7 +273,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Struct createStruct(final String typeName, final Object[] attributes) throws SQLException {
+    public Struct createStruct(final String typeName, final Object[] attributes) {
         return null;
     }
 
@@ -442,7 +441,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public SQLWarning getWarnings() throws SQLException {
+    public SQLWarning getWarnings() {
         return warnings;
     }
 
@@ -450,7 +449,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed() {
         return closed;
     }
 
@@ -458,7 +457,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isReadOnly() throws SQLException {
+    public boolean isReadOnly() {
         return readonly;
     }
 
@@ -466,7 +465,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setReadOnly(final boolean readOnly) throws SQLException {
+    public void setReadOnly(final boolean readOnly) {
         readonly = readOnly;
     }
 
@@ -474,7 +473,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isValid(final int timeout) throws SQLException {
+    public boolean isValid(final int timeout) {
         return !closed;
     }
 
@@ -490,7 +489,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public String nativeSQL(final String sql) throws SQLException {
+    public String nativeSQL(final String sql) {
         return sql;
     }
 
@@ -578,7 +577,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void releaseSavepoint(final Savepoint savepoint) throws SQLException {
+    public void releaseSavepoint(final Savepoint savepoint) {
         throw new UnsupportedOperationException();
     }
 
@@ -586,7 +585,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void rollback() throws SQLException {
+    public void rollback() {
         throw new UnsupportedOperationException();
     }
 
@@ -594,7 +593,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void rollback(final Savepoint savepoint) throws SQLException {
+    public void rollback(final Savepoint savepoint) {
         throw new UnsupportedOperationException();
     }
 
@@ -602,7 +601,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setClientInfo(final String name, final String value) throws SQLClientInfoException {
+    public void setClientInfo(final String name, final String value) {
         clientInfo.put(name, value);
     }
 
@@ -610,7 +609,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setNetworkTimeout(final Executor executor, final int milliseconds) throws SQLException {
+    public void setNetworkTimeout(final Executor executor, final int milliseconds) {
         networkTimeout = milliseconds;
     }
 
@@ -640,7 +639,7 @@ public final class ParadoxConnection implements Connection {
      */
     private void tryLock(final File dir) throws SQLException {
         try {
-            lockFile = new RandomAccessFile(new File(dir.getAbsolutePath() + File.separator + "db.lock"), "rw");
+            lockFile = new RandomAccessFile(new File(dir.getAbsolutePath(), "db.lock"), "rw");
             final FileChannel channel = lockFile.getChannel();
             lock = channel.tryLock();
         } catch (final IOException e) {
