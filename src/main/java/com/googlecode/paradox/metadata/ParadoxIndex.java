@@ -31,13 +31,16 @@ import java.util.List;
  * @version 1.1
  * @since 1.0
  */
-public class ParadoxIndex extends ParadoxDataFile {
+public final class ParadoxIndex extends ParadoxDataFile {
 
     /**
      * Index charset.
      */
     private Charset charset = Charset.forName("Cp437");
 
+    /**
+     * Fields index order.
+     */
     private List<Short> fieldsOrder;
 
     /**
