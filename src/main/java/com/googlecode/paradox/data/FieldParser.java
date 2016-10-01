@@ -22,6 +22,7 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
 
@@ -29,32 +30,32 @@ import java.sql.SQLException;
  * Parses a database field.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public interface FieldParser {
-    
+
     /**
      * If this parses matches with the paradox field type.
      *
      * @param type
-     *            the field type.
+     *         the field type.
      * @return true if I can handle this type.
      */
     boolean match(int type);
-    
+
     /**
      * Parses the filter;
      *
      * @param table
-     *            the paradox tables.
+     *         the paradox tables.
      * @param buffer
-     *            the buffer to read of.
+     *         the buffer to read of.
      * @param field
-     *            the paradox field.
+     *         the paradox field.
      * @return the parsed value.
      * @throws SQLException
-     *             in case of parse errors.
+     *         in case of parse errors.
      */
     FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) throws SQLException;
 }

@@ -42,7 +42,7 @@ import java.util.Arrays;
 public final class MemoField implements FieldParser {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
@@ -50,7 +50,7 @@ public final class MemoField implements FieldParser {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)

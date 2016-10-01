@@ -23,8 +23,8 @@ package com.googlecode.paradox;
  * Class used to avoid name clashing in driver.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 interface IParadoxDriver extends java.sql.Driver {
 }

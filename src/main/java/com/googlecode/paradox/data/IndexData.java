@@ -70,13 +70,12 @@ public final class IndexData {
         final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {
-                final ParadoxIndex index;
                 try {
-                    index = loadIndexHeader(file);
+                    final ParadoxIndex index = loadIndexHeader(file);
+                    indexes.add(index);
                 } catch (final IOException ex) {
                     throw new SQLException("Error loading Paradox index.", ex);
                 }
-                indexes.add(index);
             }
         }
         return indexes;
