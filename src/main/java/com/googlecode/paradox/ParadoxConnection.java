@@ -171,7 +171,7 @@ public final class ParadoxConnection implements Connection {
         }
         statements.clear();
 
-        if (lock != null) {
+        if (lock != null && lock.isValid()) {
             try {
                 lock.release();
             } catch (final IOException ex) {
