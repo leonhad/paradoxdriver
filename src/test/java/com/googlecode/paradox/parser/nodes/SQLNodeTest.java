@@ -26,10 +26,10 @@ import java.util.ArrayList;
 
 /**
  * Unit test for {@link SQLNode} class.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class SQLNodeTest {
 
@@ -51,7 +51,7 @@ public class SQLNodeTest {
         final ArrayList<SQLNode> list = new ArrayList<>();
         final SQLNode node = new JoinNode();
         node.setChildhood(list);
-        Assert.assertEquals(list, node.getChildhood());
+        Assert.assertEquals("Conditional is not the same.", list.size(), node.getChildhood().size());
     }
 
 }

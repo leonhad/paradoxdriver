@@ -118,10 +118,6 @@ public final class ParadoxConnection implements Connection {
      * Stores the JDBC type mapping.
      */
     private Map<String, Class<?>> typeMap;
-    /**
-     * SQL warnings for this connection.
-     */
-    private SQLWarning warnings;
 
     /**
      * Creates a new paradox connection.
@@ -162,7 +158,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void clearWarnings() {
-        warnings = null;
+        // Not used.
     }
 
     /**
@@ -181,7 +177,6 @@ public final class ParadoxConnection implements Connection {
             } catch (final IOException ex) {
                 throw new SQLException("Error unlocking database.", SQLStates.INVALID_STATE.getValue(), ex);
             }
-            lock = null;
         }
         if (lockFile != null) {
             try {
@@ -245,7 +240,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Statement createStatement() throws SQLException {
+    public Statement createStatement() {
         final Statement stmt = new ParadoxStatement(this);
         statements.add(stmt);
         return stmt;
@@ -255,7 +250,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Statement createStatement(final int resultSetType, final int resultSetConcurrency) throws SQLException {
+    public Statement createStatement(final int resultSetType, final int resultSetConcurrency) {
         return createStatement();
     }
 
@@ -264,8 +259,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int
-            resultSetHoldability) throws
-            SQLException {
+            resultSetHoldability) {
         return createStatement();
     }
 
@@ -373,7 +367,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public int getNetworkTimeout() throws SQLException {
+    public int getNetworkTimeout() {
         return networkTimeout;
     }
 
@@ -381,7 +375,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public String getSchema() throws SQLException {
+    public String getSchema() {
         return schema;
     }
 
@@ -389,7 +383,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setSchema(final String schema) throws SQLException {
+    public void setSchema(final String schema) {
         this.schema = schema;
     }
 
@@ -397,7 +391,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public int getTransactionIsolation() throws SQLException {
+    public int getTransactionIsolation() {
         return transactionIsolation;
     }
 
@@ -416,7 +410,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Map<String, Class<?>> getTypeMap() throws SQLException {
+    public Map<String, Class<?>> getTypeMap() {
         return typeMap;
     }
 
@@ -424,7 +418,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setTypeMap(final Map<String, Class<?>> typeMap) throws SQLException {
+    public void setTypeMap(final Map<String, Class<?>> typeMap) {
         this.typeMap = typeMap;
     }
 
@@ -442,7 +436,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public SQLWarning getWarnings() {
-        return warnings;
+        return null;
     }
 
     /**
@@ -481,7 +475,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isWrapperFor(final Class<?> iFace) throws SQLException {
+    public boolean isWrapperFor(final Class<?> iFace) {
         return Utils.isWrapperFor(this, iFace);
     }
 

@@ -22,6 +22,7 @@ package com.googlecode.paradox.metadata;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -90,7 +91,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
      * @return the file orders.
      */
     public List<Short> getFieldsOrder() {
-        return fieldsOrder;
+        return Collections.unmodifiableList(fieldsOrder);
     }
 
     /**
@@ -100,7 +101,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
      *         the fields order to set.
      */
     public void setFieldsOrder(final List<Short> fieldsOrder) {
-        this.fieldsOrder = fieldsOrder;
+        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
     }
 
     /**

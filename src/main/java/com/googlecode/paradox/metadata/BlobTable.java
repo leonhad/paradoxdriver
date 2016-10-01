@@ -156,11 +156,8 @@ public final class BlobTable extends ParadoxDataFile {
         if (block != null) {
             return block.getValue();
         }
-        try {
-            block = readBlock(blockNum, offset);
-        } catch (final Exception x) {
-            throw new SQLException("Read clob error", SQLStates.LOAD_DATA.getValue(), x);
-        }
+
+        block = readBlock(blockNum, offset);
         if (block == null) {
             throw new SQLException("Block " + blockNum + " not found. Invalid mb file", SQLStates.LOAD_DATA.getValue());
         }
@@ -422,7 +419,7 @@ public final class BlobTable extends ParadoxDataFile {
             channel.read(header);
             header.flip();
             final byte headerType = header.get();
-            final short blockSize = header.getShort();
+            final int blockSize = header.getShort();
 
             if (headerType == SINGLE_BLOCK) {
                 parseSingleBlock(blocks, startBlockAddress, headerType, blockSize);

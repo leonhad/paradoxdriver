@@ -20,6 +20,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Stores a SQL node.
@@ -113,11 +114,11 @@ public class SQLNode {
      *         the childhood.
      */
     public final void setChildhood(final Collection<? extends SQLNode> childhood) {
-        this.childhood = childhood;
+        this.childhood = Collections.unmodifiableCollection(childhood);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {
