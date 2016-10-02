@@ -21,7 +21,7 @@ package com.googlecode.paradox.parser.nodes.conditional;
 
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Stores the AND node.
@@ -40,7 +40,7 @@ public class ANDNode extends SQLNode {
      */
     public ANDNode(final SQLNode child) {
         super("AND");
-        setChildhood(Arrays.asList(child));
+        setChildhood(Collections.singletonList(child));
     }
 
 }

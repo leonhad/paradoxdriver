@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 /**
  * Unit test for {@link DateUtils}.
@@ -111,7 +112,9 @@ public class DateUtilsTest {
      */
     @Test
     public void testSdnToGregorian() {
-        Assert.assertEquals("4715-11-25", DateUtils.sdnToGregorian(1).toString());
+        Date date = DateUtils.sdnToGregorian(1);
+        Assert.assertNotNull("Null date.", date);
+        Assert.assertEquals("Invalid date.", "4715-11-25", date.toString());
     }
 
     /**
@@ -119,7 +122,7 @@ public class DateUtilsTest {
      */
     @Test
     public void testSdnToGregorianInvalid() {
-        Assert.assertNull(DateUtils.sdnToGregorian(0));
-        Assert.assertNull(DateUtils.sdnToGregorian(-1));
+        Assert.assertNull("Date is not null.", DateUtils.sdnToGregorian(0));
+        Assert.assertNull("Date is not null.", DateUtils.sdnToGregorian(-1));
     }
 }

@@ -21,26 +21,26 @@ package com.googlecode.paradox.parser.nodes.conditional;
 
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Store the NOT node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public class NOTNode extends SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param child
-     *            the child node.
+     *         the child node.
      */
     public NOTNode(final SQLNode child) {
         super("NOT");
-        setChildhood(Arrays.asList(child));
+        setChildhood(Collections.singletonList(child));
     }
 
 }

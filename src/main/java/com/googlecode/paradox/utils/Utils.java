@@ -126,7 +126,7 @@ public final class Utils {
      *         the type of the class modeled by this Class object.
      * @param wrapper
      *         the wrapper class.
-     * @param iface
+     * @param iFace
      *         A Class defining an interface that the result must implement.
      * @return an object that implements the interface. May be a proxy for the actual implementing object.
      * @throws java.sql.SQLException
@@ -134,8 +134,8 @@ public final class Utils {
      * @since 1.2
      */
     @SuppressWarnings("unchecked")
-    public static <T> T unwrap(final Wrapper wrapper, final Class<T> iface) throws SQLException {
-        if (wrapper.isWrapperFor(iface)) {
+    public static <T> T unwrap(final Wrapper wrapper, final Class<T> iFace) throws SQLException {
+        if (wrapper.isWrapperFor(iFace)) {
             return (T) wrapper;
         }
         throw new SQLException("Type not found.", SQLStates.TYPE_NOT_FOUND.getValue());

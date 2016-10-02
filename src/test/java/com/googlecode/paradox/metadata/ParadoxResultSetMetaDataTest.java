@@ -35,7 +35,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -153,7 +152,7 @@ public class ParadoxResultSetMetaDataTest {
         column.setSigned(true);
         column.setScale(2);
         ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
-                Arrays.asList(column));
+                Collections.singletonList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", TypeName.INTEGER.getClassName(), metaData.getColumnClassName(1));
         Assert.assertEquals("Testing for catalog name.", "db", metaData.getCatalogName(1));
@@ -192,7 +191,7 @@ public class ParadoxResultSetMetaDataTest {
         column.setName("name");
         column.setNullable(true);
         ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData((ParadoxConnection) conn,
-                Arrays.asList(column));
+                Collections.singletonList(column));
         Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNullable, metaData.isNullable(1));
     }
 

@@ -19,21 +19,20 @@
  */
 package com.googlecode.paradox.procedures;
 
+import com.googlecode.paradox.procedures.math.Min;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.googlecode.paradox.procedures.math.Min;
-
 /**
  * Unit test for {@link ProcedureAS}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class ProcedureASTest {
     /**
-     * Test for get all procedures avaliable.
+     * Test for get all procedures available.
      */
     @Test
     public void testAllProcedures() {
@@ -61,6 +60,9 @@ public class ProcedureASTest {
      */
     @Test
     public void testProcedureByName() {
-        Assert.assertSame(new Min().getName(), ProcedureAS.getInstance().get("min").getName());
+        Min min = new Min();
+        AbstractCallableProcedure minByName = ProcedureAS.getInstance().get("min");
+        Assert.assertNotNull("Procedure not registered.", minByName);
+        Assert.assertSame("Procedure is not the same.", min.getName(), minByName.getName());
     }
 }

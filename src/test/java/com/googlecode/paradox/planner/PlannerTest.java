@@ -182,7 +182,7 @@ public class PlannerTest {
      * Test for SELECT plan without columns.
      *
      * @throws SQLException
-     *         em caso de falhas.
+     *         in case of errors.
      */
     @Test(expected = SQLException.class)
     public void testSelectWithoutColumns() throws SQLException {

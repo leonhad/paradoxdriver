@@ -140,6 +140,22 @@ class Scanner {
     }
 
     /**
+     * Check if is a character or a string.
+     *
+     * @param c
+     *         the char to verify.
+     * @return <code>true</code> if c is a char.
+     */
+    private static boolean isCharacters(char c) {
+        boolean characters = false;
+        if (c == '\'') {
+            // characters
+            characters = true;
+        }
+        return characters;
+    }
+
+    /**
      * If buffer has tokens.
      *
      * @return true if the buffer still have tokens.
@@ -202,7 +218,7 @@ class Scanner {
                     return false;
                 } else if (c == '"' || c == '\'') {
                     // identifiers with special chars
-                    boolean characters = isCharacters(c);
+                    final boolean characters = isCharacters(c);
                     parseString(c);
                     return characters;
                 } else {
@@ -212,22 +228,6 @@ class Scanner {
             }
         }
         return false;
-    }
-
-    /**
-     * Check if is a character or a string.
-     *
-     * @param c
-     *         the char to verify.
-     * @return <code>true</code> if c is a char.
-     */
-    private boolean isCharacters(char c) {
-        boolean characters = false;
-        if (c == '\'') {
-            // characters
-            characters = true;
-        }
-        return characters;
     }
 
     /**
@@ -241,16 +241,16 @@ class Scanner {
     private void parseNumber(final char start) throws SQLException {
         char c = start;
         boolean numeric = false;
-        int dotcount = 0;
-        while (!isSeparator(c) && (numeric && c == '.' || !isSpecial(c))) {
+        int dotCount = 0;
+        while (!isSeparator(c) && ((numeric && (c == '.')) || !isSpecial(c))) {
             value.append(c);
             if (value.length() == 1) {
                 numeric = Character.isDigit(value.charAt(0));
             } else if (c == '.') {
-                dotcount++;
+                dotCount++;
 
                 // Only one dot per numeric value
-                checkDotCount(dotcount);
+                checkDotCount(dotCount);
             }
             if (hasNext()) {
                 c = nextChar();
@@ -268,10 +268,8 @@ class Scanner {
      *
      * @param type
      *         the string type (special char used).
-     * @throws SQLException
-     *         in case of parse errors.
      */
-    private void parseString(final char type) throws SQLException {
+    private void parseString(final char type) {
         char c;
         do {
             if (hasNext()) {

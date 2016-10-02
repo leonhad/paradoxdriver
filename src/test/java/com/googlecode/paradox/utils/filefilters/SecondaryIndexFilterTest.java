@@ -19,17 +19,17 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
-import java.io.File;
-
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
+
 /**
  * Unit test for {@link SecondaryIndexFilter}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class SecondaryIndexFilterTest {
 
@@ -38,9 +38,9 @@ public class SecondaryIndexFilterTest {
      */
     @Test
     public void testAccept() {
-        final File file = new File("teste.xn2");
+        final File file = new File("test.xn2");
         final SecondaryIndexFilter filter = new SecondaryIndexFilter();
-        Assert.assertTrue(filter.accept(file));
+        Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
 
 }

@@ -168,6 +168,7 @@ public final class DriverTest {
     public void testValidConnection() throws SQLException {
         final Driver driver = new Driver();
         try (Connection c = driver.connect("jdbc:paradox:target/test-classes/", null)) {
+            Assert.assertNotNull("Connection is null.", c);
             Assert.assertNotNull("Connection is not valid.", c.isValid(0));
         }
     }
@@ -181,6 +182,6 @@ public final class DriverTest {
     @Test
     public void testValidURL() throws SQLException {
         final Driver driver = new Driver();
-        Assert.assertTrue(driver.acceptsURL("jdbc:paradox:/path"));
+        Assert.assertTrue("Driver connection is invalid.", driver.acceptsURL("jdbc:paradox:/path"));
     }
 }

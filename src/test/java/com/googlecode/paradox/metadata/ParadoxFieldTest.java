@@ -148,7 +148,7 @@ public class ParadoxFieldTest {
 
     /**
      * Test for {@link ParadoxField#getSize()} and
-     * {@link ParadoxField#setSize(short)} method.
+     * {@link ParadoxField#setSize(int)} method.
      *
      * @throws SQLException
      *         in case of errors.
@@ -171,17 +171,17 @@ public class ParadoxFieldTest {
         field.setAlias("alias");
         field.setChecked(false);
         field.setExpression("expression");
-        field.setJoinName("joinname");
+        field.setJoinName("joinName");
         field.setName("name");
-        field.setTableName("tablename");
+        field.setTableName("tableName");
         field.setTable(null);
 
         Assert.assertEquals("alias", field.getAlias());
         Assert.assertFalse("Field is not checked.", field.isChecked());
         Assert.assertEquals("expression", field.getExpression());
-        Assert.assertEquals("joinname", field.getJoinName());
+        Assert.assertEquals("joinName", field.getJoinName());
         Assert.assertEquals("name", field.getName());
-        Assert.assertEquals("tablename", field.getTableName());
+        Assert.assertEquals("tableName", field.getTableName());
         Assert.assertEquals(null, field.getTable());
     }
 

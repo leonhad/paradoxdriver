@@ -261,8 +261,8 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        return Utils.isWrapperFor(this, iface);
+    public boolean isWrapperFor(final Class<?> iFace) throws SQLException {
+        return Utils.isWrapperFor(this, iFace);
     }
 
     /**

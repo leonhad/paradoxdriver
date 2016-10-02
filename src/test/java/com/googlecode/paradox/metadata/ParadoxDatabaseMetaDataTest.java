@@ -39,12 +39,12 @@ public class ParadoxDatabaseMetaDataTest {
      *         in case of failures.
      */
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void init() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
     /**
-     * Close the test conneciton.
+     * Close the test connection.
      *
      * @throws Exception
      *         in case of failures.
@@ -341,9 +341,9 @@ public class ParadoxDatabaseMetaDataTest {
      *         in case of errors.
      */
     @Test
-    public void testColumnsInvaidPattern() throws SQLException {
+    public void testColumnsInvalidPattern() throws SQLException {
         try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", "invalid_column")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Result not right instance.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -359,7 +359,7 @@ public class ParadoxDatabaseMetaDataTest {
     }
 
     /**
-     * Test for deletes autodetectes.
+     * Test for deletes auto detects.
      *
      * @throws SQLException
      *         in case of errors.
@@ -377,8 +377,8 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testImportedKeys() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getImportedKeys("db", null, "teste.db")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+        try (ResultSet rs = conn.getMetaData().getImportedKeys("db", null, "test.db")) {
+            Assert.assertTrue("Invalid instance.", rs instanceof ParadoxResultSet);
         }
     }
 

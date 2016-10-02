@@ -31,7 +31,7 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 public final class Average extends AbstractCallableProcedure {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getName() {
@@ -39,10 +39,10 @@ public final class Average extends AbstractCallableProcedure {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getRemarks() {
-        return "Returns the avarage values.";
+        return "Returns the average values.";
     }
 }

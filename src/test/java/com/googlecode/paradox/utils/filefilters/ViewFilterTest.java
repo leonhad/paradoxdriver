@@ -19,18 +19,18 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.io.File;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link ViewFilter}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class ViewFilterTest {
 
@@ -39,9 +39,9 @@ public class ViewFilterTest {
      */
     @Test
     public void testAccept() {
-        final File file = new File("teste.qbe");
+        final File file = new File("test.qbe");
         final ViewFilter filter = new ViewFilter();
-        assertTrue(filter.accept(file));
+        assertTrue("Invalid file filter.", filter.accept(file));
     }
 
 }

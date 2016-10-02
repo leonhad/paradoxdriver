@@ -1,5 +1,5 @@
 /**
- * SQL values comparisions.
+ * SQL values comparisons.
  *
  * @since 1.0
  */

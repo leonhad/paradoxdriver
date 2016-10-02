@@ -34,7 +34,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,7 +67,7 @@ public class ParadoxResultSetTest {
     }
 
     /**
-     * Close the test conneciton.
+     * Close the test connection.
      *
      * @throws Exception
      *         in case of failures.
@@ -201,7 +200,7 @@ public class ParadoxResultSetTest {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column());
         List<List<FieldValue>> values = new ArrayList<>();
-        values.add(Arrays.asList(new FieldValue("Teste", Types.VARCHAR)));
+        values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
         ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) conn);
         ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) conn, stmt, values, columns);
         Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
@@ -218,7 +217,7 @@ public class ParadoxResultSetTest {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column());
         List<List<FieldValue>> values = new ArrayList<>();
-        values.add(Arrays.asList(new FieldValue("Teste", Types.VARCHAR)));
+        values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
         ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) conn);
         ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) conn, stmt, values, columns);
         rs.afterLast();

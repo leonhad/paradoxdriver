@@ -22,10 +22,19 @@ package com.googlecode.paradox.integration;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 
 /**
@@ -51,7 +60,8 @@ public class MainTest {
     /**
      * Register the database driver.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
@@ -59,9 +69,10 @@ public class MainTest {
     }
 
     /**
-     * Close the test conneciton.
+     * Close the test connection.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -73,7 +84,8 @@ public class MainTest {
     /**
      * Connect to the test database.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Before
     public void connect() throws Exception {
@@ -83,7 +95,8 @@ public class MainTest {
     /**
      * Test for the catalog metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testCatalog() throws Exception {
@@ -107,7 +120,8 @@ public class MainTest {
     /**
      * Test for the index info metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testIndexInfo() throws Exception {
@@ -153,7 +167,8 @@ public class MainTest {
     /**
      * Test for primary key metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testPrimaryKey() throws Exception {
@@ -181,7 +196,8 @@ public class MainTest {
     /**
      * Test for {@link ResultSet} execution.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testResultSet() throws Exception {
@@ -196,7 +212,8 @@ public class MainTest {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Column 'AC':", rs.getString("ac"), "201");
             Assert.assertEquals("Column 'State':", rs.getString("State"), "NJ");
-            Assert.assertEquals("Column 'Cities':", rs.getString("Cities"), "Hackensack, Jersey City (201/551 overlay)");
+            Assert.assertEquals("Column 'Cities':", rs.getString("Cities"),
+                    "Hackensack, Jersey City (201/551 overlay)");
         } finally {
             if (rs != null) {
                 rs.close();
@@ -210,7 +227,8 @@ public class MainTest {
     /**
      * Test for {@link ResultSet} with multiple values.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testResultSetMultipleValues() throws Exception {
@@ -223,11 +241,14 @@ public class MainTest {
             rs = stmt.executeQuery("SELECT \"id\", name, moneys FROM \"general.db\"");
 
             Assert.assertTrue("First record:", rs.next());
-            Assert.assertEquals("1 row: ", "1 - Mari -100.0", rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
+            Assert.assertEquals("1 row: ", "1 - Mari -100.0",
+                    rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
             Assert.assertTrue("Second record:", rs.next());
-            Assert.assertEquals("2 row: ", "2 - Katty -150.0", rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
+            Assert.assertEquals("2 row: ", "2 - Katty -150.0",
+                    rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
             Assert.assertTrue("Third record:", rs.next());
-            Assert.assertEquals("2 row: ", "333333333 - Elizabet -75.0", rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
+            Assert.assertEquals("2 row: ", "333333333 - Elizabet -75.0",
+                    rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
         } finally {
             if (rs != null) {
                 rs.close();
@@ -244,7 +265,8 @@ public class MainTest {
     /**
      * Test {@link ResultSet} with one column.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testResultSetOneColumn() throws Exception {
@@ -280,7 +302,8 @@ public class MainTest {
     /**
      * Test {@link ResultSet} with two columns.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testResultSetTwoColumn() throws Exception {
@@ -322,28 +345,31 @@ public class MainTest {
     /**
      * Test for unwrap impossible.
      *
-     * @throws Exception if test succeed.
+     * @throws Exception
+     *         if test succeed.
      */
     @Test(expected = SQLException.class)
-    public void testUnwrapImpossive() throws Exception {
+    public void testUnwrapImpossible() throws Exception {
         Utils.unwrap(conn, Integer.class);
     }
 
     /**
-     * Test for a valid conneciton.
+     * Test for a valid connection.
      *
-     * @throws SQLException in case of failures.
+     * @throws SQLException
+     *         in case of failures.
      */
     @Test
     public void testValidConnection() throws SQLException {
-        Assert.assertTrue(conn.isWrapperFor(ParadoxConnection.class));
-        Assert.assertNotNull(conn.unwrap(ParadoxConnection.class));
+        Assert.assertTrue("Wrapper invalid.", conn.isWrapperFor(ParadoxConnection.class));
+        Assert.assertNotNull("Can't unwrap.", conn.unwrap(ParadoxConnection.class));
     }
 
     /**
      * Test for view columns metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *         in case of failures.
      */
     @Test
     public void testViewColumns() throws Exception {

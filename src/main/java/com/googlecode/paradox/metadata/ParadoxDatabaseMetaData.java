@@ -170,7 +170,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param fields
      *         the field list.
      * @throws SQLException
-     *         in case of erros.
+     *         in case of errors.
      */
     private void fieldMetadata(final String columnNamePattern, final List<List<FieldValue>> values,
                                final String tableName, final List<ParadoxField> fields) throws SQLException {
@@ -192,7 +192,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(new FieldValue(field.getSize(), Types.INTEGER));
             row.add(new FieldValue(2_048, Types.INTEGER));
 
-            if (field.getType() == 5 || field.getType() == 6) {
+            if ((field.getType() == 5) || (field.getType() == 6)) {
                 row.add(new FieldValue(2, Types.INTEGER));
             } else {
                 row.add(new FieldValue(0, Types.INTEGER));
@@ -228,8 +228,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param type
      *         the row type.
      * @return the row.
-     * @throws SQLException
-     *         in case of errors.
      */
     private List<FieldValue> formatRow(final String name, final String type) {
         final ArrayList<FieldValue> row = new ArrayList<>(1);
@@ -899,8 +897,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getProcedures(final String catalog, final String schemaPattern, final String procedureNamePattern)
-            throws SQLException {
+    public ResultSet getProcedures(final String catalog, final String schemaPattern, final String
+            procedureNamePattern) {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column("PROCEDURE_CAT", Types.VARCHAR));
         columns.add(new Column("PROCEDURE_SCHEM", Types.VARCHAR));
@@ -987,8 +985,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) {
-        if (catalog != null && !Expressions.accept(conn.getCatalog(), catalog)
-                || schemaPattern != null && !Expressions.accept(conn.getSchema(), schemaPattern)) {
+        if (((catalog != null) && !Expressions.accept(conn.getCatalog(), catalog))
+                || ((schemaPattern != null) && !Expressions.accept(conn.getSchema(), schemaPattern))) {
             return new ParadoxResultSet(conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
         }
         return getSchemas();

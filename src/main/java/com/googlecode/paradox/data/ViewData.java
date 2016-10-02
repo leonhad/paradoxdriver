@@ -285,7 +285,7 @@ public final class ViewData {
      *         the old line.
      * @return the paradox field list.
      * @throws SQLException
-     *         in case of porse errors.
+     *         in case of parse errors.
      * @throws IOException
      *         in case of I/O errors.
      */

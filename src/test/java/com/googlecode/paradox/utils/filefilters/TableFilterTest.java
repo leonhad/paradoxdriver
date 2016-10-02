@@ -19,18 +19,18 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.io.File;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link TableFilter}.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class TableFilterTest {
 
@@ -39,9 +39,9 @@ public class TableFilterTest {
      */
     @Test
     public void testAccept() {
-        final File file = new File("teste.db");
+        final File file = new File("test.db");
         final TableFilter filter = new TableFilter();
-        assertTrue(filter.accept(file));
+        assertTrue("Invalid file filter.", filter.accept(file));
     }
 
 }

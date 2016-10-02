@@ -31,8 +31,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Reads primary key data fields.
@@ -65,44 +63,14 @@ public final class PrimaryKeyData {
         final String name = table.getName() + ".PX";
 
         final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter(name));
-        if (fileList != null) {
-            for (final File file : fileList) {
-                final ParadoxPK key;
-                try {
-                    key = loadPKHeader(file);
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox tables.", ex);
-                }
-                return key;
+        if (fileList != null && fileList.length > 0) {
+            try {
+                return loadPKHeader(fileList[0]);
+            } catch (final IOException ex) {
+                throw new SQLException("Error loading Paradox tables.", ex);
             }
         }
         return null;
-    }
-
-    /**
-     * Gets all primary keys from the database.
-     *
-     * @param conn
-     *         the database connection.
-     * @return a list of primary keys.
-     * @throws SQLException
-     *         in case of load failures.
-     */
-    public static List<ParadoxPK> listPrimaryKeys(final ParadoxConnection conn) throws SQLException {
-        final ArrayList<ParadoxPK> keys = new ArrayList<>();
-        final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter());
-        if (fileList != null) {
-            for (final File file : fileList) {
-                final ParadoxPK key;
-                try {
-                    key = loadPKHeader(file);
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox tables.", ex);
-                }
-                keys.add(key);
-            }
-        }
-        return keys;
     }
 
     /**

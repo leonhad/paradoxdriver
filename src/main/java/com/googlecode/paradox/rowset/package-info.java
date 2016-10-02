@@ -1,5 +1,5 @@
 /**
- * Package for SQL rowset.
+ * Package for SQL row set.
  *
  * @since 1.3
  */
