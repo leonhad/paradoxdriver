@@ -47,7 +47,7 @@ public final class ClobBlock {
     /**
      * The CLOB data.
      */
-    private byte[] value = null;
+    private final byte[] value;
 
     /**
      * Create a new instance.
@@ -81,6 +81,8 @@ public final class ClobBlock {
         this.offset = offset;
         if (value != null) {
             this.value = value.clone();
+        } else {
+            this.value = new byte[0];
         }
     }
 
@@ -117,9 +119,6 @@ public final class ClobBlock {
      * @return the CLOB data value.
      */
     public byte[] getValue() {
-        if (value != null) {
-            return value.clone();
-        }
-        return null;
+        return value.clone();
     }
 }
