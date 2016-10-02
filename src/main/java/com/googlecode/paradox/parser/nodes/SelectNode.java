@@ -71,7 +71,7 @@ public final class SelectNode extends StatementNode {
      * @param field
      *         the field to add.
      */
-    public final void addField(final SQLNode field) {
+    public void addField(final SQLNode field) {
         fields.add(field);
     }
 
@@ -81,7 +81,7 @@ public final class SelectNode extends StatementNode {
      * @param identifier
      *         the group by identifier to add.
      */
-    public final void addGroupBy(final IdentifierNode identifier) {
+    void addGroupBy(IdentifierNode identifier) {
         groups.add(identifier);
     }
 
@@ -91,7 +91,7 @@ public final class SelectNode extends StatementNode {
      * @param identifier
      *         the order by identifier to add.
      */
-    public final void addOrderBy(final IdentifierNode identifier) {
+    void addOrderBy(final IdentifierNode identifier) {
         order.add(identifier);
     }
 
@@ -101,7 +101,7 @@ public final class SelectNode extends StatementNode {
      * @param table
      *         the table to add
      */
-    public final void addTable(final TableNode table) {
+    public void addTable(final TableNode table) {
         tables.add(table);
     }
 
@@ -216,7 +216,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return the condition list.
      */
-    public final List<SQLNode> getConditions() {
+    public List<SQLNode> getConditions() {
         if (conditions != null) {
             return Collections.unmodifiableList(conditions);
         }
@@ -229,7 +229,7 @@ public final class SelectNode extends StatementNode {
      * @param conditions
      *         the condition list.
      */
-    public final void setConditions(final Collection<SQLNode> conditions) {
+    public void setConditions(final Collection<SQLNode> conditions) {
         this.conditions = new ArrayList<>(conditions);
     }
 
@@ -238,7 +238,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return the field list.
      */
-    public final List<SQLNode> getFields() {
+    public List<SQLNode> getFields() {
         return Collections.unmodifiableList(fields);
     }
 
@@ -247,7 +247,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return the group list.
      */
-    public final List<IdentifierNode> getGroups() {
+    List<IdentifierNode> getGroups() {
         return Collections.unmodifiableList(groups);
     }
 
@@ -256,7 +256,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return the order by list.
      */
-    public final List<IdentifierNode> getOrder() {
+    public List<IdentifierNode> getOrder() {
         return Collections.unmodifiableList(order);
     }
 
@@ -265,7 +265,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return the table list.
      */
-    public final List<TableNode> getTables() {
+    public List<TableNode> getTables() {
         return Collections.unmodifiableList(tables);
     }
 
@@ -274,7 +274,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return true if this select has a distinct token.
      */
-    public final boolean isDistinct() {
+    boolean isDistinct() {
         return distinct;
     }
 
@@ -284,7 +284,7 @@ public final class SelectNode extends StatementNode {
      * @param distinct
      *         the distinct key present.
      */
-    public final void setDistinct(final boolean distinct) {
+    public void setDistinct(final boolean distinct) {
         this.distinct = distinct;
     }
 
@@ -292,7 +292,7 @@ public final class SelectNode extends StatementNode {
      * Show this node SELECT.
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append(getName());
         builder.append(' ');
