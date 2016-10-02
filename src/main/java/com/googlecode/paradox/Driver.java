@@ -56,7 +56,7 @@ public final class Driver implements IParadoxDriver {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean acceptsURL(final String url) {
@@ -64,7 +64,7 @@ public final class Driver implements IParadoxDriver {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Connection connect(final String url, final Properties info) throws SQLException {
@@ -76,7 +76,7 @@ public final class Driver implements IParadoxDriver {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMajorVersion() {
@@ -84,7 +84,7 @@ public final class Driver implements IParadoxDriver {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public int getMinorVersion() {
@@ -92,7 +92,7 @@ public final class Driver implements IParadoxDriver {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public Logger getParentLogger() {
@@ -100,10 +100,10 @@ public final class Driver implements IParadoxDriver {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
-    public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) throws SQLException {
+    public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
         final DriverPropertyInfo dbProp = new DriverPropertyInfo("DBNAME", info.getProperty("DBNAME"));
         dbProp.required = false;
         dbProp.description = "Database name";
@@ -116,7 +116,7 @@ public final class Driver implements IParadoxDriver {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean jdbcCompliant() {
