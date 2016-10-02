@@ -202,11 +202,7 @@ class Scanner {
                     return false;
                 } else if (c == '"' || c == '\'') {
                     // identifiers with special chars
-                    boolean characters = false;
-                    if (c == '\'') {
-                        // characters
-                        characters = true;
-                    }
+                    boolean characters = isCharacters(c);
                     parseString(c);
                     return characters;
                 } else {
@@ -216,6 +212,22 @@ class Scanner {
             }
         }
         return false;
+    }
+
+    /**
+     * Check if is a character or a string.
+     *
+     * @param c
+     *         the char to verify.
+     * @return <code>true</code> if c is a char.
+     */
+    private boolean isCharacters(char c) {
+        boolean characters = false;
+        if (c == '\'') {
+            // characters
+            characters = true;
+        }
+        return characters;
     }
 
     /**
