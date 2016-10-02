@@ -23,20 +23,20 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 
 /**
  * Stores the greater than node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
-public class GreaterThanNode extends AbstractComparisonNode {
+public final class GreaterThanNode extends AbstractComparisonNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param first
-     *            the first node.
+     *         the first node.
      * @param last
-     *            the last node.
+     *         the last node.
      */
     public GreaterThanNode(final FieldNode first, final FieldNode last) {
         super(">", first, last);

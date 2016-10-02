@@ -24,13 +24,13 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
  * Stores the asterisk node.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @since 1.2
  * @version 1.1
+ * @since 1.2
  */
-public class AsteriskNode extends SQLNode {
+public final class AsteriskNode extends SQLNode {
 
     /**
      * Create a new instance.

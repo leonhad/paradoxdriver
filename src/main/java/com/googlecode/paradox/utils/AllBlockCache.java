@@ -54,11 +54,11 @@ public final class AllBlockCache implements IBlockCache {
     public void add(final List<ClobBlock> blocks) {
         Map<Integer, ClobBlock> map;
         for (final ClobBlock block : blocks) {
-            if (!cache.containsKey(block.getNum())) {
+            if (cache.containsKey(block.getNum())) {
+                map = cache.get(block.getNum());
+            } else {
                 map = new ConcurrentHashMap<>();
                 cache.put(block.getNum(), map);
-            } else {
-                map = cache.get(block.getNum());
             }
             map.put(block.getOffset(), block);
         }

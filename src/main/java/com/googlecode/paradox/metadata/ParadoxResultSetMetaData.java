@@ -100,7 +100,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public int getColumnCount() throws SQLException {
+    public int getColumnCount() {
         return columns.size();
     }
 
@@ -227,7 +227,10 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public int isNullable(final int column) throws SQLException {
         final Column dto = getColumn(column);
-        return dto.isNullable() ? ResultSetMetaData.columnNullable : ResultSetMetaData.columnNoNulls;
+        if (dto.isNullable()) {
+            return ResultSetMetaData.columnNullable;
+        }
+        return ResultSetMetaData.columnNoNulls;
     }
 
     /**
@@ -261,7 +264,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isWrapperFor(final Class<?> iFace) throws SQLException {
+    public boolean isWrapperFor(final Class<?> iFace) {
         return Utils.isWrapperFor(this, iFace);
     }
 

@@ -23,20 +23,20 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 
 /**
  * Store the less than node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
-public class LessThanNode extends AbstractComparisonNode {
+public final class LessThanNode extends AbstractComparisonNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param first
-     *            the first node.
+     *         the first node.
      * @param last
-     *            the last node.
+     *         the last node.
      */
     public LessThanNode(final FieldNode first, final FieldNode last) {
         super("<", first, last);

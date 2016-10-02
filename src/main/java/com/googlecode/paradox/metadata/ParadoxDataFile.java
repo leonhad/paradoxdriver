@@ -34,6 +34,10 @@ import java.util.List;
 public class ParadoxDataFile {
 
     /**
+     * Java file used to read the database.
+     */
+    private final File file;
+    /**
      * Fields in this file.
      */
     protected List<ParadoxField> fields;
@@ -101,10 +105,6 @@ public class ParadoxDataFile {
      * If this file has an write protected lock.
      */
     private byte writeProtected;
-    /**
-     * Java file used to read the database.
-     */
-    private File file;
     /**
      * The file name.
      */

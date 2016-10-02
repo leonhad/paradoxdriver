@@ -28,7 +28,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @version 1.0
  * @since 1.1
  */
-public class NullNode extends SQLNode {
+public final class NullNode extends SQLNode {
 
     /**
      * Create a new instance.

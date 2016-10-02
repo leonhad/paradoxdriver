@@ -39,7 +39,7 @@ public final class ViewFilter implements FileFilter {
     private final String viewName;
 
     /**
-     * Create a new instance;
+     * Create a new instance.
      */
     ViewFilter() {
         this(null);
@@ -56,7 +56,7 @@ public final class ViewFilter implements FileFilter {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {

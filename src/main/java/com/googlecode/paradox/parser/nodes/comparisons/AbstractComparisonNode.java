@@ -24,10 +24,10 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
  * Stores a abstract comparision node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.1
+ * @since 1.1
  */
 abstract class AbstractComparisonNode extends SQLNode {
 
@@ -43,13 +43,13 @@ abstract class AbstractComparisonNode extends SQLNode {
 
     /**
      * Creates a new instance.
-     * 
+     *
      * @param name
-     *            the condition name.
+     *         the condition name.
      * @param first
-     *            the first node.
+     *         the first node.
      * @param last
-     *            the last node.
+     *         the last node.
      */
     AbstractComparisonNode(final String name, final FieldNode first, final FieldNode last) {
         super(name);
@@ -59,7 +59,7 @@ abstract class AbstractComparisonNode extends SQLNode {
 
     /**
      * Gets the first node.
-     * 
+     *
      * @return the first node.
      */
     public FieldNode getFirst() {
@@ -68,7 +68,7 @@ abstract class AbstractComparisonNode extends SQLNode {
 
     /**
      * Gets the last node.
-     * 
+     *
      * @return the last node.
      */
     public FieldNode getLast() {
@@ -76,7 +76,7 @@ abstract class AbstractComparisonNode extends SQLNode {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {

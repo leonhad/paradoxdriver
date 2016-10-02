@@ -56,7 +56,7 @@ public final class PrimaryKeyFilter implements FileFilter {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {

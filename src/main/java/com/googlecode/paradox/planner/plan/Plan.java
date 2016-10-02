@@ -25,15 +25,16 @@ import java.sql.SQLException;
  * Used to creates and execute SQL plans.
  *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public interface Plan {
 
     /**
      * Execute this plan.
      *
-     * @throws SQLException in case of failures.
+     * @throws SQLException
+     *         in case of failures.
      */
     void execute() throws SQLException;
 }

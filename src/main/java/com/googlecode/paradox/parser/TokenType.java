@@ -23,8 +23,8 @@ package com.googlecode.paradox.parser;
  * SQL Tokens
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.2
+ * @since 1.0
  */
 public enum TokenType {
     /**
@@ -235,12 +235,12 @@ public enum TokenType {
     /**
      * Stores the conditional break values.
      */
-    private static final TokenType[] CONDITIONAL_BREAKS = { ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN };
+    private static final TokenType[] CONDITIONAL_BREAKS = {ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN};
 
     /**
      * Stores the operator values.
      */
-    private static final TokenType[] OPERATORS = { AND, OR, XOR };
+    private static final TokenType[] OPERATORS = {AND, OR, XOR};
 
     /**
      * Token value.
@@ -256,9 +256,9 @@ public enum TokenType {
 
     /**
      * Creates a new instance.
-     * 
+     *
      * @param value
-     *            the token value.
+     *         the token value.
      */
     TokenType(final String value) {
         this.value = value;
@@ -266,9 +266,9 @@ public enum TokenType {
 
     /**
      * Gets the token by value.
-     * 
+     *
      * @param value
-     *            the value to search in the token list.
+     *         the value to search in the token list.
      * @return the token by value.
      */
     public static TokenType get(final String value) {
@@ -282,9 +282,9 @@ public enum TokenType {
 
     /**
      * Gets if the token is a conditional break.
-     * 
+     *
      * @param tokenType
-     *            the type to test of.
+     *         the type to test of.
      * @return true if this token is a conditional break.
      */
     public static boolean isConditionalBreak(final TokenType tokenType) {
@@ -298,9 +298,9 @@ public enum TokenType {
 
     /**
      * Gets if the token for operator types.
-     * 
+     *
      * @param tokenType
-     *            the type to test of.
+     *         the type to test of.
      * @return true if this token is an operator.
      */
     public static boolean isOperator(final TokenType tokenType) {

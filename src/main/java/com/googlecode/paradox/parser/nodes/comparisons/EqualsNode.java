@@ -23,20 +23,20 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 
 /**
  * Stores the equals node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
-public class EqualsNode extends AbstractComparisonNode {
+public final class EqualsNode extends AbstractComparisonNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param first
-     *            the first node.
+     *         the first node.
      * @param last
-     *            the last node.
+     *         the last node.
      */
     public EqualsNode(final FieldNode first, final FieldNode last) {
         super("=", first, last);
