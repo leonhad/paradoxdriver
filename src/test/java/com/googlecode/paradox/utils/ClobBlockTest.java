@@ -40,6 +40,7 @@ public class ClobBlockTest {
         Assert.assertEquals("Invalid clob number.", 2, clob.getNum());
         Assert.assertEquals("Invalid clob type.", 1, clob.getType());
         Assert.assertEquals("Invalid clob offset.", 0, clob.getOffset());
-        Assert.assertNull("Invalid clob value.", clob.getValue());
+        Assert.assertNotNull("Invalid clob value.", clob.getValue());
+        Assert.assertEquals("Invalid clob value.", 0, clob.getValue().length);
     }
 }
