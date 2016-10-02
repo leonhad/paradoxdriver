@@ -23,15 +23,15 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 
 /**
  * The COUNT function.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public class Count extends AbstractCallableProcedure {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getName() {
@@ -39,7 +39,7 @@ public class Count extends AbstractCallableProcedure {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getRemarks() {

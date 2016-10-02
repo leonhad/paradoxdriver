@@ -31,7 +31,7 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 public final class Max extends AbstractCallableProcedure {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getName() {
@@ -39,7 +39,7 @@ public final class Max extends AbstractCallableProcedure {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String getRemarks() {
