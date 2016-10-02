@@ -37,7 +37,7 @@ import java.sql.Types;
 public final class IntegerField implements FieldParser {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
@@ -45,7 +45,7 @@ public final class IntegerField implements FieldParser {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {

@@ -39,7 +39,7 @@ import java.sql.Types;
 public final class DateField implements FieldParser {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
@@ -47,7 +47,7 @@ public final class DateField implements FieldParser {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
@@ -55,7 +55,7 @@ public final class DateField implements FieldParser {
         final int a2 = 0xFF & buffer.get();
         final int a3 = 0xFF & buffer.get();
         final int a4 = 0xFF & buffer.get();
-        final long days = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFFFFFFL;
+        final long days = (a1 << 24 | a2 << 16 | a3 << 8 | a4) & 0x0FFF_FFFFL;
 
         final Date date = DateUtils.sdnToGregorian(days + 1_721_425);
         return new FieldValue(date, Types.DATE);

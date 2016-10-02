@@ -41,12 +41,12 @@ public final class ParadoxPK extends ParadoxDataFile {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj == this || obj != null && this.getClass() == obj.getClass() && getName().equals(
-                ((ParadoxPK) obj).getName());
+        return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass()) && getName().equals(
+                ((ParadoxPK) obj).getName()));
     }
 
     /**

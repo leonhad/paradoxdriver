@@ -25,7 +25,6 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 
 import java.nio.ByteBuffer;
-import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.Calendar;
@@ -41,7 +40,7 @@ import java.util.GregorianCalendar;
 public final class TimeField implements FieldParser {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
@@ -49,11 +48,10 @@ public final class TimeField implements FieldParser {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) throws
-            SQLException {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final int a1 = buffer.get();
         final int a2 = buffer.get();
         final int a3 = buffer.get();

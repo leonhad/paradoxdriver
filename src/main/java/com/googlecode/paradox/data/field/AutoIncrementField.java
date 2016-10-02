@@ -38,7 +38,7 @@ import java.sql.Types;
 public final class AutoIncrementField implements FieldParser {
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
@@ -46,12 +46,12 @@ public final class AutoIncrementField implements FieldParser {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException {
-        final int v = buffer.getInt() & 0x0FFFFFFF;
+        final int v = buffer.getInt() & 0x0FFF_FFFF;
         return new FieldValue(v, Types.INTEGER);
     }
 }
