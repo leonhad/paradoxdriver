@@ -289,7 +289,7 @@ public enum TokenType {
      */
     public static boolean isConditionalBreak(final TokenType tokenType) {
         for (final TokenType token : CONDITIONAL_BREAKS) {
-            if (token.equals(tokenType)) {
+            if (token == tokenType) {
                 return true;
             }
         }
@@ -305,7 +305,7 @@ public enum TokenType {
      */
     public static boolean isOperator(final TokenType tokenType) {
         for (final TokenType token : OPERATORS) {
-            if (token.equals(tokenType)) {
+            if (token == tokenType) {
                 return true;
             }
         }

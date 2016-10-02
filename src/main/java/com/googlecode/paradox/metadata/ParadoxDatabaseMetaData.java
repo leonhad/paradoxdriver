@@ -597,7 +597,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("FILTER_CONDITION", Types.VARCHAR));
 
         final List<List<FieldValue>> values = new ArrayList<>(1);
-        FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
+        final FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
 
         for (final ParadoxTable table : TableData.listTables(conn, tableNamePattern)) {
             final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(conn, table);
@@ -896,8 +896,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
         final List<List<FieldValue>> values = new ArrayList<>();
-        FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
-        FieldValue fieldVarchar = new FieldValue(Types.VARCHAR);
+        final FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
+        final FieldValue fieldVarchar = new FieldValue(Types.VARCHAR);
 
         for (final AbstractCallableProcedure procedure : ProcedureAS.getInstance().list()) {
             if (Expressions.accept(procedure.getName(), procedureNamePattern)) {
