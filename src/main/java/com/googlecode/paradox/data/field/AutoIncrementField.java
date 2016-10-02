@@ -25,7 +25,6 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 
 import java.nio.ByteBuffer;
-import java.sql.SQLException;
 import java.sql.Types;
 
 /**
@@ -49,8 +48,7 @@ public final class AutoIncrementField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
-            throws SQLException {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final int v = buffer.getInt() & 0x0FFF_FFFF;
         return new FieldValue(v, Types.INTEGER);
     }
