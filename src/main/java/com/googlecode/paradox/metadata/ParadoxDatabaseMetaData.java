@@ -53,6 +53,11 @@ import java.util.List;
 public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
     /**
+     * Paradox max column name.
+     */
+    private static final int PARADOX_MAX_COLUMN_NAME = 8;
+
+    /**
      * String max size.
      */
     private static final int STRING_MAX_SIZE = 255;
@@ -73,7 +78,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     private static final int JDBC_MAJOR_VERSION = 4;
 
     /**
-     * JDBC minor version
+     * JDBC minor version.
      */
     private static final int JDBC_MINOR_VERSION = 0;
 
@@ -233,7 +238,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(new FieldValue(Types.VARCHAR));
             row.add(new FieldValue(Types.INTEGER));
             row.add(new FieldValue(Types.INTEGER));
-            row.add(new FieldValue(255, Types.INTEGER));
+            row.add(new FieldValue(STRING_MAX_SIZE, Types.INTEGER));
             row.add(new FieldValue(ordinal));
             row.add(new FieldValue("YES", Types.VARCHAR));
             row.add(new FieldValue(Types.VARCHAR));
@@ -592,6 +597,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("FILTER_CONDITION", Types.VARCHAR));
 
         final List<List<FieldValue>> values = new ArrayList<>(1);
+        FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
 
         for (final ParadoxTable table : TableData.listTables(conn, tableNamePattern)) {
             final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(conn, table);
@@ -610,8 +616,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     row.add(new FieldValue(0, Types.INTEGER));
                     row.add(new FieldValue(pk.getName(), Types.VARCHAR));
                     row.add(new FieldValue("A", Types.VARCHAR));
-                    row.add(new FieldValue(0, Types.INTEGER));
-                    row.add(new FieldValue(0, Types.INTEGER));
+                    row.add(fieldZero);
+                    row.add(fieldZero);
                     row.add(null);
 
                     values.add(row);
@@ -633,8 +639,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     row.add(new FieldValue(ordinal, Types.INTEGER));
                     row.add(new FieldValue(field.getName(), Types.VARCHAR));
                     row.add(new FieldValue(index.getOrder(), Types.VARCHAR));
-                    row.add(new FieldValue(0, Types.INTEGER));
-                    row.add(new FieldValue(0, Types.INTEGER));
+                    row.add(fieldZero);
+                    row.add(fieldZero);
                     row.add(null);
 
                     values.add(row);
@@ -666,7 +672,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxBinaryLiteralLength() {
-        return 8;
+        return PARADOX_MAX_COLUMN_NAME;
     }
 
     /**
@@ -690,7 +696,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnNameLength() {
-        return 8;
+        return PARADOX_MAX_COLUMN_NAME;
     }
 
     /**
@@ -890,6 +896,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
         final List<List<FieldValue>> values = new ArrayList<>();
+        FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
+        FieldValue fieldVarchar = new FieldValue(Types.VARCHAR);
 
         for (final AbstractCallableProcedure procedure : ProcedureAS.getInstance().list()) {
             if (Expressions.accept(procedure.getName(), procedureNamePattern)) {
@@ -902,17 +910,17 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     row.add(new FieldValue(DatabaseMetaData.procedureColumnIn, Types.INTEGER));
                     row.add(new FieldValue(field.getSqlType(), Types.INTEGER));
                     row.add(new FieldValue(Column.getTypeName(field.getSqlType()), Types.VARCHAR));
-                    row.add(new FieldValue(0, Types.INTEGER));
+                    row.add(fieldZero);
                     row.add(new FieldValue(field.getSize(), Types.INTEGER));
-                    row.add(new FieldValue(0, Types.INTEGER));
-                    row.add(new FieldValue(0, Types.INTEGER));
+                    row.add(fieldZero);
+                    row.add(fieldZero);
                     row.add(new FieldValue(DatabaseMetaData.procedureNullable));
-                    row.add(new FieldValue(Types.VARCHAR));
-                    row.add(new FieldValue(Types.VARCHAR));
-                    row.add(new FieldValue(Types.VARCHAR));
-                    row.add(new FieldValue(Types.VARCHAR));
-                    row.add(new FieldValue(Types.VARCHAR));
-                    row.add(new FieldValue(Types.VARCHAR));
+                    row.add(fieldVarchar);
+                    row.add(fieldVarchar);
+                    row.add(fieldVarchar);
+                    row.add(fieldVarchar);
+                    row.add(fieldVarchar);
+                    row.add(fieldVarchar);
                     row.add(new FieldValue("NO", Types.VARCHAR));
                     row.add(new FieldValue(procedure.getName(), Types.VARCHAR));
                     values.add(row);
