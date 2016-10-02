@@ -65,6 +65,10 @@ import java.util.Map;
 public final class ParadoxResultSet implements ResultSet {
 
     /**
+     * Default fetch size.
+     */
+    private static final int FETCH_SIZE = 10;
+    /**
      * If this connection is invalid.
      */
     private static final String ERROR_INVALID_COLUMN = "Invalid column.";
@@ -95,7 +99,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * The amount of rows fetched.
      */
-    private int fetchSize = 10;
+    private int fetchSize = FETCH_SIZE;
     /**
      * Last got value.
      */
@@ -385,7 +389,10 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? (byte) 0 : lastValue.getNumber().byteValue();
+        if (lastValue.isNull()) {
+            return (byte) 0;
+        }
+        return lastValue.getNumber().byteValue();
     }
 
     /**
@@ -473,7 +480,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public String getCursorName() {
-        return statement != null ? statement.getCursorName() : "NO_NAME";
+        if (statement != null) {
+            return statement.getCursorName();
+        }
+        return "NO_NAME";
     }
 
     /**
@@ -527,7 +537,10 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? 0D : lastValue.getNumber().doubleValue();
+        if (lastValue.isNull()) {
+            return 0D;
+        }
+        return lastValue.getNumber().doubleValue();
     }
 
     /**
@@ -566,7 +579,10 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? 0F : lastValue.getNumber().floatValue();
+        if (lastValue.isNull()) {
+            return 0F;
+        }
+        return lastValue.getNumber().floatValue();
     }
 
     /**
@@ -620,7 +636,10 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? 0L : lastValue.getNumber().longValue();
+        if (lastValue.isNull()) {
+            return 0L;
+        }
+        return lastValue.getNumber().longValue();
     }
 
     /**
@@ -794,7 +813,10 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? (short) 0 : lastValue.getNumber().shortValue();
+        if (lastValue.isNull()) {
+            return (short) 0;
+        }
+        return lastValue.getNumber().shortValue();
     }
 
     /**
@@ -907,7 +929,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Timestamp getTimestamp(final int columnIndex, final Calendar cal) throws SQLException {
+    public Timestamp getTimestamp(final int columnIndex, final Calendar cal) {
         return getTimestamp(columnIndex);
     }
 
@@ -1048,7 +1070,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isWrapperFor(final Class<?> iFace) throws SQLException {
+    public boolean isWrapperFor(final Class<?> iFace) {
         return Utils.isWrapperFor(this, iFace);
     }
 
@@ -1311,7 +1333,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream) throws SQLException {
+    public void updateBlob(final int columnIndex, final InputStream inputStream) {
         throw new UnsupportedOperationException();
     }
 
