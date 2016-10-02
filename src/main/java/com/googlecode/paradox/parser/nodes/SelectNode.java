@@ -31,7 +31,7 @@ import java.util.List;
  * @version 1.1
  * @since 1.0
  */
-public class SelectNode extends StatementNode {
+public final class SelectNode extends StatementNode {
 
     /**
      * The field list (SELECT).

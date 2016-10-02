@@ -71,7 +71,7 @@ public final class TableNode extends SQLNode {
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {

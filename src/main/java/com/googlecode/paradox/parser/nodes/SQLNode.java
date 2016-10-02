@@ -116,13 +116,4 @@ public class SQLNode {
     public final void setChildhood(final Collection<? extends SQLNode> childhood) {
         this.childhood = Collections.unmodifiableCollection(childhood);
     }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public String toString() {
-        return name;
-    }
-
 }

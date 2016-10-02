@@ -21,10 +21,10 @@ package com.googlecode.paradox.parser.nodes;
 
 /**
  * The join type list.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public enum JoinType {
     /**

@@ -21,18 +21,18 @@ package com.googlecode.paradox.parser.nodes;
 
 /**
  * Stores a statement node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
 public class StatementNode extends SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param name
-     *            the statement name.
+     *         the statement name.
      */
     public StatementNode(final String name) {
         super(name);

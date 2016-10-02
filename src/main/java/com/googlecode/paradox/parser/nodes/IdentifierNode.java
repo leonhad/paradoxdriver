@@ -21,20 +21,28 @@ package com.googlecode.paradox.parser.nodes;
 
 /**
  * Stores a identifier node.
- * 
+ *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
-public class IdentifierNode extends SQLNode {
+public final class IdentifierNode extends SQLNode {
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param name
-     *            the identifier name.
+     *         the identifier name.
      */
     public IdentifierNode(final String name) {
         super(name);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public String toString() {
+        return name;
     }
 }
