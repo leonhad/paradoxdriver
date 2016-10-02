@@ -47,7 +47,7 @@ public final class ClobBlock {
     /**
      * The CLOB data.
      */
-    private final byte[] value;
+    private byte[] value = null;
 
     /**
      * Create a new instance.
@@ -79,9 +79,7 @@ public final class ClobBlock {
         this.num = num;
         this.type = type;
         this.offset = offset;
-        if (value == null) {
-            this.value = value;
-        } else {
+        if (value != null) {
             this.value = value.clone();
         }
     }
