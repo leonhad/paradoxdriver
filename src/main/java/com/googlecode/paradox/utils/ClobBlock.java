@@ -79,10 +79,10 @@ public final class ClobBlock {
         this.num = num;
         this.type = type;
         this.offset = offset;
-        if (value != null) {
-            this.value = value.clone();
-        } else {
+        if (value == null) {
             this.value = new byte[0];
+        } else {
+            this.value = value.clone();
         }
     }
 
