@@ -53,6 +53,36 @@ import java.util.List;
 public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
     /**
+     * String max size.
+     */
+    private static final int STRING_MAX_SIZE = 255;
+
+    /**
+     * Paradox major version.
+     */
+    private static final int PARADOX_MAJOR_VERSION = 7;
+
+    /**
+     * Paradox minor version.
+     */
+    private static final int PARADOX_MINOR_VERSION = 0;
+
+    /**
+     * JDBC major version.
+     */
+    private static final int JDBC_MAJOR_VERSION = 4;
+
+    /**
+     * JDBC minor version
+     */
+    private static final int JDBC_MINOR_VERSION = 0;
+
+    /**
+     * Max field size.
+     */
+    private static final int MAX_INT_SIZE = 2_048;
+
+    /**
      * The column name field.
      */
     private static final String COLUMN_NAME = "COLUMN_NAME";
@@ -190,7 +220,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(new FieldValue(type, Types.INTEGER));
             row.add(new FieldValue(Column.getTypeName(type), Types.VARCHAR));
             row.add(new FieldValue(field.getSize(), Types.INTEGER));
-            row.add(new FieldValue(2_048, Types.INTEGER));
+            row.add(new FieldValue(MAX_INT_SIZE, Types.INTEGER));
 
             if ((field.getType() == 5) || (field.getType() == 6)) {
                 row.add(new FieldValue(2, Types.INTEGER));
@@ -424,7 +454,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getDatabaseMajorVersion() {
-        return 7;
+        return PARADOX_MAJOR_VERSION;
     }
 
     /**
@@ -432,7 +462,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getDatabaseMinorVersion() {
-        return 0;
+        return PARADOX_MINOR_VERSION;
     }
 
     /**
@@ -620,7 +650,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getJDBCMajorVersion() {
-        return 4;
+        return JDBC_MAJOR_VERSION;
     }
 
     /**
@@ -628,7 +658,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getJDBCMinorVersion() {
-        return 0;
+        return JDBC_MINOR_VERSION;
     }
 
     /**
@@ -644,7 +674,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxCatalogNameLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -652,7 +682,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxCharLiteralLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -668,7 +698,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInGroupBy() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -676,7 +706,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInIndex() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -684,7 +714,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInOrderBy() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -692,7 +722,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInSelect() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -700,7 +730,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInTable() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -716,7 +746,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxCursorNameLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -724,7 +754,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxIndexLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -732,7 +762,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxProcedureNameLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -740,7 +770,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxRowSize() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -748,7 +778,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxSchemaNameLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -772,7 +802,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxTableNameLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -780,7 +810,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxTablesInSelect() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
@@ -788,7 +818,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public int getMaxUserNameLength() {
-        return 255;
+        return STRING_MAX_SIZE;
     }
 
     /**
