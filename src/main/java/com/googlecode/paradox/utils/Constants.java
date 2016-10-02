@@ -23,13 +23,13 @@ package com.googlecode.paradox.utils;
  * Stores the driver constants.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.0
+ * @since 1.0
  */
 public final class Constants {
 
     /**
-     * Driver Name
+     * Driver Name.
      */
     public static final String DRIVER_NAME = "Paradox";
     /**
@@ -41,23 +41,23 @@ public final class Constants {
      */
     public static final String ERROR_UNSUPPORTED_OPERATION = "Unsupported operation.";
     /**
-     * Major version of the Driver
+     * Major version of the Driver.
      */
     public static final int MAJOR_VERSION = 1;
     /**
-     * Paradox max string size
+     * Paradox max string size.
      */
     public static final int MAX_STRING_SIZE = 255;
     /**
-     * Minor version of the Driver
+     * Minor version of the Driver.
      */
     public static final int MINOR_VERSION = 3;
     /**
-     * Driver String Version
+     * Driver String Version.
      */
     public static final String DRIVER_VERSION = Constants.MAJOR_VERSION + "." + Constants.MINOR_VERSION;
     /**
-     * Driver prefix
+     * Driver prefix.
      */
     public static final String URL_PREFIX = "jdbc:paradox:";
 

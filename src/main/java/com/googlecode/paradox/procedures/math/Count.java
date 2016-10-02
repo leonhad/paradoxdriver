@@ -28,7 +28,7 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
  * @version 1.0
  * @since 1.1
  */
-public class Count extends AbstractCallableProcedure {
+public final class Count extends AbstractCallableProcedure {
 
     /**
      * {@inheritDoc}.
