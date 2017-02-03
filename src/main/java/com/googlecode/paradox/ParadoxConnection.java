@@ -1,28 +1,26 @@
 /*
  * ParadoxConnection.java
  *
- * 03/14/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -57,27 +55,15 @@ import java.util.concurrent.Executor;
  * @since 1.0
  */
 public final class ParadoxConnection implements Connection {
-
-    /**
-     * Database catalog.
-     */
-    private final String catalog;
-    /**
-     * Store the connection directory reference.
-     */
-    private final File dir;
-    /**
-     * Stores the opened statements.
-     */
-    private final ArrayList<Statement> statements = new ArrayList<>();
-    /**
-     * Driver URL.
-     */
-    private final String url;
+    
     /**
      * Auto Commit flag.
      */
     private boolean autocommit = true;
+    /**
+     * Database catalog.
+     */
+    private final String catalog;
     /**
      * Connection properties info.
      */
@@ -86,6 +72,10 @@ public final class ParadoxConnection implements Connection {
      * If this connection is closed.
      */
     private boolean closed;
+    /**
+     * Store the connection directory reference.
+     */
+    private final File dir;
     /**
      * This connection holdability.
      */
@@ -111,6 +101,10 @@ public final class ParadoxConnection implements Connection {
      */
     private String schema = "APP";
     /**
+     * Stores the opened statements.
+     */
+    private final ArrayList<Statement> statements = new ArrayList<>();
+    /**
      * Stores the transaction isolation mode.
      */
     private int transactionIsolation = Connection.TRANSACTION_NONE;
@@ -118,31 +112,33 @@ public final class ParadoxConnection implements Connection {
      * Stores the JDBC type mapping.
      */
     private Map<String, Class<?>> typeMap;
+    /**
+     * Driver URL.
+     */
+    private final String url;
 
     /**
      * Creates a new paradox connection.
      *
      * @param dir
-     *         database directory.
+     *            database directory.
      * @param url
-     *         connect URL.
+     *            connect URL.
      * @param info
-     *         connection properties.
+     *            connection properties.
      * @throws SQLException
-     *         in any connection fault.
+     *             in any connection fault.
      */
     public ParadoxConnection(final File dir, final String url, final Map<Object, Object> info) throws SQLException {
         this.url = url;
         this.dir = dir;
 
-        if (info != null && info.size() > 0) {
-            throw new SQLFeatureNotSupportedException("Change properties is not supported yet.");
-        } else if (!dir.exists() && !dir.isDirectory()) {
+        // FIXME: change parameters.
+        if (!dir.exists() && !dir.isDirectory()) {
             throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
         }
-
-        tryLock(dir);
-        catalog = dir.getName();
+        this.tryLock(dir);
+        this.catalog = dir.getName();
     }
 
     /**
@@ -166,26 +162,26 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void close() throws SQLException {
-        for (final Statement stmt : statements) {
+        for (final Statement stmt : this.statements) {
             stmt.close();
         }
-        statements.clear();
+        this.statements.clear();
 
-        if (lock != null && lock.isValid()) {
+        if ((this.lock != null) && this.lock.isValid()) {
             try {
-                lock.release();
+                this.lock.release();
             } catch (final IOException ex) {
                 throw new SQLException("Error unlocking database.", SQLStates.INVALID_STATE.getValue(), ex);
             }
         }
-        if (lockFile != null) {
+        if (this.lockFile != null) {
             try {
-                lockFile.close();
+                this.lockFile.close();
             } catch (final IOException ex) {
                 throw new SQLException("Can't release lock file.", SQLStates.INVALID_STATE.getValue(), ex);
             }
         }
-        closed = true;
+        this.closed = true;
     }
 
     /**
@@ -242,7 +238,7 @@ public final class ParadoxConnection implements Connection {
     @Override
     public Statement createStatement() {
         final Statement stmt = new ParadoxStatement(this);
-        statements.add(stmt);
+        this.statements.add(stmt);
         return stmt;
     }
 
@@ -251,16 +247,16 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency) {
-        return createStatement();
+        return this.createStatement();
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int
-            resultSetHoldability) {
-        return createStatement();
+    public Statement createStatement(final int resultSetType, final int resultSetConcurrency,
+            final int resultSetHoldability) {
+        return this.createStatement();
     }
 
     /**
@@ -276,15 +272,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean getAutoCommit() {
-        return autocommit;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setAutoCommit(final boolean autoCommit) {
-        autocommit = autoCommit;
+        return this.autocommit;
     }
 
     /**
@@ -292,15 +280,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getCatalog() {
-        return catalog;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setCatalog(final String catalog) throws SQLException {
-        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
+        return this.catalog;
     }
 
     /**
@@ -308,15 +288,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Properties getClientInfo() {
-        return new Properties(clientInfo);
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setClientInfo(final Properties clientInfo) {
-        this.clientInfo = new Properties(clientInfo);
+        return new Properties(this.clientInfo);
     }
 
     /**
@@ -324,7 +296,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getClientInfo(final String name) {
-        return clientInfo.getProperty(name);
+        return this.clientInfo.getProperty(name);
     }
 
     /**
@@ -333,7 +305,7 @@ public final class ParadoxConnection implements Connection {
      * @return the current directory.
      */
     public File getDir() {
-        return dir;
+        return this.dir;
     }
 
     /**
@@ -341,18 +313,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public int getHoldability() {
-        return holdability;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setHoldability(final int holdability) throws SQLException {
-        if (holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT && holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT) {
-            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
-        }
-        this.holdability = holdability;
+        return this.holdability;
     }
 
     /**
@@ -368,7 +329,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public int getNetworkTimeout() {
-        return networkTimeout;
+        return this.networkTimeout;
     }
 
     /**
@@ -376,15 +337,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getSchema() {
-        return schema;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setSchema(final String schema) {
-        this.schema = schema;
+        return this.schema;
     }
 
     /**
@@ -392,18 +345,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public int getTransactionIsolation() {
-        return transactionIsolation;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setTransactionIsolation(final int level) throws SQLException {
-        if (Connection.TRANSACTION_NONE != level) {
-            throw new SQLException("Invalid level.");
-        }
-        transactionIsolation = level;
+        return this.transactionIsolation;
     }
 
     /**
@@ -411,15 +353,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Map<String, Class<?>> getTypeMap() {
-        return typeMap;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setTypeMap(final Map<String, Class<?>> typeMap) {
-        this.typeMap = typeMap;
+        return this.typeMap;
     }
 
     /**
@@ -428,7 +362,7 @@ public final class ParadoxConnection implements Connection {
      * @return the URL connection
      */
     public String getUrl() {
-        return url;
+        return this.url;
     }
 
     /**
@@ -444,7 +378,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean isClosed() {
-        return closed;
+        return this.closed;
     }
 
     /**
@@ -452,15 +386,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean isReadOnly() {
-        return readonly;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setReadOnly(final boolean readOnly) {
-        readonly = readOnly;
+        return this.readonly;
     }
 
     /**
@@ -468,7 +394,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean isValid(final int timeout) {
-        return !closed;
+        return !this.closed;
     }
 
     /**
@@ -500,9 +426,8 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency)
-            throws
-            SQLException {
-        return prepareCall(sql);
+            throws SQLException {
+        return this.prepareCall(sql);
     }
 
     /**
@@ -510,9 +435,8 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency,
-                                         final int resultSetHoldability) throws
-            SQLException {
-        return prepareCall(sql);
+            final int resultSetHoldability) throws SQLException {
+        return this.prepareCall(sql);
     }
 
     /**
@@ -528,27 +452,25 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(final String sql, final int autoGeneratedKeys) throws SQLException {
-        return prepareStatement(sql);
+        return this.prepareStatement(sql);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int
-            resultSetConcurrency) throws
-            SQLException {
-        return prepareStatement(sql);
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency)
+            throws SQLException {
+        return this.prepareStatement(sql);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int
-            resultSetConcurrency, final int resultSetHoldability) throws
-            SQLException {
-        return prepareStatement(sql);
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency,
+            final int resultSetHoldability) throws SQLException {
+        return this.prepareStatement(sql);
     }
 
     /**
@@ -556,7 +478,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(final String sql, final int[] columnIndexes) throws SQLException {
-        return prepareStatement(sql);
+        return this.prepareStatement(sql);
     }
 
     /**
@@ -564,7 +486,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public PreparedStatement prepareStatement(final String sql, final String[] columnNames) throws SQLException {
-        return prepareStatement(sql);
+        return this.prepareStatement(sql);
     }
 
     /**
@@ -595,8 +517,43 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
+    public void setAutoCommit(final boolean autoCommit) {
+        this.autocommit = autoCommit;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setCatalog(final String catalog) throws SQLException {
+        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setClientInfo(final Properties clientInfo) {
+        this.clientInfo = new Properties(clientInfo);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
     public void setClientInfo(final String name, final String value) {
-        clientInfo.put(name, value);
+        this.clientInfo.put(name, value);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setHoldability(final int holdability) throws SQLException {
+        if ((holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT) && (holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT)) {
+            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
+        }
+        this.holdability = holdability;
     }
 
     /**
@@ -604,7 +561,15 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setNetworkTimeout(final Executor executor, final int milliseconds) {
-        networkTimeout = milliseconds;
+        this.networkTimeout = milliseconds;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setReadOnly(final boolean readOnly) {
+        this.readonly = readOnly;
     }
 
     /**
@@ -624,22 +589,49 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setSchema(final String schema) {
+        this.schema = schema;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setTransactionIsolation(final int level) throws SQLException {
+        if (Connection.TRANSACTION_NONE != level) {
+            throw new SQLException("Invalid level.");
+        }
+        this.transactionIsolation = level;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setTypeMap(final Map<String, Class<?>> typeMap) {
+        this.typeMap = typeMap;
+    }
+
+    /**
      * Try to lock this connection.
      *
      * @param dir
-     *         database directory.
+     *            database directory.
      * @throws SQLException
-     *         if this can't lock the connection.
+     *             if this can't lock the connection.
      */
     private void tryLock(final File dir) throws SQLException {
         try {
-            lockFile = new RandomAccessFile(new File(dir.getAbsolutePath(), "db.lock"), "rw");
-            final FileChannel channel = lockFile.getChannel();
-            lock = channel.tryLock();
+            this.lockFile = new RandomAccessFile(new File(dir.getAbsolutePath(), "db.lock"), "rw");
+            final FileChannel channel = this.lockFile.getChannel();
+            this.lock = channel.tryLock();
         } catch (final IOException e) {
             throw new SQLException(e);
         }
-        if (lock == null || !lock.isValid() || lock.isShared()) {
+        if ((this.lock == null) || !this.lock.isValid() || this.lock.isShared()) {
             throw new SQLException("Database is locked");
         }
     }
