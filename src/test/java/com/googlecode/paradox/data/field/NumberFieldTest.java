@@ -26,6 +26,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.googlecode.paradox.data.table.value.FieldValue;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * Unit test for {@link NumberField} class.
@@ -56,7 +60,23 @@ public class NumberFieldTest {
         final NumberField field = new NumberField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x40, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0 });
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals(100.5, value.getNumber());
+        Assert.assertEquals("Diferent values.", 100.5d, value.getNumber().doubleValue(), 0);
+    }
+    
+    
+    /**
+     * Test for decimal values.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testDecimalValues() throws Exception {
+        try (Connection conn = DriverManager.getConnection("jdbc:paradox:target/test-classes/db");
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM \"DECIMAL\"")) {
+
+            Assert.assertTrue("First record:", rs.next());
+        }
     }
 
     /**

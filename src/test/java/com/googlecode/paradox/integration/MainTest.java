@@ -60,8 +60,7 @@ public class MainTest {
     /**
      * Register the database driver.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
@@ -71,8 +70,7 @@ public class MainTest {
     /**
      * Close the test connection.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -84,8 +82,7 @@ public class MainTest {
     /**
      * Connect to the test database.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Before
     public void connect() throws Exception {
@@ -95,8 +92,7 @@ public class MainTest {
     /**
      * Test for the catalog metadata.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testCatalog() throws Exception {
@@ -120,8 +116,7 @@ public class MainTest {
     /**
      * Test for the index info metadata.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testIndexInfo() throws Exception {
@@ -167,8 +162,7 @@ public class MainTest {
     /**
      * Test for primary key metadata.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testPrimaryKey() throws Exception {
@@ -196,8 +190,7 @@ public class MainTest {
     /**
      * Test for {@link ResultSet} execution.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSet() throws Exception {
@@ -210,10 +203,10 @@ public class MainTest {
             rs = stmt.executeQuery("SELECT AC as 'ACode', State, CITIES FROM AREACODES");
 
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertEquals("Column 'AC':", rs.getString("ac"), "201");
-            Assert.assertEquals("Column 'State':", rs.getString("State"), "NJ");
-            Assert.assertEquals("Column 'Cities':", rs.getString("Cities"),
-                    "Hackensack, Jersey City (201/551 overlay)");
+            Assert.assertEquals("Column 'AC':", "201", rs.getString("ac"));
+            Assert.assertEquals("Column 'State':", "NJ", rs.getString("State"));
+            Assert.assertEquals("Column 'Cities':", "Hackensack, Jersey City (201/551 overlay)",
+                    rs.getString("Cities"));
         } finally {
             if (rs != null) {
                 rs.close();
@@ -227,8 +220,7 @@ public class MainTest {
     /**
      * Test for {@link ResultSet} with multiple values.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSetMultipleValues() throws Exception {
@@ -261,12 +253,11 @@ public class MainTest {
             }
         }
     }
-
+    
     /**
      * Test {@link ResultSet} with one column.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSetOneColumn() throws Exception {
@@ -302,8 +293,7 @@ public class MainTest {
     /**
      * Test {@link ResultSet} with two columns.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testResultSetTwoColumn() throws Exception {
@@ -345,8 +335,7 @@ public class MainTest {
     /**
      * Test for unwrap impossible.
      *
-     * @throws Exception
-     *         if test succeed.
+     * @throws Exception if test succeed.
      */
     @Test(expected = SQLException.class)
     public void testUnwrapImpossible() throws Exception {
@@ -356,8 +345,7 @@ public class MainTest {
     /**
      * Test for a valid connection.
      *
-     * @throws SQLException
-     *         in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testValidConnection() throws SQLException {
@@ -368,8 +356,7 @@ public class MainTest {
     /**
      * Test for view columns metadata.
      *
-     * @throws Exception
-     *         in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testViewColumns() throws Exception {
