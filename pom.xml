@@ -125,9 +125,7 @@
                 </dependencies>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <argLine>-noverify -Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
-                        ${jacoco.agent.ut.arg}
-                    </argLine>
+                    <argLine>-noverify -Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled</argLine>
                     <includes>
                         <include>**/*.class</include>
                     </includes>
