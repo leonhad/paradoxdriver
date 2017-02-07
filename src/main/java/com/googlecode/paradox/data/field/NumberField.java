@@ -49,7 +49,24 @@ public final class NumberField implements FieldParser {
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final double v = buffer.getDouble() * -1;
-        return new FieldValue(v, Types.DOUBLE);
+        long value = buffer.getLong();
+        //System.out.println("teste " + Long.toHexString(value));
+        //System.out.println("teste " + Binary64ToDouble(value));
+        
+        return new FieldValue(Binary64ToDouble(value), Types.DOUBLE);
+    }
+
+    double Binary64ToDouble(long value) {
+        long minus = -1, exponent;
+        double fraction, result;
+
+        if ((value & 0x8000000000000000l) == 0) {
+            minus = 1;
+        }
+        exponent = ((value & 0x7FF0000000000000L) >> 52) - 1023;
+        fraction = value & 0xFFFFFFFFFFFFFL + 0x10000000000000L;
+        fraction = fraction / 0x10000000000000L;
+        result = minus * fraction * Math.pow(2, exponent);
+        return (result);
     }
 }

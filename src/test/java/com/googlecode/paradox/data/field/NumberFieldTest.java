@@ -33,7 +33,7 @@ import java.sql.Statement;
 
 /**
  * Unit test for {@link NumberField} class.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @since 1.3
  * @version 1.0
@@ -51,19 +51,19 @@ public class NumberFieldTest {
 
     /**
      * Test for parse method.
-     * 
-     * @throws SQLException
-     *             in case of parse errors.
+     *
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final NumberField field = new NumberField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x40, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0 });
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{
+            (byte) 0x40, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0
+        });
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Diferent values.", 100.5d, value.getNumber().doubleValue(), 0);
     }
-    
-    
+
     /**
      * Test for decimal values.
      *
@@ -72,8 +72,8 @@ public class NumberFieldTest {
     @Test
     public void testDecimalValues() throws Exception {
         try (Connection conn = DriverManager.getConnection("jdbc:paradox:target/test-classes/db");
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM \"DECIMAL\"")) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM \"DECIMAL\"")) {
 
             Assert.assertTrue("First record:", rs.next());
         }
