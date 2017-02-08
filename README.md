@@ -21,8 +21,5 @@ If you using Maven, you can use the dependencies below:
 </dependency>
 ```
 
-If you just want the files, you can grab them here:
+If you just want the files, you can grab the [latest release](https://github.com/leonhad/paradoxdriver/releases/latest):
 
-  * [paradoxdriver-1.2.jar](http://search.maven.org/remotecontent?filepath=com/googlecode/paradoxdriver/paradoxdriver/1.2/paradoxdriver-1.2.jar)
-  * [paradoxdriver-1.2-javadoc.jar](http://search.maven.org/remotecontent?filepath=com/googlecode/paradoxdriver/paradoxdriver/1.2/paradoxdriver-1.2-javadoc.jar)
-  * [paradoxdriver-1.2-sources.jar](http://search.maven.org/remotecontent?filepath=com/googlecode/paradoxdriver/paradoxdriver/1.2/paradoxdriver-1.2-sources.jar)
