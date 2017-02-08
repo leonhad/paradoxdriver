@@ -21,5 +21,5 @@ If you using Maven, you can use the dependencies below:
 </dependency>
 ```
 
-If you just want the files, you can grab the [latest release](https://github.com/leonhad/paradoxdriver/releases/latest):
+If you just want the files, you can grab the [latest release](https://github.com/leonhad/paradoxdriver/releases/latest).
 
