@@ -50,10 +50,9 @@ public final class NumberField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long value = buffer.getLong();
-        //System.out.println("teste " + Long.toHexString(value));
-        //System.out.println("teste " + Binary64ToDouble(value));
+        System.out.println(Binary64ToDouble(value)+ " = " + Double.longBitsToDouble(value));
         
-        return new FieldValue(Binary64ToDouble(value), Types.DOUBLE);
+        return new FieldValue(Double.longBitsToDouble(value), Types.DOUBLE);
     }
 
     double Binary64ToDouble(long value) {
