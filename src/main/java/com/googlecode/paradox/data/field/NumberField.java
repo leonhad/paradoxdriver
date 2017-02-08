@@ -26,6 +26,7 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 
 import java.nio.ByteBuffer;
 import java.sql.Types;
+import java.util.BitSet;
 
 /**
  * Parses the numeric fields.
@@ -50,22 +51,11 @@ public final class NumberField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long value = buffer.getLong();
-        System.out.println(Binary64ToDouble(value)+ " = " + Double.longBitsToDouble(value));
-        
-        return new FieldValue(Double.longBitsToDouble(value), Types.DOUBLE);
-    }
-
-    double Binary64ToDouble(long value) {
-        long minus = -1, exponent;
-        double fraction, result;
-
-        if ((value & 0x8000000000000000l) == 0) {
-            minus = 1;
+        if ((value >>> 63) == 1) {
+            value &= 0x7FFFFFFFFFFFFFFFL;
+        } else {
+            value = ~value;
         }
-        exponent = ((value & 0x7FF0000000000000L) >> 52) - 1023;
-        fraction = value & 0xFFFFFFFFFFFFFL + 0x10000000000000L;
-        fraction = fraction / 0x10000000000000L;
-        result = minus * fraction * Math.pow(2, exponent);
-        return (result);
+        return new FieldValue(Double.longBitsToDouble(value), Types.DOUBLE);
     }
 }

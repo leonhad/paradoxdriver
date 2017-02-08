@@ -137,7 +137,6 @@ public final class ParadoxConnection implements Connection {
         if (!dir.exists() && !dir.isDirectory()) {
             throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
         }
-        this.tryLock(dir);
         this.catalog = dir.getName();
     }
 
@@ -613,27 +612,6 @@ public final class ParadoxConnection implements Connection {
     @Override
     public void setTypeMap(final Map<String, Class<?>> typeMap) {
         this.typeMap = typeMap;
-    }
-
-    /**
-     * Try to lock this connection.
-     *
-     * @param dir
-     *            database directory.
-     * @throws SQLException
-     *             if this can't lock the connection.
-     */
-    private void tryLock(final File dir) throws SQLException {
-        try {
-            this.lockFile = new RandomAccessFile(new File(dir.getAbsolutePath(), "db.lock"), "rw");
-            final FileChannel channel = this.lockFile.getChannel();
-            this.lock = channel.tryLock();
-        } catch (final IOException e) {
-            throw new SQLException(e);
-        }
-        if ((this.lock == null) || !this.lock.isValid() || this.lock.isShared()) {
-            throw new SQLException("Database is locked");
-        }
     }
 
     /**
