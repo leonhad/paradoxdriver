@@ -58,10 +58,10 @@ public class NumberFieldTest {
     public void testParse() throws SQLException {
         final NumberField field = new NumberField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{
-            (byte) 0x40, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0
+            (byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0
         });
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Diferent values.", 100.5d, value.getNumber().doubleValue(), 0);
+        Assert.assertEquals("Different values.", 100.5d, value.getNumber().doubleValue(), 0);
     }
 
     /**

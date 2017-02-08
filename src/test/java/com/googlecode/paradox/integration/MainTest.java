@@ -233,13 +233,13 @@ public class MainTest {
             rs = stmt.executeQuery("SELECT \"id\", name, moneys FROM \"general.db\"");
 
             Assert.assertTrue("First record:", rs.next());
-            Assert.assertEquals("1 row: ", "1 - Mari -100.0",
+            Assert.assertEquals("1 row: ", "1 - Mari 100.0",
                     rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
             Assert.assertTrue("Second record:", rs.next());
-            Assert.assertEquals("2 row: ", "2 - Katty -150.0",
+            Assert.assertEquals("2 row: ", "2 - Katty 150.0",
                     rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
             Assert.assertTrue("Third record:", rs.next());
-            Assert.assertEquals("2 row: ", "333333333 - Elizabet -75.0",
+            Assert.assertEquals("2 row: ", "333333333 - Elizabet 75.0",
                     rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
         } finally {
             if (rs != null) {
