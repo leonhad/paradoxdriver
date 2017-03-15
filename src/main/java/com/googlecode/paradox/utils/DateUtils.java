@@ -35,7 +35,7 @@ public final class DateUtils {
     /**
      * Amount of days in 400 years.
      */
-    private static final int DAYS_PER_400_YEARS = 146097;
+    private static final int DAYS_PER_400_YEARS = 146_097;
 
     /**
      * Amount of days in 5 months.
@@ -50,7 +50,7 @@ public final class DateUtils {
     /**
      * Days offset in Paradox format.
      */
-    private static final int SDN_OFFSET = 32045;
+    private static final int SDN_OFFSET = 32_045;
 
     /**
      * Utility class.
@@ -132,7 +132,7 @@ public final class DateUtils {
         }
 
         /* Adjust to the B.C./A.D. type numbering. */
-        year -= 4800;
+        year -= 4_800;
         if (year <= 0) {
             year--;
         }
@@ -152,7 +152,7 @@ public final class DateUtils {
      */
     private static void checkForDateBoundaries(final long inputYear, final long inputMonth, final long inputDay) {
         // Check for invalid year.
-        if ((inputYear == 0) || (inputYear < -4714)) {
+        if ((inputYear == 0) || (inputYear < -4_714)) {
             throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
         }
         // Check for invalid month.
@@ -178,7 +178,7 @@ public final class DateUtils {
      *             in case of invalid date.
      */
     private static void checkYearBounds(final long inputYear, final long inputMonth, final long inputDay) {
-        if (inputYear == -4714) {
+        if (inputYear == -4_714) {
             if (inputMonth < 11) {
                 throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
             }
