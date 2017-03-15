@@ -25,7 +25,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public final class DriverTest {
-
+    
     /**
      * Test for JDBC compliance.
      */
@@ -34,7 +34,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertFalse("Driver not compliant.", driver.jdbcCompliant());
     }
-
+    
     /**
      * Test for invalid connection.
      *
@@ -46,7 +46,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertNull("Connection can't be valid.", driver.connect(null, null));
     }
-
+    
     /**
      * Test an invalid URL.
      *
@@ -58,7 +58,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertFalse(driver.acceptsURL("jdbc:mysql:/path"));
     }
-
+    
     /**
      * Test for driver logger.
      *
@@ -70,7 +70,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertNotNull(driver.getParentLogger());
     }
-
+    
     /**
      * Test for the Major Version.
      *
@@ -82,7 +82,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertEquals(Constants.MAJOR_VERSION, driver.getMajorVersion());
     }
-
+    
     /**
      * Test for the Minor Version.
      *
@@ -94,7 +94,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertEquals(Constants.MINOR_VERSION, driver.getMinorVersion());
     }
-
+    
     /**
      * Test for null properties.
      *
@@ -106,7 +106,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertEquals(0, driver.getPropertyInfo(null, null).length);
     }
-
+    
     /**
      * Test for null property info.
      *
@@ -118,7 +118,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null);
     }
-
+    
     /**
      * Test for property info.
      *
@@ -133,7 +133,7 @@ public final class DriverTest {
         Assert.assertEquals("DBNAME", info[0].name);
         Assert.assertEquals("password", info[1].name);
     }
-
+    
     /**
      * Test for properties with invalid URL.
      *
@@ -145,7 +145,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         driver.getPropertyInfo("jdbc:paradox:/path", null);
     }
-
+    
     /**
      * Test for a valid connection.
      *
@@ -160,7 +160,7 @@ public final class DriverTest {
             Assert.assertNotNull("Connection is not valid.", c.isValid(0));
         }
     }
-
+    
     /**
      * Test a valid URL.
      *

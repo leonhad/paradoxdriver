@@ -20,19 +20,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.2
  */
 public final class AllBlockCache implements IBlockCache {
-
+    
     /**
      * The cache instance.
      */
     private final Map<Integer, Map<Integer, ClobBlock>> cache;
-
+    
     /**
      * Create a new cache.
      */
     public AllBlockCache() {
-        cache = new ConcurrentHashMap<>();
+        this.cache = new ConcurrentHashMap<>();
     }
-
+    
     /**
      * Adds a list block to the cache.
      *
@@ -43,27 +43,27 @@ public final class AllBlockCache implements IBlockCache {
     public void add(final List<ClobBlock> blocks) {
         Map<Integer, ClobBlock> map;
         for (final ClobBlock block : blocks) {
-            if (cache.containsKey(block.getNum())) {
-                map = cache.get(block.getNum());
+            if (this.cache.containsKey(block.getNum())) {
+                map = this.cache.get(block.getNum());
             } else {
                 map = new ConcurrentHashMap<>();
-                cache.put(block.getNum(), map);
+                this.cache.put(block.getNum(), map);
             }
             map.put(block.getOffset(), block);
         }
     }
-
+    
     /**
      * Clears the cache.
      */
     @Override
     public void close() {
-        for (final Map<Integer, ClobBlock> map : cache.values()) {
+        for (final Map<Integer, ClobBlock> map : this.cache.values()) {
             map.clear();
         }
-        cache.clear();
+        this.cache.clear();
     }
-
+    
     /**
      * Gets a block by id.
      *
@@ -74,7 +74,7 @@ public final class AllBlockCache implements IBlockCache {
      */
     @Override
     public ClobBlock get(final int num, final int offset) {
-        final Map<Integer, ClobBlock> map = cache.get(num);
+        final Map<Integer, ClobBlock> map = this.cache.get(num);
         if (map != null) {
             return map.get(offset);
         }

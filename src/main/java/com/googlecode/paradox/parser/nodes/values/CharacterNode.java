@@ -19,7 +19,7 @@ import java.util.Locale;
  * @since 1.1
  */
 public final class CharacterNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -31,5 +31,5 @@ public final class CharacterNode extends SQLNode {
     public CharacterNode(final String value, final String alias) {
         super(value.toUpperCase(Locale.US), alias.toUpperCase(Locale.US));
     }
-
+    
 }

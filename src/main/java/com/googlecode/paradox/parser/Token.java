@@ -16,17 +16,17 @@ package com.googlecode.paradox.parser;
  * @since 1.0
  */
 public final class Token {
-
+    
     /**
      * The token type.
      */
     private final TokenType type;
-
+    
     /**
      * The token value.
      */
     private final String value;
-
+    
     /**
      * Creates a new instance.
      *
@@ -39,49 +39,49 @@ public final class Token {
         this.type = type;
         this.value = value;
     }
-
+    
     /**
      * Gets the token type.
      *
      * @return the token type.
      */
     public TokenType getType() {
-        return type;
+        return this.type;
     }
-
+    
     /**
      * Gets the token value.
      *
      * @return the token value.
      */
     public String getValue() {
-        return value;
+        return this.value;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
-        return type + " = " + value;
+        return this.type + " = " + this.value;
     }
-
+    
     /**
      * Gets if this token is a conditional break.
      *
      * @return true if this token is a conditional break.
      */
     boolean isConditionBreak() {
-        return TokenType.isConditionalBreak(type);
+        return TokenType.isConditionalBreak(this.type);
     }
-
+    
     /**
      * Gets if this token is an operator.
      *
      * @return true if this token is an operator.
      */
     boolean isOperator() {
-        return TokenType.isOperator(type);
+        return TokenType.isOperator(this.type);
     }
-
+    
 }

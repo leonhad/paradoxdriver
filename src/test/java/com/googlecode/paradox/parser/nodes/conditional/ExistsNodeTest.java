@@ -30,7 +30,7 @@ public class ExistsNodeTest {
         Assert.assertEquals(1, and.getChildhood().size());
         Assert.assertEquals(node, and.getChildhood().iterator().next());
     }
-
+    
     /**
      * Test for name.
      */

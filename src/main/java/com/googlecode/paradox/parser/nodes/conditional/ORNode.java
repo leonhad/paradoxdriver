@@ -19,7 +19,7 @@ import java.util.Collections;
  * @since 1.1
  */
 public class ORNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -28,7 +28,7 @@ public class ORNode extends SQLNode {
      */
     public ORNode(final SQLNode child) {
         super("OR");
-        setChildhood(Collections.singletonList(child));
+        this.setChildhood(Collections.singletonList(child));
     }
-
+    
 }

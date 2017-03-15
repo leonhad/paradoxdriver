@@ -20,7 +20,7 @@ import java.util.Collections;
  * @since 1.1
  */
 public class ExistsNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -29,7 +29,7 @@ public class ExistsNode extends SQLNode {
      */
     public ExistsNode(final SelectNode child) {
         super("EXISTS");
-        setChildhood(Collections.singletonList(child));
+        this.setChildhood(Collections.singletonList(child));
     }
-
+    
 }

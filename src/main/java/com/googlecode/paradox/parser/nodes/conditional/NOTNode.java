@@ -19,7 +19,7 @@ import java.util.Collections;
  * @since 1.1
  */
 public class NOTNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -28,7 +28,7 @@ public class NOTNode extends SQLNode {
      */
     public NOTNode(final SQLNode child) {
         super("NOT");
-        setChildhood(Collections.singletonList(child));
+        this.setChildhood(Collections.singletonList(child));
     }
-
+    
 }

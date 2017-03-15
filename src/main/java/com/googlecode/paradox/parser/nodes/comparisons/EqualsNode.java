@@ -18,7 +18,7 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
  * @since 1.1
  */
 public final class EqualsNode extends AbstractComparisonNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -30,5 +30,5 @@ public final class EqualsNode extends AbstractComparisonNode {
     public EqualsNode(final FieldNode first, final FieldNode last) {
         super("=", first, last);
     }
-
+    
 }

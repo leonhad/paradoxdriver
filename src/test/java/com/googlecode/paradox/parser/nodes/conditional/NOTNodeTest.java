@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class NOTNodeTest {
-
+    
     /**
      * Test for childhood.
      */
@@ -32,7 +32,7 @@ public class NOTNodeTest {
         Assert.assertEquals(1, and.getChildhood().size());
         Assert.assertEquals(node, and.getChildhood().iterator().next());
     }
-
+    
     /**
      * Test for name.
      */

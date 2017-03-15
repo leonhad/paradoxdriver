@@ -12,15 +12,15 @@ import org.junit.Test;
  * @since 1.0
  */
 public class PrimaryKeyFilterTest {
-
+    
     private final PrimaryKeyFilter filter = new PrimaryKeyFilter();
-
+    
     /**
      * Test for acceptance.
      */
     @Test
     public void testAccept() {
         final File file = new File("test.px");
-        Assert.assertTrue("Invalid file filter.", filter.accept(file));
+        Assert.assertTrue("Invalid file filter.", this.filter.accept(file));
     }
 }

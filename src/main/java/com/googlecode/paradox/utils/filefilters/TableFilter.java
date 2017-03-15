@@ -20,24 +20,24 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class TableFilter implements FileFilter {
-
+    
     /**
      * The file extension.
      */
     private final String extension;
-
+    
     /**
      * The table name.
      */
     private final String tableName;
-
+    
     /**
      * Create a new instance.
      */
     public TableFilter() {
         this(null, "db");
     }
-
+    
     /**
      * Create a new instance.
      *
@@ -47,7 +47,7 @@ public final class TableFilter implements FileFilter {
     public TableFilter(final String tableName) {
         this(tableName, "db");
     }
-
+    
     /**
      * Create a new instance.
      *
@@ -60,18 +60,18 @@ public final class TableFilter implements FileFilter {
         this.tableName = tableName;
         this.extension = extension;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-
-        if (tableName != null) {
-            return Expressions.accept(name, tableName + "." + extension, false);
+        
+        if (this.tableName != null) {
+            return Expressions.accept(name, this.tableName + "." + this.extension, false);
         }
-        return Expressions.accept(name, "%." + extension, false);
+        return Expressions.accept(name, "%." + this.extension, false);
     }
-
+    
 }

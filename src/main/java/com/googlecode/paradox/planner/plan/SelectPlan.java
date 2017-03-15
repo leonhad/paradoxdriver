@@ -29,22 +29,22 @@ import java.util.List;
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
-
+    
     /**
      * The columns in this plan.
      */
     private final List<Column> columns = new ArrayList<>();
-
+    
     /**
      * The tables in this plan.
      */
     private final List<PlanTableNode> tables = new ArrayList<>();
-
+    
     /**
      * The data values.
      */
     private final List<List<FieldValue>> values = new ArrayList<>();
-
+    
     /**
      * Creates a SELECT plan.
      *
@@ -53,7 +53,7 @@ public final class SelectPlan implements Plan {
      */
     public SelectPlan(final ParadoxConnection conn) {
     }
-
+    
     /**
      * Add column from select list.
      *
@@ -63,14 +63,14 @@ public final class SelectPlan implements Plan {
      *             search column exception.
      */
     public void addColumn(final String name) throws SQLException {
-        final ParadoxField field = findField(name);
+        final ParadoxField field = this.findField(name);
         if (field == null) {
             throw new SQLException(String.format("Invalid column name: '%s'", name),
                     SQLStates.INVALID_COLUMN.getValue());
         }
-        columns.add(field.getColumn());
+        this.columns.add(field.getColumn());
     }
-
+    
     /**
      * Associate all columns from a table.
      *
@@ -81,10 +81,10 @@ public final class SelectPlan implements Plan {
      */
     public void addColumnFromTable(final ParadoxTable table) throws SQLException {
         for (final ParadoxField field : table.getFields()) {
-            columns.add(field.getColumn());
+            this.columns.add(field.getColumn());
         }
     }
-
+    
     /**
      * Adds a table to this plan.
      *
@@ -92,55 +92,55 @@ public final class SelectPlan implements Plan {
      *            the table.
      */
     public void addTable(final PlanTableNode table) {
-        tables.add(table);
+        this.tables.add(table);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public void execute() throws SQLException {
-        if (columns.isEmpty() || tables.isEmpty()) {
+        if (this.columns.isEmpty() || this.tables.isEmpty()) {
             return;
         }
-
-        for (final Column column : columns) {
-            for (final PlanTableNode table : tables) {
+        
+        for (final Column column : this.columns) {
+            for (final PlanTableNode table : this.tables) {
                 final ParadoxTable pTable = table.getTable();
                 if (column.getTableName().equalsIgnoreCase(pTable.getName())) {
-                    loadTableData(column, pTable);
+                    this.loadTableData(column, pTable);
                 }
             }
         }
     }
-
+    
     /**
      * Gets the columns in SELECT statement.
      *
      * @return the columns in SELECT statement.
      */
     public List<Column> getColumns() {
-        return Collections.unmodifiableList(columns);
+        return Collections.unmodifiableList(this.columns);
     }
-
+    
     /**
      * Gets the tables in this plan.
      *
      * @return the tables in this plan.
      */
     public List<PlanTableNode> getTables() {
-        return Collections.unmodifiableList(tables);
+        return Collections.unmodifiableList(this.tables);
     }
-
+    
     /**
      * Values from tables in column order.
      *
      * @return array of array of values/ Can be null (empty result set);
      */
     public List<List<FieldValue>> getValues() {
-        return Collections.unmodifiableList(values);
+        return Collections.unmodifiableList(this.values);
     }
-
+    
     /**
      * Fill the result row with a field order.
      *
@@ -152,16 +152,16 @@ public final class SelectPlan implements Plan {
     private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) {
         for (int j = 0; j < tableData.size(); j++) {
             List<FieldValue> resultRow;
-            if (j == values.size()) {
+            if (j == this.values.size()) {
                 resultRow = new ArrayList<>();
-                values.add(resultRow);
+                this.values.add(resultRow);
             } else {
-                resultRow = values.get(j);
+                resultRow = this.values.get(j);
             }
             resultRow.add(tableData.get(j).get(fieldOrder));
         }
     }
-
+    
     /**
      * Finds a single column in the table list.
      *
@@ -176,15 +176,15 @@ public final class SelectPlan implements Plan {
      */
     private void findColumn(final String fieldName, final List<ParadoxField> fields, final String prefix)
             throws SQLException {
-        for (final PlanTableNode table : tables) {
+        for (final PlanTableNode table : this.tables) {
             if (table.getTable() == null) {
                 throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
             }
-
+            
             if ((prefix != null) && (table.getAlias() != null) && !prefix.equalsIgnoreCase(table.getAlias())) {
                 continue;
             }
-
+            
             for (final ParadoxField field : table.getTable().getFields()) {
                 if (field.getName().equalsIgnoreCase(fieldName)) {
                     fields.add(field);
@@ -194,7 +194,7 @@ public final class SelectPlan implements Plan {
             }
         }
     }
-
+    
     /**
      * Find a paradox field by its name.
      *
@@ -213,8 +213,8 @@ public final class SelectPlan implements Plan {
             prefix = newName.substring(0, p);
             newName = newName.substring(p + 1);
         }
-
-        findColumn(newName, fields, prefix);
+        
+        this.findColumn(newName, fields, prefix);
         if (!fields.isEmpty()) {
             if (fields.size() > 1) {
                 throw new SQLException("Column '" + newName + "' ambiguously defined",
@@ -223,10 +223,10 @@ public final class SelectPlan implements Plan {
                 return fields.get(0);
             }
         }
-
+        
         return null;
     }
-
+    
     /**
      * Load the table data form a table.
      *
@@ -250,8 +250,8 @@ public final class SelectPlan implements Plan {
             System.out.println(column.getName() + " " + field.getOrderNum() + " " + tableData.size());
             throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
         }
-
+        
         final int p = field.getOrderNum() - 1;
-        fillResultValues(tableData, p);
+        this.fillResultValues(tableData, p);
     }
 }

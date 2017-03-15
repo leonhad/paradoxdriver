@@ -34,7 +34,7 @@ public class VarcharFieldTest {
         final VarcharField field = new VarcharField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -53,7 +53,7 @@ public class VarcharFieldTest {
         final FieldValue value = field.parse(table, buffer, paradoxField);
         Assert.assertEquals("Value not equals.", "test", value.getValue());
     }
-
+    
     /**
      * Test for valid match.
      */

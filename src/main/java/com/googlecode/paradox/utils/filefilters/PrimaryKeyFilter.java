@@ -20,19 +20,19 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class PrimaryKeyFilter implements FileFilter {
-
+    
     /**
      * The primary key name.
      */
     private final String pkName;
-
+    
     /**
      * Create a new instance.
      */
     public PrimaryKeyFilter() {
-        pkName = null;
+        this.pkName = null;
     }
-
+    
     /**
      * Create a new instance.
      *
@@ -42,15 +42,15 @@ public final class PrimaryKeyFilter implements FileFilter {
     public PrimaryKeyFilter(final String pkName) {
         this.pkName = pkName;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-
-        return Expressions.accept(name, "%.PX") && ((pkName == null) || Expressions.accept(name, pkName));
+        
+        return Expressions.accept(name, "%.PX") && ((this.pkName == null) || Expressions.accept(name, this.pkName));
     }
-
+    
 }

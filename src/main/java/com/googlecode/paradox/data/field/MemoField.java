@@ -28,7 +28,7 @@ import java.util.Arrays;
  * @since 1.3
  */
 public final class MemoField implements FieldParser {
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -36,7 +36,7 @@ public final class MemoField implements FieldParser {
     public boolean match(final int type) {
         return type == 0xC;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -45,12 +45,12 @@ public final class MemoField implements FieldParser {
             throws SQLException {
         final ByteBuffer value = ByteBuffer.allocate(field.getSize());
         Arrays.fill(value.array(), (byte) 0);
-
+        
         for (int chars = 0; chars < field.getSize(); chars++) {
             value.put(buffer.get());
         }
         value.flip();
-
+        
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final long offset = buffer.getInt();
         // Length
@@ -58,13 +58,13 @@ public final class MemoField implements FieldParser {
         // Modifier
         buffer.getShort();
         buffer.order(ByteOrder.BIG_ENDIAN);
-
+        
         final ClobDescriptor descriptor = new ClobDescriptor(table.getBlobTable());
         descriptor.setLeader(Utils.parseString(value, table.getCharset()));
-
+        
         descriptor.setOffset(offset);
-
+        
         return new FieldValue(descriptor, Types.CLOB);
     }
-
+    
 }

@@ -23,17 +23,17 @@ import org.junit.experimental.categories.Category;
  */
 @Category(IntegrationTest.class)
 public class PlannerTest {
-
+    
     /**
      * The database test connection.
      */
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-
+    
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -44,7 +44,7 @@ public class PlannerTest {
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Used to close the test connection.
      *
@@ -53,11 +53,11 @@ public class PlannerTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to test database.
      *
@@ -66,9 +66,9 @@ public class PlannerTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for an invalid table.
      *
@@ -78,10 +78,10 @@ public class PlannerTest {
     @Test(expected = SQLException.class)
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser("select * from invalid");
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         planner.create(parser.parse().get(0));
     }
-
+    
     /**
      * Test for a SELECT plan.
      *
@@ -91,7 +91,7 @@ public class PlannerTest {
     @Test
     public void testSelect() throws Exception {
         final SQLParser parser = new SQLParser("select * from areacodes a");
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());

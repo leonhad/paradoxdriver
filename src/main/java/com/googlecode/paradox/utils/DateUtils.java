@@ -26,39 +26,39 @@ import java.util.logging.Logger;
  * @since 1.0
  */
 public final class DateUtils {
-
+    
     /**
      * Amount of days in four years.
      */
     private static final int DAYS_PER_4_YEARS = 1461;
-
+    
     /**
      * Amount of days in 400 years.
      */
     private static final int DAYS_PER_400_YEARS = 146_097;
-
+    
     /**
      * Amount of days in 5 months.
      */
     private static final int DAYS_PER_5_MONTHS = 153;
-
+    
     /**
      * Used for debug purposes.
      */
     private static final Logger LOGGER = Logger.getLogger(DateUtils.class.getName());
-
+    
     /**
      * Days offset in Paradox format.
      */
     private static final int SDN_OFFSET = 32_045;
-
+    
     /**
      * Utility class.
      */
     private DateUtils() {
         // Utility class, not for use.
     }
-
+    
     /**
      * Convert the Gregorian date to Paradox format.
      *
@@ -78,10 +78,10 @@ public final class DateUtils {
             DateUtils.LOGGER.log(Level.FINER, e.getMessage(), e);
             return 0;
         }
-
+        
         // Make year always a positive number.
         long year = DateUtils.fixYearBounds(inputYear);
-
+        
         long month;
         // Adjust the start of the year.
         if (inputMonth > 2) {
@@ -90,11 +90,11 @@ public final class DateUtils {
             month = inputMonth + 9L;
             year--;
         }
-
+        
         return ((((year / 100) * DateUtils.DAYS_PER_400_YEARS) / 4) + (((year % 100) * DateUtils.DAYS_PER_4_YEARS) / 4)
                 + (((month * DateUtils.DAYS_PER_5_MONTHS) + 2) / 5) + inputDay) - DateUtils.SDN_OFFSET;
     }
-
+    
     /**
      * Convert the Paradox date to Gregorian format.
      *
@@ -103,26 +103,26 @@ public final class DateUtils {
      * @return the Java {@link Date}.
      */
     public static Date sdnToGregorian(final long sdn) {
-
+        
         if (sdn <= 0) {
             return null;
         }
-
+        
         long temp = ((sdn + DateUtils.SDN_OFFSET) * 4) - 1;
-
+        
         /* Calculate the century (year/100). */
         final long century = temp / DateUtils.DAYS_PER_400_YEARS;
-
+        
         /* Calculate the year and day of year (1 <= dayOfYear <= 366). */
         temp = (((temp % DateUtils.DAYS_PER_400_YEARS) / 4) * 4) + 3;
         long year = (century * 100) + (temp / DateUtils.DAYS_PER_4_YEARS);
         final long dayOfYear = ((temp % DateUtils.DAYS_PER_4_YEARS) / 4) + 1;
-
+        
         /* Calculate the month and day of month. */
         temp = (dayOfYear * 5) - 3;
         long month = temp / DateUtils.DAYS_PER_5_MONTHS;
         final long day = ((temp % DateUtils.DAYS_PER_5_MONTHS) / 5) + 1;
-
+        
         /* Convert to the normal beginning of the year. */
         if (month < 10) {
             month += 3;
@@ -130,7 +130,7 @@ public final class DateUtils {
             year += 1;
             month -= 9;
         }
-
+        
         /* Adjust to the B.C./A.D. type numbering. */
         year -= 4_800;
         if (year <= 0) {
@@ -139,7 +139,7 @@ public final class DateUtils {
         final Calendar calendar = new GregorianCalendar((int) year, (int) month - 1, (int) day);
         return new Date(calendar.getTime().getTime());
     }
-
+    
     /**
      * Check for valid date boundaries.
      *
@@ -164,7 +164,7 @@ public final class DateUtils {
             throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
         }
     }
-
+    
     /**
      * Check for dates before SDN 1 (November 25, 4714 B.C.).
      *
@@ -187,7 +187,7 @@ public final class DateUtils {
             }
         }
     }
-
+    
     /**
      * Check for the year bounds.
      *

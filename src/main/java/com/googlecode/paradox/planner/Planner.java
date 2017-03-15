@@ -32,12 +32,12 @@ import java.util.List;
  * @since 1.1
  */
 public class Planner {
-
+    
     /**
      * The database connection.
      */
     private final ParadoxConnection conn;
-
+    
     /**
      * Create a new instance.
      *
@@ -47,7 +47,7 @@ public class Planner {
     public Planner(final ParadoxConnection conn) {
         this.conn = conn;
     }
-
+    
     /**
      * Parses the table metadata.
      *
@@ -79,7 +79,7 @@ public class Planner {
             plan.addTable(node);
         }
     }
-
+    
     /**
      * Create a plan from given statement.
      *
@@ -91,12 +91,12 @@ public class Planner {
      */
     public final Plan create(final StatementNode statement) throws SQLException {
         if (statement instanceof SelectNode) {
-            return createSelect((SelectNode) statement);
+            return this.createSelect((SelectNode) statement);
         } else {
             throw new SQLFeatureNotSupportedException();
         }
     }
-
+    
     /**
      * Creates an SELECT plan.
      *
@@ -107,20 +107,20 @@ public class Planner {
      *             in case of syntax error.
      */
     private Plan createSelect(final SelectNode statement) throws SQLException {
-        final SelectPlan plan = new SelectPlan(conn);
-        final List<ParadoxTable> paradoxTables = TableData.listTables(conn);
-
+        final SelectPlan plan = new SelectPlan(this.conn);
+        final List<ParadoxTable> paradoxTables = TableData.listTables(this.conn);
+        
         // Load the table metadata.
         Planner.parseTableMetaData(statement, plan, paradoxTables);
-        parseColumns(statement, plan);
-
+        this.parseColumns(statement, plan);
+        
         if (plan.getColumns().isEmpty()) {
             throw new SQLException("Empty column list.", SQLStates.INVALID_SQL.getValue());
         }
-
+        
         return plan;
     }
-
+    
     /**
      * Parses the table columns.
      *

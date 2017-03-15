@@ -19,7 +19,7 @@ import java.util.Collections;
  * @since 1.1
  */
 public class ANDNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -28,7 +28,7 @@ public class ANDNode extends SQLNode {
      */
     public ANDNode(final SQLNode child) {
         super("AND");
-        setChildhood(Collections.singletonList(child));
+        this.setChildhood(Collections.singletonList(child));
     }
-
+    
 }

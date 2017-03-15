@@ -20,12 +20,12 @@ public enum JoinType {
      * Cross join type.
      */
     CROSS,
-
+    
     /**
      * Left join type.
      */
     LEFT,
-
+    
     /**
      * Right join type.
      */

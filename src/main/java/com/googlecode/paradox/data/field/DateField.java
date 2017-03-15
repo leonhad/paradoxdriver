@@ -25,7 +25,7 @@ import java.sql.Types;
  * @since 1.3
  */
 public final class DateField implements FieldParser {
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -33,7 +33,7 @@ public final class DateField implements FieldParser {
     public boolean match(final int type) {
         return type == 2;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -44,7 +44,7 @@ public final class DateField implements FieldParser {
         final int a3 = 0xFF & buffer.get();
         final int a4 = 0xFF & buffer.get();
         final long days = ((a1 << 24) | (a2 << 16) | (a3 << 8) | a4) & 0x0FFF_FFFFL;
-
+        
         final Date date = DateUtils.sdnToGregorian(days + 1_721_425);
         return new FieldValue(date, Types.DATE);
     }

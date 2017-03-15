@@ -16,7 +16,7 @@ package com.googlecode.paradox.parser.nodes;
  * @since 1.0
  */
 public final class IdentifierNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -26,12 +26,12 @@ public final class IdentifierNode extends SQLNode {
     public IdentifierNode(final String name) {
         super(name);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
-        return name;
+        return this.name;
     }
 }

@@ -32,14 +32,14 @@ import java.util.List;
  * @since 1.0
  */
 public final class IndexData {
-
+    
     /**
      * Utility class.
      */
     private IndexData() {
         // Utility class.
     }
-
+    
     /**
      * List the indexes in a database file.
      *
@@ -68,7 +68,7 @@ public final class IndexData {
         }
         return indexes;
     }
-
+    
     /**
      * Loads the database file header.
      *
@@ -82,15 +82,15 @@ public final class IndexData {
      */
     private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
-
+        
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-
+        
         final ParadoxIndex index = new ParadoxIndex(file, file.getName());
-
+        
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
-
+            
             index.setRecordSize(buffer.getShort());
             index.setHeaderSize(buffer.getShort());
             index.setType(buffer.get());
@@ -100,32 +100,32 @@ public final class IndexData {
             index.setTotalBlocks(buffer.getShort());
             index.setFirstBlock(buffer.getShort());
             index.setLastBlock(buffer.getShort());
-
+            
             buffer.position(0x21);
             index.setFieldCount(buffer.getShort());
             index.setPrimaryFieldCount(buffer.getShort());
-
+            
             buffer.position(0x38);
             index.setWriteProtected(buffer.get());
             index.setVersionId(buffer.get());
-
+            
             buffer.position(0x49);
             index.setAutoIncrementValue(buffer.getInt());
             index.setFirstFreeBlock(buffer.getShort());
-
+            
             buffer.position(0x55);
             index.setReferentialIntegrity(buffer.get());
-
+            
             IndexData.parseVersionID(buffer, index);
-
+            
             IndexData.parseFields(buffer, index);
-
+            
             IndexData.parseSortID(buffer, index);
             IndexData.parseIndexName(buffer, index);
         }
         return index;
     }
-
+    
     /**
      * Parse fields in index header.
      *
@@ -144,7 +144,7 @@ public final class IndexData {
             field.setSize(buffer.get());
             fields.add(field);
         }
-
+        
         if (index.getVersionId() > 4) {
             if (index.getVersionId() == 0xC) {
                 buffer.position(0x78 + 261 + 4 + (6 * fields.size()));
@@ -154,10 +154,10 @@ public final class IndexData {
         } else {
             buffer.position(0x58 + 83 + (6 * fields.size()));
         }
-
+        
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ByteBuffer name = ByteBuffer.allocate(261);
-
+            
             while (true) {
                 final byte c = buffer.get();
                 if (c == 0) {
@@ -169,14 +169,14 @@ public final class IndexData {
             fields.get(loop).setName(index.getCharset().decode(name).toString());
         }
         index.setFields(fields);
-
+        
         final ArrayList<Short> fieldsOrder = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             fieldsOrder.add(buffer.getShort());
         }
         index.setFieldsOrder(fieldsOrder);
     }
-
+    
     /**
      * Parse the index names.
      *
@@ -200,7 +200,7 @@ public final class IndexData {
             index.setName(tempName);
         }
     }
-
+    
     /**
      * Parse the sort order ID.
      *
@@ -221,7 +221,7 @@ public final class IndexData {
         sortOrderID.flip();
         index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
     }
-
+    
     /**
      * Parse and handle the version ID.
      *
@@ -235,7 +235,7 @@ public final class IndexData {
             // Set the charset.
             buffer.position(0x6A);
             index.setCharset(Charset.forName("cp" + buffer.getShort()));
-
+            
             buffer.position(0x78);
         } else {
             buffer.position(0x58);

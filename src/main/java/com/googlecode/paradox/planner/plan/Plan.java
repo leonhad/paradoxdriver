@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * @since 1.1
  */
 public interface Plan {
-
+    
     /**
      * Execute this plan.
      *

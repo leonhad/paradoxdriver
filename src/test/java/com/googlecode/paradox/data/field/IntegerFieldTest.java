@@ -30,7 +30,7 @@ public class IntegerFieldTest {
         final IntegerField field = new IntegerField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -44,7 +44,7 @@ public class IntegerFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals(16473, value.getNumber());
     }
-
+    
     /**
      * Test for valid match.
      */

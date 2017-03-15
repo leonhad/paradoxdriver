@@ -18,87 +18,87 @@ import java.sql.ResultSet;
  * @since 1.0
  */
 public enum SQLStates {
-
+    
     /**
      * This driver can't change catalog.
      */
     CHANGE_CATALOG_NOT_SUPPORTED("1003"),
-
+    
     /**
      * There is more than one column name in same reference.
      */
     COLUMN_AMBIQUOUS("1015"),
-
+    
     /**
      * Used when some directory is not found
      */
     DIR_NOT_FOUND("1001"),
-
+    
     /**
      * The referenced column in invalid.
      */
     INVALID_COLUMN("1010"),
-
+    
     /**
      * Command invalid.
      */
     INVALID_COMMAND("1006"),
-
+    
     /**
      * Invalid field value.
      */
     INVALID_FIELD_VALUE("1012"),
-
+    
     /**
      * There is an error in I/O subsystem.
      */
     INVALID_IO("1016"),
-
+    
     /**
      * Invalid parameter format or value.
      */
     INVALID_PARAMETER("1005"),
-
+    
     /**
      * Column not found.
      */
     INVALID_ROW("1008"),
-
+    
     /**
      * Invalid SQL.
      */
     INVALID_SQL("1007"),
-
+    
     /**
      * Invalid SQL state.
      */
     INVALID_STATE("1011"),
-
+    
     /**
      * Table format is invalid.
      */
     INVALID_TABLE("1014"),
-
+    
     /**
      * Error in data load.
      */
     LOAD_DATA("1100"),
-
+    
     /**
      * {@link ResultSet} not open for use.
      */
     RESULTSET_CLOSED("1009"),
-
+    
     /**
      * Type not valid or unsupported.
      */
     TYPE_NOT_FOUND("1004");
-
+    
     /**
      * The constant code.
      */
     private final String value;
-
+    
     /**
      * Create a new instance.
      *
@@ -108,14 +108,14 @@ public enum SQLStates {
     SQLStates(final String value) {
         this.value = value;
     }
-
+    
     /**
      * Gets the constant code.
      *
      * @return the constant code.
      */
     public String getValue() {
-        return value;
+        return this.value;
     }
-
+    
 }

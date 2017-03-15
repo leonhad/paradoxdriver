@@ -19,17 +19,17 @@ import com.googlecode.paradox.metadata.BlobTable;
  * @since 1.2
  */
 class BlobDescriptor {
-
+    
     /**
      * The blob table.
      */
     private final BlobTable file;
-
+    
     /**
      * Blob file offset.
      */
     private long offset;
-
+    
     /**
      * Creates a new instance.
      *
@@ -39,25 +39,25 @@ class BlobDescriptor {
     BlobDescriptor(final BlobTable file) {
         this.file = file;
     }
-
+    
     /**
      * Gets the blob file.
      *
      * @return the blob file.
      */
     public final BlobTable getFile() {
-        return file;
+        return this.file;
     }
-
+    
     /**
      * Gets the blob offset.
      *
      * @return the blob offset.
      */
     public final long getOffset() {
-        return offset;
+        return this.offset;
     }
-
+    
     /**
      * Sets the blob offset.
      *

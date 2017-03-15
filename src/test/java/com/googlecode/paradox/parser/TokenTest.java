@@ -19,7 +19,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class TokenTest {
-
+    
     /**
      * Test for instance.
      */
@@ -29,7 +29,7 @@ public class TokenTest {
         Assert.assertEquals(TokenType.AND, token.getType());
         Assert.assertEquals("value", token.getValue());
     }
-
+    
     /**
      * Test for {@link Token#toString()} method.
      */

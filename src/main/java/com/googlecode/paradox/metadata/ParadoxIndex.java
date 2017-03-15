@@ -22,27 +22,27 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxIndex extends ParadoxDataFile {
-
+    
     /**
      * Index charset.
      */
     private Charset charset = Charset.forName("Cp437");
-
+    
     /**
      * Fields index order.
      */
     private List<Short> fieldsOrder;
-
+    
     /**
      * Parent name.
      */
     private String parentName;
-
+    
     /**
      * Field order ID.
      */
     private String sortOrderID;
-
+    
     /**
      * Creates a new instance.
      *
@@ -54,38 +54,38 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public ParadoxIndex(final File file, final String name) {
         super(file, name);
     }
-
+    
     /**
      * Gets the charset.
      *
      * @return the charset.
      */
     public Charset getCharset() {
-        return charset;
+        return this.charset;
     }
-
+    
     /**
      * Gets the file orders.
      *
      * @return the file orders.
      */
     public List<Short> getFieldsOrder() {
-        return Collections.unmodifiableList(fieldsOrder);
+        return Collections.unmodifiableList(this.fieldsOrder);
     }
-
+    
     /**
      * Gets the index order.
      *
      * @return the index order.
      */
     public String getOrder() {
-        final int referential = getReferentialIntegrity();
+        final int referential = this.getReferentialIntegrity();
         if ((referential == 0x10) || (referential == 0x11) || (referential == 0x30)) {
             return "D";
         }
         return "A";
     }
-
+    
     /**
      * Gets the primary key.
      *
@@ -93,21 +93,21 @@ public final class ParadoxIndex extends ParadoxDataFile {
      */
     public List<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
-        for (int loop = 0; loop < getPrimaryFieldCount(); loop++) {
-            ret.add(fields.get(loop));
+        for (int loop = 0; loop < this.getPrimaryFieldCount(); loop++) {
+            ret.add(this.fields.get(loop));
         }
         return ret;
     }
-
+    
     /**
      * Gets the sorter order id.
      *
      * @return the sorter order id.
      */
     public String getSortOrderID() {
-        return sortOrderID;
+        return this.sortOrderID;
     }
-
+    
     /**
      * Sets the charset.
      *
@@ -117,7 +117,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public void setCharset(final Charset charset) {
         this.charset = charset;
     }
-
+    
     /**
      * Sets the fields order.
      *
@@ -127,7 +127,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public void setFieldsOrder(final List<Short> fieldsOrder) {
         this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
     }
-
+    
     /**
      * Sets the parent name.
      *
@@ -137,7 +137,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public void setParentName(final String parentName) {
         this.parentName = parentName;
     }
-
+    
     /**
      * Sets the sort order ID.
      *
@@ -147,13 +147,13 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public void setSortOrderID(final String sortOrderID) {
         this.sortOrderID = sortOrderID;
     }
-
+    
     /**
      * Gets the parent name.
      *
      * @return the parent name.
      */
     String getParentName() {
-        return parentName;
+        return this.parentName;
     }
 }

@@ -28,14 +28,14 @@ import java.sql.SQLException;
  * @since 1.0
  */
 public final class PrimaryKeyData {
-
+    
     /**
      * Utility class.
      */
     private PrimaryKeyData() {
         // Utility class.
     }
-
+    
     /**
      * Gets the primary keys from the database file.
      *
@@ -49,7 +49,7 @@ public final class PrimaryKeyData {
      */
     public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
         final String name = table.getName() + ".PX";
-
+        
         final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter(name));
         if ((fileList != null) && (fileList.length > 0)) {
             try {
@@ -60,7 +60,7 @@ public final class PrimaryKeyData {
         }
         return null;
     }
-
+    
     /**
      * Gets the {@link ParadoxPK} from a PK file.
      *
@@ -76,12 +76,12 @@ public final class PrimaryKeyData {
         FileChannel channel = null;
         final FileInputStream fs = new FileInputStream(file);
         final ParadoxPK pk = new ParadoxPK();
-
+        
         try {
             channel = fs.getChannel();
             channel.read(buffer);
             buffer.flip();
-
+            
             pk.setName(file.getName());
             pk.setRecordSize(buffer.getShort());
             pk.setHeaderSize(buffer.getShort());
@@ -92,10 +92,10 @@ public final class PrimaryKeyData {
             pk.setTotalBlocks(buffer.getShort());
             pk.setFirstBlock(buffer.getShort());
             pk.setLastBlock(buffer.getShort());
-
+            
             buffer.position(0x15);
             pk.setIndexFieldNumber(buffer.get());
-
+            
             buffer.position(0x38);
             pk.setWriteProtected(buffer.get());
             pk.setVersionId(buffer.get());

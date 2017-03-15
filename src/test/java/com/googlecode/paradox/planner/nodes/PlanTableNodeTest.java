@@ -11,7 +11,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class PlanTableNodeTest {
-
+    
     /**
      * Test for instance sanity.
      */
@@ -20,7 +20,7 @@ public class PlanTableNodeTest {
         final PlanTableNode node = new PlanTableNode();
         node.setAlias("alias");
         node.setTable(null);
-
+        
         Assert.assertEquals("Alias not equals.", "alias", node.getAlias());
         Assert.assertNull("Table not equals.", node.getTable());
     }

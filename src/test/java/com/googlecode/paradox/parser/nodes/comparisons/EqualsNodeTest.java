@@ -20,7 +20,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class EqualsNodeTest {
-
+    
     /**
      * Test for {@link BetweenNode#toString()} method.
      */

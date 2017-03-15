@@ -20,7 +20,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class SQLNodeTest {
-
+    
     /**
      * Test for alias.
      */
@@ -30,7 +30,7 @@ public class SQLNodeTest {
         node.setAlias("alias");
         Assert.assertEquals("alias", node.getAlias());
     }
-
+    
     /**
      * Test conditions.
      */
@@ -41,5 +41,5 @@ public class SQLNodeTest {
         node.setChildhood(list);
         Assert.assertEquals("Conditional is not the same.", list.size(), node.getChildhood().size());
     }
-
+    
 }

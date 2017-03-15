@@ -33,12 +33,12 @@ public class UtilsTest {
      * Connection string used in tests.
      */
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-
+    
     /**
      * Database connection.
      */
     private Connection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -49,7 +49,7 @@ public class UtilsTest {
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Close the test connection.
      *
@@ -58,11 +58,11 @@ public class UtilsTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to the test database.
      *
@@ -71,9 +71,9 @@ public class UtilsTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test if the constructor is private.
      *
@@ -91,18 +91,19 @@ public class UtilsTest {
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Utils.class));
     }
-
+    
     /**
-     * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)} method with invalid value.
+     * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)} method
+     * with invalid value.
      *
      * @throws Exception
      *             in case of failures.
      */
     @Test
     public void testIsNotWrapFor() throws Exception {
-        Assert.assertFalse(Utils.isWrapperFor(conn, Connection.class));
+        Assert.assertFalse(Utils.isWrapperFor(this.conn, Connection.class));
     }
-
+    
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
      *
@@ -111,9 +112,9 @@ public class UtilsTest {
      */
     @Test
     public void testIsWrapFor() throws Exception {
-        Assert.assertTrue(Utils.isWrapperFor(conn, ParadoxConnection.class));
+        Assert.assertTrue(Utils.isWrapperFor(this.conn, ParadoxConnection.class));
     }
-
+    
     /**
      * Test for unwrap.
      *
@@ -122,9 +123,9 @@ public class UtilsTest {
      */
     @Test
     public void testUnwrap() throws Exception {
-        Assert.assertNotNull(Utils.unwrap(conn, ParadoxConnection.class));
+        Assert.assertNotNull(Utils.unwrap(this.conn, ParadoxConnection.class));
     }
-
+    
     /**
      * Test for a unwrap with wrong class.
      *
@@ -133,6 +134,6 @@ public class UtilsTest {
      */
     @Test(expected = SQLException.class)
     public void testUnwrapImpossible() throws Exception {
-        Utils.unwrap(conn, Integer.class);
+        Utils.unwrap(this.conn, Integer.class);
     }
 }

@@ -21,19 +21,19 @@ import java.util.logging.Logger;
  * @since 1.1
  */
 public final class Expressions {
-
+    
     /**
      * The class logger.
      */
     private static final Logger LOGGER = Logger.getLogger(Expressions.class.getName());
-
+    
     /**
      * Utility class.
      */
     private Expressions() {
         // Utility class.
     }
-
+    
     /**
      * Test for an expression.
      *
@@ -46,7 +46,7 @@ public final class Expressions {
     public static boolean accept(final String expression, final String criteria) {
         return Expressions.accept(expression, criteria, false);
     }
-
+    
     /**
      * Test for an expression.
      *
@@ -67,7 +67,7 @@ public final class Expressions {
         }
         return true;
     }
-
+    
     /**
      * Test for an expression.
      *
@@ -86,13 +86,13 @@ public final class Expressions {
         final char[] exp = Expressions.getCharArrayWithCase(expression, caseSensitive);
         final int limit = exp.length - 1;
         int index = 0;
-
+        
         for (int loop = 0; loop < criterion.length; loop++) {
             if (index > limit) {
                 throw new SQLException();
             }
             final char c = criterion[loop];
-
+            
             if (c == '?') {
                 index++;
             } else if (c == '%') {
@@ -113,7 +113,7 @@ public final class Expressions {
             throw new SQLException();
         }
     }
-
+    
     /**
      * Check for expressions limit boundaries.
      *
@@ -134,7 +134,7 @@ public final class Expressions {
             throw new SQLException();
         }
     }
-
+    
     /**
      * Check for index boundaries.
      *
@@ -152,7 +152,7 @@ public final class Expressions {
             throw new SQLException();
         }
     }
-
+    
     /**
      * Fix index based on % position.
      *
@@ -173,7 +173,7 @@ public final class Expressions {
         }
         return index;
     }
-
+    
     /**
      * Gets a char array with case option.
      *

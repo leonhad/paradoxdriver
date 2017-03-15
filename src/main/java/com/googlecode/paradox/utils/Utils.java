@@ -22,32 +22,34 @@ import java.util.Locale;
  * @since 1.2
  */
 public final class Utils {
-
+    
     /**
      * Utility class.
      */
     private Utils() {
         // Utility class.
     }
-
+    
     /**
-     * Returns true if this either implements the interface argument or is directly or indirectly a wrapper for an
-     * object that does. Returns false otherwise..
+     * Returns true if this either implements the interface argument or is
+     * directly or indirectly a wrapper for an object that does. Returns false
+     * otherwise..
      *
      * @param wrapper
      *            wrapper to test for.
      * @param iFace
      *            a Class defining an interface.
-     * @return true if this implements the interface or directly or indirectly wraps an object that does.
+     * @return true if this implements the interface or directly or indirectly
+     *         wraps an object that does.
      * @since 1.2
      */
     public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iFace) {
         return wrapper.getClass().isAssignableFrom(iFace);
     }
-
+    
     /**
-     * Convert the Paradox VARCHAR to {@link String}. The paradox fill the entire buffer with zeros at end of VARCHAR
-     * literals.
+     * Convert the Paradox VARCHAR to {@link String}. The paradox fill the
+     * entire buffer with zeros at end of VARCHAR literals.
      *
      * @param buffer
      *            VARCHAR Buffer to convert.
@@ -68,7 +70,7 @@ public final class Utils {
         buffer.limit(length);
         return charset.decode(buffer).toString();
     }
-
+    
     /**
      * Remove the DB suffix from a {@link String}.
      *
@@ -79,7 +81,7 @@ public final class Utils {
     public static String removeDb(final String name) {
         return Utils.removeSuffix(name, "DB");
     }
-
+    
     /**
      * Remove the MB suffix from a {@link String}.
      *
@@ -90,10 +92,10 @@ public final class Utils {
     public static String removeMb(final String name) {
         return Utils.removeSuffix(name, "MB");
     }
-
+    
     /**
-     * Returns an object that implements the given interface to allow access to non-standard methods, or standard
-     * methods not exposed by the proxy.
+     * Returns an object that implements the given interface to allow access to
+     * non-standard methods, or standard methods not exposed by the proxy.
      *
      * @param <T>
      *            the type of the class modeled by this Class object.
@@ -101,7 +103,8 @@ public final class Utils {
      *            the wrapper class.
      * @param iFace
      *            A Class defining an interface that the result must implement.
-     * @return an object that implements the interface. May be a proxy for the actual implementing object.
+     * @return an object that implements the interface. May be a proxy for the
+     *         actual implementing object.
      * @throws java.sql.SQLException
      *             If no object found that implements the interface.
      * @since 1.2
@@ -113,7 +116,7 @@ public final class Utils {
         }
         throw new SQLException("Type not found.", SQLStates.TYPE_NOT_FOUND.getValue());
     }
-
+    
     /**
      * Remove a given suffix from {@link String}.
      *

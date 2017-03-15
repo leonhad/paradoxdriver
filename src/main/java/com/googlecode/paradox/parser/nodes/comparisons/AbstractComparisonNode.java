@@ -20,17 +20,17 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @since 1.1
  */
 abstract class AbstractComparisonNode extends SQLNode {
-
+    
     /**
      * The first node.
      */
     private final FieldNode first;
-
+    
     /**
      * The last node.
      */
     private final FieldNode last;
-
+    
     /**
      * Creates a new instance.
      *
@@ -46,30 +46,30 @@ abstract class AbstractComparisonNode extends SQLNode {
         this.first = first;
         this.last = last;
     }
-
+    
     /**
      * Gets the first node.
      *
      * @return the first node.
      */
     public FieldNode getFirst() {
-        return first;
+        return this.first;
     }
-
+    
     /**
      * Gets the last node.
      *
      * @return the last node.
      */
     public FieldNode getLast() {
-        return last;
+        return this.last;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
-        return first + " " + getName() + " " + last;
+        return this.first + " " + this.getName() + " " + this.last;
     }
 }

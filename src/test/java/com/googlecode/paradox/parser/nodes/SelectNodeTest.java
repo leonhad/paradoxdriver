@@ -23,7 +23,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class SelectNodeTest {
-
+    
     /**
      * Test for condition list.
      */
@@ -34,7 +34,7 @@ public class SelectNodeTest {
         node.setConditions(new ArrayList<SQLNode>());
         Assert.assertEquals(0, node.getConditions().size());
     }
-
+    
     /**
      * Test for distinct flag.
      */
@@ -45,7 +45,7 @@ public class SelectNodeTest {
         node.setDistinct(true);
         Assert.assertTrue(node.isDistinct());
     }
-
+    
     /**
      * Test for fields.
      */
@@ -57,7 +57,7 @@ public class SelectNodeTest {
         node.addField(field);
         Assert.assertEquals(1, node.getFields().size());
     }
-
+    
     /**
      * Test for group by.
      */
@@ -69,7 +69,7 @@ public class SelectNodeTest {
         node.addGroupBy(identifier);
         Assert.assertEquals(1, node.getGroups().size());
     }
-
+    
     /**
      * Test for order by.
      */
@@ -81,7 +81,7 @@ public class SelectNodeTest {
         node.addOrderBy(identifier);
         Assert.assertEquals(1, node.getOrder().size());
     }
-
+    
     /**
      * Test for tables.
      */
@@ -93,7 +93,7 @@ public class SelectNodeTest {
         node.addTable(table);
         Assert.assertEquals(1, node.getTables().size());
     }
-
+    
     /**
      * Test for {@link SelectNode#toString()} method.
      */
@@ -108,17 +108,17 @@ public class SelectNodeTest {
         node.addGroupBy(new IdentifierNode("f2"));
         node.addOrderBy(new IdentifierNode("f"));
         node.addOrderBy(new IdentifierNode("f2"));
-
+        
         final ArrayList<SQLNode> conditions = new ArrayList<>();
         conditions.add(new EqualsNode(new FieldNode("t", "field", null), new FieldNode("t", "field2", null)));
         conditions.add(new NotEqualsNode(new FieldNode("t", "field", null), new FieldNode("t", "field2", null)));
         node.setConditions(conditions);
-
+        
         Assert.assertEquals(
                 "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b WHERE t.field = t.field2 t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
                 node.toString());
     }
-
+    
     /**
      * Test for {@link SelectNode#toString()} method with empty where.
      */
@@ -131,7 +131,7 @@ public class SelectNodeTest {
         node.setConditions(Collections.EMPTY_LIST);
         Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
-
+    
     /**
      * Test for {@link SelectNode#toString()} method with fields.
      */

@@ -18,12 +18,12 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparisonNode {
-
+    
     /**
      * The field node.
      */
     private final FieldNode field;
-
+    
     /**
      * Create a new instance.
      *
@@ -38,22 +38,22 @@ public final class BetweenNode extends AbstractComparisonNode {
         super("BETWEEN", first, last);
         this.field = field;
     }
-
+    
     /**
      * Gets the field node.
      *
      * @return the field node.
      */
     public FieldNode getField() {
-        return field;
+        return this.field;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
-        return field + " BETWEEN " + getFirst() + " AND " + getLast();
+        return this.field + " BETWEEN " + this.getFirst() + " AND " + this.getLast();
     }
-
+    
 }

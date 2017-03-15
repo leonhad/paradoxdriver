@@ -25,12 +25,12 @@ public class ParadoxDatabaseMetaDataTest {
      * The connection string used in this tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-
+    
     /**
      * The database connection.
      */
     private Connection conn;
-
+    
     /**
      * Register the database driver.
      *
@@ -41,7 +41,7 @@ public class ParadoxDatabaseMetaDataTest {
     public static void init() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Close the test connection.
      *
@@ -50,11 +50,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to the test database.
      *
@@ -63,9 +63,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = DriverManager.getConnection(ParadoxDatabaseMetaDataTest.CONNECTION_STRING + "db");
+        this.conn = DriverManager.getConnection(ParadoxDatabaseMetaDataTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for attributes.
      *
@@ -74,11 +74,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testAttributes() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getAttributes("db", null, null, null)) {
+        try (ResultSet rs = this.conn.getMetaData().getAttributes("db", null, null, null)) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for commit failure closes results.
      *
@@ -87,9 +87,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testAutocommitFailureClosesResult() throws SQLException {
-        Assert.assertFalse(conn.getMetaData().autoCommitFailureClosesAllResultSets());
+        Assert.assertFalse(this.conn.getMetaData().autoCommitFailureClosesAllResultSets());
     }
-
+    
     /**
      * Test for best row identifier.
      *
@@ -98,11 +98,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testBestRowIdentifier() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getBestRowIdentifier("db", "%", "%", 0, false)) {
+        try (ResultSet rs = this.conn.getMetaData().getBestRowIdentifier("db", "%", "%", 0, false)) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for the catalog metadata.
      *
@@ -111,7 +111,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testCatalog() throws Exception {
-        final DatabaseMetaData meta = conn.getMetaData();
+        final DatabaseMetaData meta = this.conn.getMetaData();
         try (ResultSet rs = meta.getCatalogs()) {
             if (rs.next()) {
                 Assert.assertEquals("db", rs.getString("TABLE_CAT"));
@@ -120,7 +120,7 @@ public class ParadoxDatabaseMetaDataTest {
             }
         }
     }
-
+    
     /**
      * Test for catalog separator.
      *
@@ -129,9 +129,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testCatalogSeparator() throws SQLException {
-        Assert.assertEquals("Testing for catalog separator.", ".", conn.getMetaData().getCatalogSeparator());
+        Assert.assertEquals("Testing for catalog separator.", ".", this.conn.getMetaData().getCatalogSeparator());
     }
-
+    
     /**
      * Test for catalog term.
      *
@@ -140,9 +140,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testCatalogTerm() throws SQLException {
-        Assert.assertEquals("Testing for catalog term.", "CATALOG", conn.getMetaData().getCatalogTerm());
+        Assert.assertEquals("Testing for catalog term.", "CATALOG", this.conn.getMetaData().getCatalogTerm());
     }
-
+    
     /**
      * Test for client info properties.
      *
@@ -151,11 +151,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testClientInfoProperties() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getClientInfoProperties()) {
+        try (ResultSet rs = this.conn.getMetaData().getClientInfoProperties()) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for column privileges.
      *
@@ -164,11 +164,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testColumnPrivileges() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getColumnPrivileges("db", "%", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getColumnPrivileges("db", "%", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for columns.
      *
@@ -177,11 +177,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testColumns() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getColumns("db", "%", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for columns with invalid pattern.
      *
@@ -190,11 +190,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testColumnsInvalidPattern() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", "invalid_column")) {
+        try (ResultSet rs = this.conn.getMetaData().getColumns("db", "%", "%", "invalid_column")) {
             Assert.assertTrue("Result not right instance.", rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for columns with invalid table pattern.
      *
@@ -203,11 +203,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testColumnsWithInvalidTablePattern() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "invalid_table", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getColumns("db", "%", "invalid_table", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for columns with null table pattern.
      *
@@ -216,11 +216,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testColumnsWithNullTablePattern() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", null, "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getColumns("db", "%", null, "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for columns without column pattern.
      *
@@ -229,11 +229,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testColumnsWithoutColumnPattern() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getColumns("db", "%", "%", null)) {
+        try (ResultSet rs = this.conn.getMetaData().getColumns("db", "%", "%", null)) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for connection.
      *
@@ -242,9 +242,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testConnection() throws SQLException {
-        Assert.assertSame("Testing for connection.", conn, conn.getMetaData().getConnection());
+        Assert.assertSame("Testing for connection.", this.conn, this.conn.getMetaData().getConnection());
     }
-
+    
     /**
      * Test for cross references.
      *
@@ -253,11 +253,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testCrossReference() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getCrossReference("db", "%", "%", "db", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getCrossReference("db", "%", "%", "db", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for database definition causes transaction commit.
      *
@@ -266,9 +266,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseDefinitionsCausesCommit() throws SQLException {
-        Assert.assertTrue(conn.getMetaData().dataDefinitionCausesTransactionCommit());
+        Assert.assertTrue(this.conn.getMetaData().dataDefinitionCausesTransactionCommit());
     }
-
+    
     /**
      * Test for database major version.
      *
@@ -277,9 +277,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseMajorVersion() throws SQLException {
-        Assert.assertEquals("Testing for database major version.", 7, conn.getMetaData().getDatabaseMajorVersion());
+        Assert.assertEquals("Testing for database major version.", 7,
+                this.conn.getMetaData().getDatabaseMajorVersion());
     }
-
+    
     /**
      * Test for database minor version.
      *
@@ -288,9 +289,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseMinorVersion() throws SQLException {
-        Assert.assertEquals("Testing for database minor version.", 0, conn.getMetaData().getDatabaseMinorVersion());
+        Assert.assertEquals("Testing for database minor version.", 0,
+                this.conn.getMetaData().getDatabaseMinorVersion());
     }
-
+    
     /**
      * Test for database product name.
      *
@@ -300,9 +302,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testDatabaseProductName() throws SQLException {
         Assert.assertEquals("Testing for database product name.", "Paradox",
-                conn.getMetaData().getDatabaseProductName());
+                this.conn.getMetaData().getDatabaseProductName());
     }
-
+    
     /**
      * Test for database product version.
      *
@@ -312,9 +314,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testDatabaseProductVersion() throws SQLException {
         Assert.assertEquals("Testing for database product version.", "Paradox 1.3",
-                conn.getMetaData().getDatabaseProductVersion());
+                this.conn.getMetaData().getDatabaseProductVersion());
     }
-
+    
     /**
      * Test for data definition ignored in transactions.
      *
@@ -324,9 +326,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testDataDefinitionIgnoredInTransactions() throws SQLException {
         Assert.assertFalse("Testing for data definition ignored in transactions.",
-                conn.getMetaData().dataDefinitionIgnoredInTransactions());
+                this.conn.getMetaData().dataDefinitionIgnoredInTransactions());
     }
-
+    
     /**
      * Test for default transaction isolation.
      *
@@ -336,9 +338,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testDefaultTransactionIsolation() throws SQLException {
         Assert.assertEquals("Testing for default transaction isolation.", Connection.TRANSACTION_NONE,
-                conn.getMetaData().getDefaultTransactionIsolation());
+                this.conn.getMetaData().getDefaultTransactionIsolation());
     }
-
+    
     /**
      * Test for deletes auto detects.
      *
@@ -347,9 +349,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDeleteAutoDetects() throws SQLException {
-        Assert.assertFalse(conn.getMetaData().deletesAreDetected(0));
+        Assert.assertFalse(this.conn.getMetaData().deletesAreDetected(0));
     }
-
+    
     /**
      * Test for driver major version.
      *
@@ -358,9 +360,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverMajorVersion() throws SQLException {
-        Assert.assertEquals("Testing for driver major version.", 1, conn.getMetaData().getDriverMajorVersion());
+        Assert.assertEquals("Testing for driver major version.", 1, this.conn.getMetaData().getDriverMajorVersion());
     }
-
+    
     /**
      * Test for driver minor version.
      *
@@ -369,9 +371,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverMinorVersion() throws SQLException {
-        Assert.assertEquals("Testing for driver minor version.", 3, conn.getMetaData().getDriverMinorVersion());
+        Assert.assertEquals("Testing for driver minor version.", 3, this.conn.getMetaData().getDriverMinorVersion());
     }
-
+    
     /**
      * Test for driver name.
      *
@@ -380,9 +382,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverName() throws SQLException {
-        Assert.assertEquals("Testing for driver name.", "Paradox", conn.getMetaData().getDriverName());
+        Assert.assertEquals("Testing for driver name.", "Paradox", this.conn.getMetaData().getDriverName());
     }
-
+    
     /**
      * Test for driver version.
      *
@@ -391,9 +393,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverVersion() throws SQLException {
-        Assert.assertEquals("Testing for driver version.", "1.3", conn.getMetaData().getDriverVersion());
+        Assert.assertEquals("Testing for driver version.", "1.3", this.conn.getMetaData().getDriverVersion());
     }
-
+    
     /**
      * Test for exported keys.
      *
@@ -402,11 +404,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testExportedKeys() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getExportedKeys("db", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getExportedKeys("db", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for extra name chars.
      *
@@ -415,9 +417,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testExtraNameChars() throws SQLException {
-        Assert.assertEquals("Testing for extra name chars.", "", conn.getMetaData().getExtraNameCharacters());
+        Assert.assertEquals("Testing for extra name chars.", "", this.conn.getMetaData().getExtraNameCharacters());
     }
-
+    
     /**
      * Test for function columns.
      *
@@ -426,11 +428,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testFunctionColumns() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getFunctionColumns("db", "%", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getFunctionColumns("db", "%", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for functions.
      *
@@ -439,11 +441,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testFunctions() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getFunctions("db", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getFunctions("db", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for generated key always returned.
      *
@@ -453,9 +455,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testGeneratedKeyAlwaysReturned() throws SQLException {
         Assert.assertTrue("Testing for data definition ignored in transactions.",
-                conn.getMetaData().generatedKeyAlwaysReturned());
+                this.conn.getMetaData().generatedKeyAlwaysReturned());
     }
-
+    
     /**
      * Test for identifier quote string.
      *
@@ -464,9 +466,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testIdentifierQuoteString() throws SQLException {
-        Assert.assertEquals("Testing for extra name chars.", "\"", conn.getMetaData().getIdentifierQuoteString());
+        Assert.assertEquals("Testing for extra name chars.", "\"", this.conn.getMetaData().getIdentifierQuoteString());
     }
-
+    
     /**
      * Test for imported keys.
      *
@@ -475,11 +477,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testImportedKeys() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getImportedKeys("db", null, "test.db")) {
+        try (ResultSet rs = this.conn.getMetaData().getImportedKeys("db", null, "test.db")) {
             Assert.assertTrue("Invalid instance.", rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for index info.
      *
@@ -488,11 +490,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testIndexInfo() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getIndexInfo("db", "%", "%", false, false)) {
+        try (ResultSet rs = this.conn.getMetaData().getIndexInfo("db", "%", "%", false, false)) {
             Assert.assertTrue("Test for ResultSet.", rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for JDBC version.
      *
@@ -501,11 +503,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testJDBCVersion() throws SQLException {
-        final DatabaseMetaData meta = conn.getMetaData();
+        final DatabaseMetaData meta = this.conn.getMetaData();
         Assert.assertEquals("Test for major version", 4, meta.getJDBCMajorVersion());
         Assert.assertEquals("Test for minor version", 0, meta.getJDBCMinorVersion());
     }
-
+    
     /**
      * Test for max binary literal length.
      *
@@ -515,9 +517,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testMaxBinaryLiteralLength() throws SQLException {
         Assert.assertEquals("Testing for max binary literal length.", 8,
-                conn.getMetaData().getMaxBinaryLiteralLength());
+                this.conn.getMetaData().getMaxBinaryLiteralLength());
     }
-
+    
     /**
      * Test for max catalog name length.
      *
@@ -526,9 +528,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxCatalogNameLength() throws SQLException {
-        Assert.assertEquals("Testing for max catalog name length.", 255, conn.getMetaData().getMaxCatalogNameLength());
+        Assert.assertEquals("Testing for max catalog name length.", 255,
+                this.conn.getMetaData().getMaxCatalogNameLength());
     }
-
+    
     /**
      * Test for max char literal length.
      *
@@ -537,9 +540,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxCharLiteralLength() throws SQLException {
-        Assert.assertEquals("Testing for max char literal name.", 255, conn.getMetaData().getMaxCharLiteralLength());
+        Assert.assertEquals("Testing for max char literal name.", 255,
+                this.conn.getMetaData().getMaxCharLiteralLength());
     }
-
+    
     /**
      * Test for max column in group by.
      *
@@ -548,9 +552,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxColumnInGroupBy() throws SQLException {
-        Assert.assertEquals("Testing for max column in group by.", 255, conn.getMetaData().getMaxColumnsInGroupBy());
+        Assert.assertEquals("Testing for max column in group by.", 255,
+                this.conn.getMetaData().getMaxColumnsInGroupBy());
     }
-
+    
     /**
      * Test for max column in index.
      *
@@ -559,9 +564,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxColumnInIndex() throws SQLException {
-        Assert.assertEquals("Testing for max column in index.", 255, conn.getMetaData().getMaxColumnsInIndex());
+        Assert.assertEquals("Testing for max column in index.", 255, this.conn.getMetaData().getMaxColumnsInIndex());
     }
-
+    
     /**
      * Test for max column in order by.
      *
@@ -570,9 +575,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxColumnInOrderBy() throws SQLException {
-        Assert.assertEquals("Testing for max column in order by.", 255, conn.getMetaData().getMaxColumnsInOrderBy());
+        Assert.assertEquals("Testing for max column in order by.", 255,
+                this.conn.getMetaData().getMaxColumnsInOrderBy());
     }
-
+    
     /**
      * Test for max column in select.
      *
@@ -581,9 +587,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxColumnInSelect() throws SQLException {
-        Assert.assertEquals("Testing for max column in select.", 255, conn.getMetaData().getMaxColumnsInSelect());
+        Assert.assertEquals("Testing for max column in select.", 255, this.conn.getMetaData().getMaxColumnsInSelect());
     }
-
+    
     /**
      * Test for max column in table.
      *
@@ -592,9 +598,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxColumnInTable() throws SQLException {
-        Assert.assertEquals("Testing for max column in table.", 255, conn.getMetaData().getMaxColumnsInTable());
+        Assert.assertEquals("Testing for max column in table.", 255, this.conn.getMetaData().getMaxColumnsInTable());
     }
-
+    
     /**
      * Test for max column name length.
      *
@@ -603,9 +609,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxColumnNameLength() throws SQLException {
-        Assert.assertEquals("Testing for max column name length.", 8, conn.getMetaData().getMaxColumnNameLength());
+        Assert.assertEquals("Testing for max column name length.", 8, this.conn.getMetaData().getMaxColumnNameLength());
     }
-
+    
     /**
      * Test for max connections.
      *
@@ -614,9 +620,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxConnections() throws SQLException {
-        Assert.assertEquals("Testing for max connections.", 1, conn.getMetaData().getMaxConnections());
+        Assert.assertEquals("Testing for max connections.", 1, this.conn.getMetaData().getMaxConnections());
     }
-
+    
     /**
      * Test for max cursor name length.
      *
@@ -625,9 +631,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxCursorNameLength() throws SQLException {
-        Assert.assertEquals("Testing for max cursor name length.", 255, conn.getMetaData().getMaxCursorNameLength());
+        Assert.assertEquals("Testing for max cursor name length.", 255,
+                this.conn.getMetaData().getMaxCursorNameLength());
     }
-
+    
     /**
      * Test for max index length.
      *
@@ -636,9 +643,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxIndexLength() throws SQLException {
-        Assert.assertEquals("Testing for max index length.", 255, conn.getMetaData().getMaxIndexLength());
+        Assert.assertEquals("Testing for max index length.", 255, this.conn.getMetaData().getMaxIndexLength());
     }
-
+    
     /**
      * Test for max procedure name length.
      *
@@ -648,9 +655,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testMaxProcedureNameLength() throws SQLException {
         Assert.assertEquals("Testing for max procedure name length.", 255,
-                conn.getMetaData().getMaxProcedureNameLength());
+                this.conn.getMetaData().getMaxProcedureNameLength());
     }
-
+    
     /**
      * Test for max rows include blobs.
      *
@@ -659,9 +666,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxRowsIncludesBlob() throws SQLException {
-        Assert.assertTrue(conn.getMetaData().doesMaxRowSizeIncludeBlobs());
+        Assert.assertTrue(this.conn.getMetaData().doesMaxRowSizeIncludeBlobs());
     }
-
+    
     /**
      * Test for max row size.
      *
@@ -670,9 +677,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxRowSize() throws SQLException {
-        Assert.assertEquals("Testing for max row size.", 255, conn.getMetaData().getMaxRowSize());
+        Assert.assertEquals("Testing for max row size.", 255, this.conn.getMetaData().getMaxRowSize());
     }
-
+    
     /**
      * Test for max statement length.
      *
@@ -682,9 +689,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testMaxStatementLength() throws SQLException {
         Assert.assertEquals("Testing for max statement length.", Integer.MAX_VALUE,
-                conn.getMetaData().getMaxStatementLength());
+                this.conn.getMetaData().getMaxStatementLength());
     }
-
+    
     /**
      * Test for max statements.
      *
@@ -694,9 +701,9 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testMaxStatements() throws SQLException {
         Assert.assertEquals("Testing for max column in table.", Integer.MAX_VALUE,
-                conn.getMetaData().getMaxStatements());
+                this.conn.getMetaData().getMaxStatements());
     }
-
+    
     /**
      * Test for max tables in select.
      *
@@ -705,9 +712,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxTableInSelect() throws SQLException {
-        Assert.assertEquals("Testing for max column in table.", 255, conn.getMetaData().getMaxTablesInSelect());
+        Assert.assertEquals("Testing for max column in table.", 255, this.conn.getMetaData().getMaxTablesInSelect());
     }
-
+    
     /**
      * Test for max table name length.
      *
@@ -716,9 +723,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxTableNameLength() throws SQLException {
-        Assert.assertEquals("Testing for max table name length.", 255, conn.getMetaData().getMaxTableNameLength());
+        Assert.assertEquals("Testing for max table name length.", 255, this.conn.getMetaData().getMaxTableNameLength());
     }
-
+    
     /**
      * Test for max user name length.
      *
@@ -727,9 +734,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxUserNameLength() throws SQLException {
-        Assert.assertEquals("Testing for max user name length.", 255, conn.getMetaData().getMaxUserNameLength());
+        Assert.assertEquals("Testing for max user name length.", 255, this.conn.getMetaData().getMaxUserNameLength());
     }
-
+    
     /**
      * Test for numeric functions.
      *
@@ -738,9 +745,10 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testNumericFunctions() throws SQLException {
-        Assert.assertEquals("Testing for numeric functions.", "AVERAGE,SUM", conn.getMetaData().getNumericFunctions());
+        Assert.assertEquals("Testing for numeric functions.", "AVERAGE,SUM",
+                this.conn.getMetaData().getNumericFunctions());
     }
-
+    
     /**
      * Test for primary keys.
      *
@@ -749,11 +757,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testPrimaryKeys() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getPrimaryKeys("db", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getPrimaryKeys("db", "%", "%")) {
             Assert.assertTrue("Test for ResultSet.", rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for procedures callable.
      *
@@ -762,9 +770,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedureCallable() throws SQLException {
-        Assert.assertFalse(conn.getMetaData().allProceduresAreCallable());
+        Assert.assertFalse(this.conn.getMetaData().allProceduresAreCallable());
     }
-
+    
     /**
      * Test for procedure columns.
      *
@@ -773,11 +781,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedureColumns() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getProcedureColumns("db", "%", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getProcedureColumns("db", "%", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for procedure columns with invalid pattern.
      *
@@ -786,11 +794,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedureColumnsWithInvalidPattern() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getProcedureColumns("db", "%", "invalid_procedure", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getProcedureColumns("db", "%", "invalid_procedure", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for procedures.
      *
@@ -799,11 +807,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedures() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getProcedures("db", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getProcedures("db", "%", "%")) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for schemas.
      *
@@ -812,11 +820,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testSchemas() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getSchemas()) {
+        try (ResultSet rs = this.conn.getMetaData().getSchemas()) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for tables.
      *
@@ -826,12 +834,12 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testTables() throws SQLException {
         final String[] types = { "TABLE", "VIEW" };
-
-        try (ResultSet rs = conn.getMetaData().getTables("db", "%", "%", types)) {
+        
+        try (ResultSet rs = this.conn.getMetaData().getTables("db", "%", "%", types)) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for table selectable.
      *
@@ -840,9 +848,9 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testTableSelectable() throws SQLException {
-        Assert.assertTrue(conn.getMetaData().allTablesAreSelectable());
+        Assert.assertTrue(this.conn.getMetaData().allTablesAreSelectable());
     }
-
+    
     /**
      * Test for tables with null type.
      *
@@ -851,11 +859,11 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testTablesWithNullType() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getTables("db", "%", "%", null)) {
+        try (ResultSet rs = this.conn.getMetaData().getTables("db", "%", "%", null)) {
             Assert.assertTrue(rs instanceof ParadoxResultSet);
         }
     }
-
+    
     /**
      * Test for table types.
      *
@@ -864,7 +872,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testTableTypes() throws SQLException {
-        try (ResultSet rs = conn.getMetaData().getTableTypes()) {
+        try (ResultSet rs = this.conn.getMetaData().getTableTypes()) {
             Assert.assertTrue("Get first result.", rs.next());
             Assert.assertEquals("Testing for table type.", "TABLE", rs.getString(1));
             Assert.assertTrue("Get second result.", rs.next());

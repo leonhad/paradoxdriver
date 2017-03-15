@@ -22,7 +22,7 @@ import java.sql.SQLException;
  * @since 1.3
  */
 public interface FieldParser {
-
+    
     /**
      * If this parses matches with the paradox field type.
      *
@@ -31,7 +31,7 @@ public interface FieldParser {
      * @return true if I can handle this type.
      */
     boolean match(int type);
-
+    
     /**
      * Parses the filter;
      *

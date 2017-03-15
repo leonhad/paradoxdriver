@@ -31,12 +31,12 @@ import org.junit.experimental.categories.Category;
  */
 @Category(IntegrationTest.class)
 public class BlobTest {
-
+    
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -47,7 +47,7 @@ public class BlobTest {
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Used to close the test connection.
      *
@@ -56,11 +56,11 @@ public class BlobTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to test database.
      *
@@ -69,9 +69,9 @@ public class BlobTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for BLOB reading.
      *
@@ -82,12 +82,12 @@ public class BlobTest {
     public void testReadBlob() throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
-
+        
         try {
-            stmt = conn.createStatement();
-
+            stmt = this.conn.createStatement();
+            
             rs = stmt.executeQuery("SELECT comments FROM customer");
-
+            
             Assert.assertTrue("First record not exists", rs.next());
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
             Assert.assertEquals("Small comment (less 100 symbols)",
@@ -104,15 +104,15 @@ public class BlobTest {
             Assert.assertEquals("3 row: Medium comment (318 symbols)", 318, rs.getClob("comments").length());
             Assert.assertTrue("3 row: Start with:mvn",
                     rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()).startsWith("mvn"));
-
+            
             Assert.assertTrue("Fourth record not exists", rs.next());
             Assert.assertNotNull("Fourth comment is null", rs.getClob("comments"));
             Assert.assertEquals("4 row: Big comment (56864 symbols)", 56864, rs.getClob("comments").length());
-
+            
             Assert.assertTrue("Five record not exists", rs.next());
             Assert.assertNotNull("Five comment is null", rs.getClob("comments"));
             Assert.assertEquals("5 row: Small comment (415 symbols)", 426, rs.getClob("comments").length());
-
+            
         } finally {
             if (rs != null) {
                 rs.close();
@@ -120,12 +120,12 @@ public class BlobTest {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
+            if (this.conn != null) {
+                this.conn.close();
             }
         }
     }
-
+    
     /**
      * Test for CLOB with cp1251 charset.
      *
@@ -136,12 +136,12 @@ public class BlobTest {
     public void testReadBlob1251() throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
-
+        
         try {
-            stmt = conn.createStatement();
-
+            stmt = this.conn.createStatement();
+            
             rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2");
-
+            
             Assert.assertTrue("Nation locale: record not exists", rs.next());
             final Clob c = rs.getClob("note");
             final String expected =
@@ -152,7 +152,7 @@ public class BlobTest {
                             + "(OASIS) - спецификация носит обязательный характер;\r\n";
             final String real = c.getSubString(1, (int) c.length());
             Assert.assertEquals("Unexpected cp1251 text", expected, real);
-
+            
         } finally {
             if (rs != null) {
                 rs.close();
@@ -160,8 +160,8 @@ public class BlobTest {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
+            if (this.conn != null) {
+                this.conn.close();
             }
         }
     }

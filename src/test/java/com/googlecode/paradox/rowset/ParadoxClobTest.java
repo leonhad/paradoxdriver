@@ -36,7 +36,7 @@ public class ParadoxClobTest {
      * The database connection.
      */
     private ParadoxConnection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -47,7 +47,7 @@ public class ParadoxClobTest {
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Used to close the test connection.
      *
@@ -56,11 +56,11 @@ public class ParadoxClobTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to test database.
      *
@@ -69,9 +69,9 @@ public class ParadoxClobTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for {@link Clob#getAsciiStream()} method.
      *
@@ -80,19 +80,19 @@ public class ParadoxClobTest {
      */
     @Test
     public void testAsciiStream() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             final BufferedReader reader = new BufferedReader(new InputStreamReader(clob.getAsciiStream()));
             Assert.assertEquals("Testing for input stream value.", "Small comment (less 100 symbols)",
                     reader.readLine());
         }
     }
-
+    
     /**
      * Test for {@link Clob#getCharacterStream()} method.
      *
@@ -101,19 +101,19 @@ public class ParadoxClobTest {
      */
     @Test
     public void testCharacterStream() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             final BufferedReader reader = new BufferedReader(clob.getCharacterStream());
             Assert.assertEquals("Testing for input stream value.", "Small comment (less 100 symbols)",
                     reader.readLine());
         }
     }
-
+    
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with high position.
      *
@@ -122,17 +122,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithHighPosition() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getCharacterStream(100, 3);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with invalid length.
      *
@@ -141,17 +141,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithInvalidLength() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getCharacterStream(1, -1);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with long length.
      *
@@ -160,17 +160,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithLongLength() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getCharacterStream(1, 100);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with low position.
      *
@@ -179,17 +179,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithLowPosition() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getCharacterStream(0, 3);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} method.
      *
@@ -198,18 +198,18 @@ public class ParadoxClobTest {
      */
     @Test
     public void testCharacterStreamWithParameters() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             final BufferedReader reader = new BufferedReader(clob.getCharacterStream(1, 3));
             Assert.assertEquals("Testing for input stream value.", "Sma", reader.readLine());
         }
     }
-
+    
     /**
      * Test for {@link ResultSet#getClob(String)} method.
      *
@@ -218,7 +218,7 @@ public class ParadoxClobTest {
      */
     @Test
     public void testReadBlob() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
@@ -237,7 +237,7 @@ public class ParadoxClobTest {
             Assert.assertEquals("5 row: Small comment (415 symbols)", 426, rs.getClob("comments").length());
         }
     }
-
+    
     /**
      * Test for CLOB with cp1251 charset.
      *
@@ -246,9 +246,9 @@ public class ParadoxClobTest {
      */
     @Test
     public void testReadBlob1251() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2")) {
-
+            
             Assert.assertTrue("Nation locale: record not exists", rs.next());
             final Clob c = rs.getClob("note");
             final String expected =
@@ -258,12 +258,12 @@ public class ParadoxClobTest {
                             + "Discovery and Integration (UDDI) версии 2.0 - стандарт Организации по развитию стандартов "
                             + "структурированной информации Organization for the Advancement of Structured Information "
                             + "Standards (OASIS) - спецификация носит обязательный характер;\r\n";
-
+            
             final String real = c.getSubString(1, (int) c.length());
             Assert.assertEquals("Testing for cp1251 text.", expected, real);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getSubString(long, int)} method.
      *
@@ -272,17 +272,17 @@ public class ParadoxClobTest {
      */
     @Test
     public void testSubString() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             Assert.assertEquals("Testing for input stream value.", "Sma", clob.getSubString(1, 3));
         }
     }
-
+    
     /**
      * Test for {@link Clob#getSubString(long, int)} method with high length.
      *
@@ -291,17 +291,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testSubStringWithHighLength() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getSubString(1, 100);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getSubString(long, int)} method with high position.
      *
@@ -310,17 +310,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testSubStringWithHighPos() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getSubString(100, 3);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getSubString(long, int)} method with invalid length.
      *
@@ -329,17 +329,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testSubStringWithInvalidLength() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getSubString(1, -1);
         }
     }
-
+    
     /**
      * Test for {@link Clob#getSubString(long, int)} method with low position.
      *
@@ -348,17 +348,17 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testSubStringWithLowPos() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.getSubString(0, 3);
         }
     }
-
+    
     /**
      * Test for {@link Clob#truncate(long)} method.
      *
@@ -367,18 +367,18 @@ public class ParadoxClobTest {
      */
     @Test
     public void testTruncate() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.truncate(3);
             Assert.assertEquals("Testing for truncate.", 3, clob.length());
         }
     }
-
+    
     /**
      * Test for {@link Clob#truncate(long)} method with high value.
      *
@@ -387,18 +387,18 @@ public class ParadoxClobTest {
      */
     @Test(expected = SQLException.class)
     public void testTruncateHighValue() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             final long value = clob.length();
             clob.truncate(value + 100);
         }
     }
-
+    
     /**
      * Test for {@link Clob#truncate(long)} method with zero size.
      *
@@ -407,13 +407,13 @@ public class ParadoxClobTest {
      */
     @Test
     public void testTruncateWithZeroSize() throws Exception {
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = this.conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-
+            
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-
+            
             clob.truncate(0);
             Assert.assertEquals("Testing for truncate.", 0, clob.length());
         }

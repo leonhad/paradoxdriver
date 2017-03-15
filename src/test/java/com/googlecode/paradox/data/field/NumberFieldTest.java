@@ -26,7 +26,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class NumberFieldTest {
-
+    
     /**
      * Test for decimal values.
      *
@@ -38,11 +38,11 @@ public class NumberFieldTest {
         try (Connection conn = DriverManager.getConnection("jdbc:paradox:target/test-classes/db");
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT * FROM \"DECIMAL\"")) {
-
+            
             Assert.assertTrue("First record:", rs.next());
         }
     }
-
+    
     /**
      * Test for invalid match.
      */
@@ -51,7 +51,7 @@ public class NumberFieldTest {
         final NumberField field = new NumberField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -65,7 +65,7 @@ public class NumberFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Different values.", 100.5d, value.getNumber().doubleValue(), 0);
     }
-
+    
     /**
      * Test for valid match.
      */

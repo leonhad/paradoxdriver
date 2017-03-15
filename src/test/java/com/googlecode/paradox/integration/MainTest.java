@@ -34,17 +34,17 @@ import org.junit.experimental.categories.Category;
  */
 @Category(IntegrationTest.class)
 public class MainTest {
-
+    
     /**
      * The connection string used in this tests.
      */
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-
+    
     /**
      * The database connection.
      */
     private Connection conn;
-
+    
     /**
      * Register the database driver.
      *
@@ -55,7 +55,7 @@ public class MainTest {
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Close the test connection.
      *
@@ -64,11 +64,11 @@ public class MainTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to the test database.
      *
@@ -77,9 +77,9 @@ public class MainTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for the catalog metadata.
      *
@@ -89,8 +89,8 @@ public class MainTest {
     @Test
     public void testCatalog() throws Exception {
         ResultSet rs = null;
-
-        final DatabaseMetaData meta = conn.getMetaData();
+        
+        final DatabaseMetaData meta = this.conn.getMetaData();
         try {
             rs = meta.getCatalogs();
             if (rs.next()) {
@@ -104,7 +104,7 @@ public class MainTest {
             }
         }
     }
-
+    
     /**
      * Test for the index info metadata.
      *
@@ -114,22 +114,22 @@ public class MainTest {
     @Test
     public void testIndexInfo() throws Exception {
         ResultSet rs = null;
-
+        
         try {
             final String[] names = new String[2];
-            final DatabaseMetaData meta = conn.getMetaData();
-
+            final DatabaseMetaData meta = this.conn.getMetaData();
+            
             rs = meta.getIndexInfo("db", "APP", "customer.db", true, true);
             Assert.assertTrue(rs.next());
             names[0] = rs.getString("INDEX_NAME");
             Assert.assertTrue(rs.next());
             names[1] = rs.getString("INDEX_NAME");
             Assert.assertTrue(rs.next());
-
+            
             Arrays.sort(names);
             Assert.assertEquals("CUSTOMER.PX", names[0]);
             Assert.assertEquals("CUSTOMER.X06", names[1]);
-
+            
             while (rs.next()) {
                 Assert.assertEquals("db", rs.getString("TABLE_CAT"));
                 Assert.assertEquals("APP", rs.getString("TABLE_SCHEM"));
@@ -151,7 +151,7 @@ public class MainTest {
             }
         }
     }
-
+    
     /**
      * Test for primary key metadata.
      *
@@ -161,10 +161,10 @@ public class MainTest {
     @Test
     public void testPrimaryKey() throws Exception {
         ResultSet rs = null;
-
+        
         try {
-            final DatabaseMetaData meta = conn.getMetaData();
-
+            final DatabaseMetaData meta = this.conn.getMetaData();
+            
             rs = meta.getPrimaryKeys("db", "APP", "CUSTOMER.db");
             Assert.assertTrue(rs.next());
             Assert.assertEquals("db", rs.getString("TABLE_CAT"));
@@ -180,7 +180,7 @@ public class MainTest {
             }
         }
     }
-
+    
     /**
      * Test for {@link ResultSet} execution.
      *
@@ -191,12 +191,12 @@ public class MainTest {
     public void testResultSet() throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
-
+        
         try {
-            stmt = conn.createStatement();
-
+            stmt = this.conn.createStatement();
+            
             rs = stmt.executeQuery("SELECT AC as 'ACode', State, CITIES FROM AREACODES");
-
+            
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Column 'AC':", "201", rs.getString("ac"));
             Assert.assertEquals("Column 'State':", "NJ", rs.getString("State"));
@@ -211,7 +211,7 @@ public class MainTest {
             }
         }
     }
-
+    
     /**
      * Test for {@link ResultSet} with multiple values.
      *
@@ -222,12 +222,12 @@ public class MainTest {
     public void testResultSetMultipleValues() throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
-
+        
         try {
-            stmt = conn.createStatement();
-
+            stmt = this.conn.createStatement();
+            
             rs = stmt.executeQuery("SELECT \"id\", name, moneys FROM \"general.db\"");
-
+            
             Assert.assertTrue("First record:", rs.next());
             Assert.assertEquals("1 row: ", "1 - Mari 100.0",
                     rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
@@ -244,12 +244,12 @@ public class MainTest {
             if (stmt != null) {
                 stmt.close();
             }
-            if (conn != null) {
-                conn.close();
+            if (this.conn != null) {
+                this.conn.close();
             }
         }
     }
-
+    
     /**
      * Test {@link ResultSet} with one column.
      *
@@ -260,12 +260,12 @@ public class MainTest {
     public void testResultSetOneColumn() throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
-
+        
         try {
-            stmt = conn.createStatement();
-
+            stmt = this.conn.createStatement();
+            
             rs = stmt.executeQuery("SELECT email FROM customer");
-
+            
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString("email"));
             Assert.assertTrue("No second row", rs.next());
@@ -286,7 +286,7 @@ public class MainTest {
             }
         }
     }
-
+    
     /**
      * Test {@link ResultSet} with two columns.
      *
@@ -297,12 +297,12 @@ public class MainTest {
     public void testResultSetTwoColumn() throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
-
+        
         try {
-            stmt = conn.createStatement();
-
+            stmt = this.conn.createStatement();
+            
             rs = stmt.executeQuery("SELECT email,custno  FROM customer");
-
+            
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString(1));
             Assert.assertEquals("1 row:", 1, rs.getInt(2));
@@ -329,7 +329,7 @@ public class MainTest {
             }
         }
     }
-
+    
     /**
      * Test for unwrap impossible.
      *
@@ -338,9 +338,9 @@ public class MainTest {
      */
     @Test(expected = SQLException.class)
     public void testUnwrapImpossible() throws Exception {
-        Utils.unwrap(conn, Integer.class);
+        Utils.unwrap(this.conn, Integer.class);
     }
-
+    
     /**
      * Test for a valid connection.
      *
@@ -349,10 +349,10 @@ public class MainTest {
      */
     @Test
     public void testValidConnection() throws SQLException {
-        Assert.assertTrue("Wrapper invalid.", conn.isWrapperFor(ParadoxConnection.class));
-        Assert.assertNotNull("Can't unwrap.", conn.unwrap(ParadoxConnection.class));
+        Assert.assertTrue("Wrapper invalid.", this.conn.isWrapperFor(ParadoxConnection.class));
+        Assert.assertNotNull("Can't unwrap.", this.conn.unwrap(ParadoxConnection.class));
     }
-
+    
     /**
      * Test for view columns metadata.
      *
@@ -361,8 +361,8 @@ public class MainTest {
      */
     @Test
     public void testViewColumns() throws Exception {
-        final DatabaseMetaData meta = conn.getMetaData();
-
+        final DatabaseMetaData meta = this.conn.getMetaData();
+        
         try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
             // Test for AC field.
             Assert.assertTrue(rs.next());
@@ -376,7 +376,7 @@ public class MainTest {
             Assert.assertEquals("Testing for nullable.", null, rs.getString("NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
-
+            
             // Test for State field.
             Assert.assertTrue(rs.next());
             Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
@@ -389,7 +389,7 @@ public class MainTest {
             Assert.assertEquals("Testing for nullable.", null, rs.getString("NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
-
+            
             // Test for Cities field.
             Assert.assertTrue(rs.next());
             Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
@@ -402,7 +402,7 @@ public class MainTest {
             Assert.assertEquals("Testing for nullable.", null, rs.getString("NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
-
+            
             // No more results.
             Assert.assertFalse(rs.next());
         }

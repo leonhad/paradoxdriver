@@ -34,12 +34,12 @@ import org.junit.Test;
  * @since 1.0
  */
 public class TableDataTest {
-
+    
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -50,7 +50,7 @@ public class TableDataTest {
     public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Used to close the test connection.
      *
@@ -59,11 +59,11 @@ public class TableDataTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to test database.
      *
@@ -72,9 +72,9 @@ public class TableDataTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for invalid table
      *
@@ -83,9 +83,10 @@ public class TableDataTest {
      */
     @Test
     public void testInvalidTable() throws SQLException {
-        Assert.assertEquals("Failed in count invalid tables.", 0, TableData.listTables(conn, "not found.db").size());
+        Assert.assertEquals("Failed in count invalid tables.", 0,
+                TableData.listTables(this.conn, "not found.db").size());
     }
-
+    
     /**
      * Test for table area codes.
      *
@@ -94,14 +95,14 @@ public class TableDataTest {
      */
     @Test
     public void testLoadAreaCodes() throws SQLException {
-        final List<ParadoxTable> tables = TableData.listTables(conn, "areacodes.db");
+        final List<ParadoxTable> tables = TableData.listTables(this.conn, "areacodes.db");
         Assert.assertNotNull("List tables is null", tables);
         Assert.assertTrue("List tables is empty", tables.size() > 0);
         final ParadoxTable table = tables.get(0);
         final List<List<FieldValue>> data = TableData.loadData(table, table.getFields());
         Assert.assertEquals("Error in load table.", table.getRowCount(), data.size());
     }
-
+    
     /**
      * Test for contact table.
      *
@@ -110,12 +111,12 @@ public class TableDataTest {
      */
     @Test
     public void testLoadContacts() throws SQLException {
-        final ParadoxTable table = TableData.listTables(conn, "contacts.db").get(0);
+        final ParadoxTable table = TableData.listTables(this.conn, "contacts.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-
+    
     /**
      * Test for customer table.
      *
@@ -124,12 +125,12 @@ public class TableDataTest {
      */
     @Test
     public void testLoadCustomer() throws SQLException {
-        final ParadoxTable table = TableData.listTables(conn, "customer.db").get(0);
+        final ParadoxTable table = TableData.listTables(this.conn, "customer.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-
+    
     /**
      * Test for Hercules table.
      *
@@ -138,10 +139,10 @@ public class TableDataTest {
      */
     @Test
     public void testLoadHercules() throws SQLException {
-        final ParadoxTable table = TableData.listTables(conn, "hercules.db").get(0);
+        final ParadoxTable table = TableData.listTables(this.conn, "hercules.db").get(0);
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, table.getFields()));
     }
-
+    
     /**
      * Test for orders table.
      *
@@ -150,12 +151,12 @@ public class TableDataTest {
      */
     @Test
     public void testLoadOrders() throws SQLException {
-        final ParadoxTable table = TableData.listTables(conn, "orders.db").get(0);
+        final ParadoxTable table = TableData.listTables(this.conn, "orders.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-
+    
     /**
      * Test for server table.
      *
@@ -164,12 +165,12 @@ public class TableDataTest {
      */
     @Test
     public void testLoadServer() throws SQLException {
-        final ParadoxTable table = TableData.listTables(conn, "server.db").get(0);
+        final ParadoxTable table = TableData.listTables(this.conn, "server.db").get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-
+    
     /**
      * Test for class sanity.
      *

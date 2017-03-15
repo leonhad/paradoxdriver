@@ -20,7 +20,7 @@ import org.junit.Test;
  * @since 1.1
  */
 public class ExpressionsTest {
-
+    
     /**
      * Test for equals.
      */
@@ -28,7 +28,7 @@ public class ExpressionsTest {
     public void testEquals() {
         Assert.assertTrue(Expressions.accept("TABLE", "table", false));
     }
-
+    
     /**
      * Test for an extra value.
      */
@@ -36,7 +36,7 @@ public class ExpressionsTest {
     public void testExtra() {
         Assert.assertFalse(Expressions.accept("TEST.QBE~", "%.QBE"));
     }
-
+    
     /**
      * Test for like.
      */
@@ -44,7 +44,7 @@ public class ExpressionsTest {
     public void testLikes() {
         Assert.assertTrue(Expressions.accept("TABLE", "TA%"));
     }
-
+    
     /**
      * Test for mixed values.
      */
@@ -52,7 +52,7 @@ public class ExpressionsTest {
     public void testMix() {
         Assert.assertTrue(Expressions.accept("TEST.X02", "%.X??"));
     }
-
+    
     /**
      * Test for not equals.
      */
@@ -60,7 +60,7 @@ public class ExpressionsTest {
     public void testNotEquals() {
         Assert.assertFalse(Expressions.accept("TABLE", "table", true));
     }
-
+    
     /**
      * Test for sanity.
      *
@@ -78,7 +78,7 @@ public class ExpressionsTest {
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Expressions.class));
     }
-
+    
     /**
      * Test for unique keyword.
      */

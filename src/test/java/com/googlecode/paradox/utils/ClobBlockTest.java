@@ -19,7 +19,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class ClobBlockTest {
-
+    
     /**
      * Test for getters.
      */

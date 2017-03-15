@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.0
  */
 public class SecondaryIndexFilterTest {
-
+    
     /**
      * Test for acceptance.
      */
@@ -31,5 +31,5 @@ public class SecondaryIndexFilterTest {
         final SecondaryIndexFilter filter = new SecondaryIndexFilter();
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
-
+    
 }

@@ -18,7 +18,7 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
  * @since 1.1
  */
 public final class Min extends AbstractCallableProcedure {
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -26,7 +26,7 @@ public final class Min extends AbstractCallableProcedure {
     public String getName() {
         return "min";
     }
-
+    
     /**
      * {@inheritDoc}.
      */

@@ -23,7 +23,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class FieldFactoryTest {
-
+    
     /**
      * Test for sanity.
      *
@@ -41,7 +41,7 @@ public class FieldFactoryTest {
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(FieldFactory.class));
     }
-
+    
     /**
      * Test for invalid field type.
      *

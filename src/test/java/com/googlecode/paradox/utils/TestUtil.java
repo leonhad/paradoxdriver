@@ -22,7 +22,7 @@ import org.junit.Assert;
  * @since 1.2
  */
 public class TestUtil {
-
+    
     /**
      * Verifies that a utility class is well defined.
      *

@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class TypeNameTest {
-
+    
     /**
      * Gets the class name.
      *
@@ -32,7 +32,7 @@ public class TypeNameTest {
     public void testClassName() throws SQLException {
         Assert.assertEquals("java.io.InputStream", TypeName.getClassNameByType(Types.BINARY));
     }
-
+    
     /**
      * Test for unsupported type.
      *
@@ -43,7 +43,7 @@ public class TypeNameTest {
     public void testClassNameUnsupported() throws SQLException {
         TypeName.getClassNameByType(99);
     }
-
+    
     /**
      * Gets the field name.
      *
@@ -54,7 +54,7 @@ public class TypeNameTest {
     public void testFieldName() throws SQLException {
         Assert.assertEquals("BINARY", TypeName.getTypeName(Types.BINARY));
     }
-
+    
     /**
      * Test for unsupported type name.
      *
@@ -65,7 +65,7 @@ public class TypeNameTest {
     public void testNameUnsupported() throws SQLException {
         TypeName.getTypeName(99);
     }
-
+    
     /**
      * Test for SQL Type.
      */

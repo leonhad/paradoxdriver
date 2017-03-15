@@ -21,7 +21,7 @@ import java.util.List;
  * @since 1.1
  */
 public abstract class AbstractCallableProcedure {
-
+    
     /**
      * Get the procedure columns.
      *
@@ -29,29 +29,29 @@ public abstract class AbstractCallableProcedure {
      */
     public final List<ParadoxField> getCols() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
-
+        
         final ParadoxField field = new ParadoxField();
         field.setName("field");
         field.setType((byte) 0xC);
         ret.add(field);
-
+        
         return ret;
     }
-
+    
     /**
      * Gets the procedure name.
      *
      * @return the procedure name.
      */
     public abstract String getName();
-
+    
     /**
      * Gets the procedure description.
      *
      * @return the procedure description.
      */
     public abstract String getRemarks();
-
+    
     /**
      * Gets the return type.
      *

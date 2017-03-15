@@ -16,7 +16,7 @@ package com.googlecode.paradox.parser.nodes;
  * @since 1.0
  */
 public class StatementNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *

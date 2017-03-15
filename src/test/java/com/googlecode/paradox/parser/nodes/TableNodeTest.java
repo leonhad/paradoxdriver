@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class TableNodeTest {
-
+    
     /**
      * Test for instance.
      */
@@ -31,7 +31,7 @@ public class TableNodeTest {
         Assert.assertEquals("Testing for name.", "table", node.getName());
         Assert.assertEquals("Testing for alias", "alias", node.getAlias());
     }
-
+    
     /**
      * Test for joins.
      */
@@ -42,7 +42,7 @@ public class TableNodeTest {
         node.addJoin(new JoinNode());
         Assert.assertEquals("Testing for changed join size.", 1, node.getJoins().size());
     }
-
+    
     /**
      * Test for {@link TableNode#toString()} method.
      */
@@ -51,14 +51,14 @@ public class TableNodeTest {
         final TableNode node = new TableNode("table.db", "alias");
         final JoinNode join = new JoinNode();
         join.setTableName("table2");
-
+        
         final FieldNode fieldA = new FieldNode(null, "a", null);
         final FieldNode fieldB = new FieldNode(null, "b", null);
-
+        
         final ArrayList<SQLNode> list = new ArrayList<>();
         list.add(new EqualsNode(fieldA, fieldB));
         join.setConditions(list);
-
+        
         node.addJoin(join);
         Assert.assertEquals("Testing for toString().", "table AS alias CROSS JOIN table2 ON a = b ", node.toString());
     }

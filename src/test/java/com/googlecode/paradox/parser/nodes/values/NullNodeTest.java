@@ -19,7 +19,7 @@ import org.junit.Test;
  * @since 1.1
  */
 public class NullNodeTest {
-
+    
     /**
      * Test for instance.
      */

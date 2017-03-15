@@ -19,22 +19,22 @@ import java.util.Collections;
  * @since 1.0
  */
 public class SQLNode {
-
+    
     /**
      * Node childhood.
      */
     private Collection<? extends SQLNode> childhood;
-
+    
     /**
      * The node alias.
      */
     protected String alias;
-
+    
     /**
      * The node name.
      */
     protected final String name;
-
+    
     /**
      * Create a new instance.
      *
@@ -44,7 +44,7 @@ public class SQLNode {
     protected SQLNode(final String name) {
         this.name = name;
     }
-
+    
     /**
      * Create a new instance.
      *
@@ -57,16 +57,16 @@ public class SQLNode {
         this.name = name;
         this.alias = alias;
     }
-
+    
     /**
      * Gets the node alias.
      *
      * @return the node alias.
      */
     public final String getAlias() {
-        return alias;
+        return this.alias;
     }
-
+    
     /**
      * Gets the childhood.
      *
@@ -74,18 +74,18 @@ public class SQLNode {
      */
     @SuppressWarnings("unchecked")
     public final Collection<SQLNode> getChildhood() {
-        return (Collection<SQLNode>) childhood;
+        return (Collection<SQLNode>) this.childhood;
     }
-
+    
     /**
      * Gets the node name.
      *
      * @return the node name.
      */
     public final String getName() {
-        return name;
+        return this.name;
     }
-
+    
     /**
      * Sets the node alias.
      *
@@ -95,7 +95,7 @@ public class SQLNode {
     public final void setAlias(final String alias) {
         this.alias = alias;
     }
-
+    
     /**
      * Sets the childhood.
      *

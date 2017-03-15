@@ -18,7 +18,7 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
  * @since 1.1
  */
 public final class NotEqualsNode extends AbstractComparisonNode {
-
+    
     /**
      * Create a new instance.
      *

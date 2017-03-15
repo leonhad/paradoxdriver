@@ -16,12 +16,12 @@ package com.googlecode.paradox.parser.nodes;
  * @since 1.0
  */
 public final class FieldNode extends SQLNode {
-
+    
     /**
      * This field table name.
      */
     private final String tableName;
-
+    
     /**
      * Stores field values (from select statements).
      *
@@ -36,33 +36,33 @@ public final class FieldNode extends SQLNode {
         super(fieldName, alias);
         this.tableName = tableName;
     }
-
+    
     /**
      * Gets the table name.
      *
      * @return the table name.
      */
     public String getTableName() {
-        return tableName;
+        return this.tableName;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        if (tableName != null) {
-            builder.append(tableName);
+        if (this.tableName != null) {
+            builder.append(this.tableName);
             builder.append('.');
         }
-        builder.append(getName());
-
-        if ((alias != null) && !getName().equals(alias)) {
+        builder.append(this.getName());
+        
+        if ((this.alias != null) && !this.getName().equals(this.alias)) {
             builder.append(" AS ");
-            builder.append(alias);
+            builder.append(this.alias);
         }
         return builder.toString();
     }
-
+    
 }

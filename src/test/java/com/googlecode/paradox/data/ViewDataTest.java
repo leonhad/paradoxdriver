@@ -30,12 +30,12 @@ import org.junit.Test;
  * @since 1.0
  */
 public class ViewDataTest {
-
+    
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -46,7 +46,7 @@ public class ViewDataTest {
     public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Used to close the test connection.
      *
@@ -55,11 +55,11 @@ public class ViewDataTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to test database.
      *
@@ -68,9 +68,9 @@ public class ViewDataTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for list views.
      *
@@ -79,9 +79,9 @@ public class ViewDataTest {
      */
     @Test
     public void testListViews() throws Exception {
-        Assert.assertNotNull("Invalid views", ViewData.listViews(conn));
+        Assert.assertNotNull("Invalid views", ViewData.listViews(this.conn));
     }
-
+    
     /**
      * Test for parse view.
      *
@@ -96,10 +96,10 @@ public class ViewDataTest {
         Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());
         Assert.assertEquals("Invalid field name.", "CALC _PC*_QTD", field.getExpression());
         Assert.assertEquals("Invalid field name.", "CUSTOTOTAL", field.getAlias());
-
+        
         Assert.assertTrue(field.isChecked());
     }
-
+    
     /**
      * Test for class sanity.
      *
@@ -110,7 +110,7 @@ public class ViewDataTest {
     public void testSanity() throws Exception {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(ViewData.class));
     }
-
+    
     /**
      * Test for view file reading.
      *
@@ -119,8 +119,8 @@ public class ViewDataTest {
      */
     @Test
     public void testViewFileReading() throws Exception {
-        final DatabaseMetaData meta = conn.getMetaData();
-
+        final DatabaseMetaData meta = this.conn.getMetaData();
+        
         try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
             // This view have 3 fields.
             Assert.assertTrue("Invalid result set.", rs.next());

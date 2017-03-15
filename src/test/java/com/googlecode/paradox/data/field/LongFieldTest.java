@@ -30,7 +30,7 @@ public class LongFieldTest {
         final LongField field = new LongField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -44,7 +44,7 @@ public class LongFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals(256L, value.getNumber());
     }
-
+    
     /**
      * Test for valid match.
      */

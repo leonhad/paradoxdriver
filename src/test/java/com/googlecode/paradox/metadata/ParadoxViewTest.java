@@ -20,7 +20,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class ParadoxViewTest {
-
+    
     /**
      * Test for field order.
      */
@@ -31,7 +31,7 @@ public class ParadoxViewTest {
         view.setFieldsOrder(list);
         Assert.assertEquals(list, view.getFieldsOrder());
     }
-
+    
     /**
      * Test for fields.
      */
@@ -42,7 +42,7 @@ public class ParadoxViewTest {
         view.setFields(list);
         Assert.assertEquals(list, view.getFields());
     }
-
+    
     /**
      * Test for field sort.
      */

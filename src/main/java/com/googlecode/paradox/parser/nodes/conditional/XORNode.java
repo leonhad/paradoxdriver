@@ -19,7 +19,7 @@ import java.util.Collections;
  * @since 1.1
  */
 public class XORNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *
@@ -28,7 +28,7 @@ public class XORNode extends SQLNode {
      */
     public XORNode(final SQLNode child) {
         super("XOR");
-        setChildhood(Collections.singletonList(child));
+        this.setChildhood(Collections.singletonList(child));
     }
-
+    
 }

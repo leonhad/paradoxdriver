@@ -23,7 +23,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class AutoIncrementFieldTest {
-
+    
     /**
      * Test for invalid match.
      */
@@ -32,7 +32,7 @@ public class AutoIncrementFieldTest {
         final AutoIncrementField field = new AutoIncrementField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -46,7 +46,7 @@ public class AutoIncrementFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals(256, value.getNumber());
     }
-
+    
     /**
      * Test for valid match.
      */

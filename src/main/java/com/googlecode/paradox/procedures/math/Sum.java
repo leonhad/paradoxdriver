@@ -18,7 +18,7 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
  * @since 1.1
  */
 public final class Sum extends AbstractCallableProcedure {
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -26,7 +26,7 @@ public final class Sum extends AbstractCallableProcedure {
     public String getName() {
         return "sum";
     }
-
+    
     /**
      * {@inheritDoc}.
      */

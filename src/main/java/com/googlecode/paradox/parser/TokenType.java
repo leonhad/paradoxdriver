@@ -20,229 +20,229 @@ public enum TokenType {
      * And token.
      */
     AND,
-
+    
     /**
      * AS token.
      */
     AS,
-
+    
     /**
      * All fields token.
      */
     ASTERISK("*"),
-
+    
     /**
      * Between token.
      */
     BETWEEN,
-
+    
     /**
      * By token.
      */
     BY,
-
+    
     /**
      * Character literal.
      */
     CHARACTER(null),
-
+    
     /**
      * Comma token.
      */
     COMMA(","),
-
+    
     /**
      * Delete token.
      */
     DELETE,
-
+    
     /**
      * Distinct token.
      */
     DISTINCT,
-
+    
     /**
      * Equals token.
      */
     EQUALS("="),
-
+    
     /**
      * Exists token.
      */
     EXISTS,
-
+    
     /**
      * From token.
      */
     FROM,
-
+    
     /**
      * Having token.
      */
     HAVING,
-
+    
     /**
      * Identifier token.
      */
     IDENTIFIER,
-
+    
     /**
      * Inner token.
      */
     INNER,
-
+    
     /**
      * Insert token.
      */
     INSERT,
-
+    
     /**
      * Into token.
      */
     INTO,
-
+    
     /**
      * Join token.
      */
     JOIN,
-
+    
     /**
      * Left token.
      */
     LEFT,
-
+    
     /**
      * Less token.
      */
     LESS("<"),
-
+    
     /**
      * Left parenthesis token.
      */
     LPAREN("("),
-
+    
     /**
      * Minus token.
      */
     MINUS("-"),
-
+    
     /**
      * More token.
      */
     MORE(">"),
-
+    
     /**
      * Not token.
      */
     NOT,
-
+    
     /**
      * Not equals token.
      */
     NOTEQUALS("<>"),
-
+    
     /**
      * Variant not equals token.
      */
     NOTEQUALS2("!="),
-
+    
     /**
      * Null token.
      */
     NULL,
-
+    
     /**
      * Numeric token.
      */
     NUMERIC(null),
-
+    
     /**
      * ON token.
      */
     ON,
-
+    
     /**
      * OR token.
      */
     OR,
-
+    
     /**
      * Order token.
      */
     ORDER,
-
+    
     /**
      * Outer token.
      */
     OUTER,
-
+    
     /**
      * Period token.
      */
     PERIOD("."),
-
+    
     /**
      * Plus token.
      */
     PLUS("+"),
-
+    
     /**
      * Right token.
      */
     RIGHT,
-
+    
     /**
      * Right parenthesis token.
      */
     RPAREN(")"),
-
+    
     /**
      * Select token.
      */
     SELECT,
-
+    
     /**
      * Semicolon token.
      */
     SEMI(";"),
-
+    
     /**
      * Update token.
      */
     UPDATE,
-
+    
     /**
      * Where token.
      */
     WHERE,
-
+    
     /**
      * XOR token.
      */
     XOR;
-
+    
     /**
      * Stores the conditional break values.
      */
     private static final TokenType[] CONDITIONAL_BREAKS = { ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN };
-
+    
     /**
      * Stores the operator values.
      */
     private static final TokenType[] OPERATORS = { AND, OR, XOR };
-
+    
     /**
      * Token value.
      */
     private final String value;
-
+    
     /**
      * Creates a new instance.
      */
     TokenType() {
-        value = name();
+        this.value = this.name();
     }
-
+    
     /**
      * Creates a new instance.
      *
@@ -252,7 +252,7 @@ public enum TokenType {
     TokenType(final String value) {
         this.value = value;
     }
-
+    
     /**
      * Gets the token by value.
      *
@@ -268,7 +268,7 @@ public enum TokenType {
         }
         return null;
     }
-
+    
     /**
      * Gets if the token is a conditional break.
      *
@@ -284,7 +284,7 @@ public enum TokenType {
         }
         return false;
     }
-
+    
     /**
      * Gets if the token for operator types.
      *

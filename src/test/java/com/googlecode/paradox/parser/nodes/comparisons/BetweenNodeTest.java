@@ -20,7 +20,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class BetweenNodeTest {
-
+    
     /**
      * Test the field node.
      */
@@ -30,7 +30,7 @@ public class BetweenNodeTest {
         final BetweenNode node = new BetweenNode(field, null, null);
         Assert.assertEquals(field, node.getField());
     }
-
+    
     /**
      * Test for {@link BetweenNode#toString()} method.
      */

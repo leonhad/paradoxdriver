@@ -28,17 +28,17 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxResultSetMetaData implements ResultSetMetaData {
-
+    
     /**
      * {@link ResultSet} columns.
      */
     private final List<Column> columns;
-
+    
     /**
      * The database connection.
      */
     private final ParadoxConnection conn;
-
+    
     /**
      * Creates a new {@link ResultSetMetaData}.
      *
@@ -51,188 +51,188 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         this.columns = Collections.unmodifiableList(columns);
         this.conn = conn;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getCatalogName(final int column) throws SQLException {
-        getColumn(column);
-        return conn.getCatalog();
+        this.getColumn(column);
+        return this.conn.getCatalog();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getColumnClassName(final int column) throws SQLException {
-        return TypeName.getClassNameByType(getColumnType(column));
+        return TypeName.getClassNameByType(this.getColumnType(column));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getColumnCount() {
-        return columns.size();
+        return this.columns.size();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getColumnDisplaySize(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.getMaxSize();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getColumnLabel(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.getName();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getColumnName(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.getName();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getColumnType(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.getType();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getColumnTypeName(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return Column.getTypeName(dto.getType());
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getPrecision(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.getPrecision();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getScale(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.getScale();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getSchemaName(final int column) throws SQLException {
-        getColumn(column);
-        return conn.getSchema();
+        this.getColumn(column);
+        return this.conn.getSchema();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getTableName(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.getTableName();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isAutoIncrement(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.isAutoIncrement();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isCaseSensitive(final int column) throws SQLException {
-        getColumn(column);
+        this.getColumn(column);
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isCurrency(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.isCurrency();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isDefinitelyWritable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.isWritable();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int isNullable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         if (dto.isNullable()) {
             return ResultSetMetaData.columnNullable;
         }
         return ResultSetMetaData.columnNoNulls;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isReadOnly(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.isReadOnly();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isSearchable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.isSearchable();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isSigned(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.isSigned();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -240,16 +240,16 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     public boolean isWrapperFor(final Class<?> iFace) {
         return Utils.isWrapperFor(this, iFace);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isWritable(final int column) throws SQLException {
-        final Column dto = getColumn(column);
+        final Column dto = this.getColumn(column);
         return dto.isWritable();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -257,7 +257,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return Utils.unwrap(this, iface);
     }
-
+    
     /**
      * Get an column.
      *
@@ -268,9 +268,9 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      *             in case of invalid type.
      */
     private Column getColumn(final int column) throws SQLException {
-        if ((column < 1) || (column > columns.size())) {
+        if ((column < 1) || (column > this.columns.size())) {
             throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN.getValue());
         }
-        return columns.get(column - 1);
+        return this.columns.get(column - 1);
     }
 }

@@ -51,7 +51,7 @@ import java.util.Map;
  * @since 1.0
  */
 public final class ParadoxResultSet implements ResultSet {
-
+    
     /**
      * If this connection is invalid.
      */
@@ -96,7 +96,7 @@ public final class ParadoxResultSet implements ResultSet {
      * The list of all {@link ResultSet} rows.
      */
     private final List<List<FieldValue>> values;
-
+    
     /**
      * Creates a new {@link ResultSet}.
      *
@@ -115,7 +115,7 @@ public final class ParadoxResultSet implements ResultSet {
         this.values = Collections.unmodifiableList(values);
         this.columns = Collections.unmodifiableList(columns);
         this.conn = conn;
-
+        
         // Fill column indexes
         for (int loop = 0; loop < columns.size(); loop++) {
             if (columns.get(loop) != null) {
@@ -123,42 +123,42 @@ public final class ParadoxResultSet implements ResultSet {
             }
         }
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean absolute(final int row) {
         if (row < 0) {
-            if ((row + values.size()) < 0) {
+            if ((row + this.values.size()) < 0) {
                 return false;
             }
-            position = values.size() + row;
+            this.position = this.values.size() + row;
         } else {
-            if (row > values.size()) {
+            if (row > this.values.size()) {
                 return false;
             }
-            position = row - 1;
+            this.position = row - 1;
         }
         return true;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public void afterLast() {
-        position = values.size();
+        this.position = this.values.size();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public void beforeFirst() {
-        position = -1;
+        this.position = -1;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -166,7 +166,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void cancelRowUpdates() {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -174,21 +174,21 @@ public final class ParadoxResultSet implements ResultSet {
     public void clearWarnings() {
         // Not used.
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public void close() throws SQLException {
-        if (clobMap != null) {
-            for (final Clob clob : clobMap.values()) {
+        if (this.clobMap != null) {
+            for (final Clob clob : this.clobMap.values()) {
                 clob.free();
             }
-            clearClob();
+            this.clearClob();
         }
-        closed = true;
+        this.closed = true;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -196,33 +196,33 @@ public final class ParadoxResultSet implements ResultSet {
     public void deleteRow() {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int findColumn(final String columnLabel) throws SQLException {
-        for (final Column column : columns) {
+        for (final Column column : this.columns) {
             if (column.getName().equalsIgnoreCase(columnLabel)) {
                 return column.getIndex() + 1;
             }
         }
         throw new SQLException("Invalid column: " + columnLabel, SQLStates.INVALID_COLUMN.getValue());
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean first() {
-        if (values.isEmpty()) {
+        if (this.values.isEmpty()) {
             return false;
         }
-        position = 0;
-        clearClob();
+        this.position = 0;
+        this.clearClob();
         return true;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -230,7 +230,7 @@ public final class ParadoxResultSet implements ResultSet {
     public Array getArray(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -238,7 +238,7 @@ public final class ParadoxResultSet implements ResultSet {
     public Array getArray(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -246,15 +246,15 @@ public final class ParadoxResultSet implements ResultSet {
     public InputStream getAsciiStream(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public InputStream getAsciiStream(final String columnLabel) throws SQLException {
-        return getAsciiStream(findColumn(columnLabel));
+        return this.getAsciiStream(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -262,7 +262,7 @@ public final class ParadoxResultSet implements ResultSet {
     public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
-
+    
     /**
      * {@inheritDoc}.
      *
@@ -272,20 +272,20 @@ public final class ParadoxResultSet implements ResultSet {
     @SuppressWarnings("squid:S1133")
     @Override
     public BigDecimal getBigDecimal(final int columnIndex, final int scale) throws SQLException {
-        verifyRow();
-
-        final BigDecimal value = getBigDecimal(columnIndex);
+        this.verifyRow();
+        
+        final BigDecimal value = this.getBigDecimal(columnIndex);
         return value.setScale(scale, RoundingMode.HALF_DOWN);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public BigDecimal getBigDecimal(final String columnLabel) throws SQLException {
-        return getBigDecimal(findColumn(columnLabel));
+        return this.getBigDecimal(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      *
@@ -295,9 +295,9 @@ public final class ParadoxResultSet implements ResultSet {
     @Deprecated
     @Override
     public BigDecimal getBigDecimal(final String columnLabel, final int scale) throws SQLException {
-        return getBigDecimal(findColumn(columnLabel), scale);
+        return this.getBigDecimal(this.findColumn(columnLabel), scale);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -305,15 +305,15 @@ public final class ParadoxResultSet implements ResultSet {
     public InputStream getBinaryStream(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public InputStream getBinaryStream(final String columnLabel) throws SQLException {
-        return getBinaryStream(findColumn(columnLabel));
+        return this.getBinaryStream(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -321,7 +321,7 @@ public final class ParadoxResultSet implements ResultSet {
     public Blob getBlob(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -329,59 +329,59 @@ public final class ParadoxResultSet implements ResultSet {
     public Blob getBlob(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean getBoolean(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        if (!lastValue.isNull()) {
-            return lastValue.getBoolean();
+        this.lastValue = row.get(columnIndex - 1);
+        if (!this.lastValue.isNull()) {
+            return this.lastValue.getBoolean();
         }
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean getBoolean(final String columnLabel) throws SQLException {
-        return getBoolean(findColumn(columnLabel));
+        return this.getBoolean(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public byte getByte(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        if (lastValue.isNull()) {
+        this.lastValue = row.get(columnIndex - 1);
+        if (this.lastValue.isNull()) {
             return (byte) 0;
         }
-        return lastValue.getNumber().byteValue();
+        return this.lastValue.getNumber().byteValue();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public byte getByte(final String columnLabel) throws SQLException {
-        return getByte(findColumn(columnLabel));
+        return this.getByte(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -389,15 +389,15 @@ public final class ParadoxResultSet implements ResultSet {
     public byte[] getBytes(final int columnIndex) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public byte[] getBytes(final String columnLabel) throws SQLException {
-        return getBytes(findColumn(columnLabel));
+        return this.getBytes(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -405,31 +405,31 @@ public final class ParadoxResultSet implements ResultSet {
     public Reader getCharacterStream(final int columnIndex) throws SQLException {
         throw new SQLFeatureNotSupportedException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Reader getCharacterStream(final String columnLabel) throws SQLException {
-        return getCharacterStream(findColumn(columnLabel));
+        return this.getCharacterStream(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Clob getClob(final int columnIndex) throws SQLException {
-        if (clobMap == null) {
-            clobMap = new HashMap<>(1);
+        if (this.clobMap == null) {
+            this.clobMap = new HashMap<>(1);
         }
-        if (clobMap.containsKey(columnIndex)) {
-            return clobMap.get(columnIndex);
+        if (this.clobMap.containsKey(columnIndex)) {
+            return this.clobMap.get(columnIndex);
         }
         final Object val = this.getObject(columnIndex);
         if (val != null) {
             if (val instanceof ClobDescriptor) {
                 final ParadoxClob clob = new ParadoxClob((ClobDescriptor) val);
-                clobMap.put(columnIndex, clob);
+                this.clobMap.put(columnIndex, clob);
                 return clob;
             } else {
                 throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
@@ -437,15 +437,15 @@ public final class ParadoxResultSet implements ResultSet {
         }
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Clob getClob(final String columnLabel) throws SQLException {
-        return getClob(findColumn(columnLabel));
+        return this.getClob(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -453,83 +453,83 @@ public final class ParadoxResultSet implements ResultSet {
     public int getConcurrency() {
         return ResultSet.CONCUR_READ_ONLY;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getCursorName() {
-        if (statement != null) {
-            return statement.getCursorName();
+        if (this.statement != null) {
+            return this.statement.getCursorName();
         }
         return "NO_NAME";
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Date getDate(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        return lastValue.getDate();
+        this.lastValue = row.get(columnIndex - 1);
+        return this.lastValue.getDate();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Date getDate(final int columnIndex, final Calendar cal) throws SQLException {
-        return getDate(columnIndex);
+        return this.getDate(columnIndex);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Date getDate(final String columnLabel) throws SQLException {
-        return getDate(findColumn(columnLabel));
+        return this.getDate(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Date getDate(final String columnLabel, final Calendar cal) throws SQLException {
-        return getDate(columnLabel);
+        return this.getDate(columnLabel);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public double getDouble(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        if (lastValue.isNull()) {
+        this.lastValue = row.get(columnIndex - 1);
+        if (this.lastValue.isNull()) {
             return 0D;
         }
-        return lastValue.getNumber().doubleValue();
+        return this.lastValue.getNumber().doubleValue();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public double getDouble(final String columnLabel) throws SQLException {
-        return getDouble(findColumn(columnLabel));
+        return this.getDouble(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -537,106 +537,106 @@ public final class ParadoxResultSet implements ResultSet {
     public int getFetchDirection() throws SQLException {
         throw new SQLException("No fetch direction");
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getFetchSize() {
-        return fetchSize;
+        return this.fetchSize;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public float getFloat(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        if (lastValue.isNull()) {
+        this.lastValue = row.get(columnIndex - 1);
+        if (this.lastValue.isNull()) {
             return 0F;
         }
-        return lastValue.getNumber().floatValue();
+        return this.lastValue.getNumber().floatValue();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public float getFloat(final String columnLabel) throws SQLException {
-        return getFloat(findColumn(columnLabel));
+        return this.getFloat(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getHoldability() {
-        return conn.getHoldability();
+        return this.conn.getHoldability();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getInt(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        return lastValue.isNull() ? 0 : lastValue.getNumber().intValue();
+        this.lastValue = row.get(columnIndex - 1);
+        return this.lastValue.isNull() ? 0 : this.lastValue.getNumber().intValue();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getInt(final String columnLabel) throws SQLException {
-        return getInt(findColumn(columnLabel));
+        return this.getInt(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public long getLong(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        if (lastValue.isNull()) {
+        this.lastValue = row.get(columnIndex - 1);
+        if (this.lastValue.isNull()) {
             return 0L;
         }
-        return lastValue.getNumber().longValue();
+        return this.lastValue.getNumber().longValue();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public long getLong(final String columnLabel) throws SQLException {
-        return getLong(findColumn(columnLabel));
+        return this.getLong(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public ResultSetMetaData getMetaData() {
-        return new ParadoxResultSetMetaData(conn, columns);
+        return new ParadoxResultSetMetaData(this.conn, this.columns);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -644,7 +644,7 @@ public final class ParadoxResultSet implements ResultSet {
     public Reader getNCharacterStream(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -652,7 +652,7 @@ public final class ParadoxResultSet implements ResultSet {
     public Reader getNCharacterStream(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -660,7 +660,7 @@ public final class ParadoxResultSet implements ResultSet {
     public NClob getNClob(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -668,7 +668,7 @@ public final class ParadoxResultSet implements ResultSet {
     public NClob getNClob(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -676,7 +676,7 @@ public final class ParadoxResultSet implements ResultSet {
     public String getNString(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -684,22 +684,22 @@ public final class ParadoxResultSet implements ResultSet {
     public String getNString(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Object getObject(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        return lastValue.getValue();
+        this.lastValue = row.get(columnIndex - 1);
+        return this.lastValue.getValue();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -707,23 +707,23 @@ public final class ParadoxResultSet implements ResultSet {
     public <T> T getObject(final int columnIndex, final Class<T> type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Object getObject(final int columnIndex, final Map<String, Class<?>> map) throws SQLException {
-        return getObject(columnIndex);
+        return this.getObject(columnIndex);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Object getObject(final String columnLabel) throws SQLException {
-        return getObject(findColumn(columnLabel));
+        return this.getObject(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -731,15 +731,15 @@ public final class ParadoxResultSet implements ResultSet {
     public <T> T getObject(final String columnLabel, final Class<T> type) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Object getObject(final String columnLabel, final Map<String, Class<?>> map) throws SQLException {
-        return getObject(columnLabel);
+        return this.getObject(columnLabel);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -747,7 +747,7 @@ public final class ParadoxResultSet implements ResultSet {
     public Ref getRef(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -755,15 +755,15 @@ public final class ParadoxResultSet implements ResultSet {
     public Ref getRef(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getRow() {
-        return position + 1;
+        return this.position + 1;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -771,7 +771,7 @@ public final class ParadoxResultSet implements ResultSet {
     public RowId getRowId(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -779,33 +779,33 @@ public final class ParadoxResultSet implements ResultSet {
     public RowId getRowId(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public short getShort(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        if (lastValue.isNull()) {
+        this.lastValue = row.get(columnIndex - 1);
+        if (this.lastValue.isNull()) {
             return (short) 0;
         }
-        return lastValue.getNumber().shortValue();
+        return this.lastValue.getNumber().shortValue();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public short getShort(final String columnLabel) throws SQLException {
-        return getShort(findColumn(columnLabel));
+        return this.getShort(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -813,7 +813,7 @@ public final class ParadoxResultSet implements ResultSet {
     public SQLXML getSQLXML(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -821,81 +821,81 @@ public final class ParadoxResultSet implements ResultSet {
     public SQLXML getSQLXML(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Statement getStatement() {
-        return statement;
+        return this.statement;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getString(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        if ((lastValue != null) && (lastValue.getValue() != null)) {
-            return lastValue.getValue().toString();
+        this.lastValue = row.get(columnIndex - 1);
+        if ((this.lastValue != null) && (this.lastValue.getValue() != null)) {
+            return this.lastValue.getValue().toString();
         }
-
+        
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getString(final String columnLabel) throws SQLException {
-        return getString(findColumn(columnLabel));
+        return this.getString(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Time getTime(final int columnIndex) throws SQLException {
-        verifyRow();
-
-        final List<FieldValue> row = values.get(position);
+        this.verifyRow();
+        
+        final List<FieldValue> row = this.values.get(this.position);
         if (columnIndex > row.size()) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        lastValue = row.get(columnIndex - 1);
-        return lastValue.getTime();
+        this.lastValue = row.get(columnIndex - 1);
+        return this.lastValue.getTime();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Time getTime(final int columnIndex, final Calendar cal) throws SQLException {
-        return getTime(columnIndex);
+        return this.getTime(columnIndex);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Time getTime(final String columnLabel) throws SQLException {
-        return getTime(findColumn(columnLabel));
+        return this.getTime(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Time getTime(final String columnLabel, final Calendar cal) throws SQLException {
-        return getTime(columnLabel);
+        return this.getTime(columnLabel);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -903,31 +903,31 @@ public final class ParadoxResultSet implements ResultSet {
     public Timestamp getTimestamp(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Timestamp getTimestamp(final int columnIndex, final Calendar cal) {
-        return getTimestamp(columnIndex);
+        return this.getTimestamp(columnIndex);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Timestamp getTimestamp(final String columnLabel) throws SQLException {
-        return getTimestamp(findColumn(columnLabel));
+        return this.getTimestamp(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Timestamp getTimestamp(final String columnLabel, final Calendar cal) throws SQLException {
-        return getTimestamp(columnLabel);
+        return this.getTimestamp(columnLabel);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -935,7 +935,7 @@ public final class ParadoxResultSet implements ResultSet {
     public int getType() {
         return ResultSet.TYPE_FORWARD_ONLY;
     }
-
+    
     /**
      * {@inheritDoc}.
      *
@@ -947,7 +947,7 @@ public final class ParadoxResultSet implements ResultSet {
     public InputStream getUnicodeStream(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      *
@@ -957,9 +957,9 @@ public final class ParadoxResultSet implements ResultSet {
     @SuppressWarnings("squid:S1133")
     @Override
     public InputStream getUnicodeStream(final String columnLabel) throws SQLException {
-        return getUnicodeStream(findColumn(columnLabel));
+        return this.getUnicodeStream(this.findColumn(columnLabel));
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -967,7 +967,7 @@ public final class ParadoxResultSet implements ResultSet {
     public URL getURL(final int columnIndex) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -975,16 +975,16 @@ public final class ParadoxResultSet implements ResultSet {
     public URL getURL(final String columnLabel) {
         return null;
     }
-
+    
     /**
      * Gets the all row values.
      *
      * @return the row values.
      */
     public List<List<FieldValue>> getValues() {
-        return Collections.unmodifiableList(values);
+        return Collections.unmodifiableList(this.values);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -992,7 +992,7 @@ public final class ParadoxResultSet implements ResultSet {
     public SQLWarning getWarnings() {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1000,47 +1000,47 @@ public final class ParadoxResultSet implements ResultSet {
     public void insertRow() {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isAfterLast() {
-        return position >= values.size();
+        return this.position >= this.values.size();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isBeforeFirst() {
-        return position == -1;
+        return this.position == -1;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isClosed() {
-        return closed;
+        return this.closed;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isFirst() {
-        return (position + 1) == 0;
+        return (this.position + 1) == 0;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isLast() {
-        return (position + 1) == values.size();
+        return (this.position + 1) == this.values.size();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1048,20 +1048,20 @@ public final class ParadoxResultSet implements ResultSet {
     public boolean isWrapperFor(final Class<?> iFace) {
         return Utils.isWrapperFor(this, iFace);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean last() {
-        if (values.isEmpty()) {
+        if (this.values.isEmpty()) {
             return false;
         }
-        position = values.size() - 1;
-        clearClob();
+        this.position = this.values.size() - 1;
+        this.clearClob();
         return true;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1069,7 +1069,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void moveToCurrentRow() {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1077,33 +1077,33 @@ public final class ParadoxResultSet implements ResultSet {
     public void moveToInsertRow() {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean next() {
-        position++;
-        if (hasNext()) {
-            clearClob();
+        this.position++;
+        if (this.hasNext()) {
+            this.clearClob();
             return true;
         }
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean previous() {
-        if (position > -1) {
-            position--;
-            clearClob();
+        if (this.position > -1) {
+            this.position--;
+            this.clearClob();
             return true;
         }
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1111,7 +1111,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void refreshRow() {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1119,7 +1119,7 @@ public final class ParadoxResultSet implements ResultSet {
     public boolean relative(final int rows) {
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1127,7 +1127,7 @@ public final class ParadoxResultSet implements ResultSet {
     public boolean rowDeleted() {
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1135,7 +1135,7 @@ public final class ParadoxResultSet implements ResultSet {
     public boolean rowInserted() {
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1143,7 +1143,7 @@ public final class ParadoxResultSet implements ResultSet {
     public boolean rowUpdated() {
         return false;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1151,15 +1151,15 @@ public final class ParadoxResultSet implements ResultSet {
     public void setFetchDirection(final int direction) throws SQLException {
         throw new SQLException("No fetch direction");
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public void setFetchSize(final int rows) {
-        fetchSize = rows;
+        this.fetchSize = rows;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1167,7 +1167,7 @@ public final class ParadoxResultSet implements ResultSet {
     public <T> T unwrap(final Class<T> iFace) throws SQLException {
         return Utils.unwrap(this, iFace);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1175,7 +1175,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateArray(final int columnIndex, final Array x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1183,7 +1183,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateArray(final String columnLabel, final Array x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1191,7 +1191,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateAsciiStream(final int columnIndex, final InputStream x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1199,7 +1199,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1207,7 +1207,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateAsciiStream(final int columnIndex, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1215,7 +1215,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateAsciiStream(final String columnLabel, final InputStream x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1223,7 +1223,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateAsciiStream(final String columnLabel, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1231,7 +1231,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1239,7 +1239,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBigDecimal(final int columnIndex, final BigDecimal x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1247,7 +1247,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBigDecimal(final String columnLabel, final BigDecimal x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1255,7 +1255,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBinaryStream(final int columnIndex, final InputStream x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1263,7 +1263,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBinaryStream(final int columnIndex, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1271,7 +1271,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBinaryStream(final int columnIndex, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1279,7 +1279,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBinaryStream(final String columnLabel, final InputStream x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1287,7 +1287,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBinaryStream(final String columnLabel, final InputStream x, final int length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1295,7 +1295,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1303,7 +1303,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBlob(final int columnIndex, final Blob x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1311,7 +1311,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBlob(final int columnIndex, final InputStream inputStream) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1319,7 +1319,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1327,7 +1327,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBlob(final String columnLabel, final Blob x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1335,7 +1335,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBlob(final String columnLabel, final InputStream inputStream) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1343,7 +1343,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1351,7 +1351,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBoolean(final int columnIndex, final boolean x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1359,7 +1359,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBoolean(final String columnLabel, final boolean x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1367,7 +1367,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateByte(final int columnIndex, final byte x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1375,7 +1375,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateByte(final String columnLabel, final byte x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1383,7 +1383,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBytes(final int columnIndex, final byte[] x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1391,7 +1391,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateBytes(final String columnLabel, final byte[] x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1399,7 +1399,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateCharacterStream(final int columnIndex, final Reader x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1407,7 +1407,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateCharacterStream(final int columnIndex, final Reader x, final int length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1415,7 +1415,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateCharacterStream(final int columnIndex, final Reader x, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1423,7 +1423,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateCharacterStream(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1431,7 +1431,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateCharacterStream(final String columnLabel, final Reader reader, final int length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1439,7 +1439,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1447,7 +1447,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateClob(final int columnIndex, final Clob x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1455,7 +1455,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateClob(final int columnIndex, final Reader reader) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1463,7 +1463,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateClob(final int columnIndex, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1471,7 +1471,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateClob(final String columnLabel, final Clob x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1479,7 +1479,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateClob(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1487,7 +1487,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateClob(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1495,7 +1495,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateDate(final int columnIndex, final Date x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1503,7 +1503,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateDate(final String columnLabel, final Date x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1511,7 +1511,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateDouble(final int columnIndex, final double x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1519,7 +1519,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateDouble(final String columnLabel, final double x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1527,7 +1527,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateFloat(final int columnIndex, final float x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1535,7 +1535,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateFloat(final String columnLabel, final float x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1543,7 +1543,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateInt(final int columnIndex, final int x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1551,7 +1551,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateInt(final String columnLabel, final int x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1559,7 +1559,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateLong(final int columnIndex, final long x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1567,7 +1567,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateLong(final String columnLabel, final long x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1575,7 +1575,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNCharacterStream(final int columnIndex, final Reader x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1583,7 +1583,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNCharacterStream(final int columnIndex, final Reader x, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1591,7 +1591,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNCharacterStream(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1599,7 +1599,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1607,7 +1607,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNClob(final int columnIndex, final NClob nClob) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1615,7 +1615,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNClob(final int columnIndex, final Reader reader) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1623,7 +1623,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNClob(final int columnIndex, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1631,7 +1631,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNClob(final String columnLabel, final NClob nClob) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1639,7 +1639,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNClob(final String columnLabel, final Reader reader) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1647,7 +1647,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNClob(final String columnLabel, final Reader reader, final long length) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1655,7 +1655,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNString(final int columnIndex, final String nString) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1663,7 +1663,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNString(final String columnLabel, final String nString) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1671,7 +1671,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNull(final int columnIndex) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1679,7 +1679,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateNull(final String columnLabel) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1687,7 +1687,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateObject(final int columnIndex, final Object x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1695,7 +1695,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateObject(final int columnIndex, final Object x, final int scaleOrLength) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1703,7 +1703,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateObject(final String columnLabel, final Object x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1711,7 +1711,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateObject(final String columnLabel, final Object x, final int scaleOrLength) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1719,7 +1719,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateRef(final int columnIndex, final Ref x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1727,7 +1727,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateRef(final String columnLabel, final Ref x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1735,7 +1735,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateRow() {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1743,7 +1743,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateRowId(final int columnIndex, final RowId x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1751,7 +1751,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateRowId(final String columnLabel, final RowId x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1759,7 +1759,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateShort(final int columnIndex, final short x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1767,7 +1767,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateShort(final String columnLabel, final short x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1775,7 +1775,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateSQLXML(final int columnIndex, final SQLXML xmlObject) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1783,7 +1783,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateSQLXML(final String columnLabel, final SQLXML xmlObject) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1791,7 +1791,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateString(final int columnIndex, final String x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1799,7 +1799,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateString(final String columnLabel, final String x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1807,7 +1807,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateTime(final int columnIndex, final Time x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1815,7 +1815,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateTime(final String columnLabel, final Time x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1823,7 +1823,7 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateTimestamp(final int columnIndex, final Timestamp x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -1831,31 +1831,31 @@ public final class ParadoxResultSet implements ResultSet {
     public void updateTimestamp(final String columnLabel, final Timestamp x) {
         throw new UnsupportedOperationException();
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean wasNull() throws SQLException {
-        if (closed) {
+        if (this.closed) {
             throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
         }
-        return lastValue.isNull();
+        return this.lastValue.isNull();
     }
-
+    
     /**
      * Clear the current clob.
      */
     private void clearClob() {
-        if (clobMap != null) {
-            clobMap.clear();
+        if (this.clobMap != null) {
+            this.clobMap.clear();
         }
     }
-
+    
     private boolean hasNext() {
-        return (values != null) && (position < values.size());
+        return (this.values != null) && (this.position < this.values.size());
     }
-
+    
     /**
      * Verify it there is more rows.
      *
@@ -1863,9 +1863,9 @@ public final class ParadoxResultSet implements ResultSet {
      *             in case of errors.
      */
     private void verifyRow() throws SQLException {
-        if (!hasNext()) {
+        if (!this.hasNext()) {
             throw new SQLDataException("Result do not have more rows.", SQLStates.INVALID_ROW.getValue());
-        } else if (closed) {
+        } else if (this.closed) {
             throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
         }
     }

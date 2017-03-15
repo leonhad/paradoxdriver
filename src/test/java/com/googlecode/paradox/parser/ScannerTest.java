@@ -20,7 +20,7 @@ import org.junit.Test;
  * @version 1.1
  */
 public class ScannerTest {
-
+    
     /**
      * Test for character values.
      *
@@ -35,7 +35,7 @@ public class ScannerTest {
         Assert.assertEquals("test 1", token.getValue());
         Assert.assertFalse(scanner.hasNext());
     }
-
+    
     /**
      * Test for groups.
      *
@@ -50,7 +50,7 @@ public class ScannerTest {
         token = scanner.nextToken();
         Assert.assertEquals("Table.db \" ", token.getValue());
     }
-
+    
     /**
      * Test of hasNext method, of class Scanner.
      *
@@ -66,7 +66,7 @@ public class ScannerTest {
         }
         Assert.assertFalse(scanner.hasNext());
     }
-
+    
     /**
      * Test for NULL token.
      *
@@ -80,7 +80,7 @@ public class ScannerTest {
         Assert.assertEquals(TokenType.NULL, token.getType());
         Assert.assertFalse(scanner.hasNext());
     }
-
+    
     /**
      * Test for two dots in number.
      *
@@ -92,7 +92,7 @@ public class ScannerTest {
         final Scanner scanner = new Scanner("123.8.7");
         scanner.nextToken();
     }
-
+    
     /**
      * Test for numeric values.
      *
@@ -111,7 +111,7 @@ public class ScannerTest {
         Assert.assertEquals("123.8", token.getValue());
         Assert.assertFalse(scanner.hasNext());
     }
-
+    
     /**
      * Test of pushBack method, of class Scanner.
      *
@@ -130,7 +130,7 @@ public class ScannerTest {
         Assert.assertEquals(TokenType.RPAREN, token.getType());
         Assert.assertEquals(")", token.getValue());
         scanner.pushBack(token);
-
+        
         Assert.assertTrue(scanner.hasNext());
         token = scanner.nextToken();
         Assert.assertFalse(scanner.hasNext());

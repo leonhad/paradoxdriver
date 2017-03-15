@@ -21,7 +21,7 @@ import java.util.List;
  * @since 1.0
  */
 public final class SelectNode extends StatementNode {
-
+    
     /**
      * The conditions list.
      */
@@ -46,14 +46,14 @@ public final class SelectNode extends StatementNode {
      * The tables in from token.
      */
     private final ArrayList<TableNode> tables = new ArrayList<>();
-
+    
     /**
      * Create a new instance.
      */
     public SelectNode() {
         super("SELECT");
     }
-
+    
     /**
      * Adds the field in the list.
      *
@@ -61,9 +61,9 @@ public final class SelectNode extends StatementNode {
      *            the field to add.
      */
     public void addField(final SQLNode field) {
-        fields.add(field);
+        this.fields.add(field);
     }
-
+    
     /**
      * Adds the table in list.
      *
@@ -71,48 +71,48 @@ public final class SelectNode extends StatementNode {
      *            the table to add
      */
     public void addTable(final TableNode table) {
-        tables.add(table);
+        this.tables.add(table);
     }
-
+    
     /**
      * Gets the condition list.
      *
      * @return the condition list.
      */
     public List<SQLNode> getConditions() {
-        if (conditions != null) {
-            return Collections.unmodifiableList(conditions);
+        if (this.conditions != null) {
+            return Collections.unmodifiableList(this.conditions);
         }
         return Collections.emptyList();
     }
-
+    
     /**
      * Gets the field list.
      *
      * @return the field list.
      */
     public List<SQLNode> getFields() {
-        return Collections.unmodifiableList(fields);
+        return Collections.unmodifiableList(this.fields);
     }
-
+    
     /**
      * Gets the order by list.
      *
      * @return the order by list.
      */
     public List<IdentifierNode> getOrder() {
-        return Collections.unmodifiableList(order);
+        return Collections.unmodifiableList(this.order);
     }
-
+    
     /**
      * Gets the table list.
      *
      * @return the table list.
      */
     public List<TableNode> getTables() {
-        return Collections.unmodifiableList(tables);
+        return Collections.unmodifiableList(this.tables);
     }
-
+    
     /**
      * Sets the condition list.
      *
@@ -122,7 +122,7 @@ public final class SelectNode extends StatementNode {
     public void setConditions(final Collection<SQLNode> conditions) {
         this.conditions = new ArrayList<>(conditions);
     }
-
+    
     /**
      * Sets the distinct key present.
      *
@@ -132,24 +132,24 @@ public final class SelectNode extends StatementNode {
     public void setDistinct(final boolean distinct) {
         this.distinct = distinct;
     }
-
+    
     /**
      * Show this node SELECT.
      */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(getName());
+        builder.append(this.getName());
         builder.append(' ');
-
-        buildFields(builder);
-        buildFrom(builder);
-        buildWhere(builder);
-        buildGroupBy(builder);
-        buildOrderBy(builder);
+        
+        this.buildFields(builder);
+        this.buildFrom(builder);
+        this.buildWhere(builder);
+        this.buildGroupBy(builder);
+        this.buildOrderBy(builder);
         return builder.toString();
     }
-
+    
     /**
      * Build the fields description.
      *
@@ -158,7 +158,7 @@ public final class SelectNode extends StatementNode {
      */
     private void buildFields(final StringBuilder builder) {
         boolean first = true;
-        for (final SQLNode field : fields) {
+        for (final SQLNode field : this.fields) {
             if (first) {
                 first = false;
             } else {
@@ -167,7 +167,7 @@ public final class SelectNode extends StatementNode {
             builder.append(field);
         }
     }
-
+    
     /**
      * Build the FROM description.
      *
@@ -176,10 +176,10 @@ public final class SelectNode extends StatementNode {
      */
     private void buildFrom(final StringBuilder builder) {
         boolean first;
-        if (!tables.isEmpty()) {
+        if (!this.tables.isEmpty()) {
             builder.append(" FROM ");
             first = true;
-            for (final TableNode table : tables) {
+            for (final TableNode table : this.tables) {
                 if (first) {
                     first = false;
                 } else {
@@ -189,7 +189,7 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-
+    
     /**
      * Build the grouping fields.
      *
@@ -198,10 +198,10 @@ public final class SelectNode extends StatementNode {
      */
     private void buildGroupBy(final StringBuilder builder) {
         boolean first;
-        if (!groups.isEmpty()) {
+        if (!this.groups.isEmpty()) {
             builder.append(" GROUP BY ");
             first = true;
-            for (final IdentifierNode group : groups) {
+            for (final IdentifierNode group : this.groups) {
                 if (first) {
                     first = false;
                 } else {
@@ -211,7 +211,7 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-
+    
     /**
      * Build the fields order.
      *
@@ -220,10 +220,10 @@ public final class SelectNode extends StatementNode {
      */
     private void buildOrderBy(final StringBuilder builder) {
         boolean first;
-        if (!order.isEmpty()) {
+        if (!this.order.isEmpty()) {
             builder.append(" ORDER BY ");
             first = true;
-            for (final IdentifierNode identifier : order) {
+            for (final IdentifierNode identifier : this.order) {
                 if (first) {
                     first = false;
                 } else {
@@ -233,7 +233,7 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-
+    
     /**
      * Build the WHERE conditions.
      *
@@ -242,10 +242,10 @@ public final class SelectNode extends StatementNode {
      */
     private void buildWhere(final StringBuilder builder) {
         boolean first;
-        if ((conditions != null) && !conditions.isEmpty()) {
+        if ((this.conditions != null) && !this.conditions.isEmpty()) {
             builder.append(" WHERE ");
             first = true;
-            for (final SQLNode cond : conditions) {
+            for (final SQLNode cond : this.conditions) {
                 if (first) {
                     first = false;
                 } else {
@@ -255,7 +255,7 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-
+    
     /**
      * Adds the group by identifier.
      *
@@ -263,9 +263,9 @@ public final class SelectNode extends StatementNode {
      *            the group by identifier to add.
      */
     void addGroupBy(final IdentifierNode identifier) {
-        groups.add(identifier);
+        this.groups.add(identifier);
     }
-
+    
     /**
      * Adds the order by identifier.
      *
@@ -273,24 +273,24 @@ public final class SelectNode extends StatementNode {
      *            the order by identifier to add.
      */
     void addOrderBy(final IdentifierNode identifier) {
-        order.add(identifier);
+        this.order.add(identifier);
     }
-
+    
     /**
      * Gets the group list.
      *
      * @return the group list.
      */
     List<IdentifierNode> getGroups() {
-        return Collections.unmodifiableList(groups);
+        return Collections.unmodifiableList(this.groups);
     }
-
+    
     /**
      * Get if this select has a distinct token.
      *
      * @return true if this select has a distinct token.
      */
     boolean isDistinct() {
-        return distinct;
+        return this.distinct;
     }
 }

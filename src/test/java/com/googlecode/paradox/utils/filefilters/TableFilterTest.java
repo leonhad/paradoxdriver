@@ -20,7 +20,7 @@ import org.junit.Test;
  * @since 1.0
  */
 public class TableFilterTest {
-
+    
     /**
      * Test for acceptance.
      */
@@ -30,5 +30,5 @@ public class TableFilterTest {
         final TableFilter filter = new TableFilter();
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
-
+    
 }

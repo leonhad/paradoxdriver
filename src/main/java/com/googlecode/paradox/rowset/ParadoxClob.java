@@ -29,37 +29,37 @@ import java.sql.SQLException;
  * @since 1.2
  */
 public final class ParadoxClob implements Clob {
-
+    
     /**
      * The default clob charset.
      */
     private static final Charset DEFAULT_CHARSET = Charset.forName("cp1251");
-
+    
     /**
      * The blob table.
      */
     private BlobTable blob;
-
+    
     /**
      * The blob length.
      */
     private long length;
-
+    
     /**
      * The blob offset.
      */
     private long offset;
-
+    
     /**
      * If this blob is already parsed.
      */
     private boolean parsed;
-
+    
     /**
      * The blob data.
      */
     private byte[] value;
-
+    
     /**
      * Create a new instance.
      *
@@ -67,57 +67,57 @@ public final class ParadoxClob implements Clob {
      *            the blob descriptor.
      */
     public ParadoxClob(final ClobDescriptor descriptor) {
-        offset = -1;
+        this.offset = -1;
         // If MB_Offset = 0 then the entire blob is contained in the leader.
         if (descriptor.getOffset() == 0) {
             if (descriptor.getLeader() != null) {
-                value = descriptor.getLeader().getBytes(ParadoxClob.DEFAULT_CHARSET);
-                length = value.length;
+                this.value = descriptor.getLeader().getBytes(ParadoxClob.DEFAULT_CHARSET);
+                this.length = this.value.length;
             }
-            parsed = true;
+            this.parsed = true;
         } else {
-            offset = descriptor.getOffset();
-            blob = descriptor.getFile();
+            this.offset = descriptor.getOffset();
+            this.blob = descriptor.getFile();
         }
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public void free() throws SQLException {
-        if (blob != null) {
-            blob.close();
+        if (this.blob != null) {
+            this.blob.close();
         }
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public InputStream getAsciiStream() throws SQLException {
-        parse();
-        isValid();
-        return new ByteArrayInputStream(value);
+        this.parse();
+        this.isValid();
+        return new ByteArrayInputStream(this.value);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Reader getCharacterStream() throws SQLException {
-        parse();
-        isValid();
-        return new InputStreamReader(new ByteArrayInputStream(value), ParadoxClob.DEFAULT_CHARSET);
+        this.parse();
+        this.isValid();
+        return new InputStreamReader(new ByteArrayInputStream(this.value), ParadoxClob.DEFAULT_CHARSET);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
-        parse();
-        isValid();
+        this.parse();
+        this.isValid();
         if ((pos < 1) || (pos > this.length)) {
             throw new SQLException("Invalid position in Clob object set");
         } else if (((pos - 1) + length) > this.length) {
@@ -125,17 +125,17 @@ public final class ParadoxClob implements Clob {
         } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-        return new InputStreamReader(new ByteArrayInputStream(value, (int) pos - 1, (int) length),
+        return new InputStreamReader(new ByteArrayInputStream(this.value, (int) pos - 1, (int) length),
                 ParadoxClob.DEFAULT_CHARSET);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getSubString(final long pos, final int length) throws SQLException {
-        parse();
-        isValid();
+        this.parse();
+        this.isValid();
         if ((pos < 1) || (pos > this.length)) {
             throw new SQLException("Invalid position '" + pos + "' in Clob object set");
         } else if (((pos - 1) + length) > this.length) {
@@ -143,19 +143,19 @@ public final class ParadoxClob implements Clob {
         } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-        return new String(value, (int) pos - 1, length, ParadoxClob.DEFAULT_CHARSET);
+        return new String(this.value, (int) pos - 1, length, ParadoxClob.DEFAULT_CHARSET);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public long length() throws SQLException {
-        parse();
-        isValid();
-        return length;
+        this.parse();
+        this.isValid();
+        return this.length;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -163,7 +163,7 @@ public final class ParadoxClob implements Clob {
     public long position(final Clob search, final long start) {
         return 0;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -171,7 +171,7 @@ public final class ParadoxClob implements Clob {
     public long position(final String search, final long start) {
         return 0;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -179,7 +179,7 @@ public final class ParadoxClob implements Clob {
     public OutputStream setAsciiStream(final long pos) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -187,7 +187,7 @@ public final class ParadoxClob implements Clob {
     public Writer setCharacterStream(final long pos) {
         return null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -195,7 +195,7 @@ public final class ParadoxClob implements Clob {
     public int setString(final long pos, final String str) {
         return 0;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -203,25 +203,25 @@ public final class ParadoxClob implements Clob {
     public int setString(final long pos, final String str, final int offset, final int len) {
         return 0;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public void truncate(final long length) throws SQLException {
-        parse();
-        isValid();
+        this.parse();
+        this.isValid();
         if (length > this.length) {
             throw new SQLException("Length more than what can be truncated");
         }
         if (length == 0) {
-            value = new byte[] {};
+            this.value = new byte[] {};
         } else {
-            value = getSubString(1, (int) length).getBytes(ParadoxClob.DEFAULT_CHARSET);
+            this.value = this.getSubString(1, (int) length).getBytes(ParadoxClob.DEFAULT_CHARSET);
         }
-        this.length = value.length;
+        this.length = this.value.length;
     }
-
+    
     /**
      * Check for the blob validate.
      *
@@ -229,11 +229,11 @@ public final class ParadoxClob implements Clob {
      *             in case of invalid descriptor.
      */
     private void isValid() throws SQLException {
-        if (!parsed && (blob == null)) {
+        if (!this.parsed && (this.blob == null)) {
             throw new SQLException("Invalid CLOB descriptor.");
         }
     }
-
+    
     /**
      * Parse the blob.
      *
@@ -241,10 +241,10 @@ public final class ParadoxClob implements Clob {
      *             in case of parse errors.
      */
     private void parse() throws SQLException {
-        if (!parsed) {
-            value = blob.read(offset);
-            parsed = blob.isParsed();
-            length = value.length;
+        if (!this.parsed) {
+            this.value = this.blob.read(this.offset);
+            this.parsed = this.blob.isParsed();
+            this.length = this.value.length;
         }
     }
 }

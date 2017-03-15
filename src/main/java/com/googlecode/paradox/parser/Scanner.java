@@ -22,32 +22,32 @@ import java.util.Locale;
  * @since 1.0
  */
 class Scanner {
-
+    
     /**
      * Separators char.
      */
     private static final char[] SEPARATORS = { ' ', '\t', '\n', '\0', '\r' };
-
+    
     /**
      * Special chars.
      */
     private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=', ';' };
-
+    
     /**
      * Character buffer used to parse the SQL.
      */
     private final CharBuffer buffer;
-
+    
     /**
      * Read tokens.
      */
     private final ArrayList<Token> tokens = new ArrayList<>();
-
+    
     /**
      * Value buffer.
      */
     private final StringBuilder value = new StringBuilder(299);
-
+    
     /**
      * Creates a new instance.
      *
@@ -62,7 +62,7 @@ class Scanner {
         }
         this.buffer = CharBuffer.wrap(buffer.trim());
     }
-
+    
     /**
      * Checks for maximum number dots allowed.
      *
@@ -76,7 +76,7 @@ class Scanner {
             throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL.getValue());
         }
     }
-
+    
     /**
      * Creates a token by value.
      *
@@ -94,7 +94,7 @@ class Scanner {
         }
         return new Token(TokenType.IDENTIFIER, value);
     }
-
+    
     /**
      * Check if is a character or a string.
      *
@@ -110,7 +110,7 @@ class Scanner {
         }
         return characters;
     }
-
+    
     /**
      * If the char is a separator.
      *
@@ -126,7 +126,7 @@ class Scanner {
         }
         return false;
     }
-
+    
     /**
      * if the value is a special char.
      *
@@ -142,16 +142,16 @@ class Scanner {
         }
         return false;
     }
-
+    
     /**
      * Gets the next value in buffer.
      *
      * @return the next char.
      */
     private char nextChar() {
-        return buffer.get();
+        return this.buffer.get();
     }
-
+    
     /**
      * Parses identifier tokens.
      *
@@ -160,28 +160,28 @@ class Scanner {
      *             in case of parser errors.
      */
     private boolean parseIdentifier() throws SQLException {
-        while (hasNext()) {
-            final char c = nextChar();
-
+        while (this.hasNext()) {
+            final char c = this.nextChar();
+            
             // Ignore separators.
             if (!Scanner.isSeparator(c)) {
                 if (Scanner.isSpecial(c)) {
-                    value.append(c);
+                    this.value.append(c);
                     return false;
                 } else if ((c == '"') || (c == '\'')) {
                     // identifiers with special chars
                     final boolean characters = Scanner.isCharacters(c);
-                    parseString(c);
+                    this.parseString(c);
                     return characters;
                 } else {
-                    parseNumber(c);
+                    this.parseNumber(c);
                     return false;
                 }
             }
         }
         return false;
     }
-
+    
     /**
      * Parses a numeric char.
      *
@@ -195,26 +195,26 @@ class Scanner {
         boolean numeric = false;
         int dotCount = 0;
         while (!Scanner.isSeparator(c) && ((numeric && (c == '.')) || !Scanner.isSpecial(c))) {
-            value.append(c);
-            if (value.length() == 1) {
-                numeric = Character.isDigit(value.charAt(0));
+            this.value.append(c);
+            if (this.value.length() == 1) {
+                numeric = Character.isDigit(this.value.charAt(0));
             } else if (c == '.') {
                 dotCount++;
-
+                
                 // Only one dot per numeric value
                 Scanner.checkDotCount(dotCount);
             }
-            if (hasNext()) {
-                c = nextChar();
+            if (this.hasNext()) {
+                c = this.nextChar();
             } else {
                 break;
             }
         }
         if (Scanner.isSeparator(c) || Scanner.isSpecial(c)) {
-            pushBack();
+            this.pushBack();
         }
     }
-
+    
     /**
      * Parses a {@link String} value.
      *
@@ -224,47 +224,47 @@ class Scanner {
     private void parseString(final char type) {
         char c;
         do {
-            if (hasNext()) {
-                c = nextChar();
+            if (this.hasNext()) {
+                c = this.nextChar();
             } else {
                 return;
             }
             if (c == type) {
-                if (hasNext()) {
-                    c = nextChar();
+                if (this.hasNext()) {
+                    c = this.nextChar();
                 } else {
                     return;
                 }
                 if (c == type) {
-                    value.append(c);
+                    this.value.append(c);
                     // prevent breaking
                     c = ' ';
                 } else {
-                    pushBack();
+                    this.pushBack();
                     return;
                 }
             } else {
-                value.append(c);
+                this.value.append(c);
             }
         } while (c != type);
     }
-
+    
     /**
      * Push back the read char.
      */
     private void pushBack() {
-        buffer.position(buffer.position() - 1);
+        this.buffer.position(this.buffer.position() - 1);
     }
-
+    
     /**
      * If buffer has tokens.
      *
      * @return true if the buffer still have tokens.
      */
     boolean hasNext() {
-        return !tokens.isEmpty() || buffer.hasRemaining();
+        return !this.tokens.isEmpty() || this.buffer.hasRemaining();
     }
-
+    
     /**
      * Gets the next {@link Token} in buffer.
      *
@@ -273,25 +273,25 @@ class Scanner {
      *             in case of parse errors.
      */
     Token nextToken() throws SQLException {
-        final int size = tokens.size();
+        final int size = this.tokens.size();
         if (size > 0) {
-            final Token token = tokens.get(size - 1);
-            tokens.remove(size - 1);
+            final Token token = this.tokens.get(size - 1);
+            this.tokens.remove(size - 1);
             return token;
         }
-        if (!hasNext()) {
+        if (!this.hasNext()) {
             throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL.getValue());
         }
-        value.delete(0, value.length());
-        final boolean characters = parseIdentifier();
+        this.value.delete(0, this.value.length());
+        final boolean characters = this.parseIdentifier();
         if (characters) {
-            return new Token(TokenType.CHARACTER, value.toString());
-        } else if (Character.isDigit(value.charAt(0))) {
-            return new Token(TokenType.NUMERIC, value.toString());
+            return new Token(TokenType.CHARACTER, this.value.toString());
+        } else if (Character.isDigit(this.value.charAt(0))) {
+            return new Token(TokenType.NUMERIC, this.value.toString());
         }
-        return Scanner.getToken(value.toString());
+        return Scanner.getToken(this.value.toString());
     }
-
+    
     /**
      * Push back the given token in buffer.
      *
@@ -299,6 +299,6 @@ class Scanner {
      *            the token to push back.
      */
     void pushBack(final Token token) {
-        tokens.add(token);
+        this.tokens.add(token);
     }
 }

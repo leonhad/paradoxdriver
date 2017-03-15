@@ -20,7 +20,7 @@ import org.junit.Test;
  * @since 1.0
  */
 public class ViewFilterTest {
-
+    
     /**
      * Test for acceptance.
      */
@@ -30,5 +30,5 @@ public class ViewFilterTest {
         final ViewFilter filter = new ViewFilter();
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
-
+    
 }

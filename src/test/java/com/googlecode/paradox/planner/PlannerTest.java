@@ -33,17 +33,17 @@ import org.junit.Test;
  * @since 1.1
  */
 public class PlannerTest {
-
+    
     /**
      * The database test connection.
      */
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-
+    
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -54,7 +54,7 @@ public class PlannerTest {
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Used to close the test connection.
      *
@@ -63,11 +63,11 @@ public class PlannerTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to test database.
      *
@@ -76,9 +76,9 @@ public class PlannerTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for a asterisk node plan.
      *
@@ -88,7 +88,7 @@ public class PlannerTest {
     @Test
     public void testAsterisk() throws Exception {
         final SQLParser parser = new SQLParser("select * from areacodes a");
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
@@ -96,7 +96,7 @@ public class PlannerTest {
         Assert.assertEquals("Second column not 'State'.", "STATE", plan.getColumns().get(1).getName());
         Assert.assertEquals("Third column not 'Cities'.", "CITIES", plan.getColumns().get(2).getName());
     }
-
+    
     /**
      * Test for valid column name.
      *
@@ -106,12 +106,12 @@ public class PlannerTest {
     @Test
     public void testColumnName() throws SQLException {
         final SQLParser parser = new SQLParser("select ac from areacodes a");
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
         Assert.assertEquals("Test the column size.", 1, plan.getColumns().size());
         Assert.assertEquals("Test the column name.", "AC", plan.getColumns().get(0).getName());
     }
-
+    
     /**
      * Test for empty column name.
      *
@@ -122,10 +122,10 @@ public class PlannerTest {
     public void testEmptyColumnName() throws SQLException {
         final SelectNode selectNode = new SelectNode();
         selectNode.addField(new IdentifierNode(""));
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         planner.create(selectNode);
     }
-
+    
     /**
      * Test for a invalid node.
      *
@@ -135,10 +135,10 @@ public class PlannerTest {
     @Test(expected = SQLFeatureNotSupportedException.class)
     public void testInvalid() throws SQLException {
         final StatementNode node = new StatementNode("node");
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         planner.create(node);
     }
-
+    
     /**
      * Test for an invalid table.
      *
@@ -148,10 +148,10 @@ public class PlannerTest {
     @Test(expected = SQLException.class)
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser("select * from invalid");
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         planner.create(parser.parse().get(0));
     }
-
+    
     /**
      * Test for null column name.
      *
@@ -162,10 +162,10 @@ public class PlannerTest {
     public void testNullColumnName() throws SQLException {
         final SelectNode selectNode = new SelectNode();
         selectNode.addField(new IdentifierNode(null));
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         planner.create(selectNode);
     }
-
+    
     /**
      * Test for SELECT plan without columns.
      *
@@ -175,7 +175,7 @@ public class PlannerTest {
     @Test(expected = SQLException.class)
     public void testSelectWithoutColumns() throws SQLException {
         final SelectNode node = new SelectNode();
-        final Planner planner = new Planner(conn);
+        final Planner planner = new Planner(this.conn);
         planner.create(node);
     }
 }

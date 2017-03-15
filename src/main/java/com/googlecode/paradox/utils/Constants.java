@@ -16,7 +16,7 @@ package com.googlecode.paradox.utils;
  * @since 1.0
  */
 public final class Constants {
-
+    
     /**
      * Driver Name.
      */
@@ -49,7 +49,7 @@ public final class Constants {
      * Driver prefix.
      */
     public static final String URL_PREFIX = "jdbc:paradox:";
-
+    
     /**
      * Utility class.
      */

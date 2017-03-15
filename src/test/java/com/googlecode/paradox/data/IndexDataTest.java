@@ -26,12 +26,12 @@ import org.junit.Test;
  * @version 1.1
  */
 public class IndexDataTest {
-
+    
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-
+    
     /**
      * Register the driver.
      *
@@ -42,7 +42,7 @@ public class IndexDataTest {
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
+    
     /**
      * Used to close the test connection.
      *
@@ -51,11 +51,11 @@ public class IndexDataTest {
      */
     @After
     public void closeConnection() throws Exception {
-        if (conn != null) {
-            conn.close();
+        if (this.conn != null) {
+            this.conn.close();
         }
     }
-
+    
     /**
      * Connect to test database.
      *
@@ -64,9 +64,9 @@ public class IndexDataTest {
      */
     @Before
     public void connect() throws Exception {
-        conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-
+    
     /**
      * Test for index listing.
      *
@@ -75,6 +75,6 @@ public class IndexDataTest {
      */
     @Test
     public void testListIndexes() throws Exception {
-        Assert.assertNotEquals("Empty indexes.", 0, IndexData.listIndexes(conn, "Client.db"));
+        Assert.assertNotEquals("Empty indexes.", 0, IndexData.listIndexes(this.conn, "Client.db"));
     }
 }

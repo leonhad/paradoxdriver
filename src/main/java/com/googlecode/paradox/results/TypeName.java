@@ -24,79 +24,79 @@ import java.sql.Types;
  * @since 1.3
  */
 public enum TypeName {
-
+    
     /**
      * The binary type.
      */
     BINARY(Types.BINARY, "BINARY", InputStream.class.getName()),
-
+    
     /**
      * The BLOB type.
      */
     BLOB(Types.BLOB, "BLOB", InputStream.class.getName()),
-
+    
     /**
      * The boolean type.
      */
     BOOLEAN(Types.BOOLEAN, "BOOLEAN", Boolean.class.getName()),
-
+    
     /**
      * The BLOB type.
      */
     CLOB(Types.CLOB, "CLOB", String.class.getName()),
-
+    
     /**
      * The date type.
      */
     DATE(Types.DATE, "DATE", Date.class.getName()),
-
+    
     /**
      * The double type.
      */
     DOUBLE(Types.DOUBLE, "DOUBLE", Double.class.getName()),
-
+    
     /**
      * The integer type.
      */
     INTEGER(Types.INTEGER, "INTEGER", Integer.class.getName()),
-
+    
     /**
      * The numeric type.
      */
     NUMERIC(Types.NUMERIC, "NUMERIC", Number.class.getName()),
-
+    
     /**
      * The time type.
      */
     TIME(Types.TIME, "TIME", Time.class.getName()),
-
+    
     /**
      * The TIMESTAMP type.
      */
     TIMESTAMP(Types.TIMESTAMP, "TIMESTAMP", Timestamp.class.getName()),
-
+    
     /**
      * The VARCHAR type.
      */
     VARCHAR(Types.VARCHAR, "VARCHAR", String.class.getName());
-
+    
     private static final TypeName[] VALUES = TypeName.values();
-
+    
     /**
      * The class name.
      */
     private final String className;
-
+    
     /**
      * The type name.
      */
     private final String name;
-
+    
     /**
      * The SQL Type.
      */
     private final int sqlType;
-
+    
     /**
      * Creates a new instance.
      *
@@ -110,7 +110,7 @@ public enum TypeName {
         this.name = name;
         this.className = className;
     }
-
+    
     /**
      * Gets the class name by its SQL type.
      *
@@ -128,7 +128,7 @@ public enum TypeName {
         }
         throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
     }
-
+    
     /**
      * Gets the field name by its SQL type.
      *
@@ -146,32 +146,32 @@ public enum TypeName {
         }
         throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
     }
-
+    
     /**
      * Gets the class name.
      *
      * @return the class name.
      */
     public String getClassName() {
-        return className;
+        return this.className;
     }
-
+    
     /**
      * Gets the type name.
      *
      * @return the type name.
      */
     public String getName() {
-        return name;
+        return this.name;
     }
-
+    
     /**
      * Gets the SQL type.
      *
      * @return the SQL type.
      */
     public int getSQLType() {
-        return sqlType;
+        return this.sqlType;
     }
-
+    
 }

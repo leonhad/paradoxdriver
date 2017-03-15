@@ -17,27 +17,27 @@ package com.googlecode.paradox.utils;
  * @since 1.2
  */
 public final class ClobBlock {
-
+    
     /**
      * The CLOB number.
      */
     private final int num;
-
+    
     /**
      * The CLOB offset.
      */
     private final int offset;
-
+    
     /**
      * The CLOB type.
      */
     private final int type;
-
+    
     /**
      * The CLOB data.
      */
     private final byte[] value;
-
+    
     /**
      * Create a new instance.
      *
@@ -51,7 +51,7 @@ public final class ClobBlock {
     public ClobBlock(final int num, final int type, final int offset) {
         this(num, type, offset, null);
     }
-
+    
     /**
      * Create a new instance.
      *
@@ -74,40 +74,40 @@ public final class ClobBlock {
             this.value = value.clone();
         }
     }
-
+    
     /**
      * Gets the CLOB offset.
      *
      * @return the CLOB offset.
      */
     public int getOffset() {
-        return offset;
+        return this.offset;
     }
-
+    
     /**
      * Gets the CLOB type.
      *
      * @return the CLOB type.
      */
     public int getType() {
-        return type;
+        return this.type;
     }
-
+    
     /**
      * Gets the CLOB data value.
      *
      * @return the CLOB data value.
      */
     public byte[] getValue() {
-        return value.clone();
+        return this.value.clone();
     }
-
+    
     /**
      * Gets the CLOB number.
      *
      * @return the CLOB number.
      */
     int getNum() {
-        return num;
+        return this.num;
     }
 }

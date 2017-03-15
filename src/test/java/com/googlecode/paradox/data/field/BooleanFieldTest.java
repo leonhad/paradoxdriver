@@ -30,7 +30,7 @@ public class BooleanFieldTest {
         final BooleanField field = new BooleanField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse false value.
      *
@@ -44,7 +44,7 @@ public class BooleanFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertFalse(value.getBoolean());
     }
-
+    
     /**
      * Test for parse invalid value.
      *
@@ -57,7 +57,7 @@ public class BooleanFieldTest {
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 1 });
         field.parse(null, buffer, null);
     }
-
+    
     /**
      * Test for parse null value.
      *
@@ -71,7 +71,7 @@ public class BooleanFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertNull(value.getBoolean());
     }
-
+    
     /**
      * Test for parse true value.
      *
@@ -85,7 +85,7 @@ public class BooleanFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertTrue(value.getBoolean());
     }
-
+    
     /**
      * Test for valid match.
      */

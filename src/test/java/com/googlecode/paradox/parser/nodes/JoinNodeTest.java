@@ -22,7 +22,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class JoinNodeTest {
-
+    
     /**
      * Test conditions.
      */
@@ -33,7 +33,7 @@ public class JoinNodeTest {
         node.setConditions(list);
         Assert.assertEquals(list, node.getConditions());
     }
-
+    
     /**
      * Test for new instance.
      */
@@ -42,7 +42,7 @@ public class JoinNodeTest {
         final JoinNode node = new JoinNode();
         Assert.assertEquals("JOIN", node.getName());
     }
-
+    
     /**
      * Test join type.
      */
@@ -52,7 +52,7 @@ public class JoinNodeTest {
         node.setType(JoinType.LEFT);
         Assert.assertEquals(JoinType.LEFT, node.getType());
     }
-
+    
     /**
      * Test for table name.
      */
@@ -62,7 +62,7 @@ public class JoinNodeTest {
         node.setTableName("name");
         Assert.assertEquals("name", node.getTableName());
     }
-
+    
     /**
      * Test for {@link JoinNode#toString()} method.
      */
@@ -73,7 +73,7 @@ public class JoinNodeTest {
         node.setAlias("alias");
         Assert.assertEquals("CROSS JOIN table AS alias", node.toString());
     }
-
+    
     /**
      * Test for {@link JoinNode#toString()} method with conditions.
      */
@@ -86,7 +86,7 @@ public class JoinNodeTest {
         node.setConditions(list);
         Assert.assertEquals("CROSS JOIN table ON a = b ", node.toString());
     }
-
+    
     /**
      * Test for {@link JoinNode#toString()} method with no alias.
      */

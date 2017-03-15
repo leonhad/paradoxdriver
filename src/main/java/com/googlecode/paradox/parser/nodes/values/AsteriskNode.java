@@ -20,7 +20,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @since 1.2
  */
 public final class AsteriskNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      */

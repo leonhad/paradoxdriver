@@ -26,7 +26,7 @@ import java.util.GregorianCalendar;
  * @since 1.3
  */
 public final class TimeField implements FieldParser {
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -34,7 +34,7 @@ public final class TimeField implements FieldParser {
     public boolean match(final int type) {
         return type == 0x14;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -45,7 +45,7 @@ public final class TimeField implements FieldParser {
         final int a3 = buffer.get();
         final int a4 = buffer.get();
         final long timeInMillis = (a1 << 24) | (a2 << 16) | (a3 << 8) | a4;
-
+        
         if (timeInMillis != 0) {
             final Calendar calendar = new GregorianCalendar(1, 0, 0);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);

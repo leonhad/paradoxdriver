@@ -27,7 +27,7 @@ public class ProcedureASTest {
     public void testAllProcedures() {
         Assert.assertEquals(5, ProcedureAS.getInstance().list().size());
     }
-
+    
     /**
      * Test instance.
      */
@@ -35,7 +35,7 @@ public class ProcedureASTest {
     public void testInstance() {
         Assert.assertNotNull(ProcedureAS.getInstance());
     }
-
+    
     /**
      * Test for an invalid procedure.
      */
@@ -43,7 +43,7 @@ public class ProcedureASTest {
     public void testInvalidProcedure() {
         Assert.assertNull(ProcedureAS.getInstance().get("INVALID"));
     }
-
+    
     /**
      * Test the get procedure by its name.
      */

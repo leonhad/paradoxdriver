@@ -26,7 +26,7 @@ import java.util.Arrays;
  * @since 1.3
  */
 public final class VarcharField implements FieldParser {
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -34,21 +34,21 @@ public final class VarcharField implements FieldParser {
     public boolean match(final int type) {
         return type == 1;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final ByteBuffer valueString = ByteBuffer.allocate(Constants.MAX_STRING_SIZE);
-
+        
         // reset buffer to zeros
         Arrays.fill(valueString.array(), (byte) 0);
-
+        
         for (int chars = 0; chars < field.getSize(); chars++) {
             valueString.put(buffer.get());
         }
         return new FieldValue(Utils.parseString(valueString, table.getCharset()), Types.VARCHAR);
     }
-
+    
 }

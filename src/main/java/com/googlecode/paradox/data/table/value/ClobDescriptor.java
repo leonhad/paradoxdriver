@@ -19,12 +19,12 @@ import com.googlecode.paradox.metadata.BlobTable;
  * @since 1.2
  */
 public final class ClobDescriptor extends BlobDescriptor {
-
+    
     /**
      * The clob leader.
      */
     private String leader;
-
+    
     /**
      * Creates a new instance.
      *
@@ -34,16 +34,16 @@ public final class ClobDescriptor extends BlobDescriptor {
     public ClobDescriptor(final BlobTable file) {
         super(file);
     }
-
+    
     /**
      * Gets the clob leader.
      *
      * @return the clob leader.
      */
     public String getLeader() {
-        return leader;
+        return this.leader;
     }
-
+    
     /**
      * Sets the clob leader.
      *

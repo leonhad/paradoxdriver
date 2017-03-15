@@ -33,7 +33,7 @@ public class TimeFieldTest {
         final TimeField field = new TimeField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -45,13 +45,13 @@ public class TimeFieldTest {
         final Calendar calendar = new GregorianCalendar(1, 0, 0);
         calendar.add(Calendar.MILLISECOND, 30000);
         final Time time = new Time(calendar.getTimeInMillis());
-
+        
         final TimeField field = new TimeField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 0, 0, 0x75, 0x30 });
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals(time, value.getTime());
     }
-
+    
     /**
      * Test for null time.
      *
@@ -65,7 +65,7 @@ public class TimeFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertNull(value.getTime());
     }
-
+    
     /**
      * Test for valid match.
      */

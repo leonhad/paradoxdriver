@@ -20,12 +20,12 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class ViewFilter implements FileFilter {
-
+    
     /**
      * The view name.
      */
     private final String viewName;
-
+    
     /**
      * Create a new instance.
      *
@@ -35,22 +35,23 @@ public final class ViewFilter implements FileFilter {
     public ViewFilter(final String viewName) {
         this.viewName = viewName;
     }
-
+    
     /**
      * Create a new instance.
      */
     ViewFilter() {
         this(null);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-
-        return Expressions.accept(name, "%.QBE") && ((viewName == null) || Expressions.accept(name, viewName));
+        
+        return Expressions.accept(name, "%.QBE")
+                && ((this.viewName == null) || Expressions.accept(name, this.viewName));
     }
-
+    
 }

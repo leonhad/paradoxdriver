@@ -19,7 +19,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public class FieldNodeTest {
-
+    
     /**
      * Test for {@link FieldNode#toString()} method.
      */
@@ -28,7 +28,7 @@ public class FieldNodeTest {
         final FieldNode node = new FieldNode("table", "field", "alias");
         Assert.assertEquals("table.field AS alias", node.toString());
     }
-
+    
     /**
      * Test for {@link FieldNode#toString()} method with null alias.
      */
@@ -37,7 +37,7 @@ public class FieldNodeTest {
         final FieldNode node = new FieldNode("table", "field", null);
         Assert.assertEquals("table.field", node.toString());
     }
-
+    
     /**
      * Test {@link FieldNode#toString()} with null table.
      */
@@ -46,7 +46,7 @@ public class FieldNodeTest {
         final FieldNode node = new FieldNode(null, "field", null);
         Assert.assertEquals("field", node.toString());
     }
-
+    
     /**
      * Test for {@link FieldNode#toString()} method without alias.
      */

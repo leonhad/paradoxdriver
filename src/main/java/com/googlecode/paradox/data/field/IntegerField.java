@@ -23,7 +23,7 @@ import java.sql.Types;
  * @since 1.3
  */
 public final class IntegerField implements FieldParser {
-
+    
     /**
      * {@inheritDoc}.
      */
@@ -31,7 +31,7 @@ public final class IntegerField implements FieldParser {
     public boolean match(final int type) {
         return type == 3;
     }
-
+    
     /**
      * {@inheritDoc}.
      */

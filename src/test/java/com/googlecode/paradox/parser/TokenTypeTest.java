@@ -19,29 +19,29 @@ import org.junit.Test;
  * @since 1.3
  */
 public class TokenTypeTest {
-
+    
     /**
      * Used to test the conditional breaks.
      */
     private static final TokenType[] CONDITIONAL_BREAKS = { TokenType.ORDER, TokenType.HAVING, TokenType.RPAREN,
             TokenType.LEFT, TokenType.RIGHT, TokenType.OUTER, TokenType.INNER, TokenType.JOIN };
-
+    
     /**
      * Used to test the operator values.
      */
     private static final TokenType[] OPERATORS = { TokenType.AND, TokenType.OR, TokenType.XOR };
-
+    
     /**
      * Test for conditional breaks.
      */
     @Test
     public void testConditionalBreaks() {
         for (final TokenType token : TokenType.values()) {
-            final boolean test = isConditionalBreak(token);
+            final boolean test = this.isConditionalBreak(token);
             Assert.assertEquals(test, TokenType.isConditionalBreak(token));
         }
     }
-
+    
     /**
      * Test for null conditional break.
      */
@@ -49,7 +49,7 @@ public class TokenTypeTest {
     public void testNullConditional() {
         Assert.assertFalse(TokenType.isConditionalBreak(null));
     }
-
+    
     /**
      * Test for null operator.
      */
@@ -57,18 +57,18 @@ public class TokenTypeTest {
     public void testNullOperators() {
         Assert.assertFalse("Invalid operator.", TokenType.isOperator(null));
     }
-
+    
     /**
      * Test for operators.
      */
     @Test
     public void testOperators() {
         for (final TokenType token : TokenType.values()) {
-            final boolean test = isOperator(token);
+            final boolean test = this.isOperator(token);
             Assert.assertEquals("Operators not the same.", test, TokenType.isOperator(token));
         }
     }
-
+    
     /**
      * Test the get token by nonexistent value.
      */
@@ -76,7 +76,7 @@ public class TokenTypeTest {
     public void testTokenByNonexistentValue() {
         Assert.assertNull(TokenType.get("invalid"));
     }
-
+    
     /**
      * Test the get token by value.
      */
@@ -84,7 +84,7 @@ public class TokenTypeTest {
     public void testTokenByValue() {
         Assert.assertEquals(TokenType.PLUS, TokenType.get("+"));
     }
-
+    
     /**
      * Test for a conditional break.
      *
@@ -100,7 +100,7 @@ public class TokenTypeTest {
         }
         return false;
     }
-
+    
     /**
      * Test for operator types.
      *

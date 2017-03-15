@@ -24,28 +24,28 @@ import org.junit.Test;
  * @version 1.0
  */
 public class CallableProcedureTest {
-
+    
     /**
      * The object to test.
      */
     private final AbstractCallableProcedure call = new Average();
-
+    
     /**
      * Test for default field.
      */
     @Test
     public void testDefaultField() {
-        final List<ParadoxField> fields = call.getCols();
+        final List<ParadoxField> fields = this.call.getCols();
         Assert.assertEquals(1, fields.size());
         Assert.assertEquals("field", fields.get(0).getName());
         Assert.assertEquals(0xC, fields.get(0).getType());
     }
-
+    
     /**
      * Test for return type procedure.
      */
     @Test
     public void testReturnType() {
-        Assert.assertEquals(DatabaseMetaData.procedureReturnsResult, call.getReturnType());
+        Assert.assertEquals(DatabaseMetaData.procedureReturnsResult, this.call.getReturnType());
     }
 }

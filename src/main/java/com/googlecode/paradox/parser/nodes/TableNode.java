@@ -21,12 +21,12 @@ import java.util.List;
  * @since 1.0
  */
 public final class TableNode extends SQLNode {
-
+    
     /**
      * The table joins.
      */
     private final List<JoinNode> joins = new ArrayList<>();
-
+    
     /**
      * Create a new instance.
      *
@@ -38,7 +38,7 @@ public final class TableNode extends SQLNode {
     public TableNode(final String name, final String alias) {
         super(Utils.removeDb(name), alias);
     }
-
+    
     /**
      * Adds the join table.
      *
@@ -46,34 +46,34 @@ public final class TableNode extends SQLNode {
      *            the join table.
      */
     public void addJoin(final JoinNode join) {
-        joins.add(join);
+        this.joins.add(join);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(getName());
-        if (!getName().equals(alias)) {
+        builder.append(this.getName());
+        if (!this.getName().equals(this.alias)) {
             builder.append(" AS ");
-            builder.append(alias);
+            builder.append(this.alias);
         }
-        for (final JoinNode join : joins) {
+        for (final JoinNode join : this.joins) {
             builder.append(' ');
             builder.append(join);
         }
         return builder.toString();
     }
-
+    
     /**
      * Gets the join tables.
      *
      * @return the join tables.
      */
     List<JoinNode> getJoins() {
-        return Collections.unmodifiableList(joins);
+        return Collections.unmodifiableList(this.joins);
     }
-
+    
 }

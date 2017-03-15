@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class ColumnTest {
-
+    
     /**
      * Test for auto increment.
      */
@@ -31,7 +31,7 @@ public class ColumnTest {
         column.setAutoIncrement(true);
         Assert.assertTrue(column.isAutoIncrement());
     }
-
+    
     /**
      * Test for auto increment type.
      */
@@ -42,7 +42,7 @@ public class ColumnTest {
         Assert.assertEquals(9d, column.getPrecision(), 0);
         Assert.assertTrue(column.isAutoIncrement());
     }
-
+    
     /**
      * Test for currency.
      */
@@ -52,7 +52,7 @@ public class ColumnTest {
         column.setCurrency(true);
         Assert.assertTrue(column.isCurrency());
     }
-
+    
     /**
      * Test for double type.
      */
@@ -63,7 +63,7 @@ public class ColumnTest {
         Assert.assertEquals(9d, column.getPrecision(), 0);
         Assert.assertTrue(column.isCurrency());
     }
-
+    
     /**
      * Test field.
      */
@@ -76,7 +76,7 @@ public class ColumnTest {
         column.setField(field);
         Assert.assertEquals(field, column.getField());
     }
-
+    
     /**
      * Test for index.
      */
@@ -86,7 +86,7 @@ public class ColumnTest {
         column.setIndex(1);
         Assert.assertEquals(1, column.getIndex());
     }
-
+    
     /**
      * Test instance with field.
      */
@@ -100,7 +100,7 @@ public class ColumnTest {
         Assert.assertEquals("field", column.getName());
         Assert.assertEquals(ParadoxFieldType.INTEGER.getType(), column.getType());
     }
-
+    
     /**
      * Test instance with values.
      */
@@ -110,7 +110,7 @@ public class ColumnTest {
         Assert.assertEquals("field", column.getName());
         Assert.assertEquals(ParadoxFieldType.INTEGER.getType(), column.getType());
     }
-
+    
     /**
      * Test for max size.
      */
@@ -120,7 +120,7 @@ public class ColumnTest {
         column.setMaxSize(1);
         Assert.assertEquals(1, column.getMaxSize());
     }
-
+    
     /**
      * Test for name.
      */
@@ -130,7 +130,7 @@ public class ColumnTest {
         column.setName("name");
         Assert.assertEquals("name", column.getName());
     }
-
+    
     /**
      * Test for nullable.
      */
@@ -140,7 +140,7 @@ public class ColumnTest {
         column.setNullable(true);
         Assert.assertTrue(column.isNullable());
     }
-
+    
     /**
      * Test for numeric type.
      */
@@ -150,7 +150,7 @@ public class ColumnTest {
         column.setType(ParadoxFieldType.NUMERIC.getType());
         Assert.assertEquals(2d, column.getScale(), 0);
     }
-
+    
     /**
      * Test for precision.
      */
@@ -160,7 +160,7 @@ public class ColumnTest {
         column.setPrecision(1);
         Assert.assertEquals(1, column.getPrecision());
     }
-
+    
     /**
      * Test for read only.
      */
@@ -170,7 +170,7 @@ public class ColumnTest {
         column.setReadOnly(true);
         Assert.assertTrue(column.isReadOnly());
     }
-
+    
     /**
      * Test for scale.
      */
@@ -180,7 +180,7 @@ public class ColumnTest {
         column.setScale(1);
         Assert.assertEquals(1, column.getScale());
     }
-
+    
     /**
      * Test for searchable.
      */
@@ -190,7 +190,7 @@ public class ColumnTest {
         column.setSearchable(true);
         Assert.assertTrue(column.isSearchable());
     }
-
+    
     /**
      * Test for signed.
      */
@@ -200,7 +200,7 @@ public class ColumnTest {
         column.setSigned(true);
         Assert.assertTrue(column.isSigned());
     }
-
+    
     /**
      * Test for table name.
      */
@@ -210,7 +210,7 @@ public class ColumnTest {
         column.setTableName("name");
         Assert.assertEquals("name", column.getTableName());
     }
-
+    
     /**
      * Test for type.
      */
@@ -220,7 +220,7 @@ public class ColumnTest {
         column.setType(1);
         Assert.assertEquals(1, column.getType());
     }
-
+    
     /**
      * Test for type name.
      *
@@ -231,7 +231,7 @@ public class ColumnTest {
     public void testTypeName() throws SQLException {
         Assert.assertEquals(TypeName.BOOLEAN.getName(), Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
     }
-
+    
     /**
      * Test for writable.
      */

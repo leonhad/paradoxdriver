@@ -30,7 +30,7 @@ public class DateFieldTest {
         final DateField field = new DateField();
         Assert.assertFalse(field.match(0));
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -44,7 +44,7 @@ public class DateFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("0100-01-01", value.getDate().toString());
     }
-
+    
     /**
      * Test for parse method.
      *
@@ -58,7 +58,7 @@ public class DateFieldTest {
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("1996-05-04", value.getDate().toString());
     }
-
+    
     /**
      * Test for valid match.
      */

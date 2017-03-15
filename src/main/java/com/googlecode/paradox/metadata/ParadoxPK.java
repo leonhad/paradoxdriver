@@ -16,45 +16,45 @@ package com.googlecode.paradox.metadata;
  * @since 1.0
  */
 public final class ParadoxPK extends ParadoxDataFile {
-
+    
     /**
      * The index field order.
      */
     private int indexFieldNumber;
-
+    
     /**
      * Creates a new instance.
      */
     public ParadoxPK() {
         super(null, null);
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean equals(final Object obj) {
         return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass())
-                && getName().equals(((ParadoxPK) obj).getName()));
+                && this.getName().equals(((ParadoxPK) obj).getName()));
     }
-
+    
     /**
      * Gets the index field number.
      *
      * @return the index field number.
      */
     public int getIndexFieldNumber() {
-        return indexFieldNumber;
+        return this.indexFieldNumber;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int hashCode() {
-        return getName().hashCode();
+        return this.getName().hashCode();
     }
-
+    
     /**
      * Sets the index field number.
      *

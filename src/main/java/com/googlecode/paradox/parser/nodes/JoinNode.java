@@ -19,47 +19,47 @@ import java.util.List;
  * @since 1.0
  */
 public final class JoinNode extends SQLNode {
-
+    
     /**
      * The condition list.
      */
     private List<SQLNode> conditions;
-
+    
     /**
      * The table name.
      */
     private String tableName;
-
+    
     /**
      * The join type.
      */
     private JoinType type = JoinType.CROSS;
-
+    
     /**
      * Create a new instance.
      */
     public JoinNode() {
         super("JOIN");
     }
-
+    
     /**
      * Gets the table name.
      *
      * @return the table name.
      */
     public String getTableName() {
-        return tableName;
+        return this.tableName;
     }
-
+    
     /**
      * Gets the join type.
      *
      * @return the join type.
      */
     public JoinType getType() {
-        return type;
+        return this.type;
     }
-
+    
     /**
      * Sets the condition list.
      *
@@ -69,7 +69,7 @@ public final class JoinNode extends SQLNode {
     public void setConditions(final List<SQLNode> conditions) {
         this.conditions = Collections.unmodifiableList(conditions);
     }
-
+    
     /**
      * Sets the table name.
      *
@@ -79,7 +79,7 @@ public final class JoinNode extends SQLNode {
     public void setTableName(final String tableName) {
         this.tableName = tableName;
     }
-
+    
     /**
      * Sets the join type.
      *
@@ -89,37 +89,37 @@ public final class JoinNode extends SQLNode {
     public void setType(final JoinType type) {
         this.type = type;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(type);
+        builder.append(this.type);
         builder.append(" JOIN ");
-        builder.append(tableName);
-        if ((getAlias() != null) && !tableName.equals(getAlias())) {
+        builder.append(this.tableName);
+        if ((this.getAlias() != null) && !this.tableName.equals(this.getAlias())) {
             builder.append(" AS ");
-            builder.append(getAlias());
+            builder.append(this.getAlias());
         }
-        if (conditions != null) {
+        if (this.conditions != null) {
             builder.append(" ON ");
-            for (final SQLNode condition : conditions) {
+            for (final SQLNode condition : this.conditions) {
                 builder.append(condition);
                 builder.append(' ');
             }
         }
         return builder.toString();
     }
-
+    
     /**
      * Gets the conditions.
      *
      * @return the conditions.
      */
     List<SQLNode> getConditions() {
-        return Collections.unmodifiableList(conditions);
+        return Collections.unmodifiableList(this.conditions);
     }
-
+    
 }

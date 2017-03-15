@@ -22,22 +22,22 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxTable extends ParadoxDataFile {
-
+    
     /**
      * The blob instance used to read the file.
      */
     private BlobTable blobFile;
-
+    
     /**
      * Table charset.
      */
     private Charset charset = Charset.forName("Cp437");
-
+    
     /**
      * Fields order in file.
      */
     private List<Short> fieldsOrder;
-
+    
     /**
      * Creates a new instance.
      *
@@ -49,19 +49,19 @@ public final class ParadoxTable extends ParadoxDataFile {
     public ParadoxTable(final File file, final String name) {
         super(file, name);
     }
-
+    
     /**
      * Gets the blob table.
      *
      * @return the blob table.
      */
     public BlobTable getBlobTable() {
-        if (blobFile == null) {
-            blobFile = new BlobTable(getFile(), getName());
+        if (this.blobFile == null) {
+            this.blobFile = new BlobTable(this.getFile(), this.getName());
         }
-        return blobFile;
+        return this.blobFile;
     }
-
+    
     /**
      * Return the block size in bytes.
      *
@@ -69,25 +69,25 @@ public final class ParadoxTable extends ParadoxDataFile {
      */
     public int getBlockSizeBytes() {
         // The blockSize is always in KiB
-        return getBlockSize() * 1024;
+        return this.getBlockSize() * 1024;
     }
-
+    
     /**
      * @return the charset.
      */
     public Charset getCharset() {
-        return charset;
+        return this.charset;
     }
-
+    
     /**
      * Gets the file order.
      *
      * @return the fields order.
      */
     public List<Short> getFieldsOrder() {
-        return Collections.unmodifiableList(fieldsOrder);
+        return Collections.unmodifiableList(this.fieldsOrder);
     }
-
+    
     /**
      * Sets the charset.
      *
@@ -97,7 +97,7 @@ public final class ParadoxTable extends ParadoxDataFile {
     public void setCharset(final Charset charset) {
         this.charset = charset;
     }
-
+    
     /**
      * Sets the file order.
      *
@@ -107,7 +107,7 @@ public final class ParadoxTable extends ParadoxDataFile {
     public void setFieldsOrder(final List<Short> fieldsOrder) {
         this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
     }
-
+    
     /**
      * Gets the table name.
      *
@@ -115,9 +115,9 @@ public final class ParadoxTable extends ParadoxDataFile {
      */
     @Override
     public String toString() {
-        return getName();
+        return this.getName();
     }
-
+    
     /**
      * Gets the primary keys list.
      *
@@ -125,8 +125,8 @@ public final class ParadoxTable extends ParadoxDataFile {
      */
     List<ParadoxField> getPrimaryKeys() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
-        for (int loop = 0; loop < getPrimaryFieldCount(); loop++) {
-            ret.add(getFields().get(loop));
+        for (int loop = 0; loop < this.getPrimaryFieldCount(); loop++) {
+            ret.add(this.getFields().get(loop));
         }
         return ret;
     }

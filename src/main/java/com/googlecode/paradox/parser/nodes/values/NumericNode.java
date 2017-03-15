@@ -18,7 +18,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @version 1.0
  */
 public class NumericNode extends SQLNode {
-
+    
     /**
      * Create a new instance.
      *

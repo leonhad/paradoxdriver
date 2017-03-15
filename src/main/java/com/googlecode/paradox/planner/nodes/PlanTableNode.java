@@ -18,35 +18,35 @@ import com.googlecode.paradox.metadata.ParadoxTable;
  * @since 1.1
  */
 public final class PlanTableNode {
-
+    
     /**
      * The plan alias.
      */
     private String alias;
-
+    
     /**
      * The plan table.
      */
     private ParadoxTable table;
-
+    
     /**
      * Gets the plan alias.
      *
      * @return the plan alias.
      */
     public String getAlias() {
-        return alias;
+        return this.alias;
     }
-
+    
     /**
      * Gets the table plan.
      *
      * @return the table plan.
      */
     public ParadoxTable getTable() {
-        return table;
+        return this.table;
     }
-
+    
     /**
      * Sets the plan alias.
      *
@@ -56,7 +56,7 @@ public final class PlanTableNode {
     public void setAlias(final String alias) {
         this.alias = alias;
     }
-
+    
     /**
      * Sets the plan table.
      *
@@ -66,5 +66,5 @@ public final class PlanTableNode {
     public void setTable(final ParadoxTable table) {
         this.table = table;
     }
-
+    
 }

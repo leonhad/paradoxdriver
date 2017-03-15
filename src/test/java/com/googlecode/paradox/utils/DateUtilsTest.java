@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class DateUtilsTest {
-
+    
     /**
      * Test the Gregorian do SDN conversion.
      */
@@ -29,7 +29,7 @@ public class DateUtilsTest {
     public void testGregorianToSdn() {
         Assert.assertEquals(2457566, DateUtils.gregorianToSdn(2016, 6, 26));
     }
-
+    
     /**
      * Check for invalid date.
      */
@@ -38,7 +38,7 @@ public class DateUtilsTest {
         Assert.assertEquals(0, DateUtils.gregorianToSdn(2016, 6, 0));
         Assert.assertEquals(0, DateUtils.gregorianToSdn(2016, 6, 32));
     }
-
+    
     /**
      * Check for invalid month.
      */
@@ -47,7 +47,7 @@ public class DateUtilsTest {
         Assert.assertEquals(0, DateUtils.gregorianToSdn(2016, 0, 26));
         Assert.assertEquals(0, DateUtils.gregorianToSdn(2016, 13, 26));
     }
-
+    
     /**
      * Test negative year.
      */
@@ -56,7 +56,7 @@ public class DateUtilsTest {
         Assert.assertEquals(1721060, DateUtils.gregorianToSdn(-1, 1, 1));
         Assert.assertEquals(1721426, DateUtils.gregorianToSdn(1, 1, 1));
     }
-
+    
     /**
      * Check for invalid year.
      */
@@ -65,7 +65,7 @@ public class DateUtilsTest {
         Assert.assertEquals(0, DateUtils.gregorianToSdn(0, 6, 26));
         Assert.assertEquals(0, DateUtils.gregorianToSdn(-5000, 6, 26));
     }
-
+    
     /**
      * Test for year limits.
      */
@@ -76,7 +76,7 @@ public class DateUtilsTest {
         Assert.assertEquals(1, DateUtils.gregorianToSdn(-4714, 11, 25));
         Assert.assertEquals(30, DateUtils.gregorianToSdn(-4714, 12, 24));
     }
-
+    
     /**
      * Test utility class.
      *
@@ -94,7 +94,7 @@ public class DateUtilsTest {
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(DateUtils.class));
     }
-
+    
     /**
      * Test low SDN.
      */
@@ -104,7 +104,7 @@ public class DateUtilsTest {
         Assert.assertNotNull("Null date.", date);
         Assert.assertEquals("Invalid date.", "4715-11-25", date.toString());
     }
-
+    
     /**
      * Test invalid SDN.
      */

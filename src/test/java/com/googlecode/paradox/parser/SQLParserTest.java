@@ -29,7 +29,7 @@ import org.junit.Test;
  * @version 1.1
  */
 public class SQLParserTest {
-
+    
     /**
      * Test for column values.
      *
@@ -41,22 +41,22 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("SELECT 'test', 123 as number FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(2, select.getFields().size());
         Assert.assertTrue(select.getFields().get(0) instanceof CharacterNode);
         Assert.assertEquals("TEST", select.getFields().get(0).getName());
         Assert.assertTrue(select.getFields().get(1) instanceof NumericNode);
         Assert.assertEquals("123", select.getFields().get(1).getName());
         Assert.assertEquals("number", select.getFields().get(1).getAlias());
-
+        
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-
+    
     /**
      * Test for join token.
      *
@@ -69,18 +69,18 @@ public class SQLParserTest {
                 "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
+        
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-
+    
     /**
      * Test for SELECT token.
      *
@@ -92,18 +92,18 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("SELECT * FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
+        
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-
+    
     /**
      * Test for tables.
      *
@@ -115,18 +115,18 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
+        
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-
+    
     /**
      * Test a SELECT with two tables.
      *
@@ -138,24 +138,24 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("select CODE as cod, state.NAME name FROM client, state");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(2, select.getFields().size());
         Assert.assertEquals("CODE", select.getFields().get(0).getName());
         Assert.assertEquals("cod", select.getFields().get(0).getAlias());
-
+        
         Assert.assertEquals("state", ((FieldNode) select.getFields().get(1)).getTableName());
         Assert.assertEquals("NAME", select.getFields().get(1).getName());
         Assert.assertEquals("name", select.getFields().get(1).getAlias());
-
+        
         Assert.assertEquals(2, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("state", select.getTables().get(1).getName());
     }
-
+    
     /**
      * Test tables with alias.
      *
@@ -167,22 +167,22 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("select *, name FROM client as cli, state STATE");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(2, select.getFields().size());
         Assert.assertEquals(2, select.getTables().size());
-
+        
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
+        
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("cli", select.getTables().get(0).getAlias());
         Assert.assertEquals("state", select.getTables().get(1).getName());
         Assert.assertEquals("STATE", select.getTables().get(1).getAlias());
     }
-
+    
     /**
      * Test for where token.
      *
@@ -194,18 +194,18 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b and c <> t");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
+        
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("test", select.getTables().get(0).getAlias());
-
+        
         Assert.assertEquals(3, select.getConditions().size());
         Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
         Assert.assertTrue(select.getConditions().get(1) instanceof ANDNode);
@@ -215,7 +215,7 @@ public class SQLParserTest {
         Assert.assertEquals("c", ((NotEqualsNode) select.getConditions().get(2)).getFirst().getName());
         Assert.assertEquals("t", ((NotEqualsNode) select.getConditions().get(2)).getLast().getName());
     }
-
+    
     /**
      * Test a where with alias.
      *
@@ -227,18 +227,18 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE test.a = c.b");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-
+        
         Assert.assertTrue(tree instanceof SelectNode);
-
+        
         final SelectNode select = (SelectNode) tree;
-
+        
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
+        
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("test", select.getTables().get(0).getAlias());
-
+        
         Assert.assertEquals(1, select.getConditions().size());
         Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
         Assert.assertEquals("test", ((EqualsNode) select.getConditions().get(0)).getFirst().getTableName());

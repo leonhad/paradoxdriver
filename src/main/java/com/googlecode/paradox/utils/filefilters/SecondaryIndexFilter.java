@@ -21,12 +21,12 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class SecondaryIndexFilter implements FileFilter {
-
+    
     /**
      * The index name.
      */
     private final String indexName;
-
+    
     /**
      * Create a new instance.
      *
@@ -36,22 +36,23 @@ public final class SecondaryIndexFilter implements FileFilter {
     public SecondaryIndexFilter(final String indexName) {
         this.indexName = indexName;
     }
-
+    
     /**
      * Create a new instance.
      */
     SecondaryIndexFilter() {
-        indexName = null;
+        this.indexName = null;
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-
-        return Expressions.accept(name, "%.X??") && ((indexName == null) || Expressions.accept(name, indexName));
+        
+        return Expressions.accept(name, "%.X??")
+                && ((this.indexName == null) || Expressions.accept(name, this.indexName));
     }
-
+    
 }

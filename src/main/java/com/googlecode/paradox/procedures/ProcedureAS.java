@@ -25,28 +25,28 @@ import java.util.List;
  * @since 1.0
  */
 public final class ProcedureAS {
-
+    
     /**
      * Default instance.
      */
     private static final ProcedureAS INSTANCE = new ProcedureAS();
-
+    
     /**
      * All registered procedures.
      */
     private final List<AbstractCallableProcedure> procedures = new ArrayList<>();
-
+    
     /**
      * Register the default procedures.
      */
     private ProcedureAS() {
-        register(new Average());
-        register(new Count());
-        register(new Max());
-        register(new Min());
-        register(new Sum());
+        this.register(new Average());
+        this.register(new Count());
+        this.register(new Max());
+        this.register(new Min());
+        this.register(new Sum());
     }
-
+    
     /**
      * Gets the instance.
      *
@@ -55,7 +55,7 @@ public final class ProcedureAS {
     public static ProcedureAS getInstance() {
         return ProcedureAS.INSTANCE;
     }
-
+    
     /**
      * Gets the procedure by name.
      *
@@ -64,23 +64,23 @@ public final class ProcedureAS {
      * @return the procedure.
      */
     public AbstractCallableProcedure get(final String name) {
-        for (final AbstractCallableProcedure procedure : procedures) {
+        for (final AbstractCallableProcedure procedure : this.procedures) {
             if (procedure.getName().equalsIgnoreCase(name)) {
                 return procedure;
             }
         }
         return null;
     }
-
+    
     /**
      * Gets the procedures list.
      *
      * @return the procedures list.
      */
     public List<AbstractCallableProcedure> list() {
-        return Collections.unmodifiableList(procedures);
+        return Collections.unmodifiableList(this.procedures);
     }
-
+    
     /**
      * Registers a new procedure.
      *
@@ -88,6 +88,6 @@ public final class ProcedureAS {
      *            the procedure to register.
      */
     private void register(final AbstractCallableProcedure procedure) {
-        procedures.add(procedure);
+        this.procedures.add(procedure);
     }
 }

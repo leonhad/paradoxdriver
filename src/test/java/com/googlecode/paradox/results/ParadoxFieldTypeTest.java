@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class ParadoxFieldTypeTest {
-
+    
     /**
      * Test for invalid type.
      *
@@ -32,7 +32,7 @@ public class ParadoxFieldTypeTest {
     public void getType() throws SQLException {
         ParadoxFieldType.getSQLTypeByType(-1);
     }
-
+    
     /**
      * Test for SQL type.
      *
@@ -44,5 +44,5 @@ public class ParadoxFieldTypeTest {
         Assert.assertEquals("Test for get SQL type.", ParadoxFieldType.AUTO_INCREMENT.getSQLType(),
                 ParadoxFieldType.getSQLTypeByType(ParadoxFieldType.AUTO_INCREMENT.getType()));
     }
-
+    
 }

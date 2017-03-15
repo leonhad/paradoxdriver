@@ -21,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class FieldValueTest {
-
+    
     /**
      * Test for field value.
      *
@@ -35,7 +35,7 @@ public class FieldValueTest {
         Assert.assertTrue("Invalid value.", fieldValue.getBoolean());
         Assert.assertNull("Testing for invalid field.", fieldValue.getField());
     }
-
+    
     /**
      * Test for invalid {@link Boolean} value.
      *
@@ -47,7 +47,7 @@ public class FieldValueTest {
         final FieldValue fieldValue = new FieldValue("test value", Types.VARCHAR);
         fieldValue.getBoolean();
     }
-
+    
     /**
      * Test for invalid {@link java.sql.Date} value.
      *
@@ -59,7 +59,7 @@ public class FieldValueTest {
         final FieldValue fieldValue = new FieldValue("test value", Types.VARCHAR);
         fieldValue.getDate();
     }
-
+    
     /**
      * Test for invalid {@link Number} value.
      *
@@ -71,7 +71,7 @@ public class FieldValueTest {
         final FieldValue fieldValue = new FieldValue("test value", Types.VARCHAR);
         fieldValue.getNumber();
     }
-
+    
     /**
      * Test for invalid {@link java.sql.Time} value.
      *
@@ -83,7 +83,7 @@ public class FieldValueTest {
         final FieldValue fieldValue = new FieldValue("test value", Types.VARCHAR);
         fieldValue.getTime();
     }
-
+    
     /**
      * Test for not null value.
      *
@@ -95,7 +95,7 @@ public class FieldValueTest {
         final FieldValue fieldValue = new FieldValue(Boolean.FALSE, Types.BOOLEAN);
         Assert.assertFalse("Testing for invalid null value.", fieldValue.isNull());
     }
-
+    
     /**
      * Test for null value.
      *
