@@ -73,12 +73,9 @@ public final class PrimaryKeyData {
     private static ParadoxPK loadPKHeader(final File file) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        FileChannel channel = null;
-        final FileInputStream fs = new FileInputStream(file);
         final ParadoxPK pk = new ParadoxPK();
         
-        try {
-            channel = fs.getChannel();
+        try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
             
@@ -99,11 +96,6 @@ public final class PrimaryKeyData {
             buffer.position(0x38);
             pk.setWriteProtected(buffer.get());
             pk.setVersionId(buffer.get());
-        } finally {
-            if (channel != null) {
-                channel.close();
-            }
-            fs.close();
         }
         return pk;
     }
