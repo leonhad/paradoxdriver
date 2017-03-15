@@ -1,5 +1,9 @@
 /*
- * DateUtils.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * DateUtils.java
+ *
+ * 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can
  * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
  * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -53,6 +57,42 @@ public final class DateUtils {
      */
     private DateUtils() {
         // Utility class, not for use.
+    }
+
+    /**
+     * Convert the Gregorian date to Paradox format.
+     *
+     * @param inputYear
+     *            the year to convert.
+     * @param inputMonth
+     *            the month to convert.
+     * @param inputDay
+     *            the day to convert.
+     * @return the Paradox date.
+     */
+    public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
+        try {
+            DateUtils.checkForDateBoundaries(inputYear, inputMonth, inputDay);
+            DateUtils.checkYearBounds(inputYear, inputMonth, inputDay);
+        } catch (final IllegalArgumentException e) {
+            DateUtils.LOGGER.log(Level.FINER, e.getMessage(), e);
+            return 0;
+        }
+
+        // Make year always a positive number.
+        long year = DateUtils.fixYearBounds(inputYear);
+
+        long month;
+        // Adjust the start of the year.
+        if (inputMonth > 2) {
+            month = inputMonth - 3L;
+        } else {
+            month = inputMonth + 9L;
+            year--;
+        }
+
+        return ((((year / 100) * DateUtils.DAYS_PER_400_YEARS) / 4) + (((year % 100) * DateUtils.DAYS_PER_4_YEARS) / 4)
+                + (((month * DateUtils.DAYS_PER_5_MONTHS) + 2) / 5) + inputDay) - DateUtils.SDN_OFFSET;
     }
 
     /**
@@ -163,41 +203,5 @@ public final class DateUtils {
             year = inputYear + 4_800L;
         }
         return year;
-    }
-
-    /**
-     * Convert the Gregorian date to Paradox format.
-     *
-     * @param inputYear
-     *            the year to convert.
-     * @param inputMonth
-     *            the month to convert.
-     * @param inputDay
-     *            the day to convert.
-     * @return the Paradox date.
-     */
-    static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
-        try {
-            DateUtils.checkForDateBoundaries(inputYear, inputMonth, inputDay);
-            DateUtils.checkYearBounds(inputYear, inputMonth, inputDay);
-        } catch (final IllegalArgumentException e) {
-            DateUtils.LOGGER.log(Level.FINER, e.getMessage(), e);
-            return 0;
-        }
-
-        // Make year always a positive number.
-        long year = DateUtils.fixYearBounds(inputYear);
-
-        long month;
-        // Adjust the start of the year.
-        if (inputMonth > 2) {
-            month = inputMonth - 3L;
-        } else {
-            month = inputMonth + 9L;
-            year--;
-        }
-
-        return ((((year / 100) * DateUtils.DAYS_PER_400_YEARS) / 4) + (((year % 100) * DateUtils.DAYS_PER_4_YEARS) / 4)
-                + (((month * DateUtils.DAYS_PER_5_MONTHS) + 2) / 5) + inputDay) - DateUtils.SDN_OFFSET;
     }
 }
