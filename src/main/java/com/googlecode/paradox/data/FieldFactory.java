@@ -33,13 +33,13 @@ import java.util.List;
  * @version 1.0
  * @since 1.3
  */
-final class FieldFactory {
+public final class FieldFactory {
     
     /**
      * Stores all available parsers.
      */
     private static final List<FieldParser> ALL_PARSES = new ArrayList<>();
-    
+
     // Initialize the parsers.
     static {
         FieldFactory.ALL_PARSES.add(new AutoIncrementField());
@@ -52,14 +52,14 @@ final class FieldFactory {
         FieldFactory.ALL_PARSES.add(new TimeField());
         FieldFactory.ALL_PARSES.add(new VarcharField());
     }
-    
+
     /**
      * Utility class.
      */
     private FieldFactory() {
         // Utility class.
     }
-    
+
     /**
      * Parses the filter;
      *

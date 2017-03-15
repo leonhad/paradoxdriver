@@ -21,33 +21,33 @@ import java.util.Locale;
  * @version 1.2
  * @since 1.0
  */
-class Scanner {
+public class Scanner {
     
     /**
      * Separators char.
      */
     private static final char[] SEPARATORS = { ' ', '\t', '\n', '\0', '\r' };
-    
+
     /**
      * Special chars.
      */
     private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=', ';' };
-    
+
     /**
      * Character buffer used to parse the SQL.
      */
     private final CharBuffer buffer;
-    
+
     /**
      * Read tokens.
      */
     private final ArrayList<Token> tokens = new ArrayList<>();
-    
+
     /**
      * Value buffer.
      */
     private final StringBuilder value = new StringBuilder(299);
-    
+
     /**
      * Creates a new instance.
      *
@@ -62,7 +62,7 @@ class Scanner {
         }
         this.buffer = CharBuffer.wrap(buffer.trim());
     }
-    
+
     /**
      * Checks for maximum number dots allowed.
      *
@@ -76,7 +76,7 @@ class Scanner {
             throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL.getValue());
         }
     }
-    
+
     /**
      * Creates a token by value.
      *
@@ -94,7 +94,7 @@ class Scanner {
         }
         return new Token(TokenType.IDENTIFIER, value);
     }
-    
+
     /**
      * Check if is a character or a string.
      *
@@ -110,7 +110,7 @@ class Scanner {
         }
         return characters;
     }
-    
+
     /**
      * If the char is a separator.
      *
@@ -126,7 +126,7 @@ class Scanner {
         }
         return false;
     }
-    
+
     /**
      * if the value is a special char.
      *
@@ -142,7 +142,7 @@ class Scanner {
         }
         return false;
     }
-    
+
     /**
      * Gets the next value in buffer.
      *
@@ -151,7 +151,7 @@ class Scanner {
     private char nextChar() {
         return this.buffer.get();
     }
-    
+
     /**
      * Parses identifier tokens.
      *
@@ -162,7 +162,7 @@ class Scanner {
     private boolean parseIdentifier() throws SQLException {
         while (this.hasNext()) {
             final char c = this.nextChar();
-            
+
             // Ignore separators.
             if (!Scanner.isSeparator(c)) {
                 if (Scanner.isSpecial(c)) {
@@ -181,7 +181,7 @@ class Scanner {
         }
         return false;
     }
-    
+
     /**
      * Parses a numeric char.
      *
@@ -200,7 +200,7 @@ class Scanner {
                 numeric = Character.isDigit(this.value.charAt(0));
             } else if (c == '.') {
                 dotCount++;
-                
+
                 // Only one dot per numeric value
                 Scanner.checkDotCount(dotCount);
             }
@@ -214,7 +214,7 @@ class Scanner {
             this.pushBack();
         }
     }
-    
+
     /**
      * Parses a {@link String} value.
      *
@@ -248,14 +248,14 @@ class Scanner {
             }
         } while (c != type);
     }
-    
+
     /**
      * Push back the read char.
      */
     private void pushBack() {
         this.buffer.position(this.buffer.position() - 1);
     }
-    
+
     /**
      * If buffer has tokens.
      *
@@ -264,7 +264,7 @@ class Scanner {
     boolean hasNext() {
         return !this.tokens.isEmpty() || this.buffer.hasRemaining();
     }
-    
+
     /**
      * Gets the next {@link Token} in buffer.
      *
@@ -291,7 +291,7 @@ class Scanner {
         }
         return Scanner.getToken(this.value.toString());
     }
-    
+
     /**
      * Push back the given token in buffer.
      *

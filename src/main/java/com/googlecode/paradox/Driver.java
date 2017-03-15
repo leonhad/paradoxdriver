@@ -31,7 +31,7 @@ public final class Driver implements IParadoxDriver {
      * Logger instance for this class.
      */
     private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
-    
+
     // Register the drive into JDBC API.
     static {
         try {
@@ -42,7 +42,7 @@ public final class Driver implements IParadoxDriver {
             Driver.LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -50,7 +50,7 @@ public final class Driver implements IParadoxDriver {
     public boolean acceptsURL(final String url) {
         return (url != null) && url.startsWith(Constants.URL_PREFIX);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -58,11 +58,11 @@ public final class Driver implements IParadoxDriver {
     public Connection connect(final String url, final Properties info) throws SQLException {
         if (this.acceptsURL(url)) {
             final String dirName = url.substring(Constants.URL_PREFIX.length(), url.length());
-            return new ParadoxConnection(new File(dirName), url, info);
+            return new ParadoxConnection(new File(dirName), url);
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -70,7 +70,7 @@ public final class Driver implements IParadoxDriver {
     public int getMajorVersion() {
         return Constants.MAJOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -78,7 +78,7 @@ public final class Driver implements IParadoxDriver {
     public int getMinorVersion() {
         return Constants.MINOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -86,7 +86,7 @@ public final class Driver implements IParadoxDriver {
     public Logger getParentLogger() {
         return Driver.LOGGER;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -95,14 +95,14 @@ public final class Driver implements IParadoxDriver {
         final DriverPropertyInfo dbProp = new DriverPropertyInfo("DBNAME", info.getProperty("DBNAME"));
         dbProp.required = false;
         dbProp.description = "Database name";
-        
+
         final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", info.getProperty("password"));
         passwordProp.required = false;
         passwordProp.description = "Password to use for authentication";
-        
+
         return new DriverPropertyInfo[] { dbProp, passwordProp };
     }
-    
+
     /**
      * {@inheritDoc}.
      */

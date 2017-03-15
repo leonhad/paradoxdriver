@@ -38,12 +38,12 @@ public class ParadoxResultSetTest {
      * The connection string used in this tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-    
+
     /**
      * The database connection.
      */
     private Connection conn;
-    
+
     /**
      * Register the database driver.
      *
@@ -54,7 +54,7 @@ public class ParadoxResultSetTest {
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Close the test connection.
      *
@@ -67,7 +67,7 @@ public class ParadoxResultSetTest {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to the test database.
      *
@@ -78,7 +78,7 @@ public class ParadoxResultSetTest {
     public void connect() throws Exception {
         this.conn = DriverManager.getConnection(ParadoxResultSetTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with empty values.
      *
@@ -90,10 +90,11 @@ public class ParadoxResultSetTest {
         final List<Column> columns = new ArrayList<>();
         final List<List<FieldValue>> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
-        final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns);
-        Assert.assertTrue("Invalid absolute value.", rs.absolute(0));
+        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+            Assert.assertTrue("Invalid absolute value.", rs.absolute(0));
+        }
     }
-    
+
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with high row
      * number.
@@ -106,10 +107,11 @@ public class ParadoxResultSetTest {
         final List<Column> columns = new ArrayList<>();
         final List<List<FieldValue>> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
-        final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns);
-        Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
+        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+            Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
+        }
     }
-    
+
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with low row
      * number.
@@ -122,10 +124,11 @@ public class ParadoxResultSetTest {
         final List<Column> columns = new ArrayList<>();
         final List<List<FieldValue>> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
-        final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns);
-        Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
+        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+            Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
+        }
     }
-    
+
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with negative row
      * value.
@@ -140,10 +143,11 @@ public class ParadoxResultSetTest {
         final List<List<FieldValue>> values = new ArrayList<>();
         values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
-        final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns);
-        Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
+        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+            Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
+        }
     }
-    
+
     /**
      * Test for {@link ParadoxResultSet#afterLast()} method.
      *
@@ -157,11 +161,12 @@ public class ParadoxResultSetTest {
         final List<List<FieldValue>> values = new ArrayList<>();
         values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
-        final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns);
-        rs.afterLast();
-        Assert.assertTrue("Testing for invalid position.", rs.isAfterLast());
+        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+            rs.afterLast();
+            Assert.assertTrue("Testing for invalid position.", rs.isAfterLast());
+        }
     }
-    
+
     /**
      * Test for first result.
      *
@@ -180,7 +185,7 @@ public class ParadoxResultSetTest {
             Assert.assertEquals("Rows with different values.", firstValue, rs.getString("ac"));
         }
     }
-    
+
     /**
      * Test for first result.
      *
@@ -197,7 +202,7 @@ public class ParadoxResultSetTest {
             Assert.assertFalse("There is one first row", rs.first());
         }
     }
-    
+
     /**
      * Test for {@link ResultSet} execution.
      *
