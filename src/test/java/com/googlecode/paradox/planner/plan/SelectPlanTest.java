@@ -29,6 +29,11 @@ public class SelectPlanTest {
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
+     * The database connection.
+     */
+    private ParadoxConnection conn;
+
+    /**
      * Register the database driver.
      *
      * @throws Exception
@@ -38,11 +43,6 @@ public class SelectPlanTest {
     public static void initClass() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
-    /**
-     * The database connection.
-     */
-    private ParadoxConnection conn;
 
     /**
      * Close the test connection.

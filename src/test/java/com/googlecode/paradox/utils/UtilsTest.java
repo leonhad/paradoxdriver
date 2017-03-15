@@ -35,6 +35,11 @@ public class UtilsTest {
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
+     * Database connection.
+     */
+    private Connection conn;
+
+    /**
      * Register the driver.
      *
      * @throws Exception
@@ -44,11 +49,6 @@ public class UtilsTest {
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
-    /**
-     * Database connection.
-     */
-    private Connection conn;
 
     /**
      * Close the test connection.

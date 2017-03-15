@@ -34,6 +34,36 @@ class Scanner {
     private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=', ';' };
 
     /**
+     * Character buffer used to parse the SQL.
+     */
+    private final CharBuffer buffer;
+
+    /**
+     * Read tokens.
+     */
+    private final ArrayList<Token> tokens = new ArrayList<>();
+
+    /**
+     * Value buffer.
+     */
+    private final StringBuilder value = new StringBuilder(299);
+
+    /**
+     * Creates a new instance.
+     *
+     * @param buffer
+     *            the buffer to read of.
+     * @throws SQLException
+     *             in case of parse errors.
+     */
+    Scanner(final String buffer) throws SQLException {
+        if (buffer == null) {
+            throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL.getValue());
+        }
+        this.buffer = CharBuffer.wrap(buffer.trim());
+    }
+
+    /**
      * Checks for maximum number dots allowed.
      *
      * @param dotCount
@@ -111,36 +141,6 @@ class Scanner {
             }
         }
         return false;
-    }
-
-    /**
-     * Character buffer used to parse the SQL.
-     */
-    private final CharBuffer buffer;
-
-    /**
-     * Read tokens.
-     */
-    private final ArrayList<Token> tokens = new ArrayList<>();
-
-    /**
-     * Value buffer.
-     */
-    private final StringBuilder value = new StringBuilder(299);
-
-    /**
-     * Creates a new instance.
-     *
-     * @param buffer
-     *            the buffer to read of.
-     * @throws SQLException
-     *             in case of parse errors.
-     */
-    Scanner(final String buffer) throws SQLException {
-        if (buffer == null) {
-            throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL.getValue());
-        }
-        this.buffer = CharBuffer.wrap(buffer.trim());
     }
 
     /**

@@ -232,6 +232,28 @@ public enum TokenType {
     private static final TokenType[] OPERATORS = { AND, OR, XOR };
 
     /**
+     * Token value.
+     */
+    private final String value;
+
+    /**
+     * Creates a new instance.
+     */
+    TokenType() {
+        value = name();
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param value
+     *            the token value.
+     */
+    TokenType(final String value) {
+        this.value = value;
+    }
+
+    /**
      * Gets the token by value.
      *
      * @param value
@@ -277,27 +299,5 @@ public enum TokenType {
             }
         }
         return false;
-    }
-
-    /**
-     * Token value.
-     */
-    private final String value;
-
-    /**
-     * Creates a new instance.
-     */
-    TokenType() {
-        value = name();
-    }
-
-    /**
-     * Creates a new instance.
-     *
-     * @param value
-     *            the token value.
-     */
-    TokenType(final String value) {
-        this.value = value;
     }
 }

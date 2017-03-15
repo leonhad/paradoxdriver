@@ -103,24 +103,6 @@ public enum ParadoxFieldType {
     private static final ParadoxFieldType[] VALUES = ParadoxFieldType.values();
 
     /**
-     * Gets the field name by its type.
-     *
-     * @param type
-     *            the type value.
-     * @return the field type name.
-     * @throws SQLException
-     *             in case of invalid type.
-     */
-    public static int getSQLTypeByType(final int type) throws SQLException {
-        for (final ParadoxFieldType typeName : ParadoxFieldType.VALUES) {
-            if (typeName.getType() == type) {
-                return typeName.getSQLType();
-            }
-        }
-        throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
-    }
-
-    /**
      * The SQL Type.
      */
     private final int sqlType;
@@ -141,6 +123,24 @@ public enum ParadoxFieldType {
     ParadoxFieldType(final int type, final int sqlType) {
         this.type = (byte) type;
         this.sqlType = sqlType;
+    }
+
+    /**
+     * Gets the field name by its type.
+     *
+     * @param type
+     *            the type value.
+     * @return the field type name.
+     * @throws SQLException
+     *             in case of invalid type.
+     */
+    public static int getSQLTypeByType(final int type) throws SQLException {
+        for (final ParadoxFieldType typeName : ParadoxFieldType.VALUES) {
+            if (typeName.getType() == type) {
+                return typeName.getSQLType();
+            }
+        }
+        throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
     }
 
     /**

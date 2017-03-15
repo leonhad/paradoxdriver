@@ -32,15 +32,6 @@ public final class ProcedureAS {
     private static final ProcedureAS INSTANCE = new ProcedureAS();
 
     /**
-     * Gets the instance.
-     *
-     * @return the instance.
-     */
-    public static ProcedureAS getInstance() {
-        return ProcedureAS.INSTANCE;
-    }
-
-    /**
      * All registered procedures.
      */
     private final List<AbstractCallableProcedure> procedures = new ArrayList<>();
@@ -54,6 +45,15 @@ public final class ProcedureAS {
         register(new Max());
         register(new Min());
         register(new Sum());
+    }
+
+    /**
+     * Gets the instance.
+     *
+     * @return the instance.
+     */
+    public static ProcedureAS getInstance() {
+        return ProcedureAS.INSTANCE;
     }
 
     /**

@@ -49,6 +49,13 @@ public final class DateUtils {
     private static final int SDN_OFFSET = 32045;
 
     /**
+     * Utility class.
+     */
+    private DateUtils() {
+        // Utility class, not for use.
+    }
+
+    /**
      * Convert the Paradox date to Gregorian format.
      *
      * @param sdn
@@ -192,12 +199,5 @@ public final class DateUtils {
 
         return ((((year / 100) * DateUtils.DAYS_PER_400_YEARS) / 4) + (((year % 100) * DateUtils.DAYS_PER_4_YEARS) / 4)
                 + (((month * DateUtils.DAYS_PER_5_MONTHS) + 2) / 5) + inputDay) - DateUtils.SDN_OFFSET;
-    }
-
-    /**
-     * Utility class.
-     */
-    private DateUtils() {
-        // Utility class, not for use.
     }
 }

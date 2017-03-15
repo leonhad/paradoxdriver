@@ -40,6 +40,11 @@ public class ParadoxResultSetTest {
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
+     * The database connection.
+     */
+    private Connection conn;
+
+    /**
      * Register the database driver.
      *
      * @throws Exception
@@ -49,11 +54,6 @@ public class ParadoxResultSetTest {
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-
-    /**
-     * The database connection.
-     */
-    private Connection conn;
 
     /**
      * Close the test connection.

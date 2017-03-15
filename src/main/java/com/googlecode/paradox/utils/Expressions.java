@@ -28,6 +28,13 @@ public final class Expressions {
     private static final Logger LOGGER = Logger.getLogger(Expressions.class.getName());
 
     /**
+     * Utility class.
+     */
+    private Expressions() {
+        // Utility class.
+    }
+
+    /**
      * Test for an expression.
      *
      * @param expression
@@ -181,12 +188,5 @@ public final class Expressions {
             return str.toCharArray();
         }
         return str.toUpperCase(Locale.US).toCharArray();
-    }
-
-    /**
-     * Utility class.
-     */
-    private Expressions() {
-        // Utility class.
     }
 }

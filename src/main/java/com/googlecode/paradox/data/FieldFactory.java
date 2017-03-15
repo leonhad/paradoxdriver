@@ -54,6 +54,13 @@ final class FieldFactory {
     }
 
     /**
+     * Utility class.
+     */
+    private FieldFactory() {
+        // Utility class.
+    }
+
+    /**
      * Parses the filter;
      *
      * @param table
@@ -74,12 +81,5 @@ final class FieldFactory {
             }
         }
         throw new SQLException("Field type unsupported.", SQLStates.TYPE_NOT_FOUND.getValue());
-    }
-
-    /**
-     * Utility class.
-     */
-    private FieldFactory() {
-        // Utility class.
     }
 }

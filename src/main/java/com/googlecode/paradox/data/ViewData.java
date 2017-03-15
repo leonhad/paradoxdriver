@@ -43,6 +43,13 @@ public final class ViewData {
     private static final Charset CHARSET = Charset.forName("Cp1250");
 
     /**
+     * Utility class.
+     */
+    private ViewData() {
+        // Utility class.
+    }
+
+    /**
      * Returns all connections view.
      *
      * @param conn
@@ -451,12 +458,5 @@ public final class ViewData {
                 field.setChecked(true);
             }
         }
-    }
-
-    /**
-     * Utility class.
-     */
-    private ViewData() {
-        // Utility class.
     }
 }

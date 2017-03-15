@@ -36,6 +36,11 @@ import org.junit.Test;
 public class TableDataTest {
 
     /**
+     * The database connection.
+     */
+    private ParadoxConnection conn;
+
+    /**
      * Register the driver.
      *
      * @throws ClassNotFoundException
@@ -45,11 +50,6 @@ public class TableDataTest {
     public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
-    /**
-     * The database connection.
-     */
-    private ParadoxConnection conn;
 
     /**
      * Used to close the test connection.

@@ -57,23 +57,6 @@ public final class BlobTable extends ParadoxDataFile {
     private static final int SUB_BLOCK = 3;
 
     /**
-     * Calculate block type. We'll refer to the first four bytes after the leader as MB_Offset. MB_Offset is used to
-     * locate the blob data. If MB_Offset = 0 then the entire blob is contained in the leader. Take the low-order byte
-     * from MB_Offset and call it MB_Index. Change the low-order byte of MB_Offset to zero. If MB_Index is FFh, then
-     * MB_Offset contains the offset of a type 02 (SINGLE_BLOCK) block in the MB file. Otherwise, MB_Offset contains the
-     * offset of a type 03 (SUB_BLOCK) block in the MB file. MB_Index contains the index of an entry in the Blob Pointer
-     * Array in the type 03 block.
-     *
-     * @param offset
-     *            offset to read on.
-     * @return number of blocks read.
-     */
-    private static int getBlockNum(final long offset) {
-        final int idx = (int) (offset & 0xFF00) >> 8;
-        return (((idx & 0x0F) * 0xF) + (idx & 0xF0)) >> 4;
-    }
-
-    /**
      * Block cache.
      */
     private final IBlockCache cache;
@@ -111,6 +94,23 @@ public final class BlobTable extends ParadoxDataFile {
         cache = new AllBlockCache();
         parsed = false;
         fields = Collections.emptyList();
+    }
+
+    /**
+     * Calculate block type. We'll refer to the first four bytes after the leader as MB_Offset. MB_Offset is used to
+     * locate the blob data. If MB_Offset = 0 then the entire blob is contained in the leader. Take the low-order byte
+     * from MB_Offset and call it MB_Index. Change the low-order byte of MB_Offset to zero. If MB_Index is FFh, then
+     * MB_Offset contains the offset of a type 02 (SINGLE_BLOCK) block in the MB file. Otherwise, MB_Offset contains the
+     * offset of a type 03 (SUB_BLOCK) block in the MB file. MB_Index contains the index of an entry in the Blob Pointer
+     * Array in the type 03 block.
+     *
+     * @param offset
+     *            offset to read on.
+     * @return number of blocks read.
+     */
+    private static int getBlockNum(final long offset) {
+        final int idx = (int) (offset & 0xFF00) >> 8;
+        return (((idx & 0x0F) * 0xF) + (idx & 0xF0)) >> 4;
     }
 
     /**

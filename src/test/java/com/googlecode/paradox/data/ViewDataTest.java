@@ -32,6 +32,11 @@ import org.junit.Test;
 public class ViewDataTest {
 
     /**
+     * The database connection.
+     */
+    private ParadoxConnection conn;
+
+    /**
      * Register the driver.
      *
      * @throws ClassNotFoundException
@@ -41,11 +46,6 @@ public class ViewDataTest {
     public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
-    /**
-     * The database connection.
-     */
-    private ParadoxConnection conn;
 
     /**
      * Used to close the test connection.

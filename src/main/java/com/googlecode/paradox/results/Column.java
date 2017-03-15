@@ -24,19 +24,6 @@ import java.sql.Types;
 public final class Column {
 
     /**
-     * Gets the field type description.
-     *
-     * @param type
-     *            the field type.
-     * @return the type description.
-     * @throws SQLException
-     *             if is an invalid type.
-     */
-    public static String getTypeName(final int type) throws SQLException {
-        return TypeName.getTypeName(type);
-    }
-
-    /**
      * If this column is auto incremented.
      */
     private boolean autoIncrement;
@@ -142,6 +129,19 @@ public final class Column {
     public Column(final String name, final int type) {
         this.name = name;
         setType(type);
+    }
+
+    /**
+     * Gets the field type description.
+     *
+     * @param type
+     *            the field type.
+     * @return the type description.
+     * @throws SQLException
+     *             if is an invalid type.
+     */
+    public static String getTypeName(final int type) throws SQLException {
+        return TypeName.getTypeName(type);
     }
 
     /**

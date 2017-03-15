@@ -34,6 +34,13 @@ import java.util.List;
 public final class IndexData {
 
     /**
+     * Utility class.
+     */
+    private IndexData() {
+        // Utility class.
+    }
+
+    /**
      * List the indexes in a database file.
      *
      * @param conn
@@ -233,12 +240,5 @@ public final class IndexData {
         } else {
             buffer.position(0x58);
         }
-    }
-
-    /**
-     * Utility class.
-     */
-    private IndexData() {
-        // Utility class.
     }
 }

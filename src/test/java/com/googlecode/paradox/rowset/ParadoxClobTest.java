@@ -33,6 +33,11 @@ import org.junit.Test;
  */
 public class ParadoxClobTest {
     /**
+     * The database connection.
+     */
+    private ParadoxConnection conn;
+
+    /**
      * Register the driver.
      *
      * @throws ClassNotFoundException
@@ -42,11 +47,6 @@ public class ParadoxClobTest {
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
-    /**
-     * The database connection.
-     */
-    private ParadoxConnection conn;
 
     /**
      * Used to close the test connection.

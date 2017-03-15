@@ -34,6 +34,21 @@ import java.util.List;
 public class Planner {
 
     /**
+     * The database connection.
+     */
+    private final ParadoxConnection conn;
+
+    /**
+     * Create a new instance.
+     *
+     * @param conn
+     *            the database connection.
+     */
+    public Planner(final ParadoxConnection conn) {
+        this.conn = conn;
+    }
+
+    /**
      * Parses the table metadata.
      *
      * @param statement
@@ -63,21 +78,6 @@ public class Planner {
             }
             plan.addTable(node);
         }
-    }
-
-    /**
-     * The database connection.
-     */
-    private final ParadoxConnection conn;
-
-    /**
-     * Create a new instance.
-     *
-     * @param conn
-     *            the database connection.
-     */
-    public Planner(final ParadoxConnection conn) {
-        this.conn = conn;
     }
 
     /**

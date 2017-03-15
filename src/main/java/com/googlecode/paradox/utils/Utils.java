@@ -24,6 +24,13 @@ import java.util.Locale;
 public final class Utils {
 
     /**
+     * Utility class.
+     */
+    private Utils() {
+        // Utility class.
+    }
+
+    /**
      * Returns true if this either implements the interface argument or is directly or indirectly a wrapper for an
      * object that does. Returns false otherwise..
      *
@@ -121,12 +128,5 @@ public final class Utils {
             return name.substring(0, name.length() - 3);
         }
         return name;
-    }
-
-    /**
-     * Utility class.
-     */
-    private Utils() {
-        // Utility class.
     }
 }

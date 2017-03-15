@@ -83,6 +83,35 @@ public enum TypeName {
     private static final TypeName[] VALUES = TypeName.values();
 
     /**
+     * The class name.
+     */
+    private final String className;
+
+    /**
+     * The type name.
+     */
+    private final String name;
+
+    /**
+     * The SQL Type.
+     */
+    private final int sqlType;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param sqlType
+     *            the SQL type.
+     * @param name
+     *            the type name.
+     */
+    TypeName(final int sqlType, final String name, final String className) {
+        this.sqlType = sqlType;
+        this.name = name;
+        this.className = className;
+    }
+
+    /**
      * Gets the class name by its SQL type.
      *
      * @param sqlType
@@ -116,35 +145,6 @@ public enum TypeName {
             }
         }
         throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
-    }
-
-    /**
-     * The class name.
-     */
-    private final String className;
-
-    /**
-     * The type name.
-     */
-    private final String name;
-
-    /**
-     * The SQL Type.
-     */
-    private final int sqlType;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param sqlType
-     *            the SQL type.
-     * @param name
-     *            the type name.
-     */
-    TypeName(final int sqlType, final String name, final String className) {
-        this.sqlType = sqlType;
-        this.name = name;
-        this.className = className;
     }
 
     /**

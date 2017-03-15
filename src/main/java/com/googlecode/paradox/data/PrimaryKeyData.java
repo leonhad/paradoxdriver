@@ -30,6 +30,13 @@ import java.sql.SQLException;
 public final class PrimaryKeyData {
 
     /**
+     * Utility class.
+     */
+    private PrimaryKeyData() {
+        // Utility class.
+    }
+
+    /**
      * Gets the primary keys from the database file.
      *
      * @param conn
@@ -99,12 +106,5 @@ public final class PrimaryKeyData {
             fs.close();
         }
         return pk;
-    }
-
-    /**
-     * Utility class.
-     */
-    private PrimaryKeyData() {
-        // Utility class.
     }
 }

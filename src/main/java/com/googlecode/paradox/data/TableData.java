@@ -37,6 +37,13 @@ import java.util.List;
 public final class TableData {
 
     /**
+     * Utility class.
+     */
+    private TableData() {
+        // Utility class.
+    }
+
+    /**
      * List all database tables.
      *
      * @param conn
@@ -335,12 +342,5 @@ public final class TableData {
             }
         }
         return row;
-    }
-
-    /**
-     * Utility class.
-     */
-    private TableData() {
-        // Utility class.
     }
 }

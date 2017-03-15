@@ -40,6 +40,11 @@ public class PlannerTest {
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
+     * The database connection.
+     */
+    private ParadoxConnection conn;
+
+    /**
      * Register the driver.
      *
      * @throws ClassNotFoundException
@@ -49,11 +54,6 @@ public class PlannerTest {
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-
-    /**
-     * The database connection.
-     */
-    private ParadoxConnection conn;
 
     /**
      * Used to close the test connection.
