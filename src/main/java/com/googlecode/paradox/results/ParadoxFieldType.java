@@ -1,26 +1,14 @@
 /*
- * ParadoxFieldType.java
- *
- * 07/06/2016
- * Copyright (C) 2016 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxFieldType.java 07/06/2016 Copyright (C) 2016 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.utils.SQLStates;
-
 import java.sql.SQLException;
 import java.sql.Types;
 
@@ -112,7 +100,25 @@ public enum ParadoxFieldType {
      */
     VARCHAR2(0xE, Types.VARCHAR);
 
-    private static final ParadoxFieldType[] VALUES = values();
+    private static final ParadoxFieldType[] VALUES = ParadoxFieldType.values();
+
+    /**
+     * Gets the field name by its type.
+     *
+     * @param type
+     *            the type value.
+     * @return the field type name.
+     * @throws SQLException
+     *             in case of invalid type.
+     */
+    public static int getSQLTypeByType(final int type) throws SQLException {
+        for (final ParadoxFieldType typeName : ParadoxFieldType.VALUES) {
+            if (typeName.getType() == type) {
+                return typeName.getSQLType();
+            }
+        }
+        throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
+    }
 
     /**
      * The SQL Type.
@@ -128,31 +134,13 @@ public enum ParadoxFieldType {
      * Creates a new instance.
      *
      * @param type
-     *         the Paradox type.
+     *            the Paradox type.
      * @param sqlType
-     *         the SQL type.
+     *            the SQL type.
      */
     ParadoxFieldType(final int type, final int sqlType) {
         this.type = (byte) type;
         this.sqlType = sqlType;
-    }
-
-    /**
-     * Gets the field name by its type.
-     *
-     * @param type
-     *         the type value.
-     * @return the field type name.
-     * @throws SQLException
-     *         in case of invalid type.
-     */
-    public static int getSQLTypeByType(final int type) throws SQLException {
-        for (final ParadoxFieldType typeName : VALUES) {
-            if (typeName.getType() == type) {
-                return typeName.getSQLType();
-            }
-        }
-        throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
     }
 
     /**

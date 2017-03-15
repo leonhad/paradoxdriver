@@ -1,21 +1,10 @@
 /*
- * ParadoxResultSet.java
- *
- * 03/14/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxResultSet.java 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox;
 
@@ -26,7 +15,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -65,29 +53,13 @@ import java.util.Map;
 public final class ParadoxResultSet implements ResultSet {
 
     /**
-     * Default fetch size.
-     */
-    private static final int FETCH_SIZE = 10;
-    /**
      * If this connection is invalid.
      */
     private static final String ERROR_INVALID_COLUMN = "Invalid column.";
     /**
-     * {@link ResultSet} columns.
+     * Default fetch size.
      */
-    private final List<Column> columns;
-    /**
-     * The connection used in this {@link ResultSet}.
-     */
-    private final ParadoxConnection conn;
-    /**
-     * This {@link ResultSet} {@link Statement}.
-     */
-    private final ParadoxStatement statement;
-    /**
-     * The list of all {@link ResultSet} rows.
-     */
-    private final List<List<FieldValue>> values;
+    private static final int FETCH_SIZE = 10;
     /**
      * Clob fields mapping.
      */
@@ -97,9 +69,17 @@ public final class ParadoxResultSet implements ResultSet {
      */
     private boolean closed;
     /**
+     * {@link ResultSet} columns.
+     */
+    private final List<Column> columns;
+    /**
+     * The connection used in this {@link ResultSet}.
+     */
+    private final ParadoxConnection conn;
+    /**
      * The amount of rows fetched.
      */
-    private int fetchSize = FETCH_SIZE;
+    private int fetchSize = ParadoxResultSet.FETCH_SIZE;
     /**
      * Last got value.
      */
@@ -108,21 +88,29 @@ public final class ParadoxResultSet implements ResultSet {
      * Row position.
      */
     private int position = -1;
+    /**
+     * This {@link ResultSet} {@link Statement}.
+     */
+    private final ParadoxStatement statement;
+    /**
+     * The list of all {@link ResultSet} rows.
+     */
+    private final List<List<FieldValue>> values;
 
     /**
      * Creates a new {@link ResultSet}.
      *
      * @param conn
-     *         the database connection.
+     *            the database connection.
      * @param statement
-     *         the {@link Statement} for this {@link ResultSet}.
+     *            the {@link Statement} for this {@link ResultSet}.
      * @param values
-     *         row and column values.
+     *            row and column values.
      * @param columns
-     *         the columns name.
+     *            the columns name.
      */
-    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement, final
-    List<List<FieldValue>> values, final List<Column> columns) {
+    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
+            final List<List<FieldValue>> values, final List<Column> columns) {
         this.statement = statement;
         this.values = Collections.unmodifiableList(values);
         this.columns = Collections.unmodifiableList(columns);
@@ -142,7 +130,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public boolean absolute(final int row) {
         if (row < 0) {
-            if (row + values.size() < 0) {
+            if ((row + values.size()) < 0) {
                 return false;
             }
             position = values.size() + row;
@@ -177,15 +165,6 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public void cancelRowUpdates() {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Clear the current clob.
-     */
-    private void clearClob() {
-        if (clobMap != null) {
-            clobMap.clear();
-        }
     }
 
     /**
@@ -360,7 +339,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         if (!lastValue.isNull()) {
@@ -386,7 +365,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         if (lastValue.isNull()) {
@@ -495,7 +474,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         return lastValue.getDate();
@@ -534,7 +513,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         if (lastValue.isNull()) {
@@ -576,7 +555,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         if (lastValue.isNull()) {
@@ -610,7 +589,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         return lastValue.isNull() ? 0 : lastValue.getNumber().intValue();
@@ -633,7 +612,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         if (lastValue.isNull()) {
@@ -715,7 +694,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         return lastValue.getValue();
@@ -810,7 +789,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         if (lastValue.isNull()) {
@@ -860,10 +839,10 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
-        if (lastValue != null && lastValue.getValue() != null) {
+        if ((lastValue != null) && (lastValue.getValue() != null)) {
             return lastValue.getValue().toString();
         }
 
@@ -887,7 +866,7 @@ public final class ParadoxResultSet implements ResultSet {
 
         final List<FieldValue> row = values.get(position);
         if (columnIndex > row.size()) {
-            throw new SQLException(ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         lastValue = row.get(columnIndex - 1);
         return lastValue.getTime();
@@ -1014,10 +993,6 @@ public final class ParadoxResultSet implements ResultSet {
         return null;
     }
 
-    private boolean hasNext() {
-        return values != null && position < values.size();
-    }
-
     /**
      * {@inheritDoc}.
      */
@@ -1055,7 +1030,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean isFirst() {
-        return position + 1 == 0;
+        return (position + 1) == 0;
     }
 
     /**
@@ -1063,7 +1038,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean isLast() {
-        return position + 1 == values.size();
+        return (position + 1) == values.size();
     }
 
     /**
@@ -1858,20 +1833,6 @@ public final class ParadoxResultSet implements ResultSet {
     }
 
     /**
-     * Verify it there is more rows.
-     *
-     * @throws SQLException
-     *         in case of errors.
-     */
-    private void verifyRow() throws SQLException {
-        if (!hasNext()) {
-            throw new SQLDataException("Result do not have more rows.", SQLStates.INVALID_ROW.getValue());
-        } else if (closed) {
-            throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
-        }
-    }
-
-    /**
      * {@inheritDoc}.
      */
     @Override
@@ -1880,5 +1841,32 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
         }
         return lastValue.isNull();
+    }
+
+    /**
+     * Clear the current clob.
+     */
+    private void clearClob() {
+        if (clobMap != null) {
+            clobMap.clear();
+        }
+    }
+
+    private boolean hasNext() {
+        return (values != null) && (position < values.size());
+    }
+
+    /**
+     * Verify it there is more rows.
+     *
+     * @throws SQLException
+     *             in case of errors.
+     */
+    private void verifyRow() throws SQLException {
+        if (!hasNext()) {
+            throw new SQLDataException("Result do not have more rows.", SQLStates.INVALID_ROW.getValue());
+        } else if (closed) {
+            throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
+        }
     }
 }

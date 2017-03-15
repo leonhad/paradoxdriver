@@ -1,21 +1,10 @@
 /*
- * Planner.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Planner.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.planner;
 
@@ -31,7 +20,6 @@ import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.SQLStates;
-
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
@@ -46,35 +34,19 @@ import java.util.List;
 public class Planner {
 
     /**
-     * The database connection.
-     */
-    private final ParadoxConnection conn;
-
-    /**
-     * Create a new instance.
-     *
-     * @param conn
-     *         the database connection.
-     */
-    public Planner(final ParadoxConnection conn) {
-        this.conn = conn;
-    }
-
-    /**
      * Parses the table metadata.
      *
      * @param statement
-     *         the SELECT statement.
+     *            the SELECT statement.
      * @param plan
-     *         the select execution plan.
+     *            the select execution plan.
      * @param paradoxTables
-     *         the tables list.
+     *            the tables list.
      * @throws SQLException
-     *         in case of parse errors.
+     *             in case of parse errors.
      */
-    private static void parseTableMetaData(final SelectNode statement, final SelectPlan plan, final List<ParadoxTable>
-            paradoxTables) throws
-            SQLException {
+    private static void parseTableMetaData(final SelectNode statement, final SelectPlan plan,
+            final List<ParadoxTable> paradoxTables) throws SQLException {
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
             for (final ParadoxTable paradoxTable : paradoxTables) {
@@ -94,13 +66,28 @@ public class Planner {
     }
 
     /**
+     * The database connection.
+     */
+    private final ParadoxConnection conn;
+
+    /**
+     * Create a new instance.
+     *
+     * @param conn
+     *            the database connection.
+     */
+    public Planner(final ParadoxConnection conn) {
+        this.conn = conn;
+    }
+
+    /**
      * Create a plan from given statement.
      *
      * @param statement
-     *         the statement to plan.
+     *            the statement to plan.
      * @return the execution plan.
      * @throws SQLException
-     *         in case of plan errors.
+     *             in case of plan errors.
      */
     public final Plan create(final StatementNode statement) throws SQLException {
         if (statement instanceof SelectNode) {
@@ -114,17 +101,17 @@ public class Planner {
      * Creates an SELECT plan.
      *
      * @param statement
-     *         the statement to parse.
+     *            the statement to parse.
      * @return the SELECT plan.
      * @throws SQLException
-     *         in case of syntax error.
+     *             in case of syntax error.
      */
     private Plan createSelect(final SelectNode statement) throws SQLException {
         final SelectPlan plan = new SelectPlan(conn);
         final List<ParadoxTable> paradoxTables = TableData.listTables(conn);
 
         // Load the table metadata.
-        parseTableMetaData(statement, plan, paradoxTables);
+        Planner.parseTableMetaData(statement, plan, paradoxTables);
         parseColumns(statement, plan);
 
         if (plan.getColumns().isEmpty()) {
@@ -138,11 +125,11 @@ public class Planner {
      * Parses the table columns.
      *
      * @param statement
-     *         the SELECT statement.
+     *            the SELECT statement.
      * @param plan
-     *         the SELECT execution plan.
+     *            the SELECT execution plan.
      * @throws SQLException
-     *         in case of parse errors.
+     *             in case of parse errors.
      */
     private void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
         for (final SQLNode field : statement.getFields()) {
@@ -152,7 +139,7 @@ public class Planner {
                     plan.addColumnFromTable(table.getTable());
                 }
             } else {
-                if (name == null || name.isEmpty()) {
+                if ((name == null) || name.isEmpty()) {
                     throw new SQLException("Column name is empty.");
                 }
                 plan.addColumn(name);

@@ -1,21 +1,10 @@
 /*
- * BlobDescriptor.java
- *
- * 12/22/2014
- * Copyright (C) 2014 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * BlobDescriptor.java 12/22/2014 Copyright (C) 2014 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.data.table.value;
 
@@ -34,7 +23,7 @@ class BlobDescriptor {
     /**
      * The blob table.
      */
-    private BlobTable file;
+    private final BlobTable file;
 
     /**
      * Blob file offset.
@@ -45,7 +34,7 @@ class BlobDescriptor {
      * Creates a new instance.
      *
      * @param file
-     *         the blob file reference.
+     *            the blob file reference.
      */
     BlobDescriptor(final BlobTable file) {
         this.file = file;
@@ -73,7 +62,7 @@ class BlobDescriptor {
      * Sets the blob offset.
      *
      * @param offset
-     *         the blob offset.
+     *            the blob offset.
      */
     public final void setOffset(final long offset) {
         this.offset = offset;

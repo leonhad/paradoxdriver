@@ -1,8 +1,12 @@
 package com.googlecode.paradox.integration;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.SQLParser;
+import com.googlecode.paradox.planner.Planner;
+import com.googlecode.paradox.planner.plan.SelectPlan;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,15 +14,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.SQLParser;
-import com.googlecode.paradox.planner.Planner;
-import com.googlecode.paradox.planner.plan.SelectPlan;
-
 /**
  * Integration test for SQL planning.
- * 
+ *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
@@ -32,13 +30,8 @@ public class PlannerTest {
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
-     * The database connection.
-     */
-    private ParadoxConnection conn;
-
-    /**
      * Register the driver.
-     * 
+     *
      * @throws ClassNotFoundException
      *             in case of connection errors.
      */
@@ -48,8 +41,13 @@ public class PlannerTest {
     }
 
     /**
+     * The database connection.
+     */
+    private ParadoxConnection conn;
+
+    /**
      * Used to close the test connection.
-     * 
+     *
      * @throws Exception
      *             in case closing of errors.
      */
@@ -62,7 +60,7 @@ public class PlannerTest {
 
     /**
      * Connect to test database.
-     * 
+     *
      * @throws Exception
      *             in case of connection errors.
      */
@@ -73,7 +71,7 @@ public class PlannerTest {
 
     /**
      * Test for an invalid table.
-     * 
+     *
      * @throws Exception
      *             in case of failures.
      */
@@ -86,7 +84,7 @@ public class PlannerTest {
 
     /**
      * Test for a SELECT plan.
-     * 
+     *
      * @throws Exception
      *             in case of failures.
      */

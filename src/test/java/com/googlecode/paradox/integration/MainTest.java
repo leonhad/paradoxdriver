@@ -1,34 +1,16 @@
 /*
- * MainTest.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * MainTest.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.integration;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -36,6 +18,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 /**
  * Generic integration tests for Paradox Driver.
@@ -53,14 +41,10 @@ public class MainTest {
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
-     * The database connection.
-     */
-    private Connection conn;
-
-    /**
      * Register the database driver.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
@@ -68,9 +52,15 @@ public class MainTest {
     }
 
     /**
+     * The database connection.
+     */
+    private Connection conn;
+
+    /**
      * Close the test connection.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -82,7 +72,8 @@ public class MainTest {
     /**
      * Connect to the test database.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Before
     public void connect() throws Exception {
@@ -92,7 +83,8 @@ public class MainTest {
     /**
      * Test for the catalog metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testCatalog() throws Exception {
@@ -116,7 +108,8 @@ public class MainTest {
     /**
      * Test for the index info metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testIndexInfo() throws Exception {
@@ -162,7 +155,8 @@ public class MainTest {
     /**
      * Test for primary key metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testPrimaryKey() throws Exception {
@@ -190,7 +184,8 @@ public class MainTest {
     /**
      * Test for {@link ResultSet} execution.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testResultSet() throws Exception {
@@ -220,7 +215,8 @@ public class MainTest {
     /**
      * Test for {@link ResultSet} with multiple values.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testResultSetMultipleValues() throws Exception {
@@ -253,11 +249,12 @@ public class MainTest {
             }
         }
     }
-    
+
     /**
      * Test {@link ResultSet} with one column.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testResultSetOneColumn() throws Exception {
@@ -293,7 +290,8 @@ public class MainTest {
     /**
      * Test {@link ResultSet} with two columns.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testResultSetTwoColumn() throws Exception {
@@ -335,7 +333,8 @@ public class MainTest {
     /**
      * Test for unwrap impossible.
      *
-     * @throws Exception if test succeed.
+     * @throws Exception
+     *             if test succeed.
      */
     @Test(expected = SQLException.class)
     public void testUnwrapImpossible() throws Exception {
@@ -345,7 +344,8 @@ public class MainTest {
     /**
      * Test for a valid connection.
      *
-     * @throws SQLException in case of failures.
+     * @throws SQLException
+     *             in case of failures.
      */
     @Test
     public void testValidConnection() throws SQLException {
@@ -356,7 +356,8 @@ public class MainTest {
     /**
      * Test for view columns metadata.
      *
-     * @throws Exception in case of failures.
+     * @throws Exception
+     *             in case of failures.
      */
     @Test
     public void testViewColumns() throws Exception {

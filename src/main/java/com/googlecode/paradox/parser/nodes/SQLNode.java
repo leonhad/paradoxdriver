@@ -1,21 +1,10 @@
 /*
- * SQLNode.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SQLNode.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.parser.nodes;
 
@@ -32,9 +21,9 @@ import java.util.Collections;
 public class SQLNode {
 
     /**
-     * The node name.
+     * Node childhood.
      */
-    protected final String name;
+    private Collection<? extends SQLNode> childhood;
 
     /**
      * The node alias.
@@ -42,15 +31,15 @@ public class SQLNode {
     protected String alias;
 
     /**
-     * Node childhood.
+     * The node name.
      */
-    private Collection<? extends SQLNode> childhood;
+    protected final String name;
 
     /**
      * Create a new instance.
      *
      * @param name
-     *         the node name.
+     *            the node name.
      */
     protected SQLNode(final String name) {
         this.name = name;
@@ -60,9 +49,9 @@ public class SQLNode {
      * Create a new instance.
      *
      * @param name
-     *         the node name.
+     *            the node name.
      * @param alias
-     *         the node alias.
+     *            the node alias.
      */
     protected SQLNode(final String name, final String alias) {
         this.name = name;
@@ -101,7 +90,7 @@ public class SQLNode {
      * Sets the node alias.
      *
      * @param alias
-     *         the alias name.
+     *            the alias name.
      */
     public final void setAlias(final String alias) {
         this.alias = alias;
@@ -111,7 +100,7 @@ public class SQLNode {
      * Sets the childhood.
      *
      * @param childhood
-     *         the childhood.
+     *            the childhood.
      */
     public final void setChildhood(final Collection<? extends SQLNode> childhood) {
         this.childhood = Collections.unmodifiableCollection(childhood);

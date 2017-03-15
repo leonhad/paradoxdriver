@@ -1,21 +1,10 @@
 /*
- * TokenType.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * TokenType.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.parser;
 
@@ -235,12 +224,60 @@ public enum TokenType {
     /**
      * Stores the conditional break values.
      */
-    private static final TokenType[] CONDITIONAL_BREAKS = {ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN};
+    private static final TokenType[] CONDITIONAL_BREAKS = { ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN };
 
     /**
      * Stores the operator values.
      */
-    private static final TokenType[] OPERATORS = {AND, OR, XOR};
+    private static final TokenType[] OPERATORS = { AND, OR, XOR };
+
+    /**
+     * Gets the token by value.
+     *
+     * @param value
+     *            the value to search in the token list.
+     * @return the token by value.
+     */
+    public static TokenType get(final String value) {
+        for (final TokenType token : TokenType.values()) {
+            if (value.equals(token.value)) {
+                return token;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets if the token is a conditional break.
+     *
+     * @param tokenType
+     *            the type to test of.
+     * @return true if this token is a conditional break.
+     */
+    public static boolean isConditionalBreak(final TokenType tokenType) {
+        for (final TokenType token : TokenType.CONDITIONAL_BREAKS) {
+            if (token == tokenType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets if the token for operator types.
+     *
+     * @param tokenType
+     *            the type to test of.
+     * @return true if this token is an operator.
+     */
+    public static boolean isOperator(final TokenType tokenType) {
+        for (final TokenType token : TokenType.OPERATORS) {
+            if (token == tokenType) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Token value.
@@ -258,57 +295,9 @@ public enum TokenType {
      * Creates a new instance.
      *
      * @param value
-     *         the token value.
+     *            the token value.
      */
     TokenType(final String value) {
         this.value = value;
-    }
-
-    /**
-     * Gets the token by value.
-     *
-     * @param value
-     *         the value to search in the token list.
-     * @return the token by value.
-     */
-    public static TokenType get(final String value) {
-        for (final TokenType token : TokenType.values()) {
-            if (value.equals(token.value)) {
-                return token;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Gets if the token is a conditional break.
-     *
-     * @param tokenType
-     *         the type to test of.
-     * @return true if this token is a conditional break.
-     */
-    public static boolean isConditionalBreak(final TokenType tokenType) {
-        for (final TokenType token : CONDITIONAL_BREAKS) {
-            if (token == tokenType) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Gets if the token for operator types.
-     *
-     * @param tokenType
-     *         the type to test of.
-     * @return true if this token is an operator.
-     */
-    public static boolean isOperator(final TokenType tokenType) {
-        for (final TokenType token : OPERATORS) {
-            if (token == tokenType) {
-                return true;
-            }
-        }
-        return false;
     }
 }

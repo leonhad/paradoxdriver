@@ -1,10 +1,8 @@
 package com.googlecode.paradox.utils.filefilters;
 
-import org.junit.Test;
-
 import java.io.File;
-
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for {@link PrimaryKeyFilter}.
@@ -23,6 +21,6 @@ public class PrimaryKeyFilterTest {
     @Test
     public void testAccept() {
         final File file = new File("test.px");
-        assertTrue("Invalid file filter.", filter.accept(file));
+        Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
 }

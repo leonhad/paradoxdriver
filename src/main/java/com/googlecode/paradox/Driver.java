@@ -1,26 +1,14 @@
 /*
- * Driver.java
- *
- * 03/14/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Driver.java 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.utils.Constants;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -44,14 +32,14 @@ public final class Driver implements IParadoxDriver {
      */
     private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
 
-    //  Register the drive into JDBC API.
+    // Register the drive into JDBC API.
     static {
         try {
             // Register The Paradox Driver
             final Driver driverInst = new Driver();
             DriverManager.registerDriver(driverInst);
         } catch (final SQLException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            Driver.LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -60,7 +48,7 @@ public final class Driver implements IParadoxDriver {
      */
     @Override
     public boolean acceptsURL(final String url) {
-        return url != null && url.startsWith(Constants.URL_PREFIX);
+        return (url != null) && url.startsWith(Constants.URL_PREFIX);
     }
 
     /**
@@ -112,7 +100,7 @@ public final class Driver implements IParadoxDriver {
         passwordProp.required = false;
         passwordProp.description = "Password to use for authentication";
 
-        return new DriverPropertyInfo[]{dbProp, passwordProp};
+        return new DriverPropertyInfo[] { dbProp, passwordProp };
     }
 
     /**

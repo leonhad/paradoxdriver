@@ -1,21 +1,10 @@
 /*
- * IndexData.java
- *
- * 03/14/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * IndexData.java 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.data;
 
@@ -24,7 +13,6 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,22 +34,15 @@ import java.util.List;
 public final class IndexData {
 
     /**
-     * Utility class.
-     */
-    private IndexData() {
-        // Utility class.
-    }
-
-    /**
      * List the indexes in a database file.
      *
      * @param conn
-     *         the Paradox connection.
+     *            the Paradox connection.
      * @param tableName
-     *         the table name.
+     *            the table name.
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException
-     *         in case of reading failures.
+     *             in case of reading failures.
      */
     public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
             throws SQLException {
@@ -71,7 +52,7 @@ public final class IndexData {
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
-                    final ParadoxIndex index = loadIndexHeader(file);
+                    final ParadoxIndex index = IndexData.loadIndexHeader(file);
                     indexes.add(index);
                 } catch (final IOException ex) {
                     throw new SQLException("Error loading Paradox index.", ex);
@@ -85,12 +66,12 @@ public final class IndexData {
      * Loads the database file header.
      *
      * @param file
-     *         the database {@link File}.
+     *            the database {@link File}.
      * @return the {@link ParadoxIndex} reference.
      * @throws IOException
-     *         if case of I/O exceptions.
+     *             if case of I/O exceptions.
      * @throws SQLException
-     *         in case of database errors.
+     *             in case of database errors.
      */
     private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
@@ -128,12 +109,12 @@ public final class IndexData {
             buffer.position(0x55);
             index.setReferentialIntegrity(buffer.get());
 
-            parseVersionID(buffer, index);
+            IndexData.parseVersionID(buffer, index);
 
-            parseFields(buffer, index);
+            IndexData.parseFields(buffer, index);
 
-            parseSortID(buffer, index);
-            parseIndexName(buffer, index);
+            IndexData.parseSortID(buffer, index);
+            IndexData.parseIndexName(buffer, index);
         }
         return index;
     }
@@ -142,11 +123,11 @@ public final class IndexData {
      * Parse fields in index header.
      *
      * @param buffer
-     *         the buffer to parse.
+     *            the buffer to parse.
      * @param index
-     *         the paradox index.
+     *            the paradox index.
      * @throws SQLException
-     *         in case of parse errors.
+     *             in case of parse errors.
      */
     private static void parseFields(final ByteBuffer buffer, final ParadoxIndex index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
@@ -159,12 +140,12 @@ public final class IndexData {
 
         if (index.getVersionId() > 4) {
             if (index.getVersionId() == 0xC) {
-                buffer.position(0x78 + 261 + 4 + 6 * fields.size());
+                buffer.position(0x78 + 261 + 4 + (6 * fields.size()));
             } else {
-                buffer.position(0x78 + 83 + 6 * fields.size());
+                buffer.position(0x78 + 83 + (6 * fields.size()));
             }
         } else {
-            buffer.position(0x58 + 83 + 6 * fields.size());
+            buffer.position(0x58 + 83 + (6 * fields.size()));
         }
 
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
@@ -190,53 +171,12 @@ public final class IndexData {
     }
 
     /**
-     * Parse and handle the version ID.
-     *
-     * @param buffer
-     *         the buffer to parse.
-     * @param index
-     *         the paradox index.
-     */
-    private static void parseVersionID(final ByteBuffer buffer, final ParadoxIndex index) {
-        if (index.getVersionId() > 4) {
-            // Set the charset.
-            buffer.position(0x6A);
-            index.setCharset(Charset.forName("cp" + buffer.getShort()));
-
-            buffer.position(0x78);
-        } else {
-            buffer.position(0x58);
-        }
-    }
-
-    /**
-     * Parse the sort order ID.
-     *
-     * @param buffer
-     *         the buffer to parse.
-     * @param index
-     *         the paradox index.
-     */
-    private static void parseSortID(final ByteBuffer buffer, final ParadoxIndex index) {
-        final ByteBuffer sortOrderID = ByteBuffer.allocate(26);
-        while (true) {
-            final byte c = buffer.get();
-            if (c == 0) {
-                break;
-            }
-            sortOrderID.put(c);
-        }
-        sortOrderID.flip();
-        index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
-    }
-
-    /**
      * Parse the index names.
      *
      * @param buffer
-     *         the buffer to parse.
+     *            the buffer to parse.
      * @param index
-     *         the paradox index.
+     *            the paradox index.
      */
     private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer name = ByteBuffer.allocate(26);
@@ -252,5 +192,53 @@ public final class IndexData {
         if (tempName.length() != 0) {
             index.setName(tempName);
         }
+    }
+
+    /**
+     * Parse the sort order ID.
+     *
+     * @param buffer
+     *            the buffer to parse.
+     * @param index
+     *            the paradox index.
+     */
+    private static void parseSortID(final ByteBuffer buffer, final ParadoxIndex index) {
+        final ByteBuffer sortOrderID = ByteBuffer.allocate(26);
+        while (true) {
+            final byte c = buffer.get();
+            if (c == 0) {
+                break;
+            }
+            sortOrderID.put(c);
+        }
+        sortOrderID.flip();
+        index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
+    }
+
+    /**
+     * Parse and handle the version ID.
+     *
+     * @param buffer
+     *            the buffer to parse.
+     * @param index
+     *            the paradox index.
+     */
+    private static void parseVersionID(final ByteBuffer buffer, final ParadoxIndex index) {
+        if (index.getVersionId() > 4) {
+            // Set the charset.
+            buffer.position(0x6A);
+            index.setCharset(Charset.forName("cp" + buffer.getShort()));
+
+            buffer.position(0x78);
+        } else {
+            buffer.position(0x58);
+        }
+    }
+
+    /**
+     * Utility class.
+     */
+    private IndexData() {
+        // Utility class.
     }
 }

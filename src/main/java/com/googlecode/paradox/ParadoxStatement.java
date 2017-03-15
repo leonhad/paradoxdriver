@@ -1,21 +1,10 @@
 /*
- * ParadoxStatement.java
- *
- * 03/14/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxStatement.java 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox;
 
@@ -28,7 +17,6 @@ import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,6 +36,11 @@ import java.util.List;
 final class ParadoxStatement implements Statement {
 
     /**
+     * If this statement is closed.
+     */
+    private boolean closed;
+
+    /**
      * The Paradox connection.
      */
     private final ParadoxConnection conn;
@@ -56,11 +49,6 @@ final class ParadoxStatement implements Statement {
      * The cursor name.
      */
     private String cursorName = "NO_NAME";
-
-    /**
-     * If this statement is closed.
-     */
-    private boolean closed;
 
     /**
      * The fetch direction.
@@ -101,7 +89,7 @@ final class ParadoxStatement implements Statement {
      * Creates a statement.
      *
      * @param conn
-     *         the paradox connection.
+     *            the paradox connection.
      */
     ParadoxStatement(final ParadoxConnection conn) {
         this.conn = conn;
@@ -144,7 +132,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public void close() throws SQLException {
-        if (rs != null && !rs.isClosed()) {
+        if ((rs != null) && !rs.isClosed()) {
             rs.close();
         }
         closed = true;
@@ -163,7 +151,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public boolean execute(final String sql) throws SQLException {
-        if (rs != null && !rs.isClosed()) {
+        if ((rs != null) && !rs.isClosed()) {
             rs.close();
         }
         boolean select = false;
@@ -215,7 +203,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public ResultSet executeQuery(final String sql) throws SQLException {
-        if (rs != null && !rs.isClosed()) {
+        if ((rs != null) && !rs.isClosed()) {
             rs.close();
         }
         final SQLParser parser = new SQLParser(sql);
@@ -229,13 +217,6 @@ final class ParadoxStatement implements Statement {
         }
         executeSelect((SelectNode) node);
         return rs;
-    }
-
-    private void executeSelect(final SelectNode node) throws SQLException {
-        final Planner planner = new Planner(conn);
-        final SelectPlan plan = (SelectPlan) planner.create(node);
-        plan.execute();
-        rs = new ParadoxResultSet(conn, this, plan.getValues(), plan.getColumns());
     }
 
     /**
@@ -499,6 +480,13 @@ final class ParadoxStatement implements Statement {
     @Override
     public <T> T unwrap(final Class<T> iFace) throws SQLException {
         return Utils.unwrap(this, iFace);
+    }
+
+    private void executeSelect(final SelectNode node) throws SQLException {
+        final Planner planner = new Planner(conn);
+        final SelectPlan plan = (SelectPlan) planner.create(node);
+        plan.execute();
+        rs = new ParadoxResultSet(conn, this, plan.getValues(), plan.getColumns());
     }
 
     /**

@@ -1,26 +1,14 @@
 /*
- * TypeName.java
- *
- * 07/06/2016
- * Copyright (C) 2016 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * TypeName.java 07/06/2016 Copyright (C) 2016 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.utils.SQLStates;
-
 import java.io.InputStream;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -48,14 +36,14 @@ public enum TypeName {
     BLOB(Types.BLOB, "BLOB", InputStream.class.getName()),
 
     /**
-     * The BLOB type.
-     */
-    CLOB(Types.CLOB, "CLOB", String.class.getName()),
-
-    /**
      * The boolean type.
      */
     BOOLEAN(Types.BOOLEAN, "BOOLEAN", Boolean.class.getName()),
+
+    /**
+     * The BLOB type.
+     */
+    CLOB(Types.CLOB, "CLOB", String.class.getName()),
 
     /**
      * The date type.
@@ -92,7 +80,43 @@ public enum TypeName {
      */
     VARCHAR(Types.VARCHAR, "VARCHAR", String.class.getName());
 
-    private static final TypeName[] VALUES = values();
+    private static final TypeName[] VALUES = TypeName.values();
+
+    /**
+     * Gets the class name by its SQL type.
+     *
+     * @param sqlType
+     *            the SQL type value.
+     * @return the class type name.
+     * @throws SQLException
+     *             in case of invalid type.
+     */
+    public static String getClassNameByType(final int sqlType) throws SQLException {
+        for (final TypeName typeName : TypeName.VALUES) {
+            if (typeName.getSQLType() == sqlType) {
+                return typeName.getClassName();
+            }
+        }
+        throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
+    }
+
+    /**
+     * Gets the field name by its SQL type.
+     *
+     * @param sqlType
+     *            the SQL type value.
+     * @return the field type name.
+     * @throws SQLException
+     *             in case of invalid type.
+     */
+    public static String getTypeName(final int sqlType) throws SQLException {
+        for (final TypeName typeName : TypeName.VALUES) {
+            if (typeName.getSQLType() == sqlType) {
+                return typeName.getName();
+            }
+        }
+        throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
+    }
 
     /**
      * The class name.
@@ -113,50 +137,14 @@ public enum TypeName {
      * Creates a new instance.
      *
      * @param sqlType
-     *         the SQL type.
+     *            the SQL type.
      * @param name
-     *         the type name.
+     *            the type name.
      */
     TypeName(final int sqlType, final String name, final String className) {
         this.sqlType = sqlType;
         this.name = name;
         this.className = className;
-    }
-
-    /**
-     * Gets the class name by its SQL type.
-     *
-     * @param sqlType
-     *         the SQL type value.
-     * @return the class type name.
-     * @throws SQLException
-     *         in case of invalid type.
-     */
-    public static String getClassNameByType(final int sqlType) throws SQLException {
-        for (final TypeName typeName : VALUES) {
-            if (typeName.getSQLType() == sqlType) {
-                return typeName.getClassName();
-            }
-        }
-        throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
-    }
-
-    /**
-     * Gets the field name by its SQL type.
-     *
-     * @param sqlType
-     *         the SQL type value.
-     * @return the field type name.
-     * @throws SQLException
-     *         in case of invalid type.
-     */
-    public static String getTypeName(final int sqlType) throws SQLException {
-        for (final TypeName typeName : VALUES) {
-            if (typeName.getSQLType() == sqlType) {
-                return typeName.getName();
-            }
-        }
-        throw new SQLException("Type not found: " + sqlType, SQLStates.TYPE_NOT_FOUND.getValue());
     }
 
     /**

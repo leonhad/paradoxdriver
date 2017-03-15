@@ -1,21 +1,10 @@
 /*
- * SelectNode.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * SelectNode.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.parser.nodes;
 
@@ -34,6 +23,14 @@ import java.util.List;
 public final class SelectNode extends StatementNode {
 
     /**
+     * The conditions list.
+     */
+    private List<SQLNode> conditions;
+    /**
+     * If has a distinct token.
+     */
+    private boolean distinct;
+    /**
      * The field list (SELECT).
      */
     private final ArrayList<SQLNode> fields = new ArrayList<>();
@@ -49,14 +46,6 @@ public final class SelectNode extends StatementNode {
      * The tables in from token.
      */
     private final ArrayList<TableNode> tables = new ArrayList<>();
-    /**
-     * The conditions list.
-     */
-    private List<SQLNode> conditions;
-    /**
-     * If has a distinct token.
-     */
-    private boolean distinct;
 
     /**
      * Create a new instance.
@@ -69,146 +58,20 @@ public final class SelectNode extends StatementNode {
      * Adds the field in the list.
      *
      * @param field
-     *         the field to add.
+     *            the field to add.
      */
     public void addField(final SQLNode field) {
         fields.add(field);
     }
 
     /**
-     * Adds the group by identifier.
-     *
-     * @param identifier
-     *         the group by identifier to add.
-     */
-    void addGroupBy(IdentifierNode identifier) {
-        groups.add(identifier);
-    }
-
-    /**
-     * Adds the order by identifier.
-     *
-     * @param identifier
-     *         the order by identifier to add.
-     */
-    void addOrderBy(final IdentifierNode identifier) {
-        order.add(identifier);
-    }
-
-    /**
      * Adds the table in list.
      *
      * @param table
-     *         the table to add
+     *            the table to add
      */
     public void addTable(final TableNode table) {
         tables.add(table);
-    }
-
-    /**
-     * Build the fields description.
-     *
-     * @param builder
-     *         builder to append fields.
-     */
-    private void buildFields(final StringBuilder builder) {
-        boolean first = true;
-        for (final SQLNode field : fields) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(", ");
-            }
-            builder.append(field);
-        }
-    }
-
-    /**
-     * Build the FROM description.
-     *
-     * @param builder
-     *         builder to append FROM tables.
-     */
-    private void buildFrom(final StringBuilder builder) {
-        boolean first;
-        if (!tables.isEmpty()) {
-            builder.append(" FROM ");
-            first = true;
-            for (final TableNode table : tables) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(table);
-            }
-        }
-    }
-
-    /**
-     * Build the grouping fields.
-     *
-     * @param builder
-     *         builder to GROUP BY fields.
-     */
-    private void buildGroupBy(final StringBuilder builder) {
-        boolean first;
-        if (!groups.isEmpty()) {
-            builder.append(" GROUP BY ");
-            first = true;
-            for (final IdentifierNode group : groups) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(group);
-            }
-        }
-    }
-
-    /**
-     * Build the fields order.
-     *
-     * @param builder
-     *         builder to ORDER BY fields.
-     */
-    private void buildOrderBy(final StringBuilder builder) {
-        boolean first;
-        if (!order.isEmpty()) {
-            builder.append(" ORDER BY ");
-            first = true;
-            for (final IdentifierNode identifier : order) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(identifier);
-            }
-        }
-    }
-
-    /**
-     * Build the WHERE conditions.
-     *
-     * @param builder
-     *         builder to WHERE conditions.
-     */
-    private void buildWhere(final StringBuilder builder) {
-        boolean first;
-        if (conditions != null && !conditions.isEmpty()) {
-            builder.append(" WHERE ");
-            first = true;
-            for (final SQLNode cond : conditions) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(' ');
-                }
-                builder.append(cond);
-            }
-        }
     }
 
     /**
@@ -224,31 +87,12 @@ public final class SelectNode extends StatementNode {
     }
 
     /**
-     * Sets the condition list.
-     *
-     * @param conditions
-     *         the condition list.
-     */
-    public void setConditions(final Collection<SQLNode> conditions) {
-        this.conditions = new ArrayList<>(conditions);
-    }
-
-    /**
      * Gets the field list.
      *
      * @return the field list.
      */
     public List<SQLNode> getFields() {
         return Collections.unmodifiableList(fields);
-    }
-
-    /**
-     * Gets the group list.
-     *
-     * @return the group list.
-     */
-    List<IdentifierNode> getGroups() {
-        return Collections.unmodifiableList(groups);
     }
 
     /**
@@ -270,19 +114,20 @@ public final class SelectNode extends StatementNode {
     }
 
     /**
-     * Get if this select has a distinct token.
+     * Sets the condition list.
      *
-     * @return true if this select has a distinct token.
+     * @param conditions
+     *            the condition list.
      */
-    boolean isDistinct() {
-        return distinct;
+    public void setConditions(final Collection<SQLNode> conditions) {
+        this.conditions = new ArrayList<>(conditions);
     }
 
     /**
      * Sets the distinct key present.
      *
      * @param distinct
-     *         the distinct key present.
+     *            the distinct key present.
      */
     public void setDistinct(final boolean distinct) {
         this.distinct = distinct;
@@ -303,5 +148,149 @@ public final class SelectNode extends StatementNode {
         buildGroupBy(builder);
         buildOrderBy(builder);
         return builder.toString();
+    }
+
+    /**
+     * Build the fields description.
+     *
+     * @param builder
+     *            builder to append fields.
+     */
+    private void buildFields(final StringBuilder builder) {
+        boolean first = true;
+        for (final SQLNode field : fields) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(", ");
+            }
+            builder.append(field);
+        }
+    }
+
+    /**
+     * Build the FROM description.
+     *
+     * @param builder
+     *            builder to append FROM tables.
+     */
+    private void buildFrom(final StringBuilder builder) {
+        boolean first;
+        if (!tables.isEmpty()) {
+            builder.append(" FROM ");
+            first = true;
+            for (final TableNode table : tables) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(table);
+            }
+        }
+    }
+
+    /**
+     * Build the grouping fields.
+     *
+     * @param builder
+     *            builder to GROUP BY fields.
+     */
+    private void buildGroupBy(final StringBuilder builder) {
+        boolean first;
+        if (!groups.isEmpty()) {
+            builder.append(" GROUP BY ");
+            first = true;
+            for (final IdentifierNode group : groups) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(group);
+            }
+        }
+    }
+
+    /**
+     * Build the fields order.
+     *
+     * @param builder
+     *            builder to ORDER BY fields.
+     */
+    private void buildOrderBy(final StringBuilder builder) {
+        boolean first;
+        if (!order.isEmpty()) {
+            builder.append(" ORDER BY ");
+            first = true;
+            for (final IdentifierNode identifier : order) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(identifier);
+            }
+        }
+    }
+
+    /**
+     * Build the WHERE conditions.
+     *
+     * @param builder
+     *            builder to WHERE conditions.
+     */
+    private void buildWhere(final StringBuilder builder) {
+        boolean first;
+        if ((conditions != null) && !conditions.isEmpty()) {
+            builder.append(" WHERE ");
+            first = true;
+            for (final SQLNode cond : conditions) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(' ');
+                }
+                builder.append(cond);
+            }
+        }
+    }
+
+    /**
+     * Adds the group by identifier.
+     *
+     * @param identifier
+     *            the group by identifier to add.
+     */
+    void addGroupBy(final IdentifierNode identifier) {
+        groups.add(identifier);
+    }
+
+    /**
+     * Adds the order by identifier.
+     *
+     * @param identifier
+     *            the order by identifier to add.
+     */
+    void addOrderBy(final IdentifierNode identifier) {
+        order.add(identifier);
+    }
+
+    /**
+     * Gets the group list.
+     *
+     * @return the group list.
+     */
+    List<IdentifierNode> getGroups() {
+        return Collections.unmodifiableList(groups);
+    }
+
+    /**
+     * Get if this select has a distinct token.
+     *
+     * @return true if this select has a distinct token.
+     */
+    boolean isDistinct() {
+        return distinct;
     }
 }

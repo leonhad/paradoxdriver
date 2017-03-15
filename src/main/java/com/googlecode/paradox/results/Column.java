@@ -1,27 +1,15 @@
 /*
- * ParadoxDataFile.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxDataFile.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxField;
-
 import java.sql.SQLException;
 import java.sql.Types;
 
@@ -34,6 +22,19 @@ import java.sql.Types;
  * @since 1.0
  */
 public final class Column {
+
+    /**
+     * Gets the field type description.
+     *
+     * @param type
+     *            the field type.
+     * @return the type description.
+     * @throws SQLException
+     *             if is an invalid type.
+     */
+    public static String getTypeName(final int type) throws SQLException {
+        return TypeName.getTypeName(type);
+    }
 
     /**
      * If this column is auto incremented.
@@ -123,7 +124,7 @@ public final class Column {
      * Create a new instance.
      *
      * @param field
-     *         the paradox field.
+     *            the paradox field.
      */
     public Column(final ParadoxField field) {
         this(field.getName(), field.getType());
@@ -134,26 +135,13 @@ public final class Column {
      * Create a new instance.
      *
      * @param name
-     *         the field name.
+     *            the field name.
      * @param type
-     *         the field type.
+     *            the field type.
      */
     public Column(final String name, final int type) {
         this.name = name;
         setType(type);
-    }
-
-    /**
-     * Gets the field type description.
-     *
-     * @param type
-     *         the field type.
-     * @return the type description.
-     * @throws SQLException
-     *         if is an invalid type.
-     */
-    public static String getTypeName(final int type) throws SQLException {
-        return TypeName.getTypeName(type);
     }
 
     /**
@@ -295,7 +283,7 @@ public final class Column {
      * Sets the auto increment value.
      *
      * @param autoIncrement
-     *         the auto increment value to set.
+     *            the auto increment value to set.
      */
     public void setAutoIncrement(final boolean autoIncrement) {
         this.autoIncrement = autoIncrement;
@@ -305,7 +293,7 @@ public final class Column {
      * Sets if this field is a current.
      *
      * @param currency
-     *         the currency to set.
+     *            the currency to set.
      */
     public void setCurrency(final boolean currency) {
         this.currency = currency;
@@ -315,7 +303,7 @@ public final class Column {
      * Sets the paradox field.
      *
      * @param field
-     *         the paradox field to set.
+     *            the paradox field to set.
      */
     public void setField(final ParadoxField field) {
         this.field = field;
@@ -325,7 +313,7 @@ public final class Column {
      * Sets the field index.
      *
      * @param index
-     *         the index to set.
+     *            the index to set.
      */
     public void setIndex(final int index) {
         this.index = index;
@@ -335,7 +323,7 @@ public final class Column {
      * Sets the field max size.
      *
      * @param maxSize
-     *         the max size to set.
+     *            the max size to set.
      */
     public void setMaxSize(final int maxSize) {
         this.maxSize = maxSize;
@@ -345,7 +333,7 @@ public final class Column {
      * Sets the field name
      *
      * @param name
-     *         the field name to set.
+     *            the field name to set.
      */
     public void setName(final String name) {
         this.name = name;
@@ -355,7 +343,7 @@ public final class Column {
      * Sets if this field can be null.
      *
      * @param nullable
-     *         the nullable to set.
+     *            the nullable to set.
      */
     public void setNullable(final boolean nullable) {
         this.nullable = nullable;
@@ -365,7 +353,7 @@ public final class Column {
      * Sets the field precision.
      *
      * @param precision
-     *         the precision to set.
+     *            the precision to set.
      */
     public void setPrecision(final int precision) {
         this.precision = precision;
@@ -375,7 +363,7 @@ public final class Column {
      * Sets if this field is read only.
      *
      * @param readOnly
-     *         the read only to set.
+     *            the read only to set.
      */
     public void setReadOnly(final boolean readOnly) {
         this.readOnly = readOnly;
@@ -385,7 +373,7 @@ public final class Column {
      * Sets the field scale.
      *
      * @param scale
-     *         the scale to set.
+     *            the scale to set.
      */
     public void setScale(final int scale) {
         this.scale = scale;
@@ -395,7 +383,7 @@ public final class Column {
      * Sets if this field is searchable.
      *
      * @param searchable
-     *         the searchable to set.
+     *            the searchable to set.
      */
     public void setSearchable(final boolean searchable) {
         this.searchable = searchable;
@@ -405,7 +393,7 @@ public final class Column {
      * Sets if this field has sign.
      *
      * @param signed
-     *         the signed to set.
+     *            the signed to set.
      */
     public void setSigned(final boolean signed) {
         this.signed = signed;
@@ -415,7 +403,7 @@ public final class Column {
      * Sets the tables name
      *
      * @param tableName
-     *         the tables name to set.
+     *            the tables name to set.
      */
     public void setTableName(final String tableName) {
         this.tableName = tableName;
@@ -425,7 +413,7 @@ public final class Column {
      * Sets the field SQL type.
      *
      * @param type
-     *         the field SQL type to set.
+     *            the field SQL type to set.
      */
     public void setType(final int type) {
         this.type = type;
@@ -445,7 +433,7 @@ public final class Column {
      * Sets if this field is writable.
      *
      * @param writable
-     *         the writable to set.
+     *            the writable to set.
      */
     public void setWritable(final boolean writable) {
         this.writable = writable;

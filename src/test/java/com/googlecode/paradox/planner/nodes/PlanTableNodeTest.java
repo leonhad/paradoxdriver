@@ -17,7 +17,7 @@ public class PlanTableNodeTest {
      */
     @Test
     public void testInstance() {
-        PlanTableNode node = new PlanTableNode();
+        final PlanTableNode node = new PlanTableNode();
         node.setAlias("alias");
         node.setTable(null);
 

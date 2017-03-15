@@ -1,21 +1,10 @@
 /*
- * PrimaryKeyData.java
- *
- * 03/14/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * PrimaryKeyData.java 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.data;
 
@@ -23,7 +12,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,30 +30,23 @@ import java.sql.SQLException;
 public final class PrimaryKeyData {
 
     /**
-     * Utility class.
-     */
-    private PrimaryKeyData() {
-        // Utility class.
-    }
-
-    /**
      * Gets the primary keys from the database file.
      *
      * @param conn
-     *         the database connection.
+     *            the database connection.
      * @param table
-     *         the tables primary key.
+     *            the tables primary key.
      * @return the primary keys.
      * @throws SQLException
-     *         in case of load failures.
+     *             in case of load failures.
      */
     public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
         final String name = table.getName() + ".PX";
 
         final File[] fileList = conn.getDir().listFiles(new PrimaryKeyFilter(name));
-        if (fileList != null && fileList.length > 0) {
+        if ((fileList != null) && (fileList.length > 0)) {
             try {
-                return loadPKHeader(fileList[0]);
+                return PrimaryKeyData.loadPKHeader(fileList[0]);
             } catch (final IOException ex) {
                 throw new SQLException("Error loading Paradox tables.", ex);
             }
@@ -77,10 +58,10 @@ public final class PrimaryKeyData {
      * Gets the {@link ParadoxPK} from a PK file.
      *
      * @param file
-     *         the file to read.
+     *            the file to read.
      * @return the {@link ParadoxPK}.
      * @throws IOException
-     *         in case of I/O exceptions.
+     *             in case of I/O exceptions.
      */
     private static ParadoxPK loadPKHeader(final File file) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
@@ -118,5 +99,12 @@ public final class PrimaryKeyData {
             fs.close();
         }
         return pk;
+    }
+
+    /**
+     * Utility class.
+     */
+    private PrimaryKeyData() {
+        // Utility class.
     }
 }

@@ -1,33 +1,21 @@
 /*
- * DriverTest.java
- *
- * 06/29/2016
- * Copyright (C) 2016 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * DriverTest.java 06/29/2016 Copyright (C) 2016 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.utils.Constants;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for {@link Driver}.
@@ -51,7 +39,7 @@ public final class DriverTest {
      * Test for invalid connection.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testInvalidConnection() throws SQLException {
@@ -63,7 +51,7 @@ public final class DriverTest {
      * Test an invalid URL.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testInvalidURL() throws SQLException {
@@ -75,7 +63,7 @@ public final class DriverTest {
      * Test for driver logger.
      *
      * @throws SQLFeatureNotSupportedException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testLogger() throws SQLFeatureNotSupportedException {
@@ -87,7 +75,7 @@ public final class DriverTest {
      * Test for the Major Version.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testMajorVersion() throws SQLException {
@@ -99,7 +87,7 @@ public final class DriverTest {
      * Test for the Minor Version.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testMinorVersion() throws SQLException {
@@ -111,7 +99,7 @@ public final class DriverTest {
      * Test for null properties.
      *
      * @throws SQLException
-     *         if there is no errors.
+     *             if there is no errors.
      */
     @Test(expected = NullPointerException.class)
     public void testNullProperty() throws SQLException {
@@ -123,7 +111,7 @@ public final class DriverTest {
      * Test for null property info.
      *
      * @throws SQLException
-     *         if there is no errors.
+     *             if there is no errors.
      */
     @Test(expected = NullPointerException.class)
     public void testNullPropertyInfo() throws SQLException {
@@ -135,7 +123,7 @@ public final class DriverTest {
      * Test for property info.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testPropertyInfo() throws SQLException {
@@ -150,7 +138,7 @@ public final class DriverTest {
      * Test for properties with invalid URL.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test(expected = NullPointerException.class)
     public void testPropertyInfoInvalidURL() throws SQLException {
@@ -162,7 +150,7 @@ public final class DriverTest {
      * Test for a valid connection.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testValidConnection() throws SQLException {
@@ -177,7 +165,7 @@ public final class DriverTest {
      * Test a valid URL.
      *
      * @throws SQLException
-     *         in case of errors.
+     *             in case of errors.
      */
     @Test
     public void testValidURL() throws SQLException {

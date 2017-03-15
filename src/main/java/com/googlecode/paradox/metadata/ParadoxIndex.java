@@ -1,21 +1,10 @@
 /*
- * ParadoxIndex.java
- *
- * 03/14/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxIndex.java 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.metadata;
 
@@ -58,9 +47,9 @@ public final class ParadoxIndex extends ParadoxDataFile {
      * Creates a new instance.
      *
      * @param file
-     *         the file to read of.
+     *            the file to read of.
      * @param name
-     *         index name.
+     *            index name.
      */
     public ParadoxIndex(final File file, final String name) {
         super(file, name);
@@ -76,16 +65,6 @@ public final class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
-     * Sets the charset.
-     *
-     * @param charset
-     *         the charset to set.
-     */
-    public void setCharset(final Charset charset) {
-        this.charset = charset;
-    }
-
-    /**
      * Gets the file orders.
      *
      * @return the file orders.
@@ -95,45 +74,16 @@ public final class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
-     * Sets the fields order.
-     *
-     * @param fieldsOrder
-     *         the fields order to set.
-     */
-    public void setFieldsOrder(final List<Short> fieldsOrder) {
-        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
-    }
-
-    /**
      * Gets the index order.
      *
      * @return the index order.
      */
     public String getOrder() {
         final int referential = getReferentialIntegrity();
-        if (referential == 0x10 || referential == 0x11 || referential == 0x30) {
+        if ((referential == 0x10) || (referential == 0x11) || (referential == 0x30)) {
             return "D";
         }
         return "A";
-    }
-
-    /**
-     * Gets the parent name.
-     *
-     * @return the parent name.
-     */
-    String getParentName() {
-        return parentName;
-    }
-
-    /**
-     * Sets the parent name.
-     *
-     * @param parentName
-     *         the parent name to set.
-     */
-    public void setParentName(final String parentName) {
-        this.parentName = parentName;
     }
 
     /**
@@ -159,12 +109,51 @@ public final class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
+     * Sets the charset.
+     *
+     * @param charset
+     *            the charset to set.
+     */
+    public void setCharset(final Charset charset) {
+        this.charset = charset;
+    }
+
+    /**
+     * Sets the fields order.
+     *
+     * @param fieldsOrder
+     *            the fields order to set.
+     */
+    public void setFieldsOrder(final List<Short> fieldsOrder) {
+        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
+    }
+
+    /**
+     * Sets the parent name.
+     *
+     * @param parentName
+     *            the parent name to set.
+     */
+    public void setParentName(final String parentName) {
+        this.parentName = parentName;
+    }
+
+    /**
      * Sets the sort order ID.
      *
      * @param sortOrderID
-     *         the sort order ID to set.
+     *            the sort order ID to set.
      */
     public void setSortOrderID(final String sortOrderID) {
         this.sortOrderID = sortOrderID;
+    }
+
+    /**
+     * Gets the parent name.
+     *
+     * @return the parent name.
+     */
+    String getParentName() {
+        return parentName;
     }
 }

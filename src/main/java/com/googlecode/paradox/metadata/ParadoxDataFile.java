@@ -1,26 +1,14 @@
 /*
- * ParadoxDataFile.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxDataFile.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.utils.Utils;
-
 import java.io.File;
 import java.util.List;
 
@@ -34,14 +22,6 @@ import java.util.List;
 public class ParadoxDataFile {
 
     /**
-     * Java file used to read the database.
-     */
-    private final File file;
-    /**
-     * Fields in this file.
-     */
-    protected List<ParadoxField> fields;
-    /**
      * The field with auto increment value.
      */
     private int autoIncrementValue;
@@ -53,6 +33,10 @@ public class ParadoxDataFile {
      * File count in this file.
      */
     private int fieldCount;
+    /**
+     * Java file used to read the database.
+     */
+    private final File file;
     /**
      * The first block in the file.
      */
@@ -69,6 +53,10 @@ public class ParadoxDataFile {
      * The last block in the file.
      */
     private int lastBlock;
+    /**
+     * The file name.
+     */
+    private String name;
     /**
      * Primary key field count.
      */
@@ -106,17 +94,17 @@ public class ParadoxDataFile {
      */
     private byte writeProtected;
     /**
-     * The file name.
+     * Fields in this file.
      */
-    private String name;
+    protected List<ParadoxField> fields;
 
     /**
      * Creates a new instance.
      *
      * @param file
-     *         the database {@link File}.
+     *            the database {@link File}.
      * @param name
-     *         the file name.
+     *            the file name.
      */
     protected ParadoxDataFile(final File file, final String name) {
         this.file = file;
@@ -127,7 +115,7 @@ public class ParadoxDataFile {
      * Finds a field by name.
      *
      * @param name
-     *         the field name.
+     *            the field name.
      * @return the {@link ParadoxField}.
      */
     public final ParadoxField findField(final String name) {
@@ -151,32 +139,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the auto increment value.
-     *
-     * @param autoIncrementValue
-     *         the auto increment value.
-     */
-    public final void setAutoIncrementValue(final int autoIncrementValue) {
-        this.autoIncrementValue = autoIncrementValue;
-    }
-
-    /**
      * Gets the block size.
      *
      * @return the block size.
      */
     public final byte getBlockSize() {
         return blockSize;
-    }
-
-    /**
-     * Sets the block size.
-     *
-     * @param blockSize
-     *         the block size.
-     */
-    public final void setBlockSize(final byte blockSize) {
-        this.blockSize = blockSize;
     }
 
     /**
@@ -189,32 +157,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the field count.
-     *
-     * @param fieldCount
-     *         the field count.
-     */
-    public final void setFieldCount(final int fieldCount) {
-        this.fieldCount = fieldCount;
-    }
-
-    /**
      * Gets the field list.
      *
      * @return the field list.
      */
     public final List<ParadoxField> getFields() {
         return fields;
-    }
-
-    /**
-     * Sets the field list.
-     *
-     * @param fields
-     *         the field list.
-     */
-    public final void setFields(final List<ParadoxField> fields) {
-        this.fields = fields;
     }
 
     /**
@@ -236,32 +184,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the first block.
-     *
-     * @param firstBlock
-     *         the first block.
-     */
-    public final void setFirstBlock(final int firstBlock) {
-        this.firstBlock = firstBlock;
-    }
-
-    /**
      * Gets the first free block reference.
      *
      * @return the first free block reference.
      */
     public final int getFirstFreeBlock() {
         return firstFreeBlock;
-    }
-
-    /**
-     * Sets the first free block.
-     *
-     * @param firstFreeBlock
-     *         the first free block.
-     */
-    public final void setFirstFreeBlock(final int firstFreeBlock) {
-        this.firstFreeBlock = firstFreeBlock;
     }
 
     /**
@@ -274,32 +202,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the header size.
-     *
-     * @param headerSize
-     *         the header size.
-     */
-    public final void setHeaderSize(final int headerSize) {
-        this.headerSize = headerSize;
-    }
-
-    /**
      * Gets the last block reference.
      *
      * @return the last block reference.
      */
     public final int getLastBlock() {
         return lastBlock;
-    }
-
-    /**
-     * Sets the last block.
-     *
-     * @param lastBlock
-     *         the last block.
-     */
-    public final void setLastBlock(final int lastBlock) {
-        this.lastBlock = lastBlock;
     }
 
     /**
@@ -312,32 +220,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the file name.
-     *
-     * @param name
-     *         the file name.
-     */
-    public final void setName(final String name) {
-        this.name = name;
-    }
-
-    /**
      * Gets the primary key field count.
      *
      * @return the primary key field count.
      */
     public final int getPrimaryFieldCount() {
         return primaryFieldCount;
-    }
-
-    /**
-     * Sets the primary key field count.
-     *
-     * @param primaryFieldCount
-     *         the primary key field count.
-     */
-    public final void setPrimaryFieldCount(final int primaryFieldCount) {
-        this.primaryFieldCount = primaryFieldCount;
     }
 
     /**
@@ -350,32 +238,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Set the record size.
-     *
-     * @param recordSize
-     *         the record size.
-     */
-    public final void setRecordSize(final int recordSize) {
-        this.recordSize = recordSize;
-    }
-
-    /**
      * Gets the referential integrity reference.
      *
      * @return the referential integrity reference.
      */
     public final byte getReferentialIntegrity() {
         return referentialIntegrity;
-    }
-
-    /**
-     * Set the referential integrity value.
-     *
-     * @param referentialIntegrity
-     *         the referential integrity value.
-     */
-    public final void setReferentialIntegrity(final byte referentialIntegrity) {
-        this.referentialIntegrity = referentialIntegrity;
     }
 
     /**
@@ -388,32 +256,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the row count.
-     *
-     * @param rowCount
-     *         the row count.
-     */
-    public final void setRowCount(final int rowCount) {
-        this.rowCount = rowCount;
-    }
-
-    /**
      * Gets the file total blocks.
      *
      * @return the file total blocks.
      */
     public final int getTotalBlocks() {
         return totalBlocks;
-    }
-
-    /**
-     * Sets the total blocks.
-     *
-     * @param totalBlocks
-     *         the total blocks.
-     */
-    public final void setTotalBlocks(final int totalBlocks) {
-        this.totalBlocks = totalBlocks;
     }
 
     /**
@@ -426,32 +274,12 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the file type.
-     *
-     * @param type
-     *         the file type.
-     */
-    public final void setType(final byte type) {
-        this.type = type;
-    }
-
-    /**
      * Gets the used blocks.
      *
      * @return the used blocks.
      */
     public final int getUsedBlocks() {
         return usedBlocks;
-    }
-
-    /**
-     * Sets the used blocks.
-     *
-     * @param usedBlocks
-     *         the used blocks.
-     */
-    public final void setUsedBlocks(final int usedBlocks) {
-        this.usedBlocks = usedBlocks;
     }
 
     /**
@@ -464,16 +292,6 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Sets the file version ID.
-     *
-     * @param versionId
-     *         the file version ID.
-     */
-    public final void setVersionId(final byte versionId) {
-        this.versionId = versionId;
-    }
-
-    /**
      * Gets the write protected value.
      *
      * @return the write protected value.
@@ -483,10 +301,180 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Sets the auto increment value.
+     *
+     * @param autoIncrementValue
+     *            the auto increment value.
+     */
+    public final void setAutoIncrementValue(final int autoIncrementValue) {
+        this.autoIncrementValue = autoIncrementValue;
+    }
+
+    /**
+     * Sets the block size.
+     *
+     * @param blockSize
+     *            the block size.
+     */
+    public final void setBlockSize(final byte blockSize) {
+        this.blockSize = blockSize;
+    }
+
+    /**
+     * Sets the field count.
+     *
+     * @param fieldCount
+     *            the field count.
+     */
+    public final void setFieldCount(final int fieldCount) {
+        this.fieldCount = fieldCount;
+    }
+
+    /**
+     * Sets the field list.
+     *
+     * @param fields
+     *            the field list.
+     */
+    public final void setFields(final List<ParadoxField> fields) {
+        this.fields = fields;
+    }
+
+    /**
+     * Sets the first block.
+     *
+     * @param firstBlock
+     *            the first block.
+     */
+    public final void setFirstBlock(final int firstBlock) {
+        this.firstBlock = firstBlock;
+    }
+
+    /**
+     * Sets the first free block.
+     *
+     * @param firstFreeBlock
+     *            the first free block.
+     */
+    public final void setFirstFreeBlock(final int firstFreeBlock) {
+        this.firstFreeBlock = firstFreeBlock;
+    }
+
+    /**
+     * Sets the header size.
+     *
+     * @param headerSize
+     *            the header size.
+     */
+    public final void setHeaderSize(final int headerSize) {
+        this.headerSize = headerSize;
+    }
+
+    /**
+     * Sets the last block.
+     *
+     * @param lastBlock
+     *            the last block.
+     */
+    public final void setLastBlock(final int lastBlock) {
+        this.lastBlock = lastBlock;
+    }
+
+    /**
+     * Sets the file name.
+     *
+     * @param name
+     *            the file name.
+     */
+    public final void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets the primary key field count.
+     *
+     * @param primaryFieldCount
+     *            the primary key field count.
+     */
+    public final void setPrimaryFieldCount(final int primaryFieldCount) {
+        this.primaryFieldCount = primaryFieldCount;
+    }
+
+    /**
+     * Set the record size.
+     *
+     * @param recordSize
+     *            the record size.
+     */
+    public final void setRecordSize(final int recordSize) {
+        this.recordSize = recordSize;
+    }
+
+    /**
+     * Set the referential integrity value.
+     *
+     * @param referentialIntegrity
+     *            the referential integrity value.
+     */
+    public final void setReferentialIntegrity(final byte referentialIntegrity) {
+        this.referentialIntegrity = referentialIntegrity;
+    }
+
+    /**
+     * Sets the row count.
+     *
+     * @param rowCount
+     *            the row count.
+     */
+    public final void setRowCount(final int rowCount) {
+        this.rowCount = rowCount;
+    }
+
+    /**
+     * Sets the total blocks.
+     *
+     * @param totalBlocks
+     *            the total blocks.
+     */
+    public final void setTotalBlocks(final int totalBlocks) {
+        this.totalBlocks = totalBlocks;
+    }
+
+    /**
+     * Sets the file type.
+     *
+     * @param type
+     *            the file type.
+     */
+    public final void setType(final byte type) {
+        this.type = type;
+    }
+
+    /**
+     * Sets the used blocks.
+     *
+     * @param usedBlocks
+     *            the used blocks.
+     */
+    public final void setUsedBlocks(final int usedBlocks) {
+        this.usedBlocks = usedBlocks;
+    }
+
+    /**
+     * Sets the file version ID.
+     *
+     * @param versionId
+     *            the file version ID.
+     */
+    public final void setVersionId(final byte versionId) {
+        this.versionId = versionId;
+    }
+
+    /**
      * Sets the write protected value.
      *
      * @param writeProtected
-     *         the write protected value.
+     *            the write protected value.
      */
     public final void setWriteProtected(final byte writeProtected) {
         this.writeProtected = writeProtected;

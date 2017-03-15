@@ -1,21 +1,10 @@
 /*
- * ParadoxView.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxView.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.metadata;
 
@@ -47,9 +36,9 @@ public final class ParadoxView extends ParadoxDataFile {
      * Creates a new instance.
      *
      * @param file
-     *         the file to read of.
+     *            the file to read of.
      * @param name
-     *         the view name.
+     *            the view name.
      */
     public ParadoxView(final File file, final String name) {
         super(file, name);
@@ -65,16 +54,6 @@ public final class ParadoxView extends ParadoxDataFile {
     }
 
     /**
-     * Sets the fields order.
-     *
-     * @param fieldsOrder
-     *         the fields order to set.
-     */
-    public void setFieldsOrder(final List<ParadoxField> fieldsOrder) {
-        this.fieldsOrder = new ArrayList<>(fieldsOrder);
-    }
-
-    /**
      * Gets the fields sort.
      *
      * @return the fieldsSort the fields sort.
@@ -84,10 +63,20 @@ public final class ParadoxView extends ParadoxDataFile {
     }
 
     /**
+     * Sets the fields order.
+     *
+     * @param fieldsOrder
+     *            the fields order to set.
+     */
+    public void setFieldsOrder(final List<ParadoxField> fieldsOrder) {
+        this.fieldsOrder = new ArrayList<>(fieldsOrder);
+    }
+
+    /**
      * Sets the fields sort.
      *
      * @param fieldsSort
-     *         the fields sort to set.
+     *            the fields sort to set.
      */
     public void setFieldsSort(final List<ParadoxField> fieldsSort) {
         this.fieldsSort = new ArrayList<>(fieldsSort);

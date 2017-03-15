@@ -1,21 +1,10 @@
 /*
- * ParadoxPK.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxPK.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.metadata;
 
@@ -45,8 +34,8 @@ public final class ParadoxPK extends ParadoxDataFile {
      */
     @Override
     public boolean equals(final Object obj) {
-        return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass()) && getName().equals(
-                ((ParadoxPK) obj).getName()));
+        return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass())
+                && getName().equals(((ParadoxPK) obj).getName()));
     }
 
     /**
@@ -59,20 +48,20 @@ public final class ParadoxPK extends ParadoxDataFile {
     }
 
     /**
-     * Sets the index field number.
-     *
-     * @param indexFieldNumber
-     *         the index field number.
-     */
-    public void setIndexFieldNumber(final int indexFieldNumber) {
-        this.indexFieldNumber = indexFieldNumber;
-    }
-
-    /**
      * {@inheritDoc}.
      */
     @Override
     public int hashCode() {
         return getName().hashCode();
+    }
+
+    /**
+     * Sets the index field number.
+     *
+     * @param indexFieldNumber
+     *            the index field number.
+     */
+    public void setIndexFieldNumber(final int indexFieldNumber) {
+        this.indexFieldNumber = indexFieldNumber;
     }
 }

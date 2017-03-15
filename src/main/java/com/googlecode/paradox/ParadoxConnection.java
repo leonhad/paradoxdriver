@@ -1,20 +1,10 @@
 /*
- * ParadoxConnection.java
- *
- * 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
+ * ParadoxConnection.java 03/14/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in
+ * the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox;
 
@@ -24,7 +14,6 @@ import com.googlecode.paradox.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.sql.Array;
 import java.sql.Blob;
@@ -55,7 +44,7 @@ import java.util.concurrent.Executor;
  * @since 1.0
  */
 public final class ParadoxConnection implements Connection {
-    
+
     /**
      * Auto Commit flag.
      */
@@ -137,7 +126,7 @@ public final class ParadoxConnection implements Connection {
         if (!dir.exists() && !dir.isDirectory()) {
             throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
         }
-        this.catalog = dir.getName();
+        catalog = dir.getName();
     }
 
     /**
@@ -161,26 +150,26 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void close() throws SQLException {
-        for (final Statement stmt : this.statements) {
+        for (final Statement stmt : statements) {
             stmt.close();
         }
-        this.statements.clear();
+        statements.clear();
 
-        if ((this.lock != null) && this.lock.isValid()) {
+        if ((lock != null) && lock.isValid()) {
             try {
-                this.lock.release();
+                lock.release();
             } catch (final IOException ex) {
                 throw new SQLException("Error unlocking database.", SQLStates.INVALID_STATE.getValue(), ex);
             }
         }
-        if (this.lockFile != null) {
+        if (lockFile != null) {
             try {
-                this.lockFile.close();
+                lockFile.close();
             } catch (final IOException ex) {
                 throw new SQLException("Can't release lock file.", SQLStates.INVALID_STATE.getValue(), ex);
             }
         }
-        this.closed = true;
+        closed = true;
     }
 
     /**
@@ -237,7 +226,7 @@ public final class ParadoxConnection implements Connection {
     @Override
     public Statement createStatement() {
         final Statement stmt = new ParadoxStatement(this);
-        this.statements.add(stmt);
+        statements.add(stmt);
         return stmt;
     }
 
@@ -271,7 +260,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean getAutoCommit() {
-        return this.autocommit;
+        return autocommit;
     }
 
     /**
@@ -279,7 +268,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getCatalog() {
-        return this.catalog;
+        return catalog;
     }
 
     /**
@@ -287,7 +276,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Properties getClientInfo() {
-        return new Properties(this.clientInfo);
+        return new Properties(clientInfo);
     }
 
     /**
@@ -295,7 +284,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getClientInfo(final String name) {
-        return this.clientInfo.getProperty(name);
+        return clientInfo.getProperty(name);
     }
 
     /**
@@ -304,7 +293,7 @@ public final class ParadoxConnection implements Connection {
      * @return the current directory.
      */
     public File getDir() {
-        return this.dir;
+        return dir;
     }
 
     /**
@@ -312,7 +301,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public int getHoldability() {
-        return this.holdability;
+        return holdability;
     }
 
     /**
@@ -328,7 +317,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public int getNetworkTimeout() {
-        return this.networkTimeout;
+        return networkTimeout;
     }
 
     /**
@@ -336,7 +325,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getSchema() {
-        return this.schema;
+        return schema;
     }
 
     /**
@@ -344,7 +333,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public int getTransactionIsolation() {
-        return this.transactionIsolation;
+        return transactionIsolation;
     }
 
     /**
@@ -352,7 +341,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Map<String, Class<?>> getTypeMap() {
-        return this.typeMap;
+        return typeMap;
     }
 
     /**
@@ -361,7 +350,7 @@ public final class ParadoxConnection implements Connection {
      * @return the URL connection
      */
     public String getUrl() {
-        return this.url;
+        return url;
     }
 
     /**
@@ -377,7 +366,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean isClosed() {
-        return this.closed;
+        return closed;
     }
 
     /**
@@ -385,7 +374,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean isReadOnly() {
-        return this.readonly;
+        return readonly;
     }
 
     /**
@@ -393,7 +382,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public boolean isValid(final int timeout) {
-        return !this.closed;
+        return !closed;
     }
 
     /**
@@ -517,7 +506,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setAutoCommit(final boolean autoCommit) {
-        this.autocommit = autoCommit;
+        autocommit = autoCommit;
     }
 
     /**
@@ -541,7 +530,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setClientInfo(final String name, final String value) {
-        this.clientInfo.put(name, value);
+        clientInfo.put(name, value);
     }
 
     /**
@@ -560,7 +549,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setNetworkTimeout(final Executor executor, final int milliseconds) {
-        this.networkTimeout = milliseconds;
+        networkTimeout = milliseconds;
     }
 
     /**
@@ -568,7 +557,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setReadOnly(final boolean readOnly) {
-        this.readonly = readOnly;
+        readonly = readOnly;
     }
 
     /**
@@ -603,7 +592,7 @@ public final class ParadoxConnection implements Connection {
         if (Connection.TRANSACTION_NONE != level) {
             throw new SQLException("Invalid level.");
         }
-        this.transactionIsolation = level;
+        transactionIsolation = level;
     }
 
     /**

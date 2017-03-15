@@ -1,21 +1,10 @@
 /*
- * Token.java
- *
- * 03/12/2009
- * Copyright (C) 2009 Leonardo Alves da Costa
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Token.java 03/12/2009 Copyright (C) 2009 Leonardo Alves da Costa This program is free software: you can redistribute
+ * it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU
+ * General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.googlecode.paradox.parser;
 
@@ -42,9 +31,9 @@ public final class Token {
      * Creates a new instance.
      *
      * @param type
-     *         the token type.
+     *            the token type.
      * @param value
-     *         the token value.
+     *            the token value.
      */
     Token(final TokenType type, final String value) {
         this.type = type;
@@ -70,6 +59,14 @@ public final class Token {
     }
 
     /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public String toString() {
+        return type + " = " + value;
+    }
+
+    /**
      * Gets if this token is a conditional break.
      *
      * @return true if this token is a conditional break.
@@ -85,14 +82,6 @@ public final class Token {
      */
     boolean isOperator() {
         return TokenType.isOperator(type);
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public String toString() {
-        return type + " = " + value;
     }
 
 }
