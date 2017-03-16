@@ -41,7 +41,7 @@ import java.util.concurrent.Executor;
  * @since 1.0
  */
 public final class ParadoxConnection implements Connection {
-    
+
     /**
      * Auto Commit flag.
      */
@@ -71,7 +71,7 @@ public final class ParadoxConnection implements Connection {
      */
     private int networkTimeout;
     /**
-     * If this connection is readonly.
+     * If this connection is read only.
      */
     private boolean readonly = true;
     /**

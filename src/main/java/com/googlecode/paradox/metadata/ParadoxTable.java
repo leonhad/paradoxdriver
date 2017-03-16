@@ -9,9 +9,7 @@
 package com.googlecode.paradox.metadata;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,22 +20,12 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxTable extends ParadoxDataFile {
-    
+
     /**
      * The blob instance used to read the file.
      */
     private BlobTable blobFile;
-    
-    /**
-     * Table charset.
-     */
-    private Charset charset = Charset.forName("Cp437");
-    
-    /**
-     * Fields order in file.
-     */
-    private List<Short> fieldsOrder;
-    
+
     /**
      * Creates a new instance.
      *
@@ -49,7 +37,7 @@ public final class ParadoxTable extends ParadoxDataFile {
     public ParadoxTable(final File file, final String name) {
         super(file, name);
     }
-    
+
     /**
      * Gets the blob table.
      *
@@ -61,53 +49,17 @@ public final class ParadoxTable extends ParadoxDataFile {
         }
         return this.blobFile;
     }
-    
+
     /**
      * Return the block size in bytes.
      *
      * @return the block size in bytes.
      */
     public int getBlockSizeBytes() {
-        // The blockSize is always in KiB
-        return this.getBlockSize() * 1024;
+        // The blockSize is always in KiB.
+        return this.getBlockSize() * 1_024;
     }
-    
-    /**
-     * @return the charset.
-     */
-    public Charset getCharset() {
-        return this.charset;
-    }
-    
-    /**
-     * Gets the file order.
-     *
-     * @return the fields order.
-     */
-    public List<Short> getFieldsOrder() {
-        return Collections.unmodifiableList(this.fieldsOrder);
-    }
-    
-    /**
-     * Sets the charset.
-     *
-     * @param charset
-     *            the charset to set.
-     */
-    public void setCharset(final Charset charset) {
-        this.charset = charset;
-    }
-    
-    /**
-     * Sets the file order.
-     *
-     * @param fieldsOrder
-     *            the fieldsOrder to set.
-     */
-    public void setFieldsOrder(final List<Short> fieldsOrder) {
-        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
-    }
-    
+
     /**
      * Gets the table name.
      *
@@ -117,7 +69,7 @@ public final class ParadoxTable extends ParadoxDataFile {
     public String toString() {
         return this.getName();
     }
-    
+
     /**
      * Gets the primary keys list.
      *

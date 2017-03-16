@@ -9,9 +9,7 @@
 package com.googlecode.paradox.metadata;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,27 +20,17 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxIndex extends ParadoxDataFile {
-    
-    /**
-     * Index charset.
-     */
-    private Charset charset = Charset.forName("Cp437");
-    
-    /**
-     * Fields index order.
-     */
-    private List<Short> fieldsOrder;
-    
+
     /**
      * Parent name.
      */
     private String parentName;
-    
+
     /**
      * Field order ID.
      */
     private String sortOrderID;
-    
+
     /**
      * Creates a new instance.
      *
@@ -54,25 +42,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public ParadoxIndex(final File file, final String name) {
         super(file, name);
     }
-    
-    /**
-     * Gets the charset.
-     *
-     * @return the charset.
-     */
-    public Charset getCharset() {
-        return this.charset;
-    }
-    
-    /**
-     * Gets the file orders.
-     *
-     * @return the file orders.
-     */
-    public List<Short> getFieldsOrder() {
-        return Collections.unmodifiableList(this.fieldsOrder);
-    }
-    
+
     /**
      * Gets the index order.
      *
@@ -85,7 +55,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
         }
         return "A";
     }
-    
+
     /**
      * Gets the primary key.
      *
@@ -98,7 +68,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
         }
         return ret;
     }
-    
+
     /**
      * Gets the sorter order id.
      *
@@ -107,27 +77,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public String getSortOrderID() {
         return this.sortOrderID;
     }
-    
-    /**
-     * Sets the charset.
-     *
-     * @param charset
-     *            the charset to set.
-     */
-    public void setCharset(final Charset charset) {
-        this.charset = charset;
-    }
-    
-    /**
-     * Sets the fields order.
-     *
-     * @param fieldsOrder
-     *            the fields order to set.
-     */
-    public void setFieldsOrder(final List<Short> fieldsOrder) {
-        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
-    }
-    
+
     /**
      * Sets the parent name.
      *
@@ -137,7 +87,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public void setParentName(final String parentName) {
         this.parentName = parentName;
     }
-    
+
     /**
      * Sets the sort order ID.
      *
@@ -147,7 +97,7 @@ public final class ParadoxIndex extends ParadoxDataFile {
     public void setSortOrderID(final String sortOrderID) {
         this.sortOrderID = sortOrderID;
     }
-    
+
     /**
      * Gets the parent name.
      *

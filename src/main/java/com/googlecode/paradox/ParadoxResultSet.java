@@ -51,7 +51,7 @@ import java.util.Map;
  * @since 1.0
  */
 public final class ParadoxResultSet implements ResultSet {
-    
+
     /**
      * If this connection is invalid.
      */
@@ -590,7 +590,10 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row.get(columnIndex - 1);
-        return this.lastValue.isNull() ? 0 : this.lastValue.getNumber().intValue();
+        if (this.lastValue.isNull()) {
+            return 0;
+        }
+        return this.lastValue.getNumber().intValue();
     }
 
     /**

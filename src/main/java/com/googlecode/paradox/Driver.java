@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  * @since 1.0
  */
 public final class Driver implements IParadoxDriver {
-    
+
     /**
      * Logger instance for this class.
      */
