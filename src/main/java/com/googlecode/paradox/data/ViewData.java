@@ -9,6 +9,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
@@ -36,19 +37,19 @@ import java.util.Locale;
  * @since 1.0
  */
 public final class ViewData {
-    
+
     /**
      * Default charset.
      */
     private static final Charset CHARSET = Charset.forName("Cp1250");
-    
+
     /**
      * Utility class.
      */
     private ViewData() {
         // Utility class.
     }
-    
+
     /**
      * Returns all connections view.
      *
@@ -61,7 +62,7 @@ public final class ViewData {
     public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
         return ViewData.listViews(conn, null);
     }
-    
+
     /**
      * Gets all view filtered by name.
      *
@@ -85,7 +86,7 @@ public final class ViewData {
         }
         return views;
     }
-    
+
     /**
      * Fix the view extra line.
      *
@@ -102,25 +103,25 @@ public final class ViewData {
         }
         return line;
     }
-    
+
     /**
      * Get a field by its name.
      *
-     * @param table
+     * @param field
      *            the Paradox table.
      * @param name
      *            the field name.
      * @return the Paradox field.
      */
-    private static ParadoxField getField(final ParadoxTable table, final String name) {
-        for (final ParadoxField f : table.getFields()) {
+    private static ParadoxField getField(final ParadoxDataFile field, final String name) {
+        for (final ParadoxField f : field.getFields()) {
             if (f.getName().equals(name)) {
                 return f;
             }
         }
         return null;
     }
-    
+
     /**
      * Gets a field by name.
      *
@@ -139,7 +140,7 @@ public final class ViewData {
         }
         return originalField;
     }
-    
+
     /**
      * Get the {@link ParadoxTable} by name.
      *
@@ -158,7 +159,7 @@ public final class ViewData {
         }
         throw new SQLException("Table " + tableName + " not found");
     }
-    
+
     /**
      * Gets a {@link ParadoxView} by {@link File}.
      *
@@ -174,42 +175,42 @@ public final class ViewData {
         final ByteBuffer buffer = ByteBuffer.allocate(8192);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ParadoxView view = new ParadoxView(file, file.getName());
-        
+
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
-            
+
             final BufferedReader reader =
                     new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));
-            
+
             if (!"Query".equals(reader.readLine())) {
                 return view;
             }
-            
+
             // ANSWER
             String line = reader.readLine();
             if (line == null) {
                 return view;
             }
-            
+
             // Extra Line
             line = ViewData.fixExtraLine(reader);
-            
+
             // FIELDORDER.
             line = ViewData.parseFileOrder(conn, view, reader, line);
-            
+
             // SORT.
             line = ViewData.parseSort(conn, view, reader, line);
-            
+
             final ArrayList<ParadoxField> fields = ViewData.parseFields(conn, reader, line);
-            
+
             view.setFields(fields);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
         return view;
     }
-    
+
     /**
      * Parses check token.
      *
@@ -224,7 +225,7 @@ public final class ViewData {
             field.setChecked(true);
         }
     }
-    
+
     /**
      * Parses the view fields.
      *
@@ -248,12 +249,12 @@ public final class ViewData {
             // Fields
             final String[] fields = line.split("\\|");
             final String table = fields[0].trim();
-            
+
             for (int loop = 1; loop < fields.length; loop++) {
                 final String name = fields[loop].trim();
                 final ParadoxField field = new ParadoxField();
                 final ParadoxField original = ViewData.getFieldByName(ViewData.getTable(conn, table), name);
-                
+
                 field.setTableName(table);
                 field.setName(name);
                 field.setType(original.getType());
@@ -272,13 +273,13 @@ public final class ViewData {
                     ViewData.parseExpression(field, type);
                 }
             }
-            
+
             // Extra Line
             line = ViewData.fixExtraLine(reader);
         }
         return fieldList;
     }
-    
+
     /**
      * Parses the file order token.
      *
@@ -301,14 +302,18 @@ public final class ViewData {
         String line = oldLine;
         if ((line != null) && line.startsWith("FIELDORDER: ")) {
             final ArrayList<ParadoxField> fields = ViewData.readFields(conn, reader, line);
-            view.setFieldsOrder(fields);
-            
+            final ArrayList<Short> fieldsOrder = new ArrayList<>(fields.size());
+            for (final ParadoxField field : fields) {
+                fieldsOrder.add((short) ViewData.getField(view, field.getName()).getOrderNum());
+            }
+            view.setFieldsOrder(fieldsOrder);
+
             // Extra line.
             line = ViewData.fixExtraLine(reader);
         }
         return line;
     }
-    
+
     /**
      * Parses the table join names
      *
@@ -320,7 +325,7 @@ public final class ViewData {
     private static void parseJoinName(final ParadoxField field, final StringBuilder builder) {
         if (builder.charAt(0) == '_') {
             final StringBuilder temp = new StringBuilder(builder.length());
-            
+
             for (final char c : builder.toString().toCharArray()) {
                 if ((c == ' ') || (c == ',')) {
                     break;
@@ -332,7 +337,7 @@ public final class ViewData {
             field.setJoinName(name);
         }
     }
-    
+
     /**
      * Parses the sort token.
      *
@@ -356,13 +361,13 @@ public final class ViewData {
         if ((line != null) && line.startsWith("SORT: ")) {
             final ArrayList<ParadoxField> fields = ViewData.readFields(conn, reader, line);
             view.setFieldsSort(fields);
-            
+
             // Extra Line.
             line = ViewData.fixExtraLine(reader);
         }
         return line;
     }
-    
+
     /**
      * Read fields from buffer.
      *
@@ -378,19 +383,19 @@ public final class ViewData {
      */
     private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader,
             final String firstLine) throws IOException, SQLException {
-        
+
         final StringBuilder line = new StringBuilder(firstLine.substring(firstLine.indexOf(':') + 1));
         do {
             line.append(ViewData.readLine(reader));
         } while (line.toString().endsWith(","));
-        
+
         ParadoxTable lastTable = null;
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         final String[] cols = line.toString().split(",");
         for (final String col : cols) {
             final String[] i = col.split("->");
             final ParadoxField field = new ParadoxField();
-            
+
             if (i.length < 2) {
                 if (lastTable == null) {
                     throw new SQLException("Invalid table.");
@@ -401,14 +406,14 @@ public final class ViewData {
                 field.setName(i[1].substring(1, i[1].length() - 1));
             }
             final ParadoxField originalField = ViewData.getFieldByName(lastTable, field.getName());
-            
+
             field.setType(originalField.getType());
             field.setSize(originalField.getSize());
             fields.add(field);
         }
         return fields;
     }
-    
+
     /**
      * Read a line from buffer.
      *
@@ -422,7 +427,7 @@ public final class ViewData {
         final String line = reader.readLine();
         return line != null ? line.trim() : null;
     }
-    
+
     /**
      * Parse a view Paradox expression.
      *
@@ -433,12 +438,12 @@ public final class ViewData {
      */
     static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
-        
+
         ViewData.parseCheck(field, builder);
         if (builder.length() == 0) {
             return;
         }
-        
+
         ViewData.parseJoinName(field, builder);
         final String typeTest = builder.toString().trim();
         if (typeTest.toUpperCase(Locale.US).startsWith("AS")) {

@@ -20,18 +20,18 @@ import org.junit.Test;
  * @since 1.3
  */
 public class ParadoxViewTest {
-    
+
     /**
      * Test for field order.
      */
     @Test
     public void testFieldOrder() {
-        final ArrayList<ParadoxField> list = new ArrayList<>();
+        final ArrayList<Short> list = new ArrayList<>();
         final ParadoxView view = new ParadoxView(null, null);
         view.setFieldsOrder(list);
         Assert.assertEquals(list, view.getFieldsOrder());
     }
-    
+
     /**
      * Test for fields.
      */
@@ -42,7 +42,7 @@ public class ParadoxViewTest {
         view.setFields(list);
         Assert.assertEquals(list, view.getFields());
     }
-    
+
     /**
      * Test for field sort.
      */
