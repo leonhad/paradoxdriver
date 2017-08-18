@@ -40,9 +40,16 @@ public class IntegerFieldTest {
     @Test
     public void testParse() throws SQLException {
         final IntegerField field = new IntegerField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x40, (byte) 0x59 });
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals(16473, value.getNumber());
+        
+        // Test positive numbers
+        ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x87, (byte) 0xE1 });
+        FieldValue value = field.parse(null, buffer, null);
+        Assert.assertEquals(2017, value.getNumber());
+        
+        // Test negative numbers
+        buffer = ByteBuffer.wrap(new byte[] { (byte) 0x40, (byte) 0x59 });
+        value = field.parse(null, buffer, null);
+        Assert.assertEquals(-16295, value.getNumber());
     }
     
     /**

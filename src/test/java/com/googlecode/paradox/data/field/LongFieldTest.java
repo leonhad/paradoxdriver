@@ -40,9 +40,16 @@ public class LongFieldTest {
     @Test
     public void testParse() throws SQLException {
         final LongField field = new LongField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 0, 0, 1, 0 });
-        final FieldValue value = field.parse(null, buffer, null);
+        
+        // Test positive values
+        ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00 });
+        FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals(256L, value.getNumber());
+        
+        // Test negative values
+        buffer = ByteBuffer.wrap(new byte[] { (byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00 });
+        value = field.parse(null, buffer, null);
+        Assert.assertEquals(-256L, value.getNumber());
     }
     
     /**

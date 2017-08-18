@@ -25,7 +25,7 @@ import java.sql.Types;
 public final class LongField implements FieldParser {
     
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     @Override
     public boolean match(final int type) {
@@ -33,11 +33,14 @@ public final class LongField implements FieldParser {
     }
     
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
+     * 
+     * Longs (4 bytes) fields are stored as two's complement with the high bit inverted.
+     * 
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final long l = buffer.getInt() & 0x7FFF_FFFF;
+        final long l = (int) (buffer.getInt() ^ 0x8000_0000);
         return new FieldValue(l, Types.BIGINT);
     }
 }
