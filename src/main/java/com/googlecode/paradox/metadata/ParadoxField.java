@@ -287,7 +287,8 @@ public final class ParadoxField {
      */
     public void setSize(final int size) throws SQLException {
         this.physicsSize = size;
-        if ((this.getSqlType() == Types.CLOB) || (this.getSqlType() == Types.BLOB)) {
+        int sqlType = this.getSqlType();
+        if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
             this.size = size - 10;
         } else {
             this.size = size;

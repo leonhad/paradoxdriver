@@ -25,7 +25,7 @@ import java.sql.Types;
 public final class IntegerField implements FieldParser {
     
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
      */
     @Override
     public boolean match(final int type) {
@@ -33,11 +33,14 @@ public final class IntegerField implements FieldParser {
     }
     
     /**
-     * {@inheritDoc}.
+     * {@inheritDoc}
+     * 
+     * Integer (2 bytes) fields are stored as two's complement with the high bit inverted.
+     * 
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final int v = buffer.getShort();
+        final int v = (short) (buffer.getShort() ^ 0x8000);
         return new FieldValue(v, Types.INTEGER);
     }
 }

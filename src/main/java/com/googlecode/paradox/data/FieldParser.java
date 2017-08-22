@@ -33,7 +33,7 @@ public interface FieldParser {
     boolean match(int type);
     
     /**
-     * Parses the filter;
+     * Parses the field.
      *
      * @param table
      *            the paradox tables.

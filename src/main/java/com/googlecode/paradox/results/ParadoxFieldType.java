@@ -66,6 +66,13 @@ public enum ParadoxFieldType {
     DOUBLE(5, Types.DOUBLE),
     
     /**
+     * The graphics type.
+     * 
+     * It's really a BLOB that contains an image file.
+     */
+    GRAPHIC(0x10, Types.BLOB),
+    
+    /**
      * The integer type.
      */
     INTEGER(3, Types.INTEGER),
