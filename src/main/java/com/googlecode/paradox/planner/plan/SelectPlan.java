@@ -15,6 +15,8 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
 import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
 import com.googlecode.paradox.parser.nodes.conditional.ORNode;
@@ -228,20 +230,36 @@ public final class SelectPlan implements Plan {
 	 */
 	private boolean evaluateCondition(SQLNode condition, List<FieldValue> listField) throws SQLException {
 		if(condition instanceof EqualsNode) {
-			EqualsNode equalsCondition = (EqualsNode) condition;
-			int fieldNumOrder = findField(equalsCondition.getFirst().toString()).getOrderNum()-1;
+			EqualsNode nodeCondition = (EqualsNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
 			FieldValue column = listField.get(fieldNumOrder);
-			if (equalsCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
-					&& equalsCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&& nodeCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
 				return true;
 			else return false;
 			
 		}else if(condition instanceof NotEqualsNode) {
-			NotEqualsNode notEqualsCondition = (NotEqualsNode) condition;
-			int fieldNumOrder = findField(notEqualsCondition.getFirst().toString()).getOrderNum()-1;
+			NotEqualsNode nodeCondition = (NotEqualsNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
 			FieldValue column = listField.get(fieldNumOrder);
-			if (notEqualsCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
-					&& !notEqualsCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&& !nodeCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
+				return true;
+			else return false;
+		}else if(condition instanceof GreaterThanNode) {
+			GreaterThanNode nodeCondition = (GreaterThanNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&&  Double.parseDouble(column.getValue().toString()) > Double.parseDouble(nodeCondition.getLast().toString())) 
+				return true;
+			else return false;
+		}else if(condition instanceof LessThanNode) {
+			LessThanNode nodeCondition = (LessThanNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&&  Double.parseDouble(column.getValue().toString()) < Double.parseDouble(nodeCondition.getLast().toString())) 
 				return true;
 			else return false;
 		}

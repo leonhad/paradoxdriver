@@ -212,4 +212,33 @@ public class PlannerTest {
          Assert.assertEquals("Test the result size.", 0, plan.getValues().size());
     }
     
+    /**
+     * Test for SELECT plan with where GreaterThan clause.
+     *
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testSelectWhereGreaterThan() throws SQLException {
+    	 final SQLParser parser = new SQLParser("select ac from areacodes where state = ny and ac > 845");
+         final Planner planner = new Planner(this.conn);
+         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+         plan.execute();
+         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
+    }
+    /**
+     * Test for SELECT plan with where LessThan clause.
+     *
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testSelectWhereLessThan() throws SQLException {
+    	 final SQLParser parser = new SQLParser("select ac from areacodes where state = ny and ac < 320");
+         final Planner planner = new Planner(this.conn);
+         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+         plan.execute();
+         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
+    }
+    
 }
