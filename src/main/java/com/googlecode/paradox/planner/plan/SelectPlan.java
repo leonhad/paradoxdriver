@@ -15,6 +15,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
 import com.googlecode.paradox.parser.nodes.conditional.ORNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
@@ -186,7 +187,7 @@ public final class SelectPlan implements Plan {
 				resultRow.add(tableData.get(j).get(fieldOrder));
 			} else {						//verify conditions
 										
-				if (checkConditions((conditions.size()-1), tableData.get(j))) {
+				if (checkConditions(0, tableData.get(j))) {
 					resultRow = new ArrayList<>();
 					this.values.add(resultRow);
 											
@@ -208,11 +209,11 @@ public final class SelectPlan implements Plan {
 	 * @throws SQLException 
 	 */
 	private boolean checkConditions(int numCondition, List<FieldValue> listField) throws SQLException {
-		if (numCondition == 0) return evaluateCondition(conditions.get(numCondition),listField);
-		else if(conditions.get(numCondition-1) instanceof ANDNode) 
-			return evaluateCondition(conditions.get(numCondition),listField) && checkConditions(numCondition-2,listField);
-		else if(conditions.get(numCondition-1) instanceof ORNode) 
-			return evaluateCondition(conditions.get(numCondition),listField) || checkConditions(numCondition-2,listField);
+		if (numCondition == conditions.size()-1) return evaluateCondition(conditions.get(numCondition),listField);
+		else if(conditions.get(numCondition+1) instanceof ANDNode) 
+			return evaluateCondition(conditions.get(numCondition),listField) && checkConditions(numCondition+2,listField);
+		else if(conditions.get(numCondition+1) instanceof ORNode) 
+			return evaluateCondition(conditions.get(numCondition),listField) || checkConditions(numCondition+2,listField);
 		else return false;
 	}
 	
@@ -234,7 +235,17 @@ public final class SelectPlan implements Plan {
 					&& equalsCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
 				return true;
 			else return false;
+			
+		}else if(condition instanceof NotEqualsNode) {
+			NotEqualsNode notEqualsCondition = (NotEqualsNode) condition;
+			int fieldNumOrder = findField(notEqualsCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (notEqualsCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&& !notEqualsCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
+				return true;
+			else return false;
 		}
+		
 		return false;
 	}
     

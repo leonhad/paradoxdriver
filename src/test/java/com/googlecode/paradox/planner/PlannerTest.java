@@ -197,4 +197,19 @@ public class PlannerTest {
          Assert.assertEquals("Test the result value.", "917", plan.getValues().get(2).get(0).getValue());
     }
     
+    /**
+     * Test for SELECT plan with where notEquals clause.
+     *
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testSelectWhereNotEquals() throws SQLException {
+    	 final SQLParser parser = new SQLParser("select ac from areacodes where state <> ny and ac = 212 or ac=315 or ac=917");
+         final Planner planner = new Planner(this.conn);
+         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+         plan.execute();
+         Assert.assertEquals("Test the result size.", 0, plan.getValues().size());
+    }
+    
 }
