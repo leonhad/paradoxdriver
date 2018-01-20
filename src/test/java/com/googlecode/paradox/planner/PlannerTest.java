@@ -178,4 +178,21 @@ public class PlannerTest {
         final Planner planner = new Planner(this.conn);
         planner.create(node);
     }
+    
+    /**
+     * Test for SELECT plan with where equals clause.
+     *
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testSelectWhereEquals() throws SQLException {
+    	 final SQLParser parser = new SQLParser("select ac from areacodes where state = mb");
+         final Planner planner = new Planner(this.conn);
+         final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+         plan.execute();
+         Assert.assertEquals("Test the result size.", 1, plan.getValues().size());
+         Assert.assertEquals("Test the result value.", "204", plan.getValues().get(0).get(0).getValue());
+    }
+    
 }
