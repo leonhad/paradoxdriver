@@ -15,6 +15,8 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
+import com.googlecode.paradox.parser.nodes.conditional.ORNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
@@ -173,7 +175,7 @@ public final class SelectPlan implements Plan {
 	private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) throws SQLException {
 		for (int j = 0; j < tableData.size(); j++) {
 			List<FieldValue> resultRow;
-			if (conditions.size() == 0) {
+			if (conditions.size() == 0) {	//no conditions to verify
 				if (j == this.values.size()) {
 					resultRow = new ArrayList<>();
 					this.values.add(resultRow);
@@ -182,24 +184,58 @@ public final class SelectPlan implements Plan {
 				}
 
 				resultRow.add(tableData.get(j).get(fieldOrder));
-			} else {
-				for (int i = 0; i < conditions.size(); i++) {
-					if (conditions.get(i) instanceof EqualsNode) { //reminder: maybe a visitor pattern it's a better fitting here
-						EqualsNode condition = (EqualsNode) conditions.get(i);
-						int fieldNumOrder = findField(condition.getFirst().toString()).getOrderNum()-1;
-						FieldValue column = tableData.get(j).get(fieldNumOrder);
-						if (condition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
-								&& condition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) {
-							resultRow = new ArrayList<>();
-							this.values.add(resultRow);
-							
-							resultRow.add(tableData.get(j).get(fieldOrder));
-						}
-					}// end if equalsNode
-				} // end for conditions
+			} else {						//verify conditions
+										
+				if (checkConditions((conditions.size()-1), tableData.get(j))) {
+					resultRow = new ArrayList<>();
+					this.values.add(resultRow);
+											
+					resultRow.add(tableData.get(j).get(fieldOrder));
+				}
+				
 			} // end else conditions
 
+		}//end for tableData
+	}
+	
+    /**
+     * Check the conditions by concatenating and evaluating the comparison nodes.
+	 * 
+	 * @param numCondition
+	 *            quantity of conditions to be verified.
+	 * @param listField
+	 *            list of fields.
+	 * @throws SQLException 
+	 */
+	private boolean checkConditions(int numCondition, List<FieldValue> listField) throws SQLException {
+		if (numCondition == 0) return evaluateCondition(conditions.get(numCondition),listField);
+		else if(conditions.get(numCondition-1) instanceof ANDNode) 
+			return evaluateCondition(conditions.get(numCondition),listField) && checkConditions(numCondition-2,listField);
+		else if(conditions.get(numCondition-1) instanceof ORNode) 
+			return evaluateCondition(conditions.get(numCondition),listField) || checkConditions(numCondition-2,listField);
+		else return false;
+	}
+	
+    /**
+     * Evaluate the conditions.
+	 *
+	 * @param condition
+	 *            the condition to be evaluated.
+	 * @param listField
+	 *            list of fields.
+	 * @throws SQLException 
+	 */
+	private boolean evaluateCondition(SQLNode condition, List<FieldValue> listField) throws SQLException {
+		if(condition instanceof EqualsNode) {
+			EqualsNode equalsCondition = (EqualsNode) condition;
+			int fieldNumOrder = findField(equalsCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (equalsCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&& equalsCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
+				return true;
+			else return false;
 		}
+		return false;
 	}
     
     /**

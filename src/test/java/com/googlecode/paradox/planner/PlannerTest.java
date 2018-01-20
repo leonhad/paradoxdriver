@@ -187,12 +187,14 @@ public class PlannerTest {
      */
     @Test
     public void testSelectWhereEquals() throws SQLException {
-    	 final SQLParser parser = new SQLParser("select ac from areacodes where state = mb");
+    	 final SQLParser parser = new SQLParser("select ac from areacodes where state = ny and ac = 212 or ac=315 or ac=917");
          final Planner planner = new Planner(this.conn);
          final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
          plan.execute();
-         Assert.assertEquals("Test the result size.", 1, plan.getValues().size());
-         Assert.assertEquals("Test the result value.", "204", plan.getValues().get(0).get(0).getValue());
+         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
+         Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0).get(0).getValue());
+         Assert.assertEquals("Test the result value.", "315", plan.getValues().get(1).get(0).getValue());
+         Assert.assertEquals("Test the result value.", "917", plan.getValues().get(2).get(0).getValue());
     }
     
 }
