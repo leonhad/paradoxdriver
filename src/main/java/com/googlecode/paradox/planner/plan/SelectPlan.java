@@ -176,6 +176,10 @@ public final class SelectPlan implements Plan {
 	 * @throws SQLException 
 	 */
 	private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) throws SQLException {
+		int placeholder = 0;
+		boolean addingAtt = false;
+		if(this.values.size() != 0) addingAtt = true; 
+		
 		for (int j = 0; j < tableData.size(); j++) {
 			List<FieldValue> resultRow;
 			if (conditions.size() == 0) {	//no conditions to verify
@@ -184,17 +188,20 @@ public final class SelectPlan implements Plan {
 					this.values.add(resultRow);
 				} else {
 					resultRow = this.values.get(j);
+					System.out.println(this.values.get(j));
 				}
 
 				resultRow.add(tableData.get(j).get(fieldOrder));
 			} else {						//verify conditions
-										
 				if (checkConditions(0, tableData.get(j))) {
-					resultRow = new ArrayList<>();
-					this.values.add(resultRow);
-											
-					resultRow.add(tableData.get(j).get(fieldOrder));
-				}
+						resultRow = new ArrayList<>();
+						if(addingAtt)
+							resultRow = this.values.get(placeholder++);
+						else
+							this.values.add(resultRow);
+						resultRow.add(tableData.get(j).get(fieldOrder));											
+					}
+				
 				
 			} // end else conditions
 
