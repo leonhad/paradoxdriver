@@ -240,5 +240,22 @@ public class PlannerTest {
          plan.execute();
          Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
     }
+    /**
+     * Test for SELECT plan with where clause and multiples columns.
+     *
+     * @throws SQLException
+     *             in case of errors.
+     */
+    @Test
+    public void testSelectWhereMultipleColumns() throws SQLException {
+    	final SQLParser parser = new SQLParser("select * from areacodes where state = ny and ac < 320");
+        final Planner planner = new Planner(this.conn);
+        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+        plan.execute();
+        Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
+        Assert.assertEquals("Field expected", "AC", plan.getValues().get(0).get(0).getField().getName());
+        Assert.assertEquals("Field expected", "State", plan.getValues().get(0).get(1).getField().getName());
+        Assert.assertEquals("Field expected", "Cities", plan.getValues().get(0).get(2).getField().getName());
+    }
     
 }
