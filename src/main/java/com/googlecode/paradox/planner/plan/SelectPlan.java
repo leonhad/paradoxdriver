@@ -188,7 +188,6 @@ public final class SelectPlan implements Plan {
 					this.values.add(resultRow);
 				} else {
 					resultRow = this.values.get(j);
-					System.out.println(this.values.get(j));
 				}
 
 				resultRow.add(tableData.get(j).get(fieldOrder));
