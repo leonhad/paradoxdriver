@@ -16,6 +16,7 @@ import com.googlecode.paradox.data.field.LongField;
 import com.googlecode.paradox.data.field.MemoField;
 import com.googlecode.paradox.data.field.NumberField;
 import com.googlecode.paradox.data.field.TimeField;
+import com.googlecode.paradox.data.field.TimestampField;
 import com.googlecode.paradox.data.field.VarcharField;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -50,6 +51,7 @@ public final class FieldFactory {
         FieldFactory.ALL_PARSES.add(new MemoField());
         FieldFactory.ALL_PARSES.add(new NumberField());
         FieldFactory.ALL_PARSES.add(new TimeField());
+        FieldFactory.ALL_PARSES.add(new TimestampField());
         FieldFactory.ALL_PARSES.add(new VarcharField());
     }
 
