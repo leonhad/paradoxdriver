@@ -705,8 +705,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T getObject(final int columnIndex, final Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
+        return (T)getObject(columnIndex);
     }
 
     /**
@@ -729,8 +729,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T getObject(final String columnLabel, final Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
+        return (T) getObject(columnLabel);
     }
 
     /**
