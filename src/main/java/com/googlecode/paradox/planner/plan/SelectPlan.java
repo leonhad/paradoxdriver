@@ -13,6 +13,13 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
+import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
+import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
+import com.googlecode.paradox.parser.nodes.conditional.ORNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
@@ -45,6 +52,11 @@ public final class SelectPlan implements Plan {
      */
     private final List<List<FieldValue>> values = new ArrayList<>();
     
+	/**
+	 * The conditions to filter values
+	 */
+	private List<SQLNode> conditions = new ArrayList<>();
+    
     /**
      * Creates a SELECT plan.
      *
@@ -53,6 +65,18 @@ public final class SelectPlan implements Plan {
      */
     public SelectPlan(final ParadoxConnection conn) {
     }
+    
+    /**
+     * Creates a SELECT plan with conditions.
+     *
+     * @param conn
+     *            the Paradox connection.
+     * @param conditions
+     * 				the conditions to filter results
+     */
+	public SelectPlan(final ParadoxConnection conn, List<SQLNode> conditions) {
+		this.conditions = conditions;
+	}
     
     /**
      * Add column from select list.
@@ -142,25 +166,112 @@ public final class SelectPlan implements Plan {
     }
     
     /**
-     * Fill the result row with a field order.
-     *
-     * @param tableData
-     *            the table data load from.
-     * @param fieldOrder
-     *            the field order.
-     */
-    private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) {
-        for (int j = 0; j < tableData.size(); j++) {
-            List<FieldValue> resultRow;
-            if (j == this.values.size()) {
-                resultRow = new ArrayList<>();
-                this.values.add(resultRow);
-            } else {
-                resultRow = this.values.get(j);
-            }
-            resultRow.add(tableData.get(j).get(fieldOrder));
-        }
-    }
+	 * Fill the result row with a field order and filters the result row by the
+	 * conditions.
+	 *
+	 * @param tableData
+	 *            the table data load from.
+	 * @param fieldOrder
+	 *            the field order.
+	 * @throws SQLException 
+	 */
+	private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) throws SQLException {
+		int placeholder = 0;
+		boolean addingAtt = false;
+		if(this.values.size() != 0) addingAtt = true; 
+		
+		for (int j = 0; j < tableData.size(); j++) {
+			List<FieldValue> resultRow;
+			if (conditions.size() == 0) {	//no conditions to verify
+				if (j == this.values.size()) {
+					resultRow = new ArrayList<>();
+					this.values.add(resultRow);
+				} else {
+					resultRow = this.values.get(j);
+				}
+
+				resultRow.add(tableData.get(j).get(fieldOrder));
+			} else {						//verify conditions
+				if (checkConditions(0, tableData.get(j))) {
+						resultRow = new ArrayList<>();
+						if(addingAtt)
+							resultRow = this.values.get(placeholder++);
+						else
+							this.values.add(resultRow);
+						resultRow.add(tableData.get(j).get(fieldOrder));											
+					}
+				
+				
+			} // end else conditions
+
+		}//end for tableData
+	}
+	
+    /**
+     * Check the conditions by concatenating and evaluating the comparison nodes.
+	 * 
+	 * @param numCondition
+	 *            quantity of conditions to be verified.
+	 * @param listField
+	 *            list of fields.
+	 * @throws SQLException 
+	 */
+	private boolean checkConditions(int numCondition, List<FieldValue> listField) throws SQLException {
+		if (numCondition == conditions.size()-1) return evaluateCondition(conditions.get(numCondition),listField);
+		else if(conditions.get(numCondition+1) instanceof ANDNode) 
+			return evaluateCondition(conditions.get(numCondition),listField) && checkConditions(numCondition+2,listField);
+		else if(conditions.get(numCondition+1) instanceof ORNode) 
+			return evaluateCondition(conditions.get(numCondition),listField) || checkConditions(numCondition+2,listField);
+		else return false;
+	}
+	
+    /**
+     * Evaluate the conditions.
+	 *
+	 * @param condition
+	 *            the condition to be evaluated.
+	 * @param listField
+	 *            list of fields.
+	 * @throws SQLException 
+	 */
+	private boolean evaluateCondition(SQLNode condition, List<FieldValue> listField) throws SQLException {
+		if(condition instanceof EqualsNode) {
+			EqualsNode nodeCondition = (EqualsNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&& nodeCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
+				return true;
+			else return false;
+			
+		}else if(condition instanceof NotEqualsNode) {
+			NotEqualsNode nodeCondition = (NotEqualsNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&& !nodeCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
+				return true;
+			else return false;
+		}else if(condition instanceof GreaterThanNode) {
+			GreaterThanNode nodeCondition = (GreaterThanNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&&  Double.parseDouble(column.getValue().toString()) > Double.parseDouble(nodeCondition.getLast().toString())) 
+				return true;
+			else return false;
+		}else if(condition instanceof LessThanNode) {
+			LessThanNode nodeCondition = (LessThanNode) condition;
+			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
+			FieldValue column = listField.get(fieldNumOrder);
+			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
+					&&  Double.parseDouble(column.getValue().toString()) < Double.parseDouble(nodeCondition.getLast().toString())) 
+				return true;
+			else return false;
+		}
+		
+		return false;
+	}
     
     /**
      * Finds a single column in the table list.
