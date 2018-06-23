@@ -901,15 +901,22 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Timestamp getTimestamp(final int columnIndex) {
-        return null;
+    public Timestamp getTimestamp(final int columnIndex) throws SQLException {
+        this.verifyRow();
+
+        final List<FieldValue> row = this.values.get(this.position);
+        if (columnIndex > row.size()) {
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+        }
+        this.lastValue = row.get(columnIndex - 1);
+        return this.lastValue.getTimestamp();
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public Timestamp getTimestamp(final int columnIndex, final Calendar cal) {
+    public Timestamp getTimestamp(final int columnIndex, final Calendar cal) throws SQLException {
         return this.getTimestamp(columnIndex);
     }
 
