@@ -9,32 +9,37 @@
 package com.googlecode.paradox.data.table.value;
 
 import com.googlecode.paradox.metadata.BlobTable;
+import com.googlecode.paradox.rowset.ParadoxClob;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
 
 /**
  * Describe a CLOB file.
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
+ * @author Michael Berry
  * @version 1.1
  * @since 1.2
  */
 public final class ClobDescriptor extends BlobDescriptor {
-    
+
     /**
      * The clob leader.
      */
     private String leader;
-    
+
     /**
      * Creates a new instance.
      *
-     * @param file
-     *            blob file reference.
+     * @param file blob file reference.
      */
     public ClobDescriptor(final BlobTable file) {
         super(file);
     }
-    
+
     /**
      * Gets the clob leader.
      *
@@ -43,7 +48,7 @@ public final class ClobDescriptor extends BlobDescriptor {
     public String getLeader() {
         return this.leader;
     }
-    
+
     /**
      * Sets the clob leader.
      *
@@ -52,5 +57,25 @@ public final class ClobDescriptor extends BlobDescriptor {
      */
     public void setLeader(final String leader) {
         this.leader = leader;
+    }
+
+    @Override
+    public String toString() {
+        ParadoxClob clob = new ParadoxClob(this);
+        
+        try (InputStream is = clob.getAsciiStream()) {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            int nRead;
+            byte[] data = new byte[1024];
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            byte[] byteArray = buffer.toByteArray();
+            return new String(byteArray);
+        } catch (SQLException | IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }
