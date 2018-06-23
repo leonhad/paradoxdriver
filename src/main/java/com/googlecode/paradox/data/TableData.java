@@ -175,7 +175,7 @@ public final class TableData extends AbstractParadoxData {
         final ParadoxTable table = new ParadoxTable(file, file.getName());
         ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-
+        
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();

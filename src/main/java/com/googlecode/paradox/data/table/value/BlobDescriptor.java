@@ -18,7 +18,7 @@ import com.googlecode.paradox.metadata.BlobTable;
  * @version 1.1
  * @since 1.2
  */
-class BlobDescriptor {
+public class BlobDescriptor {
     
     /**
      * The blob table.
@@ -31,12 +31,17 @@ class BlobDescriptor {
     private long offset;
     
     /**
+     * The blob leader.
+     */
+    private byte[] leader;
+    
+    /**
      * Creates a new instance.
      *
      * @param file
      *            the blob file reference.
      */
-    BlobDescriptor(final BlobTable file) {
+    public BlobDescriptor(final BlobTable file) {
         this.file = file;
     }
     
@@ -66,5 +71,24 @@ class BlobDescriptor {
      */
     public final void setOffset(final long offset) {
         this.offset = offset;
+    }
+    
+    /**
+     * Gets the clob leader.
+     *
+     * @return the clob leader.
+     */
+    public byte[] getLeader() {
+        return this.leader;
+    }
+
+    /**
+     * Sets the clob leader.
+     *
+     * @param leader
+     *            the clob leader.
+     */
+    public void setLeader(final byte[] leader) {
+        this.leader = leader;
     }
 }

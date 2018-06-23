@@ -844,7 +844,11 @@ public final class ParadoxResultSet implements ResultSet {
         }
         this.lastValue = row.get(columnIndex - 1);
         if ((this.lastValue != null) && (this.lastValue.getValue() != null)) {
-            return this.lastValue.getValue().toString();
+            if (this.lastValue.getValue() instanceof ClobDescriptor) { //Special case
+                return ((ClobDescriptor)(this.lastValue.getValue())).getClobString();
+            } else {
+                return this.lastValue.getValue().toString();
+            }
         }
 
         return null;

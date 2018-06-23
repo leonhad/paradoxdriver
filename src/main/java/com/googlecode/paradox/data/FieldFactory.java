@@ -9,6 +9,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.data.field.AutoIncrementField;
+import com.googlecode.paradox.data.field.BlobField;
 import com.googlecode.paradox.data.field.BooleanField;
 import com.googlecode.paradox.data.field.DateField;
 import com.googlecode.paradox.data.field.IntegerField;
@@ -45,6 +46,7 @@ public final class FieldFactory {
     static {
         FieldFactory.ALL_PARSES.add(new AutoIncrementField());
         FieldFactory.ALL_PARSES.add(new BooleanField());
+        FieldFactory.ALL_PARSES.add(new BlobField());
         FieldFactory.ALL_PARSES.add(new DateField());
         FieldFactory.ALL_PARSES.add(new IntegerField());
         FieldFactory.ALL_PARSES.add(new LongField());
