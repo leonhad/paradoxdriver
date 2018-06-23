@@ -13,6 +13,7 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import java.nio.ByteBuffer;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
 
@@ -48,6 +49,6 @@ public final class TimestampField implements FieldParser {
 
         Date date = new Date();
         date.setTime(value - MILLIS_UNTIL_1970);
-        return new FieldValue(date, Types.TIMESTAMP);
+        return new FieldValue(new Timestamp(date.getTime()), Types.TIMESTAMP);
     }
 }
