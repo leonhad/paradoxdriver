@@ -358,7 +358,6 @@ public final class SelectPlan implements Plan {
         final List<List<FieldValue>> tableData = TableData.loadData(table, table.getFields());
         // search column index
         if ((field.getOrderNum() > table.getFields().size()) || (field.getOrderNum() < 1)) {
-            System.out.println(column.getName() + " " + field.getOrderNum() + " " + tableData.size());
             throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
         }
         

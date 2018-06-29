@@ -42,5 +42,5 @@ public interface IBlockCache {
      *            the CLOB offset.
      * @return the block in cache.
      */
-    ClobBlock get(int num, int offset);
+    ClobBlock get(BlockOffset offset);
 }

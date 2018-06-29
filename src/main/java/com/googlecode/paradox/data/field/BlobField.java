@@ -9,25 +9,25 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.table.value.BlobDescriptor;
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import java.sql.Types;
 
 /**
- * Parses memo fields.
+ * Parses blob fields.
  *
  * @author Leonardo Alves da Costa
+ * @author Michael Berry
  * @version 1.0
  * @since 1.3
  */
-public final class MemoField extends LobField {
+public final class BlobField extends LobField {
     
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == 0xC;
+        return type == 0xD;
     }
     
     /**
@@ -35,15 +35,15 @@ public final class MemoField extends LobField {
      */
     @Override
     public BlobDescriptor getDescriptor(final ParadoxTable table) {
-        return new ClobDescriptor(table.getBlobTable(), table.getCharset());
+        return new BlobDescriptor(table.getBlobTable());
     }
-
+    
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getFieldType() {
-        return Types.CLOB;
+        return Types.BLOB;
     }
     
 }

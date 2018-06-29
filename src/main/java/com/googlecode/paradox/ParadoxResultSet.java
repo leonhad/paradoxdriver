@@ -705,8 +705,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T getObject(final int columnIndex, final Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
+        return (T)getObject(columnIndex);
     }
 
     /**
@@ -729,8 +729,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T getObject(final String columnLabel, final Class<T> type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
+        return (T) getObject(columnLabel);
     }
 
     /**
@@ -844,7 +844,11 @@ public final class ParadoxResultSet implements ResultSet {
         }
         this.lastValue = row.get(columnIndex - 1);
         if ((this.lastValue != null) && (this.lastValue.getValue() != null)) {
-            return this.lastValue.getValue().toString();
+            if (this.lastValue.getValue() instanceof ClobDescriptor) { //Special case
+                return ((ClobDescriptor)(this.lastValue.getValue())).getClobString();
+            } else {
+                return this.lastValue.getValue().toString();
+            }
         }
 
         return null;
@@ -901,15 +905,22 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Timestamp getTimestamp(final int columnIndex) {
-        return null;
+    public Timestamp getTimestamp(final int columnIndex) throws SQLException {
+        this.verifyRow();
+
+        final List<FieldValue> row = this.values.get(this.position);
+        if (columnIndex > row.size()) {
+            throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
+        }
+        this.lastValue = row.get(columnIndex - 1);
+        return this.lastValue.getTimestamp();
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public Timestamp getTimestamp(final int columnIndex, final Calendar cal) {
+    public Timestamp getTimestamp(final int columnIndex, final Calendar cal) throws SQLException {
         return this.getTimestamp(columnIndex);
     }
 

@@ -24,7 +24,7 @@ public final class AllBlockCache implements IBlockCache {
     /**
      * The cache instance.
      */
-    private final Map<Integer, Map<Integer, ClobBlock>> cache;
+    private final Map<BlockOffset, ClobBlock> cache;
     
     /**
      * Create a new cache.
@@ -41,15 +41,8 @@ public final class AllBlockCache implements IBlockCache {
      */
     @Override
     public void add(final List<ClobBlock> blocks) {
-        Map<Integer, ClobBlock> map;
         for (final ClobBlock block : blocks) {
-            if (this.cache.containsKey(block.getNum())) {
-                map = this.cache.get(block.getNum());
-            } else {
-                map = new ConcurrentHashMap<>();
-                this.cache.put(block.getNum(), map);
-            }
-            map.put(block.getOffset(), block);
+            cache.put(block.getOffset(), block);
         }
     }
     
@@ -58,9 +51,6 @@ public final class AllBlockCache implements IBlockCache {
      */
     @Override
     public void close() {
-        for (final Map<Integer, ClobBlock> map : this.cache.values()) {
-            map.clear();
-        }
         this.cache.clear();
     }
     
@@ -73,11 +63,7 @@ public final class AllBlockCache implements IBlockCache {
      *            the block offset.
      */
     @Override
-    public ClobBlock get(final int num, final int offset) {
-        final Map<Integer, ClobBlock> map = this.cache.get(num);
-        if (map != null) {
-            return map.get(offset);
-        }
-        return null;
+    public ClobBlock get(final BlockOffset offset) {
+        return cache.get(offset);
     }
 }

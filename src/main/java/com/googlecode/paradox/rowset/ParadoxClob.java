@@ -10,12 +10,14 @@ package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.BlobTable;
+import com.googlecode.paradox.utils.Utils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -36,27 +38,27 @@ public final class ParadoxClob implements Clob {
     private static final Charset DEFAULT_CHARSET = Charset.forName("cp1251");
     
     /**
-     * The blob table.
+     * The clob table.
      */
     private BlobTable blob;
     
     /**
-     * The blob length.
+     * The clob length.
      */
     private long length;
     
     /**
-     * The blob offset.
+     * The clob offset.
      */
     private long offset;
     
     /**
-     * If this blob is already parsed.
+     * If this clob is already parsed.
      */
     private boolean parsed;
     
     /**
-     * The blob data.
+     * The clob data.
      */
     private byte[] value;
     
@@ -71,7 +73,7 @@ public final class ParadoxClob implements Clob {
         // If MB_Offset = 0 then the entire blob is contained in the leader.
         if (descriptor.getOffset() == 0) {
             if (descriptor.getLeader() != null) {
-                this.value = descriptor.getLeader().getBytes(ParadoxClob.DEFAULT_CHARSET);
+                this.value = descriptor.getLeaderAsStr().getBytes();
                 this.length = this.value.length;
             }
             this.parsed = true;

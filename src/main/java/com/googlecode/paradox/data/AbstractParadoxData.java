@@ -30,7 +30,11 @@ public abstract class AbstractParadoxData {
         if (index.getVersionId() > AbstractParadoxData.MINIMIUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
-            index.setCharset(Charset.forName("cp" + buffer.getShort()));
+            int cp = buffer.getShort();
+            if(cp==0x1B5) { //437 is actually interpreted as CP1252.
+                cp = 0x4E4;
+            }
+            index.setCharset(Charset.forName("cp" + cp));
 
             buffer.position(0x78);
         } else {

@@ -9,6 +9,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.data.field.AutoIncrementField;
+import com.googlecode.paradox.data.field.BlobField;
 import com.googlecode.paradox.data.field.BooleanField;
 import com.googlecode.paradox.data.field.DateField;
 import com.googlecode.paradox.data.field.IntegerField;
@@ -16,6 +17,7 @@ import com.googlecode.paradox.data.field.LongField;
 import com.googlecode.paradox.data.field.MemoField;
 import com.googlecode.paradox.data.field.NumberField;
 import com.googlecode.paradox.data.field.TimeField;
+import com.googlecode.paradox.data.field.TimestampField;
 import com.googlecode.paradox.data.field.VarcharField;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -44,12 +46,14 @@ public final class FieldFactory {
     static {
         FieldFactory.ALL_PARSES.add(new AutoIncrementField());
         FieldFactory.ALL_PARSES.add(new BooleanField());
+        FieldFactory.ALL_PARSES.add(new BlobField());
         FieldFactory.ALL_PARSES.add(new DateField());
         FieldFactory.ALL_PARSES.add(new IntegerField());
         FieldFactory.ALL_PARSES.add(new LongField());
         FieldFactory.ALL_PARSES.add(new MemoField());
         FieldFactory.ALL_PARSES.add(new NumberField());
         FieldFactory.ALL_PARSES.add(new TimeField());
+        FieldFactory.ALL_PARSES.add(new TimestampField());
         FieldFactory.ALL_PARSES.add(new VarcharField());
     }
 

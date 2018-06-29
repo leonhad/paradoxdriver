@@ -18,6 +18,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -88,8 +89,13 @@ public class ParadoxClobTest {
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
             
             final BufferedReader reader = new BufferedReader(new InputStreamReader(clob.getAsciiStream()));
+            String line = reader.readLine();
+            
+            System.out.println(Arrays.toString("Small comment (less 100 symbols)".toCharArray()));
+            System.out.println(Arrays.toString(line.toCharArray()));
+            
             Assert.assertEquals("Testing for input stream value.", "Small comment (less 100 symbols)",
-                    reader.readLine());
+                    line);
         }
     }
     
