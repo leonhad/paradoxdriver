@@ -10,14 +10,13 @@ package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.BlobTable;
-import com.googlecode.paradox.utils.Utils;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -31,42 +30,41 @@ import java.sql.SQLException;
  * @since 1.2
  */
 public final class ParadoxClob implements Clob {
-    
+
     /**
      * The default clob charset.
      */
     private static final Charset DEFAULT_CHARSET = Charset.forName("cp1251");
-    
+
     /**
      * The clob table.
      */
     private BlobTable blob;
-    
+
     /**
      * The clob length.
      */
     private long length;
-    
+
     /**
      * The clob offset.
      */
     private long offset;
-    
+
     /**
      * If this clob is already parsed.
      */
     private boolean parsed;
-    
+
     /**
      * The clob data.
      */
     private byte[] value;
-    
+
     /**
      * Create a new instance.
      *
-     * @param descriptor
-     *            the blob descriptor.
+     * @param descriptor the blob descriptor.
      */
     public ParadoxClob(final ClobDescriptor descriptor) {
         this.offset = -1;
@@ -82,7 +80,7 @@ public final class ParadoxClob implements Clob {
             this.blob = descriptor.getFile();
         }
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -92,7 +90,7 @@ public final class ParadoxClob implements Clob {
             this.blob.close();
         }
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -102,7 +100,7 @@ public final class ParadoxClob implements Clob {
         this.isValid();
         return new ByteArrayInputStream(this.value);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -112,7 +110,7 @@ public final class ParadoxClob implements Clob {
         this.isValid();
         return new InputStreamReader(new ByteArrayInputStream(this.value), ParadoxClob.DEFAULT_CHARSET);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -130,7 +128,7 @@ public final class ParadoxClob implements Clob {
         return new InputStreamReader(new ByteArrayInputStream(this.value, (int) pos - 1, (int) length),
                 ParadoxClob.DEFAULT_CHARSET);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -147,7 +145,7 @@ public final class ParadoxClob implements Clob {
         }
         return new String(this.value, (int) pos - 1, length, ParadoxClob.DEFAULT_CHARSET);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -157,7 +155,7 @@ public final class ParadoxClob implements Clob {
         this.isValid();
         return this.length;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -165,7 +163,7 @@ public final class ParadoxClob implements Clob {
     public long position(final Clob search, final long start) {
         return 0;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -173,7 +171,7 @@ public final class ParadoxClob implements Clob {
     public long position(final String search, final long start) {
         return 0;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -181,7 +179,7 @@ public final class ParadoxClob implements Clob {
     public OutputStream setAsciiStream(final long pos) {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -189,7 +187,7 @@ public final class ParadoxClob implements Clob {
     public Writer setCharacterStream(final long pos) {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -197,7 +195,7 @@ public final class ParadoxClob implements Clob {
     public int setString(final long pos, final String str) {
         return 0;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -205,7 +203,7 @@ public final class ParadoxClob implements Clob {
     public int setString(final long pos, final String str, final int offset, final int len) {
         return 0;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -217,30 +215,28 @@ public final class ParadoxClob implements Clob {
             throw new SQLException("Length more than what can be truncated");
         }
         if (length == 0) {
-            this.value = new byte[] {};
+            this.value = new byte[]{};
         } else {
             this.value = this.getSubString(1, (int) length).getBytes(ParadoxClob.DEFAULT_CHARSET);
         }
         this.length = this.value.length;
     }
-    
+
     /**
      * Check for the blob validate.
      *
-     * @throws SQLException
-     *             in case of invalid descriptor.
+     * @throws SQLException in case of invalid descriptor.
      */
     private void isValid() throws SQLException {
         if (!this.parsed && (this.blob == null)) {
             throw new SQLException("Invalid CLOB descriptor.");
         }
     }
-    
+
     /**
      * Parse the blob.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     private void parse() throws SQLException {
         if (!this.parsed) {

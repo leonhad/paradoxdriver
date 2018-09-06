@@ -52,10 +52,7 @@ public class BlockOffset {
         if (this.mainBlockOffset != other.mainBlockOffset) {
             return false;
         }
-        if (this.subBlockOffset != other.subBlockOffset) {
-            return false;
-        }
-        return true;
+        return this.subBlockOffset == other.subBlockOffset;
     }
 
     @Override
