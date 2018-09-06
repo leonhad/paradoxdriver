@@ -268,6 +268,7 @@ public final class ParadoxResultSet implements ResultSet {
      *
      * @deprecated this method is only used for JDBC compatibility.
      */
+    @SuppressWarnings("squid:S1133")
     @Deprecated
     @Override
     public BigDecimal getBigDecimal(final int columnIndex, final int scale) throws SQLException {
@@ -290,6 +291,7 @@ public final class ParadoxResultSet implements ResultSet {
      *
      * @deprecated this method is only used for JDBC compatibility.
      */
+    @SuppressWarnings("squid:S1133")
     @Deprecated
     @Override
     public BigDecimal getBigDecimal(final String columnLabel, final int scale) throws SQLException {
@@ -953,6 +955,7 @@ public final class ParadoxResultSet implements ResultSet {
      *
      * @deprecated this method is only used for JDBC compatibility.
      */
+    @SuppressWarnings("squid:S1133")
     @Deprecated
     @Override
     public InputStream getUnicodeStream(final int columnIndex) {
@@ -964,6 +967,7 @@ public final class ParadoxResultSet implements ResultSet {
      *
      * @deprecated this method is only used for JDBC compatibility.
      */
+    @SuppressWarnings("squid:S1133")
     @Deprecated
     @Override
     public InputStream getUnicodeStream(final String columnLabel) throws SQLException {

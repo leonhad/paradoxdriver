@@ -8,7 +8,6 @@
  */
 package com.googlecode.paradox.planner.plan;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -23,6 +22,7 @@ import com.googlecode.paradox.parser.nodes.conditional.ORNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,55 +36,48 @@ import java.util.List;
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
-    
+
     /**
      * The columns in this plan.
      */
     private final List<Column> columns = new ArrayList<>();
-    
+
     /**
      * The tables in this plan.
      */
     private final List<PlanTableNode> tables = new ArrayList<>();
-    
+
     /**
      * The data values.
      */
     private final List<List<FieldValue>> values = new ArrayList<>();
-    
-	/**
-	 * The conditions to filter values
-	 */
-	private List<SQLNode> conditions = new ArrayList<>();
-    
+
     /**
-     * Creates a SELECT plan.
-     *
-     * @param conn
-     *            the Paradox connection.
+     * The conditions to filter values
      */
-    public SelectPlan(final ParadoxConnection conn) {
+    private final List<SQLNode> conditions;
+
+    /**
+     * Creates a new instance.
+     */
+    SelectPlan() {
+        this(Collections.<SQLNode>emptyList());
     }
-    
+
     /**
      * Creates a SELECT plan with conditions.
      *
-     * @param conn
-     *            the Paradox connection.
-     * @param conditions
-     * 				the conditions to filter results
+     * @param conditions the conditions to filter results
      */
-	public SelectPlan(final ParadoxConnection conn, List<SQLNode> conditions) {
-		this.conditions = conditions;
-	}
-    
+    public SelectPlan(List<SQLNode> conditions) {
+        this.conditions = conditions;
+    }
+
     /**
      * Add column from select list.
      *
-     * @param name
-     *            column name.
-     * @throws SQLException
-     *             search column exception.
+     * @param name column name.
+     * @throws SQLException search column exception.
      */
     public void addColumn(final String name) throws SQLException {
         final ParadoxField field = this.findField(name);
@@ -94,31 +87,28 @@ public final class SelectPlan implements Plan {
         }
         this.columns.add(field.getColumn());
     }
-    
+
     /**
      * Associate all columns from a table.
      *
-     * @param table
-     *            the table to scan.
-     * @throws SQLException
-     *             in case of wrong SQL type.
+     * @param table the table to scan.
+     * @throws SQLException in case of wrong SQL type.
      */
     public void addColumnFromTable(final ParadoxTable table) throws SQLException {
         for (final ParadoxField field : table.getFields()) {
             this.columns.add(field.getColumn());
         }
     }
-    
+
     /**
      * Adds a table to this plan.
      *
-     * @param table
-     *            the table.
+     * @param table the table.
      */
     public void addTable(final PlanTableNode table) {
         this.tables.add(table);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -127,7 +117,7 @@ public final class SelectPlan implements Plan {
         if (this.columns.isEmpty() || this.tables.isEmpty()) {
             return;
         }
-        
+
         for (final Column column : this.columns) {
             for (final PlanTableNode table : this.tables) {
                 final ParadoxTable pTable = table.getTable();
@@ -137,7 +127,7 @@ public final class SelectPlan implements Plan {
             }
         }
     }
-    
+
     /**
      * Gets the columns in SELECT statement.
      *
@@ -146,7 +136,7 @@ public final class SelectPlan implements Plan {
     public List<Column> getColumns() {
         return Collections.unmodifiableList(this.columns);
     }
-    
+
     /**
      * Gets the tables in this plan.
      *
@@ -155,7 +145,7 @@ public final class SelectPlan implements Plan {
     public List<PlanTableNode> getTables() {
         return Collections.unmodifiableList(this.tables);
     }
-    
+
     /**
      * Values from tables in column order.
      *
@@ -164,138 +154,127 @@ public final class SelectPlan implements Plan {
     public List<List<FieldValue>> getValues() {
         return Collections.unmodifiableList(this.values);
     }
-    
+
     /**
-	 * Fill the result row with a field order and filters the result row by the
-	 * conditions.
-	 *
-	 * @param tableData
-	 *            the table data load from.
-	 * @param fieldOrder
-	 *            the field order.
-	 * @throws SQLException 
-	 */
-	private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) throws SQLException {
-		int placeholder = 0;
-		boolean addingAtt = false;
-		if(this.values.size() != 0) addingAtt = true; 
-		
-		for (int j = 0; j < tableData.size(); j++) {
-			List<FieldValue> resultRow;
-			if (conditions.size() == 0) {	//no conditions to verify
-				if (j == this.values.size()) {
-					resultRow = new ArrayList<>();
-					this.values.add(resultRow);
-				} else {
-					resultRow = this.values.get(j);
-				}
+     * Fill the result row with a field order and filters the result row by the
+     * conditions.
+     *
+     * @param tableData  the table data load from.
+     * @param fieldOrder the field order.
+     * @throws SQLException in case of errors.
+     */
+    private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) throws SQLException {
+        int placeholder = 0;
+        boolean addingAtt = false;
+        if (!this.values.isEmpty()) {
+            addingAtt = true;
+        }
 
-				resultRow.add(tableData.get(j).get(fieldOrder));
-			} else {						//verify conditions
-				if (checkConditions(0, tableData.get(j))) {
-						resultRow = new ArrayList<>();
-						if(addingAtt)
-							resultRow = this.values.get(placeholder++);
-						else
-							this.values.add(resultRow);
-						resultRow.add(tableData.get(j).get(fieldOrder));											
-					}
-				
-				
-			} // end else conditions
+        for (int j = 0; j < tableData.size(); j++) {
+            List<FieldValue> resultRow;
+            if (conditions.isEmpty()) {
+                if (j == this.values.size()) {
+                    resultRow = new ArrayList<>();
+                    this.values.add(resultRow);
+                } else {
+                    resultRow = this.values.get(j);
+                }
 
-		}//end for tableData
-	}
-	
+                resultRow.add(tableData.get(j).get(fieldOrder));
+            } else {
+                if (checkConditions(0, tableData.get(j))) {
+                    resultRow = new ArrayList<>();
+                    if (addingAtt)
+                        resultRow = this.values.get(placeholder++);
+                    else
+                        this.values.add(resultRow);
+                    resultRow.add(tableData.get(j).get(fieldOrder));
+                }
+            }
+        }
+    }
+
     /**
      * Check the conditions by concatenating and evaluating the comparison nodes.
-	 * 
-	 * @param numCondition
-	 *            quantity of conditions to be verified.
-	 * @param listField
-	 *            list of fields.
-	 * @throws SQLException 
-	 */
-	private boolean checkConditions(int numCondition, List<FieldValue> listField) throws SQLException {
-		if (numCondition == conditions.size()-1) return evaluateCondition(conditions.get(numCondition),listField);
-		else if(conditions.get(numCondition+1) instanceof ANDNode) 
-			return evaluateCondition(conditions.get(numCondition),listField) && checkConditions(numCondition+2,listField);
-		else if(conditions.get(numCondition+1) instanceof ORNode) 
-			return evaluateCondition(conditions.get(numCondition),listField) || checkConditions(numCondition+2,listField);
-		else return false;
-	}
-	
+     *
+     * @param numCondition quantity of conditions to be verified.
+     * @param listField    list of fields.
+     * @throws SQLException in case of errors.
+     */
+    private boolean checkConditions(int numCondition, List<FieldValue> listField) throws SQLException {
+        if (numCondition == conditions.size() - 1) {
+            return evaluateCondition(conditions.get(numCondition), listField);
+        } else if (conditions.get(numCondition + 1) instanceof ANDNode) {
+            return evaluateCondition(conditions.get(numCondition), listField) && checkConditions(numCondition + 2,
+                    listField);
+        } else if (conditions.get(numCondition + 1) instanceof ORNode) {
+            return evaluateCondition(conditions.get(numCondition), listField) || checkConditions(numCondition + 2,
+                    listField);
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Evaluate the conditions.
-	 *
-	 * @param condition
-	 *            the condition to be evaluated.
-	 * @param listField
-	 *            list of fields.
-	 * @throws SQLException 
-	 */
-	private boolean evaluateCondition(SQLNode condition, List<FieldValue> listField) throws SQLException {
-		if(condition instanceof EqualsNode) {
-			EqualsNode nodeCondition = (EqualsNode) condition;
-			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
-			FieldValue column = listField.get(fieldNumOrder);
-			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
-					&& nodeCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
-				return true;
-			else return false;
-			
-		}else if(condition instanceof NotEqualsNode) {
-			NotEqualsNode nodeCondition = (NotEqualsNode) condition;
-			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
-			FieldValue column = listField.get(fieldNumOrder);
-			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
-					&& !nodeCondition.getLast().toString().toUpperCase().equals(column.getValue().toString().toUpperCase())) 
-				return true;
-			else return false;
-		}else if(condition instanceof GreaterThanNode) {
-			GreaterThanNode nodeCondition = (GreaterThanNode) condition;
-			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
-			FieldValue column = listField.get(fieldNumOrder);
-			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
-					&&  Double.parseDouble(column.getValue().toString()) > Double.parseDouble(nodeCondition.getLast().toString())) 
-				return true;
-			else return false;
-		}else if(condition instanceof LessThanNode) {
-			LessThanNode nodeCondition = (LessThanNode) condition;
-			int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum()-1;
-			FieldValue column = listField.get(fieldNumOrder);
-			if (nodeCondition.getFirst().toString().toUpperCase().equals(column.getField().toString().toUpperCase())
-					&&  Double.parseDouble(column.getValue().toString()) < Double.parseDouble(nodeCondition.getLast().toString())) 
-				return true;
-			else return false;
-		}
-		
-		return false;
-	}
-    
+     *
+     * @param condition the condition to be evaluated.
+     * @param listField list of fields.
+     * @throws SQLException in case of erros.
+     */
+    private boolean evaluateCondition(SQLNode condition, List<FieldValue> listField) throws SQLException {
+        if (condition instanceof EqualsNode) {
+            EqualsNode nodeCondition = (EqualsNode) condition;
+            int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum() - 1;
+            FieldValue column = listField.get(fieldNumOrder);
+            return nodeCondition.getFirst().toString().equalsIgnoreCase(column.getField().toString())
+                    && nodeCondition.getLast().toString().equalsIgnoreCase(column.getValue().toString().toUpperCase());
+
+        } else if (condition instanceof NotEqualsNode) {
+            NotEqualsNode nodeCondition = (NotEqualsNode) condition;
+            int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum() - 1;
+            FieldValue column = listField.get(fieldNumOrder);
+            return nodeCondition.getFirst().toString().equalsIgnoreCase(column.getField().toString())
+                    && !nodeCondition.getLast().toString().equalsIgnoreCase(
+                    column.getValue().toString());
+        } else if (condition instanceof GreaterThanNode) {
+            GreaterThanNode nodeCondition = (GreaterThanNode) condition;
+            int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum() - 1;
+            FieldValue column = listField.get(fieldNumOrder);
+            return nodeCondition.getFirst().toString().equalsIgnoreCase(column.getField().toString())
+                    && Double.parseDouble(column.getValue().toString()) > Double.parseDouble(
+                    nodeCondition.getLast().toString());
+        } else if (condition instanceof LessThanNode) {
+            LessThanNode nodeCondition = (LessThanNode) condition;
+            int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum() - 1;
+            FieldValue column = listField.get(fieldNumOrder);
+            return nodeCondition.getFirst().toString().equalsIgnoreCase(column.getField().toString())
+                    && Double.parseDouble(column.getValue().toString()) < Double.parseDouble(
+                    nodeCondition.getLast().toString());
+        }
+
+        return false;
+    }
+
     /**
      * Finds a single column in the table list.
      *
-     * @param fieldName
-     *            the field name.
-     * @param fields
-     *            the field list.
-     * @param prefix
-     *            the field prefix.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @param fieldName the field name.
+     * @param fields    the field list.
+     * @param prefix    the field prefix.
+     * @throws SQLException in case of parse errors.
      */
     private void findColumn(final String fieldName, final List<ParadoxField> fields, final String prefix)
-            throws SQLException {
+    throws SQLException {
         for (final PlanTableNode table : this.tables) {
             if (table.getTable() == null) {
                 throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
             }
-            
+
             if ((prefix != null) && (table.getAlias() != null) && !prefix.equalsIgnoreCase(table.getAlias())) {
                 continue;
             }
-            
+
             for (final ParadoxField field : table.getTable().getFields()) {
                 if (field.getName().equalsIgnoreCase(fieldName)) {
                     fields.add(field);
@@ -305,15 +284,13 @@ public final class SelectPlan implements Plan {
             }
         }
     }
-    
+
     /**
      * Find a paradox field by its name.
      *
-     * @param name
-     *            the field name.
+     * @param name the field name.
      * @return the paradox field.
-     * @throws SQLException
-     *             in case of find errors.
+     * @throws SQLException in case of find errors.
      */
     private ParadoxField findField(final String name) throws SQLException {
         String newName = name;
@@ -324,7 +301,7 @@ public final class SelectPlan implements Plan {
             prefix = newName.substring(0, p);
             newName = newName.substring(p + 1);
         }
-        
+
         this.findColumn(newName, fields, prefix);
         if (!fields.isEmpty()) {
             if (fields.size() > 1) {
@@ -334,19 +311,16 @@ public final class SelectPlan implements Plan {
                 return fields.get(0);
             }
         }
-        
-        return null;
+
+        throw new SQLException(String.format("Field %s not found.", name));
     }
-    
+
     /**
      * Load the table data form a table.
      *
-     * @param column
-     *            the column to load.
-     * @param table
-     *            the table to load.
-     * @throws SQLException
-     *             in case of execution errors.
+     * @param column the column to load.
+     * @param table  the table to load.
+     * @throws SQLException in case of execution errors.
      */
     private void loadTableData(final Column column, final ParadoxTable table) throws SQLException {
         final ParadoxField field = table.findField(column.getName());
@@ -360,7 +334,7 @@ public final class SelectPlan implements Plan {
         if ((field.getOrderNum() > table.getFields().size()) || (field.getOrderNum() < 1)) {
             throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
         }
-        
+
         final int p = field.getOrderNum() - 1;
         this.fillResultValues(tableData, p);
     }

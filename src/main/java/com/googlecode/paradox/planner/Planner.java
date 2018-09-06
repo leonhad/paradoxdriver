@@ -107,7 +107,7 @@ public class Planner {
      *             in case of syntax error.
      */
     private Plan createSelect(final SelectNode statement) throws SQLException {
-        final SelectPlan plan = new SelectPlan(this.conn,statement.getConditions());
+        final SelectPlan plan = new SelectPlan(statement.getConditions());
         final List<ParadoxTable> paradoxTables = TableData.listTables(this.conn);
         
         // Load the table metadata.
