@@ -10,7 +10,15 @@ package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Clob;
 import java.sql.Driver;
@@ -18,13 +26,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 /**
  * Unit test for {@link ParadoxClob} class.
@@ -38,195 +39,181 @@ public class ParadoxClobTest {
      * The database connection.
      */
     private ParadoxConnection conn;
-    
+
     /**
      * Register the driver.
      *
-     * @throws ClassNotFoundException
-     *             in case of connection errors.
+     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Used to close the test connection.
      *
-     * @throws Exception
-     *             in case closing of errors.
+     * @throws SQLException in case closing of errors.
      */
     @After
-    public void closeConnection() throws Exception {
+    public void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to test database.
      *
-     * @throws Exception
-     *             in case of connection errors.
+     * @throws SQLException in case of connection errors.
      */
     @Before
-    public void connect() throws Exception {
+    public void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test for {@link Clob#getAsciiStream()} method.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testAsciiStream() throws Exception {
+    public void testAsciiStream() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             final BufferedReader reader = new BufferedReader(new InputStreamReader(clob.getAsciiStream()));
             String line = reader.readLine();
-            
-            System.out.println(Arrays.toString("Small comment (less 100 symbols)".toCharArray()));
-            System.out.println(Arrays.toString(line.toCharArray()));
-            
+
             Assert.assertEquals("Testing for input stream value.", "Small comment (less 100 symbols)",
                     line);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getCharacterStream()} method.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharacterStream() throws Exception {
+    public void testCharacterStream() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             final BufferedReader reader = new BufferedReader(clob.getCharacterStream());
             Assert.assertEquals("Testing for input stream value.", "Small comment (less 100 symbols)",
                     reader.readLine());
         }
     }
-    
+
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with high position.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testCharacterStreamWithHighPosition() throws Exception {
+    public void testCharacterStreamWithHighPosition() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getCharacterStream(100, 3);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with invalid length.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testCharacterStreamWithInvalidLength() throws Exception {
+    public void testCharacterStreamWithInvalidLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getCharacterStream(1, -1);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with long length.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testCharacterStreamWithLongLength() throws Exception {
+    public void testCharacterStreamWithLongLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getCharacterStream(1, 100);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} with low position.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testCharacterStreamWithLowPosition() throws Exception {
+    public void testCharacterStreamWithLowPosition() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getCharacterStream(0, 3);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getCharacterStream(long, long)} method.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharacterStreamWithParameters() throws Exception {
+    public void testCharacterStreamWithParameters() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             final BufferedReader reader = new BufferedReader(clob.getCharacterStream(1, 3));
             Assert.assertEquals("Testing for input stream value.", "Sma", reader.readLine());
         }
     }
-    
+
     /**
      * Test for {@link ResultSet#getClob(String)} method.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadBlob() throws Exception {
+    public void testReadBlob() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
             Assert.assertEquals("Fields are not equals.", rs.getClob(1), rs.getClob("comments"));
@@ -244,19 +231,18 @@ public class ParadoxClobTest {
             Assert.assertEquals("5 row: Small comment (415 symbols)", 426, rs.getClob("comments").length());
         }
     }
-    
+
     /**
      * Test for CLOB with cp1251 charset.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Ignore
     @Test
-    public void testReadBlob1251() throws Exception {
+    public void testReadBlob1251() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2")) {
-            
+             ResultSet rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2")) {
+
             Assert.assertTrue("Nation locale: record not exists", rs.next());
             final Clob c = rs.getClob("note");
             final String expected =
@@ -266,162 +252,154 @@ public class ParadoxClobTest {
                             + "Discovery and Integration (UDDI) версии 2.0 - стандарт Организации по развитию стандартов "
                             + "структурированной информации Organization for the Advancement of Structured Information "
                             + "Standards (OASIS) - спецификация носит обязательный характер;\r\n";
-            
+
             final String real = c.getSubString(1, (int) c.length());
             Assert.assertEquals("Testing for cp1251 text.", expected, real);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getSubString(long, int)} method.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testSubString() throws Exception {
+    public void testSubString() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             Assert.assertEquals("Testing for input stream value.", "Sma", clob.getSubString(1, 3));
         }
     }
-    
+
     /**
      * Test for {@link Clob#getSubString(long, int)} method with high length.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testSubStringWithHighLength() throws Exception {
+    public void testSubStringWithHighLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getSubString(1, 100);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getSubString(long, int)} method with high position.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testSubStringWithHighPos() throws Exception {
+    public void testSubStringWithHighPos() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getSubString(100, 3);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getSubString(long, int)} method with invalid length.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testSubStringWithInvalidLength() throws Exception {
+    public void testSubStringWithInvalidLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getSubString(1, -1);
         }
     }
-    
+
     /**
      * Test for {@link Clob#getSubString(long, int)} method with low position.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testSubStringWithLowPos() throws Exception {
+    public void testSubStringWithLowPos() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.getSubString(0, 3);
         }
     }
-    
+
     /**
      * Test for {@link Clob#truncate(long)} method.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testTruncate() throws Exception {
+    public void testTruncate() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.truncate(3);
             Assert.assertEquals("Testing for truncate.", 3, clob.length());
         }
     }
-    
+
     /**
      * Test for {@link Clob#truncate(long)} method with high value.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = SQLException.class)
-    public void testTruncateHighValue() throws Exception {
+    public void testTruncateHighValue() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             final long value = clob.length();
             clob.truncate(value + 100);
         }
     }
-    
+
     /**
      * Test for {@link Clob#truncate(long)} method with zero size.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testTruncateWithZeroSize() throws Exception {
+    public void testTruncateWithZeroSize() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
-            
+
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            
+
             clob.truncate(0);
             Assert.assertEquals("Testing for truncate.", 0, clob.length());
         }
