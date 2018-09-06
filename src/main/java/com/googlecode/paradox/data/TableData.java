@@ -15,6 +15,7 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,17 +40,15 @@ public final class TableData extends AbstractParadoxData {
      * Utility class.
      */
     private TableData() {
-        // Utility class.
+        super();
     }
 
     /**
      * List all database tables.
      *
-     * @param conn
-     *            the database connection.
+     * @param conn the database connection.
      * @return all {@link ParadoxTable}.
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     public static List<ParadoxTable> listTables(final ParadoxConnection conn) throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<>();
@@ -66,16 +65,13 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Gets all tables within a pattern.
      *
-     * @param conn
-     *            the database connection.
-     * @param pattern
-     *            the pattern.
+     * @param conn    the database connection.
+     * @param pattern the pattern.
      * @return the tables filtered.
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     public static List<ParadoxTable> listTables(final ParadoxConnection conn, final String pattern)
-            throws SQLException {
+    throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new TableFilter(Utils.removeDb(pattern)));
         if (fileList != null) {
@@ -90,16 +86,13 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Load the table data from file.
      *
-     * @param table
-     *            the table to read.
-     * @param fields
-     *            the fields to read.
+     * @param table  the table to read.
+     * @param fields the fields to read.
      * @return the row values.
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     public static List<List<FieldValue>> loadData(final ParadoxTable table, final Collection<ParadoxField> fields)
-            throws SQLException {
+    throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<>();
 
         final int blockSize = table.getBlockSizeBytes();
@@ -142,12 +135,9 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Fix the buffer position based on file version ID.
      *
-     * @param table
-     *            the Paradox table.
-     * @param buffer
-     *            the buffer to fix.
-     * @param fieldsSize
-     *            the field list.
+     * @param table      the Paradox table.
+     * @param buffer     the buffer to fix.
+     * @param fieldsSize the field list.
      */
     private static void fixTablePositionByVersion(final ParadoxTable table, final ByteBuffer buffer,
             final int fieldsSize) {
@@ -165,17 +155,15 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Gets the table header from a file.
      *
-     * @param file
-     *            the {@link File} to read.
+     * @param file the {@link File} to read.
      * @return the {@link ParadoxTable}.
-     * @throws SQLException
-     *             in case of reading errors.
+     * @throws SQLException in case of reading errors.
      */
     private static ParadoxTable loadTableHeader(final File file) throws SQLException {
         final ParadoxTable table = new ParadoxTable(file, file.getName());
         ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        
+
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
@@ -228,16 +216,13 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Read fields attributes.
      *
-     * @param table
-     *            the Paradox table.
-     * @param buffer
-     *            the buffer to read of.
+     * @param table  the Paradox table.
+     * @param buffer the buffer to read of.
      * @return the Paradox field list.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     private static List<ParadoxField> parseTableFields(final ParadoxTable table, final ByteBuffer buffer)
-            throws SQLException {
+    throws SQLException {
         final List<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
@@ -253,12 +238,9 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Parse the Paradox fields name.
      *
-     * @param table
-     *            the Paradox table.
-     * @param buffer
-     *            the buffer to read of.
-     * @param fields
-     *            the field list.
+     * @param table  the Paradox table.
+     * @param buffer the buffer to read of.
+     * @param fields the field list.
      */
     private static void parseTableFieldsName(final ParadoxTable table, final ByteBuffer buffer,
             final List<ParadoxField> fields) {
@@ -281,10 +263,8 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Parse the fields order.
      *
-     * @param table
-     *            the Paradox table.
-     * @param buffer
-     *            the buffer to read of.
+     * @param table  the Paradox table.
+     * @param buffer the buffer to read of.
      */
     private static void parseTableFieldsOrder(final ParadoxTable table, final ByteBuffer buffer) {
         final List<Short> fieldsOrder = new ArrayList<>();
@@ -297,15 +277,11 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Read a entire row.
      *
-     * @param table
-     *            the table to read of.
-     * @param fields
-     *            the fields to read.
-     * @param buffer
-     *            the buffer to read of.
+     * @param table  the table to read of.
+     * @param fields the fields to read.
+     * @param buffer the buffer to read of.
      * @return the row.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     private static List<FieldValue> readRow(final ParadoxTable table, final Collection<ParadoxField> fields,
             final ByteBuffer buffer) throws SQLException {

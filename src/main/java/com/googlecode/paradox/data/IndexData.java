@@ -13,6 +13,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,7 +37,7 @@ public final class IndexData extends AbstractParadoxData {
      * Utility class.
      */
     private IndexData() {
-        // Utility class.
+        super();
     }
 
     /**

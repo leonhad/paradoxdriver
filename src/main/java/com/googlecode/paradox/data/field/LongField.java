@@ -12,6 +12,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+
 import java.nio.ByteBuffer;
 import java.sql.Types;
 
@@ -23,7 +24,7 @@ import java.sql.Types;
  * @since 1.3
  */
 public final class LongField implements FieldParser {
-    
+
     /**
      * {@inheritDoc}
      */
@@ -31,16 +32,13 @@ public final class LongField implements FieldParser {
     public boolean match(final int type) {
         return type == 4;
     }
-    
+
     /**
-     * {@inheritDoc}
-     * 
      * Longs (4 bytes) fields are stored as two's complement with the high bit inverted.
-     * 
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final long l = (int) (buffer.getInt() ^ 0x8000_0000);
+        final long l = buffer.getInt() ^ 0x8000_0000;
         return new FieldValue(l, Types.BIGINT);
     }
 }

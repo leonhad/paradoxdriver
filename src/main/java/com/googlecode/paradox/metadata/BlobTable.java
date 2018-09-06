@@ -15,6 +15,7 @@ import com.googlecode.paradox.utils.IBlockCache;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -117,7 +118,7 @@ public final class BlobTable extends ParadoxDataFile {
      * Read length bytes from offset position in MB file.
      *
      * @param pOffset offset of the blob's data block in the MB file and an
-     * index value.
+     *                index value.
      * @return the data values.
      * @throws SQLException in case of parse errors.
      */
@@ -132,7 +133,6 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Gets the data from LOB file.
      *
-     * @param blockNum block reference.
      * @param offset offset to read of.
      * @return the data array.
      * @throws SQLException in case of reading failures.
@@ -215,24 +215,20 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Parses free blocks.
      *
-     * @param blocks the list of CLOB blocks.
      * @param startBlockAddress the start block address.
-     * @param headerType the header type.
-     * @param blockSize the block size.
+     * @param blockSize         the block size.
      * @throws IOException in case of reading errors.
      */
-    private void parseFreeBlock(final long startBlockAddress, final byte headerType,
-            final int blockSize) throws IOException {
+    private void parseFreeBlock(final long startBlockAddress, final int blockSize) throws IOException {
         this.channel.position(startBlockAddress + (blockSize * BlobTable.HEADER_BLOCK_SIZE));
     }
 
     /**
      * Parses a single block.
      *
-     * @param blocks the CLOB block list.
      * @param startBlockAddress the start block address.
-     * @param headerType the header type.
-     * @param blockSize the block size.
+     * @param headerType        the header type.
+     * @param blockSize         the block size.
      * @throws IOException in case of reading errors.
      */
     private ClobBlock parseSingleBlock(final long startBlockAddress, final byte headerType,
@@ -260,13 +256,12 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Parses a sub block.
      *
-     * @param blocks the CLOB block list.
      * @param startBlockAddress the start block address.
-     * @param headerType the header type.
+     * @param headerType        the header type.
      * @throws IOException in case of reading errors.
      */
     private List<ClobBlock> parseSubBlock(final long startBlockAddress, final byte headerType)
-            throws IOException {
+    throws IOException {
         // There are nine more bytes in the header. I have no idea
         // what they contain.
         this.channel.position(this.channel.position() + 9);
@@ -314,9 +309,8 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Read a single block.
      *
-     * @param blockNum block reference to read.
      * @param offset offset of the blob's data block in the MB file and an index
-     * value.
+     *               value.
      * @return the CLOB block.
      * @throws SQLException in case of parse errors.
      */
@@ -335,7 +329,6 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Read the next block in the list.
      *
-     * @param blocks blocks reference.
      * @return true if has no errors.
      * @throws SQLException in case of parse errors.
      */
@@ -343,7 +336,7 @@ public final class BlobTable extends ParadoxDataFile {
         final List<ClobBlock> blocks = new ArrayList<>();
         try {
             if (this.channel.position() == this.channel.size()) {
-                return null;
+                return Collections.emptyList();
             }
             final long startBlockAddress = this.channel.position();
             final ByteBuffer header = ByteBuffer.allocate(3);
@@ -359,7 +352,7 @@ public final class BlobTable extends ParadoxDataFile {
             } else if (headerType == BlobTable.SUB_BLOCK) {
                 blocks.addAll(this.parseSubBlock(startBlockAddress, headerType));
             } else if (headerType == BlobTable.FREE_BLOCK) {
-                this.parseFreeBlock(startBlockAddress, headerType, blockSize);
+                this.parseFreeBlock(startBlockAddress, blockSize);
             } else {
                 throw new SQLException("Unsupported CLOB block type: " + headerType,
                         SQLStates.TYPE_NOT_FOUND.getValue());
