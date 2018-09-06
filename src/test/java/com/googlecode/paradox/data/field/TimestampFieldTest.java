@@ -42,7 +42,7 @@ public class TimestampFieldTest {
      */
     @Test
     public void testParse() throws SQLException {
-        final Calendar calendar = new GregorianCalendar(2013, 10, 24, 11, 29, 31);
+        final Calendar calendar = new GregorianCalendar(2013, 10, 24, 9, 29, 31);
         final Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
         
         final TimestampField field = new TimestampField();

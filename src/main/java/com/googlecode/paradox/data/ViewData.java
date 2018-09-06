@@ -15,6 +15,7 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,11 +54,9 @@ public final class ViewData {
     /**
      * Returns all connections view.
      *
-     * @param conn
-     *            the connection.
+     * @param conn the connection.
      * @return a list of all views.
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     public static List<ParadoxView> listViews(final ParadoxConnection conn) throws SQLException {
         return ViewData.listViews(conn, null);
@@ -66,16 +65,13 @@ public final class ViewData {
     /**
      * Gets all view filtered by name.
      *
-     * @param conn
-     *            the database connection.
-     * @param tableName
-     *            the name filter.
+     * @param conn      the database connection.
+     * @param tableName the name filter.
      * @return all {@link ParadoxView} filtered by name.
-     * @throws SQLException
-     *             in case of reading errors.
+     * @throws SQLException in case of reading errors.
      */
     public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName)
-            throws SQLException {
+    throws SQLException {
         final List<ParadoxView> views = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
@@ -90,11 +86,9 @@ public final class ViewData {
     /**
      * Fix the view extra line.
      *
-     * @param reader
-     *            the view reader.
+     * @param reader the view reader.
      * @return the line fixed.
-     * @throws IOException
-     *             in case of reading errors.
+     * @throws IOException in case of reading errors.
      */
     private static String fixExtraLine(final BufferedReader reader) throws IOException {
         String line = reader.readLine();
@@ -107,16 +101,17 @@ public final class ViewData {
     /**
      * Get a field by its name.
      *
-     * @param field
-     *            the Paradox table.
-     * @param name
-     *            the field name.
+     * @param field the Paradox table.
+     * @param name  the field name.
      * @return the Paradox field.
      */
     private static ParadoxField getField(final ParadoxDataFile field, final String name) {
-        for (final ParadoxField f : field.getFields()) {
-            if (f.getName().equals(name)) {
-                return f;
+        if (field != null && field.getFields() != null) {
+            for (int loop = 0; loop < field.getFields().size(); loop++) {
+                ParadoxField f = field.getFields().get(0);
+                if (f != null && f.getName().equals(name)) {
+                    return f;
+                }
             }
         }
         return null;
@@ -125,10 +120,8 @@ public final class ViewData {
     /**
      * Gets a field by name.
      *
-     * @param table
-     *            the fields table.
-     * @param name
-     *            the field name.
+     * @param table the fields table.
+     * @param name  the field name.
      * @return the {@link ParadoxField}.
      */
     private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
@@ -144,13 +137,10 @@ public final class ViewData {
     /**
      * Get the {@link ParadoxTable} by name.
      *
-     * @param conn
-     *            the connection.
-     * @param tableName
-     *            the table name.
+     * @param conn      the connection.
+     * @param tableName the table name.
      * @return the {@link ParadoxTable}.
-     * @throws SQLException
-     *             if the table doesn't exist.
+     * @throws SQLException if the table doesn't exist.
      */
     private static ParadoxTable getTable(final ParadoxConnection conn, final String tableName) throws SQLException {
         final List<ParadoxTable> tables = TableData.listTables(conn, tableName.trim());
@@ -163,13 +153,10 @@ public final class ViewData {
     /**
      * Gets a {@link ParadoxView} by {@link File}.
      *
-     * @param conn
-     *            the database connection.
-     * @param file
-     *            the {@link File} to read.
+     * @param conn the database connection.
+     * @param file the {@link File} to read.
      * @return the {@link ParadoxView}.
-     * @throws SQLException
-     *             in case of reading errors.
+     * @throws SQLException in case of reading errors.
      */
     private static ParadoxView loadView(final ParadoxConnection conn, final File file) throws SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(8192);
@@ -214,10 +201,8 @@ public final class ViewData {
     /**
      * Parses check token.
      *
-     * @param field
-     *            the field associated.
-     * @param builder
-     *            the builder reader.
+     * @param field   the field associated.
+     * @param builder the builder reader.
      */
     private static void parseCheck(final ParadoxField field, final StringBuilder builder) {
         if (builder.indexOf("Check") == 0) {
@@ -229,17 +214,12 @@ public final class ViewData {
     /**
      * Parses the view fields.
      *
-     * @param conn
-     *            the connection.
-     * @param reader
-     *            the reader to load fields.
-     * @param oldLine
-     *            the old line.
+     * @param conn    the connection.
+     * @param reader  the reader to load fields.
+     * @param oldLine the old line.
      * @return the paradox field list.
-     * @throws SQLException
-     *             in case of parse errors.
-     * @throws IOException
-     *             in case of I/O errors.
+     * @throws SQLException in case of parse errors.
+     * @throws IOException  in case of I/O errors.
      */
     private static ArrayList<ParadoxField> parseFields(final ParadoxConnection conn, final BufferedReader reader,
             final String oldLine) throws SQLException, IOException {
@@ -283,19 +263,13 @@ public final class ViewData {
     /**
      * Parses the file order token.
      *
-     * @param conn
-     *            the connection.
-     * @param view
-     *            the paradox view.
-     * @param reader
-     *            the reader to load order.
-     * @param oldLine
-     *            the old line to validate.
+     * @param conn    the connection.
+     * @param view    the paradox view.
+     * @param reader  the reader to load order.
+     * @param oldLine the old line to validate.
      * @return the current line.
-     * @throws IOException
-     *             in case of I/O errors.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws IOException  in case of I/O errors.
+     * @throws SQLException in case of parse errors.
      */
     private static String parseFileOrder(final ParadoxConnection conn, final ParadoxView view,
             final BufferedReader reader, final String oldLine) throws IOException, SQLException {
@@ -304,7 +278,10 @@ public final class ViewData {
             final ArrayList<ParadoxField> fields = ViewData.readFields(conn, reader, line);
             final ArrayList<Short> fieldsOrder = new ArrayList<>(fields.size());
             for (final ParadoxField field : fields) {
-                fieldsOrder.add((short) ViewData.getField(view, field.getName()).getOrderNum());
+                ParadoxField fieldByName = ViewData.getField(view, field.getName());
+                if (fieldByName != null) {
+                    fieldsOrder.add((short) fieldByName.getOrderNum());
+                }
             }
             view.setFieldsOrder(fieldsOrder);
 
@@ -317,10 +294,8 @@ public final class ViewData {
     /**
      * Parses the table join names
      *
-     * @param field
-     *            the field associated.
-     * @param builder
-     *            the build to read of.
+     * @param field   the field associated.
+     * @param builder the build to read of.
      */
     private static void parseJoinName(final ParadoxField field, final StringBuilder builder) {
         if (builder.charAt(0) == '_') {
@@ -341,19 +316,13 @@ public final class ViewData {
     /**
      * Parses the sort token.
      *
-     * @param conn
-     *            the connection.
-     * @param view
-     *            the view.
-     * @param reader
-     *            the reader to load sort order.
-     * @param oldLine
-     *            the old line to validate.
+     * @param conn    the connection.
+     * @param view    the view.
+     * @param reader  the reader to load sort order.
+     * @param oldLine the old line to validate.
      * @return the new line.
-     * @throws IOException
-     *             in case of I/O errors.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws IOException  in case of I/O errors.
+     * @throws SQLException in case of parse errors.
      */
     private static String parseSort(final ParadoxConnection conn, final ParadoxView view, final BufferedReader reader,
             final String oldLine) throws IOException, SQLException {
@@ -371,15 +340,11 @@ public final class ViewData {
     /**
      * Read fields from buffer.
      *
-     * @param conn
-     *            the database connection.
-     * @param reader
-     *            the buffer to read of.
+     * @param conn   the database connection.
+     * @param reader the buffer to read of.
      * @return the field list.
-     * @throws IOException
-     *             in case of I/O errors.
-     * @throws SQLException
-     *             in case of syntax errors.
+     * @throws IOException  in case of I/O errors.
+     * @throws SQLException in case of syntax errors.
      */
     private static ArrayList<ParadoxField> readFields(final ParadoxConnection conn, final BufferedReader reader,
             final String firstLine) throws IOException, SQLException {
@@ -417,11 +382,9 @@ public final class ViewData {
     /**
      * Read a line from buffer.
      *
-     * @param reader
-     *            the buffer to read of.
+     * @param reader the buffer to read of.
      * @return a new line.
-     * @throws IOException
-     *             in case of I/O exception.
+     * @throws IOException in case of I/O exception.
      */
     private static String readLine(final BufferedReader reader) throws IOException {
         final String line = reader.readLine();
@@ -431,10 +394,8 @@ public final class ViewData {
     /**
      * Parse a view Paradox expression.
      *
-     * @param field
-     *            the expression field.
-     * @param expression
-     *            the expression to parse.
+     * @param field      the expression field.
+     * @param expression the expression to parse.
      */
     static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());

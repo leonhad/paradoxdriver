@@ -19,27 +19,23 @@ import java.util.List;
  * @since 1.2
  */
 public interface IBlockCache {
-    
+
     /**
      * Adds a block to the cache.
      *
-     * @param blocks
-     *            the blocks to add.
+     * @param blocks the blocks to add.
      */
     void add(List<ClobBlock> blocks);
-    
+
     /**
      * Closes the cache.
      */
     void close();
-    
+
     /**
      * Gets the CLOB block in cache.
      *
-     * @param num
-     *            the CLOB number.
-     * @param offset
-     *            the CLOB offset.
+     * @param offset the CLOB offset.
      * @return the block in cache.
      */
     ClobBlock get(BlockOffset offset);

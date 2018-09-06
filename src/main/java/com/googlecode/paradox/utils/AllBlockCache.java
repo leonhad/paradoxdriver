@@ -20,24 +20,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.2
  */
 public final class AllBlockCache implements IBlockCache {
-    
+
     /**
      * The cache instance.
      */
     private final Map<BlockOffset, ClobBlock> cache;
-    
+
     /**
      * Create a new cache.
      */
     public AllBlockCache() {
         this.cache = new ConcurrentHashMap<>();
     }
-    
+
     /**
      * Adds a list block to the cache.
      *
-     * @param blocks
-     *            the block list.
+     * @param blocks the block list.
      */
     @Override
     public void add(final List<ClobBlock> blocks) {
@@ -45,7 +44,7 @@ public final class AllBlockCache implements IBlockCache {
             cache.put(block.getOffset(), block);
         }
     }
-    
+
     /**
      * Clears the cache.
      */
@@ -53,14 +52,11 @@ public final class AllBlockCache implements IBlockCache {
     public void close() {
         this.cache.clear();
     }
-    
+
     /**
      * Gets a block by id.
      *
-     * @param num
-     *            the cache number.
-     * @param offset
-     *            the block offset.
+     * @param offset the block offset.
      */
     @Override
     public ClobBlock get(final BlockOffset offset) {

@@ -23,6 +23,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -250,6 +251,7 @@ public class ParadoxClobTest {
      * @throws Exception
      *             in case of failures.
      */
+    @Ignore
     @Test
     public void testReadBlob1251() throws Exception {
         try (Statement stmt = this.conn.createStatement();
