@@ -17,7 +17,6 @@ import com.googlecode.paradox.utils.DateUtils;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.TestUtil;
 import com.googlecode.paradox.utils.Utils;
-import java.lang.reflect.InvocationTargetException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -31,22 +30,14 @@ import org.junit.experimental.categories.Category;
  */
 @Category(IntegrationTest.class)
 public class UtilityTest {
-    
+
     /**
      * Test for utilities classes.
      *
-     * @throws NoSuchMethodException
-     *             in case of not well formed class.
-     * @throws InvocationTargetException
-     *             in case of not well formed class.
-     * @throws InstantiationException
-     *             in case of not well formed class.
-     * @throws IllegalAccessException
-     *             in case of not well formed class.
+     * @throws Exception in case of not well formed class..
      */
     @Test
-    public void testClassesIntegrity()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void testClassesIntegrity() throws Exception {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Utils.class));
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(DateUtils.class));
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(TableData.class));

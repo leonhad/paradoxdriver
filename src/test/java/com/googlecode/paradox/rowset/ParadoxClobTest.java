@@ -14,7 +14,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -232,29 +231,23 @@ public class ParadoxClobTest {
         }
     }
 
+
     /**
      * Test for CLOB with cp1251 charset.
      *
      * @throws SQLException in case of failures.
      */
-    @Ignore
     @Test
     public void testReadBlob1251() throws SQLException {
+
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2")) {
 
             Assert.assertTrue("Nation locale: record not exists", rs.next());
             final Clob c = rs.getClob("note");
-            final String expected =
-                    "При разработке электронных сервисов необходимо придерживаться следующих " + "спецификаций:\r\n"
-                            + "\tспецификация универсального описания, поиска и интеграции электронных сервисов Universal "
-                            + "Description "
-                            + "Discovery and Integration (UDDI) версии 2.0 - стандарт Организации по развитию стандартов "
-                            + "структурированной информации Organization for the Advancement of Structured Information "
-                            + "Standards (OASIS) - спецификация носит обязательный характер;\r\n";
-
+            final String expected = "Удивительное устройство USB-флешки Kingston DataTraveler";
             final String real = c.getSubString(1, (int) c.length());
-            Assert.assertEquals("Testing for cp1251 text.", expected, real);
+            Assert.assertEquals("Unexpected cp1251 text", expected, real);
         }
     }
 
