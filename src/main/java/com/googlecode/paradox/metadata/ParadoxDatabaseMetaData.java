@@ -22,6 +22,7 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -40,92 +41,91 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
-    
+
     /**
      * The column name field.
      */
     private static final String COLUMN_NAME = "COLUMN_NAME";
-    
+
     /**
      * JDBC major version.
      */
     private static final int JDBC_MAJOR_VERSION = 4;
-    
+
     /**
      * JDBC minor version.
      */
     private static final int JDBC_MINOR_VERSION = 0;
-    
+
     /**
      * Max field size.
      */
     private static final int MAX_INT_SIZE = 2_048;
-    
+
     /**
      * Paradox major version.
      */
     private static final int PARADOX_MAJOR_VERSION = 7;
-    
+
     /**
      * Paradox max column name.
      */
     private static final int PARADOX_MAX_COLUMN_NAME = 8;
-    
+
     /**
      * Paradox minor version.
      */
     private static final int PARADOX_MINOR_VERSION = 0;
-    
+
     /**
      * The remarks name field.
      */
     private static final String REMARKS = "REMARKS";
-    
+
     /**
      * String max size.
      */
     private static final int STRING_MAX_SIZE = 255;
-    
+
     /**
      * The tables field.
      */
     private static final String TABLE = "TABLE";
-    
+
     /**
      * The tables cat name field.
      */
     private static final String TABLE_CAT = "TABLE_CAT";
-    
+
     /**
      * The tables name field.
      */
     private static final String TABLE_NAME = "TABLE_NAME";
-    
+
     /**
      * The table names schema field.
      */
     private static final String TABLE_SCHEMA = "TABLE_SCHEM";
-    
+
     /**
      * The type name field.
      */
     private static final String TYPE_NAME = "TYPE_NAME";
-    
+
     /**
      * The database connection.
      */
     private final ParadoxConnection conn;
-    
+
     /**
      * Creates an database metadata.
      *
-     * @param conn
-     *            the database connection.
+     * @param conn the database connection.
      */
     public ParadoxDatabaseMetaData(final ParadoxConnection conn) {
         this.conn = conn;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -133,7 +133,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean allProceduresAreCallable() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -141,7 +141,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean allTablesAreSelectable() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -149,7 +149,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean autoCommitFailureClosesAllResultSets() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -157,7 +157,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean dataDefinitionCausesTransactionCommit() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -165,7 +165,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean dataDefinitionIgnoredInTransactions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -173,7 +173,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean deletesAreDetected(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -181,7 +181,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean doesMaxRowSizeIncludeBlobs() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -189,7 +189,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean generatedKeyAlwaysReturned() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -198,7 +198,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final String attributeNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -207,7 +207,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final int scope, final boolean nullable) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -215,15 +215,15 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getCatalogs() {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
-        
+
         final List<FieldValue> row = new ArrayList<>(1);
         final List<List<FieldValue>> values = new ArrayList<>(1);
         row.add(new FieldValue(this.conn.getCatalog(), Types.VARCHAR));
         values.add(row);
-        
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -231,7 +231,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getCatalogSeparator() {
         return ".";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -239,7 +239,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getCatalogTerm() {
         return "CATALOG";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -247,7 +247,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getClientInfoProperties() {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -256,7 +256,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final String columnNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -287,16 +287,16 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("SCOPE_TABLE", Types.VARCHAR));
         columns.add(new Column("SOURCE_DATA_TYPE", Types.SMALLINT));
         columns.add(new Column("IS_AUTOINCREMENT", Types.VARCHAR));
-        
+
         final List<List<FieldValue>> values = new ArrayList<>(1);
-        
+
         final List<ParadoxTable> tables = TableData.listTables(this.conn);
         for (final ParadoxTable table : tables) {
             if ((tableNamePattern == null) || Expressions.accept(table.getName(), tableNamePattern)) {
                 this.fieldMetadata(columnNamePattern, values, table.getName(), table.getFields());
             }
         }
-        
+
         final List<? extends ParadoxDataFile> views = ViewData.listViews(this.conn);
         for (final ParadoxDataFile view : views) {
             if ((tableNamePattern == null) || Expressions.accept(view.getName(), tableNamePattern)) {
@@ -305,7 +305,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -313,7 +313,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public Connection getConnection() {
         return this.conn;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -323,7 +323,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final String foreignTable) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -331,7 +331,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getDatabaseMajorVersion() {
         return ParadoxDatabaseMetaData.PARADOX_MAJOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -339,7 +339,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getDatabaseMinorVersion() {
         return ParadoxDatabaseMetaData.PARADOX_MINOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -347,7 +347,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getDatabaseProductName() {
         return Constants.DRIVER_NAME;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -355,7 +355,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getDatabaseProductVersion() {
         return Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -363,7 +363,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getDefaultTransactionIsolation() {
         return Connection.TRANSACTION_NONE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -371,7 +371,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getDriverMajorVersion() {
         return Constants.MAJOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -379,7 +379,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getDriverMinorVersion() {
         return Constants.MINOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -387,7 +387,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getDriverName() {
         return Constants.DRIVER_NAME;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -395,7 +395,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getDriverVersion() {
         return Constants.DRIVER_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -403,7 +403,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getExportedKeys(final String catalog, final String schema, final String table) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -411,7 +411,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getExtraNameCharacters() {
         return "";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -420,7 +420,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final String functionNamePattern, final String columnNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -428,7 +428,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -436,7 +436,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getIdentifierQuoteString() {
         return "\"";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -444,7 +444,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getImportedKeys(final String catalog, final String schema, final String table) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -465,17 +465,17 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("CARDINALITY", Types.INTEGER));
         columns.add(new Column("PAGES", Types.INTEGER));
         columns.add(new Column("FILTER_CONDITION", Types.VARCHAR));
-        
+
         final List<List<FieldValue>> values = new ArrayList<>(1);
         final FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
-        
+
         for (final ParadoxTable table : TableData.listTables(this.conn, tableNamePattern)) {
             final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(this.conn, table);
-            
+
             if (primaryKeyIndex != null) {
                 for (final ParadoxField pk : table.getPrimaryKeys()) {
                     final ArrayList<FieldValue> row = new ArrayList<>();
-                    
+
                     row.add(new FieldValue(this.conn.getCatalog(), Types.VARCHAR));
                     row.add(new FieldValue(this.conn.getSchema(), Types.VARCHAR));
                     row.add(new FieldValue(table.getName(), Types.VARCHAR));
@@ -489,16 +489,16 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     row.add(fieldZero);
                     row.add(fieldZero);
                     row.add(null);
-                    
+
                     values.add(row);
                 }
             }
-            
+
             for (final ParadoxIndex index : IndexData.listIndexes(this.conn, tableNamePattern)) {
                 int ordinal = 0;
                 final ArrayList<FieldValue> row = new ArrayList<>();
                 for (final ParadoxField field : index.getFields()) {
-                    
+
                     row.add(new FieldValue(this.conn.getCatalog(), Types.VARCHAR));
                     row.add(new FieldValue(this.conn.getSchema(), Types.VARCHAR));
                     row.add(new FieldValue(index.getParentName(), Types.VARCHAR));
@@ -512,7 +512,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     row.add(fieldZero);
                     row.add(fieldZero);
                     row.add(null);
-                    
+
                     values.add(row);
                     ordinal++;
                 }
@@ -520,7 +520,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -528,7 +528,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getJDBCMajorVersion() {
         return ParadoxDatabaseMetaData.JDBC_MAJOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -536,7 +536,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getJDBCMinorVersion() {
         return ParadoxDatabaseMetaData.JDBC_MINOR_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -544,7 +544,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxBinaryLiteralLength() {
         return ParadoxDatabaseMetaData.PARADOX_MAX_COLUMN_NAME;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -552,7 +552,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxCatalogNameLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -560,7 +560,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxCharLiteralLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -568,7 +568,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxColumnNameLength() {
         return ParadoxDatabaseMetaData.PARADOX_MAX_COLUMN_NAME;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -576,7 +576,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxColumnsInGroupBy() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -584,7 +584,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxColumnsInIndex() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -592,7 +592,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxColumnsInOrderBy() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -600,7 +600,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxColumnsInSelect() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -608,7 +608,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxColumnsInTable() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -616,7 +616,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxConnections() {
         return 1;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -624,7 +624,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxCursorNameLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -632,7 +632,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxIndexLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -640,7 +640,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxProcedureNameLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -648,7 +648,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxRowSize() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -656,7 +656,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxSchemaNameLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -664,7 +664,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxStatementLength() {
         return Integer.MAX_VALUE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -672,7 +672,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxStatements() {
         return Integer.MAX_VALUE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -680,7 +680,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxTableNameLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -688,7 +688,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxTablesInSelect() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -696,7 +696,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getMaxUserNameLength() {
         return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -704,13 +704,13 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getNumericFunctions() {
         return "AVERAGE,SUM";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public ResultSet getPrimaryKeys(final String catalog, final String schema, final String tableNamePattern)
-            throws SQLException {
+    throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
@@ -718,10 +718,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
         columns.add(new Column("KEY_SEQ", Types.INTEGER));
         columns.add(new Column("PK_NAME", Types.VARCHAR));
-        
+
         final List<List<FieldValue>> values = new ArrayList<>(1);
         final ParadoxTable table = TableData.listTables(this.conn, tableNamePattern).get(0);
-        
+
         int loop = 0;
         for (final ParadoxField pk : table.getPrimaryKeys()) {
             final ArrayList<FieldValue> row = new ArrayList<>();
@@ -736,7 +736,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -763,11 +763,11 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("CHAR_OCTET_LENGTH", Types.VARCHAR));
         columns.add(new Column("IS_NULLABLE", Types.VARCHAR));
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
-        
+
         final List<List<FieldValue>> values = new ArrayList<>();
         final FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
         final FieldValue fieldVarchar = new FieldValue(Types.VARCHAR);
-        
+
         for (final AbstractCallableProcedure procedure : ProcedureAS.getInstance().list()) {
             if (Expressions.accept(procedure.getName(), procedureNamePattern)) {
                 for (final ParadoxField field : procedure.getCols()) {
@@ -796,10 +796,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                 }
             }
         }
-        
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -816,9 +816,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.VARCHAR));
         columns.add(new Column("PROCEDURE_TYPE", Types.INTEGER));
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
-        
+
         final List<List<FieldValue>> values = new ArrayList<>();
-        
+
         for (final AbstractCallableProcedure procedure : ProcedureAS.getInstance().list()) {
             final ArrayList<FieldValue> row = new ArrayList<>();
             row.add(new FieldValue(this.conn.getCatalog(), Types.VARCHAR));
@@ -832,10 +832,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(new FieldValue(procedure.getName(), Types.VARCHAR));
             values.add(row);
         }
-        
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -843,7 +843,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getProcedureTerm() {
         return "PROCEDURE";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -852,7 +852,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final String columnNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -860,7 +860,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public int getResultSetHoldability() {
         return this.conn.getHoldability();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -868,7 +868,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public RowIdLifetime getRowIdLifetime() {
         return RowIdLifetime.ROWID_UNSUPPORTED;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -877,16 +877,16 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column("TABLE_CATALOG", Types.VARCHAR));
-        
+
         final ArrayList<FieldValue> row = new ArrayList<>(1);
         final List<List<FieldValue>> values = new ArrayList<>(1);
         row.add(new FieldValue(this.conn.getSchema(), Types.VARCHAR));
         row.add(new FieldValue(this.conn.getCatalog(), Types.VARCHAR));
         values.add(row);
-        
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -898,7 +898,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         }
         return this.getSchemas();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -906,7 +906,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getSchemaTerm() {
         return "SCHEMA";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -914,7 +914,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getSearchStringEscape() {
         return "\\";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -922,15 +922,15 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getSQLKeywords() {
         return "SELECT";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public int getSQLStateType() {
-        return 0;
+        return DatabaseMetaData.sqlStateSQL;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -938,7 +938,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getStringFunctions() {
         return "";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -946,7 +946,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getSuperTables(final String catalog, final String schemaPattern, final String tableNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -954,7 +954,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getSuperTypes(final String catalog, final String schemaPattern, final String typeNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -962,7 +962,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getSystemFunctions() {
         return "";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -971,7 +971,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final String tableNamePattern) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -981,17 +981,17 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
-        columns.add(new Column("TABLE_NAME", Types.VARCHAR));
+        columns.add(new Column(TABLE_NAME, Types.VARCHAR));
         columns.add(new Column("TABLE_TYPE", Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.VARCHAR));
+        columns.add(new Column(REMARKS, Types.VARCHAR));
         columns.add(new Column("TYPE_CAT", Types.VARCHAR));
         columns.add(new Column("TYPE_SCHEM", Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TYPE_NAME, Types.VARCHAR));
+        columns.add(new Column(TYPE_NAME, Types.VARCHAR));
         columns.add(new Column("SELF_REFERENCING_COL_NAME", Types.VARCHAR));
         columns.add(new Column("REF_GENERATION", Types.VARCHAR));
-        
+
         final List<List<FieldValue>> values = new ArrayList<>();
-        
+
         if (types != null) {
             for (final String type : types) {
                 if (ParadoxDatabaseMetaData.TABLE.equalsIgnoreCase(type)) {
@@ -1003,7 +1003,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1011,15 +1011,15 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getTableTypes() {
         final ArrayList<Column> columns = new ArrayList<>(1);
         columns.add(new Column("TABLE_TYPE", Types.VARCHAR));
-        
+
         final List<List<FieldValue>> values = new ArrayList<>(3);
         values.add(Collections.singletonList(new FieldValue(ParadoxDatabaseMetaData.TABLE, Types.VARCHAR)));
         values.add(Collections.singletonList(new FieldValue("VIEW", Types.VARCHAR)));
         values.add(Collections.singletonList(new FieldValue("SYSTEM TABLE", Types.VARCHAR)));
-        
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1027,7 +1027,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getTimeDateFunctions() {
         return "";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1035,7 +1035,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getTypeInfo() {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1044,7 +1044,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final int[] types) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1052,7 +1052,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getURL() {
         return this.conn.getUrl();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1060,7 +1060,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public String getUserName() {
         return "SYSTEM";
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1068,7 +1068,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getVersionColumns(final String catalog, final String schema, final String table) {
         return new ParadoxResultSet(this.conn, null, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1076,7 +1076,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean insertsAreDetected(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1084,16 +1084,16 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean isCatalogAtStart() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isReadOnly() {
         return true;
-        
+
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1101,7 +1101,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean isWrapperFor(final Class<?> iFace) {
         return Utils.isWrapperFor(this, iFace);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1109,7 +1109,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean locatorsUpdateCopy() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1117,7 +1117,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean nullPlusNonNullIsNull() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1125,7 +1125,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean nullsAreSortedAtEnd() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1133,7 +1133,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean nullsAreSortedAtStart() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1141,7 +1141,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean nullsAreSortedHigh() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1149,7 +1149,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean nullsAreSortedLow() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1157,7 +1157,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean othersDeletesAreVisible(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1165,7 +1165,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean othersInsertsAreVisible(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1173,7 +1173,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean othersUpdatesAreVisible(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1181,7 +1181,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean ownDeletesAreVisible(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1189,7 +1189,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean ownInsertsAreVisible(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1197,7 +1197,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean ownUpdatesAreVisible(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1205,7 +1205,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean storesLowerCaseIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1213,7 +1213,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean storesLowerCaseQuotedIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1221,7 +1221,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean storesMixedCaseIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1229,7 +1229,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean storesMixedCaseQuotedIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1237,7 +1237,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean storesUpperCaseIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1245,7 +1245,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean storesUpperCaseQuotedIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1253,7 +1253,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsAlterTableWithAddColumn() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1261,7 +1261,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsAlterTableWithDropColumn() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1269,7 +1269,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsANSI92EntryLevelSQL() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1277,7 +1277,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsANSI92FullSQL() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1285,7 +1285,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsANSI92IntermediateSQL() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1293,7 +1293,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsBatchUpdates() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1301,7 +1301,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsCatalogsInDataManipulation() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1309,7 +1309,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsCatalogsInIndexDefinitions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1317,7 +1317,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsCatalogsInPrivilegeDefinitions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1325,7 +1325,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsCatalogsInProcedureCalls() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1333,7 +1333,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsCatalogsInTableDefinitions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1341,7 +1341,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsColumnAliasing() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1349,7 +1349,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsConvert() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1357,7 +1357,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsConvert(final int fromType, final int toType) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1365,7 +1365,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsCoreSQLGrammar() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1373,7 +1373,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsCorrelatedSubqueries() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1381,7 +1381,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsDataDefinitionAndDataManipulationTransactions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1389,7 +1389,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsDataManipulationTransactionsOnly() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1397,7 +1397,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsDifferentTableCorrelationNames() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1405,7 +1405,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsExpressionsInOrderBy() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1413,7 +1413,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsExtendedSQLGrammar() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1421,7 +1421,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsFullOuterJoins() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1429,7 +1429,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsGetGeneratedKeys() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1437,7 +1437,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsGroupBy() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1445,7 +1445,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsGroupByBeyondSelect() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1453,7 +1453,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsGroupByUnrelated() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1461,7 +1461,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsIntegrityEnhancementFacility() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1469,7 +1469,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsLikeEscapeClause() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1477,7 +1477,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsLimitedOuterJoins() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1485,7 +1485,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsMinimumSQLGrammar() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1493,7 +1493,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsMixedCaseIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1501,7 +1501,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsMixedCaseQuotedIdentifiers() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1509,7 +1509,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsMultipleOpenResults() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1517,7 +1517,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsMultipleResultSets() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1525,7 +1525,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsMultipleTransactions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1533,7 +1533,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsNamedParameters() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1541,7 +1541,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsNonNullableColumns() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1549,7 +1549,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsOpenCursorsAcrossCommit() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1557,7 +1557,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsOpenCursorsAcrossRollback() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1565,7 +1565,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsOpenStatementsAcrossCommit() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1573,7 +1573,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsOpenStatementsAcrossRollback() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1581,7 +1581,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsOrderByUnrelated() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1589,7 +1589,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsOuterJoins() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1597,7 +1597,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsPositionedDelete() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1605,7 +1605,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsPositionedUpdate() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1613,7 +1613,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsResultSetConcurrency(final int type, final int concurrency) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1621,7 +1621,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsResultSetHoldability(final int holdability) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1629,7 +1629,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsResultSetType(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1637,7 +1637,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSavepoints() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1645,7 +1645,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSchemasInDataManipulation() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1653,7 +1653,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSchemasInIndexDefinitions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1661,7 +1661,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSchemasInPrivilegeDefinitions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1669,7 +1669,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSchemasInProcedureCalls() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1677,7 +1677,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSchemasInTableDefinitions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1685,7 +1685,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSelectForUpdate() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1693,7 +1693,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsStatementPooling() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1701,7 +1701,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsStoredFunctionsUsingCallSyntax() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1709,7 +1709,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsStoredProcedures() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1717,7 +1717,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSubqueriesInComparisons() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1725,7 +1725,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSubqueriesInExists() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1733,7 +1733,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSubqueriesInIns() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1741,7 +1741,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsSubqueriesInQuantifieds() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1749,7 +1749,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsTableCorrelationNames() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1757,7 +1757,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsTransactionIsolationLevel(final int level) {
         return Connection.TRANSACTION_NONE != level;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1765,7 +1765,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsTransactions() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1773,7 +1773,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsUnion() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1781,7 +1781,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean supportsUnionAll() {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1789,7 +1789,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public <T> T unwrap(final Class<T> iFace) throws SQLException {
         return Utils.unwrap(this, iFace);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1797,7 +1797,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean updatesAreDetected(final int type) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1805,7 +1805,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean usesLocalFilePerTable() {
         return true;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -1813,20 +1813,15 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public boolean usesLocalFiles() {
         return true;
     }
-    
+
     /**
      * Gets fields metadata.
      *
-     * @param columnNamePattern
-     *            column pattern to search of.
-     * @param values
-     *            the table values.
-     * @param tableName
-     *            the table name.
-     * @param fields
-     *            the field list.
-     * @throws SQLException
-     *             in case of errors.
+     * @param columnNamePattern column pattern to search of.
+     * @param values            the table values.
+     * @param tableName         the table name.
+     * @param fields            the field list.
+     * @throws SQLException in case of errors.
      */
     private void fieldMetadata(final String columnNamePattern, final List<List<FieldValue>> values,
             final String tableName, final List<ParadoxField> fields) throws SQLException {
@@ -1835,9 +1830,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             if ((columnNamePattern != null) && !Expressions.accept(field.getName(), columnNamePattern)) {
                 continue;
             }
-            
+
             final ArrayList<FieldValue> row = new ArrayList<>();
-            
+
             final int type = field.getSqlType();
             row.add(new FieldValue(this.conn.getCatalog(), Types.VARCHAR));
             row.add(new FieldValue(this.conn.getSchema(), Types.VARCHAR));
@@ -1847,7 +1842,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(new FieldValue(Column.getTypeName(type), Types.VARCHAR));
             row.add(new FieldValue(field.getSize(), Types.INTEGER));
             row.add(new FieldValue(ParadoxDatabaseMetaData.MAX_INT_SIZE, Types.INTEGER));
-            
+
             if ((field.getType() == 5) || (field.getType() == 6)) {
                 row.add(new FieldValue(2, Types.INTEGER));
             } else {
@@ -1875,14 +1870,12 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             values.add(row);
         }
     }
-    
+
     /**
      * Format a single row metadata.
      *
-     * @param name
-     *            the row name.
-     * @param type
-     *            the row type.
+     * @param name the row name.
+     * @param type the row type.
      * @return the row.
      */
     private List<FieldValue> formatRow(final String name, final String type) {
@@ -1899,32 +1892,26 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         row.add(new FieldValue(Types.VARCHAR));
         return row;
     }
-    
+
     /**
      * Format a table metadata.
      *
-     * @param tableNamePattern
-     *            the table name pattern.
-     * @param values
-     *            the field values.
-     * @throws SQLException
-     *             in case of errors.
+     * @param tableNamePattern the table name pattern.
+     * @param values           the field values.
+     * @throws SQLException in case of errors.
      */
     private void formatTable(final String tableNamePattern, final List<List<FieldValue>> values) throws SQLException {
         for (final ParadoxTable table : TableData.listTables(this.conn, tableNamePattern)) {
-            values.add(this.formatRow(table.getName(), "TABLE"));
+            values.add(this.formatRow(table.getName(), TABLE));
         }
     }
-    
+
     /**
      * Format a table view metadata.
      *
-     * @param tableNamePattern
-     *            the table view name pattern.
-     * @param values
-     *            the table values.
-     * @throws SQLException
-     *             in case of errors.
+     * @param tableNamePattern the table view name pattern.
+     * @param values           the table values.
+     * @throws SQLException in case of errors.
      */
     private void formatView(final String tableNamePattern, final List<List<FieldValue>> values) throws SQLException {
         for (final ParadoxView view : ViewData.listViews(this.conn, tableNamePattern)) {

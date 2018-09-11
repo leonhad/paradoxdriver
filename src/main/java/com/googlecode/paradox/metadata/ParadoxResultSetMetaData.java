@@ -14,6 +14,7 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.TypeName;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -28,30 +29,28 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxResultSetMetaData implements ResultSetMetaData {
-    
+
     /**
      * {@link ResultSet} columns.
      */
     private final List<Column> columns;
-    
+
     /**
      * The database connection.
      */
     private final ParadoxConnection conn;
-    
+
     /**
      * Creates a new {@link ResultSetMetaData}.
      *
-     * @param conn
-     *            the Paradox connection.
-     * @param columns
-     *            columns in {@link ResultSet}.
+     * @param conn    the Paradox connection.
+     * @param columns columns in {@link ResultSet}.
      */
     public ParadoxResultSetMetaData(final ParadoxConnection conn, final List<Column> columns) {
         this.columns = Collections.unmodifiableList(columns);
         this.conn = conn;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -60,7 +59,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         this.getColumn(column);
         return this.conn.getCatalog();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -68,7 +67,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     public String getColumnClassName(final int column) throws SQLException {
         return TypeName.getClassNameByType(this.getColumnType(column));
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -76,7 +75,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     public int getColumnCount() {
         return this.columns.size();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -85,16 +84,15 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.getMaxSize();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public String getColumnLabel(final int column) throws SQLException {
-        final Column dto = this.getColumn(column);
-        return dto.getName();
+        return getColumnName(column);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -103,7 +101,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.getName();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -112,7 +110,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.getType();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -121,7 +119,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return Column.getTypeName(dto.getType());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -130,7 +128,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.getPrecision();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -139,7 +137,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.getScale();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -148,7 +146,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         this.getColumn(column);
         return this.conn.getSchema();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -157,7 +155,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.getTableName();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -166,7 +164,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.isAutoIncrement();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -175,7 +173,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         this.getColumn(column);
         return false;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -184,16 +182,15 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.isCurrency();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean isDefinitelyWritable(final int column) throws SQLException {
-        final Column dto = this.getColumn(column);
-        return dto.isWritable();
+        return isWritable(column);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -205,7 +202,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         }
         return ResultSetMetaData.columnNoNulls;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -214,7 +211,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.isReadOnly();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -223,7 +220,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.isSearchable();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -232,7 +229,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.isSigned();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -240,7 +237,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     public boolean isWrapperFor(final Class<?> iFace) {
         return Utils.isWrapperFor(this, iFace);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -249,7 +246,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         final Column dto = this.getColumn(column);
         return dto.isWritable();
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -257,15 +254,13 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return Utils.unwrap(this, iface);
     }
-    
+
     /**
      * Get an column.
      *
-     * @param column
-     *            the column index.
+     * @param column the column index.
      * @return the column.
-     * @throws SQLException
-     *             in case of invalid type.
+     * @throws SQLException in case of invalid type.
      */
     private Column getColumn(final int column) throws SQLException {
         if ((column < 1) || (column > this.columns.size())) {
