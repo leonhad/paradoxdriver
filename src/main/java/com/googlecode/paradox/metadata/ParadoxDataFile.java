@@ -9,8 +9,10 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.utils.Utils;
+
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -108,15 +110,13 @@ public class ParadoxDataFile {
     /**
      * Fields in this file.
      */
-    protected List<ParadoxField> fields;
+    protected List<ParadoxField> fields = new ArrayList<>();
 
     /**
      * Creates a new instance.
      *
-     * @param file
-     *            the database {@link File}.
-     * @param name
-     *            the file name.
+     * @param file the database {@link File}.
+     * @param name the file name.
      */
     protected ParadoxDataFile(final File file, final String name) {
         this.file = file;
@@ -126,16 +126,13 @@ public class ParadoxDataFile {
     /**
      * Finds a field by name.
      *
-     * @param name
-     *            the field name.
+     * @param name the field name.
      * @return the {@link ParadoxField}.
      */
     public final ParadoxField findField(final String name) {
-        if (this.fields != null) {
-            for (final ParadoxField field : this.fields) {
-                if (field.getName().equalsIgnoreCase(name)) {
-                    return field;
-                }
+        for (final ParadoxField field : this.fields) {
+            if (field.getName().equalsIgnoreCase(name)) {
+                return field;
             }
         }
         return null;
@@ -333,8 +330,7 @@ public class ParadoxDataFile {
     /**
      * Sets the auto increment value.
      *
-     * @param autoIncrementValue
-     *            the auto increment value.
+     * @param autoIncrementValue the auto increment value.
      */
     public final void setAutoIncrementValue(final int autoIncrementValue) {
         this.autoIncrementValue = autoIncrementValue;
@@ -343,8 +339,7 @@ public class ParadoxDataFile {
     /**
      * Sets the block size.
      *
-     * @param blockSize
-     *            the block size.
+     * @param blockSize the block size.
      */
     public final void setBlockSize(final byte blockSize) {
         this.blockSize = blockSize;
@@ -353,8 +348,7 @@ public class ParadoxDataFile {
     /**
      * Sets the charset.
      *
-     * @param charset
-     *            the charset to set.
+     * @param charset the charset to set.
      */
     public void setCharset(final Charset charset) {
         this.charset = charset;
@@ -363,8 +357,7 @@ public class ParadoxDataFile {
     /**
      * Sets the field count.
      *
-     * @param fieldCount
-     *            the field count.
+     * @param fieldCount the field count.
      */
     public final void setFieldCount(final int fieldCount) {
         this.fieldCount = fieldCount;
@@ -373,8 +366,7 @@ public class ParadoxDataFile {
     /**
      * Sets the field list.
      *
-     * @param fields
-     *            the field list.
+     * @param fields the field list.
      */
     public final void setFields(final List<ParadoxField> fields) {
         this.fields = fields;
@@ -383,8 +375,7 @@ public class ParadoxDataFile {
     /**
      * Sets the fields order.
      *
-     * @param fieldsOrder
-     *            the fields order to set.
+     * @param fieldsOrder the fields order to set.
      */
     public void setFieldsOrder(final List<Short> fieldsOrder) {
         this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
@@ -393,8 +384,7 @@ public class ParadoxDataFile {
     /**
      * Sets the first block.
      *
-     * @param firstBlock
-     *            the first block.
+     * @param firstBlock the first block.
      */
     public final void setFirstBlock(final int firstBlock) {
         this.firstBlock = firstBlock;
@@ -403,8 +393,7 @@ public class ParadoxDataFile {
     /**
      * Sets the first free block.
      *
-     * @param firstFreeBlock
-     *            the first free block.
+     * @param firstFreeBlock the first free block.
      */
     public final void setFirstFreeBlock(final int firstFreeBlock) {
         this.firstFreeBlock = firstFreeBlock;
@@ -413,8 +402,7 @@ public class ParadoxDataFile {
     /**
      * Sets the header size.
      *
-     * @param headerSize
-     *            the header size.
+     * @param headerSize the header size.
      */
     public final void setHeaderSize(final int headerSize) {
         this.headerSize = headerSize;
@@ -423,8 +411,7 @@ public class ParadoxDataFile {
     /**
      * Sets the last block.
      *
-     * @param lastBlock
-     *            the last block.
+     * @param lastBlock the last block.
      */
     public final void setLastBlock(final int lastBlock) {
         this.lastBlock = lastBlock;
@@ -433,8 +420,7 @@ public class ParadoxDataFile {
     /**
      * Sets the file name.
      *
-     * @param name
-     *            the file name.
+     * @param name the file name.
      */
     public final void setName(final String name) {
         this.name = name;
@@ -443,8 +429,7 @@ public class ParadoxDataFile {
     /**
      * Sets the primary key field count.
      *
-     * @param primaryFieldCount
-     *            the primary key field count.
+     * @param primaryFieldCount the primary key field count.
      */
     public final void setPrimaryFieldCount(final int primaryFieldCount) {
         this.primaryFieldCount = primaryFieldCount;
@@ -453,8 +438,7 @@ public class ParadoxDataFile {
     /**
      * Set the record size.
      *
-     * @param recordSize
-     *            the record size.
+     * @param recordSize the record size.
      */
     public final void setRecordSize(final int recordSize) {
         this.recordSize = recordSize;
@@ -463,8 +447,7 @@ public class ParadoxDataFile {
     /**
      * Set the referential integrity value.
      *
-     * @param referentialIntegrity
-     *            the referential integrity value.
+     * @param referentialIntegrity the referential integrity value.
      */
     public final void setReferentialIntegrity(final byte referentialIntegrity) {
         this.referentialIntegrity = referentialIntegrity;
@@ -473,8 +456,7 @@ public class ParadoxDataFile {
     /**
      * Sets the row count.
      *
-     * @param rowCount
-     *            the row count.
+     * @param rowCount the row count.
      */
     public final void setRowCount(final int rowCount) {
         this.rowCount = rowCount;
@@ -483,8 +465,7 @@ public class ParadoxDataFile {
     /**
      * Sets the total blocks.
      *
-     * @param totalBlocks
-     *            the total blocks.
+     * @param totalBlocks the total blocks.
      */
     public final void setTotalBlocks(final int totalBlocks) {
         this.totalBlocks = totalBlocks;
@@ -493,8 +474,7 @@ public class ParadoxDataFile {
     /**
      * Sets the file type.
      *
-     * @param type
-     *            the file type.
+     * @param type the file type.
      */
     public final void setType(final byte type) {
         this.type = type;
@@ -503,8 +483,7 @@ public class ParadoxDataFile {
     /**
      * Sets the used blocks.
      *
-     * @param usedBlocks
-     *            the used blocks.
+     * @param usedBlocks the used blocks.
      */
     public final void setUsedBlocks(final int usedBlocks) {
         this.usedBlocks = usedBlocks;
@@ -513,8 +492,7 @@ public class ParadoxDataFile {
     /**
      * Sets the file version ID.
      *
-     * @param versionId
-     *            the file version ID.
+     * @param versionId the file version ID.
      */
     public final void setVersionId(final byte versionId) {
         this.versionId = versionId;
@@ -523,8 +501,7 @@ public class ParadoxDataFile {
     /**
      * Sets the write protected value.
      *
-     * @param writeProtected
-     *            the write protected value.
+     * @param writeProtected the write protected value.
      */
     public final void setWriteProtected(final byte writeProtected) {
         this.writeProtected = writeProtected;

@@ -70,8 +70,8 @@ public final class ViewData {
      * @return all {@link ParadoxView} filtered by name.
      * @throws SQLException in case of reading errors.
      */
-    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName)
-    throws SQLException {
+    public static List<ParadoxView> listViews(final ParadoxConnection conn, final String tableName) throws
+            SQLException {
         final List<ParadoxView> views = new ArrayList<>();
         final File[] fileList = conn.getDir().listFiles(new ViewFilter(tableName));
         if (fileList != null) {
@@ -106,12 +106,9 @@ public final class ViewData {
      * @return the Paradox field.
      */
     private static ParadoxField getField(final ParadoxDataFile field, final String name) {
-        if (field != null && field.getFields() != null) {
-            for (int loop = 0; loop < field.getFields().size(); loop++) {
-                ParadoxField f = field.getFields().get(0);
-                if (f != null && f.getName().equals(name)) {
-                    return f;
-                }
+        for (final ParadoxField f : field.getFields()) {
+            if (f != null && f.getName().equalsIgnoreCase(name)) {
+                return f;
             }
         }
         return null;
@@ -189,9 +186,7 @@ public final class ViewData {
             // SORT.
             line = ViewData.parseSort(conn, view, reader, line);
 
-            final ArrayList<ParadoxField> fields = ViewData.parseFields(conn, reader, line);
-
-            view.setFields(fields);
+            view.getFields().addAll(ViewData.parseFields(conn, reader, line));
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }

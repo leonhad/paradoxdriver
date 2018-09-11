@@ -15,7 +15,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -261,7 +260,6 @@ public class MainTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Ignore
     @Test
     public void testViewColumns() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
