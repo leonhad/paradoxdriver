@@ -269,7 +269,7 @@ public class MainTest {
             Assert.assertTrue(rs.next());
             Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "areas.qbe", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "AC", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
@@ -282,7 +282,7 @@ public class MainTest {
             Assert.assertTrue(rs.next());
             Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "areas.qbe", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "State", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
@@ -295,7 +295,7 @@ public class MainTest {
             Assert.assertTrue(rs.next());
             Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "areas.qbe", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "Cities", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
