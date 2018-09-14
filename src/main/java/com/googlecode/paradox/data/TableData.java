@@ -23,6 +23,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -73,6 +74,7 @@ public final class TableData extends AbstractParadoxData {
         final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = schema.listFiles(new TableFilter(Utils.removeDb(pattern)));
         if (fileList != null) {
+            Arrays.sort(fileList);
             for (final File file : fileList) {
                 final ParadoxTable table = TableData.loadTableHeader(file);
                 tables.add(table);
