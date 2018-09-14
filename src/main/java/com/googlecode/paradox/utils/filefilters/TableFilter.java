@@ -9,6 +9,7 @@
 package com.googlecode.paradox.utils.filefilters;
 
 import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
 
@@ -20,58 +21,55 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class TableFilter implements FileFilter {
-    
+
     /**
      * The file extension.
      */
     private final String extension;
-    
+
     /**
      * The table name.
      */
     private final String tableName;
-    
+
     /**
      * Create a new instance.
      */
     public TableFilter() {
         this(null, "db");
     }
-    
+
     /**
      * Create a new instance.
      *
-     * @param tableName
-     *            the table name.
+     * @param tableName the table name.
      */
     public TableFilter(final String tableName) {
         this(tableName, "db");
     }
-    
+
     /**
      * Create a new instance.
      *
-     * @param tableName
-     *            the table name.
-     * @param extension
-     *            the table extension.
+     * @param tableName the table name.
+     * @param extension the table extension.
      */
     public TableFilter(final String tableName, final String extension) {
         this.tableName = tableName;
         this.extension = extension;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-        
+
         if (this.tableName != null) {
-            return Expressions.accept(name, this.tableName + "." + this.extension, false);
+            return Expressions.accept(name, this.tableName + "." + this.extension, false) && pathname.isFile();
         }
-        return Expressions.accept(name, "%." + this.extension, false);
+        return Expressions.accept(name, "%." + this.extension, false) && pathname.isFile();
     }
-    
+
 }

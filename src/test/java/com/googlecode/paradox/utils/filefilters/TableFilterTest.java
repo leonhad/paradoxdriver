@@ -8,9 +8,10 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
-import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.File;
 
 /**
  * Unit test for {@link TableFilter}.
@@ -26,7 +27,7 @@ public class TableFilterTest {
      */
     @Test
     public void testAccept() {
-        final File file = new File("test.db");
+        final File file = new File(this.getClass().getResource("/date/DATE4.db").getFile());
         final TableFilter filter = new TableFilter();
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
