@@ -193,7 +193,7 @@ public final class TableData extends AbstractParadoxData {
             buffer.position(0x55);
             table.setReferentialIntegrity(buffer.get());
 
-            AbstractParadoxData.parseVersionID(buffer, table);
+            parseVersionID(buffer, table);
 
             final List<ParadoxField> fields = TableData.parseTableFields(table, buffer);
 
