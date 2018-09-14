@@ -15,16 +15,17 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.results.TypeName;
 import com.googlecode.paradox.utils.Utils;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.Collections;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Collections;
 
 /**
  * Unit test for {@link ParadoxResultSetMetaData} class.
@@ -105,8 +106,8 @@ public class ParadoxResultSetMetaDataTest {
                 new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.singletonList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", TypeName.INTEGER.getClassName(), metaData.getColumnClassName(1));
-        Assert.assertEquals("Testing for catalog name.", "db", metaData.getCatalogName(1));
-        Assert.assertEquals("Testing for schema name.", "APP", metaData.getSchemaName(1));
+        Assert.assertEquals("Testing for catalog name.", "test-classes", metaData.getCatalogName(1));
+        Assert.assertEquals("Testing for schema name.", "db", metaData.getSchemaName(1));
         Assert.assertEquals("Testing for column display size.", 255, metaData.getColumnDisplaySize(1));
         Assert.assertEquals("Testing for column label.", "name", metaData.getColumnLabel(1));
         Assert.assertEquals("Testing for column name.", "name", metaData.getColumnName(1));
@@ -131,11 +132,9 @@ public class ParadoxResultSetMetaDataTest {
     /**
      * Test for instance.
      *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test
-    public void testInstance() throws SQLException {
+    public void testInstance() {
         final ParadoxResultSetMetaData metaData =
                 new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column> emptyList());
         Assert.assertEquals("Testing for column size.", 0, metaData.getColumnCount());
@@ -170,11 +169,9 @@ public class ParadoxResultSetMetaDataTest {
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
      *
-     * @throws Exception
-     *             in case of failures.
      */
     @Test
-    public void testIsWrapFor() throws Exception {
+    public void testIsWrapFor() {
         final ParadoxResultSetMetaData metaData =
                 new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column> emptyList());
         Assert.assertTrue(metaData.isWrapperFor(ParadoxResultSetMetaData.class));

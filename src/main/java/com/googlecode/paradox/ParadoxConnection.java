@@ -11,6 +11,7 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
+
 import java.io.File;
 import java.sql.Array;
 import java.sql.Blob;
@@ -77,7 +78,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * Selected Schema.
      */
-    private String schema = "APP";
+    private String schema;
     /**
      * Stores the opened statements.
      */
@@ -112,7 +113,13 @@ public final class ParadoxConnection implements Connection {
         if (!dir.exists() && !dir.isDirectory()) {
             throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
         }
-        this.catalog = dir.getName();
+        this.schema = dir.getName();
+
+        if (dir.getParent() != null && !dir.getParent().isEmpty()) {
+            this.catalog = dir.getParentFile().getName();
+        } else {
+            this.catalog = "APP";
+        }
     }
 
     /**

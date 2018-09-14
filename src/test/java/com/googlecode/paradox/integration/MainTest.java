@@ -89,7 +89,7 @@ public class MainTest {
         final DatabaseMetaData meta = this.conn.getMetaData();
         try (ResultSet rs = meta.getCatalogs()) {
             if (rs.next()) {
-                Assert.assertEquals("db", rs.getString("TABLE_CAT"));
+                Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
             } else {
                 Assert.fail("No catalog selected.");
             }
@@ -118,11 +118,11 @@ public class MainTest {
             Assert.assertEquals("CUSTOMER.X06", names[1]);
 
             while (rs.next()) {
-                Assert.assertEquals("db", rs.getString("TABLE_CAT"));
-                Assert.assertEquals("APP", rs.getString("TABLE_SCHEM"));
+                Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
+                Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
                 Assert.assertNull(rs.getString("TABLE_NAME"));
                 Assert.assertEquals("false", rs.getString("NON_UNIQUE"));
-                Assert.assertEquals("db", rs.getString("INDEX_QUALIFIER"));
+                Assert.assertEquals("test-classes", rs.getString("INDEX_QUALIFIER"));
                 Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
                 Assert.assertEquals("2", rs.getString("TYPE"));
                 Assert.assertEquals("0", rs.getString("ORDINAL_POSITION"));
@@ -144,10 +144,10 @@ public class MainTest {
     public void testPrimaryKey() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getPrimaryKeys("db", "APP", "CUSTOMER.db")) {
+        try (ResultSet rs = meta.getPrimaryKeys("db", "test-classes", "CUSTOMER.db")) {
             Assert.assertTrue(rs.next());
-            Assert.assertEquals("db", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("APP", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("CUSTOMER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("CustNo", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("0", rs.getString("KEY_SEQ"));
@@ -264,11 +264,11 @@ public class MainTest {
     public void testViewColumns() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
+        try (ResultSet rs = meta.getColumns("db", "test-classes", "AREAS.QBE", "%")) {
             // Test for AC field.
             Assert.assertTrue(rs.next());
-            Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "AC", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
@@ -280,8 +280,8 @@ public class MainTest {
 
             // Test for State field.
             Assert.assertTrue(rs.next());
-            Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "State", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
@@ -293,8 +293,8 @@ public class MainTest {
 
             // Test for Cities field.
             Assert.assertTrue(rs.next());
-            Assert.assertEquals("Testing for table catalog.", "db", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("Testing for table schema.", "APP", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "Cities", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
