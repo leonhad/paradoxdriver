@@ -11,6 +11,7 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
+import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
 import java.io.File;
 import java.sql.Array;
@@ -50,7 +51,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * Database catalog.
      */
-    private final String catalog;
+    private final File catalog;
     /**
      * Connection properties info.
      */
@@ -59,10 +60,6 @@ public final class ParadoxConnection implements Connection {
      * If this connection is closed.
      */
     private boolean closed;
-    /**
-     * Store the connection directory reference.
-     */
-    private final File dir;
     /**
      * This connection holdability.
      */
@@ -78,7 +75,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * Selected Schema.
      */
-    private String schema;
+    private File schema;
     /**
      * Stores the opened statements.
      */
@@ -99,26 +96,28 @@ public final class ParadoxConnection implements Connection {
     /**
      * Creates a new paradox connection.
      *
-     * @param dir
-     *            database directory.
-     * @param url
-     *            connect URL.
-     * @throws SQLException
-     *             in any connection fault.
+     * @param dir database directory.
+     * @param url connect URL.
+     * @throws SQLException in any connection fault.
      */
     public ParadoxConnection(final File dir, final String url) throws SQLException {
         this.url = url;
-        this.dir = dir;
 
         if (!dir.exists() && !dir.isDirectory()) {
             throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
         }
-        this.schema = dir.getName();
 
-        if (dir.getParent() != null && !dir.getParent().isEmpty()) {
-            this.catalog = dir.getParentFile().getName();
+        final File[] dirs = dir.listFiles(new DirectoryFilter());
+
+        // Is a catalog.
+        if (dirs != null && dirs.length > 0) {
+            // Uses the fist schema.
+            this.schema = dirs[0];
+            this.catalog = dir;
         } else {
-            this.catalog = "APP";
+            // Is a schema.
+            this.schema = dir;
+            this.catalog = dir.getParentFile();
         }
     }
 
@@ -246,7 +245,23 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getCatalog() {
-        return this.catalog;
+        return this.catalog.getName();
+    }
+
+    /**
+     * Gets the catalog by name.
+     *
+     * @param catalogName the catalog pattern.
+     * @return the catalog file.
+     * @throws SQLException in case of invalid catalog.
+     */
+    private File getCatalog(final String catalogName) throws SQLException {
+        final File parent = this.catalog.getParentFile();
+        final File currentCatalog = new File(parent, catalogName);
+        if (!currentCatalog.isDirectory()) {
+            throw new SQLException("Invalid catalog name.");
+        }
+        return currentCatalog;
     }
 
     /**
@@ -266,12 +281,21 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * Gets the current directory.
+     * Gets the current schema directory.
      *
-     * @return the current directory.
+     * @return the current schema directory.
      */
-    public File getDir() {
-        return this.dir;
+    public File getCurrentSchema() {
+        return this.schema;
+    }
+
+    /**
+     * Gets the current catalog directory.
+     *
+     * @return the current catalog directory.
+     */
+    public File getCurrentCatalog() {
+        return this.catalog;
     }
 
     /**
@@ -303,7 +327,19 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getSchema() {
-        return this.schema;
+        return this.schema.getName();
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setSchema(final String schema) throws SQLException {
+        final File file = new File(this.catalog, schema);
+        if (!file.isDirectory()) {
+            throw new SQLException("Schema not found.");
+        }
+        this.schema = file;
     }
 
     /**
@@ -388,12 +424,16 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * {@inheritDoc}.
+     * List the connections schema in selected catalog.
+     *
+     * @param catalog       the database catalog.
+     * @param schemaPattern the schema pattern.
+     * @return the schema directories.
+     * @throws SQLException in case of errors.
      */
-    @Override
-    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency)
-            throws SQLException {
-        return this.prepareCall(sql);
+    public File[] getSchema(final String catalog, final String schemaPattern) throws SQLException {
+        File currentCatalog = getCatalog(catalog);
+        return currentCatalog.listFiles(new DirectoryFilter(schemaPattern));
     }
 
     /**
@@ -425,9 +465,9 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency)
-            throws SQLException {
-        return this.prepareStatement(sql);
+    public CallableStatement prepareCall(final String sql, final int resultSetType,
+            final int resultSetConcurrency) throws SQLException {
+        return this.prepareCall(sql);
     }
 
     /**
@@ -558,8 +598,9 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setSchema(final String schema) {
-        this.schema = schema;
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency)
+    throws SQLException {
+        return this.prepareStatement(sql);
     }
 
     /**

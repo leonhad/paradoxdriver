@@ -15,6 +15,7 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -100,14 +101,10 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Creates a new {@link ResultSet}.
      *
-     * @param conn
-     *            the database connection.
-     * @param statement
-     *            the {@link Statement} for this {@link ResultSet}.
-     * @param values
-     *            row and column values.
-     * @param columns
-     *            the columns name.
+     * @param conn      the database connection.
+     * @param statement the {@link Statement} for this {@link ResultSet}.
+     * @param values    row and column values.
+     * @param columns   the columns name.
      */
     public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
             final List<List<FieldValue>> values, final List<Column> columns) {
@@ -707,8 +704,9 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
-        return (T)getObject(columnIndex);
+        return (T) getObject(columnIndex);
     }
 
     /**
@@ -731,6 +729,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
         return (T) getObject(columnLabel);
     }
@@ -846,8 +845,9 @@ public final class ParadoxResultSet implements ResultSet {
         }
         this.lastValue = row.get(columnIndex - 1);
         if ((this.lastValue != null) && (this.lastValue.getValue() != null)) {
-            if (this.lastValue.getValue() instanceof ClobDescriptor) { //Special case
-                return ((ClobDescriptor)(this.lastValue.getValue())).getClobString();
+            if (this.lastValue.getValue() instanceof ClobDescriptor) {
+                //Special case
+                return ((ClobDescriptor) (this.lastValue.getValue())).getClobString();
             } else {
                 return this.lastValue.getValue().toString();
             }
@@ -1873,8 +1873,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Verify it there is more rows.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     private void verifyRow() throws SQLException {
         if (!this.hasNext()) {

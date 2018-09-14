@@ -23,7 +23,7 @@ import java.util.List;
  * @since 1.3
  */
 public class SelectPlanTest {
-    
+
     /**
      * The connection string used in this tests.
      */
@@ -34,23 +34,21 @@ public class SelectPlanTest {
      * The database connection.
      */
     private ParadoxConnection conn;
-    
+
     /**
      * Register the database driver.
      *
-     * @throws ClassNotFoundException
-     *             in case of failures.
+     * @throws ClassNotFoundException in case of failures.
      */
     @BeforeClass
     public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Close the test connection.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @After
     public void closeConnection() throws SQLException {
@@ -58,112 +56,106 @@ public class SelectPlanTest {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to the test database.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Before
     public void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(SelectPlanTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test for ambiguous column table alias.
      *
-     * @throws SQLException
-     *             if has errors.
+     * @throws SQLException if has errors.
      */
     @Test(expected = SQLException.class)
     public void testAmbiguousColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan();
-        
+
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setAlias("test");
-        
-        final List<ParadoxTable> tables = TableData.listTables(this.conn, AREACODES);
+
+        final List<ParadoxTable> tables = TableData.listTables(AREACODES, this.conn.getCurrentSchema());
         tableNode.setTable(tables.get(0));
         plan.addTable(tableNode);
-        
+
         tableNode = new PlanTableNode();
         tableNode.setAlias("test2");
         tableNode.setTable(tables.get(0));
         plan.addTable(tableNode);
-        
+
         plan.addColumn("ac");
         Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
-    
+
     /**
      * Test for column value with table alias.
      *
-     * @throws SQLException
-     *             if has errors.
+     * @throws SQLException if has errors.
      */
     @Test
     public void testColumnWithTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan();
-        
+
         final PlanTableNode tableNode = new PlanTableNode();
         tableNode.setAlias("test");
-        
-        final List<ParadoxTable> tables = TableData.listTables(this.conn, AREACODES);
+
+        final List<ParadoxTable> tables = TableData.listTables(AREACODES, this.conn.getCurrentSchema());
         tableNode.setTable(tables.get(0));
         plan.addTable(tableNode);
-        
+
         plan.addColumn("test.ac");
         Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
-    
+
     /**
      * Test for invalid column value.
      *
-     * @throws SQLException
-     *             if there are no errors.
+     * @throws SQLException if there are no errors.
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan();
         plan.addColumn("invalid");
     }
-    
+
     /**
      * Test for invalid table alias.
      *
-     * @throws SQLException
-     *             if has errors.
+     * @throws SQLException if has errors.
      */
     @Test(expected = SQLException.class)
     public void testInvalidTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan();
-        
+
         final PlanTableNode tableNode = new PlanTableNode();
         tableNode.setAlias("test");
-        
-        final List<ParadoxTable> tables = TableData.listTables(this.conn, AREACODES);
+
+        final List<ParadoxTable> tables = TableData.listTables(AREACODES, this.conn.getCurrentSchema());
         tableNode.setTable(tables.get(0));
         plan.addTable(tableNode);
-        
+
         plan.addColumn("test2.ac");
     }
-    
+
     /**
      * Test for invalid table value.
      *
-     * @throws SQLException
-     *             if has errors.
+     * @throws SQLException if has errors.
      */
     @Test(expected = SQLException.class)
     public void testInvalidTableValue() throws SQLException {
         final SelectPlan plan = new SelectPlan();
-        
+
         final PlanTableNode tableNode = new PlanTableNode();
         tableNode.setAlias("test");
         tableNode.setTable(null);
         plan.addTable(tableNode);
-        
+
         plan.addColumn("test.ac");
     }
 }

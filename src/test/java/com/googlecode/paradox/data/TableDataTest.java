@@ -14,17 +14,18 @@ import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.TestUtil;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Unit test for {@link TableData}.
@@ -34,28 +35,26 @@ import org.junit.Test;
  * @since 1.0
  */
 public class TableDataTest {
-    
+
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-    
+
     /**
      * Register the driver.
      *
-     * @throws ClassNotFoundException
-     *             in case of connection errors.
+     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
     public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Used to close the test connection.
      *
-     * @throws Exception
-     *             in case closing of errors.
+     * @throws Exception in case closing of errors.
      */
     @After
     public void closeConnection() throws Exception {
@@ -63,129 +62,117 @@ public class TableDataTest {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to test database.
      *
-     * @throws Exception
-     *             in case of connection errors.
+     * @throws Exception in case of connection errors.
      */
     @Before
     public void connect() throws Exception {
         this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test for invalid table
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testInvalidTable() throws SQLException {
         Assert.assertEquals("Failed in count invalid tables.", 0,
-                TableData.listTables(this.conn, "not found.db").size());
+                TableData.listTables("not found.db", this.conn.getCurrentSchema()).size());
     }
-    
+
     /**
      * Test for table area codes.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testLoadAreaCodes() throws SQLException {
-        final List<ParadoxTable> tables = TableData.listTables(this.conn, "areacodes.db");
+        final List<ParadoxTable> tables = TableData.listTables("areacodes.db", this.conn.getCurrentSchema());
         Assert.assertNotNull("List tables is null", tables);
         Assert.assertTrue("List tables is empty", tables.size() > 0);
         final ParadoxTable table = tables.get(0);
         final List<List<FieldValue>> data = TableData.loadData(table, table.getFields());
         Assert.assertEquals("Error in load table.", table.getRowCount(), data.size());
     }
-    
+
     /**
      * Test for contact table.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testLoadContacts() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn, "contacts.db").get(0);
+        final ParadoxTable table = TableData.listTables("contacts.db", this.conn.getCurrentSchema()).get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-    
+
     /**
      * Test for customer table.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testLoadCustomer() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn, "customer.db").get(0);
+        final ParadoxTable table = TableData.listTables("customer.db", this.conn.getCurrentSchema()).get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-    
+
     /**
      * Test for Hercules table.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testLoadHercules() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn, "hercules.db").get(0);
+        final ParadoxTable table = TableData.listTables("hercules.db", this.conn.getCurrentSchema()).get(0);
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, table.getFields()));
     }
-    
+
     /**
      * Test for orders table.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testLoadOrders() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn, "orders.db").get(0);
+        final ParadoxTable table = TableData.listTables("orders.db", this.conn.getCurrentSchema()).get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-    
+
     /**
      * Test for server table.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testLoadServer() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn, "server.db").get(0);
+        final ParadoxTable table = TableData.listTables("server.db", this.conn.getCurrentSchema()).get(0);
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         fields.add(table.getFields().get(0));
         Assert.assertNotNull("Error loading table list.", TableData.loadData(table, fields));
     }
-    
+
     /**
      * Test for class sanity.
      *
-     * @throws NoSuchMethodException
-     *             in case of errors.
-     * @throws InstantiationException
-     *             in case of errors.
-     * @throws IllegalAccessException
-     *             in case of errors.
-     * @throws InvocationTargetException
-     *             in case of errors.
+     * @throws NoSuchMethodException     in case of errors.
+     * @throws InstantiationException    in case of errors.
+     * @throws IllegalAccessException    in case of errors.
+     * @throws InvocationTargetException in case of errors.
      */
     @Test
     public void testSanity()
-            throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(TableData.class));
     }
 }

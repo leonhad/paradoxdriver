@@ -55,7 +55,7 @@ public final class IndexData extends AbstractParadoxData {
             throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = Utils.removeDb(tableName) + ".X??";
-        final File[] fileList = conn.getDir().listFiles(new SecondaryIndexFilter(indexNamePattern));
+        final File[] fileList = conn.getCurrentSchema().listFiles(new SecondaryIndexFilter(indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {
                 try {

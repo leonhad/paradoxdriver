@@ -20,6 +20,8 @@ import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.SQLStates;
+
+import java.io.File;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
@@ -32,33 +34,28 @@ import java.util.List;
  * @since 1.1
  */
 public class Planner {
-    
+
     /**
      * The database connection.
      */
     private final ParadoxConnection conn;
-    
+
     /**
      * Create a new instance.
      *
-     * @param conn
-     *            the database connection.
+     * @param conn the database connection.
      */
     public Planner(final ParadoxConnection conn) {
         this.conn = conn;
     }
-    
+
     /**
      * Parses the table metadata.
      *
-     * @param statement
-     *            the SELECT statement.
-     * @param plan
-     *            the select execution plan.
-     * @param paradoxTables
-     *            the tables list.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @param statement     the SELECT statement.
+     * @param plan          the select execution plan.
+     * @param paradoxTables the tables list.
+     * @throws SQLException in case of parse errors.
      */
     private static void parseTableMetaData(final SelectNode statement, final SelectPlan plan,
             final List<ParadoxTable> paradoxTables) throws SQLException {
@@ -79,57 +76,52 @@ public class Planner {
             plan.addTable(node);
         }
     }
-    
+
     /**
      * Create a plan from given statement.
      *
-     * @param statement
-     *            the statement to plan.
+     * @param statement     the statement to plan.
+     * @param currentSchema the current schema file.
      * @return the execution plan.
-     * @throws SQLException
-     *             in case of plan errors.
+     * @throws SQLException in case of plan errors.
      */
-    public final Plan create(final StatementNode statement) throws SQLException {
+    public final Plan create(final StatementNode statement, final File currentSchema) throws SQLException {
         if (statement instanceof SelectNode) {
-            return this.createSelect((SelectNode) statement);
+            return this.createSelect((SelectNode) statement, currentSchema);
         } else {
             throw new SQLFeatureNotSupportedException();
         }
     }
-    
+
     /**
      * Creates an SELECT plan.
      *
-     * @param statement
-     *            the statement to parse.
+     * @param statement     the statement to parse.
+     * @param currentSchema the current schema file.
      * @return the SELECT plan.
-     * @throws SQLException
-     *             in case of syntax error.
+     * @throws SQLException in case of syntax error.
      */
-    private Plan createSelect(final SelectNode statement) throws SQLException {
+    private Plan createSelect(final SelectNode statement, final File currentSchema) throws SQLException {
         final SelectPlan plan = new SelectPlan(statement.getConditions());
-        final List<ParadoxTable> paradoxTables = TableData.listTables(this.conn);
-        
+        final List<ParadoxTable> paradoxTables = TableData.listTables(currentSchema);
+
         // Load the table metadata.
         Planner.parseTableMetaData(statement, plan, paradoxTables);
         this.parseColumns(statement, plan);
-        
+
         if (plan.getColumns().isEmpty()) {
             throw new SQLException("Empty column list.", SQLStates.INVALID_SQL.getValue());
         }
-        
+
         return plan;
     }
-    
+
     /**
      * Parses the table columns.
      *
-     * @param statement
-     *            the SELECT statement.
-     * @param plan
-     *            the SELECT execution plan.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @param statement the SELECT statement.
+     * @param plan      the SELECT execution plan.
+     * @throws SQLException in case of parse errors.
      */
     private void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
         for (final SQLNode field : statement.getFields()) {

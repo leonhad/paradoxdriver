@@ -106,7 +106,7 @@ public class MainTest {
         final String[] names = new String[2];
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getIndexInfo("db", "APP", "customer.db", true, true)) {
+        try (ResultSet rs = meta.getIndexInfo("test-classes", "db", "customer.db", true, true)) {
             Assert.assertTrue(rs.next());
             names[0] = rs.getString("INDEX_NAME");
             Assert.assertTrue(rs.next());
@@ -144,7 +144,7 @@ public class MainTest {
     public void testPrimaryKey() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getPrimaryKeys("db", "test-classes", "CUSTOMER.db")) {
+        try (ResultSet rs = meta.getPrimaryKeys("test-classes", "db", "CUSTOMER.db")) {
             Assert.assertTrue(rs.next());
             Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
             Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
@@ -264,7 +264,7 @@ public class MainTest {
     public void testViewColumns() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getColumns("db", "test-classes", "AREAS.QBE", "%")) {
+        try (ResultSet rs = meta.getColumns("test-classes", "db", "AREAS.QBE", "%")) {
             // Test for AC field.
             Assert.assertTrue(rs.next());
             Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));

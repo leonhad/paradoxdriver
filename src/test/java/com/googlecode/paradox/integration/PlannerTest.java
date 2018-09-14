@@ -5,14 +5,15 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.SelectPlan;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Integration test for SQL planning.
@@ -79,7 +80,7 @@ public class PlannerTest {
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser("select * from invalid");
         final Planner planner = new Planner(this.conn);
-        planner.create(parser.parse().get(0));
+        planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
     }
     
     /**
@@ -92,7 +93,7 @@ public class PlannerTest {
     public void testSelect() throws Exception {
         final SQLParser parser = new SQLParser("select * from areacodes a");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0));
+        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
         Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());

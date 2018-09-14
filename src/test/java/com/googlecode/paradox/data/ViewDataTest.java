@@ -13,14 +13,15 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.utils.TestUtil;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 
 /**
  * Unit test for {@link ViewData}.
@@ -30,28 +31,26 @@ import org.junit.Test;
  * @since 1.0
  */
 public class ViewDataTest {
-    
+
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-    
+
     /**
      * Register the driver.
      *
-     * @throws ClassNotFoundException
-     *             in case of connection errors.
+     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
     public static void initClass() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Used to close the test connection.
      *
-     * @throws Exception
-     *             in case closing of errors.
+     * @throws Exception in case closing of errors.
      */
     @After
     public void closeConnection() throws Exception {
@@ -59,69 +58,62 @@ public class ViewDataTest {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to test database.
      *
-     * @throws Exception
-     *             in case of connection errors.
+     * @throws Exception in case of connection errors.
      */
     @Before
     public void connect() throws Exception {
         this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test for list views.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testListViews() throws Exception {
-        Assert.assertNotNull("Invalid views", ViewData.listViews(this.conn));
+        Assert.assertNotNull("Invalid views", ViewData.listViews(this.conn.getCurrentSchema()));
     }
-    
+
     /**
      * Test for parse view.
-     *
-     * @throws Exception
-     *             in case of failures.
      */
     @Test
-    public void testParseExpression() throws Exception {
+    public void testParseExpression() {
         final ParadoxField field = new ParadoxField();
         ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
         Assert.assertTrue("Field is not checked.", field.isChecked());
         Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());
         Assert.assertEquals("Invalid field name.", "CALC _PC*_QTD", field.getExpression());
         Assert.assertEquals("Invalid field name.", "CUSTOTOTAL", field.getAlias());
-        
+
         Assert.assertTrue(field.isChecked());
     }
-    
+
     /**
      * Test for class sanity.
      *
-     * @throws Exception
-     *             in case of errors.
+     * @throws Exception in case of errors.
      */
     @Test
     public void testSanity() throws Exception {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(ViewData.class));
     }
-    
+
     /**
      * Test for view file reading.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testViewFileReading() throws Exception {
         final DatabaseMetaData meta = this.conn.getMetaData();
-        
-        try (ResultSet rs = meta.getColumns("db", "APP", "AREAS.QBE", "%")) {
+
+        try (ResultSet rs = meta.getColumns("test-classes", "db", "AREAS.QBE", "%")) {
             // This view have 3 fields.
             Assert.assertTrue("Invalid result set.", rs.next());
             Assert.assertTrue("Invalid result set.", rs.next());
