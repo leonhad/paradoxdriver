@@ -8,9 +8,10 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link ParadoxField} class.
@@ -20,7 +21,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public class ParadoxFieldTest {
-    
+
     /**
      * Test for auto increment.
      */
@@ -30,7 +31,7 @@ public class ParadoxFieldTest {
         field.setType((byte) 0x16);
         Assert.assertTrue(field.isAutoIncrement());
     }
-    
+
     /**
      * Test for default order.
      */
@@ -39,7 +40,7 @@ public class ParadoxFieldTest {
         final ParadoxField field = new ParadoxField();
         Assert.assertEquals(1, field.getOrderNum());
     }
-    
+
     /**
      * Test for empty alias.
      */
@@ -49,7 +50,7 @@ public class ParadoxFieldTest {
         field.setName("Field");
         Assert.assertEquals("Field", field.getAlias());
     }
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method.
      */
@@ -59,9 +60,9 @@ public class ParadoxFieldTest {
         first.setName("Field");
         final ParadoxField last = new ParadoxField();
         last.setName("Field");
-        Assert.assertTrue(first.equals(last));
+        Assert.assertEquals("Invalid equals result.", last, first);
     }
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method with a different
      * class.
@@ -70,9 +71,9 @@ public class ParadoxFieldTest {
     public void testEqualsDifferentClass() {
         final ParadoxField first = new ParadoxField();
         first.setName("Field");
-        Assert.assertFalse(first.equals("String"));
+        Assert.assertNotEquals("Invalid equals result.", "String", first);
     }
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method with null value.
      */
@@ -80,9 +81,9 @@ public class ParadoxFieldTest {
     public void testEqualsNull() {
         final ParadoxField field = new ParadoxField();
         field.setName("Field");
-        Assert.assertFalse(field.equals(null));
+        Assert.assertNotEquals("Invalid equals result.", null, field);
     }
-    
+
     /**
      * Test for getters and setters.
      */
@@ -96,16 +97,16 @@ public class ParadoxFieldTest {
         field.setName("name");
         field.setTableName("tableName");
         field.setTable(null);
-        
+
         Assert.assertEquals("alias", field.getAlias());
         Assert.assertFalse("Field is not checked.", field.isChecked());
         Assert.assertEquals("expression", field.getExpression());
         Assert.assertEquals("joinName", field.getJoinName());
         Assert.assertEquals("name", field.getName());
         Assert.assertEquals("tableName", field.getTableName());
-        Assert.assertEquals(null, field.getTable());
+        Assert.assertNull("Invalid table", field.getTable());
     }
-    
+
     /**
      * Test for {@link ParadoxField#hashCode()} method.
      */
@@ -115,7 +116,7 @@ public class ParadoxFieldTest {
         field.setName("Field");
         Assert.assertEquals((7 * 17) + "Field".hashCode(), field.hashCode());
     }
-    
+
     /**
      * Test for {@link ParadoxField#hashCode()} method variant.
      */
@@ -125,7 +126,7 @@ public class ParadoxFieldTest {
         field.setName(null);
         Assert.assertEquals(7 * 17, field.hashCode());
     }
-    
+
     /**
      * Test for not auto increment.
      */
@@ -135,7 +136,7 @@ public class ParadoxFieldTest {
         field.setType((byte) 1);
         Assert.assertFalse(field.isAutoIncrement());
     }
-    
+
     /**
      * Test for {@link ParadoxField#equals(Object)} method different values.
      */
@@ -145,27 +146,25 @@ public class ParadoxFieldTest {
         first.setName("Field");
         final ParadoxField last = new ParadoxField();
         last.setName("Field 2");
-        Assert.assertFalse(first.equals(last));
-        
+        Assert.assertNotEquals("Invalid field.", first, last);
+
         first.setName(null);
         last.setName("Field 2");
-        Assert.assertFalse(first.equals(last));
-        
+        Assert.assertNotEquals("Invalid field.", first, last);
+
         first.setName("Field");
         last.setName(null);
-        Assert.assertFalse(first.equals(last));
-        
+        Assert.assertNotEquals("Invalid field.", first, last);
+
         first.setName(null);
         last.setName(null);
-        Assert.assertTrue(first.equals(last));
+        Assert.assertEquals("Invalid field.", first, last);
     }
-    
+
     /**
-     * Test for {@link ParadoxField#getSize()} and
-     * {@link ParadoxField#setSize(int)} method.
+     * Test for {@link ParadoxField#getSize()} and {@link ParadoxField#setSize(int)} method.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testSize() throws SQLException {
@@ -175,43 +174,42 @@ public class ParadoxFieldTest {
         field.setSize(10);
         Assert.assertEquals("Field size invalid.", 10, field.getSize());
     }
-    
+
     /**
      * Test for {@link ParadoxField#toString()} method.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testSizeClob() throws SQLException {
         final ParadoxField field = new ParadoxField();
-        
+
         field.setType((byte) 0xC);
         field.setSize(20);
         Assert.assertEquals("Field size invalid.", 10, field.getSize());
-        
+
         field.setType((byte) 0xD);
         field.setSize(20);
         Assert.assertEquals("Field size invalid.", 10, field.getSize());
-        
+
         field.setType((byte) 0xF);
         field.setSize(20);
         Assert.assertEquals("Field size invalid.", 10, field.getSize());
-        
+
         field.setType((byte) 0x18);
         field.setSize(20);
         Assert.assertEquals("Field size invalid.", 10, field.getSize());
-        
+
         // Not changed by type
         field.setType((byte) 0xF);
         field.setSize(20);
         Assert.assertEquals("Physical field size invalid.", 20, field.getPhysicsSize());
-        
+
         field.setType((byte) 0x1);
         field.setSize(20);
         Assert.assertEquals("Physical field size invalid.", 20, field.getPhysicsSize());
     }
-    
+
     /**
      * Test for {@link ParadoxField#toString()} method.
      */

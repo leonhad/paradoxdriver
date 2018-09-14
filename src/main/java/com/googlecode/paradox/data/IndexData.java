@@ -8,7 +8,6 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.Utils;
@@ -43,19 +42,16 @@ public final class IndexData extends AbstractParadoxData {
     /**
      * List the indexes in a database file.
      *
-     * @param conn
-     *            the Paradox connection.
-     * @param tableName
-     *            the table name.
+     * @param currentSchema the current schema file.
+     * @param tableName     the table name.
      * @return a list of {@link ParadoxIndex}.
-     * @throws SQLException
-     *             in case of reading failures.
+     * @throws SQLException in case of reading failures.
      */
-    public static List<ParadoxIndex> listIndexes(final ParadoxConnection conn, final String tableName)
-            throws SQLException {
+    public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName)
+    throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = Utils.removeDb(tableName) + ".X??";
-        final File[] fileList = conn.getCurrentSchema().listFiles(new SecondaryIndexFilter(indexNamePattern));
+        final File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
@@ -72,13 +68,10 @@ public final class IndexData extends AbstractParadoxData {
     /**
      * Loads the database file header.
      *
-     * @param file
-     *            the database {@link File}.
+     * @param file the database {@link File}.
      * @return the {@link ParadoxIndex} reference.
-     * @throws IOException
-     *             if case of I/O exceptions.
-     * @throws SQLException
-     *             in case of database errors.
+     * @throws IOException  if case of I/O exceptions.
+     * @throws SQLException in case of database errors.
      */
     private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
@@ -129,19 +122,16 @@ public final class IndexData extends AbstractParadoxData {
     /**
      * Parse fields in index header.
      *
-     * @param buffer
-     *            the buffer to parse.
-     * @param index
-     *            the paradox index.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @param buffer the buffer to parse.
+     * @param index  the paradox index.
+     * @throws SQLException in case of parse errors.
      */
     private static void parseFields(final ByteBuffer buffer, final ParadoxIndex index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
             field.setType(buffer.get());
-            field.setSize(buffer.get());
+            field.setSize((int) buffer.get());
             fields.add(field);
         }
 
@@ -180,10 +170,8 @@ public final class IndexData extends AbstractParadoxData {
     /**
      * Parse the index names.
      *
-     * @param buffer
-     *            the buffer to parse.
-     * @param index
-     *            the paradox index.
+     * @param buffer the buffer to parse.
+     * @param index  the paradox index.
      */
     private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer name = ByteBuffer.allocate(26);
@@ -204,10 +192,8 @@ public final class IndexData extends AbstractParadoxData {
     /**
      * Parse the sort order ID.
      *
-     * @param buffer
-     *            the buffer to parse.
-     * @param index
-     *            the paradox index.
+     * @param buffer the buffer to parse.
+     * @param index  the paradox index.
      */
     private static void parseSortID(final ByteBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer sortOrderID = ByteBuffer.allocate(26);

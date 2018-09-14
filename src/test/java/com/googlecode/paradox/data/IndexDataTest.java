@@ -11,43 +11,42 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
-import java.sql.DriverManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.sql.DriverManager;
+
 /**
  * Unit test for {@link IndexData}.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class IndexDataTest {
-    
+
     /**
      * The database connection.
      */
     private ParadoxConnection conn;
-    
+
     /**
      * Register the driver.
      *
-     * @throws ClassNotFoundException
-     *             in case of connection errors.
+     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
     public static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Used to close the test connection.
      *
-     * @throws Exception
-     *             in case closing of errors.
+     * @throws Exception in case closing of errors.
      */
     @After
     public void closeConnection() throws Exception {
@@ -55,26 +54,24 @@ public class IndexDataTest {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to test database.
      *
-     * @throws Exception
-     *             in case of connection errors.
+     * @throws Exception in case of connection errors.
      */
     @Before
     public void connect() throws Exception {
         this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test for index listing.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testListIndexes() throws Exception {
-        Assert.assertNotEquals("Empty indexes.", 0, IndexData.listIndexes(this.conn, "Client.db"));
+        Assert.assertNotEquals("Empty indexes.", 0, IndexData.listIndexes(this.conn.getCurrentSchema(), "Client.db"));
     }
 }

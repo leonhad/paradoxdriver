@@ -64,12 +64,12 @@ public final class TableData extends AbstractParadoxData {
     /**
      * Gets all tables within a pattern.
      *
-     * @param pattern the pattern.
      * @param schema  the schema directory.
+     * @param pattern the pattern.
      * @return the tables filtered.
      * @throws SQLException in case of failures.
      */
-    public static List<ParadoxTable> listTables(final String pattern, final File schema) throws SQLException {
+    public static List<ParadoxTable> listTables(final File schema, final String pattern) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = schema.listFiles(new TableFilter(Utils.removeDb(pattern)));
         if (fileList != null) {

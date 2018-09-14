@@ -8,7 +8,6 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
@@ -29,29 +28,26 @@ import java.sql.SQLException;
  * @since 1.0
  */
 public final class PrimaryKeyData {
-    
+
     /**
      * Utility class.
      */
     private PrimaryKeyData() {
         // Utility class.
     }
-    
+
     /**
      * Gets the primary keys from the database file.
      *
-     * @param conn
-     *            the database connection.
-     * @param table
-     *            the tables primary key.
+     * @param currentSchema the current schema file.
+     * @param table         the tables primary key.
      * @return the primary keys.
-     * @throws SQLException
-     *             in case of load failures.
+     * @throws SQLException in case of load failures.
      */
-    public static ParadoxPK getPrimaryKey(final ParadoxConnection conn, final ParadoxTable table) throws SQLException {
+    public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxTable table) throws SQLException {
         final String name = table.getName() + ".PX";
 
-        final File[] fileList = conn.getCurrentSchema().listFiles(new PrimaryKeyFilter(name));
+        final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(name));
         if ((fileList != null) && (fileList.length > 0)) {
             try {
                 return PrimaryKeyData.loadPKHeader(fileList[0]);
@@ -61,25 +57,23 @@ public final class PrimaryKeyData {
         }
         return null;
     }
-    
+
     /**
      * Gets the {@link ParadoxPK} from a PK file.
      *
-     * @param file
-     *            the file to read.
+     * @param file the file to read.
      * @return the {@link ParadoxPK}.
-     * @throws IOException
-     *             in case of I/O exceptions.
+     * @throws IOException in case of I/O exceptions.
      */
     private static ParadoxPK loadPKHeader(final File file) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ParadoxPK pk = new ParadoxPK();
-        
+
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
             buffer.flip();
-            
+
             pk.setName(file.getName());
             pk.setRecordSize(buffer.getShort());
             pk.setHeaderSize(buffer.getShort());
@@ -90,10 +84,10 @@ public final class PrimaryKeyData {
             pk.setTotalBlocks(buffer.getShort());
             pk.setFirstBlock(buffer.getShort());
             pk.setLastBlock(buffer.getShort());
-            
+
             buffer.position(0x15);
             pk.setIndexFieldNumber(buffer.get());
-            
+
             buffer.position(0x38);
             pk.setWriteProtected(buffer.get());
             pk.setVersionId(buffer.get());

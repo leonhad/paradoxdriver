@@ -10,6 +10,7 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
+
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Locale;
@@ -22,7 +23,7 @@ import java.util.Locale;
  * @since 1.0
  */
 public final class ParadoxField {
-    
+
     /**
      * Stores the field alias.
      */
@@ -88,8 +89,7 @@ public final class ParadoxField {
     /**
      * Creates a new instance.
      *
-     * @param orderNum
-     *            order number to start.
+     * @param orderNum order number to start.
      */
     public ParadoxField(final int orderNum) {
         this.orderNum = orderNum;
@@ -126,8 +126,7 @@ public final class ParadoxField {
      * The field column reference.
      *
      * @return the {@link Column} reference.
-     * @throws SQLException
-     *             in case of type error.
+     * @throws SQLException in case of type error.
      */
     public Column getColumn() throws SQLException {
         final Column dto = new Column(this);
@@ -230,8 +229,7 @@ public final class ParadoxField {
     /**
      * Sets the field alias.
      *
-     * @param alias
-     *            the alias to set.
+     * @param alias the alias to set.
      */
     public void setAlias(final String alias) {
         this.alias = alias;
@@ -240,8 +238,7 @@ public final class ParadoxField {
     /**
      * Sets the field checked status.
      *
-     * @param checked
-     *            the checked to set.
+     * @param checked the checked to set.
      */
     public void setChecked(final boolean checked) {
         this.checked = checked;
@@ -250,8 +247,7 @@ public final class ParadoxField {
     /**
      * Sets this field expression.
      *
-     * @param expression
-     *            the expression to set.
+     * @param expression the expression to set.
      */
     public void setExpression(final String expression) {
         this.expression = expression;
@@ -260,8 +256,7 @@ public final class ParadoxField {
     /**
      * Sets the field join name.
      *
-     * @param joinName
-     *            the join name to set.
+     * @param joinName the join name to set.
      */
     public void setJoinName(final String joinName) {
         this.joinName = joinName;
@@ -270,8 +265,7 @@ public final class ParadoxField {
     /**
      * Sets the field name.
      *
-     * @param name
-     *            the name to set.
+     * @param name the name to set.
      */
     public void setName(final String name) {
         this.name = name;
@@ -280,10 +274,8 @@ public final class ParadoxField {
     /**
      * Sets the field size.
      *
-     * @param size
-     *            the size to set.
-     * @throws SQLException
-     *             in case of invalid field type.
+     * @param size the size to set.
+     * @throws SQLException in case of invalid field type.
      */
     public void setSize(final int size) throws SQLException {
         this.physicsSize = size;
@@ -298,8 +290,7 @@ public final class ParadoxField {
     /**
      * Sets the table reference.
      *
-     * @param table
-     *            the table reference.
+     * @param table the table reference.
      */
     public void setTable(final ParadoxTable table) {
         this.table = table;
@@ -308,8 +299,7 @@ public final class ParadoxField {
     /**
      * Sets the table name.
      *
-     * @param tableName
-     *            the table name to set.
+     * @param tableName the table name to set.
      */
     public void setTableName(final String tableName) {
         this.tableName = tableName;
@@ -318,8 +308,7 @@ public final class ParadoxField {
     /**
      * Sets the field type.
      *
-     * @param type
-     *            the type to set.
+     * @param type the type to set.
      */
     public void setType(final byte type) {
         this.type = type;
@@ -346,8 +335,7 @@ public final class ParadoxField {
      * Gets the SQL field type.
      *
      * @return the SQL field type.
-     * @throws SQLException
-     *             in case of type not found.
+     * @throws SQLException in case of type not found.
      */
     int getSqlType() throws SQLException {
         return ParadoxFieldType.getSQLTypeByType(this.type);

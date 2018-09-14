@@ -58,20 +58,21 @@ public final class ViewData {
      * @throws SQLException in case of failures.
      */
     public static List<ParadoxView> listViews(final File currentSchema) throws SQLException {
-        return ViewData.listViews(null, currentSchema);
+        return ViewData.listViews(currentSchema, null);
     }
 
     /**
      * Gets all view filtered by name.
      *
-     * @param tableName the name filter.
+     * @param currentSchema the current schema file.
+     * @param viewName      the name filter.
      * @return all {@link ParadoxView} filtered by name.
      * @throws SQLException in case of reading errors.
      */
-    public static List<ParadoxView> listViews(final String tableName, final File currentSchema) throws
+    public static List<ParadoxView> listViews(final File currentSchema, final String viewName) throws
             SQLException {
         final List<ParadoxView> views = new ArrayList<>();
-        final File[] fileList = currentSchema.listFiles(new ViewFilter(tableName));
+        final File[] fileList = currentSchema.listFiles(new ViewFilter(viewName));
         if (fileList != null) {
             for (final File file : fileList) {
                 final ParadoxView view = ViewData.loadView(file, currentSchema);
@@ -138,7 +139,7 @@ public final class ViewData {
      * @throws SQLException if the table doesn't exist.
      */
     private static ParadoxTable getTable(final String tableName, final File currentSchema) throws SQLException {
-        final List<ParadoxTable> tables = TableData.listTables(tableName.trim(), currentSchema);
+        final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableName.trim());
         if (!tables.isEmpty()) {
             return tables.get(0);
         }
