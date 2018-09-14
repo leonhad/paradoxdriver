@@ -98,7 +98,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * The tables cat name field.
      */
-    private static final String TABLE_CAT = "TABLE_CAT";
+    static final String TABLE_CAT = "TABLE_CAT";
 
     /**
      * The tables name field.
@@ -1899,10 +1899,11 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param type the row type.
      * @return the row.
      */
-    private List<FieldValue> formatRow(final String name, final String type) {
+    private List<FieldValue> formatRow(final String name, final String type, final String catalog,
+            final String schema) {
         final ArrayList<FieldValue> row = new ArrayList<>(1);
-        row.add(new FieldValue(this.conn.getCatalog(), Types.VARCHAR));
-        row.add(new FieldValue(this.conn.getSchema(), Types.VARCHAR));
+        row.add(new FieldValue(catalog, Types.VARCHAR));
+        row.add(new FieldValue(schema, Types.VARCHAR));
         row.add(new FieldValue(name, Types.VARCHAR));
         row.add(new FieldValue(type, Types.VARCHAR));
         row.add(new FieldValue(Types.VARCHAR));
@@ -1926,7 +1927,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final List<List<FieldValue>> values) throws SQLException {
         for (final File schema : this.conn.getSchema(catalog, schemaPattern)) {
             for (final ParadoxTable table : TableData.listTables(tableNamePattern, schema)) {
-                values.add(this.formatRow(table.getName(), TABLE));
+                values.add(this.formatRow(table.getName(), TABLE, catalog, schema.getName()));
             }
         }
     }
@@ -1942,7 +1943,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     private void formatView(final String tableNamePattern, final List<List<FieldValue>> values,
             final File currentSchema) throws SQLException {
         for (final ParadoxView view : ViewData.listViews(tableNamePattern, currentSchema)) {
-            values.add(this.formatRow(view.getName(), "VIEW"));
+            values.add(this.formatRow(this.conn.getCatalog(), currentSchema.getName(), view.getName(), "VIEW"));
         }
     }
 }

@@ -36,7 +36,7 @@ public class DirectoryFilter implements FileFilter {
     public boolean accept(final File file) {
         boolean expression = true;
         if (pattern != null) {
-            expression = Expressions.accept(pattern, "%", false);
+            expression = Expressions.accept(file.getName(), pattern, false);
         }
         return expression && file != null && file.isDirectory();
     }
