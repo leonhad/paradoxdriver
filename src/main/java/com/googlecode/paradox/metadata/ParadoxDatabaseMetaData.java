@@ -46,76 +46,62 @@ import java.util.List;
 public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
     /**
-     * The column name field.
-     */
-    private static final String COLUMN_NAME = "COLUMN_NAME";
-
-    /**
-     * JDBC major version.
-     */
-    private static final int JDBC_MAJOR_VERSION = 4;
-
-    /**
-     * JDBC minor version.
-     */
-    private static final int JDBC_MINOR_VERSION = 0;
-
-    /**
-     * Max field size.
-     */
-    private static final int MAX_INT_SIZE = 2_048;
-
-    /**
-     * Paradox major version.
-     */
-    private static final int PARADOX_MAJOR_VERSION = 7;
-
-    /**
-     * Paradox max column name.
-     */
-    private static final int PARADOX_MAX_COLUMN_NAME = 8;
-
-    /**
-     * Paradox minor version.
-     */
-    private static final int PARADOX_MINOR_VERSION = 0;
-
-    /**
-     * The remarks name field.
-     */
-    private static final String REMARKS = "REMARKS";
-
-    /**
-     * String max size.
-     */
-    private static final int STRING_MAX_SIZE = 255;
-
-    /**
-     * The tables field.
-     */
-    private static final String TABLE = "TABLE";
-
-    /**
      * The tables cat name field.
      */
     static final String TABLE_CAT = "TABLE_CAT";
-
-    /**
-     * The tables name field.
-     */
-    private static final String TABLE_NAME = "TABLE_NAME";
-
     /**
      * The table names schema field.
      */
     static final String TABLE_SCHEMA = "TABLE_SCHEM";
-
+    static final String TABLE_CATALOG = "TABLE_CATALOG";
+    /**
+     * The column name field.
+     */
+    private static final String COLUMN_NAME = "COLUMN_NAME";
+    /**
+     * JDBC major version.
+     */
+    private static final int JDBC_MAJOR_VERSION = 4;
+    /**
+     * JDBC minor version.
+     */
+    private static final int JDBC_MINOR_VERSION = 0;
+    /**
+     * Max field size.
+     */
+    private static final int MAX_INT_SIZE = 2_048;
+    /**
+     * Paradox major version.
+     */
+    private static final int PARADOX_MAJOR_VERSION = 7;
+    /**
+     * Paradox max column name.
+     */
+    private static final int PARADOX_MAX_COLUMN_NAME = 8;
+    /**
+     * Paradox minor version.
+     */
+    private static final int PARADOX_MINOR_VERSION = 0;
+    /**
+     * The remarks name field.
+     */
+    private static final String REMARKS = "REMARKS";
+    /**
+     * String max size.
+     */
+    private static final int STRING_MAX_SIZE = 255;
+    /**
+     * The tables field.
+     */
+    private static final String TABLE = "TABLE";
+    /**
+     * The tables name field.
+     */
+    private static final String TABLE_NAME = "TABLE_NAME";
     /**
      * The type name field.
      */
     private static final String TYPE_NAME = "TYPE_NAME";
-    static final String TABLE_CATALOG = "TABLE_CATALOG";
-
     /**
      * The database connection.
      */
@@ -1944,7 +1930,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     private void formatView(final String tableNamePattern, final List<List<FieldValue>> values,
             final File currentSchema) throws SQLException {
         for (final ParadoxView view : ViewData.listViews(currentSchema, tableNamePattern)) {
-            values.add(this.formatRow(this.conn.getCatalog(), currentSchema.getName(), view.getName(), "VIEW"));
+            values.add(this.formatRow(view.getName(), "VIEW", this.conn.getCatalog(), currentSchema.getName()));
         }
     }
 }

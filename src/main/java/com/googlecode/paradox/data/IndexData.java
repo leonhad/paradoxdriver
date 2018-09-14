@@ -109,7 +109,7 @@ public final class IndexData extends AbstractParadoxData {
             buffer.position(0x55);
             index.setReferentialIntegrity(buffer.get());
 
-            AbstractParadoxData.parseVersionID(buffer, index);
+            parseVersionID(buffer, index);
 
             IndexData.parseFields(buffer, index);
 
