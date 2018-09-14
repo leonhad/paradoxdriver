@@ -15,16 +15,16 @@ import java.nio.charset.Charset;
 public abstract class AbstractParadoxData {
 
     /**
+     * Minimum paradox file version.
+     */
+    private static final int MINIMIUM_VERSION = 4;
+
+    /**
      * Creates a new instance.
      */
     protected AbstractParadoxData() {
         super();
     }
-
-    /**
-     * Minimum paradox file version.
-     */
-    private static final int MINIMIUM_VERSION = 4;
 
     /**
      * Parse and handle the version ID.

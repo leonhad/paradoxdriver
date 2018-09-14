@@ -9,6 +9,7 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.utils.SQLStates;
+
 import java.nio.CharBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,16 +23,16 @@ import java.util.Locale;
  * @since 1.0
  */
 public class Scanner {
-    
+
     /**
      * Separators char.
      */
-    private static final char[] SEPARATORS = { ' ', '\t', '\n', '\0', '\r' };
+    private static final char[] SEPARATORS = {' ', '\t', '\n', '\0', '\r'};
 
     /**
      * Special chars.
      */
-    private static final char[] SPECIAL = { '(', ')', '+', '-', ',', '.', '=', ';' };
+    private static final char[] SPECIAL = {'(', ')', '+', '-', ',', '.', '=', ';'};
 
     /**
      * Character buffer used to parse the SQL.
@@ -51,10 +52,8 @@ public class Scanner {
     /**
      * Creates a new instance.
      *
-     * @param buffer
-     *            the buffer to read of.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @param buffer the buffer to read of.
+     * @throws SQLException in case of parse errors.
      */
     Scanner(final String buffer) throws SQLException {
         if (buffer == null) {
@@ -66,10 +65,8 @@ public class Scanner {
     /**
      * Checks for maximum number dots allowed.
      *
-     * @param dotCount
-     *            the dot count.
-     * @throws SQLException
-     *             in case of invalid dot count.
+     * @param dotCount the dot count.
+     * @throws SQLException in case of invalid dot count.
      */
     private static void checkDotCount(final int dotCount) throws SQLException {
         if (dotCount > 1) {
@@ -80,8 +77,7 @@ public class Scanner {
     /**
      * Creates a token by value.
      *
-     * @param value
-     *            to convert.
+     * @param value to convert.
      * @return a new {@link Token}.
      */
     private static Token getToken(final String value) {
@@ -98,8 +94,7 @@ public class Scanner {
     /**
      * Check if is a character or a string.
      *
-     * @param c
-     *            the char to verify.
+     * @param c the char to verify.
      * @return <code>true</code> if c is a char.
      */
     private static boolean isCharacters(final char c) {
@@ -114,8 +109,7 @@ public class Scanner {
     /**
      * If the char is a separator.
      *
-     * @param value
-     *            the char to identify.
+     * @param value the char to identify.
      * @return true if the char is a separator.
      */
     private static boolean isSeparator(final char value) {
@@ -130,8 +124,7 @@ public class Scanner {
     /**
      * if the value is a special char.
      *
-     * @param value
-     *            the value to identify.
+     * @param value the value to identify.
      * @return true if the value is a special char.
      */
     private static boolean isSpecial(final char value) {
@@ -156,8 +149,7 @@ public class Scanner {
      * Parses identifier tokens.
      *
      * @return if this token is an character token.
-     * @throws SQLException
-     *             in case of parser errors.
+     * @throws SQLException in case of parser errors.
      */
     private boolean parseIdentifier() throws SQLException {
         while (this.hasNext()) {
@@ -185,10 +177,8 @@ public class Scanner {
     /**
      * Parses a numeric char.
      *
-     * @param start
-     *            the char to start of.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @param start the char to start of.
+     * @throws SQLException in case of parse errors.
      */
     private void parseNumber(final char start) throws SQLException {
         char c = start;
@@ -218,8 +208,7 @@ public class Scanner {
     /**
      * Parses a {@link String} value.
      *
-     * @param type
-     *            the string type (special char used).
+     * @param type the string type (special char used).
      */
     private void parseString(final char type) {
         char c;
@@ -269,8 +258,7 @@ public class Scanner {
      * Gets the next {@link Token} in buffer.
      *
      * @return the next {@link Token}.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     Token nextToken() throws SQLException {
         final int size = this.tokens.size();
@@ -295,8 +283,7 @@ public class Scanner {
     /**
      * Push back the given token in buffer.
      *
-     * @param token
-     *            the token to push back.
+     * @param token the token to push back.
      */
     void pushBack(final Token token) {
         this.tokens.add(token);

@@ -8,7 +8,6 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
@@ -22,8 +21,7 @@ public abstract class LobField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
-    throws SQLException {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final ByteBuffer value = ByteBuffer.allocate(field.getSize());
         Arrays.fill(value.array(), (byte) 0);
 
