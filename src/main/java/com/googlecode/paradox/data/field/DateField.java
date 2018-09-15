@@ -13,6 +13,7 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.DateUtils;
+
 import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.sql.Types;
@@ -25,7 +26,7 @@ import java.sql.Types;
  * @since 1.3
  */
 public final class DateField implements FieldParser {
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -33,18 +34,18 @@ public final class DateField implements FieldParser {
     public boolean match(final int type) {
         return type == 2;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final int a1 = 0xFF & buffer.get();
-        final int a2 = 0xFF & buffer.get();
-        final int a3 = 0xFF & buffer.get();
-        final int a4 = 0xFF & buffer.get();
+        final int a1 = buffer.get() & 0xFF;
+        final int a2 = buffer.get() & 0xFF;
+        final int a3 = buffer.get() & 0xFF;
+        final int a4 = buffer.get() & 0xFF;
         final long days = ((a1 << 24) | (a2 << 16) | (a3 << 8) | a4) & 0x0FFF_FFFFL;
-        
+
         final Date date = DateUtils.sdnToGregorian(days + 1_721_425);
         return new FieldValue(date, Types.DATE);
     }
