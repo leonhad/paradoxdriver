@@ -37,15 +37,13 @@ import java.util.List;
 final class ParadoxStatement implements Statement {
 
     /**
-     * If this statement is closed.
-     */
-    private boolean closed;
-
-    /**
      * The Paradox connection.
      */
     private final ParadoxConnection conn;
-
+    /**
+     * If this statement is closed.
+     */
+    private boolean closed;
     /**
      * The cursor name.
      */
@@ -271,8 +269,28 @@ final class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
+    public void setFetchDirection(final int direction) throws SQLException {
+        if (direction != ResultSet.FETCH_FORWARD) {
+            throw new SQLException("O result set somente pode ser ResultSet.FETCH_FORWARD",
+                    SQLStates.INVALID_PARAMETER.getValue());
+        }
+        this.fetchDirection = direction;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
     public int getFetchSize() {
         return this.fetchSize;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setFetchSize(final int rows) {
+        this.fetchSize = rows;
     }
 
     /**
@@ -295,8 +313,27 @@ final class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
+    public void setMaxFieldSize(final int max) throws SQLException {
+        if (max > 255) {
+            throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER.getValue());
+        }
+        this.maxFieldSize = max;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
     public int getMaxRows() {
         return this.maxRows;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setMaxRows(final int max) {
+        this.maxRows = max;
     }
 
     /**
@@ -321,6 +358,14 @@ final class ParadoxStatement implements Statement {
     @Override
     public int getQueryTimeout() {
         return this.queryTimeout;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setQueryTimeout(final int seconds) {
+        this.queryTimeout = seconds;
     }
 
     /**
@@ -399,16 +444,16 @@ final class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
-    public boolean isWrapperFor(final Class<?> iFace) {
-        return Utils.isWrapperFor(this, iFace);
+    public void setPoolable(final boolean poolable) {
+        this.poolable = poolable;
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void setCursorName(final String name) {
-        this.cursorName = name;
+    public boolean isWrapperFor(final Class<?> iFace) {
+        return Utils.isWrapperFor(this, iFace);
     }
 
     /**
@@ -423,67 +468,12 @@ final class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
-    public void setFetchDirection(final int direction) throws SQLException {
-        if (direction != ResultSet.FETCH_FORWARD) {
-            throw new SQLException("O result set somente pode ser ResultSet.FETCH_FORWARD",
-                    SQLStates.INVALID_PARAMETER.getValue());
-        }
-        this.fetchDirection = direction;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setFetchSize(final int rows) {
-        this.fetchSize = rows;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setMaxFieldSize(final int max) throws SQLException {
-        if (max > 255) {
-            throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER.getValue());
-        }
-        this.maxFieldSize = max;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setMaxRows(final int max) {
-        this.maxRows = max;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setPoolable(final boolean poolable) {
-        this.poolable = poolable;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setQueryTimeout(final int seconds) {
-        this.queryTimeout = seconds;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
     public <T> T unwrap(final Class<T> iFace) throws SQLException {
         return Utils.unwrap(this, iFace);
     }
 
     private void executeSelect(final SelectNode node) throws SQLException {
-        final Planner planner = new Planner(this.conn);
+        final Planner planner = new Planner();
         final SelectPlan plan = (SelectPlan) planner.create(node, this.conn.getCurrentSchema());
         plan.execute();
         this.rs = new ParadoxResultSet(this.conn, this, plan.getValues(), plan.getColumns());
@@ -496,5 +486,13 @@ final class ParadoxStatement implements Statement {
      */
     String getCursorName() {
         return this.cursorName;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setCursorName(final String name) {
+        this.cursorName = name;
     }
 }

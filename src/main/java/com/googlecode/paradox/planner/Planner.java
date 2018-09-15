@@ -8,7 +8,6 @@
  */
 package com.googlecode.paradox.planner;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -36,17 +35,10 @@ import java.util.List;
 public class Planner {
 
     /**
-     * The database connection.
-     */
-    private final ParadoxConnection conn;
-
-    /**
      * Create a new instance.
-     *
-     * @param conn the database connection.
      */
-    public Planner(final ParadoxConnection conn) {
-        this.conn = conn;
+    public Planner() {
+        super();
     }
 
     /**
