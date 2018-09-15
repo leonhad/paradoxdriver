@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static com.googlecode.paradox.utils.Utils.clear;
 import static com.googlecode.paradox.utils.Utils.flip;
 import static com.googlecode.paradox.utils.Utils.position;
 
@@ -113,7 +114,7 @@ public final class TableData extends AbstractParadoxData {
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
                 channel.position(headerSize + ((nextBlock - 1) * blockSize));
 
-                buffer.clear();
+                clear(buffer);
                 channel.read(buffer);
                 flip(buffer);
 

@@ -157,7 +157,7 @@ public final class IndexData extends AbstractParadoxData {
                 }
                 name.put(c);
             }
-            name.flip();
+            flip(name);
             fields.get(loop).setName(index.getCharset().decode(name).toString());
         }
         index.setFields(fields);

@@ -75,6 +75,16 @@ public final class Utils {
     }
 
     /**
+     * Utility to call {@link Buffer#limit(int)} . This is used by Java 9 API.
+     *
+     * @param buffer   the buffer to clear.
+     * @param newLimit the new limit value.
+     */
+    public static void limit(final Buffer buffer, final int newLimit) {
+        buffer.limit(newLimit);
+    }
+
+    /**
      * Convert the Paradox VARCHAR to {@link String}. The paradox fill the
      * entire buffer with zeros at end of VARCHAR literals.
      *
@@ -92,7 +102,7 @@ public final class Utils {
             }
         }
         flip(buffer);
-        buffer.limit(length);
+        limit(buffer, length);
         return charset.decode(buffer).toString();
     }
 
