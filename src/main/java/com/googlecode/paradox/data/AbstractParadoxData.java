@@ -5,6 +5,8 @@ import com.googlecode.paradox.metadata.ParadoxDataFile;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
+import static com.googlecode.paradox.utils.Utils.position;
+
 /**
  * Handles the paradox files (structure).
  *
@@ -35,7 +37,7 @@ public abstract class AbstractParadoxData {
     protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile index) {
         if (index.getVersionId() > AbstractParadoxData.MINIMIUM_VERSION) {
             // Set the charset.
-            buffer.position(0x6A);
+            position(buffer, 0x6A);
             int cp = buffer.getShort();
             // 437 is actually interpreted as cp1252.
             if (cp == 0x1B5) {
@@ -43,9 +45,9 @@ public abstract class AbstractParadoxData {
             }
             index.setCharset(Charset.forName("cp" + cp));
 
-            buffer.position(0x78);
+            position(buffer, 0x78);
         } else {
-            buffer.position(0x58);
+            position(buffer, 0x58);
         }
     }
 

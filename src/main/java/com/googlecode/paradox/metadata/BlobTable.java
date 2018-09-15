@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.googlecode.paradox.utils.Utils.clear;
+import static com.googlecode.paradox.utils.Utils.flip;
+
 /**
  * Read from LOB file of PARADOX format.
  *
@@ -196,9 +199,9 @@ public final class BlobTable extends ParadoxDataFile {
             this.channel.position(0);
             final ByteBuffer buffer = ByteBuffer.allocate(1);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
-            buffer.clear();
+            clear(buffer);
             this.channel.read(buffer);
-            buffer.flip();
+            flip(buffer);
             final byte headerType = buffer.get();
             if (headerType != 0) {
                 throw new SQLException("Invalid blob format for '" + this.getName() + "'",
@@ -235,18 +238,18 @@ public final class BlobTable extends ParadoxDataFile {
             final int blockSize) throws IOException {
         final ByteBuffer blockHead = ByteBuffer.allocate(6);
         blockHead.order(ByteOrder.LITTLE_ENDIAN);
-        blockHead.clear();
+        clear(blockHead);
         this.channel.read(blockHead);
-        blockHead.flip();
+        flip(blockHead);
         final int blobLength = blockHead.getInt();
         // Modifier.
         blockHead.getShort();
 
         final ByteBuffer blockData = ByteBuffer.allocate(blobLength);
         blockData.order(ByteOrder.LITTLE_ENDIAN);
-        blockData.clear();
+        clear(blockData);
         this.channel.read(blockData);
-        blockData.flip();
+        flip(blockData);
         final byte[] values = new byte[blobLength];
         blockData.get(values);
         this.channel.position(startBlockAddress + (blockSize * BlobTable.HEADER_BLOCK_SIZE));
@@ -271,9 +274,9 @@ public final class BlobTable extends ParadoxDataFile {
         while (n < 64) {
             final ByteBuffer blockPointer = ByteBuffer.allocate(5);
             blockPointer.order(ByteOrder.LITTLE_ENDIAN);
-            blockPointer.clear();
+            clear(blockPointer);
             this.channel.read(blockPointer);
-            blockPointer.flip();
+            flip(blockPointer);
             // Data offset divided by 16.
             final int offset = blockPointer.get() * 0x10;
             // Data length divided by 16 (rounded up).
@@ -290,10 +293,10 @@ public final class BlobTable extends ParadoxDataFile {
                 ln = (ln - 0x10) + mdl;
                 final ByteBuffer blockData = ByteBuffer.allocate(ln);
                 blockData.order(ByteOrder.LITTLE_ENDIAN);
-                blockData.clear();
+                clear(blockData);
                 this.channel.position(start);
                 this.channel.read(blockData);
-                blockData.flip();
+                flip(blockData);
                 final byte[] values = new byte[ln];
                 blockData.get(values);
 
@@ -341,9 +344,9 @@ public final class BlobTable extends ParadoxDataFile {
             final long startBlockAddress = this.channel.position();
             final ByteBuffer header = ByteBuffer.allocate(3);
             header.order(ByteOrder.LITTLE_ENDIAN);
-            header.clear();
+            clear(header);
             this.channel.read(header);
-            header.flip();
+            flip(header);
             final byte headerType = header.get();
             final int blockSize = header.getShort();
 

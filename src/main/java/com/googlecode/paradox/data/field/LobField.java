@@ -10,6 +10,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+import static com.googlecode.paradox.utils.Utils.flip;
+
 /**
  * LobField that acts as a superclass for Blob and Clob.
  *
@@ -28,7 +30,7 @@ public abstract class LobField implements FieldParser {
         for (int chars = 0; chars < field.getSize(); chars++) {
             value.put(buffer.get());
         }
-        value.flip();
+        flip(value);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final long offset = buffer.getInt();

@@ -20,6 +20,9 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 
+import static com.googlecode.paradox.utils.Utils.flip;
+import static com.googlecode.paradox.utils.Utils.position;
+
 /**
  * Reads primary key data fields.
  *
@@ -72,7 +75,7 @@ public final class PrimaryKeyData {
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            buffer.flip();
+            flip(buffer);
 
             pk.setName(file.getName());
             pk.setRecordSize(buffer.getShort());
@@ -85,10 +88,10 @@ public final class PrimaryKeyData {
             pk.setFirstBlock(buffer.getShort());
             pk.setLastBlock(buffer.getShort());
 
-            buffer.position(0x15);
+            position(buffer, 0x15);
             pk.setIndexFieldNumber(buffer.get());
 
-            buffer.position(0x38);
+            position(buffer, 0x38);
             pk.setWriteProtected(buffer.get());
             pk.setVersionId(buffer.get());
         }

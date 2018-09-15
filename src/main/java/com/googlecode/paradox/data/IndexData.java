@@ -23,6 +23,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.googlecode.paradox.utils.Utils.flip;
+import static com.googlecode.paradox.utils.Utils.position;
+
 /**
  * Reads index data files.
  *
@@ -47,8 +50,7 @@ public final class IndexData extends AbstractParadoxData {
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException in case of reading failures.
      */
-    public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName)
-    throws SQLException {
+    public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = Utils.removeDb(tableName) + ".X??";
         final File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(indexNamePattern));
@@ -82,7 +84,7 @@ public final class IndexData extends AbstractParadoxData {
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            buffer.flip();
+            flip(buffer);
 
             index.setRecordSize(buffer.getShort());
             index.setHeaderSize(buffer.getShort());
@@ -94,19 +96,19 @@ public final class IndexData extends AbstractParadoxData {
             index.setFirstBlock(buffer.getShort());
             index.setLastBlock(buffer.getShort());
 
-            buffer.position(0x21);
+            position(buffer, 0x21);
             index.setFieldCount(buffer.getShort());
             index.setPrimaryFieldCount(buffer.getShort());
 
-            buffer.position(0x38);
+            position(buffer, 0x38);
             index.setWriteProtected(buffer.get());
             index.setVersionId(buffer.get());
 
-            buffer.position(0x49);
+            position(buffer, 0x49);
             index.setAutoIncrementValue(buffer.getInt());
             index.setFirstFreeBlock(buffer.getShort());
 
-            buffer.position(0x55);
+            position(buffer, 0x55);
             index.setReferentialIntegrity(buffer.get());
 
             parseVersionID(buffer, index);
@@ -137,12 +139,12 @@ public final class IndexData extends AbstractParadoxData {
 
         if (index.getVersionId() > 4) {
             if (index.getVersionId() == 0xC) {
-                buffer.position(0x78 + 261 + 4 + (6 * fields.size()));
+                position(buffer, 0x78 + 261 + 4 + (6 * fields.size()));
             } else {
-                buffer.position(0x78 + 83 + (6 * fields.size()));
+                position(buffer, 0x78 + 83 + (6 * fields.size()));
             }
         } else {
-            buffer.position(0x58 + 83 + (6 * fields.size()));
+            position(buffer, 0x58 + 83 + (6 * fields.size()));
         }
 
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
@@ -182,7 +184,7 @@ public final class IndexData extends AbstractParadoxData {
             }
             name.put(c);
         }
-        name.flip();
+        flip(name);
         final String tempName = index.getCharset().decode(name).toString();
         if (tempName.length() != 0) {
             index.setName(tempName);
@@ -204,7 +206,7 @@ public final class IndexData extends AbstractParadoxData {
             }
             sortOrderID.put(c);
         }
-        sortOrderID.flip();
+        flip(sortOrderID);
         index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
     }
 

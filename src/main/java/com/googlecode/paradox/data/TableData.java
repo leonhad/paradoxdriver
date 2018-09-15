@@ -18,6 +18,7 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -26,6 +27,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static com.googlecode.paradox.utils.Utils.flip;
+import static com.googlecode.paradox.utils.Utils.position;
 
 /**
  * Utility class for loading table files.
@@ -111,7 +115,7 @@ public final class TableData extends AbstractParadoxData {
 
                 buffer.clear();
                 channel.read(buffer);
-                buffer.flip();
+                flip(buffer);
 
                 nextBlock = buffer.getShort();
                 // The block number.
@@ -139,16 +143,16 @@ public final class TableData extends AbstractParadoxData {
      * @param buffer     the buffer to fix.
      * @param fieldsSize the field list.
      */
-    private static void fixTablePositionByVersion(final ParadoxTable table, final ByteBuffer buffer,
+    private static void fixTablePositionByVersion(final ParadoxTable table, final Buffer buffer,
             final int fieldsSize) {
         if (table.getVersionId() > 4) {
             if (table.getVersionId() == 0xC) {
-                buffer.position(0x78 + 261 + 4 + (6 * fieldsSize));
+                position(buffer, 0x78 + 261 + 4 + (6 * fieldsSize));
             } else {
-                buffer.position(0x78 + 83 + (6 * fieldsSize));
+                position(buffer, 0x78 + 83 + (6 * fieldsSize));
             }
         } else {
-            buffer.position(0x58 + 83 + (6 * fieldsSize));
+            position(buffer, 0x58 + 83 + (6 * fieldsSize));
         }
     }
 
@@ -166,7 +170,7 @@ public final class TableData extends AbstractParadoxData {
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            buffer.flip();
+            flip(buffer);
 
             table.setRecordSize(buffer.getShort());
             table.setHeaderSize(buffer.getShort());
@@ -178,19 +182,19 @@ public final class TableData extends AbstractParadoxData {
             table.setFirstBlock(buffer.getShort());
             table.setLastBlock(buffer.getShort());
 
-            buffer.position(0x21);
+            position(buffer, 0x21);
             table.setFieldCount(buffer.getShort());
             table.setPrimaryFieldCount(buffer.getShort());
 
-            buffer.position(0x38);
+            position(buffer, 0x38);
             table.setWriteProtected(buffer.get());
             table.setVersionId(buffer.get());
 
-            buffer.position(0x49);
+            position(buffer, 0x49);
             table.setAutoIncrementValue(buffer.getInt());
             table.setFirstFreeBlock(buffer.getShort());
 
-            buffer.position(0x55);
+            position(buffer, 0x55);
             table.setReferentialIntegrity(buffer.get());
 
             parseVersionID(buffer, table);
@@ -203,9 +207,7 @@ public final class TableData extends AbstractParadoxData {
             channel.read(buffer);
 
             TableData.fixTablePositionByVersion(table, buffer, fields.size());
-
             TableData.parseTableFieldsName(table, buffer, fields);
-
             TableData.parseTableFieldsOrder(table, buffer);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
@@ -221,8 +223,8 @@ public final class TableData extends AbstractParadoxData {
      * @return the Paradox field list.
      * @throws SQLException in case of parse errors.
      */
-    private static List<ParadoxField> parseTableFields(final ParadoxTable table, final ByteBuffer buffer)
-    throws SQLException {
+    private static List<ParadoxField> parseTableFields(final ParadoxTable table, final ByteBuffer buffer) throws
+            SQLException {
         final List<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
@@ -254,7 +256,7 @@ public final class TableData extends AbstractParadoxData {
                 }
                 name.put(c);
             }
-            name.flip();
+            flip(name);
             fields.get(loop).setName(table.getCharset().decode(name).toString());
         }
         table.setFields(fields);

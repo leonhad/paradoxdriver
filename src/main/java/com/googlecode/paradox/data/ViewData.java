@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.googlecode.paradox.utils.Utils.flip;
+
 /**
  * Read view files (structure).
  *
@@ -161,7 +163,7 @@ public final class ViewData {
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            buffer.flip();
+            flip(buffer);
 
             final BufferedReader reader =
                     new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));

@@ -8,6 +8,7 @@
  */
 package com.googlecode.paradox.utils;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
@@ -46,6 +47,34 @@ public final class Utils {
     }
 
     /**
+     * Utility to call {@link Buffer#flip()}. This is used by Java 9 API.
+     *
+     * @param buffer the buffer to flip.
+     */
+    public static void flip(final Buffer buffer) {
+        buffer.flip();
+    }
+
+    /**
+     * Utility to call {@link Buffer#position(int)}. This is used by Java 9 API.
+     *
+     * @param buffer the buffer to pos.
+     * @param pos    the new position.
+     */
+    public static void position(final Buffer buffer, int pos) {
+        buffer.position(pos);
+    }
+
+    /**
+     * Utility to call {@link Buffer#clear()}. This is used by Java 9 API.
+     *
+     * @param buffer the buffer to clear.
+     */
+    public static void clear(final Buffer buffer) {
+        buffer.clear();
+    }
+
+    /**
      * Convert the Paradox VARCHAR to {@link String}. The paradox fill the
      * entire buffer with zeros at end of VARCHAR literals.
      *
@@ -62,7 +91,7 @@ public final class Utils {
                 break;
             }
         }
-        buffer.flip();
+        flip(buffer);
         buffer.limit(length);
         return charset.decode(buffer).toString();
     }
