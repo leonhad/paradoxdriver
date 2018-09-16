@@ -45,13 +45,21 @@ import java.util.concurrent.Executor;
 public final class ParadoxConnection implements Connection {
 
     /**
-     * Auto Commit flag.
-     */
-    private boolean autocommit = true;
-    /**
      * Database catalog.
      */
     private final File catalog;
+    /**
+     * Stores the opened statements.
+     */
+    private final ArrayList<Statement> statements = new ArrayList<>();
+    /**
+     * Driver URL.
+     */
+    private final String url;
+    /**
+     * Auto Commit flag.
+     */
+    private boolean autocommit = true;
     /**
      * Connection properties info.
      */
@@ -77,10 +85,6 @@ public final class ParadoxConnection implements Connection {
      */
     private File schema;
     /**
-     * Stores the opened statements.
-     */
-    private final ArrayList<Statement> statements = new ArrayList<>();
-    /**
      * Stores the transaction isolation mode.
      */
     private int transactionIsolation = Connection.TRANSACTION_NONE;
@@ -88,10 +92,6 @@ public final class ParadoxConnection implements Connection {
      * Stores the JDBC type mapping.
      */
     private Map<String, Class<?>> typeMap;
-    /**
-     * Driver URL.
-     */
-    private final String url;
 
     /**
      * Creates a new paradox connection.
@@ -107,18 +107,9 @@ public final class ParadoxConnection implements Connection {
             throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
         }
 
-        final File[] dirs = dir.listFiles(new DirectoryFilter());
-
-        // Is a catalog.
-        if (dirs != null && dirs.length > 0) {
-            // Uses the fist schema.
-            this.schema = dirs[0];
-            this.catalog = dir;
-        } else {
-            // Is a schema.
-            this.schema = dir;
-            this.catalog = dir.getParentFile();
-        }
+        // Is a schema.
+        this.schema = dir;
+        this.catalog = dir.getParentFile();
     }
 
     /**
@@ -244,8 +235,24 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
+    public void setAutoCommit(final boolean autoCommit) {
+        this.autocommit = autoCommit;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
     public String getCatalog() {
         return this.catalog.getName();
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setCatalog(final String catalog) throws SQLException {
+        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
     }
 
     /**
@@ -270,6 +277,14 @@ public final class ParadoxConnection implements Connection {
     @Override
     public Properties getClientInfo() {
         return new Properties(this.clientInfo);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setClientInfo(final Properties clientInfo) {
+        this.clientInfo = new Properties(clientInfo);
     }
 
     /**
@@ -304,6 +319,17 @@ public final class ParadoxConnection implements Connection {
     @Override
     public int getHoldability() {
         return this.holdability;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setHoldability(final int holdability) throws SQLException {
+        if ((holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT) && (holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT)) {
+            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
+        }
+        this.holdability = holdability;
     }
 
     /**
@@ -354,8 +380,27 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
+    public void setTransactionIsolation(final int level) throws SQLException {
+        if (Connection.TRANSACTION_NONE != level) {
+            throw new SQLException("Invalid level.");
+        }
+        this.transactionIsolation = level;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
     public Map<String, Class<?>> getTypeMap() {
         return this.typeMap;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setTypeMap(final Map<String, Class<?>> typeMap) {
+        this.typeMap = typeMap;
     }
 
     /**
@@ -389,6 +434,14 @@ public final class ParadoxConnection implements Connection {
     @Override
     public boolean isReadOnly() {
         return this.readonly;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setReadOnly(final boolean readOnly) {
+        this.readonly = readOnly;
     }
 
     /**
@@ -523,30 +576,6 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setAutoCommit(final boolean autoCommit) {
-        this.autocommit = autoCommit;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setCatalog(final String catalog) throws SQLException {
-        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setClientInfo(final Properties clientInfo) {
-        this.clientInfo = new Properties(clientInfo);
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
     public void setClientInfo(final String name, final String value) {
         this.clientInfo.put(name, value);
     }
@@ -555,27 +584,8 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setHoldability(final int holdability) throws SQLException {
-        if ((holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT) && (holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT)) {
-            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
-        }
-        this.holdability = holdability;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
     public void setNetworkTimeout(final Executor executor, final int milliseconds) {
         this.networkTimeout = milliseconds;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setReadOnly(final boolean readOnly) {
-        this.readonly = readOnly;
     }
 
     /**
@@ -601,25 +611,6 @@ public final class ParadoxConnection implements Connection {
     public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency)
     throws SQLException {
         return this.prepareStatement(sql);
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setTransactionIsolation(final int level) throws SQLException {
-        if (Connection.TRANSACTION_NONE != level) {
-            throw new SQLException("Invalid level.");
-        }
-        this.transactionIsolation = level;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setTypeMap(final Map<String, Class<?>> typeMap) {
-        this.typeMap = typeMap;
     }
 
     /**
