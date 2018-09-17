@@ -17,7 +17,7 @@ If you using Maven, you can use the dependencies below:
 <dependency>
     <groupId>com.googlecode.paradoxdriver</groupId>
     <artifactId>paradoxdriver</artifactId>
-    <version>1.4</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 
