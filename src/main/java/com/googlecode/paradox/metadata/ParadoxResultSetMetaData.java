@@ -82,7 +82,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public int getColumnDisplaySize(final int column) throws SQLException {
         final Column dto = this.getColumn(column);
-        return dto.getMaxSize();
+        return dto.getField().getSize();
     }
 
     /**

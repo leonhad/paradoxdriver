@@ -10,7 +10,14 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.results.Column;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -20,11 +27,6 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Unit test for {@link ParadoxResultSet} class.
@@ -139,7 +141,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testAbsoluteNegativeRowValue() throws SQLException {
         final List<Column> columns = new ArrayList<>();
-        columns.add(new Column());
+        columns.add(new Column(new ParadoxField()));
         final List<List<FieldValue>> values = new ArrayList<>();
         values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
@@ -157,7 +159,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testAfterLast() throws SQLException {
         final List<Column> columns = new ArrayList<>();
-        columns.add(new Column());
+        columns.add(new Column(new ParadoxField()));
         final List<List<FieldValue>> values = new ArrayList<>();
         values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);

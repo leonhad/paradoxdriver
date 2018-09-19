@@ -39,28 +39,26 @@ public class ParadoxResultSetMetaDataTest {
      * The connection string used in this tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-    
+
     /**
      * The database connection.
      */
     private Connection conn;
-    
+
     /**
      * Register the database driver.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Close the test connection.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -68,29 +66,28 @@ public class ParadoxResultSetMetaDataTest {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to the test database.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Before
     public void connect() throws Exception {
         this.conn = DriverManager.getConnection(ParadoxResultSetMetaDataTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test for column metadata.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testColumn() throws SQLException {
-        final Column column = new Column();
+        final Column column = new Column(new ParadoxField());
+        column.getField().setType(ParadoxFieldType.INTEGER.getType());
+        column.getField().setSize(255);
         column.setName("name");
-        column.setMaxSize(255);
         column.setType(ParadoxFieldType.INTEGER.getSQLType());
         column.setPrecision(0);
         column.setTableName("table");
@@ -125,84 +122,78 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertTrue("Testing for read only.", metaData.isReadOnly(1));
         Assert.assertTrue("Testing for searchable.", metaData.isSearchable(1));
         Assert.assertTrue("Testing for sign.", metaData.isSigned(1));
-        
+
         Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
     }
-    
+
     /**
      * Test for instance.
-     *
      */
     @Test
     public void testInstance() {
         final ParadoxResultSetMetaData metaData =
-                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column> emptyList());
+                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column>emptyList());
         Assert.assertEquals("Testing for column size.", 0, metaData.getColumnCount());
     }
-    
+
     /**
      * Test for invalid column with high value.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumnHighValue() throws SQLException {
         final ParadoxResultSetMetaData metaData =
-                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column> emptyList());
+                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column>emptyList());
         metaData.getColumnName(5);
     }
-    
+
     /**
      * Test for invalid column with low value.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumnLowValue() throws SQLException {
         final ParadoxResultSetMetaData metaData =
-                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column> emptyList());
+                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column>emptyList());
         metaData.getColumnName(0);
     }
-    
+
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
-     *
      */
     @Test
     public void testIsWrapFor() {
         final ParadoxResultSetMetaData metaData =
-                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column> emptyList());
+                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column>emptyList());
         Assert.assertTrue(metaData.isWrapperFor(ParadoxResultSetMetaData.class));
     }
-    
+
     /**
      * Test for null column metadata.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testNullColumn() throws SQLException {
-        final Column column = new Column();
+        final Column column = new Column(new ParadoxField());
         column.setName("name");
         column.setNullable(true);
         final ParadoxResultSetMetaData metaData =
                 new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.singletonList(column));
         Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNullable, metaData.isNullable(1));
     }
-    
+
     /**
      * Test for unwrap.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testUnwrap() throws Exception {
         final ParadoxResultSetMetaData metaData =
-                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column> emptyList());
+                new ParadoxResultSetMetaData((ParadoxConnection) this.conn, Collections.<Column>emptyList());
         Assert.assertNotNull(metaData.unwrap(ParadoxResultSetMetaData.class));
     }
 }
