@@ -8,6 +8,7 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
@@ -26,6 +27,18 @@ import java.util.List;
 public class ParadoxDataFile {
 
     /**
+     * Java file used to read the database.
+     */
+    private final File file;
+    /**
+     * The database connection;
+     */
+    private final ParadoxConnection connection;
+    /**
+     * Fields in this file.
+     */
+    protected List<ParadoxField> fields = new ArrayList<>();
+    /**
      * The field with auto increment value.
      */
     private int autoIncrementValue;
@@ -36,7 +49,7 @@ public class ParadoxDataFile {
     /**
      * File charset.
      */
-    private Charset charset = Charset.forName("Cp437");
+    private Charset charset;
     /**
      * File count in this file.
      */
@@ -45,10 +58,6 @@ public class ParadoxDataFile {
      * Fields index order.
      */
     private List<Short> fieldsOrder;
-    /**
-     * Java file used to read the database.
-     */
-    private final File file;
     /**
      * The first block in the file.
      */
@@ -101,26 +110,25 @@ public class ParadoxDataFile {
      * Version ID of this file.
      */
     private byte versionId;
-
     /**
      * If this file has an write protected lock.
      */
     private byte writeProtected;
 
     /**
-     * Fields in this file.
-     */
-    protected List<ParadoxField> fields = new ArrayList<>();
-
-    /**
      * Creates a new instance.
      *
-     * @param file the database {@link File}.
-     * @param name the file name.
+     * @param file       the database {@link File}.
+     * @param name       the file name.
+     * @param connection the database connection.
      */
-    protected ParadoxDataFile(final File file, final String name) {
+    protected ParadoxDataFile(final File file, final String name, final ParadoxConnection connection) {
         this.file = file;
         this.name = Utils.removeDb(name);
+        if (connection != null) {
+            this.charset = connection.getCharset();
+        }
+        this.connection = connection;
     }
 
     /**
@@ -148,12 +156,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Sets the auto increment value.
+     *
+     * @param autoIncrementValue the auto increment value.
+     */
+    public final void setAutoIncrementValue(final int autoIncrementValue) {
+        this.autoIncrementValue = autoIncrementValue;
+    }
+
+    /**
      * Gets the block size.
      *
      * @return the block size.
      */
     public final byte getBlockSize() {
         return this.blockSize;
+    }
+
+    /**
+     * Sets the block size.
+     *
+     * @param blockSize the block size.
+     */
+    public final void setBlockSize(final byte blockSize) {
+        this.blockSize = blockSize;
     }
 
     /**
@@ -166,12 +192,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Sets the charset.
+     *
+     * @param charset the charset to set.
+     */
+    public void setCharset(final Charset charset) {
+        this.charset = charset;
+    }
+
+    /**
      * Gets the field count.
      *
      * @return the field count.
      */
     public final int getFieldCount() {
         return this.fieldCount;
+    }
+
+    /**
+     * Sets the field count.
+     *
+     * @param fieldCount the field count.
+     */
+    public final void setFieldCount(final int fieldCount) {
+        this.fieldCount = fieldCount;
     }
 
     /**
@@ -184,12 +228,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Sets the field list.
+     *
+     * @param fields the field list.
+     */
+    public final void setFields(final List<ParadoxField> fields) {
+        this.fields = fields;
+    }
+
+    /**
      * Gets the file orders.
      *
      * @return the file orders.
      */
     public List<Short> getFieldsOrder() {
         return Collections.unmodifiableList(this.fieldsOrder);
+    }
+
+    /**
+     * Sets the fields order.
+     *
+     * @param fieldsOrder the fields order to set.
+     */
+    public void setFieldsOrder(final List<Short> fieldsOrder) {
+        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
     }
 
     /**
@@ -211,183 +273,21 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Gets the first free block reference.
-     *
-     * @return the first free block reference.
-     */
-    public final int getFirstFreeBlock() {
-        return this.firstFreeBlock;
-    }
-
-    /**
-     * Gets the header size.
-     *
-     * @return the header size.
-     */
-    public final int getHeaderSize() {
-        return this.headerSize;
-    }
-
-    /**
-     * Gets the last block reference.
-     *
-     * @return the last block reference.
-     */
-    public final int getLastBlock() {
-        return this.lastBlock;
-    }
-
-    /**
-     * Gets the data files name.
-     *
-     * @return the data files name.
-     */
-    public final String getName() {
-        return this.name;
-    }
-
-    /**
-     * Gets the primary key field count.
-     *
-     * @return the primary key field count.
-     */
-    public final int getPrimaryFieldCount() {
-        return this.primaryFieldCount;
-    }
-
-    /**
-     * Gets the record size.
-     *
-     * @return the record size.
-     */
-    public final int getRecordSize() {
-        return this.recordSize;
-    }
-
-    /**
-     * Gets the referential integrity reference.
-     *
-     * @return the referential integrity reference.
-     */
-    public final byte getReferentialIntegrity() {
-        return this.referentialIntegrity;
-    }
-
-    /**
-     * Gets the row count.
-     *
-     * @return the row count.
-     */
-    public final int getRowCount() {
-        return this.rowCount;
-    }
-
-    /**
-     * Gets the file total blocks.
-     *
-     * @return the file total blocks.
-     */
-    public final int getTotalBlocks() {
-        return this.totalBlocks;
-    }
-
-    /**
-     * Gets the file type.
-     *
-     * @return the file type.
-     */
-    public final byte getType() {
-        return this.type;
-    }
-
-    /**
-     * Gets the used blocks.
-     *
-     * @return the used blocks.
-     */
-    public final int getUsedBlocks() {
-        return this.usedBlocks;
-    }
-
-    /**
-     * Gets the file version ID.
-     *
-     * @return the file version ID.
-     */
-    public final byte getVersionId() {
-        return this.versionId;
-    }
-
-    /**
-     * Gets the write protected value.
-     *
-     * @return the write protected value.
-     */
-    public final byte getWriteProtected() {
-        return this.writeProtected;
-    }
-
-    /**
-     * Sets the auto increment value.
-     *
-     * @param autoIncrementValue the auto increment value.
-     */
-    public final void setAutoIncrementValue(final int autoIncrementValue) {
-        this.autoIncrementValue = autoIncrementValue;
-    }
-
-    /**
-     * Sets the block size.
-     *
-     * @param blockSize the block size.
-     */
-    public final void setBlockSize(final byte blockSize) {
-        this.blockSize = blockSize;
-    }
-
-    /**
-     * Sets the charset.
-     *
-     * @param charset the charset to set.
-     */
-    public void setCharset(final Charset charset) {
-        this.charset = charset;
-    }
-
-    /**
-     * Sets the field count.
-     *
-     * @param fieldCount the field count.
-     */
-    public final void setFieldCount(final int fieldCount) {
-        this.fieldCount = fieldCount;
-    }
-
-    /**
-     * Sets the field list.
-     *
-     * @param fields the field list.
-     */
-    public final void setFields(final List<ParadoxField> fields) {
-        this.fields = fields;
-    }
-
-    /**
-     * Sets the fields order.
-     *
-     * @param fieldsOrder the fields order to set.
-     */
-    public void setFieldsOrder(final List<Short> fieldsOrder) {
-        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
-    }
-
-    /**
      * Sets the first block.
      *
      * @param firstBlock the first block.
      */
     public final void setFirstBlock(final int firstBlock) {
         this.firstBlock = firstBlock;
+    }
+
+    /**
+     * Gets the first free block reference.
+     *
+     * @return the first free block reference.
+     */
+    public final int getFirstFreeBlock() {
+        return this.firstFreeBlock;
     }
 
     /**
@@ -400,12 +300,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Gets the header size.
+     *
+     * @return the header size.
+     */
+    public final int getHeaderSize() {
+        return this.headerSize;
+    }
+
+    /**
      * Sets the header size.
      *
      * @param headerSize the header size.
      */
     public final void setHeaderSize(final int headerSize) {
         this.headerSize = headerSize;
+    }
+
+    /**
+     * Gets the last block reference.
+     *
+     * @return the last block reference.
+     */
+    public final int getLastBlock() {
+        return this.lastBlock;
     }
 
     /**
@@ -418,12 +336,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Gets the data files name.
+     *
+     * @return the data files name.
+     */
+    public final String getName() {
+        return this.name;
+    }
+
+    /**
      * Sets the file name.
      *
      * @param name the file name.
      */
     public final void setName(final String name) {
         this.name = name;
+    }
+
+    /**
+     * Gets the primary key field count.
+     *
+     * @return the primary key field count.
+     */
+    public final int getPrimaryFieldCount() {
+        return this.primaryFieldCount;
     }
 
     /**
@@ -436,12 +372,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Gets the record size.
+     *
+     * @return the record size.
+     */
+    public final int getRecordSize() {
+        return this.recordSize;
+    }
+
+    /**
      * Set the record size.
      *
      * @param recordSize the record size.
      */
     public final void setRecordSize(final int recordSize) {
         this.recordSize = recordSize;
+    }
+
+    /**
+     * Gets the referential integrity reference.
+     *
+     * @return the referential integrity reference.
+     */
+    public final byte getReferentialIntegrity() {
+        return this.referentialIntegrity;
     }
 
     /**
@@ -454,12 +408,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Gets the row count.
+     *
+     * @return the row count.
+     */
+    public final int getRowCount() {
+        return this.rowCount;
+    }
+
+    /**
      * Sets the row count.
      *
      * @param rowCount the row count.
      */
     public final void setRowCount(final int rowCount) {
         this.rowCount = rowCount;
+    }
+
+    /**
+     * Gets the file total blocks.
+     *
+     * @return the file total blocks.
+     */
+    public final int getTotalBlocks() {
+        return this.totalBlocks;
     }
 
     /**
@@ -472,12 +444,30 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Gets the file type.
+     *
+     * @return the file type.
+     */
+    public final byte getType() {
+        return this.type;
+    }
+
+    /**
      * Sets the file type.
      *
      * @param type the file type.
      */
     public final void setType(final byte type) {
         this.type = type;
+    }
+
+    /**
+     * Gets the used blocks.
+     *
+     * @return the used blocks.
+     */
+    public final int getUsedBlocks() {
+        return this.usedBlocks;
     }
 
     /**
@@ -490,6 +480,15 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Gets the file version ID.
+     *
+     * @return the file version ID.
+     */
+    public final byte getVersionId() {
+        return this.versionId;
+    }
+
+    /**
      * Sets the file version ID.
      *
      * @param versionId the file version ID.
@@ -499,11 +498,29 @@ public class ParadoxDataFile {
     }
 
     /**
+     * Gets the write protected value.
+     *
+     * @return the write protected value.
+     */
+    public final byte getWriteProtected() {
+        return this.writeProtected;
+    }
+
+    /**
      * Sets the write protected value.
      *
      * @param writeProtected the write protected value.
      */
     public final void setWriteProtected(final byte writeProtected) {
         this.writeProtected = writeProtected;
+    }
+
+    /**
+     * Gets the database connection.
+     *
+     * @return the database connection.
+     */
+    public ParadoxConnection getConnection() {
+        return connection;
     }
 }

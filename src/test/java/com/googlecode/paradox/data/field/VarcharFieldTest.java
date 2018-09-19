@@ -12,18 +12,19 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Unit test for {@link VarcharField} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class VarcharFieldTest {
     /**
@@ -34,16 +35,15 @@ public class VarcharFieldTest {
         final VarcharField field = new VarcharField();
         Assert.assertFalse(field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
-        final ParadoxTable table = new ParadoxTable(null, null);
+        final ParadoxTable table = new ParadoxTable(null, null, null);
         table.setCharset(Charset.forName("ISO-8859-1"));
         final ParadoxField paradoxField = new ParadoxField();
         paradoxField.setType(ParadoxFieldType.VARCHAR.getType());
@@ -53,7 +53,7 @@ public class VarcharFieldTest {
         final FieldValue value = field.parse(table, buffer, paradoxField);
         Assert.assertEquals("Value not equals.", "test", value.getValue());
     }
-    
+
     /**
      * Test for valid match.
      */

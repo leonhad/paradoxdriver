@@ -8,6 +8,8 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,13 +32,12 @@ public final class ParadoxView extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file
-     *            the file to read of.
-     * @param name
-     *            the view name.
+     * @param file       the file to read of.
+     * @param name       the view name.
+     * @param connection the database connection.
      */
-    public ParadoxView(final File file, final String name) {
-        super(file, name);
+    public ParadoxView(final File file, final String name, final ParadoxConnection connection) {
+        super(file, name, connection);
     }
 
     /**
@@ -51,8 +52,7 @@ public final class ParadoxView extends ParadoxDataFile {
     /**
      * Sets the fields sort.
      *
-     * @param fieldsSort
-     *            the fields sort to set.
+     * @param fieldsSort the fields sort to set.
      */
     public void setFieldsSort(final List<ParadoxField> fieldsSort) {
         this.fieldsSort = new ArrayList<>(fieldsSort);

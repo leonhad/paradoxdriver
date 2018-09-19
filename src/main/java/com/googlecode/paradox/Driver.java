@@ -9,6 +9,7 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.utils.Constants;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -25,7 +26,10 @@ import java.util.logging.Logger;
  * @version 2.2
  * @since 1.0
  */
-public final class Driver implements IParadoxDriver {
+@SuppressWarnings("squid:S2176")
+public final class Driver implements java.sql.Driver {
+
+    public static final String CHARSET_KEY = "charset";
 
     /**
      * Logger instance for this class.
@@ -57,8 +61,8 @@ public final class Driver implements IParadoxDriver {
     @Override
     public Connection connect(final String url, final Properties info) throws SQLException {
         if (this.acceptsURL(url)) {
-            final String dirName = url.substring(Constants.URL_PREFIX.length(), url.length());
-            return new ParadoxConnection(new File(dirName), url);
+            final String dirName = url.substring(Constants.URL_PREFIX.length());
+            return new ParadoxConnection(new File(dirName), url, info);
         }
         return null;
     }
@@ -92,15 +96,15 @@ public final class Driver implements IParadoxDriver {
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
-        final DriverPropertyInfo dbProp = new DriverPropertyInfo("DBNAME", info.getProperty("DBNAME"));
-        dbProp.required = false;
-        dbProp.description = "Database name";
+        final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, info.getProperty(CHARSET_KEY));
+        charset.required = false;
+        charset.description = "Default table charset";
 
         final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", info.getProperty("password"));
         passwordProp.required = false;
         passwordProp.description = "Password to use for authentication";
 
-        return new DriverPropertyInfo[] { dbProp, passwordProp };
+        return new DriverPropertyInfo[]{charset, passwordProp};
     }
 
     /**

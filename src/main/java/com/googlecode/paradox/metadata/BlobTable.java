@@ -8,6 +8,7 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.AllBlockCache;
 import com.googlecode.paradox.utils.BlockOffset;
 import com.googlecode.paradox.utils.ClobBlock;
@@ -84,11 +85,12 @@ public final class BlobTable extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file the file to read of.
-     * @param name the LOBs name.
+     * @param file       the file to read of.
+     * @param name       the LOBs name.
+     * @param connection the database connection.
      */
-    BlobTable(final File file, final String name) {
-        super(file, Utils.removeMb(name));
+    BlobTable(final File file, final String name, final ParadoxConnection connection) {
+        super(file, Utils.removeMb(name), connection);
         this.cache = new AllBlockCache();
         this.parsed = false;
         this.fields = Collections.emptyList();

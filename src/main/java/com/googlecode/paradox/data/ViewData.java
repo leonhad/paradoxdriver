@@ -8,6 +8,7 @@
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
@@ -56,11 +57,13 @@ public final class ViewData {
      * Returns all connections view.
      *
      * @param currentSchema the current schema file.
+     * @param connection    the database connection.
      * @return a list of all views.
      * @throws SQLException in case of failures.
      */
-    public static List<ParadoxView> listViews(final File currentSchema) throws SQLException {
-        return ViewData.listViews(currentSchema, null);
+    public static List<ParadoxView> listViews(final File currentSchema, final ParadoxConnection connection) throws
+            SQLException {
+        return ViewData.listViews(currentSchema, null, connection);
     }
 
     /**
@@ -68,16 +71,18 @@ public final class ViewData {
      *
      * @param currentSchema the current schema file.
      * @param viewName      the name filter.
+     * @param connection    the database connection.
      * @return all {@link ParadoxView} filtered by name.
      * @throws SQLException in case of reading errors.
      */
-    public static List<ParadoxView> listViews(final File currentSchema, final String viewName) throws
+    public static List<ParadoxView> listViews(final File currentSchema, final String viewName,
+            final ParadoxConnection connection) throws
             SQLException {
         final List<ParadoxView> views = new ArrayList<>();
         final File[] fileList = currentSchema.listFiles(new ViewFilter(viewName));
         if (fileList != null) {
             for (final File file : fileList) {
-                final ParadoxView view = ViewData.loadView(file, currentSchema);
+                final ParadoxView view = ViewData.loadView(file, currentSchema, connection);
                 views.add(view);
             }
         }
@@ -137,11 +142,13 @@ public final class ViewData {
      *
      * @param tableName     the table name.
      * @param currentSchema the current schema file.
+     * @param connection    the database connection.
      * @return the {@link ParadoxTable}.
      * @throws SQLException if the table doesn't exist.
      */
-    private static ParadoxTable getTable(final String tableName, final File currentSchema) throws SQLException {
-        final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableName.trim());
+    private static ParadoxTable getTable(final String tableName, final File currentSchema,
+            final ParadoxConnection connection) throws SQLException {
+        final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableName.trim(), connection);
         if (!tables.isEmpty()) {
             return tables.get(0);
         }
@@ -153,13 +160,15 @@ public final class ViewData {
      *
      * @param file          the {@link File} to read.
      * @param currentSchema the current schema file.
+     * @param connection    the database connection.
      * @return the {@link ParadoxView}.
      * @throws SQLException in case of reading errors.
      */
-    private static ParadoxView loadView(final File file, final File currentSchema) throws SQLException {
+    private static ParadoxView loadView(final File file, final File currentSchema,
+            final ParadoxConnection connection) throws SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(8192);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        final ParadoxView view = new ParadoxView(file, file.getName());
+        final ParadoxView view = new ParadoxView(file, file.getName(), connection);
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
@@ -182,12 +191,12 @@ public final class ViewData {
             line = ViewData.fixExtraLine(reader);
 
             // FIELDORDER.
-            line = ViewData.parseFileOrder(view, reader, line, currentSchema);
+            line = ViewData.parseFileOrder(view, reader, line, currentSchema, connection);
 
             // SORT.
-            line = ViewData.parseSort(view, reader, line, currentSchema);
+            line = ViewData.parseSort(view, reader, line, currentSchema, connection);
 
-            view.getFields().addAll(ViewData.parseFields(reader, line, currentSchema));
+            view.getFields().addAll(ViewData.parseFields(reader, line, currentSchema, connection));
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
@@ -213,12 +222,13 @@ public final class ViewData {
      * @param reader        the reader to load fields.
      * @param oldLine       the old line.
      * @param currentSchema the current schema file.
+     * @param connection    the database connection.
      * @return the paradox field list.
      * @throws SQLException in case of parse errors.
      * @throws IOException  in case of I/O errors.
      */
     private static ArrayList<ParadoxField> parseFields(final BufferedReader reader, final String oldLine,
-            final File currentSchema) throws SQLException, IOException {
+            final File currentSchema, final ParadoxConnection connection) throws SQLException, IOException {
         String line = oldLine;
         final ArrayList<ParadoxField> fieldList = new ArrayList<>();
         while ((line != null) && !"EndQuery".equals(line)) {
@@ -229,7 +239,8 @@ public final class ViewData {
             for (int loop = 1; loop < fields.length; loop++) {
                 final String name = fields[loop].trim();
                 final ParadoxField field = new ParadoxField();
-                final ParadoxField original = ViewData.getFieldByName(ViewData.getTable(table, currentSchema), name);
+                final ParadoxField original = ViewData.getFieldByName(
+                        ViewData.getTable(table, currentSchema, connection), name);
 
                 field.setTableName(table);
                 field.setName(name);
@@ -263,15 +274,16 @@ public final class ViewData {
      * @param reader        the reader to load order.
      * @param oldLine       the old line to validate.
      * @param currentSchema the current schema file.
+     * @param connection    the database connection.
      * @return the current line.
      * @throws IOException  in case of I/O errors.
      * @throws SQLException in case of parse errors.
      */
-    private static String parseFileOrder(final ParadoxView view, final BufferedReader reader,
-            final String oldLine, final File currentSchema) throws IOException, SQLException {
+    private static String parseFileOrder(final ParadoxView view, final BufferedReader reader, final String oldLine,
+            final File currentSchema, final ParadoxConnection connection) throws IOException, SQLException {
         String line = oldLine;
         if ((line != null) && line.startsWith("FIELDORDER: ")) {
-            final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema);
+            final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema, connection);
             final ArrayList<Short> fieldsOrder = new ArrayList<>(fields.size());
             for (final ParadoxField field : fields) {
                 ParadoxField fieldByName = ViewData.getField(view, field.getName());
@@ -312,18 +324,19 @@ public final class ViewData {
     /**
      * Parses the sort token.
      *
-     * @param view    the view.
-     * @param reader  the reader to load sort order.
-     * @param oldLine the old line to validate.
+     * @param view       the view.
+     * @param reader     the reader to load sort order.
+     * @param oldLine    the old line to validate.
+     * @param connection the database connection.
      * @return the new line.
      * @throws IOException  in case of I/O errors.
      * @throws SQLException in case of parse errors.
      */
     private static String parseSort(final ParadoxView view, final BufferedReader reader, final String oldLine,
-            final File currentSchema) throws IOException, SQLException {
+            final File currentSchema, final ParadoxConnection connection) throws IOException, SQLException {
         String line = oldLine;
         if ((line != null) && line.startsWith("SORT: ")) {
-            final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema);
+            final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema, connection);
             view.setFieldsSort(fields);
 
             // Extra Line.
@@ -337,12 +350,13 @@ public final class ViewData {
      *
      * @param reader        the buffer to read of.
      * @param currentSchema the current schema file.
+     * @param connection    the database connection.
      * @return the field list.
      * @throws IOException  in case of I/O errors.
      * @throws SQLException in case of syntax errors.
      */
     private static ArrayList<ParadoxField> readFields(final BufferedReader reader, final String firstLine,
-            final File currentSchema) throws IOException, SQLException {
+            final File currentSchema, final ParadoxConnection connection) throws IOException, SQLException {
 
         final StringBuilder line = new StringBuilder(firstLine.substring(firstLine.indexOf(':') + 1));
         do {
@@ -362,7 +376,7 @@ public final class ViewData {
                 }
                 continue;
             } else {
-                lastTable = ViewData.getTable(i[0], currentSchema);
+                lastTable = ViewData.getTable(i[0], currentSchema, connection);
                 field.setName(i[1].substring(1, i[1].length() - 1));
             }
             final ParadoxField originalField = ViewData.getFieldByName(lastTable, field.getName());

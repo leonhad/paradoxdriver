@@ -79,7 +79,7 @@ public class SelectPlanTest {
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setAlias("test");
 
-        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES);
+        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
         tableNode.setTable(tables.get(0));
         plan.addTable(tableNode);
 
@@ -104,7 +104,7 @@ public class SelectPlanTest {
         final PlanTableNode tableNode = new PlanTableNode();
         tableNode.setAlias("test");
 
-        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES);
+        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
         tableNode.setTable(tables.get(0));
         plan.addTable(tableNode);
 
@@ -135,7 +135,7 @@ public class SelectPlanTest {
         final PlanTableNode tableNode = new PlanTableNode();
         tableNode.setAlias("test");
 
-        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES);
+        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
         tableNode.setTable(tables.get(0));
         plan.addTable(tableNode);
 

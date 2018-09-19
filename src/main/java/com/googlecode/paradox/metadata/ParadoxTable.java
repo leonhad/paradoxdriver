@@ -8,6 +8,8 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +31,12 @@ public final class ParadoxTable extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file
-     *            table references file.
-     * @param name
-     *            table name.
+     * @param file       table references file.
+     * @param name       table name.
+     * @param connection the database connection.
      */
-    public ParadoxTable(final File file, final String name) {
-        super(file, name);
+    public ParadoxTable(final File file, final String name, final ParadoxConnection connection) {
+        super(file, name, connection);
     }
 
     /**
@@ -45,7 +46,7 @@ public final class ParadoxTable extends ParadoxDataFile {
      */
     public BlobTable getBlobTable() {
         if (this.blobFile == null) {
-            this.blobFile = new BlobTable(this.getFile(), this.getName());
+            this.blobFile = new BlobTable(this.getFile(), this.getName(), getConnection());
         }
         return this.blobFile;
     }

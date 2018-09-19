@@ -8,6 +8,7 @@
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
@@ -44,16 +45,18 @@ public final class PrimaryKeyData {
      *
      * @param currentSchema the current schema file.
      * @param table         the tables primary key.
+     * @param connection    the database connection.
      * @return the primary keys.
      * @throws SQLException in case of load failures.
      */
-    public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxTable table) throws SQLException {
+    public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxTable table,
+            final ParadoxConnection connection) throws SQLException {
         final String name = table.getName() + ".PX";
 
         final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(name));
         if ((fileList != null) && (fileList.length > 0)) {
             try {
-                return PrimaryKeyData.loadPKHeader(fileList[0]);
+                return PrimaryKeyData.loadPKHeader(fileList[0], connection);
             } catch (final IOException ex) {
                 throw new SQLException("Error loading Paradox tables.", ex);
             }
@@ -64,14 +67,15 @@ public final class PrimaryKeyData {
     /**
      * Gets the {@link ParadoxPK} from a PK file.
      *
-     * @param file the file to read.
+     * @param file       the file to read.
+     * @param connection the database connection.
      * @return the {@link ParadoxPK}.
      * @throws IOException in case of I/O exceptions.
      */
-    private static ParadoxPK loadPKHeader(final File file) throws IOException {
+    private static ParadoxPK loadPKHeader(final File file, final ParadoxConnection connection) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        final ParadoxPK pk = new ParadoxPK();
+        final ParadoxPK pk = new ParadoxPK(connection);
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);

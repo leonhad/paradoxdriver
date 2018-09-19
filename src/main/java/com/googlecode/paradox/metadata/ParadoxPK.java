@@ -8,6 +8,8 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 /**
  * Stores a primary key definition..
  *
@@ -16,19 +18,21 @@ package com.googlecode.paradox.metadata;
  * @since 1.0
  */
 public final class ParadoxPK extends ParadoxDataFile {
-    
+
     /**
      * The index field order.
      */
     private int indexFieldNumber;
-    
+
     /**
      * Creates a new instance.
+     *
+     * @param connection the database connection.
      */
-    public ParadoxPK() {
-        super(null, null);
+    public ParadoxPK(final ParadoxConnection connection) {
+        super(null, null, connection);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -37,7 +41,7 @@ public final class ParadoxPK extends ParadoxDataFile {
         return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass())
                 && this.getName().equals(((ParadoxPK) obj).getName()));
     }
-    
+
     /**
      * Gets the index field number.
      *
@@ -46,22 +50,21 @@ public final class ParadoxPK extends ParadoxDataFile {
     public int getIndexFieldNumber() {
         return this.indexFieldNumber;
     }
-    
+
+    /**
+     * Sets the index field number.
+     *
+     * @param indexFieldNumber the index field number.
+     */
+    public void setIndexFieldNumber(final int indexFieldNumber) {
+        this.indexFieldNumber = indexFieldNumber;
+    }
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public int hashCode() {
         return this.getName().hashCode();
-    }
-    
-    /**
-     * Sets the index field number.
-     *
-     * @param indexFieldNumber
-     *            the index field number.
-     */
-    public void setIndexFieldNumber(final int indexFieldNumber) {
-        this.indexFieldNumber = indexFieldNumber;
     }
 }

@@ -8,9 +8,10 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 /**
  * Unit test for {@link ParadoxView} class.
@@ -27,7 +28,7 @@ public class ParadoxViewTest {
     @Test
     public void testFieldOrder() {
         final ArrayList<Short> list = new ArrayList<>();
-        final ParadoxView view = new ParadoxView(null, null);
+        final ParadoxView view = new ParadoxView(null, null, null);
         view.setFieldsOrder(list);
         Assert.assertEquals(list, view.getFieldsOrder());
     }
@@ -38,7 +39,7 @@ public class ParadoxViewTest {
     @Test
     public void testFields() {
         final ArrayList<ParadoxField> list = new ArrayList<>();
-        final ParadoxView view = new ParadoxView(null, null);
+        final ParadoxView view = new ParadoxView(null, null, null);
         view.setFields(list);
         Assert.assertEquals(list, view.getFields());
     }
@@ -49,7 +50,7 @@ public class ParadoxViewTest {
     @Test
     public void testFieldSort() {
         final ArrayList<ParadoxField> list = new ArrayList<>();
-        final ParadoxView view = new ParadoxView(null, null);
+        final ParadoxView view = new ParadoxView(null, null, null);
         view.setFieldsSort(list);
         Assert.assertEquals(list, view.getFieldsSort());
     }

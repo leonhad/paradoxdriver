@@ -8,6 +8,8 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +36,12 @@ public final class ParadoxIndex extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file
-     *            the file to read of.
-     * @param name
-     *            index name.
+     * @param file       the file to read of.
+     * @param name       index name.
+     * @param connection the database connection.
      */
-    public ParadoxIndex(final File file, final String name) {
-        super(file, name);
+    public ParadoxIndex(final File file, final String name, final ParadoxConnection connection) {
+        super(file, name, connection);
     }
 
     /**
@@ -79,20 +80,9 @@ public final class ParadoxIndex extends ParadoxDataFile {
     }
 
     /**
-     * Sets the parent name.
-     *
-     * @param parentName
-     *            the parent name to set.
-     */
-    public void setParentName(final String parentName) {
-        this.parentName = parentName;
-    }
-
-    /**
      * Sets the sort order ID.
      *
-     * @param sortOrderID
-     *            the sort order ID to set.
+     * @param sortOrderID the sort order ID to set.
      */
     public void setSortOrderID(final String sortOrderID) {
         this.sortOrderID = sortOrderID;
@@ -105,5 +95,14 @@ public final class ParadoxIndex extends ParadoxDataFile {
      */
     String getParentName() {
         return this.parentName;
+    }
+
+    /**
+     * Sets the parent name.
+     *
+     * @param parentName the parent name to set.
+     */
+    public void setParentName(final String parentName) {
+        this.parentName = parentName;
     }
 }

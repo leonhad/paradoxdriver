@@ -14,6 +14,7 @@ import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -92,19 +93,29 @@ public final class ParadoxConnection implements Connection {
      * Stores the JDBC type mapping.
      */
     private Map<String, Class<?>> typeMap;
+    /**
+     * Default charset.
+     */
+    private Charset charset = Charset.forName("Cp437");
 
     /**
      * Creates a new paradox connection.
      *
-     * @param dir database directory.
-     * @param url connect URL.
+     * @param dir  database directory.
+     * @param url  connect URL.
+     * @param info the connection properties.
      * @throws SQLException in any connection fault.
      */
-    public ParadoxConnection(final File dir, final String url) throws SQLException {
+    public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
         this.url = url;
 
         if (!dir.exists() && !dir.isDirectory()) {
             throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
+        }
+
+        final String charsetName = info.getProperty(Driver.CHARSET_KEY);
+        if (charsetName != null && charsetName.trim().isEmpty()) {
+            this.charset = Charset.forName(charsetName);
         }
 
         // Is a schema.
@@ -605,11 +616,20 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
+     * Gets the default charset.
+     *
+     * @return the default charset.
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    /**
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency)
-    throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType,
+            final int resultSetConcurrency) throws SQLException {
         return this.prepareStatement(sql);
     }
 

@@ -9,13 +9,13 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.utils.Constants;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.sql.Connection;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Unit test for {@link Driver}.
@@ -25,7 +25,7 @@ import org.junit.Test;
  * @since 1.3
  */
 public final class DriverTest {
-    
+
     /**
      * Test for JDBC compliance.
      */
@@ -34,141 +34,121 @@ public final class DriverTest {
         final Driver driver = new Driver();
         Assert.assertFalse("Driver not compliant.", driver.jdbcCompliant());
     }
-    
+
     /**
      * Test for invalid connection.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testInvalidConnection() throws SQLException {
         final Driver driver = new Driver();
         Assert.assertNull("Connection can't be valid.", driver.connect(null, null));
     }
-    
+
     /**
      * Test an invalid URL.
      *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test
-    public void testInvalidURL() throws SQLException {
+    public void testInvalidURL() {
         final Driver driver = new Driver();
         Assert.assertFalse(driver.acceptsURL("jdbc:mysql:/path"));
     }
-    
+
     /**
      * Test for driver logger.
      *
-     * @throws SQLFeatureNotSupportedException
-     *             in case of errors.
      */
     @Test
-    public void testLogger() throws SQLFeatureNotSupportedException {
+    public void testLogger() {
         final Driver driver = new Driver();
         Assert.assertNotNull(driver.getParentLogger());
     }
-    
+
     /**
      * Test for the Major Version.
      *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test
-    public void testMajorVersion() throws SQLException {
+    public void testMajorVersion() {
         final Driver driver = new Driver();
         Assert.assertEquals(Constants.MAJOR_VERSION, driver.getMajorVersion());
     }
-    
+
     /**
      * Test for the Minor Version.
      *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test
-    public void testMinorVersion() throws SQLException {
+    public void testMinorVersion() {
         final Driver driver = new Driver();
         Assert.assertEquals(Constants.MINOR_VERSION, driver.getMinorVersion());
     }
-    
+
     /**
      * Test for null properties.
      *
-     * @throws SQLException
-     *             if there is no errors.
      */
     @Test(expected = NullPointerException.class)
-    public void testNullProperty() throws SQLException {
+    public void testNullProperty() {
         final Driver driver = new Driver();
         Assert.assertEquals(0, driver.getPropertyInfo(null, null).length);
     }
-    
+
     /**
      * Test for null property info.
      *
-     * @throws SQLException
-     *             if there is no errors.
      */
     @Test(expected = NullPointerException.class)
-    public void testNullPropertyInfo() throws SQLException {
+    public void testNullPropertyInfo() {
         final Driver driver = new Driver();
         driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null);
     }
-    
+
     /**
      * Test for property info.
      *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test
-    public void testPropertyInfo() throws SQLException {
+    public void testPropertyInfo() {
         final Driver driver = new Driver();
         final DriverPropertyInfo[] info = driver.getPropertyInfo("jdbc:paradox:target/test-classes/", new Properties());
         Assert.assertEquals(2, info.length);
-        Assert.assertEquals("DBNAME", info[0].name);
+        Assert.assertEquals("charset", info[0].name);
         Assert.assertEquals("password", info[1].name);
     }
-    
+
     /**
      * Test for properties with invalid URL.
      *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test(expected = NullPointerException.class)
-    public void testPropertyInfoInvalidURL() throws SQLException {
+    public void testPropertyInfoInvalidURL() {
         final Driver driver = new Driver();
         driver.getPropertyInfo("jdbc:paradox:/path", null);
     }
-    
+
     /**
      * Test for a valid connection.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testValidConnection() throws SQLException {
         final Driver driver = new Driver();
-        try (Connection c = driver.connect("jdbc:paradox:target/test-classes/", null)) {
+        try (Connection c = driver.connect("jdbc:paradox:target/test-classes/", new Properties())) {
             Assert.assertNotNull("Connection is null.", c);
             Assert.assertNotNull("Connection is not valid.", c.isValid(0));
         }
     }
-    
+
     /**
      * Test a valid URL.
      *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test
-    public void testValidURL() throws SQLException {
+    public void testValidURL() {
         final Driver driver = new Driver();
         Assert.assertTrue("Driver connection is invalid.", driver.acceptsURL("jdbc:paradox:/path"));
     }

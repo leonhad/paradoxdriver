@@ -76,7 +76,7 @@ public class ViewDataTest {
      */
     @Test
     public void testListViews() throws Exception {
-        Assert.assertNotNull("Invalid views", ViewData.listViews(this.conn.getCurrentSchema()));
+        Assert.assertNotNull("Invalid views", ViewData.listViews(this.conn.getCurrentSchema(), this.conn));
     }
 
     /**

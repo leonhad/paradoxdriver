@@ -8,6 +8,7 @@
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.Utils;
@@ -47,17 +48,19 @@ public final class IndexData extends AbstractParadoxData {
      *
      * @param currentSchema the current schema file.
      * @param tableName     the table name.
+     * @param connection    the database connection.
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException in case of reading failures.
      */
-    public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName) throws SQLException {
+    public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
+            final ParadoxConnection connection) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = Utils.removeDb(tableName) + ".X??";
         final File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
-                    final ParadoxIndex index = IndexData.loadIndexHeader(file);
+                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connection);
                     indexes.add(index);
                 } catch (final IOException ex) {
                     throw new SQLException("Error loading Paradox index.", ex);
@@ -70,17 +73,19 @@ public final class IndexData extends AbstractParadoxData {
     /**
      * Loads the database file header.
      *
-     * @param file the database {@link File}.
+     * @param file       the database {@link File}.
+     * @param connection the database connection.
      * @return the {@link ParadoxIndex} reference.
      * @throws IOException  if case of I/O exceptions.
      * @throws SQLException in case of database errors.
      */
-    private static ParadoxIndex loadIndexHeader(final File file) throws IOException, SQLException {
+    private static ParadoxIndex loadIndexHeader(final File file, final ParadoxConnection connection) throws IOException,
+            SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(2048);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        final ParadoxIndex index = new ParadoxIndex(file, file.getName());
+        final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connection);
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);

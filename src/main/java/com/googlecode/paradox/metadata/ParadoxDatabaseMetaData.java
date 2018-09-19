@@ -281,13 +281,14 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<List<FieldValue>> values = new ArrayList<>(1);
 
         for (final File currentSchema : this.conn.getSchema(catalog, schemaPattern)) {
-            final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableNamePattern);
+            final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableNamePattern, this.conn);
             for (final ParadoxTable table : tables) {
                 this.fieldMetadata(catalog, currentSchema.getName(), columnNamePattern, values, table.getName(),
                         table.getFields());
             }
 
-            final List<? extends ParadoxDataFile> views = ViewData.listViews(currentSchema, tableNamePattern);
+            final List<? extends ParadoxDataFile> views = ViewData.listViews(currentSchema, tableNamePattern,
+                    this.conn);
             for (final ParadoxDataFile view : views) {
                 this.fieldMetadata(catalog, currentSchema.getName(), columnNamePattern, values, view.getName(),
                         view.getFields());
@@ -460,8 +461,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
-            for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern)) {
-                final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(currentSchema, table);
+            for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
+                final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(currentSchema, table, this.conn);
 
                 if (primaryKeyIndex != null) {
                     for (final ParadoxField pk : table.getPrimaryKeys()) {
@@ -485,7 +486,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     }
                 }
 
-                for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, tableNamePattern)) {
+                for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, tableNamePattern, this.conn)) {
                     int ordinal = 0;
                     final ArrayList<FieldValue> row = new ArrayList<>();
                     for (final ParadoxField field : index.getFields()) {
@@ -714,7 +715,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<List<FieldValue>> values = new ArrayList<>(1);
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
-            for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern)) {
+            for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
                 int loop = 0;
                 for (final ParadoxField pk : table.getPrimaryKeys()) {
                     final ArrayList<FieldValue> row = new ArrayList<>();
@@ -1913,7 +1914,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     private void formatTable(final String catalog, final String schemaPattern, final String tableNamePattern,
             final List<List<FieldValue>> values) throws SQLException {
         for (final File schema : this.conn.getSchema(catalog, schemaPattern)) {
-            for (final ParadoxTable table : TableData.listTables(schema, tableNamePattern)) {
+            for (final ParadoxTable table : TableData.listTables(schema, tableNamePattern, this.conn)) {
                 values.add(this.formatRow(table.getName(), TABLE, catalog, schema.getName()));
             }
         }
@@ -1929,7 +1930,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     private void formatView(final String tableNamePattern, final List<List<FieldValue>> values,
             final File currentSchema) throws SQLException {
-        for (final ParadoxView view : ViewData.listViews(currentSchema, tableNamePattern)) {
+        for (final ParadoxView view : ViewData.listViews(currentSchema, tableNamePattern, this.conn)) {
             values.add(this.formatRow(view.getName(), "VIEW", this.conn.getCatalog(), currentSchema.getName()));
         }
     }

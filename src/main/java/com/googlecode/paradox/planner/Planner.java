@@ -8,6 +8,7 @@
  */
 package com.googlecode.paradox.planner;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -34,11 +35,15 @@ import java.util.List;
  */
 public class Planner {
 
+    private final ParadoxConnection connection;
+
     /**
      * Create a new instance.
+     *
+     * @param connection the database connection.
      */
-    public Planner() {
-        super();
+    public Planner(final ParadoxConnection connection) {
+        this.connection = connection;
     }
 
     /**
@@ -95,7 +100,7 @@ public class Planner {
      */
     private Plan createSelect(final SelectNode statement, final File currentSchema) throws SQLException {
         final SelectPlan plan = new SelectPlan(statement.getConditions());
-        final List<ParadoxTable> paradoxTables = TableData.listTables(currentSchema);
+        final List<ParadoxTable> paradoxTables = TableData.listTables(currentSchema, this.connection);
 
         // Load the table metadata.
         Planner.parseTableMetaData(statement, plan, paradoxTables);
