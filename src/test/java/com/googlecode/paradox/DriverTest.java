@@ -43,12 +43,11 @@ public final class DriverTest {
     @Test
     public void testInvalidConnection() throws SQLException {
         final Driver driver = new Driver();
-        Assert.assertNull("Connection can't be valid.", driver.connect(null, null));
+        Assert.assertNull("Connection can't be valid.", driver.connect(null, new Properties()));
     }
 
     /**
      * Test an invalid URL.
-     *
      */
     @Test
     public void testInvalidURL() {
@@ -58,7 +57,6 @@ public final class DriverTest {
 
     /**
      * Test for driver logger.
-     *
      */
     @Test
     public void testLogger() {
@@ -68,7 +66,6 @@ public final class DriverTest {
 
     /**
      * Test for the Major Version.
-     *
      */
     @Test
     public void testMajorVersion() {
@@ -78,7 +75,6 @@ public final class DriverTest {
 
     /**
      * Test for the Minor Version.
-     *
      */
     @Test
     public void testMinorVersion() {
@@ -88,27 +84,24 @@ public final class DriverTest {
 
     /**
      * Test for null properties.
-     *
      */
     @Test(expected = NullPointerException.class)
     public void testNullProperty() {
         final Driver driver = new Driver();
-        Assert.assertEquals(0, driver.getPropertyInfo(null, null).length);
+        Assert.assertEquals(0, driver.getPropertyInfo(null, new Properties()).length);
     }
 
     /**
      * Test for null property info.
-     *
      */
     @Test(expected = NullPointerException.class)
     public void testNullPropertyInfo() {
         final Driver driver = new Driver();
-        driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null);
+        driver.getPropertyInfo("jdbc:paradox:target/test-classes/", new Properties());
     }
 
     /**
      * Test for property info.
-     *
      */
     @Test
     public void testPropertyInfo() {
@@ -121,12 +114,11 @@ public final class DriverTest {
 
     /**
      * Test for properties with invalid URL.
-     *
      */
     @Test(expected = NullPointerException.class)
     public void testPropertyInfoInvalidURL() {
         final Driver driver = new Driver();
-        driver.getPropertyInfo("jdbc:paradox:/path", null);
+        driver.getPropertyInfo("jdbc:paradox:/path", new Properties());
     }
 
     /**
@@ -145,7 +137,6 @@ public final class DriverTest {
 
     /**
      * Test a valid URL.
-     *
      */
     @Test
     public void testValidURL() {
