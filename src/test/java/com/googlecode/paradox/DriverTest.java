@@ -88,7 +88,7 @@ public final class DriverTest {
     @Test(expected = NullPointerException.class)
     public void testNullProperty() {
         final Driver driver = new Driver();
-        Assert.assertEquals(0, driver.getPropertyInfo(null, new Properties()).length);
+        Assert.assertEquals(0, driver.getPropertyInfo(null, null).length);
     }
 
     /**
@@ -97,7 +97,7 @@ public final class DriverTest {
     @Test(expected = NullPointerException.class)
     public void testNullPropertyInfo() {
         final Driver driver = new Driver();
-        driver.getPropertyInfo("jdbc:paradox:target/test-classes/", new Properties());
+        driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null);
     }
 
     /**
@@ -118,7 +118,7 @@ public final class DriverTest {
     @Test(expected = NullPointerException.class)
     public void testPropertyInfoInvalidURL() {
         final Driver driver = new Driver();
-        driver.getPropertyInfo("jdbc:paradox:/path", new Properties());
+        driver.getPropertyInfo("jdbc:paradox:/path", null);
     }
 
     /**
