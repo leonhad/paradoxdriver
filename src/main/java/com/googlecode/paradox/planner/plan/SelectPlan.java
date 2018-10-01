@@ -165,10 +165,7 @@ public final class SelectPlan implements Plan {
      */
     private void fillResultValues(final List<List<FieldValue>> tableData, final int fieldOrder) throws SQLException {
         int placeholder = 0;
-        boolean addingAtt = false;
-        if (!this.values.isEmpty()) {
-            addingAtt = true;
-        }
+        boolean addingAtt = !this.values.isEmpty();
 
         for (int j = 0; j < tableData.size(); j++) {
             List<FieldValue> resultRow;
@@ -179,15 +176,15 @@ public final class SelectPlan implements Plan {
                 } else {
                     resultRow = this.values.get(j);
                 }
-
                 resultRow.add(tableData.get(j).get(fieldOrder));
             } else {
                 if (checkConditions(0, tableData.get(j))) {
                     resultRow = new ArrayList<>();
-                    if (addingAtt)
+                    if (addingAtt) {
                         resultRow = this.values.get(placeholder++);
-                    else
+                    } else {
                         this.values.add(resultRow);
+                    }
                     resultRow.add(tableData.get(j).get(fieldOrder));
                 }
             }

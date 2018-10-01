@@ -462,56 +462,63 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
-                final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(currentSchema, table, this.conn);
-
-                if (primaryKeyIndex != null) {
-                    for (final ParadoxField pk : table.getPrimaryKeys()) {
-                        final ArrayList<FieldValue> row = new ArrayList<>();
-
-                        row.add(new FieldValue(catalog, Types.VARCHAR));
-                        row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
-                        row.add(new FieldValue(table.getName(), Types.VARCHAR));
-                        row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
-                        row.add(new FieldValue(catalog, Types.VARCHAR));
-                        row.add(new FieldValue(primaryKeyIndex.getName(), Types.VARCHAR));
-                        row.add(new FieldValue(DatabaseMetaData.tableIndexHashed));
-                        row.add(fieldZero);
-                        row.add(new FieldValue(pk.getName(), Types.VARCHAR));
-                        row.add(new FieldValue("A", Types.VARCHAR));
-                        row.add(fieldZero);
-                        row.add(fieldZero);
-                        row.add(null);
-
-                        values.add(row);
-                    }
-                }
-
-                for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, tableNamePattern, this.conn)) {
-                    int ordinal = 0;
-                    final ArrayList<FieldValue> row = new ArrayList<>();
-                    for (final ParadoxField field : index.getFields()) {
-
-                        row.add(new FieldValue(catalog, Types.VARCHAR));
-                        row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
-                        row.add(new FieldValue(index.getParentName(), Types.VARCHAR));
-                        row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
-                        row.add(new FieldValue(catalog, Types.VARCHAR));
-                        row.add(new FieldValue(index.getName(), Types.VARCHAR));
-                        row.add(new FieldValue(DatabaseMetaData.tableIndexHashed, Types.INTEGER));
-                        row.add(new FieldValue(ordinal, Types.INTEGER));
-                        row.add(new FieldValue(field.getName(), Types.VARCHAR));
-                        row.add(new FieldValue(index.getOrder(), Types.VARCHAR));
-                        row.add(fieldZero);
-                        row.add(fieldZero);
-                        row.add(null);
-
-                        values.add(row);
-                        ordinal++;
-                    }
-                }
+                getPrimaryKeyIndex(catalog, values, fieldZero, currentSchema, table);
+                getTableIndexInfo(catalog, tableNamePattern, values, fieldZero, currentSchema);
             }
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
+    }
+
+    private void getTableIndexInfo(String catalog, String tableNamePattern, List<List<FieldValue>> values,
+            FieldValue fieldZero, File currentSchema) throws SQLException {
+        for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, tableNamePattern, this.conn)) {
+            int ordinal = 0;
+            for (final ParadoxField field : index.getFields()) {
+                final ArrayList<FieldValue> row = new ArrayList<>();
+                row.add(new FieldValue(catalog, Types.VARCHAR));
+                row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
+                row.add(new FieldValue(index.getParentName(), Types.VARCHAR));
+                row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
+                row.add(new FieldValue(catalog, Types.VARCHAR));
+                row.add(new FieldValue(index.getName(), Types.VARCHAR));
+                row.add(new FieldValue(DatabaseMetaData.tableIndexHashed, Types.INTEGER));
+                row.add(new FieldValue(ordinal, Types.INTEGER));
+                row.add(new FieldValue(field.getName(), Types.VARCHAR));
+                row.add(new FieldValue(index.getOrder(), Types.VARCHAR));
+                row.add(fieldZero);
+                row.add(fieldZero);
+                row.add(null);
+
+                values.add(row);
+                ordinal++;
+            }
+        }
+    }
+
+    private void getPrimaryKeyIndex(String catalog, List<List<FieldValue>> values, FieldValue fieldZero,
+            File currentSchema, ParadoxTable table) throws SQLException {
+        final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(currentSchema, table, this.conn);
+        if (primaryKeyIndex != null) {
+            for (final ParadoxField pk : table.getPrimaryKeys()) {
+                final ArrayList<FieldValue> row = new ArrayList<>();
+
+                row.add(new FieldValue(catalog, Types.VARCHAR));
+                row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
+                row.add(new FieldValue(table.getName(), Types.VARCHAR));
+                row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
+                row.add(new FieldValue(catalog, Types.VARCHAR));
+                row.add(new FieldValue(primaryKeyIndex.getName(), Types.VARCHAR));
+                row.add(new FieldValue(DatabaseMetaData.tableIndexHashed));
+                row.add(fieldZero);
+                row.add(new FieldValue(pk.getName(), Types.VARCHAR));
+                row.add(new FieldValue("A", Types.VARCHAR));
+                row.add(fieldZero);
+                row.add(fieldZero);
+                row.add(null);
+
+                values.add(row);
+            }
+        }
     }
 
     /**
