@@ -12,7 +12,6 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
-import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.data.table.value.FieldValue;
@@ -495,28 +494,25 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     private void getPrimaryKeyIndex(String catalog, List<List<FieldValue>> values, FieldValue fieldZero,
-            File currentSchema, ParadoxTable table) throws SQLException {
-        final ParadoxPK primaryKeyIndex = PrimaryKeyData.getPrimaryKey(currentSchema, table, this.conn);
-        if (primaryKeyIndex != null) {
-            for (final ParadoxField pk : table.getPrimaryKeys()) {
-                final ArrayList<FieldValue> row = new ArrayList<>();
+            File currentSchema, ParadoxTable table) {
+        for (final ParadoxField pk : table.getPrimaryKeys()) {
+            final ArrayList<FieldValue> row = new ArrayList<>();
 
-                row.add(new FieldValue(catalog, Types.VARCHAR));
-                row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
-                row.add(new FieldValue(table.getName(), Types.VARCHAR));
-                row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
-                row.add(new FieldValue(catalog, Types.VARCHAR));
-                row.add(new FieldValue(primaryKeyIndex.getName(), Types.VARCHAR));
-                row.add(new FieldValue(DatabaseMetaData.tableIndexHashed));
-                row.add(fieldZero);
-                row.add(new FieldValue(pk.getName(), Types.VARCHAR));
-                row.add(new FieldValue("A", Types.VARCHAR));
-                row.add(fieldZero);
-                row.add(fieldZero);
-                row.add(null);
+            row.add(new FieldValue(catalog, Types.VARCHAR));
+            row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
+            row.add(new FieldValue(table.getName(), Types.VARCHAR));
+            row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
+            row.add(new FieldValue(catalog, Types.VARCHAR));
+            row.add(new FieldValue(table.getName() + ".PX", Types.VARCHAR));
+            row.add(new FieldValue(DatabaseMetaData.tableIndexHashed));
+            row.add(new FieldValue(pk.getOrderNum() - 1, Types.INTEGER));
+            row.add(new FieldValue(pk.getName(), Types.VARCHAR));
+            row.add(new FieldValue("A", Types.VARCHAR));
+            row.add(fieldZero);
+            row.add(fieldZero);
+            row.add(null);
 
-                values.add(row);
-            }
+            values.add(row);
         }
     }
 
@@ -722,17 +718,15 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
-                int loop = 0;
                 for (final ParadoxField pk : table.getPrimaryKeys()) {
                     final ArrayList<FieldValue> row = new ArrayList<>();
                     row.add(new FieldValue(catalog, Types.VARCHAR));
                     row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
                     row.add(new FieldValue(table.getName(), Types.VARCHAR));
                     row.add(new FieldValue(pk.getName(), Types.VARCHAR));
-                    row.add(new FieldValue(loop, Types.INTEGER));
-                    row.add(new FieldValue(pk.getName(), Types.VARCHAR));
+                    row.add(new FieldValue(pk.getOrderNum() - 1, Types.INTEGER));
+                    row.add(new FieldValue(table.getName() + ".PX", Types.VARCHAR));
                     values.add(row);
-                    loop++;
                 }
             }
         }

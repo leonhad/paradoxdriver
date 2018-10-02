@@ -9,6 +9,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
 import com.googlecode.paradox.utils.Utils;
@@ -118,12 +119,34 @@ public final class IndexData extends AbstractParadoxData {
 
             parseVersionID(buffer, index);
 
-            IndexData.parseFields(buffer, index);
+            parseFields(buffer, index);
 
             IndexData.parseSortID(buffer, index);
             IndexData.parseIndexName(buffer, index);
         }
         return index;
+    }
+
+    /**
+     * Parse the index names.
+     *
+     * @param buffer the buffer to parse.
+     * @param index  the paradox index.
+     */
+    private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
+        final ByteBuffer name = ByteBuffer.allocate(26);
+        while (true) {
+            final byte c = buffer.get();
+            if (c == 0) {
+                break;
+            }
+            name.put(c);
+        }
+        flip(name);
+        final String tempName = index.getCharset().decode(name).toString();
+        if (tempName.length() != 0) {
+            index.setName(tempName);
+        }
     }
 
     /**
@@ -133,7 +156,7 @@ public final class IndexData extends AbstractParadoxData {
      * @param index  the paradox index.
      * @throws SQLException in case of parse errors.
      */
-    private static void parseFields(final ByteBuffer buffer, final ParadoxIndex index) throws SQLException {
+    protected static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
@@ -172,28 +195,6 @@ public final class IndexData extends AbstractParadoxData {
             fieldsOrder.add(buffer.getShort());
         }
         index.setFieldsOrder(fieldsOrder);
-    }
-
-    /**
-     * Parse the index names.
-     *
-     * @param buffer the buffer to parse.
-     * @param index  the paradox index.
-     */
-    private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
-        final ByteBuffer name = ByteBuffer.allocate(26);
-        while (true) {
-            final byte c = buffer.get();
-            if (c == 0) {
-                break;
-            }
-            name.put(c);
-        }
-        flip(name);
-        final String tempName = index.getCharset().decode(name).toString();
-        if (tempName.length() != 0) {
-            index.setName(tempName);
-        }
     }
 
     /**

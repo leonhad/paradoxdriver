@@ -104,7 +104,7 @@ public class MainTest {
     public void testIndexInfo() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getIndexInfo("test-classes", "db", "customer.db", true, true)) {
+        try (ResultSet rs = meta.getIndexInfo("test-classes", "db", "CUSTOMER.db", true, true)) {
             Assert.assertTrue("Invalid result set state.", rs.next());
 
             Assert.assertEquals("CUSTOMER.PX", rs.getString("INDEX_NAME"));
@@ -144,7 +144,35 @@ public class MainTest {
             Assert.assertEquals("CUSTOMER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("CustNo", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("0", rs.getString("KEY_SEQ"));
-            Assert.assertEquals("CustNo", rs.getString("PK_NAME"));
+            Assert.assertEquals("CUSTOMER.PX", rs.getString("PK_NAME"));
+            Assert.assertFalse(rs.next());
+        }
+    }
+
+    /**
+     * Test for primary key metadata with two keys.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testPrimaryKeyTwoKeys() throws SQLException {
+        final DatabaseMetaData meta = this.conn.getMetaData();
+
+        try (ResultSet rs = meta.getPrimaryKeys("test-classes", "db", "SERVER.db")) {
+            Assert.assertTrue(rs.next());
+            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("SERVER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("REQTYPE", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("0", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("SERVER.PX", rs.getString("PK_NAME"));
+            Assert.assertTrue(rs.next());
+            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("SERVER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("URI", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("1", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("SERVER.PX", rs.getString("PK_NAME"));
             Assert.assertFalse(rs.next());
         }
     }

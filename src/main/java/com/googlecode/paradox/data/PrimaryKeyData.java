@@ -31,7 +31,7 @@ import static com.googlecode.paradox.utils.Utils.position;
  * @version 1.1
  * @since 1.0
  */
-public final class PrimaryKeyData {
+public final class PrimaryKeyData extends AbstractParadoxData {
 
     /**
      * Utility class.
@@ -94,6 +94,9 @@ public final class PrimaryKeyData {
 
             position(buffer, 0x15);
             pk.setIndexFieldNumber(buffer.get());
+
+            position(buffer, 0x21);
+            pk.setFieldCount(buffer.get());
 
             position(buffer, 0x38);
             pk.setWriteProtected(buffer.get());

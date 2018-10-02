@@ -19,7 +19,7 @@ public abstract class AbstractParadoxData {
     /**
      * Minimum paradox file version.
      */
-    private static final int MINIMIUM_VERSION = 4;
+    protected static final int MINIMIUM_VERSION = 4;
 
     /**
      * Creates a new instance.
@@ -50,5 +50,4 @@ public abstract class AbstractParadoxData {
             position(buffer, 0x58);
         }
     }
-
 }
