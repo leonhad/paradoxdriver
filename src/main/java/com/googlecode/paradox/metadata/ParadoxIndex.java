@@ -11,8 +11,6 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.ParadoxConnection;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Stores index data.
@@ -22,11 +20,6 @@ import java.util.List;
  * @since 1.0
  */
 public final class ParadoxIndex extends ParadoxDataFile {
-
-    /**
-     * Parent name.
-     */
-    private String parentName;
 
     /**
      * Field order ID.
@@ -57,17 +50,9 @@ public final class ParadoxIndex extends ParadoxDataFile {
         return "A";
     }
 
-    /**
-     * Gets the primary key.
-     *
-     * @return the primary key.
-     */
-    public List<ParadoxField> getPrimaryKeys() {
-        final ArrayList<ParadoxField> ret = new ArrayList<>();
-        for (int loop = 0; loop < this.getPrimaryFieldCount(); loop++) {
-            ret.add(this.fields.get(loop));
-        }
-        return ret;
+    public boolean isUnique() {
+        final int referential = this.getReferentialIntegrity();
+        return (referential == 0x20) || (referential == 0x21) || (referential == 0x30);
     }
 
     /**
@@ -86,23 +71,5 @@ public final class ParadoxIndex extends ParadoxDataFile {
      */
     public void setSortOrderID(final String sortOrderID) {
         this.sortOrderID = sortOrderID;
-    }
-
-    /**
-     * Gets the parent name.
-     *
-     * @return the parent name.
-     */
-    String getParentName() {
-        return this.parentName;
-    }
-
-    /**
-     * Sets the parent name.
-     *
-     * @param parentName the parent name to set.
-     */
-    public void setParentName(final String parentName) {
-        this.parentName = parentName;
     }
 }

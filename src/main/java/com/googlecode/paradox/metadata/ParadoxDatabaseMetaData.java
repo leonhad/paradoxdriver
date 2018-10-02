@@ -463,26 +463,26 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
                 getPrimaryKeyIndex(catalog, values, fieldZero, currentSchema, table);
-                getTableIndexInfo(catalog, tableNamePattern, values, fieldZero, currentSchema);
+                getSecondaryIndexInfo(catalog, table, values, fieldZero, currentSchema);
             }
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
 
-    private void getTableIndexInfo(String catalog, String tableNamePattern, List<List<FieldValue>> values,
+    private void getSecondaryIndexInfo(String catalog, ParadoxTable table, List<List<FieldValue>> values,
             FieldValue fieldZero, File currentSchema) throws SQLException {
-        for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, tableNamePattern, this.conn)) {
-            int ordinal = 0;
-            for (final ParadoxField field : index.getFields()) {
+        for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, table.getName(), this.conn)) {
+            for (int loop = 0; loop < index.getFieldCount() - index.getPrimaryFieldCount(); loop++) {
+                final ParadoxField field = index.getFields().get(0);
                 final ArrayList<FieldValue> row = new ArrayList<>();
                 row.add(new FieldValue(catalog, Types.VARCHAR));
                 row.add(new FieldValue(currentSchema.getName(), Types.VARCHAR));
-                row.add(new FieldValue(index.getParentName(), Types.VARCHAR));
-                row.add(new FieldValue(Boolean.FALSE, Types.BOOLEAN));
+                row.add(new FieldValue(table.getName(), Types.VARCHAR));
+                row.add(new FieldValue(!index.isUnique(), Types.BOOLEAN));
                 row.add(new FieldValue(catalog, Types.VARCHAR));
                 row.add(new FieldValue(index.getName(), Types.VARCHAR));
                 row.add(new FieldValue(DatabaseMetaData.tableIndexHashed, Types.INTEGER));
-                row.add(new FieldValue(ordinal, Types.INTEGER));
+                row.add(new FieldValue(field.getOrderNum() - 1, Types.INTEGER));
                 row.add(new FieldValue(field.getName(), Types.VARCHAR));
                 row.add(new FieldValue(index.getOrder(), Types.VARCHAR));
                 row.add(fieldZero);
@@ -490,7 +490,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                 row.add(null);
 
                 values.add(row);
-                ordinal++;
             }
         }
     }

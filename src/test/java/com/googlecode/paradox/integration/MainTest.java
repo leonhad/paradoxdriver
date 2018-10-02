@@ -24,7 +24,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 
 /**
  * Generic integration tests for Paradox Driver.
@@ -103,35 +102,29 @@ public class MainTest {
      */
     @Test
     public void testIndexInfo() throws SQLException {
-        final String[] names = new String[2];
         final DatabaseMetaData meta = this.conn.getMetaData();
 
         try (ResultSet rs = meta.getIndexInfo("test-classes", "db", "customer.db", true, true)) {
-            Assert.assertTrue(rs.next());
-            names[0] = rs.getString("INDEX_NAME");
-            Assert.assertTrue(rs.next());
-            names[1] = rs.getString("INDEX_NAME");
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid result set state.", rs.next());
 
-            Arrays.sort(names);
-            Assert.assertEquals("CUSTOMER.PX", names[0]);
-            Assert.assertEquals("CUSTOMER.X06", names[1]);
+            Assert.assertEquals("CUSTOMER.PX", rs.getString("INDEX_NAME"));
+            Assert.assertTrue("Invalid result set state.", rs.next());
+            Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
 
-            while (rs.next()) {
-                Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
-                Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
-                Assert.assertNull(rs.getString("TABLE_NAME"));
-                Assert.assertEquals("false", rs.getString("NON_UNIQUE"));
-                Assert.assertEquals("test-classes", rs.getString("INDEX_QUALIFIER"));
-                Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
-                Assert.assertEquals("2", rs.getString("TYPE"));
-                Assert.assertEquals("0", rs.getString("ORDINAL_POSITION"));
-                Assert.assertEquals("City", rs.getString("COLUMN_NAME"));
-                Assert.assertEquals("A", rs.getString("ASC_OR_DESC"));
-                Assert.assertEquals("0", rs.getString("CARDINALITY"));
-                Assert.assertEquals("0", rs.getString("PAGES"));
-                Assert.assertNull(rs.getString("FILTER_CONDITION"));
-            }
+            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid table name.", "CUSTOMER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("true", rs.getString("NON_UNIQUE"));
+            Assert.assertEquals("test-classes", rs.getString("INDEX_QUALIFIER"));
+            Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
+            Assert.assertEquals("2", rs.getString("TYPE"));
+            Assert.assertEquals("0", rs.getString("ORDINAL_POSITION"));
+            Assert.assertEquals("City", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("A", rs.getString("ASC_OR_DESC"));
+            Assert.assertEquals("0", rs.getString("CARDINALITY"));
+            Assert.assertEquals("0", rs.getString("PAGES"));
+            Assert.assertNull(rs.getString("FILTER_CONDITION"));
+            Assert.assertFalse("Invalid result set state.", rs.next());
         }
     }
 
