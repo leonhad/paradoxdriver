@@ -80,7 +80,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
@@ -88,7 +88,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -108,7 +108,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -121,7 +121,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.0.0-M3</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
@@ -131,9 +131,6 @@
                 </dependencies>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <argLine>-noverify -Xmx1G -XX:+UseConcMarkSweepGC
-                        -XX:+CMSClassUnloadingEnabled
-                    </argLine>
                     <includes>
                         <include>**/*.class</include>
                     </includes>
@@ -143,12 +140,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.0</version>
+                <version>3.0.0-M3</version>
                 <configuration>
                     <testFailureIgnore>true</testFailureIgnore>
-                    <argLine>-Xmx1G -XX:+UseConcMarkSweepGC
-                        -XX:+CMSClassUnloadingEnabled ${jacoco.agent.it.arg}
-                    </argLine>
                     <includes>
                         <include>**/*.class</include>
                     </includes>
@@ -166,7 +160,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.2</version>
+                <version>0.8.4</version>
                 <executions>
                     <execution>
                         <id>prepare-ut-agent</id>
@@ -175,7 +169,6 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <testFailureIgnore>true</testFailureIgnore>
                             <destFile>${sonar.jacoco.reportPath}</destFile>
                             <propertyName>jacoco.agent.ut.arg</propertyName>
                             <append>true</append>
@@ -188,7 +181,6 @@
                             <goal>prepare-agent-integration</goal>
                         </goals>
                         <configuration>
-                            <testFailureIgnore>true</testFailureIgnore>
                             <destFile>${sonar.jacoco.itReportPath}</destFile>
                             <propertyName>jacoco.agent.it.arg</propertyName>
                             <append>true</append>
