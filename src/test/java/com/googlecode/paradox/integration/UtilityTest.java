@@ -28,7 +28,6 @@ import org.junit.experimental.categories.Category;
  * @version 1.1
  * @since 1.2
  */
-@Category(IntegrationTest.class)
 public class UtilityTest {
 
     /**

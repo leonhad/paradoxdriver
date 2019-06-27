@@ -30,7 +30,6 @@ import java.sql.Statement;
  * @version 1.1
  * @since 1.2
  */
-@Category(IntegrationTest.class)
 public class BlobTest {
 
     /**

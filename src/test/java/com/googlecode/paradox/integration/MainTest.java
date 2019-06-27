@@ -32,7 +32,6 @@ import java.sql.Statement;
  * @version 1.1
  * @since 1.0
  */
-@Category(IntegrationTest.class)
 public class MainTest {
 
     /**

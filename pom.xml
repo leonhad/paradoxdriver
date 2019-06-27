@@ -61,11 +61,6 @@
         <sonar.java.source>1.7</sonar.java.source>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.java.libraries>target</sonar.java.libraries>
-        <jacoco.outputDir>${project.build.directory}/</jacoco.outputDir>
-        <jacoco.out.ut.file>jacoco.exec</jacoco.out.ut.file>
-        <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
-        <sonar.jacoco.reportPath>${jacoco.outputDir}/${jacoco.out.ut.file}</sonar.jacoco.reportPath>
-        <sonar.jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</sonar.jacoco.itReportPath>
     </properties>
     <dependencies>
         <dependency>
@@ -130,32 +125,12 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <runOrder>random</runOrder>
                     <testFailureIgnore>true</testFailureIgnore>
                     <includes>
                         <include>**/*.class</include>
                     </includes>
-                    <excludedGroups>com.googlecode.paradox.integration.IntegrationTest</excludedGroups>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M3</version>
-                <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
-                    <includes>
-                        <include>**/*.class</include>
-                    </includes>
-                    <groups>com.googlecode.paradox.integration.IntegrationTest</groups>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -163,28 +138,17 @@
                 <version>0.8.4</version>
                 <executions>
                     <execution>
-                        <id>prepare-ut-agent</id>
-                        <phase>process-test-classes</phase>
+                        <id>agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                        <configuration>
-                            <destFile>${sonar.jacoco.reportPath}</destFile>
-                            <propertyName>jacoco.agent.ut.arg</propertyName>
-                            <append>true</append>
-                        </configuration>
                     </execution>
                     <execution>
-                        <id>prepare-it-agent</id>
-                        <phase>package</phase>
+                        <id>report</id>
+                        <phase>test</phase>
                         <goals>
-                            <goal>prepare-agent-integration</goal>
+                            <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <destFile>${sonar.jacoco.itReportPath}</destFile>
-                            <propertyName>jacoco.agent.it.arg</propertyName>
-                            <append>true</append>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
