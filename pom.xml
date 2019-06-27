@@ -60,6 +60,7 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.java.source>1.7</sonar.java.source>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.java.libraries>target</sonar.java.libraries>
         <jacoco.outputDir>${project.build.directory}/</jacoco.outputDir>
         <jacoco.out.ut.file>jacoco.exec</jacoco.out.ut.file>
         <jacoco.out.it.file>jacoco-it.exec</jacoco.out.it.file>
