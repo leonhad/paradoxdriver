@@ -3,12 +3,11 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.googlecode.paradoxdriver</groupId>
+    <groupId>br.com.sammubr</groupId>
     <artifactId>paradoxdriver</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.4.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Paradox Driver</name>
-    <url>https://github.com/leonhad/paradoxdriver</url>
     <description>A Paradox Java Driver (using JDBC 4)</description>
     <licenses>
         <license>
@@ -17,42 +16,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    <developers>
-        <developer>
-            <name>Leonardo Alves da Costa</name>
-            <email>leonhad@gmail.com</email>
-            <organization>Particular</organization>
-            <organizationUrl>https://github.com/leonhad/</organizationUrl>
-        </developer>
-    </developers>
-    <mailingLists>
-        <mailingList>
-            <name>Discussion List</name>
-            <subscribe>paradoxdriver-discuss+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>paradoxdriver-discuss+unsubscribe@googlegroups.com</unsubscribe>
-            <post>paradoxdriver-discuss@googlegroups.com</post>
-            <archive>https://groups.google.com/d/forum/paradoxdriver-discuss</archive>
-        </mailingList>
-    </mailingLists>
-    <scm>
-        <connection>scm:git:https://github.com/leonhad/paradoxdriver.git</connection>
-        <developerConnection>scm:git:https://github.com/leonhad/paradoxdriver.git</developerConnection>
-        <url>https://github.com/leonhad/paradoxdriver.git</url>
-    </scm>
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/leonhad/paradoxdriver/issues</url>
-    </issueManagement>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -140,31 +103,6 @@
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
