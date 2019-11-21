@@ -80,7 +80,7 @@ public final class TableData extends AbstractParadoxData {
      * @throws SQLException in case of failures.
      */
     public static List<ParadoxTable> listTables(final File schema, final String pattern,
-            final ParadoxConnection connection) throws SQLException {
+                                                final ParadoxConnection connection) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = schema.listFiles(new TableFilter(Utils.removeDb(pattern)));
         if (fileList != null) {
@@ -102,10 +102,15 @@ public final class TableData extends AbstractParadoxData {
      * @throws SQLException in case of failures.
      */
     public static List<List<FieldValue>> loadData(final ParadoxTable table,
-            final Collection<ParadoxField> fields) throws SQLException {
+                                                  final Collection<ParadoxField> fields) throws SQLException {
         final List<List<FieldValue>> ret = new ArrayList<>();
 
+        if (table.isEncrypted()) {
+            throw new SQLException("Unsupported encrypted table files.");
+        }
+
         final int blockSize = table.getBlockSizeBytes();
+        final int totalBlocks = table.getTotalBlocks();
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
@@ -123,11 +128,12 @@ public final class TableData extends AbstractParadoxData {
                 channel.read(buffer);
                 flip(buffer);
 
-                nextBlock = buffer.getShort();
+                nextBlock = buffer.getShort() & 0xFFFF;
+
                 // The block number.
                 buffer.getShort();
 
-                final int addDataSize = buffer.getShort() & 0xFFFF;
+                final int addDataSize = buffer.getShort();
                 final int rowsInBlock = (addDataSize / recordSize) + 1;
 
                 buffer.order(ByteOrder.BIG_ENDIAN);
@@ -135,7 +141,7 @@ public final class TableData extends AbstractParadoxData {
                 for (int loop = 0; loop < rowsInBlock; loop++) {
                     ret.add(TableData.readRow(table, fields, buffer));
                 }
-            } while (nextBlock != 0);
+            } while (nextBlock < totalBlocks);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
@@ -150,7 +156,7 @@ public final class TableData extends AbstractParadoxData {
      * @param fieldsSize the field list.
      */
     private static void fixTablePositionByVersion(final ParadoxTable table, final Buffer buffer,
-            final int fieldsSize) {
+                                                  final int fieldsSize) {
         if (table.getVersionId() > 4) {
             if (table.getVersionId() == 0xC) {
                 position(buffer, 0x78 + 261 + 4 + (6 * fieldsSize));
@@ -180,8 +186,8 @@ public final class TableData extends AbstractParadoxData {
             channel.read(buffer);
             flip(buffer);
 
-            table.setRecordSize(buffer.getShort());
-            table.setHeaderSize(buffer.getShort());
+            table.setRecordSize(buffer.getShort() & 0xFFFF);
+            table.setHeaderSize(buffer.getShort() & 0xFFFF);
             table.setType(buffer.get());
             table.setBlockSize(buffer.get());
             table.setRowCount(buffer.getInt());
@@ -194,9 +200,27 @@ public final class TableData extends AbstractParadoxData {
             table.setFieldCount(buffer.getShort());
             table.setPrimaryFieldCount(buffer.getShort());
 
+            // Check for encrypted file.
+            position(buffer, 0x25);
+            long value = buffer.getInt();
+
+
             position(buffer, 0x38);
             table.setWriteProtected(buffer.get());
             table.setVersionId(buffer.get());
+
+            if (value != 0) {
+                // 4.x and up
+                if (value == 0xFF00FF00 && table.getVersionId() > 4) {
+                    position(buffer, 0x5c);
+                    value = buffer.getInt();
+                    if (value != 0) {
+                        table.setEncrypted(true);
+                    }
+                } else {
+                    table.setEncrypted(true);
+                }
+            }
 
             position(buffer, 0x49);
             table.setAutoIncrementValue(buffer.getInt());
@@ -253,7 +277,7 @@ public final class TableData extends AbstractParadoxData {
      * @param fields the field list.
      */
     private static void parseTableFieldsName(final ParadoxTable table, final ByteBuffer buffer,
-            final List<ParadoxField> fields) {
+                                             final List<ParadoxField> fields) {
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
             final ByteBuffer name = ByteBuffer.allocate(261);
 
@@ -294,7 +318,7 @@ public final class TableData extends AbstractParadoxData {
      * @throws SQLException in case of parse errors.
      */
     private static List<FieldValue> readRow(final ParadoxTable table, final Collection<ParadoxField> fields,
-            final ByteBuffer buffer) throws SQLException {
+                                            final ByteBuffer buffer) throws SQLException {
         final List<FieldValue> row = new ArrayList<>();
 
         for (final ParadoxField field : table.getFields()) {
