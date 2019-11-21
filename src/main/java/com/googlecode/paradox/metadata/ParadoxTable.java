@@ -29,9 +29,9 @@ public final class ParadoxTable extends ParadoxDataFile {
     private BlobTable blobFile;
 
     /**
-     * If table is encrypted.
+     * Encrypted data.
      */
-    private boolean encrypted;
+    private int encryptedData;
 
     /**
      * Creates a new instance.
@@ -89,11 +89,15 @@ public final class ParadoxTable extends ParadoxDataFile {
         return ret;
     }
 
-    public void setEncrypted(boolean encrypted) {
-        this.encrypted = encrypted;
+    public boolean isEncrypted() {
+        return encryptedData != 0;
     }
 
-    public boolean isEncrypted() {
-        return encrypted;
+    public int getEncryptedData() {
+        return encryptedData;
+    }
+
+    public void setEncryptedData(int encryptedData) {
+        this.encryptedData = encryptedData;
     }
 }

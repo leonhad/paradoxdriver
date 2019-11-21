@@ -202,25 +202,18 @@ public final class TableData extends AbstractParadoxData {
 
             // Check for encrypted file.
             position(buffer, 0x25);
-            long value = buffer.getInt();
-
+            int value = buffer.getInt();
 
             position(buffer, 0x38);
             table.setWriteProtected(buffer.get());
             table.setVersionId(buffer.get());
 
-            if (value != 0) {
-                // 4.x and up
-                if (value == 0xFF00FF00 && table.getVersionId() > 4) {
-                    position(buffer, 0x5c);
-                    value = buffer.getInt();
-                    if (value != 0) {
-                        table.setEncrypted(true);
-                    }
-                } else {
-                    table.setEncrypted(true);
-                }
+            // Paradox version 4.x and up.
+            if (value == 0xFF00FF00 && table.getVersionId() > 4) {
+                position(buffer, 0x5c);
+                value = buffer.getInt();
             }
+            table.setEncryptedData(value);
 
             position(buffer, 0x49);
             table.setAutoIncrementValue(buffer.getInt());
