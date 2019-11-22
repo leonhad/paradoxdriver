@@ -4,11 +4,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class MainTest {
 
@@ -49,6 +45,14 @@ public class MainTest {
             Assert.assertTrue("Invalid row state.", rs.next());
             Assert.assertEquals("Invalid time.", "09:25:25", rs.getTime("TIME").toString());
             Assert.assertEquals("Invalid date.", "2018-01-02", rs.getDate("DATE").toString());
+
+            Assert.assertTrue("Invalid row state.", rs.next());
+            Assert.assertEquals("Invalid time.", "10:00:00", rs.getTime("TIME").toString());
+            Assert.assertNull("Invalid date.", rs.getDate("DATE"));
+
+            Assert.assertTrue("Invalid row state.", rs.next());
+            Assert.assertNull("Invalid time.", rs.getTime("TIME"));
+            Assert.assertEquals("Invalid date.", "2018-01-01", rs.getDate("DATE").toString());
 
             Assert.assertFalse("Invalid row state.", rs.next());
         }

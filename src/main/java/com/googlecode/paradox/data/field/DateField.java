@@ -46,7 +46,11 @@ public final class DateField implements FieldParser {
         final int a4 = buffer.get() & 0xFF;
         final long days = ((a1 << 24) | (a2 << 16) | (a3 << 8) | a4) & 0x0FFF_FFFFL;
 
-        final Date date = DateUtils.sdnToGregorian(days + 1_721_425);
+        Date date = null;
+        if (days != 0) {
+            date = DateUtils.sdnToGregorian(days + 1_721_425);
+        }
+
         return new FieldValue(date, Types.DATE);
     }
 }
