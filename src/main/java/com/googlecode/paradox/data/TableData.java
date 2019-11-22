@@ -110,7 +110,6 @@ public final class TableData extends AbstractParadoxData {
         }
 
         final int blockSize = table.getBlockSizeBytes();
-        final int totalBlocks = table.getTotalBlocks();
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
@@ -141,7 +140,7 @@ public final class TableData extends AbstractParadoxData {
                 for (int loop = 0; loop < rowsInBlock; loop++) {
                     ret.add(TableData.readRow(table, fields, buffer));
                 }
-            } while (nextBlock < totalBlocks);
+            } while (nextBlock != 0);
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
