@@ -2,7 +2,7 @@ package com.googlecode.paradox.data;
 
 public final class EncryptedData {
 
-    private static final int encryption_table_a[] = {
+    private static final int[] ENCRYPTION_TABLE_A = {
             0xB2, 0xA5, 0x0C, 0xDD, 0x38, 0xFE, 0xCB, 0x5B,
             0x0C, 0x23, 0xEC, 0x6A, 0x95, 0x3E, 0xD5, 0x2D,
             0x2C, 0xF7, 0x2D, 0x30, 0xEA, 0x15, 0x98, 0xB4,
@@ -37,7 +37,7 @@ public final class EncryptedData {
             0xF9, 0x13, 0x6F, 0x50, 0xCB, 0x21, 0x09, 0xFA
     };
 
-    private static final int encryption_table_b[] = {
+    private static final int[] ENCRYPTION_TABLE_B = {
             0x61, 0xA7, 0x79, 0x02, 0x37, 0x34, 0x6F, 0x81,
             0x01, 0xC2, 0xB2, 0xB3, 0xD6, 0x4D, 0x3E, 0x03,
             0x06, 0x60, 0x98, 0x44, 0x46, 0x68, 0x1C, 0xEB,
@@ -72,7 +72,7 @@ public final class EncryptedData {
             0xD1, 0x00, 0xDF, 0x7C, 0xE3, 0xE8, 0x57, 0xD7
     };
 
-    private static final int encryption_table_c[] = {
+    private static final int[] ENCRYPTION_TABLE_C = {
             0xF9, 0x08, 0x03, 0x0F, 0xAD, 0x52, 0x10, 0xD8,
             0x39, 0x87, 0xF0, 0xE9, 0xD7, 0xBC, 0x92, 0x9A,
             0x18, 0x53, 0xD5, 0x9C, 0xDB, 0xD4, 0xDD, 0x98,
@@ -111,37 +111,37 @@ public final class EncryptedData {
         super();
     }
 
-    private static void px_decrypt_chunk(byte src[], byte a, byte b, byte c, byte d) {
+    private static void px_decrypt_chunk(byte[] src, byte a, byte b, byte c, byte d) {
         byte[] tmp = new byte[256];
 
         for (int x = 0; x < tmp.length; ++x) {
-            int y = (encryption_table_c[x] - d) & 0xff;
-            tmp[x] = src[y] ^
-                    encryption_table_a[(x + a) & 0xff] ^
-                    encryption_table_b[(y + b) & 0xff] ^
-                    encryption_table_c[(y + c) & 0xff];
+            int y = (ENCRYPTION_TABLE_C[x] - d) & 0xff;
+            tmp[x] = (byte) (src[y] ^
+                    ENCRYPTION_TABLE_A[(x + a) & 0xff] ^
+                    ENCRYPTION_TABLE_B[(y + b) & 0xff] ^
+                    ENCRYPTION_TABLE_C[(y + c) & 0xff]);
         }
 
         System.arraycopy(tmp, 0, src, 0, tmp.length);
     }
 
-    public static void px_decrypt_db_block(byte[] src, byte[] dest, long encryption, long blocksize, long blockno) {
-        byte a = encryption & 0xff;
-        byte b = (encryption >> 8) & 0xff;
+    public static void px_decrypt_db_block(byte[] src, long encryption, long blocksize, long blockno) {
+        byte a = (byte) (encryption & 0xff);
+        byte b = (byte) ((encryption >> 8) & 0xff);
         blocksize >>= 8;
 
         for (int chunk = 0; chunk < blocksize; ++chunk) {
-            px_decrypt_chunk(src + (chunk << 8), dest + (chunk << 8), a, b, chunk, blockno);
+            //px_decrypt_chunk(src + (chunk << 8), a, b, chunk, blockno);
         }
     }
 
     public void px_decrypt_mb_block(byte[] src, byte[] dest, long encryption, long blocksize) {
-        byte a = encryption & 0xFF;
-        byte b = (encryption >> 8) & 0xFF;
+        byte a = (byte) (encryption & 0xFF);
+        byte b = (byte) ((encryption >> 8) & 0xFF);
         blocksize >>= 8;
 
         for (int chunk = 0; chunk < blocksize; ++chunk) {
-            px_decrypt_chunk(src + (chunk << 8), dest + (chunk << 8), a, b, a + 1, b + 1);
+            //px_decrypt_chunk(src + (chunk << 8), a, b, a + 1, b + 1);
         }
     }
 }
