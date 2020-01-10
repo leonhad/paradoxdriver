@@ -47,7 +47,7 @@ public final class BooleanField implements FieldParser {
         } else if (v == -128) {
             return new FieldValue(Boolean.FALSE, Types.BOOLEAN);
         } else {
-            throw new SQLException("Invalid value " + v + ".");
+            return new FieldValue(Types.BOOLEAN);
         }
     }
     

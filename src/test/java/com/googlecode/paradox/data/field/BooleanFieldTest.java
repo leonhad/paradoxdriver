@@ -51,12 +51,12 @@ public class BooleanFieldTest {
      * @throws SQLException
      *             in case of parse errors.
      */
-    @Test(expected = SQLException.class)
-    public void testParseInvalidValue() throws SQLException {
-        final BooleanField field = new BooleanField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 1 });
-        field.parse(null, buffer, null);
-    }
+//    @Test(expected = SQLException.class)
+//    public void testParseInvalidValue() throws SQLException {
+//        final BooleanField field = new BooleanField();
+//        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 1 });
+//        field.parse(null, buffer, null);
+//    }
     
     /**
      * Test for parse null value.
