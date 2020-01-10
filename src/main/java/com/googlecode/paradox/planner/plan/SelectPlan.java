@@ -259,7 +259,7 @@ public final class SelectPlan implements Plan {
      * @throws SQLException in case of parse errors.
      */
     private void findColumn(final String fieldName, final List<ParadoxField> fields, final String prefix)
-    throws SQLException {
+            throws SQLException {
         for (final PlanTableNode table : this.tables) {
             if (table.getTable() == null) {
                 throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
