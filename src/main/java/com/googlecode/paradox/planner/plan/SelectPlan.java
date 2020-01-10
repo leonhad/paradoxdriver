@@ -117,13 +117,10 @@ public final class SelectPlan implements Plan {
         if (this.columns.isEmpty() || this.tables.isEmpty()) {
             return;
         }
-
-        for (final Column column : this.columns) {
-            for (final PlanTableNode table : this.tables) {
-                final ParadoxTable pTable = table.getTable();
-                if (column.getTableName().equalsIgnoreCase(pTable.getName())) {
-                    this.loadTableData(column, pTable);
-                }
+        for (final PlanTableNode table : this.tables) {
+            final ParadoxTable pTable = table.getTable();
+            if (this.columns.get(0).getTableName().equalsIgnoreCase(pTable.getName())) {
+                this.loadTableData(this.columns, pTable);
             }
         }
     }
@@ -262,7 +259,7 @@ public final class SelectPlan implements Plan {
      * @throws SQLException in case of parse errors.
      */
     private void findColumn(final String fieldName, final List<ParadoxField> fields, final String prefix)
-    throws SQLException {
+            throws SQLException {
         for (final PlanTableNode table : this.tables) {
             if (table.getTable() == null) {
                 throw new SQLException("Empty table", SQLStates.INVALID_TABLE.getValue());
@@ -315,24 +312,23 @@ public final class SelectPlan implements Plan {
     /**
      * Load the table data form a table.
      *
-     * @param column the column to load.
+     * @param columns the columns to load.
      * @param table  the table to load.
      * @throws SQLException in case of execution errors.
      */
-    private void loadTableData(final Column column, final ParadoxTable table) throws SQLException {
-        final ParadoxField field = table.findField(column.getName());
-        if (field == null) {
-            throw new SQLException("Column '" + column.getName() + "' not found in table '" + table.getName(),
-                    SQLStates.INVALID_FIELD_VALUE.getValue());
-        }
-        // load table data
+    private void loadTableData(final List<Column> columns, final ParadoxTable table) throws SQLException {
         final List<List<FieldValue>> tableData = TableData.loadData(table, table.getFields());
-        // search column index
-        if ((field.getOrderNum() > table.getFields().size()) || (field.getOrderNum() < 1)) {
-            throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
-        }
 
-        final int p = field.getOrderNum() - 1;
-        this.fillResultValues(tableData, p);
+        for (Column column : columns) {
+            final ParadoxField field = table.findField(column.getName());
+            if (field == null) {
+                throw new SQLException("Column '" + column.getName() + "' not found in table '" + table.getName(), SQLStates.INVALID_FIELD_VALUE.getValue());
+            }
+            if ((field.getOrderNum() > table.getFields().size()) || (field.getOrderNum() < 1)) {
+                throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());
+            }
+            final int p = field.getOrderNum() - 1;
+            this.fillResultValues(tableData, p);
+        }
     }
 }
