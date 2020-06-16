@@ -21,8 +21,12 @@ import org.junit.Assert;
  * @version 1.0
  * @since 1.2
  */
-public class TestUtil {
-    
+public final class TestUtil {
+
+    private TestUtil() {
+        // Utility class.
+    }
+
     /**
      * Verifies that a utility class is well defined.
      *
