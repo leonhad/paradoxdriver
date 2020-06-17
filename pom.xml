@@ -19,8 +19,9 @@
     <version>1.4.1</version>
     <packaging>jar</packaging>
     <name>Paradox Driver</name>
-    <url>https://github.com/leonhad/paradoxdriver</url>
     <description>A Paradox Java Driver (using JDBC 4)</description>
+    <url>https://github.com/leonhad/paradoxdriver</url>
+    <inceptionYear>2009</inceptionYear>
     <licenses>
         <license>
             <name>GNU GPL v3</name>
@@ -36,15 +37,6 @@
             <organizationUrl>https://github.com/leonhad/</organizationUrl>
         </developer>
     </developers>
-    <mailingLists>
-        <mailingList>
-            <name>Discussion List</name>
-            <subscribe>paradoxdriver-discuss+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>paradoxdriver-discuss+unsubscribe@googlegroups.com</unsubscribe>
-            <post>paradoxdriver-discuss@googlegroups.com</post>
-            <archive>https://groups.google.com/d/forum/paradoxdriver-discuss</archive>
-        </mailingList>
-    </mailingLists>
     <scm>
         <connection>scm:git:https://github.com/leonhad/paradoxdriver.git</connection>
         <developerConnection>scm:git:https://github.com/leonhad/paradoxdriver.git</developerConnection>
@@ -54,46 +46,6 @@
         <system>GitHub</system>
         <url>https://github.com/leonhad/paradoxdriver/issues</url>
     </issueManagement>
-    <profiles>
-        <profile>
-            <id>oss</id>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>github</id>
-            <distributionManagement>
-                <repository>
-                    <id>github</id>
-                    <name>GitHub OWNER Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/leonhad/paradoxdriver</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-    </profiles>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -205,4 +157,45 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>oss</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>github</id>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub OWNER Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/leonhad/paradoxdriver</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>
