@@ -53,6 +53,11 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.java.source>1.8</sonar.java.source>
         <sonar.java.libraries>target</sonar.java.libraries>
+        <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria.e1.ruleKey>
+            java:S1162
+        </sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.issue.ignore.multicriteria.e1.resourceKey>**/*.java</sonar.issue.ignore.multicriteria.e1.resourceKey>
     </properties>
     <dependencies>
         <dependency>
@@ -157,7 +162,6 @@
             </plugin>
         </plugins>
     </build>
-
     <profiles>
         <profile>
             <id>oss</id>

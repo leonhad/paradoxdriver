@@ -42,7 +42,7 @@ import static com.googlecode.paradox.utils.Utils.position;
  * @version 1.1
  * @since 1.0
  */
-public final class TableData extends AbstractParadoxData {
+public final class TableData extends ParadoxData {
 
     /**
      * Utility class.
@@ -105,8 +105,6 @@ public final class TableData extends AbstractParadoxData {
      */
     public static List<List<FieldValue>> loadData(final ParadoxTable table,
                                                   final Collection<ParadoxField> fields) throws SQLException {
-        final List<List<FieldValue>> ret = new ArrayList<>();
-
         if (table.isEncrypted()) {
             throw new SQLException("Unsupported encrypted table files.");
         }
@@ -116,6 +114,7 @@ public final class TableData extends AbstractParadoxData {
         final int headerSize = table.getHeaderSize();
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
 
+        final List<List<FieldValue>> ret = new ArrayList<>();
         try (FileInputStream fs = new FileInputStream(table.getFile()); FileChannel channel = fs.getChannel()) {
             if (table.getUsedBlocks() == 0) {
                 return ret;
@@ -180,7 +179,7 @@ public final class TableData extends AbstractParadoxData {
     private static ParadoxTable loadTableHeader(final File file, final ParadoxConnection connection) throws
             SQLException {
         final ParadoxTable table = new ParadoxTable(file, file.getName(), connection);
-        ByteBuffer buffer = ByteBuffer.allocate(2048);
+        ByteBuffer buffer = ByteBuffer.allocate(2_048);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {

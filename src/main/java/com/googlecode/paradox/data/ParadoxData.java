@@ -25,7 +25,7 @@ import static com.googlecode.paradox.utils.Utils.position;
  * @version 1.0
  * @since 1.4.0
  */
-public abstract class AbstractParadoxData {
+public class ParadoxData {
 
     /**
      * Minimum paradox file version.
@@ -35,8 +35,8 @@ public abstract class AbstractParadoxData {
     /**
      * Creates a new instance.
      */
-    protected AbstractParadoxData() {
-        super();
+    protected ParadoxData() {
+        // Unused.
     }
 
     /**
@@ -46,7 +46,7 @@ public abstract class AbstractParadoxData {
      * @param index  the paradox index.
      */
     protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile index) {
-        if (index.getVersionId() > AbstractParadoxData.MINIMIUM_VERSION) {
+        if (index.getVersionId() > ParadoxData.MINIMIUM_VERSION) {
             // Set the charset.
             position(buffer, 0x6A);
             int cp = buffer.getShort();

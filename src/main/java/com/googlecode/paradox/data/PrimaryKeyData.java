@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
@@ -33,7 +34,7 @@ import static com.googlecode.paradox.utils.Utils.position;
  * @version 1.1
  * @since 1.0
  */
-public final class PrimaryKeyData extends AbstractParadoxData {
+public final class PrimaryKeyData extends ParadoxData {
 
     /**
      * Utility class.
@@ -51,7 +52,7 @@ public final class PrimaryKeyData extends AbstractParadoxData {
      * @return the primary keys.
      * @throws SQLException in case of load failures.
      */
-    public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxTable table,
+    public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxDataFile table,
             final ParadoxConnection connection) throws SQLException {
         final String name = table.getName() + ".PX";
 

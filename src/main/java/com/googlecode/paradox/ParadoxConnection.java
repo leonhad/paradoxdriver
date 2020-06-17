@@ -17,6 +17,7 @@ import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -83,7 +84,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * Default charset.
      */
-    private Charset charset = Charset.forName("Cp437");
+    private Charset charset = StandardCharsets.ISO_8859_1;
 
     /**
      * Creates a new paradox connection.

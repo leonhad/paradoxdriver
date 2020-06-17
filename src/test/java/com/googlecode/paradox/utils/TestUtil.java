@@ -10,11 +10,15 @@
  */
 package com.googlecode.paradox.utils;
 
+import org.junit.Assert;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import org.junit.Assert;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class for test utility class sanity.
@@ -25,6 +29,8 @@ import org.junit.Assert;
  */
 public final class TestUtil {
 
+    private static final Logger LOGGER = Logger.getLogger(TestUtil.class.getName());
+
     private TestUtil() {
         // Utility class.
     }
@@ -32,34 +38,31 @@ public final class TestUtil {
     /**
      * Verifies that a utility class is well defined.
      *
-     * @param classReference
-     *            utility class to verify.
+     * @param classReference utility class to verify.
      * @return true if there are no errors.
-     * @throws NoSuchMethodException
-     *             in case of sanity failures.
-     * @throws InvocationTargetException
-     *             in case of sanity failures.
-     * @throws InstantiationException
-     *             in case of sanity failures.
-     * @throws IllegalAccessException
-     *             in case of sanity failures.
      */
-    public static boolean assertUtilityClassWellDefined(final Class<?> classReference)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static boolean assertUtilityClassWellDefined(final Class<?> classReference) {
         Assert.assertTrue("class must be final", Modifier.isFinal(classReference.getModifiers()));
         Assert.assertEquals("There must be only one constructor", 1, classReference.getDeclaredConstructors().length);
-        final Constructor<?> constructor = classReference.getDeclaredConstructor();
-        if (constructor.isAccessible() || !Modifier.isPrivate(constructor.getModifiers())) {
+
+        try {
+            final Constructor<?> constructor = classReference.getDeclaredConstructor();
+            if (constructor.isAccessible() || !Modifier.isPrivate(constructor.getModifiers())) {
+                throw new SQLException("Constructor not accessible");
+            }
+            constructor.setAccessible(true);
+            constructor.newInstance();
+            constructor.setAccessible(false);
+            for (final Method method : classReference.getMethods()) {
+                if (!Modifier.isStatic(method.getModifiers()) && method.getDeclaringClass().equals(classReference)) {
+                    throw new SQLException("Invalid method " + method.getName());
+                }
+            }
+            return true;
+        } catch (final InstantiationException | InvocationTargetException | NoSuchMethodException
+                | IllegalAccessException | SQLException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
-        constructor.setAccessible(true);
-        constructor.newInstance();
-        constructor.setAccessible(false);
-        for (final Method method : classReference.getMethods()) {
-            if (!Modifier.isStatic(method.getModifiers()) && method.getDeclaringClass().equals(classReference)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

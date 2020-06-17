@@ -37,7 +37,7 @@ import static com.googlecode.paradox.utils.Utils.position;
  * @version 1.1
  * @since 1.0
  */
-public final class IndexData extends AbstractParadoxData {
+public final class IndexData extends ParadoxData {
 
     /**
      * Utility class.
@@ -158,7 +158,7 @@ public final class IndexData extends AbstractParadoxData {
      * @param index  the paradox index.
      * @throws SQLException in case of parse errors.
      */
-    protected static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
+    private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
