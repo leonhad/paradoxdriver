@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
@@ -179,7 +180,7 @@ public final class TableData extends ParadoxData {
     private static ParadoxTable loadTableHeader(final File file, final ParadoxConnection connection) throws
             SQLException {
         final ParadoxTable table = new ParadoxTable(file, file.getName(), connection);
-        ByteBuffer buffer = ByteBuffer.allocate(2_048);
+        ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {

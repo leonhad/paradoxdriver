@@ -51,7 +51,12 @@ public final class Constants {
      * Driver prefix.
      */
     public static final String URL_PREFIX = "jdbc:paradox:";
-    
+
+    /**
+     * Max buffer size.
+     */
+    public static final int MAX_BUFFER_SIZE = 2_048;
+
     /**
      * Utility class.
      */

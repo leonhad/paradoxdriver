@@ -12,6 +12,7 @@ package com.googlecode.paradox.data.table.value;
 
 import com.googlecode.paradox.metadata.BlobTable;
 import com.googlecode.paradox.rowset.ParadoxClob;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public final class ClobDescriptor extends BlobDescriptor {
         try (InputStream is = clob.getAsciiStream()) {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int nRead;
-            byte[] data = new byte[2_048];
+            byte[] data = new byte[Constants.MAX_BUFFER_SIZE];
             while ((nRead = is.read(data, 0, data.length)) != -1) {
                 buffer.write(data, 0, nRead);
             }
