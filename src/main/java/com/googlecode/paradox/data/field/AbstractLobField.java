@@ -28,7 +28,7 @@ import static com.googlecode.paradox.utils.Utils.flip;
  *
  * @author Michael
  */
-public abstract class LobField implements FieldParser {
+public abstract class AbstractLobField implements FieldParser {
 
     /**
      * {@inheritDoc}.

@@ -26,7 +26,7 @@ import java.util.Date;
  */
 public final class TimestampField implements FieldParser {
 
-    private static final long MILLIS_UNTIL_1970 = 62135683200000L;
+    private static final long MILLIS_UNTIL_1970 = 62_135_683_200_000L;
 
     /**
      * {@inheritDoc}.
@@ -43,7 +43,7 @@ public final class TimestampField implements FieldParser {
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long rawValue = buffer.getLong();
         if ((rawValue >>> 63) == 1) {
-            rawValue &= 0x7FFFFFFFFFFFFFFFL;
+            rawValue &= 0x7FFF_FFFF_FFFF_FFFFL;
         } else {
             rawValue = ~rawValue;
         }

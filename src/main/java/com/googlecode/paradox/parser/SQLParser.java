@@ -108,7 +108,7 @@ public final class SQLParser {
      * @param rparens the tokens to validate.
      * @throws SQLException in case of unexpected tokens.
      */
-    private void expect(final TokenType... rparens) throws SQLException {
+    private void expect(final TokenType˚ rparens) throws SQLException {
         boolean found = false;
         for (final TokenType rparen : rparens) {
             if (this.token.getType() == rparen) {
@@ -336,7 +336,6 @@ public final class SQLParser {
                 if (!firstField) {
                     this.expect(TokenType.COMMA, "Missing comma.");
                 }
-                final String tableName = null;
                 final String fieldName = this.token.getValue();
 
                 if (this.token.getType() == TokenType.CHARACTER) {
@@ -346,7 +345,7 @@ public final class SQLParser {
                 } else if (this.token.getType() == TokenType.ASTERISK) {
                     this.parseAsterisk(select);
                 } else {
-                    this.parseIdentifier(select, tableName, fieldName);
+                    this.parseIdentifier(select, null, fieldName);
                 }
                 firstField = false;
             } else {

@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+
 import java.nio.ByteBuffer;
 import java.sql.Types;
 
@@ -25,7 +26,7 @@ import java.sql.Types;
  * @since 1.3
  */
 public final class NumberField implements FieldParser {
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -33,7 +34,7 @@ public final class NumberField implements FieldParser {
     public boolean match(final int type) {
         return (type == 5) || (type == 6);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -41,7 +42,7 @@ public final class NumberField implements FieldParser {
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long value = buffer.getLong();
         if ((value >>> 63) == 1) {
-            value &= 0x7FFFFFFFFFFFFFFFL;
+            value &= 0x7FFF_FFFF_FFFF_FFFFL;
         } else {
             value = ~value;
         }

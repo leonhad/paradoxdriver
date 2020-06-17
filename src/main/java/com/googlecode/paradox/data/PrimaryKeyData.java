@@ -13,7 +13,6 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxPK;
-import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 
 import java.io.File;
@@ -53,7 +52,7 @@ public final class PrimaryKeyData extends ParadoxData {
      * @throws SQLException in case of load failures.
      */
     public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxDataFile table,
-            final ParadoxConnection connection) throws SQLException {
+                                          final ParadoxConnection connection) throws SQLException {
         final String name = table.getName() + ".PX";
 
         final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(name));

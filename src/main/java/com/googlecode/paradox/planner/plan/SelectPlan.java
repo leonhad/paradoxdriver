@@ -12,6 +12,7 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -63,7 +64,7 @@ public final class SelectPlan implements Plan {
      * Creates a new instance.
      */
     SelectPlan() {
-        this(Collections.<SQLNode>emptyList());
+        this(Collections.emptyList());
     }
 
     /**
@@ -96,7 +97,7 @@ public final class SelectPlan implements Plan {
      * @param table the table to scan.
      * @throws SQLException in case of wrong SQL type.
      */
-    public void addColumnFromTable(final ParadoxTable table) throws SQLException {
+    public void addColumnFromTable(final ParadoxDataFile table) throws SQLException {
         for (final ParadoxField field : table.getFields()) {
             this.columns.add(field.getColumn());
         }
@@ -315,7 +316,7 @@ public final class SelectPlan implements Plan {
      * Load the table data form a table.
      *
      * @param columns the columns to load.
-     * @param table  the table to load.
+     * @param table   the table to load.
      * @throws SQLException in case of execution errors.
      */
     private void loadTableData(final List<Column> columns, final ParadoxTable table) throws SQLException {
@@ -324,7 +325,8 @@ public final class SelectPlan implements Plan {
         for (Column column : columns) {
             final ParadoxField field = table.findField(column.getName());
             if (field == null) {
-                throw new SQLException("Column '" + column.getName() + "' not found in table '" + table.getName(), SQLStates.INVALID_FIELD_VALUE.getValue());
+                throw new SQLException("Column '" + column.getName() + "' not found in table '" + table.getName(),
+                        SQLStates.INVALID_FIELD_VALUE.getValue());
             }
             if ((field.getOrderNum() > table.getFields().size()) || (field.getOrderNum() < 1)) {
                 throw new SQLException("Invalid column position", SQLStates.INVALID_FIELD_VALUE.getValue());

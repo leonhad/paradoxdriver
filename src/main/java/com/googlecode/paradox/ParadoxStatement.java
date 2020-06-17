@@ -10,22 +10,15 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.SelectPlan;
-import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -300,7 +293,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public ResultSet getGeneratedKeys() {
-        return new ParadoxResultSet(this.conn, this, new ArrayList<List<FieldValue>>(), new ArrayList<Column>());
+        return new ParadoxResultSet(this.conn, this, new ArrayList<>(), new ArrayList<>());
     }
 
     /**

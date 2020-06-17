@@ -22,7 +22,7 @@ import java.sql.Types;
  * @version 1.0
  * @since 1.3
  */
-public final class BlobField extends LobField {
+public final class BlobField extends AbstractLobField {
     
     /**
      * {@inheritDoc}.

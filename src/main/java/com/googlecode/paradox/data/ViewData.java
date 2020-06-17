@@ -227,7 +227,8 @@ public final class ViewData {
      * @throws IOException  in case of I/O errors.
      */
     private static ArrayList<ParadoxField> parseFields(final BufferedReader reader, final String oldLine,
-                                                       final File currentSchema, final ParadoxConnection connection) throws SQLException, IOException {
+                                                       final File currentSchema, final ParadoxConnection connection)
+            throws SQLException, IOException {
         String line = oldLine;
         final ArrayList<ParadoxField> fieldList = new ArrayList<>();
         while ((line != null) && !"EndQuery".equals(line)) {
@@ -279,7 +280,8 @@ public final class ViewData {
      * @throws SQLException in case of parse errors.
      */
     private static String parseFileOrder(final ParadoxView view, final BufferedReader reader, final String oldLine,
-                                         final File currentSchema, final ParadoxConnection connection) throws IOException, SQLException {
+                                         final File currentSchema, final ParadoxConnection connection)
+            throws IOException, SQLException {
         String line = oldLine;
         if ((line != null) && line.startsWith("FIELDORDER: ")) {
             final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema, connection);
@@ -356,7 +358,8 @@ public final class ViewData {
      * @throws SQLException in case of syntax errors.
      */
     private static ArrayList<ParadoxField> readFields(final BufferedReader reader, final String firstLine,
-                                                      final File currentSchema, final ParadoxConnection connection) throws IOException, SQLException {
+                                                      final File currentSchema, final ParadoxConnection connection)
+            throws IOException, SQLException {
 
         final StringBuilder line = new StringBuilder(firstLine.substring(firstLine.indexOf(':') + 1));
         do {

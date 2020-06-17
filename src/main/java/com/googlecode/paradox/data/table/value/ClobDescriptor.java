@@ -65,13 +65,13 @@ public final class ClobDescriptor extends BlobDescriptor {
         try (InputStream is = clob.getAsciiStream()) {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int nRead;
-            byte[] data = new byte[1024];
+            byte[] data = new byte[2_048];
             while ((nRead = is.read(data, 0, data.length)) != -1) {
                 buffer.write(data, 0, nRead);
             }
             buffer.flush();
             byte[] byteArray = buffer.toByteArray();
-            return new String(byteArray);
+            return new String(byteArray, charset);
         } catch (IOException ex) {
             throw new SQLException("Unable to read field", ex);
         }
