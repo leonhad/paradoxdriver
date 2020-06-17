@@ -108,7 +108,7 @@ public final class SQLParser {
      * @param rparens the tokens to validate.
      * @throws SQLException in case of unexpected tokens.
      */
-    private void expect(final TokenType˚ rparens) throws SQLException {
+    private void expect(final TokenType... rparens) throws SQLException {
         boolean found = false;
         for (final TokenType rparen : rparens) {
             if (this.token.getType() == rparen) {
