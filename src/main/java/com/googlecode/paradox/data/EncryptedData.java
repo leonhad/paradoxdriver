@@ -12,7 +12,7 @@ package com.googlecode.paradox.data;
 
 /**
  * Encrypted data based on pxlib.
- * <p/>
+ * <p>
  * More information in http://pxlib.sourceforge.net.
  *
  * @author pxlib
