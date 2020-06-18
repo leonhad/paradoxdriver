@@ -7,10 +7,13 @@ actual code.  Please help us keep this list complete and free from
 errors.  Also see the AUTHORS file for the list of people with
 contributions significant enough to warrant copyright assignment.
 
-Andre Mikhaylov				upgoto@gmail.com
-Luis Alberto Tofoli			luis.tofoli@sgisistemas.com.br
+Andre Mikhaylov						upgoto@gmail.com
+Luis Alberto Tofoli					luis.tofoli@sgisistemas.com.br
 Pedro Henrique de Oliveira Silva	pedrospsjc@gmail.com
 Javier Alfonso (Peñalara Software)	PhoneixSegovia@gmail.com
+
+I want to give a special thanks to the pxlib producers. I used their
+encryption code in this project. More in <http://pxlib.sourceforge.net/>.
 
 Many people are not named here because we lost track of them.  We
 thank them!  Please, help us keep this list up to date.
