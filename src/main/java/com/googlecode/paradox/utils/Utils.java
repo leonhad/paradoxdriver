@@ -49,34 +49,6 @@ public final class Utils {
     }
 
     /**
-     * Utility to call {@link Buffer#flip()}. This is used by Java 9 API.
-     *
-     * @param buffer the buffer to flip.
-     */
-    public static void flip(final Buffer buffer) {
-        buffer.flip();
-    }
-
-    /**
-     * Utility to call {@link Buffer#position(int)}. This is used by Java 9 API.
-     *
-     * @param buffer the buffer to pos.
-     * @param pos    the new position.
-     */
-    public static void position(final Buffer buffer, int pos) {
-        buffer.position(pos);
-    }
-
-    /**
-     * Utility to call {@link Buffer#clear()}. This is used by Java 9 API.
-     *
-     * @param buffer the buffer to clear.
-     */
-    public static void clear(final Buffer buffer) {
-        buffer.clear();
-    }
-
-    /**
      * Utility to call {@link Buffer#limit(int)} . This is used by Java 9 API.
      *
      * @param buffer   the buffer to clear.
@@ -103,7 +75,7 @@ public final class Utils {
                 break;
             }
         }
-        flip(buffer);
+        buffer.flip();
         limit(buffer, length);
         return charset.decode(buffer).toString();
     }

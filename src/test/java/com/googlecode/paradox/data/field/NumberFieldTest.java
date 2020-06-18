@@ -10,71 +10,68 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.*;
 
 /**
  * Unit test for {@link NumberField} class.
  *
  * @author Leonardo Alves da Costa
+ * @version 1.1
  * @since 1.3
- * @version 1.0
  */
 public class NumberFieldTest {
-    
+
     /**
      * Test for decimal values.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testDecimalValues() throws Exception {
         try (Connection conn = DriverManager.getConnection("jdbc:paradox:target/test-classes/db");
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM \"DECIMAL\"")) {
-            
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM \"DECIMAL\"")) {
+
             Assert.assertTrue("First record:", rs.next());
         }
     }
-    
+
     /**
      * Test for invalid match.
      */
     @Test
     public void testInvalidMatch() {
         final NumberField field = new NumberField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid number value.", field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final NumberField field = new NumberField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0 });
+        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{
+                (byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0}
+        );
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Different values.", 100.5d, value.getNumber().doubleValue(), 0);
     }
-    
+
     /**
      * Test for valid match.
      */
     @Test
     public void testValidMatch() {
         final NumberField field = new NumberField();
-        Assert.assertTrue(field.match(5));
-        Assert.assertTrue(field.match(6));
+        Assert.assertTrue("Invalid field type.", field.match(5));
+        Assert.assertTrue("Invalid field type.", field.match(6));
     }
 }

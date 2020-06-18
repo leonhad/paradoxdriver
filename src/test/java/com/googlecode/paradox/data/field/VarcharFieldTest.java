@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
@@ -17,8 +18,7 @@ import com.googlecode.paradox.results.ParadoxFieldType;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
 /**
@@ -35,7 +35,7 @@ public class VarcharFieldTest {
     @Test
     public void testInvalidMatch() {
         final VarcharField field = new VarcharField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(0));
     }
 
     /**
@@ -46,12 +46,12 @@ public class VarcharFieldTest {
     @Test
     public void testParse() throws SQLException {
         final ParadoxTable table = new ParadoxTable(null, null, null);
-        table.setCharset(Charset.forName("ISO-8859-1"));
+        table.setCharset(StandardCharsets.ISO_8859_1);
         final ParadoxField paradoxField = new ParadoxField();
         paradoxField.setType(ParadoxFieldType.VARCHAR.getType());
         paradoxField.setSize("test".length());
         final VarcharField field = new VarcharField();
-        final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));
+        final ParadoxBuffer buffer = new ParadoxBuffer("test".getBytes(table.getCharset()));
         final FieldValue value = field.parse(table, buffer, paradoxField);
         Assert.assertEquals("Value not equals.", "test", value.getValue());
     }

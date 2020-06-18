@@ -10,22 +10,12 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.data.field.AutoIncrementField;
-import com.googlecode.paradox.data.field.BlobField;
-import com.googlecode.paradox.data.field.BooleanField;
-import com.googlecode.paradox.data.field.DateField;
-import com.googlecode.paradox.data.field.IntegerField;
-import com.googlecode.paradox.data.field.LongField;
-import com.googlecode.paradox.data.field.MemoField;
-import com.googlecode.paradox.data.field.NumberField;
-import com.googlecode.paradox.data.field.TimeField;
-import com.googlecode.paradox.data.field.TimestampField;
-import com.googlecode.paradox.data.field.VarcharField;
+import com.googlecode.paradox.data.field.*;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.SQLStates;
-import java.nio.ByteBuffer;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +28,7 @@ import java.util.List;
  * @since 1.3
  */
 public final class FieldFactory {
-    
+
     /**
      * Stores all available parsers.
      */
@@ -69,17 +59,13 @@ public final class FieldFactory {
     /**
      * Parses the filter;
      *
-     * @param table
-     *            the paradox tables.
-     * @param buffer
-     *            the buffer to read of.
-     * @param field
-     *            the paradox field.
+     * @param table  the paradox tables.
+     * @param buffer the buffer to read of.
+     * @param field  the paradox field.
      * @return the parsed value.
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
-    public static FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
+    public static FieldValue parse(final ParadoxTable table, final ParadoxBuffer buffer, final ParadoxField field)
             throws SQLException {
         for (final FieldParser parser : FieldFactory.ALL_PARSES) {
             if (parser.match(field.getType())) {

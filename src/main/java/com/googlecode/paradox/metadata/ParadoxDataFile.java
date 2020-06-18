@@ -118,6 +118,11 @@ public class ParadoxDataFile {
     private byte writeProtected;
 
     /**
+     * Encrypted data.
+     */
+    private long encryptedData;
+
+    /**
      * Creates a new instance.
      *
      * @param file       the database {@link File}.
@@ -524,5 +529,17 @@ public class ParadoxDataFile {
      */
     public ParadoxConnection getConnection() {
         return connection;
+    }
+
+    public boolean isEncrypted() {
+        return encryptedData != 0;
+    }
+
+    public long getEncryptedData() {
+        return encryptedData;
+    }
+
+    public void setEncryptedData(long encryptedData) {
+        this.encryptedData = encryptedData;
     }
 }

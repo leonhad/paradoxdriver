@@ -15,6 +15,7 @@ import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
@@ -28,8 +29,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static com.googlecode.paradox.utils.Utils.flip;
 
 /**
  * Read view files (structure).
@@ -165,40 +164,42 @@ public final class ViewData {
      */
     private static ParadoxView loadView(final File file, final File currentSchema,
                                         final ParadoxConnection connection) throws SQLException {
-        final ByteBuffer buffer = ByteBuffer.allocate(8192);
+        final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ParadoxView view = new ParadoxView(file, file.getName(), connection);
 
-        try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
+        try (final FileInputStream fs = new FileInputStream(file); final FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            flip(buffer);
+            buffer.flip();
 
-            final BufferedReader reader =
-                    new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()));
+            try (final BufferedReader reader =
+                         new BufferedReader(new StringReader(ViewData.CHARSET.decode(buffer).toString()))) {
 
-            if (!"Query".equals(reader.readLine())) {
-                return view;
+                if (!"Query".equals(reader.readLine())) {
+                    return view;
+                }
+
+                // ANSWER
+                String line = reader.readLine();
+                if (line == null) {
+                    return view;
+                }
+
+                // Extra Line
+                line = ViewData.fixExtraLine(reader);
+
+                // FIELDORDER.
+                line = ViewData.parseFileOrder(view, reader, line, currentSchema, connection);
+
+                // SORT.
+                line = ViewData.parseSort(view, reader, line, currentSchema, connection);
+
+                view.getFields().addAll(ViewData.parseFields(reader, line, currentSchema, connection));
             }
-
-            // ANSWER
-            String line = reader.readLine();
-            if (line == null) {
-                return view;
-            }
-
-            // Extra Line
-            line = ViewData.fixExtraLine(reader);
-
-            // FIELDORDER.
-            line = ViewData.parseFileOrder(view, reader, line, currentSchema, connection);
-
-            // SORT.
-            line = ViewData.parseSort(view, reader, line, currentSchema, connection);
-
-            view.getFields().addAll(ViewData.parseFields(reader, line, currentSchema, connection));
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
+
         return view;
     }
 

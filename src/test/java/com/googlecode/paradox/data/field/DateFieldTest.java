@@ -10,18 +10,19 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import java.nio.ByteBuffer;
-import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link DateField} class.
  *
  * @author Leonardo Alves da Costa
+ * @version 1.1
  * @since 1.3
- * @version 1.0
  */
 public class DateFieldTest {
     /**
@@ -30,43 +31,41 @@ public class DateFieldTest {
     @Test
     public void testInvalidMatch() {
         final DateField field = new DateField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid date type.", field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final DateField field = new DateField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x00, (byte) 0x00, (byte) 0x8D, (byte) 0x40 });
+        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x8D, (byte) 0x40});
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("0100-01-01", value.getDate().toString());
+        Assert.assertEquals("Invalid date value.", "0100-01-01", value.getDate().toString());
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse2() throws SQLException {
         final DateField field = new DateField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x00, (byte) 0x0B, (byte) 0x1E, (byte) 0xCF });
+        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{(byte) 0x00, (byte) 0x0B, (byte) 0x1E, (byte) 0xCF});
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("1996-05-04", value.getDate().toString());
+        Assert.assertEquals("Invalid date value.", "1996-05-04", value.getDate().toString());
     }
-    
+
     /**
      * Test for valid match.
      */
     @Test
     public void testValidMatch() {
         final DateField field = new DateField();
-        Assert.assertTrue(field.match(2));
+        Assert.assertTrue("Invalid date field.", field.match(2));
     }
 }

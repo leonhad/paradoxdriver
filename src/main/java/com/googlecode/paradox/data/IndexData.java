@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.SecondaryIndexFilter;
 
@@ -26,9 +27,6 @@ import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.googlecode.paradox.utils.Utils.flip;
-import static com.googlecode.paradox.utils.Utils.position;
 
 /**
  * Reads index data files.
@@ -56,7 +54,7 @@ public final class IndexData extends ParadoxData {
      * @throws SQLException in case of reading failures.
      */
     public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
-            final ParadoxConnection connection) throws SQLException {
+                                                 final ParadoxConnection connection) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         final String indexNamePattern = Utils.removeDb(tableName) + ".X??";
         final File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(indexNamePattern));
@@ -84,15 +82,15 @@ public final class IndexData extends ParadoxData {
      */
     private static ParadoxIndex loadIndexHeader(final File file, final ParadoxConnection connection) throws IOException,
             SQLException {
-        final ByteBuffer buffer = ByteBuffer.allocate(2048);
+        final ParadoxBuffer buffer = new ParadoxBuffer(Constants.MAX_BUFFER_SIZE);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connection);
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
-            channel.read(buffer);
-            flip(buffer);
+            buffer.read(channel);
+            buffer.flip();
 
             index.setRecordSize(buffer.getShort());
             index.setHeaderSize(buffer.getShort());
@@ -104,19 +102,19 @@ public final class IndexData extends ParadoxData {
             index.setFirstBlock(buffer.getShort());
             index.setLastBlock(buffer.getShort());
 
-            position(buffer, 0x21);
+            buffer.position(0x21);
             index.setFieldCount(buffer.getShort());
             index.setPrimaryFieldCount(buffer.getShort());
 
-            position(buffer, 0x38);
+            buffer.position(0x38);
             index.setWriteProtected(buffer.get());
             index.setVersionId(buffer.get());
 
-            position(buffer, 0x49);
+            buffer.position(0x49);
             index.setAutoIncrementValue(buffer.getInt());
             index.setFirstFreeBlock(buffer.getShort());
 
-            position(buffer, 0x55);
+            buffer.position(0x55);
             index.setReferentialIntegrity(buffer.get());
 
             parseVersionID(buffer, index);
@@ -135,7 +133,7 @@ public final class IndexData extends ParadoxData {
      * @param buffer the buffer to parse.
      * @param index  the paradox index.
      */
-    private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
+    private static void parseIndexName(final ParadoxBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer name = ByteBuffer.allocate(26);
         while (true) {
             final byte c = buffer.get();
@@ -144,7 +142,8 @@ public final class IndexData extends ParadoxData {
             }
             name.put(c);
         }
-        flip(name);
+
+        name.flip();
         final String tempName = index.getCharset().decode(name).toString();
         if (tempName.length() != 0) {
             index.setName(tempName);
@@ -158,7 +157,7 @@ public final class IndexData extends ParadoxData {
      * @param index  the paradox index.
      * @throws SQLException in case of parse errors.
      */
-    private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
+    private static void parseFields(final ParadoxBuffer buffer, final ParadoxDataFile index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
@@ -169,12 +168,12 @@ public final class IndexData extends ParadoxData {
 
         if (index.getVersionId() > 4) {
             if (index.getVersionId() == 0xC) {
-                position(buffer, 0x78 + 261 + 4 + (6 * fields.size()));
+                buffer.position(0x78 + 261 + 4 + (6 * fields.size()));
             } else {
-                position(buffer, 0x78 + 83 + (6 * fields.size()));
+                buffer.position(0x78 + 83 + (6 * fields.size()));
             }
         } else {
-            position(buffer, 0x58 + 83 + (6 * fields.size()));
+            buffer.position(0x58 + 83 + (6 * fields.size()));
         }
 
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
@@ -187,7 +186,7 @@ public final class IndexData extends ParadoxData {
                 }
                 name.put(c);
             }
-            flip(name);
+            name.flip();
             fields.get(loop).setName(index.getCharset().decode(name).toString());
         }
         index.setFields(fields);
@@ -205,7 +204,7 @@ public final class IndexData extends ParadoxData {
      * @param buffer the buffer to parse.
      * @param index  the paradox index.
      */
-    private static void parseSortID(final ByteBuffer buffer, final ParadoxIndex index) {
+    private static void parseSortID(final ParadoxBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer sortOrderID = ByteBuffer.allocate(26);
         while (true) {
             final byte c = buffer.get();
@@ -214,7 +213,8 @@ public final class IndexData extends ParadoxData {
             }
             sortOrderID.put(c);
         }
-        flip(sortOrderID);
+
+        sortOrderID.flip();
         index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
     }
 

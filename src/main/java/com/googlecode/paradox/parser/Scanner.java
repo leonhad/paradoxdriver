@@ -17,8 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static com.googlecode.paradox.utils.Utils.position;
-
 /**
  * SQL Scanner (read tokens from SQL String).
  *
@@ -246,7 +244,7 @@ public class Scanner {
      * Push back the read char.
      */
     private void pushBack() {
-        position(buffer, this.buffer.position() - 1);
+        buffer.position(this.buffer.position() - 1);
     }
 
     /**

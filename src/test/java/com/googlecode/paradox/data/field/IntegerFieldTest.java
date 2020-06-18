@@ -10,18 +10,19 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import java.nio.ByteBuffer;
-import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link IntegerField} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class IntegerFieldTest {
     /**
@@ -30,36 +31,35 @@ public class IntegerFieldTest {
     @Test
     public void testInvalidMatch() {
         final IntegerField field = new IntegerField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final IntegerField field = new IntegerField();
-        
+
         // Test positive numbers
-        ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x87, (byte) 0xE1 });
+        ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{(byte) 0x87, (byte) 0xE1});
         FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals(2017, value.getNumber());
-        
+        Assert.assertEquals("Invalid number value.", 2017, value.getNumber());
+
         // Test negative numbers
-        buffer = ByteBuffer.wrap(new byte[] { (byte) 0x40, (byte) 0x59 });
+        buffer = new ParadoxBuffer(new byte[]{(byte) 0x40, (byte) 0x59});
         value = field.parse(null, buffer, null);
-        Assert.assertEquals(-16295, value.getNumber());
+        Assert.assertEquals("Invalid number value.", -16295, value.getNumber());
     }
-    
+
     /**
      * Test for valid match.
      */
     @Test
     public void testValidMatch() {
         final IntegerField field = new IntegerField();
-        Assert.assertTrue(field.match(3));
+        Assert.assertTrue("Invalid field type.", field.match(3));
     }
 }

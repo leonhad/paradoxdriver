@@ -13,18 +13,15 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxPK;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
-
-import static com.googlecode.paradox.utils.Utils.flip;
-import static com.googlecode.paradox.utils.Utils.position;
 
 /**
  * Reads primary key data fields.
@@ -75,13 +72,13 @@ public final class PrimaryKeyData extends ParadoxData {
      * @throws IOException in case of I/O exceptions.
      */
     private static ParadoxPK loadPKHeader(final File file, final ParadoxConnection connection) throws IOException {
-        final ByteBuffer buffer = ByteBuffer.allocate(2048);
+        final ParadoxBuffer buffer = new ParadoxBuffer(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ParadoxPK pk = new ParadoxPK(connection);
 
-        try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
-            channel.read(buffer);
-            flip(buffer);
+        try (final FileInputStream fs = new FileInputStream(file); final FileChannel channel = fs.getChannel()) {
+            buffer.read(channel);
+            buffer.flip();
 
             pk.setName(file.getName());
             pk.setRecordSize(buffer.getShort());
@@ -94,13 +91,13 @@ public final class PrimaryKeyData extends ParadoxData {
             pk.setFirstBlock(buffer.getShort());
             pk.setLastBlock(buffer.getShort());
 
-            position(buffer, 0x15);
+            buffer.position(0x15);
             pk.setIndexFieldNumber(buffer.get());
 
-            position(buffer, 0x21);
+            buffer.position(0x21);
             pk.setFieldCount(buffer.get());
 
-            position(buffer, 0x38);
+            buffer.position(0x38);
             pk.setWriteProtected(buffer.get());
             pk.setVersionId(buffer.get());
         }

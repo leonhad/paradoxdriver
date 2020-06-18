@@ -8,9 +8,18 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.data;
 
+/**
+ * Encrypted data based on pxlib.
+ * <p/>
+ * More information in http://pxlib.sourceforge.net.
+ *
+ * @author pxlib
+ * @author Leonardo Costa (Java version).
+ * @version 1.0
+ * @since 1.5.0
+ */
 public final class EncryptedData {
 
     private static final int[] ENCRYPTION_TABLE_A = {
@@ -122,7 +131,7 @@ public final class EncryptedData {
         super();
     }
 
-    private static void px_decrypt_chunk(byte[] src, byte a, byte b, byte c, byte d) {
+    private static void decryptChunk(byte[] src, int offset, byte a, byte b, byte c, byte d) {
         byte[] tmp = new byte[256];
 
         for (int x = 0; x < tmp.length; ++x) {
@@ -133,26 +142,26 @@ public final class EncryptedData {
                     ENCRYPTION_TABLE_C[(y + c) & 0xff]);
         }
 
-        System.arraycopy(tmp, 0, src, 0, tmp.length);
+        System.arraycopy(tmp, 0, src, offset, tmp.length);
     }
 
-    public static void px_decrypt_db_block(byte[] src, long encryption, long blocksize, long blockno) {
+    public static void decryptDBBlock(byte[] src, long encryption, int blocksize, byte blockno) {
         byte a = (byte) (encryption & 0xff);
         byte b = (byte) ((encryption >> 8) & 0xff);
         blocksize >>= 8;
 
         for (int chunk = 0; chunk < blocksize; ++chunk) {
-            //px_decrypt_chunk(src + (chunk << 8), a, b, chunk, blockno);
+            decryptChunk(src, (chunk << 8), a, b, (byte) chunk, blockno);
         }
     }
 
-    public void px_decrypt_mb_block(byte[] src, byte[] dest, long encryption, long blocksize) {
+    public void decryptMBBlock(byte[] src, long encryption, int blocksize) {
         byte a = (byte) (encryption & 0xFF);
         byte b = (byte) ((encryption >> 8) & 0xFF);
         blocksize >>= 8;
 
         for (int chunk = 0; chunk < blocksize; ++chunk) {
-            //px_decrypt_chunk(src + (chunk << 8), a, b, a + 1, b + 1);
+            decryptChunk(src, (chunk << 8), a, b, (byte) (a + 1), (byte) (b + 1));
         }
     }
 }

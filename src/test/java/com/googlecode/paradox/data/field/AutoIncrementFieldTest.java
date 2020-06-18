@@ -10,50 +10,50 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import java.nio.ByteBuffer;
-import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link AutoIncrementField} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class AutoIncrementFieldTest {
-    
+
     /**
      * Test for invalid match.
      */
     @Test
     public void testInvalidMatch() {
         final AutoIncrementField field = new AutoIncrementField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final AutoIncrementField field = new AutoIncrementField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 0, 0, 1, 0 });
+        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{0, 0, 1, 0});
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals(256, value.getNumber());
+        Assert.assertEquals("Invalid number.", 256, value.getNumber());
     }
-    
+
     /**
      * Test for valid match.
      */
     @Test
     public void testValidMatch() {
         final AutoIncrementField field = new AutoIncrementField();
-        Assert.assertTrue(field.match(0x16));
+        Assert.assertTrue("Invalid field type.", field.match(0x16));
     }
 }

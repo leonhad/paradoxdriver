@@ -34,6 +34,17 @@ public class MainTest {
         Class.forName(Driver.class.getName());
     }
 
+    @Test
+    public void testAcq() throws SQLException {
+        try (Connection conn = DriverManager.getConnection("jdbc:paradox:/Users/leonardo");
+             final Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM Acq") ) {
+            while(rs.next()) {
+                System.out.println(rs.getString(1));
+            }
+        }
+    }
+
     /**
      * Test the data and time.
      *

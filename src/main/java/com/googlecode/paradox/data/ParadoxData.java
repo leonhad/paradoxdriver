@@ -13,10 +13,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-
-import static com.googlecode.paradox.utils.Utils.position;
 
 /**
  * Handles the paradox files (structure).
@@ -45,20 +42,22 @@ public class ParadoxData {
      * @param buffer the buffer to parse.
      * @param index  the paradox index.
      */
-    protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile index) {
+    protected static void parseVersionID(final ParadoxBuffer buffer, final ParadoxDataFile index) {
         if (index.getVersionId() > ParadoxData.MINIMIUM_VERSION) {
             // Set the charset.
-            position(buffer, 0x6A);
+            buffer.position(0x6A);
             int cp = buffer.getShort();
             // 437 is actually interpreted as cp1252.
             if (cp == 0x1B5) {
                 cp = 0x4E4;
             }
+
+            // FIXME review charset.
             index.setCharset(Charset.forName("cp" + cp));
 
-            position(buffer, 0x78);
+            buffer.position(0x78);
         } else {
-            position(buffer, 0x58);
+            buffer.position(0x58);
         }
     }
 }

@@ -10,21 +10,22 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import java.nio.ByteBuffer;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Unit test for {@link TimestampField} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class TimestampFieldTest {
     /**
@@ -33,32 +34,34 @@ public class TimestampFieldTest {
     @Test
     public void testInvalidMatch() {
         final TimestampField field = new TimestampField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final Calendar calendar = new GregorianCalendar(2013, 10, 24, 9, 29, 31);
         final Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
-        
+
         final TimestampField field = new TimestampField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte)0xC2, (byte)0xCC, (byte)0xE2, (byte)0xD0, (byte)0x99, (byte)0x2A, (byte)0xBC, (byte)0x0F });
+        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{
+                (byte) 0xC2, (byte) 0xCC, (byte) 0xE2, (byte) 0xD0,
+                (byte) 0x99, (byte) 0x2A, (byte) 0xBC, (byte) 0x0F
+        });
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals(timestamp, value.getTimestamp());
+        Assert.assertEquals("Invalid timestamp value.", timestamp, value.getTimestamp());
     }
-    
+
     /**
      * Test for valid match.
      */
     @Test
     public void testValidMatch() {
         final TimestampField field = new TimestampField();
-        Assert.assertTrue(field.match(0x15));
+        Assert.assertTrue("Invalid field type.", field.match(0x15));
     }
 }

@@ -10,21 +10,22 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import java.nio.ByteBuffer;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Unit test for {@link TimeField} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class TimeFieldTest {
     /**
@@ -33,47 +34,45 @@ public class TimeFieldTest {
     @Test
     public void testInvalidMatch() {
         final TimeField field = new TimeField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final Calendar calendar = new GregorianCalendar(1, 0, 0);
         calendar.add(Calendar.MILLISECOND, 30000);
         final Time time = new Time(calendar.getTimeInMillis());
-        
+
         final TimeField field = new TimeField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 0, 0, 0x75, 0x30 });
+        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{0, 0, 0x75, 0x30});
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals(time, value.getTime());
+        Assert.assertEquals("Invalid time value.", time, value.getTime());
     }
-    
+
     /**
      * Test for null time.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParseNull() throws SQLException {
         final TimeField field = new TimeField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[] { 0, 0, 0, 0 });
+        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{0, 0, 0, 0});
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertNull(value.getTime());
+        Assert.assertNull("Invalid time value.", value.getTime());
     }
-    
+
     /**
      * Test for valid match.
      */
     @Test
     public void testValidMatch() {
         final TimeField field = new TimeField();
-        Assert.assertTrue(field.match(0x14));
+        Assert.assertTrue("Invalid field type.", field.match(0x14));
     }
 }

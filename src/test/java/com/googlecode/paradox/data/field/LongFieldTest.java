@@ -10,18 +10,19 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import java.nio.ByteBuffer;
-import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link LongField} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class LongFieldTest {
     /**
@@ -30,36 +31,35 @@ public class LongFieldTest {
     @Test
     public void testInvalidMatch() {
         final LongField field = new LongField();
-        Assert.assertFalse(field.match(0));
+        Assert.assertFalse("Invalid field type.", field.match(0));
     }
-    
+
     /**
      * Test for parse method.
      *
-     * @throws SQLException
-     *             in case of parse errors.
+     * @throws SQLException in case of parse errors.
      */
     @Test
     public void testParse() throws SQLException {
         final LongField field = new LongField();
-        
+
         // Test positive values
-        ByteBuffer buffer = ByteBuffer.wrap(new byte[] { (byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00 });
+        ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00});
         FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals(256L, value.getNumber());
-        
+        Assert.assertEquals("Invalid number value.", 256L, value.getNumber());
+
         // Test negative values
-        buffer = ByteBuffer.wrap(new byte[] { (byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00 });
+        buffer = new ParadoxBuffer(new byte[]{(byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00});
         value = field.parse(null, buffer, null);
-        Assert.assertEquals(-256L, value.getNumber());
+        Assert.assertEquals("Invalid number value.", -256L, value.getNumber());
     }
-    
+
     /**
      * Test for valid match.
      */
     @Test
     public void testValidMatch() {
         final LongField field = new LongField();
-        Assert.assertTrue(field.match(4));
+        Assert.assertTrue("Invalid field type.", field.match(4));
     }
 }
