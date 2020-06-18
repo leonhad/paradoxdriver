@@ -21,12 +21,8 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Clob;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Properties;
 
 /**
  * Unit test for {@link ParadoxClob} class.
@@ -233,7 +229,6 @@ public class ParadoxClobTest {
         }
     }
 
-
     /**
      * Test for CLOB with cp1251 charset.
      *
@@ -241,9 +236,12 @@ public class ParadoxClobTest {
      */
     @Test
     public void testReadBlob1251() throws SQLException {
+        Properties properties = new Properties();
+        properties.put("charset", "cp1251");
 
-        try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2")) {
+        try (final Connection conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db", properties);
+             final Statement stmt = conn.createStatement();
+             final ResultSet rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2")) {
 
             Assert.assertTrue("Nation locale: record not exists", rs.next());
             final Clob c = rs.getClob("note");

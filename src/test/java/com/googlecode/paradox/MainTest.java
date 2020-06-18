@@ -36,11 +36,11 @@ public class MainTest {
 
     @Test
     public void testAcq() throws SQLException {
-        try (Connection conn = DriverManager.getConnection("jdbc:paradox:/Users/leonardo");
+        try (Connection conn = DriverManager.getConnection("jdbc:paradox:C:\\Projetos\\db");
              final Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM Acq") ) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM \"dan latin 1\"") ) {
             while(rs.next()) {
-                System.out.println(rs.getString(1));
+                //System.out.println(rs.getString(1));
             }
         }
     }

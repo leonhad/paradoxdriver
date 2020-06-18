@@ -17,7 +17,6 @@ import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -84,7 +83,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * Default charset.
      */
-    private Charset charset = StandardCharsets.ISO_8859_1;
+    private Charset charset;
 
     /**
      * Creates a new paradox connection.
@@ -102,7 +101,7 @@ public final class ParadoxConnection implements Connection {
         }
 
         final String charsetName = info.getProperty(Driver.CHARSET_KEY);
-        if (charsetName != null && charsetName.trim().isEmpty()) {
+        if (charsetName != null && !charsetName.trim().isEmpty()) {
             this.charset = Charset.forName(charsetName);
         }
 

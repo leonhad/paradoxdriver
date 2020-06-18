@@ -77,4 +77,8 @@ public final class ClobDescriptor extends BlobDescriptor {
             throw new SQLException("Unable to read field", ex);
         }
     }
+
+    public Charset getCharset() {
+        return charset;
+    }
 }

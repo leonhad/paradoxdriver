@@ -13,13 +13,7 @@ package com.googlecode.paradox.rowset;
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.BlobTable;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.charset.Charset;
+import java.io.*;
 import java.sql.Clob;
 import java.sql.SQLException;
 
@@ -32,11 +26,6 @@ import java.sql.SQLException;
  * @since 1.2
  */
 public final class ParadoxClob implements Clob {
-
-    /**
-     * The default clob charset.
-     */
-    private static final Charset DEFAULT_CHARSET = Charset.forName("cp1251");
 
     /**
      * The clob table.
@@ -63,12 +52,15 @@ public final class ParadoxClob implements Clob {
      */
     private byte[] value;
 
+    private final ClobDescriptor descriptor;
+
     /**
      * Create a new instance.
      *
      * @param descriptor the blob descriptor.
      */
     public ParadoxClob(final ClobDescriptor descriptor) {
+        this.descriptor = descriptor;
         this.offset = -1;
         // If MB_Offset = 0 then the entire blob is contained in the leader.
         if (descriptor.getOffset() == 0) {
@@ -110,7 +102,7 @@ public final class ParadoxClob implements Clob {
     public Reader getCharacterStream() throws SQLException {
         this.parse();
         this.isValid();
-        return new InputStreamReader(new ByteArrayInputStream(this.value), ParadoxClob.DEFAULT_CHARSET);
+        return new InputStreamReader(new ByteArrayInputStream(this.value), descriptor.getCharset());
     }
 
     /**
@@ -128,7 +120,7 @@ public final class ParadoxClob implements Clob {
             throw new SQLException("Invalid length specified");
         }
         return new InputStreamReader(new ByteArrayInputStream(this.value, (int) pos - 1, (int) length),
-                ParadoxClob.DEFAULT_CHARSET);
+                descriptor.getCharset());
     }
 
     /**
@@ -145,7 +137,7 @@ public final class ParadoxClob implements Clob {
         } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-        return new String(this.value, (int) pos - 1, length, ParadoxClob.DEFAULT_CHARSET);
+        return new String(this.value, (int) pos - 1, length, descriptor.getCharset());
     }
 
     /**
@@ -219,7 +211,7 @@ public final class ParadoxClob implements Clob {
         if (length == 0) {
             this.value = new byte[]{};
         } else {
-            this.value = this.getSubString(1, (int) length).getBytes(ParadoxClob.DEFAULT_CHARSET);
+            this.value = this.getSubString(1, (int) length).getBytes(descriptor.getCharset());
         }
         this.length = this.value.length;
     }
