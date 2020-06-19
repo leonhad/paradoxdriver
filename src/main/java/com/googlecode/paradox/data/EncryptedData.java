@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.data;
 
+import java.util.Arrays;
+
 /**
  * Encrypted data based on pxlib.
  * <p>
@@ -131,27 +133,27 @@ public final class EncryptedData {
         super();
     }
 
-    private static void decryptChunk(byte[] src, int offset, byte a, byte b, byte c, byte d) {
+    private static void decryptChunk(byte[] src, int offset, int a, int b, int c, int d) {
         byte[] tmp = new byte[256];
 
         for (int x = 0; x < tmp.length; ++x) {
-            int y = (ENCRYPTION_TABLE_C[x] - d) & 0xff;
-            tmp[x] = (byte) (src[y] ^
-                    ENCRYPTION_TABLE_A[(x + a) & 0xff] ^
-                    ENCRYPTION_TABLE_B[(y + b) & 0xff] ^
-                    ENCRYPTION_TABLE_C[(y + c) & 0xff]);
+            int y = (ENCRYPTION_TABLE_C[x] - (d & 0xff)) & 0xff;
+            tmp[x] = (byte) (src[y + offset] ^
+                    ENCRYPTION_TABLE_A[(x + (a & 0xff)) & 0xff] ^
+                    ENCRYPTION_TABLE_B[(y + (b & 0xff)) & 0xff] ^
+                    ENCRYPTION_TABLE_C[(y + (c & 0xff)) & 0xff]);
         }
 
         System.arraycopy(tmp, 0, src, offset, tmp.length);
     }
 
-    public static void decryptDBBlock(byte[] src, long encryption, int blocksize, byte blockno) {
+    public static void decryptDBBlock(byte[] src, long encryption, int blocksize, long blockno) {
         byte a = (byte) (encryption & 0xff);
         byte b = (byte) ((encryption >> 8) & 0xff);
         blocksize >>= 8;
 
         for (int chunk = 0; chunk < blocksize; ++chunk) {
-            decryptChunk(src, (chunk << 8), a, b, (byte) chunk, blockno);
+            decryptChunk(src, (chunk << 8), a, b, chunk, (int) blockno);
         }
     }
 

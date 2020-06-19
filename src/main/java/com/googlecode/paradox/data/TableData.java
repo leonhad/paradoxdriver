@@ -108,7 +108,7 @@ public final class TableData extends ParadoxData {
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
 
-        final ParadoxBuffer buffer = new ParadoxBuffer(table, table.getBlockSizeBytes(), blockSize);
+        final ParadoxBuffer buffer = new ParadoxBuffer(table, blockSize, blockSize);
 
         final List<List<FieldValue>> ret = new ArrayList<>();
         try (final FileInputStream fs = new FileInputStream(table.getFile());
@@ -123,7 +123,7 @@ public final class TableData extends ParadoxData {
                 channel.position(position);
 
                 buffer.clear();
-                buffer.read(channel, (byte)(nextBlock & 0xFF));
+                buffer.read(channel, nextBlock);
                 buffer.flip();
 
                 nextBlock = buffer.getShort() & 0xFFFF;

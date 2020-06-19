@@ -60,7 +60,7 @@ public final class ParadoxTable extends ParadoxDataFile {
      */
     public int getBlockSizeBytes() {
         // The blockSize is always in KiB.
-        return this.getBlockSize() * 1_024;
+        return this.blockSize * 1_024;
     }
 
     /**

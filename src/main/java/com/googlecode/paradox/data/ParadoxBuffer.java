@@ -53,7 +53,7 @@ public final class ParadoxBuffer {
         channel.read(buffer);
     }
 
-    public void read(final ReadableByteChannel channel, byte blockNumber) throws IOException {
+    public void read(final ReadableByteChannel channel, long blockNumber) throws IOException {
         channel.read(buffer);
 
         if (encrypted) {

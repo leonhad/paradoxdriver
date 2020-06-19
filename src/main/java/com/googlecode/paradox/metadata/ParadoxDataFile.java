@@ -47,7 +47,7 @@ public class ParadoxDataFile {
     /**
      * Block file size.
      */
-    private byte blockSize;
+    protected byte blockSize;
     /**
      * File charset.
      */
@@ -169,15 +169,6 @@ public class ParadoxDataFile {
      */
     public final void setAutoIncrementValue(final int autoIncrementValue) {
         this.autoIncrementValue = autoIncrementValue;
-    }
-
-    /**
-     * Gets the block size.
-     *
-     * @return the block size.
-     */
-    public final byte getBlockSize() {
-        return this.blockSize;
     }
 
     /**

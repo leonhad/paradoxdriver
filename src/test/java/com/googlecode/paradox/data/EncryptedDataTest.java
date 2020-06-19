@@ -3,6 +3,7 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.Driver;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.*;
