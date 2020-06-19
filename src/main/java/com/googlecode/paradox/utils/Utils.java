@@ -10,12 +10,12 @@
  */
 package com.googlecode.paradox.utils;
 
-import java.nio.Buffer;
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.sql.Wrapper;
-import java.util.Locale;
 
 /**
  * Driver utilities.
@@ -49,16 +49,6 @@ public final class Utils {
     }
 
     /**
-     * Utility to call {@link Buffer#limit(int)} . This is used by Java 9 API.
-     *
-     * @param buffer   the buffer to clear.
-     * @param newLimit the new limit value.
-     */
-    public static void limit(final Buffer buffer, final int newLimit) {
-        buffer.limit(newLimit);
-    }
-
-    /**
      * Convert the Paradox VARCHAR to {@link String}. The paradox fill the
      * entire buffer with zeros at end of VARCHAR literals.
      *
@@ -76,28 +66,30 @@ public final class Utils {
             }
         }
         buffer.flip();
-        limit(buffer, length);
+        buffer.limit(length);
         return charset.decode(buffer).toString();
     }
 
     /**
      * Remove the DB suffix from a {@link String}.
      *
+     * @param conn the Paradoc Connection.
      * @param name the {@link String} to format.
      * @return the formatted {@link String}.
      */
-    public static String removeDb(final String name) {
-        return Utils.removeSuffix(name, "DB");
+    public static String removeDb(final ParadoxConnection conn, final String name) {
+        return Utils.removeSuffix(conn, name, "DB");
     }
 
     /**
      * Remove the MB suffix from a {@link String}.
      *
+     * @param conn the Paradoc Connection.
      * @param name the {@link String} to format.
      * @return the formatted {@link String}.
      */
-    public static String removeMb(final String name) {
-        return Utils.removeSuffix(name, "MB");
+    public static String removeMb(final ParadoxConnection conn, final String name) {
+        return Utils.removeSuffix(conn, name, "MB");
     }
 
     /**
@@ -123,12 +115,13 @@ public final class Utils {
     /**
      * Remove a given suffix from {@link String}.
      *
+     * @param conn   the Paradoc Connection.
      * @param name   the {@link String} to format.
      * @param suffix the suffix.
      * @return the formatted {@link String}.
      */
-    private static String removeSuffix(final String name, final String suffix) {
-        if ((name != null) && name.toUpperCase(Locale.US).endsWith("." + suffix.toUpperCase(Locale.US))) {
+    private static String removeSuffix(final ParadoxConnection conn, final String name, final String suffix) {
+        if ((name != null) && name.toUpperCase(conn.getLocale()).endsWith("." + suffix.toUpperCase(conn.getLocale()))) {
             return name.substring(0, name.length() - 3);
         }
         return name;

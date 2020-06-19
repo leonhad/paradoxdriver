@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.parser;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
@@ -19,195 +21,216 @@ import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
-import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Unit test for {@link SQLParser}.
  *
  * @author Leonardo Alves da Costa
- * @since 1.0
  * @version 1.1
+ * @since 1.0
  */
 public class SQLParserTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "date");
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for column values.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testColumnValue() throws Exception {
-        final SQLParser parser = new SQLParser("SELECT 'test', 123 as number FROM client");
+        final SQLParser parser = new SQLParser(conn, "SELECT 'test', 123 as number FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(2, select.getFields().size());
         Assert.assertTrue(select.getFields().get(0) instanceof CharacterNode);
         Assert.assertEquals("TEST", select.getFields().get(0).getName());
         Assert.assertTrue(select.getFields().get(1) instanceof NumericNode);
         Assert.assertEquals("123", select.getFields().get(1).getName());
         Assert.assertEquals("number", select.getFields().get(1).getAlias());
-        
+
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-    
+
     /**
      * Test for join token.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testJoin() throws Exception {
-        final SQLParser parser = new SQLParser(
+        final SQLParser parser = new SQLParser(conn,
                 "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-        
+
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-    
+
     /**
      * Test for SELECT token.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testSelect() throws Exception {
-        final SQLParser parser = new SQLParser("SELECT * FROM client");
+        final SQLParser parser = new SQLParser(conn, "SELECT * FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-        
+
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-    
+
     /**
      * Test for tables.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testTable() throws Exception {
-        final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
+        final SQLParser parser = new SQLParser(conn, "SELECT * FROM \"client.db\"");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-        
+
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
     }
-    
+
     /**
      * Test a SELECT with two tables.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testTwoTable() throws Exception {
-        final SQLParser parser = new SQLParser("select CODE as cod, state.NAME name FROM client, state");
+        final SQLParser parser = new SQLParser(conn, "select CODE as cod, state.NAME name FROM client, state");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(2, select.getFields().size());
         Assert.assertEquals("CODE", select.getFields().get(0).getName());
         Assert.assertEquals("cod", select.getFields().get(0).getAlias());
-        
+
         Assert.assertEquals("state", ((FieldNode) select.getFields().get(1)).getTableName());
         Assert.assertEquals("NAME", select.getFields().get(1).getName());
         Assert.assertEquals("name", select.getFields().get(1).getAlias());
-        
+
         Assert.assertEquals(2, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("state", select.getTables().get(1).getName());
     }
-    
+
     /**
      * Test tables with alias.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testTwoTableWithAlias() throws Exception {
-        final SQLParser parser = new SQLParser("select *, name FROM client as cli, state STATE");
+        final SQLParser parser = new SQLParser(conn, "select *, name FROM client as cli, state STATE");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(2, select.getFields().size());
         Assert.assertEquals(2, select.getTables().size());
-        
+
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-        
+
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("cli", select.getTables().get(0).getAlias());
         Assert.assertEquals("state", select.getTables().get(1).getName());
         Assert.assertEquals("STATE", select.getTables().get(1).getAlias());
     }
-    
+
     /**
      * Test for where token.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testWhere() throws Exception {
-        final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b and c <> t");
+        final SQLParser parser = new SQLParser(conn, "SELECT * FROM client as test WHERE a = b and c <> t");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-        
+
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("test", select.getTables().get(0).getAlias());
-        
+
         Assert.assertEquals(3, select.getConditions().size());
         Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
         Assert.assertTrue(select.getConditions().get(1) instanceof ANDNode);
@@ -217,30 +240,29 @@ public class SQLParserTest {
         Assert.assertEquals("c", ((NotEqualsNode) select.getConditions().get(2)).getFirst().getName());
         Assert.assertEquals("t", ((NotEqualsNode) select.getConditions().get(2)).getLast().getName());
     }
-    
+
     /**
      * Test a where with alias.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testWhereWithAlias() throws Exception {
-        final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE test.a = c.b");
+        final SQLParser parser = new SQLParser(conn, "SELECT * FROM client as test WHERE test.a = c.b");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
-        
+
         Assert.assertTrue(tree instanceof SelectNode);
-        
+
         final SelectNode select = (SelectNode) tree;
-        
+
         Assert.assertEquals(1, select.getFields().size());
         Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-        
+
         Assert.assertEquals(1, select.getTables().size());
         Assert.assertEquals("client", select.getTables().get(0).getName());
         Assert.assertEquals("test", select.getTables().get(0).getAlias());
-        
+
         Assert.assertEquals(1, select.getConditions().size());
         Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
         Assert.assertEquals("test", ((EqualsNode) select.getConditions().get(0)).getFirst().getTableName());

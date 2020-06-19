@@ -10,91 +10,121 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Unit test {@link JoinNode} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class JoinNodeTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test conditions.
      */
     @Test
     public void testConditions() {
         final ArrayList<SQLNode> list = new ArrayList<>();
-        final JoinNode node = new JoinNode();
+        final JoinNode node = new JoinNode(conn);
         node.setConditions(list);
         Assert.assertEquals(list, node.getConditions());
     }
-    
+
     /**
      * Test for new instance.
      */
     @Test
     public void testInstance() {
-        final JoinNode node = new JoinNode();
+        final JoinNode node = new JoinNode(conn);
         Assert.assertEquals("JOIN", node.getName());
     }
-    
+
     /**
      * Test join type.
      */
     @Test
     public void testJoinType() {
-        final JoinNode node = new JoinNode();
+        final JoinNode node = new JoinNode(conn);
         node.setType(JoinType.LEFT);
         Assert.assertEquals(JoinType.LEFT, node.getType());
     }
-    
+
     /**
      * Test for table name.
      */
     @Test
     public void testName() {
-        final JoinNode node = new JoinNode();
+        final JoinNode node = new JoinNode(conn);
         node.setTableName("name");
         Assert.assertEquals("name", node.getTableName());
     }
-    
+
     /**
      * Test for {@link JoinNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final JoinNode node = new JoinNode();
+        final JoinNode node = new JoinNode(conn);
         node.setTableName("table");
         node.setAlias("alias");
         Assert.assertEquals("CROSS JOIN table AS alias", node.toString());
     }
-    
+
     /**
      * Test for {@link JoinNode#toString()} method with conditions.
      */
     @Test
     public void testToStringWithConditions() {
-        final JoinNode node = new JoinNode();
+        final JoinNode node = new JoinNode(conn);
         node.setTableName("table");
         final List<SQLNode> list = new ArrayList<>();
-        list.add(new EqualsNode(new FieldNode(null, "a", null), new FieldNode(null, "b", null)));
+        list.add(new EqualsNode(conn, new FieldNode(conn, null, "a", null), new FieldNode(conn, null, "b", null)));
         node.setConditions(list);
         Assert.assertEquals("CROSS JOIN table ON a = b ", node.toString());
     }
-    
+
     /**
      * Test for {@link JoinNode#toString()} method with no alias.
      */
     @Test
     public void testToStringWithoutAlias() {
-        final JoinNode node = new JoinNode();
+        final JoinNode node = new JoinNode(conn);
         node.setTableName("table");
         node.setAlias("table");
         Assert.assertEquals("CROSS JOIN table", node.toString());

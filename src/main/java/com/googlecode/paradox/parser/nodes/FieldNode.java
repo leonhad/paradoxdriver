@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 /**
  * Stores the field values.
  *
@@ -18,27 +20,26 @@ package com.googlecode.paradox.parser.nodes;
  * @since 1.0
  */
 public final class FieldNode extends SQLNode {
-    
+
     /**
      * This field table name.
      */
     private final String tableName;
-    
+
     /**
      * Stores field values (from select statements).
      *
-     * @param tableName
-     *            the table name.
-     * @param fieldName
-     *            the field name.
-     * @param alias
-     *            the field name alias.
+     * @param connection the Paradox connection.
+     * @param tableName  the table name.
+     * @param fieldName  the field name.
+     * @param alias      the field name alias.
      */
-    public FieldNode(final String tableName, final String fieldName, final String alias) {
-        super(fieldName, alias);
+    public FieldNode(final ParadoxConnection connection, final String tableName, final String fieldName,
+                     final String alias) {
+        super(connection, fieldName, alias);
         this.tableName = tableName;
     }
-    
+
     /**
      * Gets the table name.
      *
@@ -47,7 +48,7 @@ public final class FieldNode extends SQLNode {
     public String getTableName() {
         return this.tableName;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -59,12 +60,12 @@ public final class FieldNode extends SQLNode {
             builder.append('.');
         }
         builder.append(this.getName());
-        
+
         if ((this.alias != null) && !this.getName().equals(this.alias)) {
             builder.append(" AS ");
             builder.append(this.alias);
         }
         return builder.toString();
     }
-    
+
 }

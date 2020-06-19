@@ -46,7 +46,7 @@ public final class Constants {
     /**
      * Minor version of the Driver.
      */
-    public static final int MINOR_VERSION = 3;
+    public static final int MINOR_VERSION = 5;
     /**
      * Driver prefix.
      */
@@ -56,6 +56,11 @@ public final class Constants {
      * Max buffer size.
      */
     public static final int MAX_BUFFER_SIZE = 2_048;
+
+    /**
+     * Paradox version 4 ID.
+     */
+    public static final int PARADOX_VERSION_4 = 4;
 
     /**
      * Utility class.

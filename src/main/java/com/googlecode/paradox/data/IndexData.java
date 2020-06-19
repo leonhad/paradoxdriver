@@ -56,7 +56,7 @@ public final class IndexData extends ParadoxData {
     public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
                                                  final ParadoxConnection connection) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
-        final String indexNamePattern = Utils.removeDb(tableName) + ".X??";
+        final String indexNamePattern = Utils.removeDb(connection, tableName) + ".X??";
         final File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {
@@ -159,13 +159,13 @@ public final class IndexData extends ParadoxData {
     private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(loop + 1);
+            final ParadoxField field = new ParadoxField(index.getConnection(), loop + 1);
             field.setType(buffer.get());
             field.setSize((int) buffer.get());
             fields.add(field);
         }
 
-        if (index.getVersionId() > 4) {
+        if (index.getVersionId() > Constants.PARADOX_VERSION_4) {
             if (index.getVersionId() == 0xC) {
                 buffer.position(0x78 + 261 + 4 + (6 * fields.size()));
             } else {

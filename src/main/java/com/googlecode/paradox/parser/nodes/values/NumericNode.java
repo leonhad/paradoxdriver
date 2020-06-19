@@ -10,26 +10,26 @@
  */
 package com.googlecode.paradox.parser.nodes.values;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
  * Stores the numeric node.
  *
  * @author Leonardo Alves da Costa
- * @since 1.1
  * @version 1.0
+ * @since 1.1
  */
 public class NumericNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
      *
-     * @param value
-     *            the numeric value.
-     * @param alias
-     *            the numeric alias.
+     * @param connection the Paradox connection.
+     * @param value      the numeric value.
+     * @param alias      the numeric alias.
      */
-    public NumericNode(final String value, final String alias) {
-        super(value, alias);
+    public NumericNode(final ParadoxConnection connection, final String value, final String alias) {
+        super(connection, value, alias);
     }
 }

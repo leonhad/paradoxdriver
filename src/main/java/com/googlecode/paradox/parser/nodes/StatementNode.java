@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 /**
  * Stores a statement node.
  *
@@ -18,14 +20,14 @@ package com.googlecode.paradox.parser.nodes;
  * @since 1.0
  */
 public class StatementNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
      *
-     * @param name
-     *            the statement name.
+     * @param connection the Paradox connection.
+     * @param name       the statement name.
      */
-    public StatementNode(final String name) {
-        super(name);
+    public StatementNode(final ParadoxConnection connection, final String name) {
+        super(connection, name);
     }
 }

@@ -10,9 +10,16 @@
  */
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link LessThanNode} class.
@@ -23,13 +30,36 @@ import org.junit.Test;
  */
 public class LessThanNodeTest {
     /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
+    /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode("table", "first", "first");
-        final FieldNode last = new FieldNode("table", "last", "last");
-        final LessThanNode node = new LessThanNode(first, last);
+        final FieldNode first = new FieldNode(conn, "table", "first", "first");
+        final FieldNode last = new FieldNode(conn, "table", "last", "last");
+        final LessThanNode node = new LessThanNode(conn, first, last);
         Assert.assertEquals("table.first < table.last", node.toString());
     }
 }

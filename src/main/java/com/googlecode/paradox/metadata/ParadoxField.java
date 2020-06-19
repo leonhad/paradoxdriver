@@ -10,12 +10,13 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Stores a field from a table.
@@ -81,19 +82,25 @@ public final class ParadoxField {
      */
     private byte type;
 
+    private final ParadoxConnection connection;
+
     /**
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.
+     *
+     * @param connection the Paradox connection.
      */
-    public ParadoxField() {
-        this(1);
+    public ParadoxField(final ParadoxConnection connection) {
+        this(connection, 1);
     }
 
     /**
      * Creates a new instance.
      *
-     * @param orderNum order number to start.
+     * @param connection the Paradox connection.
+     * @param orderNum   order number to start.
      */
-    public ParadoxField(final int orderNum) {
+    public ParadoxField(final ParadoxConnection connection, final int orderNum) {
+        this.connection = connection;
         this.orderNum = orderNum;
     }
 
@@ -109,7 +116,7 @@ public final class ParadoxField {
             return false;
         }
         final ParadoxField other = (ParadoxField) obj;
-        return !((this.name == null) ? (other.name != null) : !this.name.equals(other.name));
+        return Objects.equals(this.name, other.name);
     }
 
     /**
@@ -132,7 +139,7 @@ public final class ParadoxField {
      */
     public Column getColumn() throws SQLException {
         final Column dto = new Column(this);
-        dto.setName(this.name.toUpperCase(Locale.US));
+        dto.setName(this.name.toUpperCase(connection.getLocale()));
         dto.setType(this.getSqlType());
         dto.setTableName(this.tableName);
         return dto;

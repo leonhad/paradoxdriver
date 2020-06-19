@@ -33,6 +33,8 @@ public final class Driver implements java.sql.Driver {
 
     public static final String CHARSET_KEY = "charset";
 
+    public static final String LOCALE_KEY = "locale";
+
     /**
      * Logger instance for this class.
      */

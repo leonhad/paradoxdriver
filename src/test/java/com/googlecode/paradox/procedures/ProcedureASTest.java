@@ -10,9 +10,16 @@
  */
 package com.googlecode.paradox.procedures;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.procedures.math.Min;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link ProcedureAS}.
@@ -23,36 +30,59 @@ import org.junit.Test;
  */
 public class ProcedureASTest {
     /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
+    /**
      * Test for get all procedures available.
      */
     @Test
     public void testAllProcedures() {
-        Assert.assertEquals(5, ProcedureAS.getInstance().list().size());
+        Assert.assertEquals(5, new ProcedureAS(conn).list().size());
     }
-    
+
     /**
      * Test instance.
      */
     @Test
     public void testInstance() {
-        Assert.assertNotNull(ProcedureAS.getInstance());
+        Assert.assertNotNull(new ProcedureAS(conn));
     }
-    
+
     /**
      * Test for an invalid procedure.
      */
     @Test
     public void testInvalidProcedure() {
-        Assert.assertNull(ProcedureAS.getInstance().get("INVALID"));
+        Assert.assertNull(new ProcedureAS(conn).get("INVALID"));
     }
-    
+
     /**
      * Test the get procedure by its name.
      */
     @Test
     public void testProcedureByName() {
-        final Min min = new Min();
-        final AbstractCallableProcedure minByName = ProcedureAS.getInstance().get("min");
+        final Min min = new Min(conn);
+        final AbstractCallableProcedure minByName = new ProcedureAS(conn).get("min");
         Assert.assertNotNull("Procedure not registered.", minByName);
         Assert.assertSame("Procedure is not the same.", min.getName(), minByName.getName());
     }

@@ -19,7 +19,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -82,7 +81,7 @@ public class PlannerTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidTable() throws Exception {
-        final SQLParser parser = new SQLParser("select * from invalid");
+        final SQLParser parser = new SQLParser(conn, "select * from invalid");
         final Planner planner = new Planner(this.conn);
         planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
     }

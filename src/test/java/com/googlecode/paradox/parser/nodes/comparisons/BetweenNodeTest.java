@@ -10,38 +10,68 @@
  */
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link BetweenNode} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class BetweenNodeTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test the field node.
      */
     @Test
     public void testField() {
-        final FieldNode field = new FieldNode("table", "field", "alias");
-        final BetweenNode node = new BetweenNode(field, null, null);
+        final FieldNode field = new FieldNode(conn, "table", "field", "alias");
+        final BetweenNode node = new BetweenNode(conn, field, null, null);
         Assert.assertEquals(field, node.getField());
     }
-    
+
     /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final FieldNode field = new FieldNode("table", "field", "field");
-        final FieldNode first = new FieldNode("table", "first", "first");
-        final FieldNode last = new FieldNode("table", "last", "last");
-        final BetweenNode node = new BetweenNode(field, first, last);
+        final FieldNode field = new FieldNode(conn, "table", "field", "field");
+        final FieldNode first = new FieldNode(conn, "table", "first", "first");
+        final FieldNode last = new FieldNode(conn, "table", "last", "last");
+        final BetweenNode node = new BetweenNode(conn, field, first, last);
         Assert.assertEquals("table.field BETWEEN table.first AND table.last", node.toString());
     }
 }

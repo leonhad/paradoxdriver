@@ -10,8 +10,10 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
+
 import java.util.Collections;
 
 /**
@@ -22,16 +24,16 @@ import java.util.Collections;
  * @since 1.1
  */
 public class ExistsNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
      *
-     * @param child
-     *            the child node.
+     * @param connection the Paradox connection.
+     * @param child      the child node.
      */
-    public ExistsNode(final SelectNode child) {
-        super("EXISTS");
+    public ExistsNode(final ParadoxConnection connection, final SelectNode child) {
+        super(connection, "EXISTS");
         this.setChildhood(Collections.singletonList(child));
     }
-    
+
 }

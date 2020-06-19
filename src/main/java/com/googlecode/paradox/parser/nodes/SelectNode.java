@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +25,7 @@ import java.util.List;
  * @since 1.0
  */
 public final class SelectNode extends StatementNode {
-    
+
     /**
      * The conditions list.
      */
@@ -48,34 +50,34 @@ public final class SelectNode extends StatementNode {
      * The tables in from token.
      */
     private final ArrayList<TableNode> tables = new ArrayList<>();
-    
+
     /**
      * Create a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    public SelectNode() {
-        super("SELECT");
+    public SelectNode(final ParadoxConnection connection) {
+        super(connection, "SELECT");
     }
-    
+
     /**
      * Adds the field in the list.
      *
-     * @param field
-     *            the field to add.
+     * @param field the field to add.
      */
     public void addField(final SQLNode field) {
         this.fields.add(field);
     }
-    
+
     /**
      * Adds the table in list.
      *
-     * @param table
-     *            the table to add
+     * @param table the table to add
      */
     public void addTable(final TableNode table) {
         this.tables.add(table);
     }
-    
+
     /**
      * Gets the condition list.
      *
@@ -87,7 +89,7 @@ public final class SelectNode extends StatementNode {
         }
         return Collections.emptyList();
     }
-    
+
     /**
      * Gets the field list.
      *
@@ -96,7 +98,7 @@ public final class SelectNode extends StatementNode {
     public List<SQLNode> getFields() {
         return Collections.unmodifiableList(this.fields);
     }
-    
+
     /**
      * Gets the order by list.
      *
@@ -105,7 +107,7 @@ public final class SelectNode extends StatementNode {
     public List<IdentifierNode> getOrder() {
         return Collections.unmodifiableList(this.order);
     }
-    
+
     /**
      * Gets the table list.
      *
@@ -114,27 +116,25 @@ public final class SelectNode extends StatementNode {
     public List<TableNode> getTables() {
         return Collections.unmodifiableList(this.tables);
     }
-    
+
     /**
      * Sets the condition list.
      *
-     * @param conditions
-     *            the condition list.
+     * @param conditions the condition list.
      */
     public void setConditions(final Collection<SQLNode> conditions) {
         this.conditions = new ArrayList<>(conditions);
     }
-    
+
     /**
      * Sets the distinct key present.
      *
-     * @param distinct
-     *            the distinct key present.
+     * @param distinct the distinct key present.
      */
     public void setDistinct(final boolean distinct) {
         this.distinct = distinct;
     }
-    
+
     /**
      * Show this node SELECT.
      */
@@ -143,7 +143,7 @@ public final class SelectNode extends StatementNode {
         final StringBuilder builder = new StringBuilder();
         builder.append(this.getName());
         builder.append(' ');
-        
+
         this.buildFields(builder);
         this.buildFrom(builder);
         this.buildWhere(builder);
@@ -151,12 +151,11 @@ public final class SelectNode extends StatementNode {
         this.buildOrderBy(builder);
         return builder.toString();
     }
-    
+
     /**
      * Build the fields description.
      *
-     * @param builder
-     *            builder to append fields.
+     * @param builder builder to append fields.
      */
     private void buildFields(final StringBuilder builder) {
         boolean first = true;
@@ -169,12 +168,11 @@ public final class SelectNode extends StatementNode {
             builder.append(field);
         }
     }
-    
+
     /**
      * Build the FROM description.
      *
-     * @param builder
-     *            builder to append FROM tables.
+     * @param builder builder to append FROM tables.
      */
     private void buildFrom(final StringBuilder builder) {
         boolean first;
@@ -191,12 +189,11 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-    
+
     /**
      * Build the grouping fields.
      *
-     * @param builder
-     *            builder to GROUP BY fields.
+     * @param builder builder to GROUP BY fields.
      */
     private void buildGroupBy(final StringBuilder builder) {
         boolean first;
@@ -213,12 +210,11 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-    
+
     /**
      * Build the fields order.
      *
-     * @param builder
-     *            builder to ORDER BY fields.
+     * @param builder builder to ORDER BY fields.
      */
     private void buildOrderBy(final StringBuilder builder) {
         boolean first;
@@ -235,12 +231,11 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-    
+
     /**
      * Build the WHERE conditions.
      *
-     * @param builder
-     *            builder to WHERE conditions.
+     * @param builder builder to WHERE conditions.
      */
     private void buildWhere(final StringBuilder builder) {
         boolean first;
@@ -257,27 +252,25 @@ public final class SelectNode extends StatementNode {
             }
         }
     }
-    
+
     /**
      * Adds the group by identifier.
      *
-     * @param identifier
-     *            the group by identifier to add.
+     * @param identifier the group by identifier to add.
      */
     void addGroupBy(final IdentifierNode identifier) {
         this.groups.add(identifier);
     }
-    
+
     /**
      * Adds the order by identifier.
      *
-     * @param identifier
-     *            the order by identifier to add.
+     * @param identifier the order by identifier to add.
      */
     void addOrderBy(final IdentifierNode identifier) {
         this.order.add(identifier);
     }
-    
+
     /**
      * Gets the group list.
      *
@@ -286,7 +279,7 @@ public final class SelectNode extends StatementNode {
     List<IdentifierNode> getGroups() {
         return Collections.unmodifiableList(this.groups);
     }
-    
+
     /**
      * Get if this select has a distinct token.
      *

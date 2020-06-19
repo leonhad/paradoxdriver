@@ -10,27 +10,57 @@
  */
 package com.googlecode.paradox.procedures;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.procedures.math.Average;
-import java.sql.DatabaseMetaData;
-import java.util.List;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Unit test for {@link AbstractCallableProcedure}.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class CallableProcedureTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * The object to test.
      */
-    private final AbstractCallableProcedure call = new Average();
-    
+    private final AbstractCallableProcedure call = new Average(conn);
+
     /**
      * Test for default field.
      */
@@ -41,7 +71,7 @@ public class CallableProcedureTest {
         Assert.assertEquals("field", fields.get(0).getName());
         Assert.assertEquals(0xC, fields.get(0).getType());
     }
-    
+
     /**
      * Test for return type procedure.
      */

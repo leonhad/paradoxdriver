@@ -10,51 +10,81 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link FieldNode}
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class FieldNodeTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for {@link FieldNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final FieldNode node = new FieldNode("table", "field", "alias");
+        final FieldNode node = new FieldNode(conn, "table", "field", "alias");
         Assert.assertEquals("table.field AS alias", node.toString());
     }
-    
+
     /**
      * Test for {@link FieldNode#toString()} method with null alias.
      */
     @Test
     public void testToStringWithNullAlias() {
-        final FieldNode node = new FieldNode("table", "field", null);
+        final FieldNode node = new FieldNode(conn, "table", "field", null);
         Assert.assertEquals("table.field", node.toString());
     }
-    
+
     /**
      * Test {@link FieldNode#toString()} with null table.
      */
     @Test
     public void testToStringWithNullTable() {
-        final FieldNode node = new FieldNode(null, "field", null);
+        final FieldNode node = new FieldNode(conn, null, "field", null);
         Assert.assertEquals("field", node.toString());
     }
-    
+
     /**
      * Test for {@link FieldNode#toString()} method without alias.
      */
     @Test
     public void testToStringWithoutAlias() {
-        final FieldNode node = new FieldNode("table", "field", "field");
+        final FieldNode node = new FieldNode(conn, "table", "field", "field");
         Assert.assertEquals("table.field", node.toString());
     }
 }

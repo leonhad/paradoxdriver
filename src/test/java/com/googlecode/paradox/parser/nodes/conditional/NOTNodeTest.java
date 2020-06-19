@@ -10,10 +10,17 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link NOTNode} class.
@@ -23,24 +30,47 @@ import org.junit.Test;
  * @since 1.3
  */
 public class NOTNodeTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for childhood.
      */
     @Test
     public void testChildhood() {
-        final SQLNode node = new StatementNode(null);
-        final NOTNode and = new NOTNode(node);
+        final SQLNode node = new StatementNode(conn, null);
+        final NOTNode and = new NOTNode(conn, node);
         Assert.assertEquals(1, and.getChildhood().size());
         Assert.assertEquals(node, and.getChildhood().iterator().next());
     }
-    
+
     /**
      * Test for name.
      */
     @Test
     public void testName() {
-        final NOTNode node = new NOTNode(null);
+        final NOTNode node = new NOTNode(conn, null);
         Assert.assertEquals("NOT", node.getName());
     }
 }

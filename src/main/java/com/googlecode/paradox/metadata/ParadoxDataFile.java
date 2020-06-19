@@ -35,7 +35,7 @@ public class ParadoxDataFile {
     /**
      * The database connection;
      */
-    private final ParadoxConnection connection;
+    protected final ParadoxConnection connection;
     /**
      * Fields in this file.
      */
@@ -131,7 +131,7 @@ public class ParadoxDataFile {
      */
     protected ParadoxDataFile(final File file, final String name, final ParadoxConnection connection) {
         this.file = file;
-        this.name = Utils.removeDb(name);
+        this.name = Utils.removeDb(connection, name);
         if (connection != null) {
             this.charset = connection.getCharset();
         }

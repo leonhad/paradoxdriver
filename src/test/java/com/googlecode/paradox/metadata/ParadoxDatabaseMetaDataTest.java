@@ -13,17 +13,9 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxResultSet;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * Unit test for {@link ParadoxDatabaseMetaData} class.
@@ -305,7 +297,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseProductVersion() throws SQLException {
-        Assert.assertEquals("Testing for database product version.", "Paradox 1.3",
+        Assert.assertEquals("Testing for database product version.", "Paradox 1.5",
                 this.conn.getMetaData().getDatabaseProductVersion());
     }
 
@@ -358,7 +350,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverMinorVersion() throws SQLException {
-        Assert.assertEquals("Testing for driver minor version.", 3, this.conn.getMetaData().getDriverMinorVersion());
+        Assert.assertEquals("Testing for driver minor version.", 5, this.conn.getMetaData().getDriverMinorVersion());
     }
 
     /**
@@ -378,7 +370,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverVersion() throws SQLException {
-        Assert.assertEquals("Testing for driver version.", "1.3", this.conn.getMetaData().getDriverVersion());
+        Assert.assertEquals("Testing for driver version.", "1.5", this.conn.getMetaData().getDriverVersion());
     }
 
     /**
@@ -628,7 +620,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testMaxRowsIncludesBlob() throws SQLException {
-        Assert.assertTrue(this.conn.getMetaData().doesMaxRowSizeIncludeBlobs());
+        Assert.assertTrue("Invalid value.", this.conn.getMetaData().doesMaxRowSizeIncludeBlobs());
     }
 
     /**
@@ -723,7 +715,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedureCallable() throws SQLException {
-        Assert.assertFalse(this.conn.getMetaData().allProceduresAreCallable());
+        Assert.assertFalse("Invalid callable value.", this.conn.getMetaData().allProceduresAreCallable());
     }
 
     /**
@@ -734,7 +726,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testProcedureColumns() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getProcedureColumns("db", "%", "%", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid ResultSet instance.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -746,7 +738,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testProcedureColumnsWithInvalidPattern() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getProcedureColumns("db", "%", "invalid_procedure", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid ResultSet instance.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -758,7 +750,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testProcedures() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getProcedures("db", "%", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid ResultSet instance.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -772,27 +764,27 @@ public class ParadoxDatabaseMetaDataTest {
         try (ResultSet rs = this.conn.getMetaData().getSchemas()) {
 
             // Classes schema.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema.", "com", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
             Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
 
             // Date schema.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema.", "date", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
             Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
 
             // DB schema.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema.", "db", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
             Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
 
             // Encrypt schema.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema.", "encrypt", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
             Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
 
             // Geog schema.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema.", "geog", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
             Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
 
@@ -832,7 +824,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testTableSelectable() throws SQLException {
-        Assert.assertTrue(this.conn.getMetaData().allTablesAreSelectable());
+        Assert.assertTrue("Invalid table selectable.", this.conn.getMetaData().allTablesAreSelectable());
     }
 
     /**
@@ -843,7 +835,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testTablesWithNullType() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getTables("db", "%", "%", null)) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid ResultSet instance.", rs instanceof ParadoxResultSet);
         }
     }
 

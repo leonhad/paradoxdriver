@@ -28,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Read view files (structure).
@@ -128,7 +127,7 @@ public final class ViewData {
     private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
         final ParadoxField originalField = ViewData.getField(table, name);
         if (originalField == null) {
-            final ParadoxField newField = new ParadoxField();
+            final ParadoxField newField = new ParadoxField(table.getConnection());
             newField.setType((byte) 1);
             return newField;
         }
@@ -239,7 +238,7 @@ public final class ViewData {
 
             for (int loop = 1; loop < fields.length; loop++) {
                 final String name = fields[loop].trim();
-                final ParadoxField field = new ParadoxField();
+                final ParadoxField field = new ParadoxField(connection);
                 final ParadoxField original = ViewData.getFieldByName(
                         ViewData.getTable(table, currentSchema, connection), name);
 
@@ -258,7 +257,7 @@ public final class ViewData {
                 final String type = types[loop].trim();
                 if (type.length() > 0) {
                     final ParadoxField field = fieldList.get(loop - 1);
-                    ViewData.parseExpression(field, type);
+                    ViewData.parseExpression(connection, field, type);
                 }
             }
 
@@ -372,7 +371,7 @@ public final class ViewData {
         final String[] cols = line.toString().split(",");
         for (final String col : cols) {
             final String[] i = col.split("->");
-            final ParadoxField field = new ParadoxField();
+            final ParadoxField field = new ParadoxField(connection);
 
             if (i.length < 2) {
                 if (lastTable == null) {
@@ -411,10 +410,11 @@ public final class ViewData {
     /**
      * Parse a view Paradox expression.
      *
+     * @param conn       the Paradoc Connection.
      * @param field      the expression field.
      * @param expression the expression to parse.
      */
-    static void parseExpression(final ParadoxField field, final String expression) {
+    static void parseExpression(final ParadoxConnection conn, final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
         ViewData.parseCheck(field, builder);
@@ -424,20 +424,20 @@ public final class ViewData {
 
         ViewData.parseJoinName(field, builder);
         final String typeTest = builder.toString().trim();
-        if (typeTest.toUpperCase(Locale.US).startsWith("AS")) {
+        if (typeTest.toUpperCase(conn.getLocale()).startsWith("AS")) {
             field.setAlias(typeTest.substring(3).trim());
         } else {
             if (typeTest.charAt(0) == ',') {
                 builder.delete(0, 1);
             }
-            final int index = builder.toString().toUpperCase(Locale.US).lastIndexOf("AS");
+            final int index = builder.toString().toUpperCase(conn.getLocale()).lastIndexOf("AS");
             if (index > -1) {
                 field.setExpression(builder.substring(0, index).trim());
                 field.setAlias(builder.substring(index + 3).trim());
             } else {
                 field.setExpression(builder.toString().trim());
             }
-            if (field.getExpression().toUpperCase(Locale.US).startsWith("CALC")) {
+            if (field.getExpression().toUpperCase(conn.getLocale()).startsWith("CALC")) {
                 field.setChecked(true);
             }
         }

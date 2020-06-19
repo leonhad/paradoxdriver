@@ -10,7 +10,9 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,34 +25,32 @@ import java.util.List;
  * @since 1.0
  */
 public final class TableNode extends SQLNode {
-    
+
     /**
      * The table joins.
      */
     private final List<JoinNode> joins = new ArrayList<>();
-    
+
     /**
      * Create a new instance.
      *
-     * @param name
-     *            the table name.
-     * @param alias
-     *            the table alias.
+     * @param connection the Paradox connection.
+     * @param name       the table name.
+     * @param alias      the table alias.
      */
-    public TableNode(final String name, final String alias) {
-        super(Utils.removeDb(name), alias);
+    public TableNode(final ParadoxConnection connection, final String name, final String alias) {
+        super(connection, Utils.removeDb(connection, name), alias);
     }
-    
+
     /**
      * Adds the join table.
      *
-     * @param join
-     *            the join table.
+     * @param join the join table.
      */
     public void addJoin(final JoinNode join) {
         this.joins.add(join);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -68,7 +68,7 @@ public final class TableNode extends SQLNode {
         }
         return builder.toString();
     }
-    
+
     /**
      * Gets the join tables.
      *
@@ -77,5 +77,5 @@ public final class TableNode extends SQLNode {
     List<JoinNode> getJoins() {
         return Collections.unmodifiableList(this.joins);
     }
-    
+
 }

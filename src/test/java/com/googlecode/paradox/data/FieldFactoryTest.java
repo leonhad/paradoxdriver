@@ -10,12 +10,17 @@
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.utils.TestUtil;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link FieldFactory} class.
@@ -25,34 +30,46 @@ import org.junit.Test;
  * @since 1.3
  */
 public class FieldFactoryTest {
-    
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "date");
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for sanity.
-     *
-     * @throws NoSuchMethodException
-     *             in case of errors.
-     * @throws InstantiationException
-     *             in case of errors.
-     * @throws IllegalAccessException
-     *             in case of errors.
-     * @throws InvocationTargetException
-     *             in case of errors.
      */
     @Test
-    public void testSanity()
-            throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(FieldFactory.class));
+    public void testSanity() {
+        Assert.assertTrue("Utility class in wrong format.",
+                TestUtil.assertUtilityClassWellDefined(FieldFactory.class));
     }
-    
+
     /**
      * Test for invalid field type.
      *
-     * @throws SQLException
-     *             in case of success.
+     * @throws SQLException in case of success.
      */
     @Test(expected = SQLException.class)
     public void testUnsupportedType() throws SQLException {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setType((byte) -1);
         FieldFactory.parse(null, null, field);
     }

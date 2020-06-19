@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 
 /**
@@ -20,16 +21,15 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
  * @since 1.1
  */
 public final class NotEqualsNode extends AbstractComparisonNode {
-    
+
     /**
      * Create a new instance.
      *
-     * @param first
-     *            the first node.
-     * @param last
-     *            the last node.
+     * @param connection the Paradox connection.
+     * @param first      the first node.
+     * @param last       the last node.
      */
-    public NotEqualsNode(final FieldNode first, final FieldNode last) {
-        super("<>", first, last);
+    public NotEqualsNode(final ParadoxConnection connection, final FieldNode first, final FieldNode last) {
+        super(connection, "<>", first, last);
     }
 }

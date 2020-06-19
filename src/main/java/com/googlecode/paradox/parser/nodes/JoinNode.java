@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -21,29 +23,31 @@ import java.util.List;
  * @since 1.0
  */
 public final class JoinNode extends SQLNode {
-    
+
     /**
      * The condition list.
      */
     private List<SQLNode> conditions;
-    
+
     /**
      * The table name.
      */
     private String tableName;
-    
+
     /**
      * The join type.
      */
     private JoinType type = JoinType.CROSS;
-    
+
     /**
      * Create a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    public JoinNode() {
-        super("JOIN");
+    public JoinNode(final ParadoxConnection connection) {
+        super(connection, "JOIN");
     }
-    
+
     /**
      * Gets the table name.
      *
@@ -52,7 +56,7 @@ public final class JoinNode extends SQLNode {
     public String getTableName() {
         return this.tableName;
     }
-    
+
     /**
      * Gets the join type.
      *
@@ -61,37 +65,34 @@ public final class JoinNode extends SQLNode {
     public JoinType getType() {
         return this.type;
     }
-    
+
     /**
      * Sets the condition list.
      *
-     * @param conditions
-     *            the condition list.
+     * @param conditions the condition list.
      */
     public void setConditions(final List<SQLNode> conditions) {
         this.conditions = Collections.unmodifiableList(conditions);
     }
-    
+
     /**
      * Sets the table name.
      *
-     * @param tableName
-     *            the table name.
+     * @param tableName the table name.
      */
     public void setTableName(final String tableName) {
         this.tableName = tableName;
     }
-    
+
     /**
      * Sets the join type.
      *
-     * @param type
-     *            the join type.
+     * @param type the join type.
      */
     public void setType(final JoinType type) {
         this.type = type;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -114,7 +115,7 @@ public final class JoinNode extends SQLNode {
         }
         return builder.toString();
     }
-    
+
     /**
      * Gets the conditions.
      *
@@ -123,5 +124,5 @@ public final class JoinNode extends SQLNode {
     List<SQLNode> getConditions() {
         return Collections.unmodifiableList(this.conditions);
     }
-    
+
 }

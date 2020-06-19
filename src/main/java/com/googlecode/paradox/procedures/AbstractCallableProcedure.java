@@ -10,7 +10,9 @@
  */
 package com.googlecode.paradox.procedures;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
+
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,16 @@ import java.util.List;
  * @since 1.1
  */
 public abstract class AbstractCallableProcedure {
-    
+
+    protected final ParadoxConnection connection;
+
+    /**
+     * @param connection the Paradox connection.
+     */
+    public AbstractCallableProcedure(ParadoxConnection connection) {
+        this.connection = connection;
+    }
+
     /**
      * Get the procedure columns.
      *
@@ -31,29 +42,29 @@ public abstract class AbstractCallableProcedure {
      */
     public final List<ParadoxField> getCols() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
-        
-        final ParadoxField field = new ParadoxField();
+
+        final ParadoxField field = new ParadoxField(connection);
         field.setName("field");
         field.setType((byte) 0xC);
         ret.add(field);
-        
+
         return ret;
     }
-    
+
     /**
      * Gets the procedure name.
      *
      * @return the procedure name.
      */
     public abstract String getName();
-    
+
     /**
      * Gets the procedure description.
      *
      * @return the procedure description.
      */
     public abstract String getRemarks();
-    
+
     /**
      * Gets the return type.
      *

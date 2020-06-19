@@ -15,6 +15,7 @@ import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.SelectPlan;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
@@ -57,7 +58,7 @@ final class ParadoxStatement implements Statement {
     /**
      * The max field size.
      */
-    private int maxFieldSize = 255;
+    private int maxFieldSize = Constants.MAX_STRING_SIZE;
 
     /**
      * The max rows.
@@ -148,7 +149,7 @@ final class ParadoxStatement implements Statement {
             this.rs.close();
         }
         boolean select = false;
-        final SQLParser parser = new SQLParser(sql);
+        final SQLParser parser = new SQLParser(conn, sql);
         final List<StatementNode> statements = parser.parse();
         for (final StatementNode statement : statements) {
             if (statement instanceof SelectNode) {
@@ -199,7 +200,7 @@ final class ParadoxStatement implements Statement {
         if ((this.rs != null) && !this.rs.isClosed()) {
             this.rs.close();
         }
-        final SQLParser parser = new SQLParser(sql);
+        final SQLParser parser = new SQLParser(conn, sql);
         final List<StatementNode> statementList = parser.parse();
         if (statementList.size() > 1) {
             throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL.getValue());
@@ -309,7 +310,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
-        if (max > 255) {
+        if (max > Constants.MAX_STRING_SIZE) {
             throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER.getValue());
         }
         this.maxFieldSize = max;

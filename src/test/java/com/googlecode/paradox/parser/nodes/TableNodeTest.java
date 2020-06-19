@@ -10,10 +10,17 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
-import java.util.ArrayList;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Unit test for {@link TableNode} class.
@@ -23,44 +30,67 @@ import org.junit.Test;
  * @since 1.3
  */
 public class TableNodeTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for instance.
      */
     @Test
     public void testInstance() {
-        final TableNode node = new TableNode("table.db", "alias");
+        final TableNode node = new TableNode(conn, "table.db", "alias");
         Assert.assertEquals("Testing for name.", "table", node.getName());
         Assert.assertEquals("Testing for alias", "alias", node.getAlias());
     }
-    
+
     /**
      * Test for joins.
      */
     @Test
     public void testJoin() {
-        final TableNode node = new TableNode("table.db", "alias");
+        final TableNode node = new TableNode(conn, "table.db", "alias");
         Assert.assertEquals("Testing for initial join size.", 0, node.getJoins().size());
-        node.addJoin(new JoinNode());
+        node.addJoin(new JoinNode(conn));
         Assert.assertEquals("Testing for changed join size.", 1, node.getJoins().size());
     }
-    
+
     /**
      * Test for {@link TableNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final TableNode node = new TableNode("table.db", "alias");
-        final JoinNode join = new JoinNode();
+        final TableNode node = new TableNode(conn, "table.db", "alias");
+        final JoinNode join = new JoinNode(conn);
         join.setTableName("table2");
-        
-        final FieldNode fieldA = new FieldNode(null, "a", null);
-        final FieldNode fieldB = new FieldNode(null, "b", null);
-        
+
+        final FieldNode fieldA = new FieldNode(conn, null, "a", null);
+        final FieldNode fieldB = new FieldNode(conn, null, "b", null);
+
         final ArrayList<SQLNode> list = new ArrayList<>();
-        list.add(new EqualsNode(fieldA, fieldB));
+        list.add(new EqualsNode(conn, fieldA, fieldB));
         join.setConditions(list);
-        
+
         node.addJoin(join);
         Assert.assertEquals("Testing for toString().", "table AS alias CROSS JOIN table2 ON a = b ", node.toString());
     }

@@ -10,10 +10,15 @@
  */
 package com.googlecode.paradox.results;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
@@ -26,11 +31,34 @@ import java.sql.SQLException;
 public class ColumnTest {
 
     /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
+    /**
      * Test for auto increment.
      */
     @Test
     public void testAutoincrement() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setAutoIncrement(true);
         Assert.assertTrue(column.isAutoIncrement());
     }
@@ -40,7 +68,7 @@ public class ColumnTest {
      */
     @Test
     public void testAutoIncrementType() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setType(ParadoxFieldType.AUTO_INCREMENT.getType());
         Assert.assertEquals(9d, column.getPrecision(), 0);
         Assert.assertTrue(column.isAutoIncrement());
@@ -51,7 +79,7 @@ public class ColumnTest {
      */
     @Test
     public void testCurrency() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setCurrency(true);
         Assert.assertTrue(column.isCurrency());
     }
@@ -61,7 +89,7 @@ public class ColumnTest {
      */
     @Test
     public void testDoubleType() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setType(ParadoxFieldType.DOUBLE.getType());
         Assert.assertEquals(9d, column.getPrecision(), 0);
         Assert.assertTrue(column.isCurrency());
@@ -72,10 +100,10 @@ public class ColumnTest {
      */
     @Test
     public void testField() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setType(ParadoxFieldType.INTEGER.getType());
         field.setName("field");
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setField(field);
         Assert.assertEquals(field, column.getField());
     }
@@ -85,7 +113,7 @@ public class ColumnTest {
      */
     @Test
     public void testIndex() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setIndex(1);
         Assert.assertEquals(1, column.getIndex());
     }
@@ -95,7 +123,7 @@ public class ColumnTest {
      */
     @Test
     public void testInstanceWithFields() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setType(ParadoxFieldType.INTEGER.getType());
         field.setName("field");
         final Column column = new Column(field);
@@ -119,7 +147,7 @@ public class ColumnTest {
      */
     @Test
     public void testName() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setName("name");
         Assert.assertEquals("name", column.getName());
     }
@@ -129,7 +157,7 @@ public class ColumnTest {
      */
     @Test
     public void testNullable() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setNullable(true);
         Assert.assertTrue(column.isNullable());
     }
@@ -139,7 +167,7 @@ public class ColumnTest {
      */
     @Test
     public void testNumericType() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setType(ParadoxFieldType.NUMERIC.getType());
         Assert.assertEquals(2d, column.getScale(), 0);
     }
@@ -149,7 +177,7 @@ public class ColumnTest {
      */
     @Test
     public void testPrecision() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setPrecision(1);
         Assert.assertEquals(1, column.getPrecision());
     }
@@ -159,7 +187,7 @@ public class ColumnTest {
      */
     @Test
     public void testReadOnly() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setReadOnly(true);
         Assert.assertTrue(column.isReadOnly());
     }
@@ -169,7 +197,7 @@ public class ColumnTest {
      */
     @Test
     public void testScale() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setScale(1);
         Assert.assertEquals(1, column.getScale());
     }
@@ -179,7 +207,7 @@ public class ColumnTest {
      */
     @Test
     public void testSearchable() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setSearchable(true);
         Assert.assertTrue(column.isSearchable());
     }
@@ -189,7 +217,7 @@ public class ColumnTest {
      */
     @Test
     public void testSigned() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setSigned(true);
         Assert.assertTrue(column.isSigned());
     }
@@ -199,7 +227,7 @@ public class ColumnTest {
      */
     @Test
     public void testTableName() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setTableName("name");
         Assert.assertEquals("name", column.getTableName());
     }
@@ -209,7 +237,7 @@ public class ColumnTest {
      */
     @Test
     public void testType() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setType(1);
         Assert.assertEquals(1, column.getType());
     }
@@ -229,7 +257,7 @@ public class ColumnTest {
      */
     @Test
     public void testWritable() {
-        final Column column = new Column(new ParadoxField());
+        final Column column = new Column(new ParadoxField(conn));
         column.setWritable(true);
         Assert.assertTrue(column.isWritable());
     }

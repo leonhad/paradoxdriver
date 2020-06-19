@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.procedures.math;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 
 /**
@@ -20,7 +21,14 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
  * @since 1.1
  */
 public final class Max extends AbstractCallableProcedure {
-    
+
+    /**
+     * @param connection the Paradox connection.
+     */
+    public Max(ParadoxConnection connection) {
+        super(connection);
+    }
+
     /**
      * {@inheritDoc}.
      */
@@ -28,7 +36,7 @@ public final class Max extends AbstractCallableProcedure {
     public String getName() {
         return "max";
     }
-    
+
     /**
      * {@inheritDoc}.
      */

@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.parser.nodes.values;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.TokenType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
@@ -22,11 +23,13 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @since 1.2
  */
 public final class AsteriskNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    public AsteriskNode() {
-        super(TokenType.ASTERISK.name());
+    public AsteriskNode(final ParadoxConnection connection) {
+        super(connection, TokenType.ASTERISK.name());
     }
 }

@@ -10,9 +10,14 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
@@ -23,13 +28,35 @@ import java.sql.SQLException;
  * @since 1.3
  */
 public class ParadoxFieldTest {
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "date");
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
 
     /**
      * Test for auto increment.
      */
     @Test
     public void testAutoIncrement() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setType((byte) 0x16);
         Assert.assertTrue(field.isAutoIncrement());
     }
@@ -39,7 +66,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testDefaultOrder() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         Assert.assertEquals(1, field.getOrderNum());
     }
 
@@ -48,7 +75,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testEmptyAlias() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setName("Field");
         Assert.assertEquals("Field", field.getAlias());
     }
@@ -58,9 +85,9 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testEquals() {
-        final ParadoxField first = new ParadoxField();
+        final ParadoxField first = new ParadoxField(conn);
         first.setName("Field");
-        final ParadoxField last = new ParadoxField();
+        final ParadoxField last = new ParadoxField(conn);
         last.setName("Field");
         Assert.assertEquals("Invalid equals result.", last, first);
     }
@@ -71,7 +98,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testEqualsDifferentClass() {
-        final ParadoxField first = new ParadoxField();
+        final ParadoxField first = new ParadoxField(conn);
         first.setName("Field");
         Assert.assertNotEquals("Invalid equals result.", "String", first);
     }
@@ -81,7 +108,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testEqualsNull() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setName("Field");
         Assert.assertNotEquals("Invalid equals result.", null, field);
     }
@@ -91,7 +118,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testGettersAndSetters() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setAlias("alias");
         field.setChecked(false);
         field.setExpression("expression");
@@ -114,7 +141,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testHashCode() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setName("Field");
         Assert.assertEquals((7 * 17) + "Field".hashCode(), field.hashCode());
     }
@@ -124,7 +151,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testHashCodeVariant() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setName(null);
         Assert.assertEquals(7 * 17, field.hashCode());
     }
@@ -134,7 +161,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testNotAutoIncrement() {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         field.setType((byte) 1);
         Assert.assertFalse(field.isAutoIncrement());
     }
@@ -144,9 +171,9 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testNotEquals() {
-        final ParadoxField first = new ParadoxField();
+        final ParadoxField first = new ParadoxField(conn);
         first.setName("Field");
-        final ParadoxField last = new ParadoxField();
+        final ParadoxField last = new ParadoxField(conn);
         last.setName("Field 2");
         Assert.assertNotEquals("Invalid field.", first, last);
 
@@ -170,7 +197,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testSize() throws SQLException {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
         // Not CLOB or BLOB type
         field.setType((byte) 0x1);
         field.setSize(10);
@@ -184,7 +211,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testSizeClob() throws SQLException {
-        final ParadoxField field = new ParadoxField();
+        final ParadoxField field = new ParadoxField(conn);
 
         field.setType((byte) 0xC);
         field.setSize(20);
@@ -217,7 +244,7 @@ public class ParadoxFieldTest {
      */
     @Test
     public void testToString() {
-        final ParadoxField first = new ParadoxField();
+        final ParadoxField first = new ParadoxField(conn);
         first.setName("Field");
         Assert.assertEquals("Field", first.toString());
     }

@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
@@ -21,33 +22,32 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @since 1.1
  */
 abstract class AbstractComparisonNode extends SQLNode {
-    
+
     /**
      * The first node.
      */
     private final FieldNode first;
-    
+
     /**
      * The last node.
      */
     private final FieldNode last;
-    
+
     /**
      * Creates a new instance.
      *
-     * @param name
-     *            the condition name.
-     * @param first
-     *            the first node.
-     * @param last
-     *            the last node.
+     * @param connection the Paradox connection.
+     * @param name       the condition name.
+     * @param first      the first node.
+     * @param last       the last node.
      */
-    AbstractComparisonNode(final String name, final FieldNode first, final FieldNode last) {
-        super(name);
+    AbstractComparisonNode(final ParadoxConnection connection, final String name, final FieldNode first,
+                           final FieldNode last) {
+        super(connection, name);
         this.first = first;
         this.last = last;
     }
-    
+
     /**
      * Gets the first node.
      *
@@ -56,7 +56,7 @@ abstract class AbstractComparisonNode extends SQLNode {
     public FieldNode getFirst() {
         return this.first;
     }
-    
+
     /**
      * Gets the last node.
      *
@@ -65,7 +65,7 @@ abstract class AbstractComparisonNode extends SQLNode {
     public FieldNode getLast() {
         return this.last;
     }
-    
+
     /**
      * {@inheritDoc}.
      */

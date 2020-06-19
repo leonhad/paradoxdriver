@@ -10,11 +10,9 @@
  */
 package com.googlecode.paradox.procedures;
 
-import com.googlecode.paradox.procedures.math.Average;
-import com.googlecode.paradox.procedures.math.Count;
-import com.googlecode.paradox.procedures.math.Max;
-import com.googlecode.paradox.procedures.math.Min;
-import com.googlecode.paradox.procedures.math.Sum;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.procedures.math.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,42 +25,29 @@ import java.util.List;
  * @since 1.0
  */
 public final class ProcedureAS {
-    
-    /**
-     * Default instance.
-     */
-    private static final ProcedureAS INSTANCE = new ProcedureAS();
-    
+
     /**
      * All registered procedures.
      */
     private final List<AbstractCallableProcedure> procedures = new ArrayList<>();
-    
+
     /**
      * Register the default procedures.
-     */
-    private ProcedureAS() {
-        this.register(new Average());
-        this.register(new Count());
-        this.register(new Max());
-        this.register(new Min());
-        this.register(new Sum());
-    }
-    
-    /**
-     * Gets the instance.
      *
-     * @return the instance.
+     * @param connection the Paradox connection.
      */
-    public static ProcedureAS getInstance() {
-        return ProcedureAS.INSTANCE;
+    public ProcedureAS(final ParadoxConnection connection) {
+        this.register(new Average(connection));
+        this.register(new Count(connection));
+        this.register(new Max(connection));
+        this.register(new Min(connection));
+        this.register(new Sum(connection));
     }
-    
+
     /**
      * Gets the procedure by name.
      *
-     * @param name
-     *            the procedure name.
+     * @param name the procedure name.
      * @return the procedure.
      */
     public AbstractCallableProcedure get(final String name) {
@@ -73,7 +58,7 @@ public final class ProcedureAS {
         }
         return null;
     }
-    
+
     /**
      * Gets the procedures list.
      *
@@ -82,12 +67,11 @@ public final class ProcedureAS {
     public List<AbstractCallableProcedure> list() {
         return Collections.unmodifiableList(this.procedures);
     }
-    
+
     /**
      * Registers a new procedure.
      *
-     * @param procedure
-     *            the procedure to register.
+     * @param procedure the procedure to register.
      */
     private void register(final AbstractCallableProcedure procedure) {
         this.procedures.add(procedure);

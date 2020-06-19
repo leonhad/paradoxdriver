@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 /**
  * Stores a identifier node.
  *
@@ -18,17 +20,17 @@ package com.googlecode.paradox.parser.nodes;
  * @since 1.0
  */
 public final class IdentifierNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
      *
-     * @param name
-     *            the identifier name.
+     * @param connection the Paradox connection.
+     * @param name       the identifier name.
      */
-    public IdentifierNode(final String name) {
-        super(name);
+    public IdentifierNode(final ParadoxConnection connection, final String name) {
+        super(connection, name);
     }
-    
+
     /**
      * {@inheritDoc}.
      */

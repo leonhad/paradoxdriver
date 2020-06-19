@@ -10,8 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes.values;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import java.util.Locale;
 
 /**
  * Stores the character node.
@@ -21,17 +21,16 @@ import java.util.Locale;
  * @since 1.1
  */
 public final class CharacterNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
      *
-     * @param value
-     *            the characters value.
-     * @param alias
-     *            the characters alias.
+     * @param connection the Paradox connection.
+     * @param value      the characters value.
+     * @param alias      the characters alias.
      */
-    public CharacterNode(final String value, final String alias) {
-        super(value.toUpperCase(Locale.US), alias.toUpperCase(Locale.US));
+    public CharacterNode(final ParadoxConnection connection, final String value, final String alias) {
+        super(connection, value.toUpperCase(connection.getLocale()), alias.toUpperCase(connection.getLocale()));
     }
-    
+
 }

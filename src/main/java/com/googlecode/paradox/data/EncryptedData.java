@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox.data;
 
-import java.util.Arrays;
-
 /**
  * Encrypted data based on pxlib.
  * <p>
@@ -23,6 +21,10 @@ import java.util.Arrays;
  * @since 1.5.0
  */
 public final class EncryptedData {
+
+    private static final int BLOCK_DIVISION = 8;
+    private static final int SECOND_BYTE = 8;
+    private static final int ENCRYPTION_TABLE_SIZE = 256;
 
     private static final int[] ENCRYPTION_TABLE_A = {
             0xB2, 0xA5, 0x0C, 0xDD, 0x38, 0xFE, 0xCB, 0x5B,
@@ -134,36 +136,36 @@ public final class EncryptedData {
     }
 
     private static void decryptChunk(byte[] src, int offset, int a, int b, int c, int d) {
-        byte[] tmp = new byte[256];
+        byte[] tmp = new byte[ENCRYPTION_TABLE_SIZE];
 
         for (int x = 0; x < tmp.length; ++x) {
-            int y = (ENCRYPTION_TABLE_C[x] - (d & 0xff)) & 0xff;
+            int y = (ENCRYPTION_TABLE_C[x] - (d & 0xFF)) & 0xFF;
             tmp[x] = (byte) (src[y + offset] ^
-                    ENCRYPTION_TABLE_A[(x + (a & 0xff)) & 0xff] ^
-                    ENCRYPTION_TABLE_B[(y + (b & 0xff)) & 0xff] ^
-                    ENCRYPTION_TABLE_C[(y + (c & 0xff)) & 0xff]);
+                    ENCRYPTION_TABLE_A[(x + (a & 0xFF)) & 0xFF] ^
+                    ENCRYPTION_TABLE_B[(y + (b & 0xFF)) & 0xFF] ^
+                    ENCRYPTION_TABLE_C[(y + (c & 0xFF)) & 0xFF]);
         }
 
         System.arraycopy(tmp, 0, src, offset, tmp.length);
     }
 
     public static void decryptDBBlock(byte[] src, long encryption, int blocksize, long blockno) {
-        byte a = (byte) (encryption & 0xff);
-        byte b = (byte) ((encryption >> 8) & 0xff);
-        blocksize >>= 8;
+        byte a = (byte) (encryption & 0xFF);
+        byte b = (byte) ((encryption >> SECOND_BYTE) & 0xFF);
+        blocksize >>= BLOCK_DIVISION;
 
         for (int chunk = 0; chunk < blocksize; ++chunk) {
-            decryptChunk(src, (chunk << 8), a, b, chunk, (int) blockno);
+            decryptChunk(src, (chunk << BLOCK_DIVISION), a, b, chunk, (int) blockno);
         }
     }
 
-    public void decryptMBBlock(byte[] src, long encryption, int blocksize) {
+    public static void decryptMBBlock(byte[] src, long encryption, int blocksize) {
         byte a = (byte) (encryption & 0xFF);
-        byte b = (byte) ((encryption >> 8) & 0xFF);
-        blocksize >>= 8;
+        byte b = (byte) ((encryption >> SECOND_BYTE) & 0xFF);
+        blocksize >>= BLOCK_DIVISION;
 
         for (int chunk = 0; chunk < blocksize; ++chunk) {
-            decryptChunk(src, (chunk << 8), a, b, (byte) (a + 1), (byte) (b + 1));
+            decryptChunk(src, (chunk << BLOCK_DIVISION), a, b, (byte) (a + 1), (byte) (b + 1));
         }
     }
 }

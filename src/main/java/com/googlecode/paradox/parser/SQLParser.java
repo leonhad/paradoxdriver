@@ -10,23 +10,10 @@
  */
 package com.googlecode.paradox.parser;
 
-import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.parser.nodes.JoinNode;
-import com.googlecode.paradox.parser.nodes.JoinType;
-import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.SelectNode;
-import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.parser.nodes.TableNode;
-import com.googlecode.paradox.parser.nodes.comparisons.BetweenNode;
-import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
-import com.googlecode.paradox.parser.nodes.comparisons.GreaterThanNode;
-import com.googlecode.paradox.parser.nodes.comparisons.LessThanNode;
-import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
-import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
-import com.googlecode.paradox.parser.nodes.conditional.ExistsNode;
-import com.googlecode.paradox.parser.nodes.conditional.NOTNode;
-import com.googlecode.paradox.parser.nodes.conditional.ORNode;
-import com.googlecode.paradox.parser.nodes.conditional.XORNode;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.nodes.*;
+import com.googlecode.paradox.parser.nodes.comparisons.*;
+import com.googlecode.paradox.parser.nodes.conditional.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
@@ -62,13 +49,17 @@ public final class SQLParser {
      */
     private Token token;
 
+    private final ParadoxConnection connection;
+
     /**
      * Creates a new instance.
      *
-     * @param sql the SQL to parse.
+     * @param connection the Paradox connection.
+     * @param sql        the SQL to parse.
      * @throws SQLException in case of parse errors.
      */
-    public SQLParser(final String sql) throws SQLException {
+    public SQLParser(final ParadoxConnection connection, final String sql) throws SQLException {
+        this.connection = connection;
         this.sql = sql;
         this.scanner = new Scanner(sql);
     }
@@ -153,7 +144,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseAsterisk(final SelectNode select) throws SQLException {
-        select.addField(new AsteriskNode());
+        select.addField(new AsteriskNode(connection));
         this.expect(TokenType.ASTERISK);
     }
 
@@ -169,7 +160,7 @@ public final class SQLParser {
         final FieldNode left = this.parseField();
         this.expect(TokenType.AND, "AND expected.");
         final FieldNode right = this.parseField();
-        return new BetweenNode(field, left, right);
+        return new BetweenNode(connection, field, left, right);
     }
 
     /**
@@ -192,7 +183,7 @@ public final class SQLParser {
             fieldAlias = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
         }
-        select.addField(new CharacterNode(fieldName, fieldAlias));
+        select.addField(new CharacterNode(connection, fieldName, fieldAlias));
     }
 
     /**
@@ -203,7 +194,7 @@ public final class SQLParser {
      */
     private SQLNode parseCondition() throws SQLException {
         if (this.token.getType() == TokenType.NOT) {
-            return new NOTNode(this.parseCondition());
+            return new NOTNode(connection, this.parseCondition());
         } else if (this.token.isOperator()) {
             return this.parseOperators();
         } else if (this.token.getType() == TokenType.LPAREN) {
@@ -244,7 +235,7 @@ public final class SQLParser {
     private EqualsNode parseEquals(final FieldNode field) throws SQLException {
         this.expect(TokenType.EQUALS);
         final FieldNode value = this.parseField();
-        return new EqualsNode(field, value);
+        return new EqualsNode(connection, field, value);
     }
 
     /**
@@ -258,7 +249,7 @@ public final class SQLParser {
         this.expect(TokenType.LPAREN, "Left parenthesis expected.");
         final SelectNode select = this.parseSelect();
         this.expect(TokenType.RPAREN, "Left parenthesis expected.");
-        return new ExistsNode(select);
+        return new ExistsNode(connection, select);
     }
 
     /**
@@ -280,7 +271,7 @@ public final class SQLParser {
             fieldName = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
         }
-        return new FieldNode(tableName, fieldName, fieldName);
+        return new FieldNode(connection, tableName, fieldName, fieldName);
     }
 
     /**
@@ -418,7 +409,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseIdentifier(final SelectNode select, final String tableName, final String fieldName)
-    throws SQLException {
+            throws SQLException {
         String fieldAlias = fieldName;
         String newTableName = tableName;
         String newFieldName = fieldName;
@@ -447,7 +438,7 @@ public final class SQLParser {
                 this.expect(TokenType.IDENTIFIER);
             }
         }
-        select.addField(new FieldNode(newTableName, newFieldName, fieldAlias));
+        select.addField(new FieldNode(connection, newTableName, newFieldName, fieldAlias));
     }
 
     /**
@@ -459,7 +450,7 @@ public final class SQLParser {
     private void parseJoin(final TableNode table) throws SQLException {
         while (this.scanner.hasNext() && (this.token.getType() != TokenType.COMMA)
                 && (this.token.getType() != TokenType.WHERE)) {
-            final JoinNode join = new JoinNode();
+            final JoinNode join = new JoinNode(connection);
 
             // Inner join
             if (this.token.getType() == TokenType.LEFT) {
@@ -504,7 +495,7 @@ public final class SQLParser {
 
         tableAlias = this.parseFields(tableAlias);
 
-        final TableNode table = new TableNode(tableName, tableAlias);
+        final TableNode table = new TableNode(connection, tableName, tableAlias);
         this.parseJoin(table);
 
         select.addTable(table);
@@ -520,7 +511,7 @@ public final class SQLParser {
     private LessThanNode parseLess(final FieldNode field) throws SQLException {
         this.expect(TokenType.LESS);
         final FieldNode value = this.parseField();
-        return new LessThanNode(field, value);
+        return new LessThanNode(connection, field, value);
     }
 
     /**
@@ -533,7 +524,7 @@ public final class SQLParser {
     private GreaterThanNode parseMore(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.MORE);
         final FieldNode value = this.parseField();
-        return new GreaterThanNode(firstField, value);
+        return new GreaterThanNode(connection, firstField, value);
     }
 
     /**
@@ -546,7 +537,7 @@ public final class SQLParser {
     private NotEqualsNode parseNotEquals(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.NOTEQUALS);
         final FieldNode value = this.parseField();
-        return new NotEqualsNode(firstField, value);
+        return new NotEqualsNode(connection, firstField, value);
     }
 
     /**
@@ -559,7 +550,7 @@ public final class SQLParser {
     private NotEqualsNode parseNotEqualsVariant(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.NOTEQUALS2);
         final FieldNode value = this.parseField();
-        return new NotEqualsNode(firstField, value);
+        return new NotEqualsNode(connection, firstField, value);
     }
 
     /**
@@ -583,7 +574,7 @@ public final class SQLParser {
             fieldAlias = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
         }
-        select.addField(new NumericNode(fieldName, fieldAlias));
+        select.addField(new NumericNode(connection, fieldName, fieldAlias));
     }
 
     /**
@@ -596,13 +587,13 @@ public final class SQLParser {
         switch (this.token.getType()) {
             case AND:
                 this.expect(TokenType.AND);
-                return new ANDNode(null);
+                return new ANDNode(connection, null);
             case OR:
                 this.expect(TokenType.OR);
-                return new ORNode(null);
+                return new ORNode(connection, null);
             case XOR:
                 this.expect(TokenType.XOR);
-                return new XORNode(null);
+                return new XORNode(connection, null);
             default:
                 throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL.getValue());
         }
@@ -615,7 +606,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private SelectNode parseSelect() throws SQLException {
-        final SelectNode select = new SelectNode();
+        final SelectNode select = new SelectNode(connection);
         this.expect(TokenType.SELECT);
 
         // Allowed only in the beginning of Select Statement

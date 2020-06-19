@@ -22,7 +22,6 @@ import com.googlecode.paradox.utils.filefilters.TableFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -81,7 +80,7 @@ public final class TableData extends ParadoxData {
     public static List<ParadoxTable> listTables(final File schema, final String pattern,
                                                 final ParadoxConnection connection) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
-        final File[] fileList = schema.listFiles(new TableFilter(Utils.removeDb(pattern)));
+        final File[] fileList = schema.listFiles(new TableFilter(Utils.removeDb(connection, pattern)));
         if (fileList != null) {
             Arrays.sort(fileList);
             for (final File file : fileList) {
@@ -156,7 +155,7 @@ public final class TableData extends ParadoxData {
      */
     private static void fixTablePositionByVersion(final ParadoxTable table, final ByteBuffer buffer,
                                                   final int fieldsSize) {
-        if (table.getVersionId() > 4) {
+        if (table.getVersionId() > Constants.PARADOX_VERSION_4) {
             if (table.getVersionId() == 0xC) {
                 buffer.position(0x78 + 261 + 4 + (6 * fieldsSize));
             } else {
@@ -209,7 +208,7 @@ public final class TableData extends ParadoxData {
             table.setVersionId(buffer.get());
 
             // Paradox version 4.x and up.
-            if (value == 0xFF00_FF00 && table.getVersionId() > 4) {
+            if (value == 0xFF00_FF00 && table.getVersionId() > Constants.PARADOX_VERSION_4) {
                 buffer.position(0x5c);
                 value = buffer.getInt();
             }
@@ -253,7 +252,7 @@ public final class TableData extends ParadoxData {
             throws SQLException {
         final List<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(loop + 1);
+            final ParadoxField field = new ParadoxField(table.getConnection(), loop + 1);
             field.setType(buffer.get());
             field.setSize(buffer.get() & 0xff);
             field.setTableName(table.getName());
@@ -316,16 +315,12 @@ public final class TableData extends ParadoxData {
         final List<FieldValue> row = new ArrayList<>();
 
         for (final ParadoxField field : table.getFields()) {
-            try {
-                final FieldValue fieldValue = FieldFactory.parse(table, buffer, field);
+            final FieldValue fieldValue = FieldFactory.parse(table, buffer, field);
 
-                // Field filter
-                if (fields.contains(field) && (fieldValue != null)) {
-                    fieldValue.setField(field);
-                    row.add(fieldValue);
-                }
-            } catch (BufferUnderflowException e) {
-                e.printStackTrace();
+            // Field filter
+            if (fields.contains(field) && (fieldValue != null)) {
+                fieldValue.setField(field);
+                row.add(fieldValue);
             }
         }
         return row;

@@ -10,7 +10,9 @@
  */
 package com.googlecode.paradox.parser.nodes.conditional;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+
 import java.util.Collections;
 
 /**
@@ -21,16 +23,16 @@ import java.util.Collections;
  * @since 1.1
  */
 public class ORNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
      *
-     * @param child
-     *            the child node.
+     * @param connection the Paradox connection.
+     * @param child      the child node.
      */
-    public ORNode(final SQLNode child) {
-        super("OR");
+    public ORNode(final ParadoxConnection connection, final SQLNode child) {
+        super(connection, "OR");
         this.setChildhood(Collections.singletonList(child));
     }
-    
+
 }

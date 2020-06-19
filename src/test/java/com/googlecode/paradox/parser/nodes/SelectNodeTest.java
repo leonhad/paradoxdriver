@@ -10,138 +10,171 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
 import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * Unit test for {@link SelectNode}.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class SelectNodeTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for condition list.
      */
     @Test
     public void testConditionList() {
-        final SelectNode node = new SelectNode();
+        final SelectNode node = new SelectNode(conn);
         Assert.assertEquals("List not empty.", 0, node.getConditions().size());
         node.setConditions(new ArrayList<SQLNode>());
         Assert.assertEquals(0, node.getConditions().size());
     }
-    
+
     /**
      * Test for distinct flag.
      */
     @Test
     public void testDistinctFlag() {
-        final SelectNode node = new SelectNode();
+        final SelectNode node = new SelectNode(conn);
         Assert.assertFalse(node.isDistinct());
         node.setDistinct(true);
         Assert.assertTrue(node.isDistinct());
     }
-    
+
     /**
      * Test for fields.
      */
     @Test
     public void testFields() {
-        final SelectNode node = new SelectNode();
-        final FieldNode field = new FieldNode("table", "field", null);
+        final SelectNode node = new SelectNode(conn);
+        final FieldNode field = new FieldNode(conn, "table", "field", null);
         Assert.assertEquals(0, node.getFields().size());
         node.addField(field);
         Assert.assertEquals(1, node.getFields().size());
     }
-    
+
     /**
      * Test for group by.
      */
     @Test
     public void testGroupBy() {
-        final SelectNode node = new SelectNode();
-        final IdentifierNode identifier = new IdentifierNode("Node");
+        final SelectNode node = new SelectNode(conn);
+        final IdentifierNode identifier = new IdentifierNode(conn, "Node");
         Assert.assertEquals(0, node.getGroups().size());
         node.addGroupBy(identifier);
         Assert.assertEquals(1, node.getGroups().size());
     }
-    
+
     /**
      * Test for order by.
      */
     @Test
     public void testOrderBy() {
-        final SelectNode node = new SelectNode();
-        final IdentifierNode identifier = new IdentifierNode("Node");
+        final SelectNode node = new SelectNode(conn);
+        final IdentifierNode identifier = new IdentifierNode(conn, "Node");
         Assert.assertEquals(0, node.getOrder().size());
         node.addOrderBy(identifier);
         Assert.assertEquals(1, node.getOrder().size());
     }
-    
+
     /**
      * Test for tables.
      */
     @Test
     public void testTables() {
-        final SelectNode node = new SelectNode();
-        final TableNode table = new TableNode("table", null);
+        final SelectNode node = new SelectNode(conn);
+        final TableNode table = new TableNode(conn, "table", null);
         Assert.assertEquals(0, node.getTables().size());
         node.addTable(table);
         Assert.assertEquals(1, node.getTables().size());
     }
-    
+
     /**
      * Test for {@link SelectNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final SelectNode node = new SelectNode();
-        node.addField(new FieldNode("t", "field", "f"));
-        node.addField(new FieldNode("b", "field2", "f2"));
-        node.addTable(new TableNode("table1", "t"));
-        node.addTable(new TableNode("table2", "b"));
-        node.addGroupBy(new IdentifierNode("f1"));
-        node.addGroupBy(new IdentifierNode("f2"));
-        node.addOrderBy(new IdentifierNode("f"));
-        node.addOrderBy(new IdentifierNode("f2"));
-        
+        final SelectNode node = new SelectNode(conn);
+        node.addField(new FieldNode(conn, "t", "field", "f"));
+        node.addField(new FieldNode(conn, "b", "field2", "f2"));
+        node.addTable(new TableNode(conn, "table1", "t"));
+        node.addTable(new TableNode(conn, "table2", "b"));
+        node.addGroupBy(new IdentifierNode(conn, "f1"));
+        node.addGroupBy(new IdentifierNode(conn, "f2"));
+        node.addOrderBy(new IdentifierNode(conn, "f"));
+        node.addOrderBy(new IdentifierNode(conn, "f2"));
+
         final ArrayList<SQLNode> conditions = new ArrayList<>();
-        conditions.add(new EqualsNode(new FieldNode("t", "field", null), new FieldNode("t", "field2", null)));
-        conditions.add(new NotEqualsNode(new FieldNode("t", "field", null), new FieldNode("t", "field2", null)));
+        conditions.add(new EqualsNode(conn, new FieldNode(conn, "t", "field", null), new FieldNode(conn, "t", "field2"
+                , null)));
+        conditions.add(new NotEqualsNode(conn, new FieldNode(conn, "t", "field", null), new FieldNode(conn, "t",
+                "field2", null)));
         node.setConditions(conditions);
-        
+
         Assert.assertEquals(
-                "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b WHERE t.field = t.field2 t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
+                "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b WHERE t.field = t.field2 t.field " +
+                        "<> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
                 node.toString());
     }
-    
+
     /**
      * Test for {@link SelectNode#toString()} method with empty where.
      */
     @SuppressWarnings("unchecked")
     @Test
     public void testToStringEmptyWhere() {
-        final SelectNode node = new SelectNode();
-        node.addField(new FieldNode("t", "field", "f"));
-        node.addField(new FieldNode("b", "field2", "f2"));
+        final SelectNode node = new SelectNode(conn);
+        node.addField(new FieldNode(conn, "t", "field", "f"));
+        node.addField(new FieldNode(conn, "b", "field2", "f2"));
         node.setConditions(Collections.EMPTY_LIST);
         Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
-    
+
     /**
      * Test for {@link SelectNode#toString()} method with fields.
      */
     @Test
     public void testToStringFields() {
-        final SelectNode node = new SelectNode();
-        node.addField(new FieldNode("t", "field", "f"));
-        node.addField(new FieldNode("b", "field2", "f2"));
+        final SelectNode node = new SelectNode(conn);
+        node.addField(new FieldNode(conn, "t", "field", "f"));
+        node.addField(new FieldNode(conn, "b", "field2", "f2"));
         Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 }

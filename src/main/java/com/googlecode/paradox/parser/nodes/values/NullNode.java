@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.parser.nodes.values;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
@@ -20,11 +21,13 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @since 1.1
  */
 public final class NullNode extends SQLNode {
-    
+
     /**
      * Create a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    public NullNode() {
-        super("NULL");
+    public NullNode(final ParadoxConnection connection) {
+        super(connection, "NULL");
     }
 }

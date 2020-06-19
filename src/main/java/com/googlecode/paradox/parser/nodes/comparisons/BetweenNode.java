@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.parser.nodes.comparisons;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 
 /**
@@ -20,27 +21,26 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparisonNode {
-    
+
     /**
      * The field node.
      */
     private final FieldNode field;
-    
+
     /**
      * Create a new instance.
      *
-     * @param first
-     *            the first node.
-     * @param field
-     *            the middle node.
-     * @param last
-     *            the last node.
+     * @param connection the Paradox connection.
+     * @param first      the first node.
+     * @param field      the middle node.
+     * @param last       the last node.
      */
-    public BetweenNode(final FieldNode field, final FieldNode first, final FieldNode last) {
-        super("BETWEEN", first, last);
+    public BetweenNode(final ParadoxConnection connection, final FieldNode field, final FieldNode first,
+                       final FieldNode last) {
+        super(connection, "BETWEEN", first, last);
         this.field = field;
     }
-    
+
     /**
      * Gets the field node.
      *
@@ -49,7 +49,7 @@ public final class BetweenNode extends AbstractComparisonNode {
     public FieldNode getField() {
         return this.field;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -57,5 +57,5 @@ public final class BetweenNode extends AbstractComparisonNode {
     public String toString() {
         return this.field + " BETWEEN " + this.getFirst() + " AND " + this.getLast();
     }
-    
+
 }

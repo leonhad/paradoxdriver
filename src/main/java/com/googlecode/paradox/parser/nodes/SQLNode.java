@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -21,45 +23,47 @@ import java.util.Collections;
  * @since 1.0
  */
 public class SQLNode {
-    
+
     /**
      * Node childhood.
      */
     private Collection<? extends SQLNode> childhood;
-    
+
     /**
      * The node alias.
      */
     protected String alias;
-    
+
     /**
      * The node name.
      */
     protected final String name;
-    
+
+    protected final ParadoxConnection connection;
+
     /**
      * Create a new instance.
      *
-     * @param name
-     *            the node name.
+     * @param connection the Paradox connection.
+     * @param name       the node name.
      */
-    protected SQLNode(final String name) {
+    protected SQLNode(final ParadoxConnection connection, final String name) {
+        this.connection = connection;
         this.name = name;
     }
-    
+
     /**
      * Create a new instance.
      *
-     * @param name
-     *            the node name.
-     * @param alias
-     *            the node alias.
+     * @param connection the Paradox connection.
+     * @param name       the node name.
+     * @param alias      the node alias.
      */
-    protected SQLNode(final String name, final String alias) {
-        this.name = name;
+    protected SQLNode(final ParadoxConnection connection, final String name, final String alias) {
+        this(connection, name);
         this.alias = alias;
     }
-    
+
     /**
      * Gets the node alias.
      *
@@ -68,7 +72,7 @@ public class SQLNode {
     public final String getAlias() {
         return this.alias;
     }
-    
+
     /**
      * Gets the childhood.
      *
@@ -78,7 +82,7 @@ public class SQLNode {
     public final Collection<SQLNode> getChildhood() {
         return (Collection<SQLNode>) this.childhood;
     }
-    
+
     /**
      * Gets the node name.
      *
@@ -87,22 +91,20 @@ public class SQLNode {
     public final String getName() {
         return this.name;
     }
-    
+
     /**
      * Sets the node alias.
      *
-     * @param alias
-     *            the alias name.
+     * @param alias the alias name.
      */
     public final void setAlias(final String alias) {
         this.alias = alias;
     }
-    
+
     /**
      * Sets the childhood.
      *
-     * @param childhood
-     *            the childhood.
+     * @param childhood the childhood.
      */
     public final void setChildhood(final Collection<? extends SQLNode> childhood) {
         this.childhood = Collections.unmodifiableCollection(childhood);

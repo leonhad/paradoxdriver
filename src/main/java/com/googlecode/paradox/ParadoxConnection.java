@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -84,6 +85,10 @@ public final class ParadoxConnection implements Connection {
      * Default charset.
      */
     private Charset charset;
+    /**
+     * Connection locale.
+     */
+    private Locale locale = Locale.getDefault();
 
     /**
      * Creates a new paradox connection.
@@ -103,6 +108,11 @@ public final class ParadoxConnection implements Connection {
         final String charsetName = info.getProperty(Driver.CHARSET_KEY);
         if (charsetName != null && !charsetName.trim().isEmpty()) {
             this.charset = Charset.forName(charsetName);
+        }
+
+        final String localeName = info.getProperty(Driver.LOCALE_KEY);
+        if (localeName != null && !localeName.trim().isEmpty()) {
+            this.locale = Locale.forLanguageTag(localeName);
         }
 
         // Is a schema.
@@ -609,6 +619,10 @@ public final class ParadoxConnection implements Connection {
      */
     public Charset getCharset() {
         return charset;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 
     /**
