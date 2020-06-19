@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.sql.*;
 
 /**
@@ -58,7 +58,7 @@ public class NumberFieldTest {
     @Test
     public void testParse() throws SQLException {
         final NumberField field = new NumberField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{
                 (byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0}
         );
         final FieldValue value = field.parse(null, buffer, null);

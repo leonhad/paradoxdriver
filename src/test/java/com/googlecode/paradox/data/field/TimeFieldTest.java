@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Calendar;
@@ -49,7 +49,7 @@ public class TimeFieldTest {
         final Time time = new Time(calendar.getTimeInMillis());
 
         final TimeField field = new TimeField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{0, 0, 0x75, 0x30});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, 0x75, 0x30});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Invalid time value.", time, value.getTime());
     }
@@ -62,7 +62,7 @@ public class TimeFieldTest {
     @Test
     public void testParseNull() throws SQLException {
         final TimeField field = new TimeField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{0, 0, 0, 0});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, 0, 0});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertNull("Invalid time value.", value.getTime());
     }

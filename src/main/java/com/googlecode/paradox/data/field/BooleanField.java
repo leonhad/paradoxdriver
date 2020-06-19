@@ -11,11 +11,11 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 
+import java.nio.ByteBuffer;
 import java.sql.Types;
 
 /**
@@ -39,7 +39,7 @@ public final class BooleanField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ParadoxBuffer buffer, final ParadoxField field) {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final byte v = buffer.get();
         if (v == 0) {
             return new FieldValue(Types.BOOLEAN);

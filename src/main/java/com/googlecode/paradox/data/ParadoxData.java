@@ -12,6 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,13 +60,21 @@ public class ParadoxData {
         // Unused.
     }
 
+    protected static void checkDBEncryption(final ByteBuffer buffer, final ParadoxDataFile dataFile, int blockSize,
+                                     long blockNumber) {
+        if (dataFile.isEncrypted()) {
+            byte[] b = buffer.array();
+            EncryptedData.decryptDBBlock(b, dataFile.getEncryptedData(), blockSize, blockNumber);
+        }
+    }
+
     /**
      * Parse and handle the version ID.
      *
      * @param buffer   the buffer to parse.
      * @param dataFile the paradox index.
      */
-    protected static void parseVersionID(final ParadoxBuffer buffer, final ParadoxDataFile dataFile) {
+    protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile) {
         if (dataFile.getVersionId() > ParadoxData.MINIMIUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);

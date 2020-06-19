@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 
 /**
@@ -44,12 +44,12 @@ public class LongFieldTest {
         final LongField field = new LongField();
 
         // Test positive values
-        ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00});
+        ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00});
         FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Invalid number value.", 256L, value.getNumber());
 
         // Test negative values
-        buffer = new ParadoxBuffer(new byte[]{(byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00});
+        buffer = ByteBuffer.wrap(new byte[]{(byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00});
         value = field.parse(null, buffer, null);
         Assert.assertEquals("Invalid number value.", -256L, value.getNumber());
     }

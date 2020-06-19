@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 
 /**
@@ -43,7 +43,7 @@ public class AutoIncrementFieldTest {
     @Test
     public void testParse() throws SQLException {
         final AutoIncrementField field = new AutoIncrementField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{0, 0, 1, 0});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, 1, 0});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Invalid number.", 256, value.getNumber());
     }

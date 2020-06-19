@@ -12,7 +12,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.BlobDescriptor;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -33,7 +32,7 @@ public abstract class AbstractLobField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ParadoxBuffer buffer, final ParadoxField field) {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final ByteBuffer value = ByteBuffer.allocate(field.getSize());
         Arrays.fill(value.array(), (byte) 0);
 

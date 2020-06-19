@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 
 /**
@@ -42,7 +42,7 @@ public class BooleanFieldTest {
     @Test
     public void testParseFalse() throws SQLException {
         final BooleanField field = new BooleanField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{-128});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{-128});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertFalse("Invalid boolean value.", value.getBoolean());
     }
@@ -55,7 +55,7 @@ public class BooleanFieldTest {
     @Test
     public void testParseNull() throws SQLException {
         final BooleanField field = new BooleanField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{0});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertNull("Invalid boolean value.", value.getBoolean());
     }
@@ -68,7 +68,7 @@ public class BooleanFieldTest {
     @Test
     public void testParseTrue() throws SQLException {
         final BooleanField field = new BooleanField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{-127});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{-127});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertTrue("Invalid boolean value.", value.getBoolean());
     }

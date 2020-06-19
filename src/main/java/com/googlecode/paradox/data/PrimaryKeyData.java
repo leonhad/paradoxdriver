@@ -19,6 +19,7 @@ import com.googlecode.paradox.utils.filefilters.PrimaryKeyFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
@@ -72,12 +73,12 @@ public final class PrimaryKeyData extends ParadoxData {
      * @throws IOException in case of I/O exceptions.
      */
     private static ParadoxPK loadPKHeader(final File file, final ParadoxConnection connection) throws IOException {
-        final ParadoxBuffer buffer = new ParadoxBuffer(Constants.MAX_BUFFER_SIZE);
+        final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ParadoxPK pk = new ParadoxPK(connection);
 
         try (final FileInputStream fs = new FileInputStream(file); final FileChannel channel = fs.getChannel()) {
-            buffer.read(channel);
+            channel.read(buffer);
             buffer.flip();
 
             pk.setName(file.getName());

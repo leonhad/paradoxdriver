@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
@@ -18,6 +17,7 @@ import com.googlecode.paradox.results.ParadoxFieldType;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
@@ -51,7 +51,7 @@ public class VarcharFieldTest {
         paradoxField.setType(ParadoxFieldType.VARCHAR.getType());
         paradoxField.setSize("test".length());
         final VarcharField field = new VarcharField();
-        final ParadoxBuffer buffer = new ParadoxBuffer("test".getBytes(table.getCharset()));
+        final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));
         final FieldValue value = field.parse(table, buffer, paradoxField);
         Assert.assertEquals("Value not equals.", "test", value.getValue());
     }

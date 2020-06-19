@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
@@ -43,7 +42,7 @@ public final class TimeField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ParadoxBuffer buffer, final ParadoxField field) {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final int a1 = buffer.get() & 0xFF;
         final int a2 = buffer.get() & 0xFF;
         final int a3 = buffer.get() & 0xFF;

@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 
 /**
@@ -42,7 +42,7 @@ public class DateFieldTest {
     @Test
     public void testParse() throws SQLException {
         final DateField field = new DateField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x8D, (byte) 0x40});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x8D, (byte) 0x40});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Invalid date value.", "0100-01-01", value.getDate().toString());
     }
@@ -55,7 +55,7 @@ public class DateFieldTest {
     @Test
     public void testParse2() throws SQLException {
         final DateField field = new DateField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{(byte) 0x00, (byte) 0x0B, (byte) 0x1E, (byte) 0xCF});
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x00, (byte) 0x0B, (byte) 0x1E, (byte) 0xCF});
         final FieldValue value = field.parse(null, buffer, null);
         Assert.assertEquals("Invalid date value.", "1996-05-04", value.getDate().toString());
     }

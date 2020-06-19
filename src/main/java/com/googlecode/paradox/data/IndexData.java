@@ -82,14 +82,14 @@ public final class IndexData extends ParadoxData {
      */
     private static ParadoxIndex loadIndexHeader(final File file, final ParadoxConnection connection) throws IOException,
             SQLException {
-        final ParadoxBuffer buffer = new ParadoxBuffer(Constants.MAX_BUFFER_SIZE);
+        final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connection);
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
-            buffer.read(channel);
+            channel.read(buffer);
             buffer.flip();
 
             index.setRecordSize(buffer.getShort());
@@ -118,7 +118,6 @@ public final class IndexData extends ParadoxData {
             index.setReferentialIntegrity(buffer.get());
 
             parseVersionID(buffer, index);
-
             parseFields(buffer, index);
 
             IndexData.parseSortID(buffer, index);
@@ -133,7 +132,7 @@ public final class IndexData extends ParadoxData {
      * @param buffer the buffer to parse.
      * @param index  the paradox index.
      */
-    private static void parseIndexName(final ParadoxBuffer buffer, final ParadoxIndex index) {
+    private static void parseIndexName(final ByteBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer name = ByteBuffer.allocate(26);
         while (true) {
             final byte c = buffer.get();
@@ -157,7 +156,7 @@ public final class IndexData extends ParadoxData {
      * @param index  the paradox index.
      * @throws SQLException in case of parse errors.
      */
-    private static void parseFields(final ParadoxBuffer buffer, final ParadoxDataFile index) throws SQLException {
+    private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(loop + 1);
@@ -204,7 +203,7 @@ public final class IndexData extends ParadoxData {
      * @param buffer the buffer to parse.
      * @param index  the paradox index.
      */
-    private static void parseSortID(final ParadoxBuffer buffer, final ParadoxIndex index) {
+    private static void parseSortID(final ByteBuffer buffer, final ParadoxIndex index) {
         final ByteBuffer sortOrderID = ByteBuffer.allocate(26);
         while (true) {
             final byte c = buffer.get();

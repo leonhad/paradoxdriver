@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 
 /**
@@ -42,6 +43,6 @@ public interface FieldParser {
      * @return the parsed value.
      * @throws SQLException in case of parse errors.
      */
-    FieldValue parse(final ParadoxTable table, final ParadoxBuffer buffer, final ParadoxField field)
+    FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException;
 }

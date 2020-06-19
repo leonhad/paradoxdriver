@@ -11,10 +11,10 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -41,7 +41,7 @@ public final class TimestampField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ParadoxBuffer buffer, final ParadoxField field) {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long rawValue = buffer.getLong();
         if ((rawValue >>> 63) == 1) {
             rawValue &= 0x7FFF_FFFF_FFFF_FFFFL;

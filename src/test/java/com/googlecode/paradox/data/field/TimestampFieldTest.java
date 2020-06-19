@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.ParadoxBuffer;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -48,7 +48,7 @@ public class TimestampFieldTest {
         final Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
 
         final TimestampField field = new TimestampField();
-        final ParadoxBuffer buffer = new ParadoxBuffer(new byte[]{
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{
                 (byte) 0xC2, (byte) 0xCC, (byte) 0xE2, (byte) 0xD0,
                 (byte) 0x99, (byte) 0x2A, (byte) 0xBC, (byte) 0x0F
         });
