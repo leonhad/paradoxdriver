@@ -57,15 +57,7 @@ public class ProcedureASTest {
      */
     @Test
     public void testAllProcedures() {
-        Assert.assertEquals(5, new ProcedureAS(conn).list().size());
-    }
-
-    /**
-     * Test instance.
-     */
-    @Test
-    public void testInstance() {
-        Assert.assertNotNull(new ProcedureAS(conn));
+        Assert.assertEquals("Invalid procedures list ize.", 5, new ProcedureAS(conn).list().size());
     }
 
     /**
@@ -73,7 +65,7 @@ public class ProcedureASTest {
      */
     @Test
     public void testInvalidProcedure() {
-        Assert.assertNull(new ProcedureAS(conn).get("INVALID"));
+        Assert.assertNull("Invalid procedure get.", new ProcedureAS(conn).get("INVALID"));
     }
 
     /**
