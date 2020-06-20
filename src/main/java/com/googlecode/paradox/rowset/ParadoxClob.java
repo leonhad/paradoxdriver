@@ -22,7 +22,7 @@ import java.sql.SQLException;
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @version 1.2
+ * @version 1.3
  * @since 1.2
  */
 public final class ParadoxClob implements Clob {
@@ -65,7 +65,7 @@ public final class ParadoxClob implements Clob {
         // If MB_Offset = 0 then the entire blob is contained in the leader.
         if (descriptor.getOffset() == 0) {
             if (descriptor.getLeader() != null) {
-                this.value = descriptor.getLeaderAsStr().getBytes();
+                this.value = descriptor.getLeaderAsStr().getBytes(descriptor.getCharset());
                 this.length = this.value.length;
             }
             this.parsed = true;

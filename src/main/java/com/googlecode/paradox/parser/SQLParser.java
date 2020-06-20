@@ -29,7 +29,7 @@ import java.util.List;
  * Parses a SQL statement.
  *
  * @author Leonardo Alves da Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class SQLParser {
@@ -61,7 +61,7 @@ public final class SQLParser {
     public SQLParser(final ParadoxConnection connection, final String sql) throws SQLException {
         this.connection = connection;
         this.sql = sql;
-        this.scanner = new Scanner(sql);
+        this.scanner = new Scanner(connection, sql);
     }
 
     /**

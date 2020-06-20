@@ -27,7 +27,7 @@ import java.sql.SQLException;
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
  * @author Michael Berry
- * @version 1.1
+ * @version 1.2
  * @since 1.2
  */
 public final class ClobDescriptor extends BlobDescriptor {

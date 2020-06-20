@@ -10,18 +10,18 @@
  */
 package com.googlecode.paradox.parser;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.SQLStates;
 
 import java.nio.CharBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * SQL Scanner (read tokens from SQL String).
  *
  * @author Leonardo Alves da Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public class Scanner {
@@ -51,16 +51,20 @@ public class Scanner {
      */
     private final StringBuilder value = new StringBuilder(299);
 
+    private final ParadoxConnection connection;
+
     /**
      * Creates a new instance.
      *
-     * @param buffer the buffer to read of.
+     * @param connection the paradox connection.
+     * @param buffer     the buffer to read of.
      * @throws SQLException in case of parse errors.
      */
-    Scanner(final String buffer) throws SQLException {
+    Scanner(final ParadoxConnection connection, final String buffer) throws SQLException {
         if (buffer == null) {
             throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL.getValue());
         }
+        this.connection = connection;
         this.buffer = CharBuffer.wrap(buffer.trim());
     }
 
@@ -82,11 +86,11 @@ public class Scanner {
      * @param value to convert.
      * @return a new {@link Token}.
      */
-    private static Token getToken(final String value) {
+    private Token getToken(final String value) {
         if (value.isEmpty()) {
             return null;
         }
-        final TokenType token = TokenType.get(value.toUpperCase(Locale.US));
+        final TokenType token = TokenType.get(value.toUpperCase(connection.getLocale()));
         if (token != null) {
             return new Token(token, value);
         }
@@ -279,7 +283,7 @@ public class Scanner {
         } else if (Character.isDigit(this.value.charAt(0))) {
             return new Token(TokenType.NUMERIC, this.value.toString());
         }
-        return Scanner.getToken(this.value.toString());
+        return getToken(this.value.toString());
     }
 
     /**

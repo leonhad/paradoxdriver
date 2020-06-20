@@ -28,7 +28,7 @@ import java.util.Properties;
  * Unit test for {@link ParadoxClob} class.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class ParadoxClobTest {
