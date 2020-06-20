@@ -18,8 +18,6 @@ import com.googlecode.paradox.utils.SQLStates;
 
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Handles field parsers.
@@ -33,22 +31,19 @@ public final class FieldFactory {
     /**
      * Stores all available parsers.
      */
-    private static final List<FieldParser> ALL_PARSES = new ArrayList<>();
-
-    // Initialize the parsers.
-    static {
-        FieldFactory.ALL_PARSES.add(new AutoIncrementField());
-        FieldFactory.ALL_PARSES.add(new BooleanField());
-        FieldFactory.ALL_PARSES.add(new BlobField());
-        FieldFactory.ALL_PARSES.add(new DateField());
-        FieldFactory.ALL_PARSES.add(new IntegerField());
-        FieldFactory.ALL_PARSES.add(new LongField());
-        FieldFactory.ALL_PARSES.add(new MemoField());
-        FieldFactory.ALL_PARSES.add(new NumberField());
-        FieldFactory.ALL_PARSES.add(new TimeField());
-        FieldFactory.ALL_PARSES.add(new TimestampField());
-        FieldFactory.ALL_PARSES.add(new VarcharField());
-    }
+    private static final FieldParser[] ALL_PARSES = {
+            new AutoIncrementField(),
+            new BooleanField(),
+            new BlobField(),
+            new DateField(),
+            new IntegerField(),
+            new LongField(),
+            new MemoField(),
+            new NumberField(),
+            new TimeField(),
+            new TimestampField(),
+            new VarcharField()
+    };
 
     /**
      * Utility class.
@@ -68,7 +63,7 @@ public final class FieldFactory {
      */
     public static FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException {
-        for (final FieldParser parser : FieldFactory.ALL_PARSES) {
+        for (final FieldParser parser : ALL_PARSES) {
             if (parser.match(field.getType())) {
                 return parser.parse(table, buffer, field);
             }

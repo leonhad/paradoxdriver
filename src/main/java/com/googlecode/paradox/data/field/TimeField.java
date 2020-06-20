@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
 import java.sql.Time;
@@ -30,14 +31,12 @@ import java.util.GregorianCalendar;
  */
 public final class TimeField implements FieldParser {
 
-    private static final int TIME_TYPE = 0x14;
-
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == TIME_TYPE;
+        return type == ParadoxFieldType.TIME.getType();
     }
 
     /**

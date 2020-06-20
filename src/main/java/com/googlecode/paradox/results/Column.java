@@ -372,9 +372,9 @@ public final class Column {
     public void setType(final int type) {
         this.type = type;
 
-        if (type == ParadoxFieldType.NUMERIC.getType()) {
+        if (type == ParadoxFieldType.NUMBER.getType()) {
             this.scale = 2;
-        } else if (type == ParadoxFieldType.DOUBLE.getType()) {
+        } else if (type == ParadoxFieldType.CURRENCY.getType()) {
             this.currency = true;
             this.precision = 9;
         } else if (type == ParadoxFieldType.AUTO_INCREMENT.getType()) {

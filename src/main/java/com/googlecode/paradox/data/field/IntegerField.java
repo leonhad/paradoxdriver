@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
 import java.sql.Types;
@@ -27,14 +28,12 @@ import java.sql.Types;
  */
 public final class IntegerField implements FieldParser {
 
-    private static final int INTEGER_TYPE = 3;
-
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean match(final int type) {
-        return type == INTEGER_TYPE;
+        return type == ParadoxFieldType.INTEGER.getType();
     }
 
     /**

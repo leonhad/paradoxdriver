@@ -12,6 +12,8 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.field.AutoIncrementField;
+import com.googlecode.paradox.results.ParadoxFieldType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -57,8 +59,8 @@ public class ParadoxFieldTest {
     @Test
     public void testAutoIncrement() {
         final ParadoxField field = new ParadoxField(conn);
-        field.setType((byte) 0x16);
-        Assert.assertTrue(field.isAutoIncrement());
+        field.setType(ParadoxFieldType.AUTO_INCREMENT.getType());
+        Assert.assertTrue("Invalid autoincrement type.", field.isAutoIncrement());
     }
 
     /**
@@ -67,7 +69,7 @@ public class ParadoxFieldTest {
     @Test
     public void testDefaultOrder() {
         final ParadoxField field = new ParadoxField(conn);
-        Assert.assertEquals(1, field.getOrderNum());
+        Assert.assertEquals("Invalid field order.", 1, field.getOrderNum());
     }
 
     /**
@@ -77,7 +79,7 @@ public class ParadoxFieldTest {
     public void testEmptyAlias() {
         final ParadoxField field = new ParadoxField(conn);
         field.setName("Field");
-        Assert.assertEquals("Field", field.getAlias());
+        Assert.assertEquals("Invalid field alias.", "Field", field.getAlias());
     }
 
     /**
@@ -127,12 +129,12 @@ public class ParadoxFieldTest {
         field.setTableName("tableName");
         field.setTable(null);
 
-        Assert.assertEquals("alias", field.getAlias());
+        Assert.assertEquals("Invalid field alias.", "alias", field.getAlias());
         Assert.assertFalse("Field is not checked.", field.isChecked());
-        Assert.assertEquals("expression", field.getExpression());
-        Assert.assertEquals("joinName", field.getJoinName());
-        Assert.assertEquals("name", field.getName());
-        Assert.assertEquals("tableName", field.getTableName());
+        Assert.assertEquals("Invalid field expression.", "expression", field.getExpression());
+        Assert.assertEquals("Invalid field join name.", "joinName", field.getJoinName());
+        Assert.assertEquals("Invalid field name.", "name", field.getName());
+        Assert.assertEquals("Invalid field table name.", "tableName", field.getTableName());
         Assert.assertNull("Invalid table", field.getTable());
     }
 
@@ -143,17 +145,7 @@ public class ParadoxFieldTest {
     public void testHashCode() {
         final ParadoxField field = new ParadoxField(conn);
         field.setName("Field");
-        Assert.assertEquals((7 * 17) + "Field".hashCode(), field.hashCode());
-    }
-
-    /**
-     * Test for {@link ParadoxField#hashCode()} method variant.
-     */
-    @Test
-    public void testHashCodeVariant() {
-        final ParadoxField field = new ParadoxField(conn);
-        field.setName(null);
-        Assert.assertEquals(7 * 17, field.hashCode());
+        Assert.assertNotEquals("Invalid hash code.", 0, field.hashCode());
     }
 
     /**
@@ -163,7 +155,7 @@ public class ParadoxFieldTest {
     public void testNotAutoIncrement() {
         final ParadoxField field = new ParadoxField(conn);
         field.setType((byte) 1);
-        Assert.assertFalse(field.isAutoIncrement());
+        Assert.assertFalse("Invalido autoincrement type.", field.isAutoIncrement());
     }
 
     /**
@@ -246,6 +238,6 @@ public class ParadoxFieldTest {
     public void testToString() {
         final ParadoxField first = new ParadoxField(conn);
         first.setName("Field");
-        Assert.assertEquals("Field", first.toString());
+        Assert.assertEquals("Invalid field name.", "Field", first.toString());
     }
 }

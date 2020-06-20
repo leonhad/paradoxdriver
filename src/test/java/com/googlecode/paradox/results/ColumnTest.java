@@ -60,7 +60,7 @@ public class ColumnTest {
     public void testAutoincrement() {
         final Column column = new Column(new ParadoxField(conn));
         column.setAutoIncrement(true);
-        Assert.assertTrue(column.isAutoIncrement());
+        Assert.assertTrue("Invalid field type.", column.isAutoIncrement());
     }
 
     /**
@@ -70,8 +70,8 @@ public class ColumnTest {
     public void testAutoIncrementType() {
         final Column column = new Column(new ParadoxField(conn));
         column.setType(ParadoxFieldType.AUTO_INCREMENT.getType());
-        Assert.assertEquals(9d, column.getPrecision(), 0);
-        Assert.assertTrue(column.isAutoIncrement());
+        Assert.assertEquals("Invalid field value.", 9d, column.getPrecision(), 0);
+        Assert.assertTrue("Invalid field type.", column.isAutoIncrement());
     }
 
     /**
@@ -81,7 +81,7 @@ public class ColumnTest {
     public void testCurrency() {
         final Column column = new Column(new ParadoxField(conn));
         column.setCurrency(true);
-        Assert.assertTrue(column.isCurrency());
+        Assert.assertTrue("Invalid field type.", column.isCurrency());
     }
 
     /**
@@ -90,9 +90,9 @@ public class ColumnTest {
     @Test
     public void testDoubleType() {
         final Column column = new Column(new ParadoxField(conn));
-        column.setType(ParadoxFieldType.DOUBLE.getType());
-        Assert.assertEquals(9d, column.getPrecision(), 0);
-        Assert.assertTrue(column.isCurrency());
+        column.setType(ParadoxFieldType.CURRENCY.getType());
+        Assert.assertEquals("Invalid field value.", 9d, column.getPrecision(), 0);
+        Assert.assertTrue("Invalid field type.", column.isCurrency());
     }
 
     /**
@@ -105,7 +105,7 @@ public class ColumnTest {
         field.setName("field");
         final Column column = new Column(new ParadoxField(conn));
         column.setField(field);
-        Assert.assertEquals(field, column.getField());
+        Assert.assertEquals("Invalid field.", field, column.getField());
     }
 
     /**
@@ -115,7 +115,7 @@ public class ColumnTest {
     public void testIndex() {
         final Column column = new Column(new ParadoxField(conn));
         column.setIndex(1);
-        Assert.assertEquals(1, column.getIndex());
+        Assert.assertEquals("Invalid field type.", 1, column.getIndex());
     }
 
     /**
@@ -127,9 +127,9 @@ public class ColumnTest {
         field.setType(ParadoxFieldType.INTEGER.getType());
         field.setName("field");
         final Column column = new Column(field);
-        Assert.assertEquals(field, column.getField());
-        Assert.assertEquals("field", column.getName());
-        Assert.assertEquals(ParadoxFieldType.INTEGER.getType(), column.getType());
+        Assert.assertEquals("Invalid field.", field, column.getField());
+        Assert.assertEquals("Invalid field name.", "field", column.getName());
+        Assert.assertEquals("Invalid field type.", ParadoxFieldType.INTEGER.getType(), column.getType());
     }
 
     /**
@@ -138,8 +138,8 @@ public class ColumnTest {
     @Test
     public void testInstanceWithValues() {
         final Column column = new Column("field", ParadoxFieldType.INTEGER.getType());
-        Assert.assertEquals("field", column.getName());
-        Assert.assertEquals(ParadoxFieldType.INTEGER.getType(), column.getType());
+        Assert.assertEquals("Invalid field name.", "field", column.getName());
+        Assert.assertEquals("Invalid field type.", ParadoxFieldType.INTEGER.getType(), column.getType());
     }
 
     /**
@@ -149,7 +149,7 @@ public class ColumnTest {
     public void testName() {
         final Column column = new Column(new ParadoxField(conn));
         column.setName("name");
-        Assert.assertEquals("name", column.getName());
+        Assert.assertEquals("Invalid field name.", "name", column.getName());
     }
 
     /**
@@ -159,7 +159,7 @@ public class ColumnTest {
     public void testNullable() {
         final Column column = new Column(new ParadoxField(conn));
         column.setNullable(true);
-        Assert.assertTrue(column.isNullable());
+        Assert.assertTrue("Invalid field nullable.", column.isNullable());
     }
 
     /**
@@ -168,8 +168,8 @@ public class ColumnTest {
     @Test
     public void testNumericType() {
         final Column column = new Column(new ParadoxField(conn));
-        column.setType(ParadoxFieldType.NUMERIC.getType());
-        Assert.assertEquals(2d, column.getScale(), 0);
+        column.setType(ParadoxFieldType.NUMBER.getType());
+        Assert.assertEquals("Invalid field value.", 2d, column.getScale(), 0);
     }
 
     /**
@@ -179,7 +179,7 @@ public class ColumnTest {
     public void testPrecision() {
         final Column column = new Column(new ParadoxField(conn));
         column.setPrecision(1);
-        Assert.assertEquals(1, column.getPrecision());
+        Assert.assertEquals("Invalid field precision.", 1, column.getPrecision());
     }
 
     /**
@@ -189,7 +189,7 @@ public class ColumnTest {
     public void testReadOnly() {
         final Column column = new Column(new ParadoxField(conn));
         column.setReadOnly(true);
-        Assert.assertTrue(column.isReadOnly());
+        Assert.assertTrue("Invalid field readonly.", column.isReadOnly());
     }
 
     /**
@@ -199,7 +199,7 @@ public class ColumnTest {
     public void testScale() {
         final Column column = new Column(new ParadoxField(conn));
         column.setScale(1);
-        Assert.assertEquals(1, column.getScale());
+        Assert.assertEquals("Invalid field scale.", 1, column.getScale());
     }
 
     /**
@@ -209,7 +209,7 @@ public class ColumnTest {
     public void testSearchable() {
         final Column column = new Column(new ParadoxField(conn));
         column.setSearchable(true);
-        Assert.assertTrue(column.isSearchable());
+        Assert.assertTrue("Invalid field searchable.", column.isSearchable());
     }
 
     /**
@@ -219,7 +219,7 @@ public class ColumnTest {
     public void testSigned() {
         final Column column = new Column(new ParadoxField(conn));
         column.setSigned(true);
-        Assert.assertTrue(column.isSigned());
+        Assert.assertTrue("Invalid field signed.", column.isSigned());
     }
 
     /**
@@ -229,7 +229,7 @@ public class ColumnTest {
     public void testTableName() {
         final Column column = new Column(new ParadoxField(conn));
         column.setTableName("name");
-        Assert.assertEquals("name", column.getTableName());
+        Assert.assertEquals("Invalid field table name.", "name", column.getTableName());
     }
 
     /**
@@ -239,7 +239,7 @@ public class ColumnTest {
     public void testType() {
         final Column column = new Column(new ParadoxField(conn));
         column.setType(1);
-        Assert.assertEquals(1, column.getType());
+        Assert.assertEquals("Invalid field type.", 1, column.getType());
     }
 
     /**
@@ -249,7 +249,8 @@ public class ColumnTest {
      */
     @Test
     public void testTypeName() throws SQLException {
-        Assert.assertEquals(TypeName.BOOLEAN.getName(), Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
+        Assert.assertEquals("Invalid field type name.", TypeName.BOOLEAN.getName(),
+                Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
     }
 
     /**
@@ -259,6 +260,6 @@ public class ColumnTest {
     public void testWritable() {
         final Column column = new Column(new ParadoxField(conn));
         column.setWritable(true);
-        Assert.assertTrue(column.isWritable());
+        Assert.assertTrue("Invalid field writable.", column.isWritable());
     }
 }

@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
@@ -27,7 +28,6 @@ import java.util.Date;
  */
 public final class TimestampField implements FieldParser {
 
-    private static final int TIMESTAMP_TYPE = 0x15;
     private static final long MILLIS_UNTIL_1970 = 62_135_683_200_000L;
 
     /**
@@ -35,7 +35,7 @@ public final class TimestampField implements FieldParser {
      */
     @Override
     public boolean match(final int type) {
-        return type == TIMESTAMP_TYPE;
+        return type == ParadoxFieldType.TIMESTAMP.getType();
     }
 
     /**

@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.utils.DateUtils;
 
 import java.nio.ByteBuffer;
@@ -29,14 +30,12 @@ import java.sql.Types;
  */
 public final class DateField implements FieldParser {
 
-    private static final int DATE_TYPE = 2;
-
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == DATE_TYPE;
+        return type == ParadoxFieldType.DATE.getType();
     }
 
     /**

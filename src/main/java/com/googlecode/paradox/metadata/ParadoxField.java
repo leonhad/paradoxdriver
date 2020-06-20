@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.field.AutoIncrementField;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
@@ -26,6 +27,8 @@ import java.util.Objects;
  * @since 1.0
  */
 public final class ParadoxField {
+
+    private static final int BLOB_SIZE_PADDING = 10;
 
     /**
      * Stores the field alias.
@@ -102,21 +105,6 @@ public final class ParadoxField {
     public ParadoxField(final ParadoxConnection connection, final int orderNum) {
         this.connection = connection;
         this.orderNum = orderNum;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        final ParadoxField other = (ParadoxField) obj;
-        return Objects.equals(this.name, other.name);
     }
 
     /**
@@ -218,15 +206,6 @@ public final class ParadoxField {
     }
 
     /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public int hashCode() {
-        final int hash = 7;
-        return (17 * hash) + ((this.name != null) ? this.name.hashCode() : 0);
-    }
-
-    /**
      * Gets field checked status.
      *
      * @return true if this field is checked.
@@ -290,7 +269,7 @@ public final class ParadoxField {
         this.physicsSize = size;
         int sqlType = this.getSqlType();
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
-            this.size = size - 10;
+            this.size = size - BLOB_SIZE_PADDING;
         } else {
             this.size = size;
         }
@@ -356,6 +335,34 @@ public final class ParadoxField {
      * @return true if this field is auto increment.
      */
     boolean isAutoIncrement() {
-        return this.type == 0x16;
+        return this.type == ParadoxFieldType.AUTO_INCREMENT.getType();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ParadoxField that = (ParadoxField) o;
+        return checked == that.checked &&
+                orderNum == that.orderNum &&
+                physicsSize == that.physicsSize &&
+                size == that.size &&
+                type == that.type &&
+                Objects.equals(alias, that.alias) &&
+                Objects.equals(expression, that.expression) &&
+                Objects.equals(joinName, that.joinName) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(table, that.table) &&
+                Objects.equals(tableName, that.tableName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(alias, checked, expression, joinName, name, orderNum, physicsSize, size, table, tableName
+                , type);
     }
 }

@@ -13,6 +13,7 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.data.table.value.BlobDescriptor;
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.sql.Types;
 
@@ -25,14 +26,12 @@ import java.sql.Types;
  */
 public final class MemoField extends AbstractLobField {
 
-    private static final int MEMO_TYPE = 0xC;
-
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == MEMO_TYPE;
+        return type == ParadoxFieldType.MEMO.getType();
     }
 
     /**

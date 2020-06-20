@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
 import java.sql.Types;
@@ -27,14 +28,12 @@ import java.sql.Types;
  */
 public final class LongField implements FieldParser {
 
-    private static final int LONG_TYPE = 4;
-
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean match(final int type) {
-        return type == LONG_TYPE;
+        return type == ParadoxFieldType.LONG.getType();
     }
 
     /**

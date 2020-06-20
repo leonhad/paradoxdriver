@@ -14,6 +14,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
 import java.sql.Types;
@@ -27,7 +28,6 @@ import java.sql.Types;
  */
 public final class BooleanField implements FieldParser {
 
-    private static final int BOOLEAN_TYPE = 9;
     private static final int TRUE_VALUE = -127;
     private static final int FALSE_VALUE = -128;
 
@@ -40,7 +40,7 @@ public final class BooleanField implements FieldParser {
      */
     @Override
     public boolean match(final int type) {
-        return type == BOOLEAN_TYPE;
+        return type == ParadoxFieldType.BOOLEAN.getType();
     }
 
     /**
