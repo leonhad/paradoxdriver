@@ -19,6 +19,7 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 import com.googlecode.paradox.procedures.ProcedureAS;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
@@ -879,8 +880,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             Arrays.sort(schemas);
             for (final File schema : schemas) {
                 final ArrayList<FieldValue> row = new ArrayList<>();
-                row.add(new FieldValue(schema.getName().toLowerCase(), Types.VARCHAR));
-                row.add(new FieldValue(catalog.getName().toLowerCase(), Types.VARCHAR));
+                row.add(new FieldValue(schema.getName().toLowerCase(conn.getLocale()), Types.VARCHAR));
+                row.add(new FieldValue(catalog.getName().toLowerCase(conn.getLocale()), Types.VARCHAR));
                 values.add(row);
             }
         }
@@ -1847,7 +1848,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(new FieldValue(field.getSize(), Types.INTEGER));
             row.add(new FieldValue(ParadoxDatabaseMetaData.MAX_INT_SIZE, Types.INTEGER));
 
-            if ((field.getType() == 5) || (field.getType() == 6)) {
+            if ((field.getType() == ParadoxFieldType.CURRENCY.getType())
+                    || (field.getType() == ParadoxFieldType.NUMBER.getType())) {
                 row.add(new FieldValue(2, Types.INTEGER));
             } else {
                 row.add(new FieldValue(0, Types.INTEGER));

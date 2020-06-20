@@ -12,7 +12,6 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.field.AutoIncrementField;
 import com.googlecode.paradox.results.ParadoxFieldType;
 import org.junit.AfterClass;
 import org.junit.Assert;
