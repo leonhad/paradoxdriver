@@ -27,12 +27,20 @@ import java.sql.Types;
  */
 public final class BooleanField implements FieldParser {
 
+    private static final int BOOLEAN_TYPE = 9;
+    private static final int TRUE_VALUE = -127;
+    private static final int FALSE_VALUE = -128;
+
+    private static final FieldValue NULL = new FieldValue(Types.BOOLEAN);
+    private static final FieldValue TRUE = new FieldValue(Boolean.TRUE, Types.BOOLEAN);
+    private static final FieldValue FALSE = new FieldValue(Boolean.FALSE, Types.BOOLEAN);
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == 9;
+        return type == BOOLEAN_TYPE;
     }
 
     /**
@@ -41,15 +49,14 @@ public final class BooleanField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final byte v = buffer.get();
-        if (v == 0) {
-            return new FieldValue(Types.BOOLEAN);
-        } else if (v == -127) {
-            return new FieldValue(Boolean.TRUE, Types.BOOLEAN);
-        } else if (v == -128) {
-            return new FieldValue(Boolean.FALSE, Types.BOOLEAN);
-        } else {
-            return new FieldValue(Types.BOOLEAN);
+        FieldValue ret = NULL;
+        if (v == TRUE_VALUE) {
+            ret = TRUE;
+        } else if (v == FALSE_VALUE) {
+            ret = FALSE;
         }
+
+        return ret;
     }
 
 }

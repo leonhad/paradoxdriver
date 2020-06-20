@@ -27,12 +27,14 @@ import java.sql.Types;
  */
 public final class LongField implements FieldParser {
 
+    private static final int LONG_TYPE = 4;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean match(final int type) {
-        return type == 4;
+        return type == LONG_TYPE;
     }
 
     /**

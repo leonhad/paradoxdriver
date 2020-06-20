@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Read view files (structure).
@@ -42,6 +43,8 @@ public final class ViewData {
      * Default charset.
      */
     private static final Charset CHARSET = StandardCharsets.ISO_8859_1;
+
+    private static final Pattern PATTERN_COL = Pattern.compile("->");
 
     /**
      * Utility class.
@@ -370,10 +373,10 @@ public final class ViewData {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         final String[] cols = line.toString().split(",");
         for (final String col : cols) {
-            final String[] i = col.split("->");
+            final String[] i = PATTERN_COL.split(col);
             final ParadoxField field = new ParadoxField(connection);
 
-            if (i.length < 2) {
+            if (i.length <= 1) {
                 if (lastTable == null) {
                     throw new SQLException("Invalid table.");
                 }

@@ -27,12 +27,15 @@ import java.sql.Types;
  */
 public final class NumberField implements FieldParser {
 
+    private static final int CURRENT_TYPE = 5;
+    private static final int NUMBER_TYPE = 6;
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return (type == 5) || (type == 6);
+        return (type == CURRENT_TYPE) || (type == NUMBER_TYPE);
     }
 
     /**
@@ -41,7 +44,7 @@ public final class NumberField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long value = buffer.getLong();
-        if ((value >>> 63) == 1) {
+        if ((value & 0x8000_0000_0000_0000L) != 0) {
             value &= 0x7FFF_FFFF_FFFF_FFFFL;
         } else {
             value = ~value;

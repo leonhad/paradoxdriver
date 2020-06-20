@@ -12,6 +12,7 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.table.value.BlobDescriptor;
 import com.googlecode.paradox.metadata.ParadoxTable;
+
 import java.sql.Types;
 
 /**
@@ -23,15 +24,17 @@ import java.sql.Types;
  * @since 1.3
  */
 public final class BlobField extends AbstractLobField {
-    
+
+    private static final int BLOB_TYPE = 0xD;
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == 0xD;
+        return type == BLOB_TYPE;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -39,7 +42,7 @@ public final class BlobField extends AbstractLobField {
     public BlobDescriptor getDescriptor(final ParadoxTable table) {
         return new BlobDescriptor(table.getBlobTable());
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -47,5 +50,5 @@ public final class BlobField extends AbstractLobField {
     public int getFieldType() {
         return Types.BLOB;
     }
-    
+
 }

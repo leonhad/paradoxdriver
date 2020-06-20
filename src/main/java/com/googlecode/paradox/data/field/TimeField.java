@@ -30,12 +30,14 @@ import java.util.GregorianCalendar;
  */
 public final class TimeField implements FieldParser {
 
+    private static final int TIME_TYPE = 0x14;
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == 0x14;
+        return type == TIME_TYPE;
     }
 
     /**
@@ -43,14 +45,10 @@ public final class TimeField implements FieldParser {
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final int a1 = buffer.get() & 0xFF;
-        final int a2 = buffer.get() & 0xFF;
-        final int a3 = buffer.get() & 0xFF;
-        final int a4 = buffer.get() & 0xFF;
-        final long timeInMillis = ((a1 << 24) | (a2 << 16) | (a3 << 8) | a4) & 0x0FFF_FFFFL;
+        final long timeInMillis = buffer.getInt() & 0x0FFF_FFFFL;
 
         if (timeInMillis != 0) {
-            final Calendar calendar = new GregorianCalendar(1, 0, 0);
+            final Calendar calendar = new GregorianCalendar(1, Calendar.JANUARY, 0);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
             final Time time = new Time(calendar.getTimeInMillis());
             return new FieldValue(time, Types.TIME);

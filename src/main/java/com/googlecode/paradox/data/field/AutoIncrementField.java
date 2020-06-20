@@ -27,12 +27,14 @@ import java.sql.Types;
  */
 public final class AutoIncrementField implements FieldParser {
 
+    private static final int AUTO_INCREMENT_TYPE = 0x16;
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == 0x16;
+        return type == AUTO_INCREMENT_TYPE;
     }
 
     /**

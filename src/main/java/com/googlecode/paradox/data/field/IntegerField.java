@@ -27,12 +27,14 @@ import java.sql.Types;
  */
 public final class IntegerField implements FieldParser {
 
+    private static final int INTEGER_TYPE = 3;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean match(final int type) {
-        return type == 3;
+        return type == INTEGER_TYPE;
     }
 
     /**

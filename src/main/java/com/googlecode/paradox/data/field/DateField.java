@@ -29,12 +29,14 @@ import java.sql.Types;
  */
 public final class DateField implements FieldParser {
 
+    private static final int DATE_TYPE = 2;
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == 2;
+        return type == DATE_TYPE;
     }
 
     /**
@@ -42,11 +44,7 @@ public final class DateField implements FieldParser {
      */
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final int a1 = buffer.get() & 0xFF;
-        final int a2 = buffer.get() & 0xFF;
-        final int a3 = buffer.get() & 0xFF;
-        final int a4 = buffer.get() & 0xFF;
-        final long days = ((a1 << 24) | (a2 << 16) | (a3 << 8) | a4) & 0x0FFF_FFFFL;
+        final long days = buffer.getInt() & 0x0FFF_FFFFL;
 
         Date date = null;
         if (days != 0) {
