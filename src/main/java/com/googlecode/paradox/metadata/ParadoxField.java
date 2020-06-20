@@ -328,6 +328,10 @@ public final class ParadoxField {
         return ParadoxFieldType.getSQLTypeByType(this.type);
     }
 
+    public ParadoxConnection getConnection() {
+        return connection;
+    }
+
     /**
      * Gets the field auto increment status.
      *

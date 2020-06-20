@@ -25,7 +25,7 @@ import java.sql.ResultSet;
  * Unit test for {@link ViewData}.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public class ViewDataTest {
@@ -83,22 +83,20 @@ public class ViewDataTest {
     @Test
     public void testParseExpression() {
         final ParadoxField field = new ParadoxField(conn);
-        ViewData.parseExpression(conn, field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
+        ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
         Assert.assertTrue("Field is not checked.", field.isChecked());
         Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());
         Assert.assertEquals("Invalid field name.", "CALC _PC*_QTD", field.getExpression());
         Assert.assertEquals("Invalid field name.", "CUSTOTOTAL", field.getAlias());
 
-        Assert.assertTrue(field.isChecked());
+        Assert.assertTrue("Invalid checked status.", field.isChecked());
     }
 
     /**
      * Test for class sanity.
-     *
-     * @throws Exception in case of errors.
      */
     @Test
-    public void testSanity() throws Exception {
+    public void testSanity() {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(ViewData.class));
     }
 

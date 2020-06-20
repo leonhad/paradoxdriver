@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox.utils;
 
-import com.googlecode.paradox.ParadoxConnection;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
@@ -20,8 +18,8 @@ import java.sql.Wrapper;
 /**
  * Driver utilities.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.2
  */
 public final class Utils {
@@ -73,23 +71,21 @@ public final class Utils {
     /**
      * Remove the DB suffix from a {@link String}.
      *
-     * @param conn the Paradoc Connection.
      * @param name the {@link String} to format.
      * @return the formatted {@link String}.
      */
-    public static String removeDb(final ParadoxConnection conn, final String name) {
-        return Utils.removeSuffix(conn, name, "DB");
+    public static String removeDB(final String name) {
+        return Utils.removeSuffix(name, "DB");
     }
 
     /**
      * Remove the MB suffix from a {@link String}.
      *
-     * @param conn the Paradoc Connection.
      * @param name the {@link String} to format.
      * @return the formatted {@link String}.
      */
-    public static String removeMb(final ParadoxConnection conn, final String name) {
-        return Utils.removeSuffix(conn, name, "MB");
+    public static String removeMB(final String name) {
+        return Utils.removeSuffix(name, "MB");
     }
 
     /**
@@ -115,14 +111,16 @@ public final class Utils {
     /**
      * Remove a given suffix from {@link String}.
      *
-     * @param conn   the Paradoc Connection.
      * @param name   the {@link String} to format.
      * @param suffix the suffix.
      * @return the formatted {@link String}.
      */
-    private static String removeSuffix(final ParadoxConnection conn, final String name, final String suffix) {
-        if ((name != null) && name.toUpperCase(conn.getLocale()).endsWith("." + suffix.toUpperCase(conn.getLocale()))) {
-            return name.substring(0, name.length() - 3);
+    private static String removeSuffix(final String name, final String suffix) {
+        if (name != null) {
+            int index = name.lastIndexOf('.');
+            if (name.substring(index + 1).equalsIgnoreCase(suffix)) {
+                return name.substring(0, index);
+            }
         }
         return name;
     }

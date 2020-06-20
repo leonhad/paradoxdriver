@@ -13,21 +13,17 @@ package com.googlecode.paradox.utils;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
-import java.lang.reflect.InvocationTargetException;
+import org.junit.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Unit test for {@link Utils}.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.2
  */
 public class UtilsTest {
@@ -35,28 +31,26 @@ public class UtilsTest {
      * Connection string used in tests.
      */
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-    
+
     /**
      * Database connection.
      */
     private Connection conn;
-    
+
     /**
      * Register the driver.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @BeforeClass
     public static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
-    
+
     /**
      * Close the test connection.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @After
     public void closeConnection() throws Exception {
@@ -64,78 +58,81 @@ public class UtilsTest {
             this.conn.close();
         }
     }
-    
+
     /**
      * Connect to the test database.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Before
     public void connect() throws Exception {
         this.conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
     }
-    
+
     /**
      * Test if the constructor is private.
-     *
-     * @throws NoSuchMethodException
-     *             in case of failures.
-     * @throws IllegalAccessException
-     *             in case of failures.
-     * @throws InvocationTargetException
-     *             in case of failures.
-     * @throws InstantiationException
-     *             in case of failures.
      */
     @Test
-    public void testConstructorIsPrivate()
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public void testConstructorIsPrivate() {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Utils.class));
     }
-    
+
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)} method
      * with invalid value.
-     *
-     * @throws Exception
-     *             in case of failures.
      */
     @Test
-    public void testIsNotWrapFor() throws Exception {
-        Assert.assertFalse(Utils.isWrapperFor(this.conn, Connection.class));
+    public void testIsNotWrapFor() {
+        Assert.assertFalse("Invalid wrapper value.", Utils.isWrapperFor(this.conn, Connection.class));
     }
-    
+
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
-     *
-     * @throws Exception
-     *             in case of failures.
      */
     @Test
-    public void testIsWrapFor() throws Exception {
-        Assert.assertTrue(Utils.isWrapperFor(this.conn, ParadoxConnection.class));
+    public void testIsWrapFor() {
+        Assert.assertTrue("Invalid wrapper value.", Utils.isWrapperFor(this.conn, ParadoxConnection.class));
     }
-    
+
     /**
      * Test for unwrap.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test
     public void testUnwrap() throws Exception {
-        Assert.assertNotNull(Utils.unwrap(this.conn, ParadoxConnection.class));
+        Assert.assertNotNull("Invalid class instance.", Utils.unwrap(this.conn, ParadoxConnection.class));
     }
-    
+
     /**
      * Test for a unwrap with wrong class.
      *
-     * @throws Exception
-     *             in case of failures.
+     * @throws Exception in case of failures.
      */
     @Test(expected = SQLException.class)
     public void testUnwrapImpossible() throws Exception {
         Utils.unwrap(this.conn, Integer.class);
+    }
+
+    /**
+     * Test for remove DB extension.
+     */
+    @Test
+    public void testRemoveDB() {
+        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeDB("FILE.DB"));
+        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeDB("FILE"));
+        Assert.assertEquals("Invalid file name.", "FILE.TXT", Utils.removeDB("FILE.TXT"));
+        Assert.assertNull("Invalid file name.", Utils.removeDB(null));
+    }
+
+    /**
+     * Test for remove MB extension.
+     */
+    @Test
+    public void testRemoveMB() {
+        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeMB("FILE.MB"));
+        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeMB("FILE"));
+        Assert.assertEquals("Invalid file name.", "FILE.TXT", Utils.removeMB("FILE.TXT"));
+        Assert.assertNull("Invalid file name.", Utils.removeMB(null));
     }
 }

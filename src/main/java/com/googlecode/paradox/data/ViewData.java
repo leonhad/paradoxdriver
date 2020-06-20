@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
 /**
  * Read view files (structure).
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public final class ViewData {
@@ -260,7 +260,7 @@ public final class ViewData {
                 final String type = types[loop].trim();
                 if (type.length() > 0) {
                     final ParadoxField field = fieldList.get(loop - 1);
-                    ViewData.parseExpression(connection, field, type);
+                    ViewData.parseExpression(field, type);
                 }
             }
 
@@ -413,11 +413,10 @@ public final class ViewData {
     /**
      * Parse a view Paradox expression.
      *
-     * @param conn       the Paradoc Connection.
      * @param field      the expression field.
      * @param expression the expression to parse.
      */
-    static void parseExpression(final ParadoxConnection conn, final ParadoxField field, final String expression) {
+    static void parseExpression(final ParadoxField field, final String expression) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
         ViewData.parseCheck(field, builder);
@@ -427,20 +426,20 @@ public final class ViewData {
 
         ViewData.parseJoinName(field, builder);
         final String typeTest = builder.toString().trim();
-        if (typeTest.toUpperCase(conn.getLocale()).startsWith("AS")) {
+        if (typeTest.toUpperCase(field.getConnection().getLocale()).startsWith("AS")) {
             field.setAlias(typeTest.substring(3).trim());
         } else {
             if (typeTest.charAt(0) == ',') {
                 builder.delete(0, 1);
             }
-            final int index = builder.toString().toUpperCase(conn.getLocale()).lastIndexOf("AS");
+            final int index = builder.toString().toUpperCase(field.getConnection().getLocale()).lastIndexOf("AS");
             if (index > -1) {
                 field.setExpression(builder.substring(0, index).trim());
                 field.setAlias(builder.substring(index + 3).trim());
             } else {
                 field.setExpression(builder.toString().trim());
             }
-            if (field.getExpression().toUpperCase(conn.getLocale()).startsWith("CALC")) {
+            if (field.getExpression().toUpperCase(field.getConnection().getLocale()).startsWith("CALC")) {
                 field.setChecked(true);
             }
         }

@@ -20,8 +20,8 @@ import java.util.List;
 /**
  * Stores a table node.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public final class TableNode extends SQLNode {
@@ -39,7 +39,7 @@ public final class TableNode extends SQLNode {
      * @param alias      the table alias.
      */
     public TableNode(final ParadoxConnection connection, final String name, final String alias) {
-        super(connection, Utils.removeDb(connection, name), alias);
+        super(connection, Utils.removeDB(name), alias);
     }
 
     /**

@@ -22,8 +22,8 @@ import java.util.List;
 /**
  * Defines the paradox default file structure.
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @author Leonardo Costa
+ * @version 1.3
  * @since 1.0
  */
 public class ParadoxDataFile {
@@ -131,7 +131,7 @@ public class ParadoxDataFile {
      */
     protected ParadoxDataFile(final File file, final String name, final ParadoxConnection connection) {
         this.file = file;
-        this.name = Utils.removeDb(connection, name);
+        this.name = Utils.removeDB(name);
         if (connection != null) {
             this.charset = connection.getCharset();
         }
