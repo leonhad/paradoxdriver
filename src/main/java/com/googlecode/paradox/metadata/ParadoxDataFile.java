@@ -23,7 +23,7 @@ import java.util.List;
  * Defines the paradox default file structure.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class ParadoxDataFile {
@@ -151,6 +151,10 @@ public class ParadoxDataFile {
             }
         }
         return null;
+    }
+
+    public String getSchemaName() {
+        return file.getParentFile().getName();
     }
 
     /**

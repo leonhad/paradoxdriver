@@ -120,7 +120,7 @@ public class SelectNodeTest {
     @Test
     public void testTables() {
         final SelectNode node = new SelectNode(conn);
-        final TableNode table = new TableNode(conn, "table", null);
+        final TableNode table = new TableNode(conn, null, "table", null);
         Assert.assertEquals("Invalid node size.", 0, node.getTables().size());
         node.addTable(table);
         Assert.assertEquals("Invalid node size.", 1, node.getTables().size());
@@ -134,8 +134,8 @@ public class SelectNodeTest {
         final SelectNode node = new SelectNode(conn);
         node.addField(new FieldNode(conn, "t", "field", "f"));
         node.addField(new FieldNode(conn, "b", "field2", "f2"));
-        node.addTable(new TableNode(conn, "table1", "t"));
-        node.addTable(new TableNode(conn, "table2", "b"));
+        node.addTable(new TableNode(conn, null, "table1", "t"));
+        node.addTable(new TableNode(conn, null, "table2", "b"));
         node.addGroupBy(new IdentifierNode(conn, "f1"));
         node.addGroupBy(new IdentifierNode(conn, "f2"));
         node.addOrderBy(new IdentifierNode(conn, "f"));

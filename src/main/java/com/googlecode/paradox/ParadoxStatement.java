@@ -27,7 +27,7 @@ import java.util.List;
  * JDBC statement implementation.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 final class ParadoxStatement implements Statement {
@@ -470,7 +470,7 @@ final class ParadoxStatement implements Statement {
 
     private void executeSelect(final SelectNode node) throws SQLException {
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(node, this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, node, this.conn.getCurrentSchema());
         plan.execute();
         this.rs = new ParadoxResultSet(this.conn, this, plan.getValues(), plan.getColumns());
     }

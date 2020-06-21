@@ -84,7 +84,7 @@ public class PlannerTest {
     public void testAsterisk() throws Exception {
         final SQLParser parser = new SQLParser(conn, "select * from areacodes a");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
         Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
@@ -101,7 +101,7 @@ public class PlannerTest {
     public void testAsteriskWithTables() throws Exception {
         final SQLParser parser = new SQLParser(conn, "select a.* from areacodes a");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
         Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
@@ -118,7 +118,7 @@ public class PlannerTest {
     public void testColumnName() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select ac from areacodes a");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         Assert.assertEquals("Test the column size.", 1, plan.getColumns().size());
         Assert.assertEquals("Test the column name.", "AC", plan.getColumns().get(0).getName());
     }
@@ -133,7 +133,7 @@ public class PlannerTest {
         final SelectNode selectNode = new SelectNode(conn);
         selectNode.addField(new IdentifierNode(conn, ""));
         final Planner planner = new Planner(this.conn);
-        planner.create(selectNode, this.conn.getCurrentSchema());
+        planner.create(conn, selectNode, this.conn.getCurrentSchema());
     }
 
     /**
@@ -145,7 +145,7 @@ public class PlannerTest {
     public void testInvalid() throws SQLException {
         final StatementNode node = new StatementNode(conn, "node");
         final Planner planner = new Planner(this.conn);
-        planner.create(node, this.conn.getCurrentSchema());
+        planner.create(conn, node, this.conn.getCurrentSchema());
     }
 
     /**
@@ -157,7 +157,7 @@ public class PlannerTest {
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser(conn, "select * from invalid");
         final Planner planner = new Planner(this.conn);
-        planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
     }
 
     /**
@@ -170,7 +170,7 @@ public class PlannerTest {
         final SelectNode selectNode = new SelectNode(conn);
         selectNode.addField(new IdentifierNode(conn, null));
         final Planner planner = new Planner(this.conn);
-        planner.create(selectNode, this.conn.getCurrentSchema());
+        planner.create(conn, selectNode, this.conn.getCurrentSchema());
     }
 
     /**
@@ -182,7 +182,7 @@ public class PlannerTest {
     public void testSelectWithoutColumns() throws SQLException {
         final SelectNode node = new SelectNode(conn);
         final Planner planner = new Planner(this.conn);
-        planner.create(node, this.conn.getCurrentSchema());
+        planner.create(conn, node, this.conn.getCurrentSchema());
     }
 
     /**
@@ -195,7 +195,7 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser(conn,
                 "select ac from areacodes where state = ny and ac = 212 or ac=315 or ac=917");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         plan.execute();
         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
         Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0).get(0).getValue());
@@ -213,7 +213,7 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser(conn,
                 "select ac from areacodes where state <> ny and ac = 212 or ac=315 or ac=917");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         plan.execute();
         Assert.assertEquals("Test the result size.", 0, plan.getValues().size());
     }
@@ -227,7 +227,7 @@ public class PlannerTest {
     public void testSelectWhereGreaterThan() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select ac from areacodes where state = ny and ac > 845");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         plan.execute();
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
     }
@@ -241,7 +241,7 @@ public class PlannerTest {
     public void testSelectWhereLessThan() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select ac from areacodes where state = ny and ac < 320");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         plan.execute();
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
     }
@@ -255,7 +255,7 @@ public class PlannerTest {
     public void testSelectWhereMultipleColumns() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select * from areacodes where state = ny and ac < 320");
         final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
         plan.execute();
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
         Assert.assertEquals("Field expected", "AC", plan.getValues().get(0).get(0).getField().getName());

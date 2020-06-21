@@ -11,28 +11,66 @@
 
 package com.googlecode.paradox.planner.nodes;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.TableData;
+import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.TableNode;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Unit test for {@link PlanTableNode} class.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class PlanTableNodeTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for instance sanity.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testInstance() {
-        final PlanTableNode node = new PlanTableNode();
-        node.setAlias("alias");
-        node.setTable(null);
-        
+    public void testInstance() throws SQLException {
+        TableNode table = new TableNode(conn, null, "areacodes", "alias");
+
+        final List<ParadoxTable> tables = TableData.listTables(conn.getCurrentSchema(), "areacodes", conn);
+        PlanTableNode node = new PlanTableNode();
+        node.setTable(conn.getSchema(), table, tables);
+
         Assert.assertEquals("Alias not equals.", "alias", node.getAlias());
-        Assert.assertNull("Table not equals.", node.getTable());
+        Assert.assertNotNull("Table not equals.", node.getTable());
     }
 }

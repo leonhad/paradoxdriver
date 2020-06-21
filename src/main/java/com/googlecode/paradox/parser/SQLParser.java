@@ -29,7 +29,7 @@ import java.util.List;
  * Parses a SQL statement.
  *
  * @author Leonardo Alves da Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class SQLParser {
@@ -352,21 +352,21 @@ public final class SQLParser {
      */
     private String parseFields(final String oldAlias) throws SQLException {
         String tableAlias = oldAlias;
-        if (this.scanner.hasNext()) {
-            this.expect(TokenType.IDENTIFIER);
-            if ((this.token.getType() == TokenType.IDENTIFIER) || (this.token.getType() == TokenType.AS)) {
-                // Field alias (with AS identifier)
-                if (this.token.getType() == TokenType.AS) {
-                    this.expect(TokenType.AS);
-                    tableAlias = this.token.getValue();
-                    this.expect(TokenType.IDENTIFIER);
-                } else {
-                    // Field alias (without AS identifier)
-                    tableAlias = this.token.getValue();
-                    this.expect(TokenType.IDENTIFIER);
-                }
+
+        if (token != null
+                && ((this.token.getType() == TokenType.IDENTIFIER) || (this.token.getType() == TokenType.AS))) {
+            // Field alias (with AS identifier)
+            if (this.token.getType() == TokenType.AS) {
+                this.expect(TokenType.AS);
+                tableAlias = this.token.getValue();
+                this.expect(TokenType.IDENTIFIER);
+            } else {
+                // Field alias (without AS identifier)
+                tableAlias = this.token.getValue();
+                this.expect(TokenType.IDENTIFIER);
             }
         }
+
         return tableAlias;
     }
 
@@ -494,12 +494,21 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseJoinTable(final SelectNode select) throws SQLException {
-        final String tableName = this.token.getValue();
-        String tableAlias = tableName;
+        String schemaName = null;
+        String tableName = this.token.getValue();
+        this.expect(TokenType.IDENTIFIER);
 
-        tableAlias = this.parseFields(tableAlias);
+        // Have schema name.
+        if (this.token != null && this.token.getType() == TokenType.PERIOD) {
+            expect(TokenType.PERIOD);
+            schemaName = tableName;
+            tableName = this.token.getValue();
+            this.expect(TokenType.IDENTIFIER);
+        }
 
-        final TableNode table = new TableNode(connection, tableName, tableAlias);
+        final String tableAlias = this.parseFields(tableName);
+
+        final TableNode table = new TableNode(connection, schemaName, tableName, tableAlias);
         this.parseJoin(table);
 
         select.addTable(table);

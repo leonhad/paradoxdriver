@@ -104,6 +104,20 @@ public final class SelectPlan implements Plan {
     }
 
     /**
+     * Associate all columns from a list of tables.
+     *
+     * @param tables the table list to scan.
+     * @throws SQLException in case of wrong SQL type.
+     */
+    public void addColumnFromTables(final Iterable<PlanTableNode> tables) throws SQLException {
+        for (final PlanTableNode table : tables) {
+            for (final ParadoxField field : table.getTable().getFields()) {
+                this.columns.add(field.getColumn());
+            }
+        }
+    }
+
+    /**
      * Adds a table to this plan.
      *
      * @param table the table.

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * Creates a SQL execution plan.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.1
  */
 public class Planner {
@@ -52,68 +52,20 @@ public class Planner {
     /**
      * Parses the table metadata.
      *
+     * @param connection    the Paradox connection.
      * @param statement     the SELECT statement.
      * @param plan          the select execution plan.
      * @param paradoxTables the tables list.
      * @throws SQLException in case of parse errors.
      */
-    private static void parseTableMetaData(final SelectNode statement, final SelectPlan plan,
-                                           final List<ParadoxTable> paradoxTables) throws SQLException {
+    private static void parseTableMetaData(final ParadoxConnection connection, final SelectNode statement,
+                                           final SelectPlan plan, final List<ParadoxTable> paradoxTables)
+            throws SQLException {
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
-            for (final ParadoxTable paradoxTable : paradoxTables) {
-                if (paradoxTable.getName().equalsIgnoreCase(table.getName())) {
-                    node.setTable(paradoxTable);
-                    break;
-                }
-            }
-            if (node.getTable() == null) {
-                throw new SQLException("Table " + table.getName() + " not found.", SQLStates.INVALID_SQL.getValue());
-            }
-            if (!table.getName().equals(table.getAlias())) {
-                node.setAlias(table.getAlias());
-            }
+            node.setTable(connection.getSchema(), table, paradoxTables);
             plan.addTable(node);
         }
-    }
-
-    /**
-     * Create a plan from given statement.
-     *
-     * @param statement     the statement to plan.
-     * @param currentSchema the current schema file.
-     * @return the execution plan.
-     * @throws SQLException in case of plan errors.
-     */
-    public final Plan create(final StatementNode statement, final File currentSchema) throws SQLException {
-        if (statement instanceof SelectNode) {
-            return this.createSelect((SelectNode) statement, currentSchema);
-        } else {
-            throw new SQLFeatureNotSupportedException();
-        }
-    }
-
-    /**
-     * Creates an SELECT plan.
-     *
-     * @param statement     the statement to parse.
-     * @param currentSchema the current schema file.
-     * @return the SELECT plan.
-     * @throws SQLException in case of syntax error.
-     */
-    private Plan createSelect(final SelectNode statement, final File currentSchema) throws SQLException {
-        final SelectPlan plan = new SelectPlan(statement.getConditions());
-        final List<ParadoxTable> paradoxTables = TableData.listTables(currentSchema, this.connection);
-
-        // Load the table metadata.
-        Planner.parseTableMetaData(statement, plan, paradoxTables);
-        parseColumns(statement, plan);
-
-        if (plan.getColumns().isEmpty()) {
-            throw new SQLException("Empty column list.", SQLStates.INVALID_SQL.getValue());
-        }
-
-        return plan;
     }
 
     /**
@@ -127,29 +79,74 @@ public class Planner {
         for (final SQLNode field : statement.getFields()) {
             final String name = field.getName();
             if (field instanceof AsteriskNode) {
-                AsteriskNode asteriskNode = (AsteriskNode) field;
-                if (asteriskNode.getTableName() != null) {
-                    List<ParadoxTable> tables = plan.getTables().stream()
-                            .filter(t -> t.isThis(asteriskNode.getTableName()))
-                            .map(PlanTableNode::getTable).collect(Collectors.toList());
-                    if (tables.isEmpty()) {
-                        throw new SQLException("Table " + asteriskNode.getTableName() + " not found.");
-                    } else if (tables.size() > 1) {
-                        throw new SQLException("Table " + asteriskNode.getTableName() + " is ambigous.");
-                    }
-
-                    plan.addColumnFromTable(tables.get(0));
-                } else {
-                    for (final PlanTableNode table : plan.getTables()) {
-                        plan.addColumnFromTable(table.getTable());
-                    }
-                }
+                parseAsterisk(plan, (AsteriskNode) field);
             } else {
                 if ((name == null) || name.isEmpty()) {
                     throw new SQLException("Column name is empty.");
                 }
+
                 plan.addColumn(name);
             }
         }
+    }
+
+    private static void parseAsterisk(final SelectPlan plan, final AsteriskNode field) throws SQLException {
+        if (field.getTableName() != null) {
+            List<ParadoxTable> tables = plan.getTables().stream()
+                    .filter(t -> t.isThis(field.getTableName()))
+                    .map(PlanTableNode::getTable).collect(Collectors.toList());
+            if (tables.isEmpty()) {
+                throw new SQLException("Table " + field.getTableName() + " not found.");
+            } else if (tables.size() > 1) {
+                throw new SQLException("Table " + field.getTableName() + " is ambigous.");
+            }
+
+            plan.addColumnFromTable(tables.get(0));
+        } else {
+            plan.addColumnFromTables(plan.getTables());
+        }
+    }
+
+    /**
+     * Create a plan from given statement.
+     *
+     * @param connection    the Paradox connection.
+     * @param statement     the statement to plan.
+     * @param currentSchema the current schema file.
+     * @return the execution plan.
+     * @throws SQLException in case of plan errors.
+     */
+    public final Plan create(final ParadoxConnection connection, final StatementNode statement,
+                             final File currentSchema) throws SQLException {
+        if (statement instanceof SelectNode) {
+            return this.createSelect(connection, (SelectNode) statement, currentSchema);
+        } else {
+            throw new SQLFeatureNotSupportedException();
+        }
+    }
+
+    /**
+     * Creates an SELECT plan.
+     *
+     * @param connection    the Paradox connection.
+     * @param statement     the statement to parse.
+     * @param currentSchema the current schema file.
+     * @return the SELECT plan.
+     * @throws SQLException in case of syntax error.
+     */
+    private Plan createSelect(final ParadoxConnection connection, final SelectNode statement,
+                              final File currentSchema) throws SQLException {
+        final SelectPlan plan = new SelectPlan(statement.getConditions());
+        final List<ParadoxTable> paradoxTables = TableData.listTables(currentSchema, this.connection);
+
+        // Load the table metadata.
+        parseTableMetaData(connection, statement, plan, paradoxTables);
+        parseColumns(statement, plan);
+
+        if (plan.getColumns().isEmpty()) {
+            throw new SQLException("Empty column list.", SQLStates.INVALID_SQL.getValue());
+        }
+
+        return plan;
     }
 }

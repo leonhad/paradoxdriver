@@ -24,7 +24,7 @@ import java.util.List;
  * Unit test for {@link ParadoxResultSet} class.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class ParadoxResultSetTest {
@@ -213,6 +213,23 @@ public class ParadoxResultSetTest {
     public void testAsteriskWithAlias() throws Exception {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT a.* FROM AREACODES a")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("Testing for column 'AC'.", "201", rs.getString("ac"));
+            Assert.assertEquals("Testing for column 'State'.", "NJ", rs.getString("State"));
+            Assert.assertEquals("Testing for column 'Cities'.", "Hackensack, Jersey City (201/551 overlay)",
+                    rs.getString("Cities"));
+        }
+    }
+
+    /**
+     * Test table with schema name.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testTableWithSchemaName() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT a.* FROM db.AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Testing for column 'AC'.", "201", rs.getString("ac"));
             Assert.assertEquals("Testing for column 'State'.", "NJ", rs.getString("State"));

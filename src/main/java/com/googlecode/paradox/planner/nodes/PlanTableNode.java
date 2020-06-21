@@ -11,12 +11,16 @@
 package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.utils.SQLStates;
+
+import java.sql.SQLException;
 
 /**
  * Stores the execution plan table node.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.1
  */
 public final class PlanTableNode {
@@ -68,10 +72,32 @@ public final class PlanTableNode {
     /**
      * Sets the plan table.
      *
-     * @param table the plan table to set.
+     * @param defaultSchema the default schema.
+     * @param table         the table data to use.
+     * @param tables        the plan table list to find the table.
+     * @throws SQLException in case of failures.
      */
-    public void setTable(final ParadoxTable table) {
-        this.table = table;
+    public void setTable(final String defaultSchema, final TableNode table, final Iterable<ParadoxTable> tables)
+            throws SQLException {
+        String schemaName = table.getSchemaName();
+        if (schemaName == null) {
+            schemaName = defaultSchema;
+        }
+
+        final String tableName = table.getName();
+        for (final ParadoxTable paradoxTable : tables) {
+            if (schemaName.equalsIgnoreCase(paradoxTable.getSchemaName())
+                    && tableName.equalsIgnoreCase(paradoxTable.getName())) {
+                this.table = paradoxTable;
+                break;
+            }
+        }
+
+        if (this.table == null) {
+            throw new SQLException("Table name " + table.getName() + " not found.", SQLStates.INVALID_SQL.getValue());
+        }
+
+        this.alias = table.getAlias();
     }
 
     /**

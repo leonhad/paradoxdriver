@@ -21,10 +21,15 @@ import java.util.List;
  * Stores a table node.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class TableNode extends SQLNode {
+
+    /**
+     * Table schema.
+     */
+    private final String schemaName;
 
     /**
      * The table joins.
@@ -35,11 +40,15 @@ public final class TableNode extends SQLNode {
      * Create a new instance.
      *
      * @param connection the Paradox connection.
+     * @param schemaName the schema name.
      * @param name       the table name.
      * @param alias      the table alias.
      */
-    public TableNode(final ParadoxConnection connection, final String name, final String alias) {
+    public TableNode(final ParadoxConnection connection, final String schemaName, final String name,
+                     final String alias) {
         super(connection, Utils.removeDB(name), alias);
+
+        this.schemaName = schemaName;
     }
 
     /**
@@ -57,6 +66,10 @@ public final class TableNode extends SQLNode {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
+        if (schemaName != null) {
+            builder.append(schemaName);
+            builder.append(".");
+        }
         builder.append(this.getName());
         if (!this.getName().equals(this.alias)) {
             builder.append(" AS ");
@@ -74,8 +87,16 @@ public final class TableNode extends SQLNode {
      *
      * @return the join tables.
      */
-    List<JoinNode> getJoins() {
+    public List<JoinNode> getJoins() {
         return Collections.unmodifiableList(this.joins);
     }
 
+    /**
+     * Gets the schema name.
+     *
+     * @return the schema name.
+     */
+    public String getSchemaName() {
+        return schemaName;
+    }
 }

@@ -83,7 +83,7 @@ public class PlannerTest {
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser(conn, "select * from invalid");
         final Planner planner = new Planner(this.conn);
-        planner.create(parser.parse().get(0), this.conn.getCurrentSchema());
+        planner.create(conn, parser.parse().get(0), this.conn.getCurrentSchema());
     }
 
 }

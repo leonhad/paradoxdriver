@@ -59,7 +59,7 @@ public class TableNodeTest {
      */
     @Test
     public void testInstance() {
-        final TableNode node = new TableNode(conn, "table.db", "alias");
+        final TableNode node = new TableNode(conn, null, "table.db", "alias");
         Assert.assertEquals("Testing for name.", "table", node.getName());
         Assert.assertEquals("Testing for alias", "alias", node.getAlias());
     }
@@ -69,7 +69,7 @@ public class TableNodeTest {
      */
     @Test
     public void testJoin() {
-        final TableNode node = new TableNode(conn, "table.db", "alias");
+        final TableNode node = new TableNode(conn, null, "table.db", "alias");
         Assert.assertEquals("Testing for initial join size.", 0, node.getJoins().size());
         node.addJoin(new JoinNode(conn));
         Assert.assertEquals("Testing for changed join size.", 1, node.getJoins().size());
@@ -80,7 +80,7 @@ public class TableNodeTest {
      */
     @Test
     public void testToString() {
-        final TableNode node = new TableNode(conn, "table.db", "alias");
+        final TableNode node = new TableNode(conn, null, "table.db", "alias");
         final JoinNode join = new JoinNode(conn);
         join.setTableName("table2");
 

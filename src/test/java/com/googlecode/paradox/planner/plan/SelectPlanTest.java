@@ -15,12 +15,9 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -87,16 +84,16 @@ public class SelectPlanTest {
     public void testAmbiguousColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan();
 
-        PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setAlias("test");
+        TableNode table = new TableNode(conn, null, AREACODES, "test");
 
         final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
-        tableNode.setTable(tables.get(0));
+        PlanTableNode tableNode = new PlanTableNode();
+        tableNode.setTable(conn.getSchema(), table, tables);
         plan.addTable(tableNode);
 
         tableNode = new PlanTableNode();
-        tableNode.setAlias("test2");
-        tableNode.setTable(tables.get(0));
+        table.setAlias("test2");
+        tableNode.setTable(conn.getSchema(), table, tables);
         plan.addTable(tableNode);
 
         plan.addColumn("ac");
@@ -112,11 +109,11 @@ public class SelectPlanTest {
     public void testColumnWithTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan();
 
-        final PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setAlias("test");
+        TableNode table = new TableNode(conn, null, AREACODES, "test");
 
         final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
-        tableNode.setTable(tables.get(0));
+        PlanTableNode tableNode = new PlanTableNode();
+        tableNode.setTable(conn.getSchema(), table, tables);
         plan.addTable(tableNode);
 
         plan.addColumn("test.ac");
@@ -143,30 +140,13 @@ public class SelectPlanTest {
     public void testInvalidTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan();
 
-        final PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setAlias("test");
+        TableNode table = new TableNode(conn, null, AREACODES, "test");
 
         final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
-        tableNode.setTable(tables.get(0));
+        PlanTableNode tableNode = new PlanTableNode();
+        tableNode.setTable(conn.getSchema(), table, tables);
         plan.addTable(tableNode);
 
         plan.addColumn("test2.ac");
-    }
-
-    /**
-     * Test for invalid table value.
-     *
-     * @throws SQLException if has errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testInvalidTableValue() throws SQLException {
-        final SelectPlan plan = new SelectPlan();
-
-        final PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setAlias("test");
-        tableNode.setTable(null);
-        plan.addTable(tableNode);
-
-        plan.addColumn("test.ac");
     }
 }
