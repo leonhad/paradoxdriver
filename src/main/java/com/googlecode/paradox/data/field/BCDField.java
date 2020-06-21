@@ -28,7 +28,9 @@ import java.nio.ByteBuffer;
 public final class BCDField implements FieldParser {
 
     private static final FieldValue NULL = new FieldValue(ParadoxFieldType.BCD.getSQLType());
-    private static final int BCD_SIZE = 17;
+    public static final int BCD_SIZE = 17;
+    public static final int MAX_DIGITS = 32;
+    public static final byte SECOND_BYTE = 4;
 
     /**
      * {@inheritDoc}.
@@ -63,7 +65,7 @@ public final class BCDField implements FieldParser {
         final StringBuilder sb = new StringBuilder();
         for (int i = 1; i < valueBuffer.length; i++) {
             byte high = (byte) (valueBuffer[i] & 0xF0);
-            high >>>= (byte) 4;
+            high >>>= SECOND_BYTE;
             high = (byte) (high & 0x0f);
             byte low = (byte) (valueBuffer[i] & 0x0F);
 
@@ -72,7 +74,7 @@ public final class BCDField implements FieldParser {
         }
 
         int realSize = field.getPhysicsSize();
-        if (realSize == 32) {
+        if (realSize == MAX_DIGITS) {
             sb.insert(0, "0.");
         } else {
             sb.insert(sb.length() - realSize, '.');

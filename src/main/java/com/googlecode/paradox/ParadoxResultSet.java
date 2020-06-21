@@ -242,7 +242,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
-        return new BigDecimal(getDouble(columnIndex));
+        return BigDecimal.valueOf(getDouble(columnIndex));
     }
 
     /**

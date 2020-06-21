@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.field.BCDField;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
@@ -270,7 +271,7 @@ public final class ParadoxField {
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
             this.size = size - BLOB_SIZE_PADDING;
         } else if (sqlType == ParadoxFieldType.BCD.getType()) {
-            this.size = 17;
+            this.size = BCDField.BCD_SIZE;
         } else {
             this.size = size;
         }
