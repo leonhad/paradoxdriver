@@ -225,7 +225,7 @@ public final class SelectPlan implements Plan {
             int fieldNumOrder = findField(nodeCondition.getFirst().toString()).getOrderNum() - 1;
             FieldValue column = listField.get(fieldNumOrder);
             return nodeCondition.getFirst().toString().equalsIgnoreCase(column.getField().toString())
-                    && nodeCondition.getLast().toString().equalsIgnoreCase(column.getValue().toString().toUpperCase());
+                    && nodeCondition.getLast().toString().equalsIgnoreCase(column.getValue().toString());
 
         } else if (condition instanceof NotEqualsNode) {
             NotEqualsNode nodeCondition = (NotEqualsNode) condition;

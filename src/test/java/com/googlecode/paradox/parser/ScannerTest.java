@@ -61,9 +61,9 @@ public class ScannerTest {
     public void testCharacterValues() throws Exception {
         final Scanner scanner = new Scanner(conn, " 'test 1' ");
         final Token token = scanner.nextToken();
-        Assert.assertEquals(TokenType.CHARACTER, token.getType());
-        Assert.assertEquals("test 1", token.getValue());
-        Assert.assertFalse(scanner.hasNext());
+        Assert.assertEquals("Invalid token type.", TokenType.CHARACTER, token.getType());
+        Assert.assertEquals("Invalid token value.", "test 1", token.getValue());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
     }
 
     /**
@@ -75,9 +75,9 @@ public class ScannerTest {
     public void testGroup() throws Exception {
         final Scanner scanner = new Scanner(conn, " \"test 1\" \"Table.db \"\" \" ");
         Token token = scanner.nextToken();
-        Assert.assertEquals("test 1", token.getValue());
+        Assert.assertEquals("Invalid token value.", "test 1", token.getValue());
         token = scanner.nextToken();
-        Assert.assertEquals("Table.db \" ", token.getValue());
+        Assert.assertEquals("Invalid token value.", "Table.db \" ", token.getValue());
     }
 
     /**
@@ -89,10 +89,10 @@ public class ScannerTest {
     public void testHasNext() throws Exception {
         final Scanner scanner = new Scanner(conn, "(SELECT * FROM Test) ");
         for (int loop = 0; loop < 6; loop++) {
-            Assert.assertTrue(scanner.hasNext());
+            Assert.assertTrue("Invalid scanner state.", scanner.hasNext());
             scanner.nextToken();
         }
-        Assert.assertFalse(scanner.hasNext());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
     }
 
     /**
@@ -104,8 +104,8 @@ public class ScannerTest {
     public void testNull() throws Exception {
         final Scanner scanner = new Scanner(conn, " NULL");
         final Token token = scanner.nextToken();
-        Assert.assertEquals(TokenType.NULL, token.getType());
-        Assert.assertFalse(scanner.hasNext());
+        Assert.assertEquals("Invalid token type.", TokenType.NULL, token.getType());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
     }
 
     /**
@@ -128,13 +128,13 @@ public class ScannerTest {
     public void testNumericValues() throws Exception {
         final Scanner scanner = new Scanner(conn, " 123 123.8 ");
         Token token = scanner.nextToken();
-        Assert.assertEquals(TokenType.NUMERIC, token.getType());
-        Assert.assertEquals("123", token.getValue());
-        Assert.assertTrue(scanner.hasNext());
+        Assert.assertEquals("Invalid token type.", TokenType.NUMERIC, token.getType());
+        Assert.assertEquals("Invalid token value.", "123", token.getValue());
+        Assert.assertTrue("Invalid scanner state.", scanner.hasNext());
         token = scanner.nextToken();
-        Assert.assertEquals(TokenType.NUMERIC, token.getType());
-        Assert.assertEquals("123.8", token.getValue());
-        Assert.assertFalse(scanner.hasNext());
+        Assert.assertEquals("Invalid token type.", TokenType.NUMERIC, token.getType());
+        Assert.assertEquals("Invalid token value.", "123.8", token.getValue());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
     }
 
     /**
@@ -149,17 +149,17 @@ public class ScannerTest {
         while (scanner.hasNext()) {
             token = scanner.nextToken();
         }
-        Assert.assertFalse(scanner.hasNext());
-        Assert.assertNotNull(token);
-        Assert.assertEquals(TokenType.RPAREN, token.getType());
-        Assert.assertEquals(")", token.getValue());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+        Assert.assertNotNull("Invalid token value.", token);
+        Assert.assertEquals("Invalid token type.", TokenType.RPAREN, token.getType());
+        Assert.assertEquals("Invalid token value.", ")", token.getValue());
         scanner.pushBack(token);
 
-        Assert.assertTrue(scanner.hasNext());
+        Assert.assertTrue("Invalid scanner state.", scanner.hasNext());
         token = scanner.nextToken();
-        Assert.assertFalse(scanner.hasNext());
-        Assert.assertNotNull(token);
-        Assert.assertEquals(TokenType.RPAREN, token.getType());
-        Assert.assertEquals(")", token.getValue());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+        Assert.assertNotNull("Invalid token value.", token);
+        Assert.assertEquals("Invalid token type.", TokenType.RPAREN, token.getType());
+        Assert.assertEquals("Invalid token value.", ")", token.getValue());
     }
 }

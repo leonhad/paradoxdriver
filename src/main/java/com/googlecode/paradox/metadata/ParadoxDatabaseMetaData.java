@@ -762,7 +762,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final FieldValue fieldVarchar = new FieldValue(Types.VARCHAR);
 
         for (final AbstractCallableProcedure procedure : new ProcedureAS(conn).list()) {
-            if (Expressions.accept(procedure.getName(), procedureNamePattern)) {
+            if (Expressions.accept(conn, procedure.getName(), procedureNamePattern)) {
                 for (final ParadoxField field : procedure.getCols()) {
                     final ArrayList<FieldValue> row = new ArrayList<>();
                     row.add(new FieldValue(catalog, Types.VARCHAR));
@@ -874,7 +874,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<List<FieldValue>> values = new ArrayList<>();
 
         final File catalog = conn.getCurrentCatalog();
-        final File[] schemas = catalog.listFiles(new DirectoryFilter());
+        final File[] schemas = catalog.listFiles(new DirectoryFilter(conn));
 
         if (schemas != null) {
             Arrays.sort(schemas);
@@ -894,8 +894,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) {
-        if (((catalog != null) && !Expressions.accept(this.conn.getCatalog(), catalog))
-                || ((schemaPattern != null) && !Expressions.accept(this.conn.getSchema(), schemaPattern))) {
+        if (((catalog != null) && !Expressions.accept(conn, this.conn.getCatalog(), catalog))
+                || ((schemaPattern != null) && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern))) {
             return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
         }
         return this.getSchemas();
@@ -1832,7 +1832,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                                final String tableName, final List<ParadoxField> fields) throws SQLException {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
-            if ((columnNamePattern != null) && !Expressions.accept(field.getName(), columnNamePattern)) {
+            if ((columnNamePattern != null) && !Expressions.accept(conn, field.getName(), columnNamePattern)) {
                 continue;
             }
 

@@ -494,7 +494,7 @@ public final class ParadoxConnection implements Connection {
      */
     public File[] getSchema(final String catalog, final String schemaPattern) throws SQLException {
         File currentCatalog = getCatalog(catalog);
-        return currentCatalog.listFiles(new DirectoryFilter(schemaPattern));
+        return currentCatalog.listFiles(new DirectoryFilter(this, schemaPattern));
     }
 
     /**

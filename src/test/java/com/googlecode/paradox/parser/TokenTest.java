@@ -17,27 +17,27 @@ import org.junit.Test;
  * Unit test for {@link Token} class.
  *
  * @author Leonardo Alves da Costa
- * @since 1.3
  * @version 1.0
+ * @since 1.3
  */
 public class TokenTest {
-    
+
     /**
      * Test for instance.
      */
     @Test
     public void testInstance() {
         final Token token = new Token(TokenType.AND, "value");
-        Assert.assertEquals(TokenType.AND, token.getType());
-        Assert.assertEquals("value", token.getValue());
+        Assert.assertEquals("Invalid token type.", TokenType.AND, token.getType());
+        Assert.assertEquals("Invalid token value.", "value", token.getValue());
     }
-    
+
     /**
      * Test for {@link Token#toString()} method.
      */
     @Test
     public void testToString() {
         final Token token = new Token(TokenType.AND, "value");
-        Assert.assertEquals("AND = value", token.toString());
+        Assert.assertEquals("Invalid token value.", "AND = value", token.toString());
     }
 }

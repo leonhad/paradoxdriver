@@ -10,7 +10,9 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
 
@@ -22,38 +24,43 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class ViewFilter implements FileFilter {
-    
+
     /**
      * The view name.
      */
     private final String viewName;
-    
+
+    private final ParadoxConnection connection;
+
     /**
      * Create a new instance.
      *
-     * @param viewName
-     *            the view name.
+     * @param connection the Paradox connection.
+     * @param viewName   the view name.
      */
-    public ViewFilter(final String viewName) {
+    public ViewFilter(final ParadoxConnection connection, final String viewName) {
+        this.connection = connection;
         this.viewName = viewName;
     }
-    
+
     /**
      * Create a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    ViewFilter() {
-        this(null);
+    ViewFilter(final ParadoxConnection connection) {
+        this(connection, null);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-        
-        return Expressions.accept(name, "%.QBE")
-                && ((this.viewName == null) || Expressions.accept(name, this.viewName));
+
+        return Expressions.accept(connection, name, "%.QBE")
+                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName));
     }
-    
+
 }

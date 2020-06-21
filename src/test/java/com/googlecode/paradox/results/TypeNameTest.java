@@ -10,10 +10,11 @@
  */
 package com.googlecode.paradox.results;
 
-import java.sql.SQLException;
-import java.sql.Types;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Unit test for {@link TypeName} class.
@@ -23,56 +24,52 @@ import org.junit.Test;
  * @since 1.3
  */
 public class TypeNameTest {
-    
+
     /**
      * Gets the class name.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testClassName() throws SQLException {
-        Assert.assertEquals("java.io.InputStream", TypeName.getClassNameByType(Types.BINARY));
+        Assert.assertEquals("Invalid token type.", "java.io.InputStream", TypeName.getClassNameByType(Types.BINARY));
     }
-    
+
     /**
      * Test for unsupported type.
      *
-     * @throws SQLException
-     *             if there is no errors.
+     * @throws SQLException if there is no errors.
      */
     @Test(expected = SQLException.class)
     public void testClassNameUnsupported() throws SQLException {
         TypeName.getClassNameByType(99);
     }
-    
+
     /**
      * Gets the field name.
      *
-     * @throws SQLException
-     *             in case of errors.
+     * @throws SQLException in case of errors.
      */
     @Test
     public void testFieldName() throws SQLException {
-        Assert.assertEquals("BINARY", TypeName.getTypeName(Types.BINARY));
+        Assert.assertEquals("Invalid token type name.", "BINARY", TypeName.getTypeName(Types.BINARY));
     }
-    
+
     /**
      * Test for unsupported type name.
      *
-     * @throws SQLException
-     *             if there is no errors.
+     * @throws SQLException if there is no errors.
      */
     @Test(expected = SQLException.class)
     public void testNameUnsupported() throws SQLException {
         TypeName.getTypeName(99);
     }
-    
+
     /**
      * Test for SQL Type.
      */
     @Test
     public void testSQLType() {
-        Assert.assertEquals(Types.BINARY, TypeName.BINARY.getSQLType());
+        Assert.assertEquals("Invalid token type.", Types.BINARY, TypeName.BINARY.getSQLType());
     }
 }

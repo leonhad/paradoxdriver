@@ -61,8 +61,8 @@ public class NOTNodeTest {
     public void testChildhood() {
         final SQLNode node = new StatementNode(conn, null);
         final NOTNode and = new NOTNode(conn, node);
-        Assert.assertEquals(1, and.getChildhood().size());
-        Assert.assertEquals(node, and.getChildhood().iterator().next());
+        Assert.assertEquals("Invalid node size.", 1, and.getChildhood().size());
+        Assert.assertEquals("Invalid node value.", node, and.getChildhood().iterator().next());
     }
 
     /**
@@ -71,6 +71,6 @@ public class NOTNodeTest {
     @Test
     public void testName() {
         final NOTNode node = new NOTNode(conn, null);
-        Assert.assertEquals("NOT", node.getName());
+        Assert.assertEquals("Invalid node name.", "NOT", node.getName());
     }
 }

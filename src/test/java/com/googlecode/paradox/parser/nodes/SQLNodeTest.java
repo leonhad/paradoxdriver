@@ -60,7 +60,7 @@ public class SQLNodeTest {
     public void testAlias() {
         final JoinNode node = new JoinNode(conn);
         node.setAlias("alias");
-        Assert.assertEquals("alias", node.getAlias());
+        Assert.assertEquals("Invalid node alias.", "alias", node.getAlias());
     }
 
     /**

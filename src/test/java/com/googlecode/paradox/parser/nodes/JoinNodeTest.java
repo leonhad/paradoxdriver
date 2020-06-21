@@ -63,7 +63,7 @@ public class JoinNodeTest {
         final ArrayList<SQLNode> list = new ArrayList<>();
         final JoinNode node = new JoinNode(conn);
         node.setConditions(list);
-        Assert.assertEquals(list, node.getConditions());
+        Assert.assertEquals("Invalid node values.", list, node.getConditions());
     }
 
     /**
@@ -72,7 +72,7 @@ public class JoinNodeTest {
     @Test
     public void testInstance() {
         final JoinNode node = new JoinNode(conn);
-        Assert.assertEquals("JOIN", node.getName());
+        Assert.assertEquals("Invalid node name.", "JOIN", node.getName());
     }
 
     /**
@@ -82,7 +82,7 @@ public class JoinNodeTest {
     public void testJoinType() {
         final JoinNode node = new JoinNode(conn);
         node.setType(JoinType.LEFT);
-        Assert.assertEquals(JoinType.LEFT, node.getType());
+        Assert.assertEquals("Invalid node type.", JoinType.LEFT, node.getType());
     }
 
     /**
@@ -92,7 +92,7 @@ public class JoinNodeTest {
     public void testName() {
         final JoinNode node = new JoinNode(conn);
         node.setTableName("name");
-        Assert.assertEquals("name", node.getTableName());
+        Assert.assertEquals("Invalid node name.", "name", node.getTableName());
     }
 
     /**
@@ -103,7 +103,7 @@ public class JoinNodeTest {
         final JoinNode node = new JoinNode(conn);
         node.setTableName("table");
         node.setAlias("alias");
-        Assert.assertEquals("CROSS JOIN table AS alias", node.toString());
+        Assert.assertEquals("Invalid node value.", "CROSS JOIN table AS alias", node.toString());
     }
 
     /**
@@ -116,7 +116,7 @@ public class JoinNodeTest {
         final List<SQLNode> list = new ArrayList<>();
         list.add(new EqualsNode(conn, new FieldNode(conn, null, "a", null), new FieldNode(conn, null, "b", null)));
         node.setConditions(list);
-        Assert.assertEquals("CROSS JOIN table ON a = b ", node.toString());
+        Assert.assertEquals("Invalid node value.", "CROSS JOIN table ON a = b ", node.toString());
     }
 
     /**
@@ -127,6 +127,6 @@ public class JoinNodeTest {
         final JoinNode node = new JoinNode(conn);
         node.setTableName("table");
         node.setAlias("table");
-        Assert.assertEquals("CROSS JOIN table", node.toString());
+        Assert.assertEquals("Invalid node value.", "CROSS JOIN table", node.toString());
     }
 }

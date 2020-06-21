@@ -10,10 +10,16 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link TableFilter}.
@@ -23,15 +29,38 @@ import java.io.File;
  * @since 1.0
  */
 public class TableFilterTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for acceptance.
      */
     @Test
     public void testAccept() {
         final File file = new File(this.getClass().getResource("/date/DATE4.db").getFile());
-        final TableFilter filter = new TableFilter();
+        final TableFilter filter = new TableFilter(conn);
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
-    
+
 }

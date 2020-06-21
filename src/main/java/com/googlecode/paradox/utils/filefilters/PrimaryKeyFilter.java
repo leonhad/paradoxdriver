@@ -10,7 +10,9 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
 
@@ -22,37 +24,42 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class PrimaryKeyFilter implements FileFilter {
-    
+
     /**
      * The primary key name.
      */
     private final String pkName;
-    
-    /**
-     * Create a new instance.
-     */
-    public PrimaryKeyFilter() {
-        this.pkName = null;
-    }
-    
+
+    private final ParadoxConnection connection;
+
     /**
      * Create a new instance.
      *
-     * @param pkName
-     *            the primary key name.
+     * @param connection the Paradox connection.
      */
-    public PrimaryKeyFilter(final String pkName) {
+    public PrimaryKeyFilter(final ParadoxConnection connection) {
+        this(connection, null);
+    }
+
+    /**
+     * Create a new instance.
+     *
+     * @param connection the Paradox connection.
+     * @param pkName     the primary key name.
+     */
+    public PrimaryKeyFilter(final ParadoxConnection connection, final String pkName) {
+        this.connection = connection;
         this.pkName = pkName;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-        
-        return Expressions.accept(name, "%.PX") && ((this.pkName == null) || Expressions.accept(name, this.pkName));
+
+        return Expressions.accept(connection, name, "%.PX")
+                && ((this.pkName == null) || Expressions.accept(connection, name, this.pkName));
     }
-    
 }

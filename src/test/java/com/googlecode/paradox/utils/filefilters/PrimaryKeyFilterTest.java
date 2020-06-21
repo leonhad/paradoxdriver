@@ -11,9 +11,16 @@
 
 package com.googlecode.paradox.utils.filefilters;
 
-import java.io.File;
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.io.File;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link PrimaryKeyFilter}.
@@ -23,15 +30,37 @@ import org.junit.Test;
  * @since 1.0
  */
 public class PrimaryKeyFilterTest {
-    
-    private final PrimaryKeyFilter filter = new PrimaryKeyFilter();
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for acceptance.
      */
     @Test
     public void testAccept() {
         final File file = new File("test.px");
-        Assert.assertTrue("Invalid file filter.", this.filter.accept(file));
+        final PrimaryKeyFilter filter = new PrimaryKeyFilter(conn);
+        Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
 }

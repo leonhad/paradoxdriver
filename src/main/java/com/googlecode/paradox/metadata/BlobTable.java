@@ -172,7 +172,7 @@ public final class BlobTable extends ParadoxDataFile {
      */
     private File openBlob() throws SQLException {
         final String name = Utils.removeDB(this.getFile().getName());
-        final File[] fileList = this.getFile().getParentFile().listFiles(new TableFilter(name, "mb"));
+        final File[] fileList = this.getFile().getParentFile().listFiles(new TableFilter(connection, name, "mb"));
         if ((fileList == null) || (fileList.length == 0)) {
             throw new SQLException(String.format("Blob file not found for table '%s'", name),
                     SQLStates.LOAD_DATA.getValue());

@@ -76,7 +76,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testAttributes() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getAttributes("db", null, null, null)) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid ResultSet state.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -87,7 +87,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testAutocommitFailureClosesResult() throws SQLException {
-        Assert.assertFalse(this.conn.getMetaData().autoCommitFailureClosesAllResultSets());
+        Assert.assertFalse("Invalid value.", this.conn.getMetaData().autoCommitFailureClosesAllResultSets());
     }
 
     /**
@@ -98,7 +98,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testBestRowIdentifier() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getBestRowIdentifier("db", "%", "%", 0, false)) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -112,7 +112,7 @@ public class ParadoxDatabaseMetaDataTest {
         final DatabaseMetaData meta = this.conn.getMetaData();
         try (ResultSet rs = meta.getCatalogs()) {
             if (rs.next()) {
-                Assert.assertEquals(TEST_CATALOG, rs.getString("TABLE_CAT"));
+                Assert.assertEquals("Invalid value.", TEST_CATALOG, rs.getString("TABLE_CAT"));
             } else {
                 Assert.fail("No catalog selected.");
             }
@@ -147,7 +147,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testClientInfoProperties() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getClientInfoProperties()) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -159,7 +159,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testColumnPrivileges() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getColumnPrivileges("db", "%", "%", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -197,7 +197,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testColumnsWithInvalidTablePattern() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getColumns("test-classes", "%", "invalid_table", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -209,7 +209,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testColumnsWithNullTablePattern() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getColumns("test-classes", "%", null, "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -221,7 +221,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testColumnsWithoutColumnPattern() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getColumns("test-classes", "%", "%", null)) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -243,7 +243,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testCrossReference() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getCrossReference("db", "%", "%", "db", "%", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -254,7 +254,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseDefinitionsCausesCommit() throws SQLException {
-        Assert.assertTrue(this.conn.getMetaData().dataDefinitionCausesTransactionCommit());
+        Assert.assertTrue("Invalid value.", this.conn.getMetaData().dataDefinitionCausesTransactionCommit());
     }
 
     /**
@@ -330,7 +330,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDeleteAutoDetects() throws SQLException {
-        Assert.assertFalse(this.conn.getMetaData().deletesAreDetected(0));
+        Assert.assertFalse("Invalid value.", this.conn.getMetaData().deletesAreDetected(0));
     }
 
     /**
@@ -381,7 +381,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testExportedKeys() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getExportedKeys("db", "%", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -403,7 +403,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testFunctionColumns() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getFunctionColumns("db", "%", "%", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 
@@ -415,7 +415,7 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testFunctions() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getFunctions("db", "%", "%")) {
-            Assert.assertTrue(rs instanceof ParadoxResultSet);
+            Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
 

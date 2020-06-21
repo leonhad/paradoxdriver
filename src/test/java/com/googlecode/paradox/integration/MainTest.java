@@ -13,19 +13,9 @@ package com.googlecode.paradox.integration;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.*;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Generic integration tests for Paradox Driver.
@@ -89,7 +79,7 @@ public class MainTest {
         final DatabaseMetaData meta = this.conn.getMetaData();
         try (ResultSet rs = meta.getCatalogs()) {
             if (rs.next()) {
-                Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
+                Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
             } else {
                 Assert.fail("No catalog selected.");
             }
@@ -108,24 +98,24 @@ public class MainTest {
         try (ResultSet rs = meta.getIndexInfo("test-classes", "db", "CUSTOMER.db", true, true)) {
             Assert.assertTrue("Invalid result set state.", rs.next());
 
-            Assert.assertEquals("CUSTOMER.PX", rs.getString("INDEX_NAME"));
+            Assert.assertEquals("Invalid value.", "CUSTOMER.PX", rs.getString("INDEX_NAME"));
             Assert.assertTrue("Invalid result set state.", rs.next());
-            Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
+            Assert.assertEquals("Invalid value.", "CUSTOMER.X06", rs.getString("INDEX_NAME"));
 
-            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid table name.", "CUSTOMER", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("true", rs.getString("NON_UNIQUE"));
-            Assert.assertEquals("test-classes", rs.getString("INDEX_QUALIFIER"));
-            Assert.assertEquals("CUSTOMER.X06", rs.getString("INDEX_NAME"));
-            Assert.assertEquals("2", rs.getString("TYPE"));
-            Assert.assertEquals("0", rs.getString("ORDINAL_POSITION"));
-            Assert.assertEquals("City", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("A", rs.getString("ASC_OR_DESC"));
-            Assert.assertEquals("0", rs.getString("CARDINALITY"));
-            Assert.assertEquals("0", rs.getString("PAGES"));
-            Assert.assertNull(rs.getString("FILTER_CONDITION"));
-            Assert.assertFalse("Invalid result set state.", rs.next());
+            Assert.assertEquals("Invalid value.", "true", rs.getString("NON_UNIQUE"));
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("INDEX_QUALIFIER"));
+            Assert.assertEquals("Invalid value.", "CUSTOMER.X06", rs.getString("INDEX_NAME"));
+            Assert.assertEquals("Invalid value.", "2", rs.getString("TYPE"));
+            Assert.assertEquals("Invalid value.", "0", rs.getString("ORDINAL_POSITION"));
+            Assert.assertEquals("Invalid value.", "City", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Invalid value.", "A", rs.getString("ASC_OR_DESC"));
+            Assert.assertEquals("Invalid value.", "0", rs.getString("CARDINALITY"));
+            Assert.assertEquals("Invalid value.", "0", rs.getString("PAGES"));
+            Assert.assertNull("Invalid value.", rs.getString("FILTER_CONDITION"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }
 
@@ -139,14 +129,14 @@ public class MainTest {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
         try (ResultSet rs = meta.getPrimaryKeys("test-classes", "db", "CUSTOMER.db")) {
-            Assert.assertTrue(rs.next());
-            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("CUSTOMER", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("CustNo", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("0", rs.getString("KEY_SEQ"));
-            Assert.assertEquals("CUSTOMER.PX", rs.getString("PK_NAME"));
-            Assert.assertFalse(rs.next());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid value.", "CUSTOMER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Invalid value.", "CustNo", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Invalid value.", "0", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "CUSTOMER.PX", rs.getString("PK_NAME"));
+            Assert.assertFalse("Invalid ResultSet State.", rs.next());
         }
     }
 
@@ -160,21 +150,21 @@ public class MainTest {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
         try (ResultSet rs = meta.getPrimaryKeys("test-classes", "db", "SERVER.db")) {
-            Assert.assertTrue(rs.next());
-            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("SERVER", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("REQTYPE", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("0", rs.getString("KEY_SEQ"));
-            Assert.assertEquals("SERVER.PX", rs.getString("PK_NAME"));
-            Assert.assertTrue(rs.next());
-            Assert.assertEquals("test-classes", rs.getString("TABLE_CAT"));
-            Assert.assertEquals("db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("SERVER", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("URI", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("1", rs.getString("KEY_SEQ"));
-            Assert.assertEquals("SERVER.PX", rs.getString("PK_NAME"));
-            Assert.assertFalse(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Invalid value.", "REQTYPE", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Invalid value.", "0", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "SERVER.PX", rs.getString("PK_NAME"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Invalid value.", "URI", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Invalid value.", "1", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "SERVER.PX", rs.getString("PK_NAME"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }
 
@@ -288,7 +278,7 @@ public class MainTest {
 
         try (ResultSet rs = meta.getColumns("test-classes", "db", "AREAS.QBE", "%")) {
             // Test for AC field.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
@@ -301,7 +291,7 @@ public class MainTest {
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
             // Test for State field.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
@@ -314,7 +304,7 @@ public class MainTest {
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
             // Test for Cities field.
-            Assert.assertTrue(rs.next());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
@@ -327,7 +317,7 @@ public class MainTest {
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
             // No more results.
-            Assert.assertFalse(rs.next());
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }
 }

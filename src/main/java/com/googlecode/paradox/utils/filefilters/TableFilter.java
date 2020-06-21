@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
@@ -34,29 +35,36 @@ public final class TableFilter implements FileFilter {
      */
     private final String tableName;
 
+    private final ParadoxConnection connection;
+
     /**
      * Create a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    public TableFilter() {
-        this(null, "db");
+    public TableFilter(final ParadoxConnection connection) {
+        this(connection, null, "db");
     }
 
     /**
      * Create a new instance.
      *
-     * @param tableName the table name.
+     * @param connection the Paradox connection.
+     * @param tableName  the table name.
      */
-    public TableFilter(final String tableName) {
-        this(tableName, "db");
+    public TableFilter(final ParadoxConnection connection, final String tableName) {
+        this(connection, tableName, "db");
     }
 
     /**
      * Create a new instance.
      *
-     * @param tableName the table name.
-     * @param extension the table extension.
+     * @param connection the Paradox connection.
+     * @param tableName  the table name.
+     * @param extension  the table extension.
      */
-    public TableFilter(final String tableName, final String extension) {
+    public TableFilter(final ParadoxConnection connection, final String tableName, final String extension) {
+        this.connection = connection;
         this.tableName = tableName;
         this.extension = extension;
     }
@@ -69,9 +77,10 @@ public final class TableFilter implements FileFilter {
         final String name = pathname.getName();
 
         if (this.tableName != null) {
-            return Expressions.accept(name, this.tableName + "." + this.extension, false) && pathname.isFile();
+            return Expressions.accept(connection, name,
+                    this.tableName + "." + this.extension, false) && pathname.isFile();
         }
-        return Expressions.accept(name, "%." + this.extension, false) && pathname.isFile();
+        return Expressions.accept(connection, name, "%." + this.extension, false) && pathname.isFile();
     }
 
 }

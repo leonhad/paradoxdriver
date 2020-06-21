@@ -106,7 +106,7 @@ public class Planner {
 
         // Load the table metadata.
         Planner.parseTableMetaData(statement, plan, paradoxTables);
-        this.parseColumns(statement, plan);
+        parseColumns(statement, plan);
 
         if (plan.getColumns().isEmpty()) {
             throw new SQLException("Empty column list.", SQLStates.INVALID_SQL.getValue());
@@ -122,7 +122,7 @@ public class Planner {
      * @param plan      the SELECT execution plan.
      * @throws SQLException in case of parse errors.
      */
-    private void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
+    private static void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
         for (final SQLNode field : statement.getFields()) {
             final String name = field.getName();
             if (field instanceof AsteriskNode) {

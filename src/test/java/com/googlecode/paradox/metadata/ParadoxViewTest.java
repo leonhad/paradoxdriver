@@ -32,7 +32,7 @@ public class ParadoxViewTest {
         final ArrayList<Short> list = new ArrayList<>();
         final ParadoxView view = new ParadoxView(null, null, null);
         view.setFieldsOrder(list);
-        Assert.assertEquals(list, view.getFieldsOrder());
+        Assert.assertEquals("Invalid value.", list, view.getFieldsOrder());
     }
 
     /**
@@ -43,7 +43,7 @@ public class ParadoxViewTest {
         final ArrayList<ParadoxField> list = new ArrayList<>();
         final ParadoxView view = new ParadoxView(null, null, null);
         view.setFields(list);
-        Assert.assertEquals(list, view.getFields());
+        Assert.assertEquals("Invalid value.", list, view.getFields());
     }
 
     /**
@@ -54,6 +54,6 @@ public class ParadoxViewTest {
         final ArrayList<ParadoxField> list = new ArrayList<>();
         final ParadoxView view = new ParadoxView(null, null, null);
         view.setFieldsSort(list);
-        Assert.assertEquals(list, view.getFieldsSort());
+        Assert.assertEquals("Invalid value.", list, view.getFieldsSort());
     }
 }

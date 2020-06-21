@@ -11,6 +11,7 @@
 
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
@@ -27,27 +28,33 @@ public class DirectoryFilter implements FileFilter {
 
     private final String pattern;
 
+    private final ParadoxConnection connection;
+
     /**
      * Creates a new instance.
      *
-     * @param pattern the directory pattern.
+     * @param connection the Paradox connection.
+     * @param pattern    the directory pattern.
      */
-    public DirectoryFilter(String pattern) {
+    public DirectoryFilter(final ParadoxConnection connection, final String pattern) {
+        this.connection = connection;
         this.pattern = pattern;
     }
 
     /**
      * Creates a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    public DirectoryFilter() {
-        this(null);
+    public DirectoryFilter(final ParadoxConnection connection) {
+        this(connection, null);
     }
 
     @Override
     public boolean accept(final File file) {
         boolean expression = true;
         if (pattern != null) {
-            expression = Expressions.accept(file.getName(), pattern, false);
+            expression = Expressions.accept(connection, file.getName(), pattern, false);
         }
         return expression && file != null && file.isDirectory();
     }

@@ -30,7 +30,7 @@ public class ParadoxFieldTypeTest {
      *             if there is no errors.
      */
     @Test(expected = SQLException.class)
-    public void getType() throws SQLException {
+    public void testGetType() throws SQLException {
         ParadoxFieldType.getSQLTypeByType(-1);
     }
     

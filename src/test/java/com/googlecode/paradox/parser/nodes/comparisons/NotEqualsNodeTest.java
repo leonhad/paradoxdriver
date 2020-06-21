@@ -60,6 +60,6 @@ public class NotEqualsNodeTest {
         final FieldNode first = new FieldNode(conn, "table", "first", "first");
         final FieldNode last = new FieldNode(conn, "table", "last", "last");
         final NotEqualsNode node = new NotEqualsNode(conn, first, last);
-        Assert.assertEquals("table.first <> table.last", node.toString());
+        Assert.assertEquals("Invalid node value.", "table.first <> table.last", node.toString());
     }
 }

@@ -60,6 +60,6 @@ public class EqualsNodeTest {
         final FieldNode first = new FieldNode(conn, "table", "first", "first");
         final FieldNode last = new FieldNode(conn, "table", "last", "last");
         final EqualsNode node = new EqualsNode(conn, first, last);
-        Assert.assertEquals("table.first = table.last", node.toString());
+        Assert.assertEquals("Invalid node value.", "table.first = table.last", node.toString());
     }
 }

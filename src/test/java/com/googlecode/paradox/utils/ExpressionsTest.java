@@ -10,9 +10,15 @@
  */
 package com.googlecode.paradox.utils;
 
-import java.lang.reflect.InvocationTargetException;
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link Expressions}.
@@ -22,70 +28,83 @@ import org.junit.Test;
  * @since 1.1
  */
 public class ExpressionsTest {
-    
+
+    /**
+     * The connection string used in this tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+
+    private static ParadoxConnection conn;
+
+    /**
+     * Register the database driver.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @BeforeClass
+    public static void setUp() throws SQLException {
+        new Driver();
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
+    }
+
+    @AfterClass
+    public static void tearDown() throws SQLException {
+        conn.close();
+    }
+
     /**
      * Test for equals.
      */
     @Test
     public void testEquals() {
-        Assert.assertTrue(Expressions.accept("TABLE", "table", false));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "table", false));
     }
-    
+
     /**
      * Test for an extra value.
      */
     @Test
     public void testExtra() {
-        Assert.assertFalse(Expressions.accept("TEST.QBE~", "%.QBE"));
+        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TEST.QBE~", "%.QBE"));
     }
-    
+
     /**
      * Test for like.
      */
     @Test
     public void testLikes() {
-        Assert.assertTrue(Expressions.accept("TABLE", "TA%"));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TA%"));
     }
-    
+
     /**
      * Test for mixed values.
      */
     @Test
     public void testMix() {
-        Assert.assertTrue(Expressions.accept("TEST.X02", "%.X??"));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X??"));
     }
-    
+
     /**
      * Test for not equals.
      */
     @Test
     public void testNotEquals() {
-        Assert.assertFalse(Expressions.accept("TABLE", "table", true));
+        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TABLE", "table", true));
     }
-    
+
     /**
      * Test for sanity.
-     *
-     * @throws IllegalAccessException
-     *             in case of errors.
-     * @throws InstantiationException
-     *             in case of errors.
-     * @throws InvocationTargetException
-     *             in case of errors.
-     * @throws NoSuchMethodException
-     *             in case of errors.
      */
     @Test
-    public void testSanity()
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public void testSanity() {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Expressions.class));
     }
-    
+
     /**
      * Test for unique keyword.
      */
     @Test
     public void testUnique() {
-        Assert.assertTrue(Expressions.accept("TABLE", "TAB?E"));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB?E"));
     }
 }

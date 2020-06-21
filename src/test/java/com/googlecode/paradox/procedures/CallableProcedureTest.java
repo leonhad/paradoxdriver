@@ -67,9 +67,9 @@ public class CallableProcedureTest {
     @Test
     public void testDefaultField() {
         final List<ParadoxField> fields = this.call.getCols();
-        Assert.assertEquals(1, fields.size());
-        Assert.assertEquals("field", fields.get(0).getName());
-        Assert.assertEquals(0xC, fields.get(0).getType());
+        Assert.assertEquals("Invalid field size.", 1, fields.size());
+        Assert.assertEquals("Invalid field name.", "field", fields.get(0).getName());
+        Assert.assertEquals("Invalid field type.", 0xC, fields.get(0).getType());
     }
 
     /**
@@ -77,6 +77,6 @@ public class CallableProcedureTest {
      */
     @Test
     public void testReturnType() {
-        Assert.assertEquals(DatabaseMetaData.procedureReturnsResult, this.call.getReturnType());
+        Assert.assertEquals("Invalid return type.", DatabaseMetaData.procedureReturnsResult, this.call.getReturnType());
     }
 }

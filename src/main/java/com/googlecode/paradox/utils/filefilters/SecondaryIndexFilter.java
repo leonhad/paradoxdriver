@@ -10,7 +10,9 @@
  */
 package com.googlecode.paradox.utils.filefilters;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
+
 import java.io.File;
 import java.io.FileFilter;
 
@@ -22,38 +24,43 @@ import java.io.FileFilter;
  * @since 1.0
  */
 public final class SecondaryIndexFilter implements FileFilter {
-    
+
     /**
      * The index name.
      */
     private final String indexName;
-    
+
+    private final ParadoxConnection connection;
+
     /**
      * Create a new instance.
      *
-     * @param indexName
-     *            the index name.
+     * @param connection the Paradox connection.
+     * @param indexName  the index name.
      */
-    public SecondaryIndexFilter(final String indexName) {
+    public SecondaryIndexFilter(final ParadoxConnection connection, final String indexName) {
+        this.connection = connection;
         this.indexName = indexName;
     }
-    
+
     /**
      * Create a new instance.
+     *
+     * @param connection the Paradox connection.
      */
-    SecondaryIndexFilter() {
-        this.indexName = null;
+    public SecondaryIndexFilter(final ParadoxConnection connection) {
+        this(connection, null);
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-        
-        return Expressions.accept(name, "%.X??")
-                && ((this.indexName == null) || Expressions.accept(name, this.indexName));
+
+        return Expressions.accept(connection, name, "%.X??")
+                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName));
     }
-    
+
 }

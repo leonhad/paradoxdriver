@@ -53,7 +53,7 @@ public final class PrimaryKeyData extends ParadoxData {
                                           final ParadoxConnection connection) throws SQLException {
         final String name = table.getName() + ".PX";
 
-        final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(name));
+        final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(connection, name));
         if ((fileList != null) && (fileList.length > 0)) {
             try {
                 return PrimaryKeyData.loadPKHeader(fileList[0], connection);

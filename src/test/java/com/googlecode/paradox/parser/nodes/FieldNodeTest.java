@@ -58,7 +58,7 @@ public class FieldNodeTest {
     @Test
     public void testToString() {
         final FieldNode node = new FieldNode(conn, "table", "field", "alias");
-        Assert.assertEquals("table.field AS alias", node.toString());
+        Assert.assertEquals("Invalid node value.", "table.field AS alias", node.toString());
     }
 
     /**
@@ -67,7 +67,7 @@ public class FieldNodeTest {
     @Test
     public void testToStringWithNullAlias() {
         final FieldNode node = new FieldNode(conn, "table", "field", null);
-        Assert.assertEquals("table.field", node.toString());
+        Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 
     /**
@@ -76,7 +76,7 @@ public class FieldNodeTest {
     @Test
     public void testToStringWithNullTable() {
         final FieldNode node = new FieldNode(conn, null, "field", null);
-        Assert.assertEquals("field", node.toString());
+        Assert.assertEquals("Invalid node value.", "field", node.toString());
     }
 
     /**
@@ -85,6 +85,6 @@ public class FieldNodeTest {
     @Test
     public void testToStringWithoutAlias() {
         final FieldNode node = new FieldNode(conn, "table", "field", "field");
-        Assert.assertEquals("table.field", node.toString());
+        Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 }

@@ -59,8 +59,8 @@ public class ExistsNodeTest {
     public void testChildhood() {
         final SelectNode node = new SelectNode(conn);
         final ExistsNode and = new ExistsNode(conn, node);
-        Assert.assertEquals(1, and.getChildhood().size());
-        Assert.assertEquals(node, and.getChildhood().iterator().next());
+        Assert.assertEquals("Invalid node size.", 1, and.getChildhood().size());
+        Assert.assertEquals("Invalid node value.", node, and.getChildhood().iterator().next());
     }
 
     /**
@@ -69,6 +69,6 @@ public class ExistsNodeTest {
     @Test
     public void testName() {
         final ExistsNode node = new ExistsNode(conn, null);
-        Assert.assertEquals("EXISTS", node.getName());
+        Assert.assertEquals("Invalid node name.", "EXISTS", node.getName());
     }
 }
