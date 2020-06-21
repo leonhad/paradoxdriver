@@ -42,7 +42,9 @@ public final class FieldFactory {
             new NumberField(),
             new TimeField(),
             new TimestampField(),
-            new VarcharField()
+            new VarcharField(),
+            new BCDField(),
+            new BytesField()
     };
 
     /**
@@ -68,6 +70,7 @@ public final class FieldFactory {
                 return parser.parse(table, buffer, field);
             }
         }
-        throw new SQLException("Field type unsupported.", SQLStates.TYPE_NOT_FOUND.getValue());
+
+        throw new SQLException("Field type " + field.getType() + " unsupported.", SQLStates.TYPE_NOT_FOUND.getValue());
     }
 }

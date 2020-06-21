@@ -10,26 +10,18 @@
  */
 package com.googlecode.paradox.integration;
 
+import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.*;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Integration test for BLOB type.
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @version 1.1
+ * @version 1.2
  * @since 1.2
  */
 public class BlobTest {
@@ -41,12 +33,10 @@ public class BlobTest {
 
     /**
      * Register the driver.
-     *
-     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
-    public static void setUp() throws ClassNotFoundException {
-        Class.forName(Driver.class.getName());
+    public static void setUp() {
+        new Driver();
     }
 
     /**
@@ -82,7 +72,7 @@ public class BlobTest {
                 "SELECT comments FROM customer")) {
             Assert.assertTrue("First record not exists", rs.next());
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
-            Assert.assertEquals("Small comment (less 100 symbols)",
+            Assert.assertEquals("Invalid comment.", "Small comment (less 100 symbols)",
                     rs.getClob("comments").getSubString(1, (int) rs.getClob("comments").length()));
             Assert.assertTrue("Second record not exists", rs.next());
             Assert.assertNotNull("Second comment is null", rs.getClob("comments"));

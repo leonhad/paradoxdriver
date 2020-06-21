@@ -10,47 +10,43 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.table.value.BlobDescriptor;
+import com.googlecode.paradox.data.FieldParser;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
-import java.sql.Types;
+import java.nio.ByteBuffer;
 
 /**
- * Parses blob fields.
+ * Parses a VARCHAR field.
  *
  * @author Leonardo Alves da Costa
- * @author Michael Berry
  * @version 1.0
  * @since 1.3
  */
-public final class BlobField extends AbstractLobField {
+public final class BytesField implements FieldParser {
 
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == ParadoxFieldType.BLOB.getType()
-                || type == ParadoxFieldType.OLE.getType()
-                || type == ParadoxFieldType.GRAPHIC.getType()
-                || type == ParadoxFieldType.FORMATTED_MEMO.getType();
+        return type == ParadoxFieldType.BYTES.getType();
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public BlobDescriptor getDescriptor(final ParadoxTable table) {
-        return new BlobDescriptor(table.getBlobTable());
-    }
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+        final ByteBuffer bytes = ByteBuffer.allocate(field.getSize());
 
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public int getFieldType() {
-        return Types.BLOB;
+        for (int chars = 0; chars < field.getSize(); chars++) {
+            bytes.put(buffer.get());
+        }
+
+        return new FieldValue(bytes.array(), ParadoxFieldType.BYTES.getSQLType());
     }
 
 }

@@ -783,6 +783,11 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Invalid schema.", "encrypt", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
             Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
 
+            // Fields schema.
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema.", "fields", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
+            Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
+
             // Geog schema.
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema.", "geog", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));

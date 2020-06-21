@@ -10,10 +10,12 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.data.table.value.BlobDescriptor;
 import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.rowset.ParadoxBlob;
 import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
@@ -23,28 +25,9 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
 import java.sql.Date;
-import java.sql.NClob;
-import java.sql.Ref;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.RowId;
-import java.sql.SQLDataException;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.SQLWarning;
-import java.sql.SQLXML;
-import java.sql.Statement;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 
 /**
  * JDBC ResultSet implementation.
@@ -109,7 +92,7 @@ public final class ParadoxResultSet implements ResultSet {
      * @param columns   the columns name.
      */
     public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
-            final List<List<FieldValue>> values, final List<Column> columns) {
+                            final List<List<FieldValue>> values, final List<Column> columns) {
         this.statement = statement;
         this.values = Collections.unmodifiableList(values);
         this.columns = Collections.unmodifiableList(columns);
@@ -259,7 +242,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        return new BigDecimal(getDouble(columnIndex));
     }
 
     /**
@@ -317,7 +300,15 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Blob getBlob(final int columnIndex) {
+    public Blob getBlob(final int columnIndex) throws SQLException {
+        final Object val = this.getObject(columnIndex);
+        if (val != null) {
+            if (val instanceof BlobDescriptor) {
+                return new ParadoxBlob((BlobDescriptor) val);
+            } else {
+                throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
+            }
+        }
         return null;
     }
 
@@ -325,8 +316,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Blob getBlob(final String columnLabel) {
-        return null;
+    public Blob getBlob(final String columnLabel) throws SQLException {
+        return getBlob(this.findColumn(columnLabel));
     }
 
     /**

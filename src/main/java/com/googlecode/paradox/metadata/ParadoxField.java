@@ -269,6 +269,8 @@ public final class ParadoxField {
         int sqlType = this.getSqlType();
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
             this.size = size - BLOB_SIZE_PADDING;
+        } else if (sqlType == ParadoxFieldType.BCD.getType()) {
+            this.size = 17;
         } else {
             this.size = size;
         }
@@ -314,7 +316,7 @@ public final class ParadoxField {
      *
      * @return the file size in file.
      */
-    int getPhysicsSize() {
+    public int getPhysicsSize() {
         return this.physicsSize;
     }
 
