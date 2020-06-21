@@ -86,6 +86,28 @@ public class SQLParserTest {
     }
 
     /**
+     * Test for schema name.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testSchemaName() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "SELECT t.* FROM db.table t");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        final SQLNode node = select.getFields().get(0);
+
+        Assert.assertTrue("Invalid node type.", node instanceof AsteriskNode);
+        final AsteriskNode asteriskNode = (AsteriskNode) node;
+
+        Assert.assertEquals("Invalid value.", "t", asteriskNode.getTableName());
+    }
+
+    /**
      * Test for column values.
      *
      * @throws Exception in case of failures.

@@ -118,7 +118,7 @@ public final class Utils {
     private static String removeSuffix(final String name, final String suffix) {
         if (name != null) {
             int index = name.lastIndexOf('.');
-            if (name.substring(index + 1).equalsIgnoreCase(suffix)) {
+            if (index != -1 && name.substring(index + 1).equalsIgnoreCase(suffix)) {
                 return name.substring(0, index);
             }
         }

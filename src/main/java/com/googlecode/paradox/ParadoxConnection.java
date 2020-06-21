@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
+import java.util.logging.Logger;
 
 /**
  * JDBC Paradox connection implementation.
@@ -89,16 +90,23 @@ public final class ParadoxConnection implements Connection {
      * Connection locale.
      */
     private Locale locale = Locale.getDefault();
+    /**
+     * The driver logger.
+     */
+    private final Logger logger;
 
     /**
      * Creates a new paradox connection.
      *
-     * @param dir  database directory.
-     * @param url  connect URL.
-     * @param info the connection properties.
+     * @param logger the driver logger.
+     * @param dir    database directory.
+     * @param url    connect URL.
+     * @param info   the connection properties.
      * @throws SQLException in any connection fault.
      */
-    public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
+    public ParadoxConnection(final Logger logger, final File dir, final String url, final Properties info)
+            throws SQLException {
+        this.logger = logger;
         this.url = url;
 
         if (!dir.exists() && !dir.isDirectory()) {
@@ -118,6 +126,10 @@ public final class ParadoxConnection implements Connection {
         // Is a schema.
         this.schema = dir;
         this.catalog = dir.getParentFile();
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     /**

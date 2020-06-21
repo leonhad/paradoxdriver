@@ -66,7 +66,7 @@ public final class Driver implements java.sql.Driver {
     public Connection connect(final String url, final Properties info) throws SQLException {
         if (this.acceptsURL(url)) {
             final String dirName = url.substring(Constants.URL_PREFIX.length());
-            return new ParadoxConnection(new File(dirName), url, info);
+            return new ParadoxConnection(LOGGER, new File(dirName), url, info);
         }
         return null;
     }
