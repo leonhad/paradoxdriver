@@ -35,7 +35,7 @@ import java.util.List;
  * Creates a SELECT plan for execution.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -291,7 +291,7 @@ public final class SelectPlan implements Plan {
      */
     private ParadoxField findField(final String name) throws SQLException {
         String newName = name;
-        final List<ParadoxField> fields = new ArrayList<>(1);
+        final List<ParadoxField> fields = new ArrayList<>();
         String prefix = null;
         final int p = newName.indexOf('.');
         if (p > -1) {

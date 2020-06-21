@@ -24,7 +24,7 @@ import java.util.List;
  * Unit test for {@link ParadoxResultSet} class.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class ParadoxResultSetTest {
@@ -180,7 +180,7 @@ public class ParadoxResultSetTest {
     public void testNoFirstResult() throws Exception {
         final ParadoxConnection paradoxConnection = (ParadoxConnection) this.conn;
         try (ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, new ParadoxStatement(paradoxConnection),
-                Collections.<List<FieldValue>>emptyList(), Collections.<Column>emptyList())) {
+                Collections.emptyList(), Collections.emptyList())) {
 
             Assert.assertFalse("There is one first row", rs.next());
             Assert.assertFalse("There is one first row", rs.first());
@@ -196,6 +196,23 @@ public class ParadoxResultSetTest {
     public void testResultSet() throws Exception {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT AC as 'ACode', State, CITIES FROM AREACODES")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("Testing for column 'AC'.", "201", rs.getString("ac"));
+            Assert.assertEquals("Testing for column 'State'.", "NJ", rs.getString("State"));
+            Assert.assertEquals("Testing for column 'Cities'.", "Hackensack, Jersey City (201/551 overlay)",
+                    rs.getString("Cities"));
+        }
+    }
+
+    /**
+     * Test for asterisk with alias.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testAsteriskWithAlias() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT a.* FROM AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Testing for column 'AC'.", "201", rs.getString("ac"));
             Assert.assertEquals("Testing for column 'State'.", "NJ", rs.getString("State"));

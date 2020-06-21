@@ -81,11 +81,6 @@ public final class SQLParser {
             case SELECT:
                 statementList.add(this.parseSelect());
                 break;
-            case SEMI:
-                if (!statementList.isEmpty()) {
-                    break;
-                }
-                throw new SQLException("Invalid SQL.");
             default:
                 throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION,
                         SQLStates.INVALID_SQL.getValue());
@@ -173,6 +168,7 @@ public final class SQLParser {
     private void parseCharacter(final SelectNode select, final String fieldName) throws SQLException {
         String fieldAlias = fieldName;
         this.expect(TokenType.CHARACTER);
+
         // Field alias (with AS identifier)
         if (this.token.getType() == TokenType.AS) {
             this.expect(TokenType.AS);
@@ -193,18 +189,19 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private SQLNode parseCondition() throws SQLException {
+        SQLNode ret = null;
         if (this.token.getType() == TokenType.NOT) {
-            return new NOTNode(connection, this.parseCondition());
+            ret = new NOTNode(connection, this.parseCondition());
         } else if (this.token.isOperator()) {
-            return this.parseOperators();
+            ret = this.parseOperators();
         } else if (this.token.getType() == TokenType.LPAREN) {
             this.expect(TokenType.RPAREN, "Right parenthesis expected");
         } else if (this.token.getType() == TokenType.EXISTS) {
-            return this.parseExists();
+            ret = this.parseExists();
         } else {
-            return this.parseFieldNode();
+            ret = this.parseFieldNode();
         }
-        return null;
+        return ret;
     }
 
     /**
@@ -336,8 +333,9 @@ public final class SQLParser {
                 } else if (this.token.getType() == TokenType.ASTERISK) {
                     this.parseAsterisk(select);
                 } else {
-                    this.parseIdentifier(select, null, fieldName);
+                    this.parseIdentifier(select, fieldName);
                 }
+
                 firstField = false;
             } else {
                 break;
@@ -362,7 +360,7 @@ public final class SQLParser {
                     this.expect(TokenType.AS);
                     tableAlias = this.token.getValue();
                     this.expect(TokenType.IDENTIFIER);
-                } else if (this.token.getType() == TokenType.IDENTIFIER) {
+                } else {
                     // Field alias (without AS identifier)
                     tableAlias = this.token.getValue();
                     this.expect(TokenType.IDENTIFIER);
@@ -404,14 +402,13 @@ public final class SQLParser {
      * Parse the identifier token associated with a field.
      *
      * @param select    the select node.
-     * @param tableName the table name.
      * @param fieldName the field name.
      * @throws SQLException in case of parse errors.
      */
-    private void parseIdentifier(final SelectNode select, final String tableName, final String fieldName)
+    private void parseIdentifier(final SelectNode select, final String fieldName)
             throws SQLException {
         String fieldAlias = fieldName;
-        String newTableName = tableName;
+        String newTableName = null;
         String newFieldName = fieldName;
         this.expect(TokenType.IDENTIFIER);
 
@@ -422,6 +419,13 @@ public final class SQLParser {
                 this.expect(TokenType.PERIOD);
                 newTableName = fieldName;
                 newFieldName = this.token.getValue();
+
+                if (this.token.getType() == TokenType.ASTERISK) {
+                    this.expect(TokenType.ASTERISK);
+                    select.addField(new AsteriskNode(connection, newTableName));
+                    return;
+                }
+
                 this.expect(TokenType.IDENTIFIER);
             }
             // Field alias (with AS identifier)

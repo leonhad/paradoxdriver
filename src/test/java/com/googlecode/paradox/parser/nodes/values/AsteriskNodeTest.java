@@ -8,6 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.googlecode.paradox.parser.nodes.values;
 
 import com.googlecode.paradox.Driver;
@@ -21,14 +22,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link NullNode} class.
+ * Unit test for {@link AsteriskNode}.
  *
- * @author Leonardo Alves da Costa
+ * @author Leonardo Costa
  * @version 1.0
- * @since 1.1
+ * @since 1.5.0
  */
-public class NullNodeTest {
-
+public class AsteriskNodeTest {
     /**
      * The connection string used in this tests.
      */
@@ -57,7 +57,19 @@ public class NullNodeTest {
      */
     @Test
     public void testInstance() {
-        final NullNode node = new NullNode(conn);
-        Assert.assertEquals("Test for node name", "NULL", node.getName());
+        final AsteriskNode node = new AsteriskNode(conn);
+        Assert.assertEquals("Test for node name", "ASTERISK", node.getName());
+    }
+
+    /**
+     * Test toString method.
+     */
+    @Test
+    public void testToString() {
+        AsteriskNode node = new AsteriskNode(conn);
+        Assert.assertEquals("Invalid value", "*", node.toString());
+
+        node = new AsteriskNode(conn, "t");
+        Assert.assertEquals("Invalid value", "t.*", node.toString());
     }
 }

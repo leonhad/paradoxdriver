@@ -27,6 +27,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Creates a SQL execution plan.
@@ -57,7 +58,7 @@ public class Planner {
      * @throws SQLException in case of parse errors.
      */
     private static void parseTableMetaData(final SelectNode statement, final SelectPlan plan,
-            final List<ParadoxTable> paradoxTables) throws SQLException {
+                                           final List<ParadoxTable> paradoxTables) throws SQLException {
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
             for (final ParadoxTable paradoxTable : paradoxTables) {
@@ -126,8 +127,22 @@ public class Planner {
         for (final SQLNode field : statement.getFields()) {
             final String name = field.getName();
             if (field instanceof AsteriskNode) {
-                for (final PlanTableNode table : plan.getTables()) {
-                    plan.addColumnFromTable(table.getTable());
+                AsteriskNode asteriskNode = (AsteriskNode) field;
+                if (asteriskNode.getTableName() != null) {
+                    List<ParadoxTable> tables = plan.getTables().stream()
+                            .filter(t -> t.isThis(asteriskNode.getTableName()))
+                            .map(PlanTableNode::getTable).collect(Collectors.toList());
+                    if (tables.isEmpty()) {
+                        throw new SQLException("Table " + asteriskNode.getTableName() + " not found.");
+                    } else if (tables.size() > 1) {
+                        throw new SQLException("Table " + asteriskNode.getTableName() + " is ambigous.");
+                    }
+
+                    plan.addColumnFromTable(tables.get(0));
+                } else {
+                    for (final PlanTableNode table : plan.getTables()) {
+                        plan.addColumnFromTable(table.getTable());
+                    }
                 }
             } else {
                 if ((name == null) || name.isEmpty()) {

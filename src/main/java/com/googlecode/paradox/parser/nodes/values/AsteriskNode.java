@@ -25,11 +25,42 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 public final class AsteriskNode extends SQLNode {
 
     /**
-     * Create a new instance.
+     * This field table name.
+     */
+    private final String tableName;
+
+    /**
+     * Creates a new instance.
      *
      * @param connection the Paradox connection.
      */
     public AsteriskNode(final ParadoxConnection connection) {
+        this(connection, null);
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param connection the Paradox connection.
+     * @param tableName  the table name.
+     */
+    public AsteriskNode(final ParadoxConnection connection, final String tableName) {
         super(connection, TokenType.ASTERISK.name());
+        this.tableName = tableName;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        if (this.tableName != null) {
+            builder.append(this.tableName);
+            builder.append('.');
+        }
+        builder.append("*");
+        return builder.toString();
     }
 }

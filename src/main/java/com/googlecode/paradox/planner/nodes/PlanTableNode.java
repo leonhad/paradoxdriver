@@ -74,4 +74,17 @@ public final class PlanTableNode {
         this.table = table;
     }
 
+    /**
+     * Return if the name is referencing this table.
+     *
+     * @param aliasOrName the alias or table name.
+     * @return <code>true</code> if is this table.
+     */
+    public boolean isThis(final String aliasOrName) {
+        if (aliasOrName == null) {
+            return false;
+        }
+
+        return aliasOrName.equalsIgnoreCase(table.getName()) || aliasOrName.equalsIgnoreCase(alias);
+    }
 }

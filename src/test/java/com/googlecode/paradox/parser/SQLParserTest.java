@@ -19,6 +19,7 @@ import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
 import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
+import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import org.junit.AfterClass;
@@ -60,6 +61,28 @@ public class SQLParserTest {
     @AfterClass
     public static void tearDown() throws SQLException {
         conn.close();
+    }
+
+    /**
+     * Test select with alias in fields.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testSelectWithAlias() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "SELECT t.* FROM table t");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        final SQLNode node = select.getFields().get(0);
+
+        Assert.assertTrue("Invalid node type.", node instanceof AsteriskNode);
+        final AsteriskNode asteriskNode = (AsteriskNode) node;
+
+        Assert.assertEquals("Invalid value.", "t", asteriskNode.getTableName());
     }
 
     /**
