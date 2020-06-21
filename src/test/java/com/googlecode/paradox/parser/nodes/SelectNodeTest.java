@@ -63,8 +63,8 @@ public class SelectNodeTest {
     public void testConditionList() {
         final SelectNode node = new SelectNode(conn);
         Assert.assertEquals("List not empty.", 0, node.getConditions().size());
-        node.setConditions(new ArrayList<SQLNode>());
-        Assert.assertEquals(0, node.getConditions().size());
+        node.setConditions(new ArrayList<>());
+        Assert.assertEquals("Invalid node size.", 0, node.getConditions().size());
     }
 
     /**
@@ -73,9 +73,9 @@ public class SelectNodeTest {
     @Test
     public void testDistinctFlag() {
         final SelectNode node = new SelectNode(conn);
-        Assert.assertFalse(node.isDistinct());
+        Assert.assertFalse("Invalid node value.", node.isDistinct());
         node.setDistinct(true);
-        Assert.assertTrue(node.isDistinct());
+        Assert.assertTrue("Invalid node value.", node.isDistinct());
     }
 
     /**
@@ -85,9 +85,9 @@ public class SelectNodeTest {
     public void testFields() {
         final SelectNode node = new SelectNode(conn);
         final FieldNode field = new FieldNode(conn, "table", "field", null);
-        Assert.assertEquals(0, node.getFields().size());
+        Assert.assertEquals("Invalid node size.", 0, node.getFields().size());
         node.addField(field);
-        Assert.assertEquals(1, node.getFields().size());
+        Assert.assertEquals("Invalid node size.", 1, node.getFields().size());
     }
 
     /**
@@ -97,9 +97,9 @@ public class SelectNodeTest {
     public void testGroupBy() {
         final SelectNode node = new SelectNode(conn);
         final IdentifierNode identifier = new IdentifierNode(conn, "Node");
-        Assert.assertEquals(0, node.getGroups().size());
+        Assert.assertEquals("Invalid node size.", 0, node.getGroups().size());
         node.addGroupBy(identifier);
-        Assert.assertEquals(1, node.getGroups().size());
+        Assert.assertEquals("Invalid node size.", 1, node.getGroups().size());
     }
 
     /**
@@ -109,9 +109,9 @@ public class SelectNodeTest {
     public void testOrderBy() {
         final SelectNode node = new SelectNode(conn);
         final IdentifierNode identifier = new IdentifierNode(conn, "Node");
-        Assert.assertEquals(0, node.getOrder().size());
+        Assert.assertEquals("Invalid node size.", 0, node.getOrder().size());
         node.addOrderBy(identifier);
-        Assert.assertEquals(1, node.getOrder().size());
+        Assert.assertEquals("Invalid node size.", 1, node.getOrder().size());
     }
 
     /**
@@ -121,9 +121,9 @@ public class SelectNodeTest {
     public void testTables() {
         final SelectNode node = new SelectNode(conn);
         final TableNode table = new TableNode(conn, "table", null);
-        Assert.assertEquals(0, node.getTables().size());
+        Assert.assertEquals("Invalid node size.", 0, node.getTables().size());
         node.addTable(table);
-        Assert.assertEquals(1, node.getTables().size());
+        Assert.assertEquals("Invalid node size.", 1, node.getTables().size());
     }
 
     /**
@@ -148,9 +148,9 @@ public class SelectNodeTest {
                 "field2", null)));
         node.setConditions(conditions);
 
-        Assert.assertEquals(
-                "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b WHERE t.field = t.field2 t.field " +
-                        "<> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
+        Assert.assertEquals("Invalid node value.",
+                "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b " +
+                        "WHERE t.field = t.field2 t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
                 node.toString());
     }
 
@@ -164,7 +164,7 @@ public class SelectNodeTest {
         node.addField(new FieldNode(conn, "t", "field", "f"));
         node.addField(new FieldNode(conn, "b", "field2", "f2"));
         node.setConditions(Collections.EMPTY_LIST);
-        Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2", node.toString());
+        Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 
     /**
@@ -175,6 +175,6 @@ public class SelectNodeTest {
         final SelectNode node = new SelectNode(conn);
         node.addField(new FieldNode(conn, "t", "field", "f"));
         node.addField(new FieldNode(conn, "b", "field2", "f2"));
-        Assert.assertEquals("SELECT t.field AS f, b.field2 AS f2", node.toString());
+        Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 }

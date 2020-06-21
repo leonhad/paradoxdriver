@@ -100,15 +100,28 @@ public final class Driver implements java.sql.Driver {
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
-        final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, info.getProperty(CHARSET_KEY));
+        String password = null;
+        String charsetValue = null;
+        String localeValue = null;
+        if (info != null) {
+            password = info.getProperty("password");
+            charsetValue = info.getProperty(CHARSET_KEY);
+            localeValue = info.getProperty(LOCALE_KEY);
+        }
+
+        final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, charsetValue);
         charset.required = false;
         charset.description = "Default table charset";
 
-        final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", info.getProperty("password"));
+        final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", password);
         passwordProp.required = false;
         passwordProp.description = "Password to use for authentication";
 
-        return new DriverPropertyInfo[]{charset, passwordProp};
+        final DriverPropertyInfo localeProp = new DriverPropertyInfo(LOCALE_KEY, localeValue);
+        localeProp.required = false;
+        localeProp.description = "Password to use for authentication";
+
+        return new DriverPropertyInfo[]{charset, localeProp, passwordProp};
     }
 
     /**

@@ -54,7 +54,7 @@ public final class DriverTest {
     @Test
     public void testInvalidURL() {
         final Driver driver = new Driver();
-        Assert.assertFalse(driver.acceptsURL("jdbc:mysql:/path"));
+        Assert.assertFalse("Invalid driver selection.", driver.acceptsURL("jdbc:mysql:/path"));
     }
 
     /**
@@ -63,7 +63,7 @@ public final class DriverTest {
     @Test
     public void testLogger() {
         final Driver driver = new Driver();
-        Assert.assertNotNull(driver.getParentLogger());
+        Assert.assertNotNull("Invalid logger.", driver.getParentLogger());
     }
 
     /**
@@ -72,7 +72,7 @@ public final class DriverTest {
     @Test
     public void testMajorVersion() {
         final Driver driver = new Driver();
-        Assert.assertEquals(Constants.MAJOR_VERSION, driver.getMajorVersion());
+        Assert.assertEquals("Invalid driver major version.", Constants.MAJOR_VERSION, driver.getMajorVersion());
     }
 
     /**
@@ -81,25 +81,26 @@ public final class DriverTest {
     @Test
     public void testMinorVersion() {
         final Driver driver = new Driver();
-        Assert.assertEquals(Constants.MINOR_VERSION, driver.getMinorVersion());
+        Assert.assertEquals("Invalid driver minor version.", Constants.MINOR_VERSION, driver.getMinorVersion());
     }
 
     /**
      * Test for null properties.
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullProperty() {
         final Driver driver = new Driver();
-        Assert.assertEquals(0, driver.getPropertyInfo(null, null).length);
+        Assert.assertEquals("Invalid property info.", 3, driver.getPropertyInfo(null, null).length);
     }
 
     /**
      * Test for null property info.
      */
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullPropertyInfo() {
         final Driver driver = new Driver();
-        driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null);
+        Assert.assertEquals("Invalid property size", 3,
+                driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null).length);
     }
 
     /**
@@ -109,18 +110,10 @@ public final class DriverTest {
     public void testPropertyInfo() {
         final Driver driver = new Driver();
         final DriverPropertyInfo[] info = driver.getPropertyInfo("jdbc:paradox:target/test-classes/", new Properties());
-        Assert.assertEquals(2, info.length);
-        Assert.assertEquals("charset", info[0].name);
-        Assert.assertEquals("password", info[1].name);
-    }
-
-    /**
-     * Test for properties with invalid URL.
-     */
-    @Test(expected = NullPointerException.class)
-    public void testPropertyInfoInvalidURL() {
-        final Driver driver = new Driver();
-        driver.getPropertyInfo("jdbc:paradox:/path", null);
+        Assert.assertEquals("Invalid info length.", 3, info.length);
+        Assert.assertEquals("Invalid info name.", Driver.CHARSET_KEY, info[0].name);
+        Assert.assertEquals("Invalid info name.", Driver.LOCALE_KEY, info[1].name);
+        Assert.assertEquals("Invalid info name.", "password", info[2].name);
     }
 
     /**
@@ -133,7 +126,7 @@ public final class DriverTest {
         final Driver driver = new Driver();
         try (Connection c = driver.connect("jdbc:paradox:target/test-classes/", new Properties())) {
             Assert.assertNotNull("Connection is null.", c);
-            Assert.assertNotNull("Connection is not valid.", c.isValid(0));
+            Assert.assertTrue("Connection is not valid.", c.isValid(0));
         }
     }
 

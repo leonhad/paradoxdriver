@@ -61,8 +61,8 @@ public class ANDNodeTest {
     public void testChildhood() {
         final SQLNode node = new StatementNode(conn, null);
         final ANDNode and = new ANDNode(conn, node);
-        Assert.assertEquals(1, and.getChildhood().size());
-        Assert.assertEquals(node, and.getChildhood().iterator().next());
+        Assert.assertEquals("Invalid node typesize.", 1, and.getChildhood().size());
+        Assert.assertEquals("Invalid node value.", node, and.getChildhood().iterator().next());
     }
 
     /**
@@ -71,6 +71,6 @@ public class ANDNodeTest {
     @Test
     public void testName() {
         final ANDNode node = new ANDNode(conn, null);
-        Assert.assertEquals("AND", node.getName());
+        Assert.assertEquals("Invalid node name.", "AND", node.getName());
     }
 }

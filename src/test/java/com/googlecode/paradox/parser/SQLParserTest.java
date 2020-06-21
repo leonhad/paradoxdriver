@@ -54,7 +54,7 @@ public class SQLParserTest {
     @BeforeClass
     public static void setUp() throws SQLException {
         new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "date");
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     @AfterClass
@@ -73,19 +73,19 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(2, select.getFields().size());
-        Assert.assertTrue(select.getFields().get(0) instanceof CharacterNode);
-        Assert.assertEquals("TEST", select.getFields().get(0).getName());
-        Assert.assertTrue(select.getFields().get(1) instanceof NumericNode);
-        Assert.assertEquals("123", select.getFields().get(1).getName());
-        Assert.assertEquals("number", select.getFields().get(1).getAlias());
+        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
+        Assert.assertTrue("Invalid node type.", select.getFields().get(0) instanceof CharacterNode);
+        Assert.assertEquals("Invalid node name.", "TEST", select.getFields().get(0).getName());
+        Assert.assertTrue("Invalid node type.", select.getFields().get(1) instanceof NumericNode);
+        Assert.assertEquals("Invalid node name.", "123", select.getFields().get(1).getName());
+        Assert.assertEquals("Invalid node alias.", "number", select.getFields().get(1).getAlias());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
     }
 
     /**
@@ -100,15 +100,15 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(1, select.getFields().size());
-        Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
     }
 
     /**
@@ -122,15 +122,15 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(1, select.getFields().size());
-        Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
     }
 
     /**
@@ -144,15 +144,15 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(1, select.getFields().size());
-        Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
     }
 
     /**
@@ -166,21 +166,21 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(2, select.getFields().size());
-        Assert.assertEquals("CODE", select.getFields().get(0).getName());
-        Assert.assertEquals("cod", select.getFields().get(0).getAlias());
+        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", "CODE", select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node alias.", "cod", select.getFields().get(0).getAlias());
 
-        Assert.assertEquals("state", ((FieldNode) select.getFields().get(1)).getTableName());
-        Assert.assertEquals("NAME", select.getFields().get(1).getName());
-        Assert.assertEquals("name", select.getFields().get(1).getAlias());
+        Assert.assertEquals("Invalid node name.", "state", ((FieldNode) select.getFields().get(1)).getTableName());
+        Assert.assertEquals("Invalid node name.", "NAME", select.getFields().get(1).getName());
+        Assert.assertEquals("Invalid node alias.", "name", select.getFields().get(1).getAlias());
 
-        Assert.assertEquals(2, select.getTables().size());
-        Assert.assertEquals("client", select.getTables().get(0).getName());
-        Assert.assertEquals("state", select.getTables().get(1).getName());
+        Assert.assertEquals("Invalid node size.", 2, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node alias.", "state", select.getTables().get(1).getName());
     }
 
     /**
@@ -194,19 +194,19 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(2, select.getFields().size());
-        Assert.assertEquals(2, select.getTables().size());
+        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
+        Assert.assertEquals("Invalid node size.", 2, select.getTables().size());
 
-        Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("client", select.getTables().get(0).getName());
-        Assert.assertEquals("cli", select.getTables().get(0).getAlias());
-        Assert.assertEquals("state", select.getTables().get(1).getName());
-        Assert.assertEquals("STATE", select.getTables().get(1).getAlias());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node alias.", "cli", select.getTables().get(0).getAlias());
+        Assert.assertEquals("Invalid node name.", "state", select.getTables().get(1).getName());
+        Assert.assertEquals("Invalid node alias.", "STATE", select.getTables().get(1).getAlias());
     }
 
     /**
@@ -220,25 +220,29 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(1, select.getFields().size());
-        Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("client", select.getTables().get(0).getName());
-        Assert.assertEquals("test", select.getTables().get(0).getAlias());
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node alias.", "test", select.getTables().get(0).getAlias());
 
-        Assert.assertEquals(3, select.getConditions().size());
-        Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
-        Assert.assertTrue(select.getConditions().get(1) instanceof ANDNode);
-        Assert.assertTrue(select.getConditions().get(2) instanceof NotEqualsNode);
-        Assert.assertEquals("a", ((EqualsNode) select.getConditions().get(0)).getFirst().getName());
-        Assert.assertEquals("b", ((EqualsNode) select.getConditions().get(0)).getLast().getName());
-        Assert.assertEquals("c", ((NotEqualsNode) select.getConditions().get(2)).getFirst().getName());
-        Assert.assertEquals("t", ((NotEqualsNode) select.getConditions().get(2)).getLast().getName());
+        Assert.assertEquals("Invalid node size.", 3, select.getConditions().size());
+        Assert.assertTrue("Invalid node type.", select.getConditions().get(0) instanceof EqualsNode);
+        Assert.assertTrue("Invalid node type.", select.getConditions().get(1) instanceof ANDNode);
+        Assert.assertTrue("Invalid node type.", select.getConditions().get(2) instanceof NotEqualsNode);
+        Assert.assertEquals("Invalid node name.", "a",
+                ((EqualsNode) select.getConditions().get(0)).getFirst().getName());
+        Assert.assertEquals("Invalid node name.", "b",
+                ((EqualsNode) select.getConditions().get(0)).getLast().getName());
+        Assert.assertEquals("Invalid node name.", "c",
+                ((NotEqualsNode) select.getConditions().get(2)).getFirst().getName());
+        Assert.assertEquals("Invalid node name.", "t",
+                ((NotEqualsNode) select.getConditions().get(2)).getLast().getName());
     }
 
     /**
@@ -252,22 +256,26 @@ public class SQLParserTest {
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
-        Assert.assertTrue(tree instanceof SelectNode);
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals(1, select.getFields().size());
-        Assert.assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals(1, select.getTables().size());
-        Assert.assertEquals("client", select.getTables().get(0).getName());
-        Assert.assertEquals("test", select.getTables().get(0).getAlias());
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node alias.", "test", select.getTables().get(0).getAlias());
 
-        Assert.assertEquals(1, select.getConditions().size());
-        Assert.assertTrue(select.getConditions().get(0) instanceof EqualsNode);
-        Assert.assertEquals("test", ((EqualsNode) select.getConditions().get(0)).getFirst().getTableName());
-        Assert.assertEquals("a", ((EqualsNode) select.getConditions().get(0)).getFirst().getName());
-        Assert.assertEquals("c", ((EqualsNode) select.getConditions().get(0)).getLast().getTableName());
-        Assert.assertEquals("b", ((EqualsNode) select.getConditions().get(0)).getLast().getName());
+        Assert.assertEquals("Invalid node size.", 1, select.getConditions().size());
+        Assert.assertTrue("Invalid node type.", select.getConditions().get(0) instanceof EqualsNode);
+        Assert.assertEquals("Invalid node table name.", "test",
+                ((EqualsNode) select.getConditions().get(0)).getFirst().getTableName());
+        Assert.assertEquals("Invalid node name.", "a",
+                ((EqualsNode) select.getConditions().get(0)).getFirst().getName());
+        Assert.assertEquals("Invalid node tablename.", "c",
+                ((EqualsNode) select.getConditions().get(0)).getLast().getTableName());
+        Assert.assertEquals("Invalid node name.", "b",
+                ((EqualsNode) select.getConditions().get(0)).getLast().getName());
     }
 }
