@@ -158,6 +158,7 @@ public class Scanner {
      * @throws SQLException in case of parser errors.
      */
     private boolean parseIdentifier() throws SQLException {
+        boolean ret = false;
         while (this.hasNext()) {
             final char c = this.nextChar();
 
@@ -165,19 +166,20 @@ public class Scanner {
             if (!Scanner.isSeparator(c)) {
                 if (Scanner.isSpecial(c)) {
                     this.value.append(c);
-                    return false;
+                    break;
                 } else if ((c == '"') || (c == '\'')) {
                     // identifiers with special chars
                     final boolean characters = Scanner.isCharacters(c);
                     this.parseString(c);
-                    return characters;
+                    ret = characters;
+                    break;
                 } else {
                     this.parseNumber(c);
-                    return false;
+                    break;
                 }
             }
         }
-        return false;
+        return ret;
     }
 
     /**
@@ -266,7 +268,7 @@ public class Scanner {
      * @return the next {@link Token}.
      * @throws SQLException in case of parse errors.
      */
-    Token nextToken() throws SQLException {
+    public Token nextToken() throws SQLException {
         final int size = this.tokens.size();
         if (size > 0) {
             final Token token = this.tokens.get(size - 1);

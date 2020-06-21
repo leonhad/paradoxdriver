@@ -20,11 +20,21 @@ import java.sql.Types;
  * Column values from a ResultSet.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @see ParadoxResultSet
  * @since 1.0
  */
 public final class Column {
+
+    /**
+     * Default number scale.
+     */
+    private static final int NUMBER_SCALE = 2;
+
+    /**
+     * Default numeric precision.
+     */
+    private static final int NUMBER_PRECISION = 9;
 
     /**
      * If this column is auto incremented.
@@ -365,25 +375,6 @@ public final class Column {
     }
 
     /**
-     * Sets the field SQL type.
-     *
-     * @param type the field SQL type to set.
-     */
-    public void setType(final int type) {
-        this.type = type;
-
-        if (type == ParadoxFieldType.NUMBER.getType()) {
-            this.scale = 2;
-        } else if (type == ParadoxFieldType.CURRENCY.getType()) {
-            this.currency = true;
-            this.precision = 9;
-        } else if (type == ParadoxFieldType.AUTO_INCREMENT.getType()) {
-            this.autoIncrement = true;
-            this.precision = 9;
-        }
-    }
-
-    /**
      * Sets if this field is writable.
      *
      * @param writable the writable to set.
@@ -392,4 +383,22 @@ public final class Column {
         this.writable = writable;
     }
 
+    /**
+     * Sets the field SQL type.
+     *
+     * @param type the field SQL type to set.
+     */
+    public void setType(final int type) {
+        this.type = type;
+
+        if (type == ParadoxFieldType.NUMBER.getType()) {
+            this.scale = NUMBER_SCALE;
+        } else if (type == ParadoxFieldType.CURRENCY.getType()) {
+            this.currency = true;
+            this.precision = NUMBER_PRECISION;
+        } else if (type == ParadoxFieldType.AUTO_INCREMENT.getType()) {
+            this.autoIncrement = true;
+            this.precision = NUMBER_PRECISION;
+        }
+    }
 }
