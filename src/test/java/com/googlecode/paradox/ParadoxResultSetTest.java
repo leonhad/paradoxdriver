@@ -237,4 +237,17 @@ public class ParadoxResultSetTest {
                     rs.getString("Cities"));
         }
     }
+
+    /**
+     * Test for cross schema.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testCrossSchema() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT a.* FROM date.DATE35 a")) {
+            Assert.assertTrue("No First row", rs.next());
+        }
+    }
 }

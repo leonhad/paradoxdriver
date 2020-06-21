@@ -13,15 +13,12 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import org.junit.*;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Unit test for {@link SelectPlan} class.
@@ -86,14 +83,13 @@ public class SelectPlanTest {
 
         TableNode table = new TableNode(conn, null, AREACODES, "test");
 
-        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
         PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn.getSchema(), table, tables);
+        tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
         tableNode = new PlanTableNode();
         table.setAlias("test2");
-        tableNode.setTable(conn.getSchema(), table, tables);
+        tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
         plan.addColumn("ac");
@@ -111,9 +107,8 @@ public class SelectPlanTest {
 
         TableNode table = new TableNode(conn, null, AREACODES, "test");
 
-        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
         PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn.getSchema(), table, tables);
+        tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
         plan.addColumn("test.ac");
@@ -142,9 +137,8 @@ public class SelectPlanTest {
 
         TableNode table = new TableNode(conn, null, AREACODES, "test");
 
-        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), AREACODES, this.conn);
         PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn.getSchema(), table, tables);
+        tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
         plan.addColumn("test2.ac");

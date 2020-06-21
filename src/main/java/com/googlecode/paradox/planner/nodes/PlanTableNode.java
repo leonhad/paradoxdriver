@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.utils.SQLStates;
@@ -72,20 +74,19 @@ public final class PlanTableNode {
     /**
      * Sets the plan table.
      *
-     * @param defaultSchema the default schema.
-     * @param table         the table data to use.
-     * @param tables        the plan table list to find the table.
+     * @param connection the Paradox connection.
+     * @param table      the table data to use.
      * @throws SQLException in case of failures.
      */
-    public void setTable(final String defaultSchema, final TableNode table, final Iterable<ParadoxTable> tables)
+    public void setTable(final ParadoxConnection connection, final TableNode table)
             throws SQLException {
         String schemaName = table.getSchemaName();
         if (schemaName == null) {
-            schemaName = defaultSchema;
+            schemaName = connection.getSchema();
         }
 
         final String tableName = table.getName();
-        for (final ParadoxTable paradoxTable : tables) {
+        for (final ParadoxTable paradoxTable : TableData.listTables(schemaName, connection)) {
             if (schemaName.equalsIgnoreCase(paradoxTable.getSchemaName())
                     && tableName.equalsIgnoreCase(paradoxTable.getName())) {
                 this.table = paradoxTable;

@@ -13,8 +13,6 @@ package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -23,7 +21,6 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Unit test for {@link PlanTableNode} class.
@@ -66,9 +63,8 @@ public class PlanTableNodeTest {
     public void testInstance() throws SQLException {
         TableNode table = new TableNode(conn, null, "areacodes", "alias");
 
-        final List<ParadoxTable> tables = TableData.listTables(conn.getCurrentSchema(), "areacodes", conn);
         PlanTableNode node = new PlanTableNode();
-        node.setTable(conn.getSchema(), table, tables);
+        node.setTable(conn, table);
 
         Assert.assertEquals("Alias not equals.", "alias", node.getAlias());
         Assert.assertNotNull("Table not equals.", node.getTable());

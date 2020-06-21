@@ -11,7 +11,6 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
@@ -23,7 +22,6 @@ import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.SQLStates;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
@@ -38,32 +36,27 @@ import java.util.stream.Collectors;
  */
 public class Planner {
 
-    private final ParadoxConnection connection;
-
     /**
      * Create a new instance.
-     *
-     * @param connection the database connection.
      */
-    public Planner(final ParadoxConnection connection) {
-        this.connection = connection;
+    protected Planner() {
+        super();
     }
 
     /**
      * Parses the table metadata.
      *
-     * @param connection    the Paradox connection.
-     * @param statement     the SELECT statement.
-     * @param plan          the select execution plan.
-     * @param paradoxTables the tables list.
+     * @param connection the Paradox connection.
+     * @param statement  the SELECT statement.
+     * @param plan       the select execution plan.
      * @throws SQLException in case of parse errors.
      */
     private static void parseTableMetaData(final ParadoxConnection connection, final SelectNode statement,
-                                           final SelectPlan plan, final List<ParadoxTable> paradoxTables)
+                                           final SelectPlan plan)
             throws SQLException {
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
-            node.setTable(connection.getSchema(), table, paradoxTables);
+            node.setTable(connection, table);
             plan.addTable(node);
         }
     }
@@ -110,16 +103,15 @@ public class Planner {
     /**
      * Create a plan from given statement.
      *
-     * @param connection    the Paradox connection.
-     * @param statement     the statement to plan.
-     * @param currentSchema the current schema file.
+     * @param connection the Paradox connection.
+     * @param statement  the statement to plan.
      * @return the execution plan.
      * @throws SQLException in case of plan errors.
      */
-    public final Plan create(final ParadoxConnection connection, final StatementNode statement,
-                             final File currentSchema) throws SQLException {
+    public static Plan create(final ParadoxConnection connection, final StatementNode statement)
+            throws SQLException {
         if (statement instanceof SelectNode) {
-            return this.createSelect(connection, (SelectNode) statement, currentSchema);
+            return createSelect(connection, (SelectNode) statement);
         } else {
             throw new SQLFeatureNotSupportedException();
         }
@@ -128,19 +120,17 @@ public class Planner {
     /**
      * Creates an SELECT plan.
      *
-     * @param connection    the Paradox connection.
-     * @param statement     the statement to parse.
-     * @param currentSchema the current schema file.
+     * @param connection the Paradox connection.
+     * @param statement  the statement to parse.
      * @return the SELECT plan.
      * @throws SQLException in case of syntax error.
      */
-    private Plan createSelect(final ParadoxConnection connection, final SelectNode statement,
-                              final File currentSchema) throws SQLException {
+    private static Plan createSelect(final ParadoxConnection connection, final SelectNode statement)
+            throws SQLException {
         final SelectPlan plan = new SelectPlan(statement.getConditions());
-        final List<ParadoxTable> paradoxTables = TableData.listTables(currentSchema, this.connection);
 
         // Load the table metadata.
-        parseTableMetaData(connection, statement, plan, paradoxTables);
+        parseTableMetaData(connection, statement, plan);
         parseColumns(statement, plan);
 
         if (plan.getColumns().isEmpty()) {

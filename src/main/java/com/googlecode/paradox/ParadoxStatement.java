@@ -469,8 +469,7 @@ final class ParadoxStatement implements Statement {
     }
 
     private void executeSelect(final SelectNode node) throws SQLException {
-        final Planner planner = new Planner(this.conn);
-        final SelectPlan plan = (SelectPlan) planner.create(conn, node, this.conn.getCurrentSchema());
+        final SelectPlan plan = (SelectPlan) Planner.create(conn, node);
         plan.execute();
         this.rs = new ParadoxResultSet(this.conn, this, plan.getValues(), plan.getColumns());
     }
