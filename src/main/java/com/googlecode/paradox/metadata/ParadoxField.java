@@ -12,7 +12,6 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.field.BCDField;
-import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.sql.SQLException;
@@ -117,20 +116,6 @@ public final class ParadoxField {
             return this.name;
         }
         return this.alias;
-    }
-
-    /**
-     * The field column reference.
-     *
-     * @return the {@link Column} reference.
-     * @throws SQLException in case of type error.
-     */
-    public Column getColumn() throws SQLException {
-        final Column dto = new Column(this);
-        dto.setName(this.name.toUpperCase(connection.getLocale()));
-        dto.setType(this.getSqlType());
-        dto.setTableName(this.tableName);
-        return dto;
     }
 
     /**
@@ -309,7 +294,11 @@ public final class ParadoxField {
      */
     @Override
     public String toString() {
-        return this.name;
+        if (this.tableName == null) {
+            return this.name;
+        }
+
+        return this.tableName + "." + this.name;
     }
 
     /**

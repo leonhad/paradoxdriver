@@ -13,6 +13,7 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import org.junit.*;
@@ -73,30 +74,6 @@ public class SelectPlanTest {
     }
 
     /**
-     * Test for ambiguous column table alias.
-     *
-     * @throws SQLException if has errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testAmbiguousColumn() throws SQLException {
-        final SelectPlan plan = new SelectPlan();
-
-        TableNode table = new TableNode(conn, null, AREACODES, "test");
-
-        PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn, table);
-        plan.addTable(tableNode);
-
-        tableNode = new PlanTableNode();
-        table.setAlias("test2");
-        tableNode.setTable(conn, table);
-        plan.addTable(tableNode);
-
-        plan.addColumn("ac");
-        Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
-    }
-
-    /**
      * Test for column value with table alias.
      *
      * @throws SQLException if has errors.
@@ -111,7 +88,7 @@ public class SelectPlanTest {
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn("test.ac");
+        plan.addColumn(new FieldNode(conn, "test", "ac", null));
         Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
 
@@ -123,7 +100,7 @@ public class SelectPlanTest {
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan();
-        plan.addColumn("invalid");
+        plan.addColumn(new FieldNode(conn, null, "invalid", null));
     }
 
     /**
@@ -141,6 +118,6 @@ public class SelectPlanTest {
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn("test2.ac");
+        plan.addColumn(new FieldNode(conn, "test2", "ac", null));
     }
 }

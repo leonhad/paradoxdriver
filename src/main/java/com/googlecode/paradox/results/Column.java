@@ -11,16 +11,19 @@
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.ParadoxResultSet;
+import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
- * Column values from a ResultSet.
+ * Column value from a ResultSet.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -94,7 +97,7 @@ public final class Column {
     /**
      * The tables name.
      */
-    private String tableName;
+    private ParadoxTable table;
 
     /**
      * The SQL data type.
@@ -116,6 +119,7 @@ public final class Column {
     public Column(final ParadoxField field) {
         this(field.getName(), field.getType());
         this.field = field;
+        this.table = field.getTable();
     }
 
     /**
@@ -127,6 +131,17 @@ public final class Column {
     public Column(final String name, final int type) {
         this.name = name;
         this.setType(type);
+    }
+
+    /**
+     * Get if this column is from the table.
+     *
+     * @param table the table .
+     * @return <code>true</code> if this column is from this table.
+     */
+    public boolean isThis(final ParadoxDataFile table) {
+        return this.table.getName().equalsIgnoreCase(table.getName())
+                && this.table.getSchemaName().equalsIgnoreCase(table.getSchemaName());
     }
 
     /**
@@ -191,7 +206,7 @@ public final class Column {
      * @return the tables name.
      */
     public String getTableName() {
-        return this.tableName;
+        return this.table.getName();
     }
 
     /**
@@ -366,15 +381,6 @@ public final class Column {
     }
 
     /**
-     * Sets the tables name
-     *
-     * @param tableName the tables name to set.
-     */
-    public void setTableName(final String tableName) {
-        this.tableName = tableName;
-    }
-
-    /**
      * Sets if this field is writable.
      *
      * @param writable the writable to set.
@@ -400,5 +406,36 @@ public final class Column {
             this.autoIncrement = true;
             this.precision = NUMBER_PRECISION;
         }
+    }
+
+    public ParadoxTable getTable() {
+        return table;
+    }
+
+    public void setTable(ParadoxTable table) {
+        this.table = table;
+    }
+
+    @Override
+    public String toString() {
+        return table.getName() + "." + name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Column column = (Column) o;
+        return Objects.equals(field, column.field) &&
+                Objects.equals(table, column.table);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(field, table);
     }
 }

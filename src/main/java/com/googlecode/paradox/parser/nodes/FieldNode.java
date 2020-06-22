@@ -12,6 +12,8 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 
+import java.util.Objects;
+
 /**
  * Stores the field values.
  *
@@ -68,4 +70,22 @@ public final class FieldNode extends SQLNode {
         return builder.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FieldNode fieldNode = (FieldNode) o;
+        return Objects.equals(tableName, fieldNode.tableName) &&
+                Objects.equals(alias, fieldNode.alias) &&
+                Objects.equals(name, fieldNode.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tableName, alias, name);
+    }
 }

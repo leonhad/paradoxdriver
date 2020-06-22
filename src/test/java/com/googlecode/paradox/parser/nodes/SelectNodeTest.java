@@ -12,8 +12,6 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
-import com.googlecode.paradox.parser.nodes.comparisons.NotEqualsNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,8 +19,6 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Unit test for {@link SelectNode}.
@@ -57,14 +53,12 @@ public class SelectNodeTest {
     }
 
     /**
-     * Test for condition list.
+     * Test for condition.
      */
     @Test
-    public void testConditionList() {
+    public void testCondition() {
         final SelectNode node = new SelectNode(conn);
-        Assert.assertEquals("List not empty.", 0, node.getConditions().size());
-        node.setConditions(new ArrayList<>());
-        Assert.assertEquals("Invalid node size.", 0, node.getConditions().size());
+        Assert.assertNull("List not empty.", node.getCondition());
     }
 
     /**
@@ -141,7 +135,8 @@ public class SelectNodeTest {
         node.addOrderBy(new IdentifierNode(conn, "f"));
         node.addOrderBy(new IdentifierNode(conn, "f2"));
 
-        final ArrayList<SQLNode> conditions = new ArrayList<>();
+        /* FIXME review unit tests.
+        final ArrayList<AbstractComparisonNode> conditions = new ArrayList<>();
         conditions.add(new EqualsNode(conn, new FieldNode(conn, "t", "field", null), new FieldNode(conn, "t", "field2"
                 , null)));
         conditions.add(new NotEqualsNode(conn, new FieldNode(conn, "t", "field", null), new FieldNode(conn, "t",
@@ -152,18 +147,18 @@ public class SelectNodeTest {
                 "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b " +
                         "WHERE t.field = t.field2 t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
                 node.toString());
+         */
     }
 
     /**
      * Test for {@link SelectNode#toString()} method with empty where.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testToStringEmptyWhere() {
         final SelectNode node = new SelectNode(conn);
         node.addField(new FieldNode(conn, "t", "field", "f"));
         node.addField(new FieldNode(conn, "b", "field2", "f2"));
-        node.setConditions(Collections.EMPTY_LIST);
+        node.setCondition(null);
         Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 

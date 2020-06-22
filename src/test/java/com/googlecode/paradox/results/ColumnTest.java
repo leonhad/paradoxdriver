@@ -13,6 +13,7 @@ package com.googlecode.paradox.results;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -228,7 +229,7 @@ public class ColumnTest {
     @Test
     public void testTableName() {
         final Column column = new Column(new ParadoxField(conn));
-        column.setTableName("name");
+        column.setTable(new ParadoxTable(null, "name", conn));
         Assert.assertEquals("Invalid field table name.", "name", column.getTableName());
     }
 

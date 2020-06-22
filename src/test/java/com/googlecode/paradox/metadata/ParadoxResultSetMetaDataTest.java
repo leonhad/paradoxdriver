@@ -87,7 +87,7 @@ public class ParadoxResultSetMetaDataTest {
         column.setName("name");
         column.setType(ParadoxFieldType.INTEGER.getSQLType());
         column.setPrecision(0);
-        column.setTableName("table");
+        column.setTable(new ParadoxTable(null, "table", conn));
         column.setAutoIncrement(false);
         column.setCurrency(false);
         column.setWritable(false);

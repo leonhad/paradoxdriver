@@ -12,6 +12,7 @@ package com.googlecode.paradox.parser.nodes.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
 
 import java.util.Collections;
 
@@ -22,7 +23,7 @@ import java.util.Collections;
  * @version 1.0
  * @since 1.1
  */
-public class ANDNode extends SQLNode {
+public class ANDNode extends AbstractComparisonNode {
 
     /**
      * Create a new instance.

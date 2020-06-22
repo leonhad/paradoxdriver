@@ -12,10 +12,7 @@ package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.SelectNode;
-import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.plan.Plan;
@@ -78,7 +75,7 @@ public class Planner {
                     throw new SQLException("Column name is empty.");
                 }
 
-                plan.addColumn(name);
+                plan.addColumn((FieldNode) field);
             }
         }
     }
@@ -127,7 +124,7 @@ public class Planner {
      */
     private static Plan createSelect(final ParadoxConnection connection, final SelectNode statement)
             throws SQLException {
-        final SelectPlan plan = new SelectPlan(statement.getConditions());
+        final SelectPlan plan = new SelectPlan(statement.getCondition());
 
         // Load the table metadata.
         parseTableMetaData(connection, statement, plan);

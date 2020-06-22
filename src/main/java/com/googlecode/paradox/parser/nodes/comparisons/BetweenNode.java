@@ -23,31 +23,36 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 public final class BetweenNode extends AbstractComparisonNode {
 
     /**
+     * The last node.
+     */
+    private final FieldNode last;
+
+    /**
      * The field node.
      */
-    private final FieldNode field;
+    private final FieldNode first;
 
     /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
-     * @param first      the first node.
      * @param field      the middle node.
+     * @param first      the first node.
      * @param last       the last node.
      */
     public BetweenNode(final ParadoxConnection connection, final FieldNode field, final FieldNode first,
                        final FieldNode last) {
-        super(connection, "BETWEEN", first, last);
-        this.field = field;
+        super(connection, "BETWEEN", field);
+        this.first = first;
+        this.last = last;
     }
 
-    /**
-     * Gets the field node.
-     *
-     * @return the field node.
-     */
-    public FieldNode getField() {
-        return this.field;
+    public FieldNode getFirst() {
+        return first;
+    }
+
+    public FieldNode getLast() {
+        return last;
     }
 
     /**
@@ -55,7 +60,7 @@ public final class BetweenNode extends AbstractComparisonNode {
      */
     @Override
     public String toString() {
-        return this.field + " BETWEEN " + this.getFirst() + " AND " + this.getLast();
+        return this.field + " BETWEEN " + first + " AND " + last;
     }
 
 }

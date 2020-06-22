@@ -188,38 +188,23 @@ public final class SQLParser {
      * @return the node.
      * @throws SQLException in case of parse errors.
      */
-    private SQLNode parseCondition() throws SQLException {
-        SQLNode ret = null;
-        if (this.token.getType() == TokenType.NOT) {
-            ret = new NOTNode(connection, this.parseCondition());
-        } else if (this.token.isOperator()) {
-            ret = this.parseOperators();
-        } else if (this.token.getType() == TokenType.LPAREN) {
-            this.expect(TokenType.RPAREN, "Right parenthesis expected");
-        } else if (this.token.getType() == TokenType.EXISTS) {
-            ret = this.parseExists();
-        } else {
-            ret = this.parseFieldNode();
+    private AbstractComparisonNode parseCondition() throws SQLException {
+        AbstractComparisonNode ret = null;
+        // FIXME redo the tree.
+        while (this.scanner.hasNext() && !this.token.isConditionBreak()) {
+            if (this.token.getType() == TokenType.NOT) {
+                ret = new NOTNode(connection, this.parseCondition());
+            } else if (this.token.isOperator()) {
+                ret = this.parseOperators();
+            } else if (this.token.getType() == TokenType.LPAREN) {
+                this.expect(TokenType.RPAREN, "Right parenthesis expected");
+            } else if (this.token.getType() == TokenType.EXISTS) {
+                ret = this.parseExists();
+            } else {
+                ret = this.parseFieldNode();
+            }
         }
         return ret;
-    }
-
-    /**
-     * Parses the conditional listing.
-     *
-     * @return a list of nodes.
-     * @throws SQLException in case of parse errors.
-     */
-    private ArrayList<SQLNode> parseConditionList() throws SQLException {
-        final ArrayList<SQLNode> conditions = new ArrayList<>();
-
-        while (this.scanner.hasNext()) {
-            if (this.token.isConditionBreak()) {
-                break;
-            }
-            conditions.add(this.parseCondition());
-        }
-        return conditions;
     }
 
     /**
@@ -277,9 +262,9 @@ public final class SQLParser {
      * @return the field node.
      * @throws SQLException in case of parse errors.
      */
-    private SQLNode parseFieldNode() throws SQLException {
+    private AbstractComparisonNode parseFieldNode() throws SQLException {
         final FieldNode firstField = this.parseField();
-        SQLNode node;
+        AbstractComparisonNode node;
 
         switch (this.token.getType()) {
             case BETWEEN:
@@ -394,7 +379,7 @@ public final class SQLParser {
 
         if (this.scanner.hasNext() && (this.token.getType() == TokenType.WHERE)) {
             this.expect(TokenType.WHERE);
-            select.setConditions(this.parseConditionList());
+            select.setCondition(this.parseCondition());
         }
     }
 
@@ -419,6 +404,7 @@ public final class SQLParser {
                 this.expect(TokenType.PERIOD);
                 newTableName = fieldName;
                 newFieldName = this.token.getValue();
+                fieldAlias = newFieldName;
 
                 if (this.token.getType() == TokenType.ASTERISK) {
                     this.expect(TokenType.ASTERISK);
@@ -482,7 +468,7 @@ public final class SQLParser {
                 this.expect(TokenType.IDENTIFIER);
             }
             this.expect(TokenType.ON);
-            join.setConditions(this.parseConditionList());
+            join.setCondition(this.parseCondition());
             table.addJoin(join);
         }
     }
@@ -596,7 +582,7 @@ public final class SQLParser {
      * @return the conditional operator node.
      * @throws SQLException in case or errors.
      */
-    private SQLNode parseOperators() throws SQLException {
+    private AbstractComparisonNode parseOperators() throws SQLException {
         switch (this.token.getType()) {
             case AND:
                 this.expect(TokenType.AND);

@@ -11,9 +11,9 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,7 +29,7 @@ public final class SelectNode extends StatementNode {
     /**
      * The conditions list.
      */
-    private List<SQLNode> conditions;
+    private AbstractComparisonNode condition;
     /**
      * If has a distinct token.
      */
@@ -83,20 +83,17 @@ public final class SelectNode extends StatementNode {
      *
      * @return the condition list.
      */
-    public List<SQLNode> getConditions() {
-        if (this.conditions != null) {
-            return Collections.unmodifiableList(this.conditions);
-        }
-        return Collections.emptyList();
+    public AbstractComparisonNode getCondition() {
+        return this.condition;
     }
 
     /**
-     * Gets the field list.
+     * Sets the condition tree.
      *
-     * @return the field list.
+     * @param condition the condition tree.
      */
-    public List<SQLNode> getFields() {
-        return Collections.unmodifiableList(this.fields);
+    public void setCondition(final AbstractComparisonNode condition) {
+        this.condition = condition;
     }
 
     /**
@@ -109,21 +106,21 @@ public final class SelectNode extends StatementNode {
     }
 
     /**
+     * Gets the field list.
+     *
+     * @return the field list.
+     */
+    public List<SQLNode> getFields() {
+        return this.fields;
+    }
+
+    /**
      * Gets the table list.
      *
      * @return the table list.
      */
     public List<TableNode> getTables() {
-        return Collections.unmodifiableList(this.tables);
-    }
-
-    /**
-     * Sets the condition list.
-     *
-     * @param conditions the condition list.
-     */
-    public void setConditions(final Collection<SQLNode> conditions) {
-        this.conditions = new ArrayList<>(conditions);
+        return this.tables;
     }
 
     /**
@@ -238,18 +235,10 @@ public final class SelectNode extends StatementNode {
      * @param builder builder to WHERE conditions.
      */
     private void buildWhere(final StringBuilder builder) {
-        boolean first;
-        if ((this.conditions != null) && !this.conditions.isEmpty()) {
+        if (this.condition != null) {
             builder.append(" WHERE ");
-            first = true;
-            for (final SQLNode cond : this.conditions) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(' ');
-                }
-                builder.append(cond);
-            }
+            builder.append(' ');
+            builder.append(condition);
         }
     }
 

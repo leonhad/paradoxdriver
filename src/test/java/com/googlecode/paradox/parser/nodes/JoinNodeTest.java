@@ -12,7 +12,6 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.comparisons.EqualsNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -20,8 +19,6 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Unit test {@link JoinNode} class.
@@ -53,17 +50,6 @@ public class JoinNodeTest {
     @AfterClass
     public static void tearDown() throws SQLException {
         conn.close();
-    }
-
-    /**
-     * Test conditions.
-     */
-    @Test
-    public void testConditions() {
-        final ArrayList<SQLNode> list = new ArrayList<>();
-        final JoinNode node = new JoinNode(conn);
-        node.setConditions(list);
-        Assert.assertEquals("Invalid node values.", list, node.getConditions());
     }
 
     /**
@@ -104,19 +90,6 @@ public class JoinNodeTest {
         node.setTableName("table");
         node.setAlias("alias");
         Assert.assertEquals("Invalid node value.", "CROSS JOIN table AS alias", node.toString());
-    }
-
-    /**
-     * Test for {@link JoinNode#toString()} method with conditions.
-     */
-    @Test
-    public void testToStringWithConditions() {
-        final JoinNode node = new JoinNode(conn);
-        node.setTableName("table");
-        final List<SQLNode> list = new ArrayList<>();
-        list.add(new EqualsNode(conn, new FieldNode(conn, null, "a", null), new FieldNode(conn, null, "b", null)));
-        node.setConditions(list);
-        Assert.assertEquals("Invalid node value.", "CROSS JOIN table ON a = b ", node.toString());
     }
 
     /**

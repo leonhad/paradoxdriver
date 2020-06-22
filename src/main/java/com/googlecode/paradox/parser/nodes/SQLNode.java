@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxConnection;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * Stores a SQL node.
@@ -50,6 +51,7 @@ public class SQLNode {
     protected SQLNode(final ParadoxConnection connection, final String name) {
         this.connection = connection;
         this.name = name;
+        this.alias = name;
     }
 
     /**
@@ -62,6 +64,10 @@ public class SQLNode {
     protected SQLNode(final ParadoxConnection connection, final String name, final String alias) {
         this(connection, name);
         this.alias = alias;
+    }
+
+    public Set<FieldNode> getClausuleFields() {
+        return Collections.emptySet();
     }
 
     /**

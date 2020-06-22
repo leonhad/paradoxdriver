@@ -109,7 +109,7 @@ public final class PlanTableNode {
      */
     public boolean isThis(final String aliasOrName) {
         if (aliasOrName == null) {
-            return false;
+            return true;
         }
 
         return aliasOrName.equalsIgnoreCase(table.getName()) || aliasOrName.equalsIgnoreCase(alias);

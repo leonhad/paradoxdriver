@@ -11,8 +11,8 @@
 package com.googlecode.paradox.parser.nodes.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
 
 import java.util.Collections;
 
@@ -23,7 +23,7 @@ import java.util.Collections;
  * @version 1.0
  * @since 1.1
  */
-public class ExistsNode extends SQLNode {
+public class ExistsNode extends AbstractComparisonNode {
 
     /**
      * Create a new instance.

@@ -11,7 +11,13 @@
 package com.googlecode.paradox.parser.nodes.comparisons;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.PlanTableNode;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Stores the equals node.
@@ -23,14 +29,42 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 public final class EqualsNode extends AbstractComparisonNode {
 
     /**
+     * The last node.
+     */
+    private final FieldNode last;
+
+    /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
-     * @param first      the first node.
+     * @param field      the first node.
      * @param last       the last node.
      */
-    public EqualsNode(final ParadoxConnection connection, final FieldNode first, final FieldNode last) {
-        super(connection, "=", first, last);
+    public EqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
+        super(connection, "=", field);
+        this.last = last;
     }
 
+    public FieldNode getLast() {
+        return last;
+    }
+
+    @Override
+    public Set<FieldNode> getClausuleFields() {
+        final Set<FieldNode> nodes = super.getClausuleFields();
+        nodes.add(last);
+        return nodes;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s = %s", field, last);
+    }
+
+    @Override
+    public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
+        final Object value1 = getValue(row, field, tables);
+        final Object value2 = getValue(row, last, tables);
+        return Objects.equals(value1, value2);
+    }
 }

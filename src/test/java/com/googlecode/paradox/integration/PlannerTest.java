@@ -44,12 +44,10 @@ public class PlannerTest {
 
     /**
      * Register the driver.
-     *
-     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
-    public static void setUp() throws ClassNotFoundException {
-        Class.forName(Driver.class.getName());
+    public static void setUp() {
+        new Driver();
     }
 
     /**

@@ -87,8 +87,8 @@ public class PlannerTest {
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
         Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
-        Assert.assertEquals("Second column not 'State'.", "STATE", plan.getColumns().get(1).getName());
-        Assert.assertEquals("Third column not 'Cities'.", "CITIES", plan.getColumns().get(2).getName());
+        Assert.assertEquals("Second column not 'State'.", "State", plan.getColumns().get(1).getName());
+        Assert.assertEquals("Third column not 'Cities'.", "Cities", plan.getColumns().get(2).getName());
     }
 
     /**
@@ -103,8 +103,8 @@ public class PlannerTest {
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
         Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
-        Assert.assertEquals("Second column not 'State'.", "STATE", plan.getColumns().get(1).getName());
-        Assert.assertEquals("Third column not 'Cities'.", "CITIES", plan.getColumns().get(2).getName());
+        Assert.assertEquals("Second column not 'State'.", "State", plan.getColumns().get(1).getName());
+        Assert.assertEquals("Third column not 'Cities'.", "Cities", plan.getColumns().get(2).getName());
     }
 
     /**
@@ -189,9 +189,9 @@ public class PlannerTest {
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute();
         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
-        Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0).get(0).getValue());
-        Assert.assertEquals("Test the result value.", "315", plan.getValues().get(1).get(0).getValue());
-        Assert.assertEquals("Test the result value.", "917", plan.getValues().get(2).get(0).getValue());
+        Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0)[0].getValue());
+        Assert.assertEquals("Test the result value.", "315", plan.getValues().get(1)[0].getValue());
+        Assert.assertEquals("Test the result value.", "917", plan.getValues().get(2)[0].getValue());
     }
 
     /**
@@ -245,9 +245,9 @@ public class PlannerTest {
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute();
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
-        Assert.assertEquals("Field expected", "AC", plan.getValues().get(0).get(0).getField().getName());
-        Assert.assertEquals("Field expected", "State", plan.getValues().get(0).get(1).getField().getName());
-        Assert.assertEquals("Field expected", "Cities", plan.getValues().get(0).get(2).getField().getName());
+        Assert.assertEquals("Field expected", "AC", plan.getValues().get(0)[0].getField().getName());
+        Assert.assertEquals("Field expected", "State", plan.getValues().get(0)[1].getField().getName());
+        Assert.assertEquals("Field expected", "Cities", plan.getValues().get(0)[2].getField().getName());
     }
 
 }

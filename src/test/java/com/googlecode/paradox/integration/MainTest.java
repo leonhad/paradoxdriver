@@ -177,7 +177,7 @@ public class MainTest {
     public void testResultSet() throws SQLException {
 
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT AC as 'ACode', State, CITIES FROM AREACODES")) {
+                "SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Column 'AC':", "201", rs.getString("ac"));
             Assert.assertEquals("Column 'State':", "NJ", rs.getString("State"));
@@ -215,7 +215,7 @@ public class MainTest {
     @Test
     public void testResultSetOneColumn() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT email FROM customer")) {
+                "SELECT EMail FROM CUSTOMER")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString("email"));
             Assert.assertTrue("No second row", rs.next());
@@ -233,7 +233,7 @@ public class MainTest {
     @Test
     public void testResultSetTwoColumn() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT email,custno  FROM customer")) {
+                "SELECT EMail,CustNo  FROM CUSTOMER")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString(1));
             Assert.assertEquals("1 row:", 1, rs.getInt(2));

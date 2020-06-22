@@ -11,8 +11,15 @@
 package com.googlecode.paradox.parser.nodes.comparisons;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.nodes.PlanTableNode;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Stores a abstract comparision node.
@@ -21,49 +28,74 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * @version 1.1
  * @since 1.1
  */
-abstract class AbstractComparisonNode extends SQLNode {
+public abstract class AbstractComparisonNode extends SQLNode {
 
     /**
-     * The first node.
+     * The field node.
      */
-    private final FieldNode first;
-
-    /**
-     * The last node.
-     */
-    private final FieldNode last;
+    protected final FieldNode field;
 
     /**
      * Creates a new instance.
      *
      * @param connection the Paradox connection.
      * @param name       the condition name.
-     * @param first      the first node.
-     * @param last       the last node.
      */
-    AbstractComparisonNode(final ParadoxConnection connection, final String name, final FieldNode first,
-                           final FieldNode last) {
+    public AbstractComparisonNode(final ParadoxConnection connection, final String name, final FieldNode field) {
         super(connection, name);
-        this.first = first;
-        this.last = last;
+        this.field = field;
+    }
+
+    public AbstractComparisonNode(final ParadoxConnection connection, final String name) {
+        this(connection, name, null);
+    }
+
+    public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
+        return false;
+    }
+
+    protected Object getValue(final List<FieldValue> row, final FieldNode field, final List<PlanTableNode> tables) {
+        final String tableName = tables.stream()
+                .filter(t -> t.getAlias().equals(field.getTableName()))
+                .map(PlanTableNode::getTable).map(ParadoxTable::getName)
+                .findFirst().orElse(field.getTableName());
+
+        FieldValue ret = null;
+        if (tableName == null) {
+            ret = row.stream().filter(v -> v.getField().getName().equalsIgnoreCase(field.getName()))
+                    .findFirst().orElse(null);
+        } else {
+            ret = row.stream().filter(v -> v.getField().getTableName().equalsIgnoreCase(tableName)
+                    && v.getField().getName().equalsIgnoreCase(field.getName())).findFirst().orElse(null);
+        }
+
+        // FIXME type converter
+
+        if (ret != null) {
+            if (ret.getValue() != null) {
+                return ret.getValue().toString();
+            }
+            return null;
+        }
+
+        return field.getName();
+    }
+
+    @Override
+    public Set<FieldNode> getClausuleFields() {
+        final Set<FieldNode> set = new HashSet<>();
+        set.add(field);
+        set.addAll(super.getClausuleFields());
+        return set;
     }
 
     /**
-     * Gets the first node.
+     * Get the field.
      *
-     * @return the first node.
+     * @return the field.
      */
-    public FieldNode getFirst() {
-        return this.first;
-    }
-
-    /**
-     * Gets the last node.
-     *
-     * @return the last node.
-     */
-    public FieldNode getLast() {
-        return this.last;
+    public FieldNode getField() {
+        return field;
     }
 
     /**
@@ -71,6 +103,6 @@ abstract class AbstractComparisonNode extends SQLNode {
      */
     @Override
     public String toString() {
-        return this.first + " " + this.getName() + " " + this.last;
+        return field.toString();
     }
 }

@@ -11,9 +11,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
-
-import java.util.Collections;
-import java.util.List;
+import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
 
 /**
  * Stores a join node.
@@ -27,7 +25,7 @@ public final class JoinNode extends SQLNode {
     /**
      * The condition list.
      */
-    private List<SQLNode> conditions;
+    private AbstractComparisonNode condition;
 
     /**
      * The table name.
@@ -67,12 +65,24 @@ public final class JoinNode extends SQLNode {
     }
 
     /**
-     * Sets the condition list.
-     *
-     * @param conditions the condition list.
+     * {@inheritDoc}.
      */
-    public void setConditions(final List<SQLNode> conditions) {
-        this.conditions = Collections.unmodifiableList(conditions);
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(this.type);
+        builder.append(" JOIN ");
+        builder.append(this.tableName);
+        if ((this.getAlias() != null) && !this.tableName.equals(this.getAlias())) {
+            builder.append(" AS ");
+            builder.append(this.getAlias());
+        }
+        if (this.condition != null) {
+            builder.append(" ON ");
+            builder.append(condition);
+            builder.append(' ');
+        }
+        return builder.toString();
     }
 
     /**
@@ -94,35 +104,21 @@ public final class JoinNode extends SQLNode {
     }
 
     /**
-     * {@inheritDoc}.
+     * Gets the condition tree.
+     *
+     * @return the condition tree.
      */
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(this.type);
-        builder.append(" JOIN ");
-        builder.append(this.tableName);
-        if ((this.getAlias() != null) && !this.tableName.equals(this.getAlias())) {
-            builder.append(" AS ");
-            builder.append(this.getAlias());
-        }
-        if (this.conditions != null) {
-            builder.append(" ON ");
-            for (final SQLNode condition : this.conditions) {
-                builder.append(condition);
-                builder.append(' ');
-            }
-        }
-        return builder.toString();
+    AbstractComparisonNode getCondition() {
+        return this.condition;
     }
 
     /**
-     * Gets the conditions.
+     * Sets the condition list.
      *
-     * @return the conditions.
+     * @param condition the condition list.
      */
-    List<SQLNode> getConditions() {
-        return Collections.unmodifiableList(this.conditions);
+    public void setCondition(final AbstractComparisonNode condition) {
+        this.condition = condition;
     }
 
 }

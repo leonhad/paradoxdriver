@@ -23,13 +23,23 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 public final class NotEqualsNode extends AbstractComparisonNode {
 
     /**
+     * The last node.
+     */
+    private final FieldNode last;
+
+    /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
-     * @param first      the first node.
+     * @param field      the first node.
      * @param last       the last node.
      */
-    public NotEqualsNode(final ParadoxConnection connection, final FieldNode first, final FieldNode last) {
-        super(connection, "<>", first, last);
+    public NotEqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
+        super(connection, "<>", field);
+        this.last = last;
+    }
+
+    public FieldNode getLast() {
+        return last;
     }
 }
