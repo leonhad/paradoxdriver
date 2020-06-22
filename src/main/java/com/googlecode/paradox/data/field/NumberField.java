@@ -28,6 +28,8 @@ import java.sql.Types;
  */
 public final class NumberField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(Types.DOUBLE);
+
     /**
      * {@inheritDoc}.
      */
@@ -47,6 +49,12 @@ public final class NumberField implements FieldParser {
         } else {
             value = ~value;
         }
-        return new FieldValue(Double.longBitsToDouble(value), Types.DOUBLE);
+
+        double v = Double.longBitsToDouble(value);
+
+        if (Double.isNaN(v)) {
+            return NULL;
+        }
+        return new FieldValue(v, Types.DOUBLE);
     }
 }

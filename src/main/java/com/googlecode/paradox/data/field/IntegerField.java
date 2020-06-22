@@ -28,6 +28,8 @@ import java.sql.Types;
  */
 public final class IntegerField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(Types.INTEGER);
+
     /**
      * {@inheritDoc}
      */
@@ -44,6 +46,11 @@ public final class IntegerField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final int v = (short) (buffer.getShort() ^ 0x8000);
+
+        if (v == -32768) {
+            return NULL;
+        }
+
         return new FieldValue(v, Types.INTEGER);
     }
 }
