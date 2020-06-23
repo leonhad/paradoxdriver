@@ -31,7 +31,9 @@ public final class ParadoxField {
     /**
      * Default number precision.
      */
-    private static final int NUMBER_PRECISION = 2;
+    private static final int NUMBER_PRECISION = 3;
+
+    private static final int CURRENCY_PRECISION = 2;
 
     private static final int BLOB_SIZE_PADDING = 10;
 
@@ -276,17 +278,19 @@ public final class ParadoxField {
      * @throws SQLException in case of invalid field type.
      */
     public void setSize(final int size) throws SQLException {
-        // FIXME Review this to match real field spec.
         this.realSize = size;
         int sqlType = this.getSqlType();
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
             this.size = size - BLOB_SIZE_PADDING;
-        } else if (type == ParadoxFieldType.NUMBER.getType()) {
-            this.precision = NUMBER_PRECISION;
+        } else if (type == ParadoxFieldType.CURRENCY.getType()) {
+            this.precision = CURRENCY_PRECISION;
             this.size = size;
         } else if (type == ParadoxFieldType.BCD.getType()) {
             this.precision = size;
             this.size = BCDField.MAX_DIGITS;
+        } else if (sqlType == Types.DECIMAL) {
+            this.precision = NUMBER_PRECISION;
+            this.size = size;
         } else {
             this.size = size;
         }
