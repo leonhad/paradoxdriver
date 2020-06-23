@@ -31,6 +31,8 @@ import java.util.GregorianCalendar;
  */
 public final class TimeField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(Types.TIME);
+
     /**
      * {@inheritDoc}.
      */
@@ -52,6 +54,7 @@ public final class TimeField implements FieldParser {
             final Time time = new Time(calendar.getTimeInMillis());
             return new FieldValue(time, Types.TIME);
         }
-        return new FieldValue(Types.TIME);
+        
+        return NULL;
     }
 }

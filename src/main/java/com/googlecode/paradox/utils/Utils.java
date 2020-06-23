@@ -57,6 +57,7 @@ public final class Utils {
     public static String parseString(final ByteBuffer buffer, final Charset charset) {
         final byte[] value = buffer.array();
         int length = value.length;
+
         for (; length > 0; length--) {
             // array value starts with zero, not 1
             if (value[length - 1] != 0) {

@@ -52,7 +52,7 @@ public final class TimestampField implements FieldParser {
         }
         long value = (long) Double.longBitsToDouble(rawValue);
 
-        Date date = new Date();
+        final Date date = new Date();
         date.setTime(value - MILLIS_UNTIL_1970);
         return new FieldValue(new Timestamp(date.getTime()), Types.TIMESTAMP);
     }
