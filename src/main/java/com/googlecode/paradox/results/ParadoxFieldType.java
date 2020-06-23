@@ -109,7 +109,7 @@ public enum ParadoxFieldType {
     /**
      * The BLOB type, variant 3.
      */
-    BYTES(0x18, Types.BLOB);
+    BYTES(0x18, Types.BINARY);
 
     private static final ParadoxFieldType[] VALUES = ParadoxFieldType.values();
 
@@ -147,6 +147,7 @@ public enum ParadoxFieldType {
                 return typeName.getSQLType();
             }
         }
+
         throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
     }
 

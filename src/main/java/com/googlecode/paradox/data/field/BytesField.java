@@ -27,6 +27,8 @@ import java.nio.ByteBuffer;
  */
 public final class BytesField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.BYTES.getSQLType());
+
     /**
      * {@inheritDoc}.
      */
@@ -42,8 +44,19 @@ public final class BytesField implements FieldParser {
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final ByteBuffer bytes = ByteBuffer.allocate(field.getSize());
 
+        // Track for NULL values.
+        boolean allZeroes = true;
         for (int chars = 0; chars < field.getSize(); chars++) {
-            bytes.put(buffer.get());
+            byte value = buffer.get();
+            bytes.put(value);
+
+            if (value != 0) {
+                allZeroes = false;
+            }
+        }
+
+        if (allZeroes) {
+            return NULL;
         }
 
         return new FieldValue(bytes.array(), ParadoxFieldType.BYTES.getSQLType());
