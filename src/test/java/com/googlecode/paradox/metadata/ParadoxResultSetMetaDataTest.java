@@ -15,6 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.results.TypeName;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 import org.junit.*;
 
@@ -86,7 +87,7 @@ public class ParadoxResultSetMetaDataTest {
         column.getField().setSize(255);
         column.setName("name");
         column.setType(ParadoxFieldType.INTEGER.getSQLType());
-        column.setPrecision(0);
+        column.setPrecision(2);
         column.setTableName("table");
         column.setAutoIncrement(false);
         column.setCurrency(false);
@@ -95,20 +96,20 @@ public class ParadoxResultSetMetaDataTest {
         column.setReadOnly(true);
         column.setSearchable(true);
         column.setSigned(true);
-        column.setScale(2);
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn,
                 Collections.singletonList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", TypeName.INTEGER.getClassName(), metaData.getColumnClassName(1));
         Assert.assertEquals("Testing for catalog name.", "test-classes", metaData.getCatalogName(1));
         Assert.assertEquals("Testing for schema name.", "db", metaData.getSchemaName(1));
-        Assert.assertEquals("Testing for column display size.", 255, metaData.getColumnDisplaySize(1));
+        Assert.assertEquals("Testing for column display size.", Constants.MAX_STRING_SIZE,
+                metaData.getColumnDisplaySize(1));
         Assert.assertEquals("Testing for column label.", "name", metaData.getColumnLabel(1));
         Assert.assertEquals("Testing for column name.", "name", metaData.getColumnName(1));
         Assert.assertEquals("Testing for column type.", ParadoxFieldType.INTEGER.getSQLType(),
                 metaData.getColumnType(1));
         Assert.assertEquals("Testing for column type name.", TypeName.INTEGER.getName(), metaData.getColumnTypeName(1));
-        Assert.assertEquals("Testing for column precision.", 0, metaData.getPrecision(1));
+        Assert.assertEquals("Testing for column precision.", 2, metaData.getPrecision(1));
         Assert.assertEquals("Testing for column scale.", 2, metaData.getScale(1));
         Assert.assertEquals("Testing for table name.", "table", metaData.getTableName(1));
         Assert.assertFalse("Testing for auto increment value.", metaData.isAutoIncrement(1));

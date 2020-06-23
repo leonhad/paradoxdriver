@@ -64,34 +64,12 @@ public class ColumnTest {
     }
 
     /**
-     * Test for auto increment type.
-     */
-    @Test
-    public void testAutoIncrementType() {
-        final Column column = new Column(new ParadoxField(conn));
-        column.setType(ParadoxFieldType.AUTO_INCREMENT.getType());
-        Assert.assertEquals("Invalid field value.", 9d, column.getPrecision(), 0);
-        Assert.assertTrue("Invalid field type.", column.isAutoIncrement());
-    }
-
-    /**
      * Test for currency.
      */
     @Test
     public void testCurrency() {
         final Column column = new Column(new ParadoxField(conn));
         column.setCurrency(true);
-        Assert.assertTrue("Invalid field type.", column.isCurrency());
-    }
-
-    /**
-     * Test for double type.
-     */
-    @Test
-    public void testDoubleType() {
-        final Column column = new Column(new ParadoxField(conn));
-        column.setType(ParadoxFieldType.CURRENCY.getType());
-        Assert.assertEquals("Invalid field value.", 9d, column.getPrecision(), 0);
         Assert.assertTrue("Invalid field type.", column.isCurrency());
     }
 
@@ -163,26 +141,6 @@ public class ColumnTest {
     }
 
     /**
-     * Test for numeric type.
-     */
-    @Test
-    public void testNumericType() {
-        final Column column = new Column(new ParadoxField(conn));
-        column.setType(ParadoxFieldType.NUMBER.getType());
-        Assert.assertEquals("Invalid field value.", 2d, column.getScale(), 0);
-    }
-
-    /**
-     * Test for precision.
-     */
-    @Test
-    public void testPrecision() {
-        final Column column = new Column(new ParadoxField(conn));
-        column.setPrecision(1);
-        Assert.assertEquals("Invalid field precision.", 1, column.getPrecision());
-    }
-
-    /**
      * Test for read only.
      */
     @Test
@@ -198,7 +156,7 @@ public class ColumnTest {
     @Test
     public void testScale() {
         final Column column = new Column(new ParadoxField(conn));
-        column.setScale(1);
+        column.setPrecision(1);
         Assert.assertEquals("Invalid field scale.", 1, column.getScale());
     }
 

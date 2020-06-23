@@ -223,11 +223,11 @@ public class ParadoxFieldTest {
         // Not changed by type
         field.setType((byte) 0xF);
         field.setSize(20);
-        Assert.assertEquals("Physical field size invalid.", 20, field.getPhysicsSize());
+        Assert.assertEquals("Physical field size invalid.", 20, field.getRealSize());
 
         field.setType((byte) 0x1);
         field.setSize(20);
-        Assert.assertEquals("Physical field size invalid.", 20, field.getPhysicsSize());
+        Assert.assertEquals("Physical field size invalid.", 20, field.getRealSize());
     }
 
     /**

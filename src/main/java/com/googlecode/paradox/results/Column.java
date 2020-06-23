@@ -27,16 +27,6 @@ import java.sql.Types;
 public final class Column {
 
     /**
-     * Default number scale.
-     */
-    private static final int NUMBER_SCALE = 2;
-
-    /**
-     * Default numeric precision.
-     */
-    private static final int NUMBER_PRECISION = 9;
-
-    /**
      * If this column is auto incremented.
      */
     private boolean autoIncrement;
@@ -77,11 +67,6 @@ public final class Column {
     private boolean readOnly;
 
     /**
-     * The field scale.
-     */
-    private int scale;
-
-    /**
      * If this field is searchable.
      */
     private boolean searchable = true;
@@ -116,6 +101,7 @@ public final class Column {
     public Column(final ParadoxField field) {
         this(field.getName(), field.getType());
         this.field = field;
+        this.precision = field.getPrecision();
     }
 
     /**
@@ -126,7 +112,7 @@ public final class Column {
      */
     public Column(final String name, final int type) {
         this.name = name;
-        this.setType(type);
+        this.type = type;
     }
 
     /**
@@ -182,7 +168,7 @@ public final class Column {
      * @return the field scale.
      */
     public int getScale() {
-        return this.scale;
+        return this.precision;
     }
 
     /**
@@ -339,15 +325,6 @@ public final class Column {
     }
 
     /**
-     * Sets the field scale.
-     *
-     * @param scale the scale to set.
-     */
-    public void setScale(final int scale) {
-        this.scale = scale;
-    }
-
-    /**
      * Sets if this field is searchable.
      *
      * @param searchable the searchable to set.
@@ -390,15 +367,5 @@ public final class Column {
      */
     public void setType(final int type) {
         this.type = type;
-
-        if (type == ParadoxFieldType.NUMBER.getType()) {
-            this.scale = NUMBER_SCALE;
-        } else if (type == ParadoxFieldType.CURRENCY.getType()) {
-            this.currency = true;
-            this.precision = NUMBER_PRECISION;
-        } else if (type == ParadoxFieldType.AUTO_INCREMENT.getType()) {
-            this.autoIncrement = true;
-            this.precision = NUMBER_PRECISION;
-        }
     }
 }

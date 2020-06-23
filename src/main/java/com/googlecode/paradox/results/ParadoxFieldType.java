@@ -47,12 +47,12 @@ public enum ParadoxFieldType {
     /**
      * The double type.
      */
-    CURRENCY(5, Types.DOUBLE),
+    CURRENCY(5, Types.NUMERIC),
 
     /**
      * The numeric type.
      */
-    NUMBER(6, Types.DOUBLE),
+    NUMBER(6, Types.NUMERIC),
 
     /**
      * The boolean type.
@@ -104,7 +104,7 @@ public enum ParadoxFieldType {
     /**
      * The binary type.
      */
-    BCD(0x17, Types.DOUBLE),
+    BCD(0x17, Types.NUMERIC),
 
     /**
      * The BLOB type, variant 3.

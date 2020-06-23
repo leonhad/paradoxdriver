@@ -8,13 +8,11 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
-import junit.framework.TestCase;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -67,7 +65,8 @@ public class BCDFieldTest {
     @Test
     public void testReadBlob() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT * FROM bcd")) {
+                "SELECT * FROM fields.bcd")) {
+            rs.getMetaData();
             Assert.assertTrue("First record not exists", rs.next());
             Assert.assertEquals("Invalid value.", 1.23D, rs.getDouble("A"), 0.001D);
             Assert.assertEquals("Invalid value.", 1.0D, rs.getDouble("B"), 0.001D);

@@ -28,6 +28,11 @@ import java.util.Objects;
  */
 public final class ParadoxField {
 
+    /**
+     * Default number precision.
+     */
+    private static final int NUMBER_PRECISION = 2;
+
     private static final int BLOB_SIZE_PADDING = 10;
 
     /**
@@ -63,7 +68,12 @@ public final class ParadoxField {
     /**
      * The the field order.
      */
-    private int physicsSize;
+    private int realSize;
+
+    /**
+     * The field precision.
+     */
+    private int precision;
 
     /**
      * The field size.
@@ -266,12 +276,17 @@ public final class ParadoxField {
      * @throws SQLException in case of invalid field type.
      */
     public void setSize(final int size) throws SQLException {
-        this.physicsSize = size;
+        // FIXME Review this to match real field spec.
+        this.realSize = size;
         int sqlType = this.getSqlType();
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
             this.size = size - BLOB_SIZE_PADDING;
-        } else if (sqlType == ParadoxFieldType.BCD.getType()) {
-            this.size = BCDField.BCD_SIZE;
+        } else if (type == ParadoxFieldType.NUMBER.getType()) {
+            this.precision = NUMBER_PRECISION;
+            this.size = size;
+        } else if (type == ParadoxFieldType.BCD.getType()) {
+            this.precision = size;
+            this.size = BCDField.MAX_DIGITS;
         } else {
             this.size = size;
         }
@@ -317,8 +332,8 @@ public final class ParadoxField {
      *
      * @return the file size in file.
      */
-    public int getPhysicsSize() {
-        return this.physicsSize;
+    public int getRealSize() {
+        return this.realSize;
     }
 
     /**
@@ -344,6 +359,10 @@ public final class ParadoxField {
         return this.type == ParadoxFieldType.AUTO_INCREMENT.getType();
     }
 
+    public int getPrecision() {
+        return precision;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -355,7 +374,7 @@ public final class ParadoxField {
         ParadoxField that = (ParadoxField) o;
         return checked == that.checked &&
                 orderNum == that.orderNum &&
-                physicsSize == that.physicsSize &&
+                realSize == that.realSize &&
                 size == that.size &&
                 type == that.type &&
                 Objects.equals(alias, that.alias) &&
@@ -368,7 +387,7 @@ public final class ParadoxField {
 
     @Override
     public int hashCode() {
-        return Objects.hash(alias, checked, expression, joinName, name, orderNum, physicsSize, size, table, tableName
+        return Objects.hash(alias, checked, expression, joinName, name, orderNum, realSize, size, table, tableName
                 , type);
     }
 }
