@@ -14,12 +14,14 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.TestUtil;
 import org.junit.*;
 
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.util.List;
 
 /**
  * Unit test for {@link ViewData}.
@@ -74,7 +76,9 @@ public class ViewDataTest {
      */
     @Test
     public void testListViews() throws Exception {
-        Assert.assertNotNull("Invalid views", ViewData.listViews(this.conn.getCurrentSchema(), this.conn));
+        final List<ParadoxView> list =  ViewData.listViews(this.conn.getCurrentSchema(), this.conn);
+        Assert.assertEquals("Invalid views", 1, list.size());
+        Assert.assertEquals("Invalid view name.", "AREAS", list.get(0).getName());
     }
 
     /**

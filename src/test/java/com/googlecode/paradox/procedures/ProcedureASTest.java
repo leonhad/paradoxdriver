@@ -57,7 +57,8 @@ public class ProcedureASTest {
      */
     @Test
     public void testAllProcedures() {
-        Assert.assertEquals("Invalid procedures list ize.", 5, new ProcedureAS(conn).list().size());
+        // No default procedure in driver.
+        Assert.assertEquals("Invalid procedures list ize.", 0, new ProcedureAS(conn).list().size());
     }
 
     /**

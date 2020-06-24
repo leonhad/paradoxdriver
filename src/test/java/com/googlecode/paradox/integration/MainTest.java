@@ -177,9 +177,9 @@ public class MainTest {
     public void testResultSet() throws SQLException {
 
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT AC as 'ACode', State, CITIES FROM AREACODES")) {
+                "SELECT AC as ACode, State, Cities FROM AREACODES")) {
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertEquals("Column 'AC':", "201", rs.getString("ac"));
+            Assert.assertEquals("Column 'AC':", "201", rs.getString("AC"));
             Assert.assertEquals("Column 'State':", "NJ", rs.getString("State"));
             Assert.assertEquals("Column 'Cities':", "Hackensack, Jersey City (201/551 overlay)",
                     rs.getString("Cities"));
@@ -194,7 +194,7 @@ public class MainTest {
     @Test
     public void testResultSetMultipleValues() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT \"id\", name, moneys FROM \"general.db\"")) {
+                "SELECT \"ID\", NAME, MONEYS FROM db.GENERAL")) {
             Assert.assertTrue("First record:", rs.next());
             Assert.assertEquals("1 row: ", "1 - Mari 100.0",
                     rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
@@ -215,7 +215,7 @@ public class MainTest {
     @Test
     public void testResultSetOneColumn() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT email FROM customer")) {
+                "SELECT EMail FROM CUSTOMER")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString("email"));
             Assert.assertTrue("No second row", rs.next());
@@ -233,7 +233,7 @@ public class MainTest {
     @Test
     public void testResultSetTwoColumn() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT email,custno  FROM customer")) {
+                "SELECT EMail,CustNo FROM CUSTOMER")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString(1));
             Assert.assertEquals("1 row:", 1, rs.getInt(2));
@@ -281,7 +281,7 @@ public class MainTest {
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "AC", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
@@ -294,7 +294,7 @@ public class MainTest {
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "State", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
@@ -307,7 +307,7 @@ public class MainTest {
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "AREAS.QBE", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "Cities", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));

@@ -169,7 +169,7 @@ public final class ViewData {
                                         final ParadoxConnection connection) throws SQLException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        final ParadoxView view = new ParadoxView(file, Utils.removeSuffix(file.getName(), ".QBE"), connection);
+        final ParadoxView view = new ParadoxView(file, Utils.removeSuffix(file.getName(), "QBE"), connection);
 
         try (final FileInputStream fs = new FileInputStream(file); final FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
