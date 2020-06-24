@@ -16,6 +16,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 /**
@@ -84,11 +85,10 @@ public final class BCDField implements FieldParser {
             removeLeadingZeroes(sb);
         }
 
-        double value = Double.parseDouble(sb.toString());
         if (negative) {
-            value *= -1;
+            sb.insert(0, '-');
         }
-
+        double value = Double.parseDouble(sb.toString());
         return new FieldValue(value, ParadoxFieldType.BCD.getSQLType());
     }
 
