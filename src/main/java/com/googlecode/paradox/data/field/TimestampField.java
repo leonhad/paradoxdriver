@@ -28,6 +28,7 @@ import java.util.Date;
  */
 public final class TimestampField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.TIMESTAMP.getSQLType());
     private static final long MILLIS_UNTIL_1970 = 62_135_683_200_000L;
 
     /**
@@ -45,6 +46,10 @@ public final class TimestampField implements FieldParser {
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long rawValue = buffer.getLong();
 
+        if (rawValue == 0) {
+            return NULL;
+        }
+
         if ((rawValue & 0x8000_0000_0000_0000L) != 0) {
             rawValue &= 0x7FFF_FFFF_FFFF_FFFFL;
         } else {
@@ -52,8 +57,6 @@ public final class TimestampField implements FieldParser {
         }
         long value = (long) Double.longBitsToDouble(rawValue);
 
-        final Date date = new Date();
-        date.setTime(value - MILLIS_UNTIL_1970);
-        return new FieldValue(new Timestamp(date.getTime()), Types.TIMESTAMP);
+        return new FieldValue(new Timestamp(value - MILLIS_UNTIL_1970), ParadoxFieldType.TIMESTAMP.getSQLType());
     }
 }

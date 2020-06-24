@@ -58,12 +58,12 @@ public class BCDFieldTest {
     }
 
     /**
-     * Test for BLOB reading.
+     * Test for BCD reading.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadBlob() throws SQLException {
+    public void testReadBCD() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
                 "SELECT * FROM fields.bcd")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
