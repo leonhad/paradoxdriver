@@ -10,21 +10,62 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import org.junit.Assert;
-import org.junit.Test;
+import com.googlecode.paradox.integration.MainTest;
+import org.junit.*;
 
 import java.nio.ByteBuffer;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Unit test for {@link LongField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class LongFieldTest {
+
+    /**
+     * The database connection.
+     */
+    private ParadoxConnection conn;
+
+    /**
+     * Register the driver.
+     */
+    @BeforeClass
+    public static void setUp() {
+        new Driver();
+    }
+
+    /**
+     * Used to close the test connection.
+     *
+     * @throws SQLException in case closing of errors.
+     */
+    @After
+    public void closeConnection() throws SQLException {
+        if (this.conn != null) {
+            this.conn.close();
+        }
+    }
+
+    /**
+     * Connect to test database.
+     *
+     * @throws SQLException in case of connection errors.
+     */
+    @Before
+    public void connect() throws SQLException {
+        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "fields");
+    }
+
     /**
      * Test for invalid match.
      */
@@ -61,5 +102,30 @@ public class LongFieldTest {
     public void testValidMatch() {
         final LongField field = new LongField();
         Assert.assertTrue("Invalid field type.", field.match(4));
+    }
+
+    /**
+     * Test for BLOB reading.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testReadBlob() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT Id, LONG FROM fields.long")) {
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", 1, rs.getInt("LONG"));
+
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", 2, rs.getInt("LONG"));
+
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 3, rs.getInt("Id"));
+            Assert.assertNull("Invalid value.", rs.getObject("LONG"));
+
+            Assert.assertFalse("Invalid Result Set state.", rs.next());
+        }
     }
 }

@@ -42,6 +42,7 @@ public final class BlobField extends AbstractLobField {
      */
     @Override
     public BlobDescriptor getDescriptor(final ParadoxTable table) {
+
         return new BlobDescriptor(table.getBlobTable());
     }
 
