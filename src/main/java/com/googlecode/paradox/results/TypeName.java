@@ -22,7 +22,7 @@ import java.sql.Types;
  * Stores the SQL type names.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public enum TypeName {
@@ -51,12 +51,7 @@ public enum TypeName {
      * The date type.
      */
     DATE(Types.DATE, "DATE", Date.class.getName()),
-    
-    /**
-     * The double type.
-     */
-    DOUBLE(Types.DOUBLE, "DOUBLE", Double.class.getName()),
-    
+
     /**
      * The integer type.
      */

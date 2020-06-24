@@ -28,7 +28,7 @@ import java.sql.Types;
  */
 public final class NumberField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(Types.DOUBLE);
+    private static final FieldValue NULL = new FieldValue(Types.NUMERIC);
 
     /**
      * {@inheritDoc}.
@@ -55,6 +55,6 @@ public final class NumberField implements FieldParser {
         if (Double.isNaN(v)) {
             return NULL;
         }
-        return new FieldValue(v, Types.DOUBLE);
+        return new FieldValue(v, ParadoxFieldType.NUMBER.getSQLType());
     }
 }

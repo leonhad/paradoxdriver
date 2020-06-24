@@ -47,12 +47,12 @@ public enum ParadoxFieldType {
     /**
      * The double type.
      */
-    CURRENCY(5, Types.DOUBLE),
+    CURRENCY(5, Types.NUMERIC),
 
     /**
      * The numeric type.
      */
-    NUMBER(6, Types.DOUBLE),
+    NUMBER(6, Types.NUMERIC),
 
     /**
      * The boolean type.
