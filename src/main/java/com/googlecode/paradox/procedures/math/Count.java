@@ -17,10 +17,15 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
  * The COUNT function.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.1
  */
 public final class Count extends AbstractCallableProcedure {
+
+    @Override
+    public boolean isNative() {
+        return true;
+    }
 
     /**
      * @param connection the Paradox connection.

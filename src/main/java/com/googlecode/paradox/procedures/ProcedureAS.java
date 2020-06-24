@@ -16,6 +16,7 @@ import com.googlecode.paradox.procedures.math.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Stores the procedures in this driver.
@@ -65,7 +66,7 @@ public final class ProcedureAS {
      * @return the procedures list.
      */
     public List<AbstractCallableProcedure> list() {
-        return Collections.unmodifiableList(this.procedures);
+        return this.procedures.stream().filter(p -> !p.isNative()).collect(Collectors.toList());
     }
 
     /**

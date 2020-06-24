@@ -82,7 +82,7 @@ public final class TableData extends ParadoxData {
     public static List<ParadoxTable> listTables(final File schema, final String pattern,
                                                 final ParadoxConnection connection) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
-        final File[] fileList = schema.listFiles(new TableFilter(connection, Utils.removeDB(pattern)));
+        final File[] fileList = schema.listFiles(new TableFilter(connection, Utils.removeSuffix(pattern, "DB")));
         if (fileList != null) {
             Arrays.sort(fileList);
             for (final File file : fileList) {

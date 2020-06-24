@@ -22,6 +22,11 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
  */
 public final class Min extends AbstractCallableProcedure {
 
+    @Override
+    public boolean isNative() {
+        return true;
+    }
+
     /**
      * @param connection the Paradox connection.
      */

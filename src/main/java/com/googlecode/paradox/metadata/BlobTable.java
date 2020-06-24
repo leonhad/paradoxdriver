@@ -84,7 +84,7 @@ public final class BlobTable extends ParadoxDataFile {
      * @param connection the database connection.
      */
     BlobTable(final File file, final String name, final ParadoxConnection connection) {
-        super(file, Utils.removeMB(name), connection);
+        super(file, Utils.removeSuffix(name, "MB"), connection);
         this.cache = new AllBlockCache();
         this.parsed = false;
         this.fields = Collections.emptyList();
@@ -171,7 +171,7 @@ public final class BlobTable extends ParadoxDataFile {
      * @throws SQLException in case of failures.
      */
     private File openBlob() throws SQLException {
-        final String name = Utils.removeDB(this.getFile().getName());
+        final String name = Utils.removeSuffix(this.getFile().getName(), "MB");
         final File[] fileList = this.getFile().getParentFile().listFiles(new TableFilter(connection, name, "mb"));
         if ((fileList == null) || (fileList.length == 0)) {
             throw new SQLException(String.format("Blob file not found for table '%s'", name),

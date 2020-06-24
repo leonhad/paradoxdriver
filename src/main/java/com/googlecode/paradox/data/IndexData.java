@@ -56,7 +56,7 @@ public final class IndexData extends ParadoxData {
     public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
                                                  final ParadoxConnection connection) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
-        final String indexNamePattern = Utils.removeDB(tableName) + ".X??";
+        final String indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".X??";
         final File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connection, indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {

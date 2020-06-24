@@ -70,26 +70,6 @@ public final class Utils {
     }
 
     /**
-     * Remove the DB suffix from a {@link String}.
-     *
-     * @param name the {@link String} to format.
-     * @return the formatted {@link String}.
-     */
-    public static String removeDB(final String name) {
-        return Utils.removeSuffix(name, "DB");
-    }
-
-    /**
-     * Remove the MB suffix from a {@link String}.
-     *
-     * @param name the {@link String} to format.
-     * @return the formatted {@link String}.
-     */
-    public static String removeMB(final String name) {
-        return Utils.removeSuffix(name, "MB");
-    }
-
-    /**
      * Returns an object that implements the given interface to allow access to
      * non-standard methods, or standard methods not exposed by the proxy.
      *
@@ -116,7 +96,7 @@ public final class Utils {
      * @param suffix the suffix.
      * @return the formatted {@link String}.
      */
-    private static String removeSuffix(final String name, final String suffix) {
+    public static String removeSuffix(final String name, final String suffix) {
         if (name != null) {
             int index = name.lastIndexOf('.');
             if (index != -1 && name.substring(index + 1).equalsIgnoreCase(suffix)) {
