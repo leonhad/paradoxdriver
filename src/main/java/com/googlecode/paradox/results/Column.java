@@ -17,27 +17,16 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Objects;
 
 /**
- * Column value from a ResultSet.
+ * Column values from a ResultSet.
  *
  * @author Leonardo Alves da Costa
- * @version 1.2
+ * @version 1.1
  * @see ParadoxResultSet
  * @since 1.0
  */
 public final class Column {
-
-    /**
-     * Default number scale.
-     */
-    private static final int NUMBER_SCALE = 2;
-
-    /**
-     * Default numeric precision.
-     */
-    private static final int NUMBER_PRECISION = 9;
 
     /**
      * If this column is auto incremented.
@@ -80,11 +69,6 @@ public final class Column {
     private boolean readOnly;
 
     /**
-     * The field scale.
-     */
-    private int scale;
-
-    /**
      * If this field is searchable.
      */
     private boolean searchable = true;
@@ -104,7 +88,7 @@ public final class Column {
      *
      * @see Types
      */
-    private int type;
+    private final int type;
 
     /**
      * If this field is writable.
@@ -120,6 +104,7 @@ public final class Column {
         this(field.getName(), field.getType());
         this.field = field;
         this.table = field.getTable();
+        this.precision = field.getPrecision();
     }
 
     /**
@@ -130,7 +115,7 @@ public final class Column {
      */
     public Column(final String name, final int type) {
         this.name = name;
-        this.setType(type);
+        this.type = type;
     }
 
     /**
@@ -197,7 +182,7 @@ public final class Column {
      * @return the field scale.
      */
     public int getScale() {
-        return this.scale;
+        return this.precision;
     }
 
     /**
@@ -354,15 +339,6 @@ public final class Column {
     }
 
     /**
-     * Sets the field scale.
-     *
-     * @param scale the scale to set.
-     */
-    public void setScale(final int scale) {
-        this.scale = scale;
-    }
-
-    /**
      * Sets if this field is searchable.
      *
      * @param searchable the searchable to set.
@@ -389,53 +365,4 @@ public final class Column {
         this.writable = writable;
     }
 
-    /**
-     * Sets the field SQL type.
-     *
-     * @param type the field SQL type to set.
-     */
-    public void setType(final int type) {
-        this.type = type;
-
-        if (type == ParadoxFieldType.NUMBER.getType()) {
-            this.scale = NUMBER_SCALE;
-        } else if (type == ParadoxFieldType.CURRENCY.getType()) {
-            this.currency = true;
-            this.precision = NUMBER_PRECISION;
-        } else if (type == ParadoxFieldType.AUTO_INCREMENT.getType()) {
-            this.autoIncrement = true;
-            this.precision = NUMBER_PRECISION;
-        }
-    }
-
-    public ParadoxTable getTable() {
-        return table;
-    }
-
-    public void setTable(ParadoxTable table) {
-        this.table = table;
-    }
-
-    @Override
-    public String toString() {
-        return table.getName() + "." + name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Column column = (Column) o;
-        return Objects.equals(field, column.field) &&
-                Objects.equals(table, column.table);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(field, table);
-    }
 }

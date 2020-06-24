@@ -12,11 +12,8 @@ package com.googlecode.paradox.data.table.value;
 
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.utils.SQLStates;
-import java.sql.Date;
-import java.sql.SQLDataException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
+
+import java.sql.*;
 
 /**
  * Stores the database values in Java format.
@@ -117,6 +114,7 @@ public final class FieldValue {
         switch (this.type) {
             case Types.INTEGER:
             case Types.BIGINT:
+            case Types.NUMERIC:
             case Types.DOUBLE:
                 return (Number) this.value;
             default:

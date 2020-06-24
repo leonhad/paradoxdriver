@@ -15,6 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.results.TypeName;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 import org.junit.*;
 
@@ -85,9 +86,8 @@ public class ParadoxResultSetMetaDataTest {
         column.getField().setType(ParadoxFieldType.INTEGER.getType());
         column.getField().setSize(255);
         column.setName("name");
-        column.setType(ParadoxFieldType.INTEGER.getSQLType());
-        column.setPrecision(0);
-        column.setTable(new ParadoxTable(null, "table", conn));
+        column.setPrecision(2);
+        column.getField().setTable(new ParadoxTable(null, "table", conn));
         column.setAutoIncrement(false);
         column.setCurrency(false);
         column.setWritable(false);
@@ -95,14 +95,14 @@ public class ParadoxResultSetMetaDataTest {
         column.setReadOnly(true);
         column.setSearchable(true);
         column.setSigned(true);
-        column.setScale(2);
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn,
                 Collections.singletonList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", TypeName.INTEGER.getClassName(), metaData.getColumnClassName(1));
         Assert.assertEquals("Testing for catalog name.", "test-classes", metaData.getCatalogName(1));
         Assert.assertEquals("Testing for schema name.", "db", metaData.getSchemaName(1));
-        Assert.assertEquals("Testing for column display size.", 255, metaData.getColumnDisplaySize(1));
+        Assert.assertEquals("Testing for column display size.", Constants.MAX_STRING_SIZE,
+                metaData.getColumnDisplaySize(1));
         Assert.assertEquals("Testing for column label.", "name", metaData.getColumnLabel(1));
         Assert.assertEquals("Testing for column name.", "name", metaData.getColumnName(1));
         Assert.assertEquals("Testing for column type.", ParadoxFieldType.INTEGER.getSQLType(),

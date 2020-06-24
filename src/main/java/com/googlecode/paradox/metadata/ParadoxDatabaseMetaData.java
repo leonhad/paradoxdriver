@@ -19,7 +19,6 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 import com.googlecode.paradox.procedures.ProcedureAS;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
@@ -1876,13 +1875,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(new FieldValue(Column.getTypeName(type), Types.VARCHAR));
             row.add(new FieldValue(field.getSize(), Types.INTEGER));
             row.add(new FieldValue(ParadoxDatabaseMetaData.MAX_INT_SIZE, Types.INTEGER));
-
-            if ((field.getType() == ParadoxFieldType.CURRENCY.getType())
-                    || (field.getType() == ParadoxFieldType.NUMBER.getType())) {
-                row.add(new FieldValue(2, Types.INTEGER));
-            } else {
-                row.add(new FieldValue(0, Types.INTEGER));
-            }
+            row.add(new FieldValue(field.getPrecision(), Types.INTEGER));
             row.add(new FieldValue(10, Types.INTEGER));
             row.add(new FieldValue(DatabaseMetaData.columnNullableUnknown));
             row.add(new FieldValue(Types.INTEGER));

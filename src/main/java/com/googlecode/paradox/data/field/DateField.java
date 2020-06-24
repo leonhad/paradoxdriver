@@ -30,6 +30,8 @@ import java.sql.Types;
  */
 public final class DateField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(Types.DATE);
+
     /**
      * {@inheritDoc}.
      */
@@ -48,6 +50,10 @@ public final class DateField implements FieldParser {
         Date date = null;
         if (days != 0) {
             date = DateUtils.sdnToGregorian(days + 1_721_425);
+        }
+
+        if (date == null) {
+            return NULL;
         }
 
         return new FieldValue(date, Types.DATE);

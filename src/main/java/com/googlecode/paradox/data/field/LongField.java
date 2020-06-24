@@ -28,6 +28,8 @@ import java.sql.Types;
  */
 public final class LongField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(Types.BIGINT);
+
     /**
      * {@inheritDoc}
      */
@@ -42,6 +44,10 @@ public final class LongField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final long l = buffer.getInt() ^ 0x8000_0000;
+        if (l == 0x8000_0000) {
+            return NULL;
+        }
+
         return new FieldValue(l, Types.BIGINT);
     }
 }

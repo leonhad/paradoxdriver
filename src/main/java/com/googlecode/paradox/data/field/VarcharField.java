@@ -30,6 +30,8 @@ import java.util.Arrays;
  */
 public final class VarcharField implements FieldParser {
 
+    private static final FieldValue NULL = new FieldValue(Types.VARCHAR);
+
     /**
      * {@inheritDoc}.
      */
@@ -51,7 +53,13 @@ public final class VarcharField implements FieldParser {
         for (int chars = 0; chars < field.getSize(); chars++) {
             valueString.put(buffer.get());
         }
-        return new FieldValue(Utils.parseString(valueString, table.getCharset()), Types.VARCHAR);
+
+        final String value = Utils.parseString(valueString, table.getCharset());
+        if (value.isEmpty()) {
+            return NULL;
+        }
+
+        return new FieldValue(value, Types.VARCHAR);
     }
 
 }

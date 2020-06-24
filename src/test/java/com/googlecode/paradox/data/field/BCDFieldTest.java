@@ -8,13 +8,11 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
-import junit.framework.TestCase;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -67,23 +65,23 @@ public class BCDFieldTest {
     @Test
     public void testReadBlob() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT * FROM bcd")) {
-            Assert.assertTrue("First record not exists", rs.next());
+                "SELECT * FROM fields.bcd")) {
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 1.23D, rs.getDouble("A"), 0.001D);
             Assert.assertEquals("Invalid value.", 1.0D, rs.getDouble("B"), 0.001D);
             Assert.assertEquals("Invalid value.", 0.123D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertTrue("Fourth record not exists", rs.next());
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", -1.23D, rs.getDouble("A"), 0.001D);
             Assert.assertEquals("Invalid value.", -1.0D, rs.getDouble("B"), 0.001D);
             Assert.assertEquals("Invalid value.", -0.123D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertTrue("Fourth record not exists", rs.next());
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 0.0D, rs.getDouble("A"), 0.001D);
             Assert.assertNull("Invalid value.", rs.getObject("B"));
             Assert.assertEquals("Invalid value.", 0.9999D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertFalse("Five record not exists", rs.next());
+            Assert.assertFalse("Invalid Result Set state.", rs.next());
         }
     }
 }
