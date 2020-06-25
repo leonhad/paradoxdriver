@@ -25,8 +25,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Parses memo fields.
@@ -40,11 +38,6 @@ public final class MemoField implements FieldParser {
      * Free block value.
      */
     private static final int FREE_BLOCK = 4;
-
-    /**
-     * Default header block size.
-     */
-    private static final long HEADER_BLOCK_SIZE = 0x1000;
 
     /**
      * Single block value.
@@ -71,7 +64,8 @@ public final class MemoField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) throws SQLException {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
+            throws SQLException {
         final ByteBuffer value = ByteBuffer.allocate(field.getSize());
         for (int chars = 0; chars < field.getSize(); chars++) {
             value.put(buffer.get());
@@ -168,10 +162,9 @@ public final class MemoField implements FieldParser {
                     // Nine extra bytes here for remaining header.
 
                     channel.position(channel.position() + hsize);
-                    // Goto the blob pointer with the passed index.
-                    //channel.position(offset + 12 + index * 5);
 
-                    ArrayList<Byte> blocks = new ArrayList<>(blobSize);
+                    byte[] blocks = new byte[blobSize];
+                    int currentOffset = 0;
                     int n = 0;
                     while (n < 64) {
                         head = ByteBuffer.allocate(5);
@@ -201,20 +194,19 @@ public final class MemoField implements FieldParser {
                             final byte[] values = new byte[ln];
                             blockData.get(values);
 
-                            for (final byte b : values) {
-                                blocks.add(b);
+                            int copyLength = ln;
+                            if (currentOffset + copyLength > blocks.length) {
+                                copyLength = blocks.length - currentOffset;
                             }
+                            System.arraycopy(values, 0, blocks, currentOffset, copyLength);
+                            currentOffset += copyLength;
+
                             channel.position(position);
                         }
                         n++;
                     }
 
-                    byte[] bytes = new byte[blocks.size()];
-                    for (int i = 0; i < blocks.size(); i++) {
-                        bytes[i] = blocks.get(i);
-                    }
-
-                    final String strValue = table.getCharset().decode(ByteBuffer.wrap(bytes)).toString();
+                    final String strValue = table.getCharset().decode(ByteBuffer.wrap(blocks)).toString();
                     return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
                 }
                 default:

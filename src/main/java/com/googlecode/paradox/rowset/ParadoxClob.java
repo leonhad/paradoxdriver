@@ -58,7 +58,11 @@ public final class ParadoxClob implements Clob {
      */
     @Override
     public InputStream getAsciiStream() {
-        return new ByteArrayInputStream(this.value.getBytes(connection.getCharset()));
+        if (this.value != null) {
+            return new ByteArrayInputStream(this.value.getBytes(connection.getCharset()));
+        }
+
+        return null;
     }
 
     /**
@@ -168,7 +172,7 @@ public final class ParadoxClob implements Clob {
         if (length == 0) {
             this.value = "";
         } else {
-            this.value = this.value.substring(1, (int) length);
+            this.value = this.value.substring(0, (int) length);
         }
     }
 

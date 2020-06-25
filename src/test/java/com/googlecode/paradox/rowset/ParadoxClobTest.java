@@ -12,11 +12,7 @@ package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -77,7 +73,7 @@ public class ParadoxClobTest {
     @Test
     public void testAsciiStream() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");

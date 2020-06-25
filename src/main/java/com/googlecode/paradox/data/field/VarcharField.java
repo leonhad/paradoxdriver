@@ -53,13 +53,24 @@ public final class VarcharField implements FieldParser {
             valueString.put(buffer.get());
         }
 
-        // FIXME review this code
-        final String value = new String(valueString.array(), table.getCharset());
-        if (value.isEmpty()) {
+        final byte[] value = valueString.array();
+        int length = value.length;
+
+        for (; length > 0; length--) {
+            // array value starts with zero, not 1
+            if (value[length - 1] != 0) {
+                break;
+            }
+        }
+        valueString.flip();
+        valueString.limit(length);
+        final String str = table.getCharset().decode(valueString).toString();
+
+        if (str.isEmpty()) {
             return NULL;
         }
 
-        return new FieldValue(value, Types.VARCHAR);
+        return new FieldValue(str, Types.VARCHAR);
     }
 
 }

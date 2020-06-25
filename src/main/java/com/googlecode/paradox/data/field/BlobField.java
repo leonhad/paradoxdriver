@@ -44,11 +44,6 @@ public final class BlobField implements FieldParser {
     private static final int FREE_BLOCK = 4;
 
     /**
-     * Default header block size.
-     */
-    private static final long HEADER_BLOCK_SIZE = 0x1000;
-
-    /**
      * Single block value.
      */
     private static final int SINGLE_BLOCK = 2;
@@ -74,7 +69,8 @@ public final class BlobField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) throws SQLException {
+    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
+            throws SQLException {
         final ByteBuffer value = ByteBuffer.allocate(field.getSize());
         for (int chars = 0; chars < field.getSize(); chars++) {
             value.put(buffer.get());
@@ -91,11 +87,10 @@ public final class BlobField implements FieldParser {
 
         long beginIndex = buffer.getInt();
         // Index.
-        //long index = beginIndex & 0xFF;
         long offset = beginIndex & 0xFFFFFF00;
 
         int size = buffer.getInt();
-        int modifier = buffer.getShort();
+        buffer.getShort();
 
         // All fields are 9, only graphics is 17.
         int hsize = 9;
@@ -167,8 +162,6 @@ public final class BlobField implements FieldParser {
                     // Nine extra bytes here for remaining header.
 
                     channel.position(channel.position() + hsize);
-                    // Goto the blob pointer with the passed index.
-                    //channel.position(offset + 12 + index * 5);
 
                     ArrayList<Byte> blocks = new ArrayList<>(blobSize);
                     int n = 0;
