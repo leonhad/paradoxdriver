@@ -197,41 +197,6 @@ public class ParadoxFieldTest {
 
     /**
      * Test for {@link ParadoxField#toString()} method.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testSizeClob() throws SQLException {
-        final ParadoxField field = new ParadoxField(conn);
-
-        field.setType((byte) 0xC);
-        field.setSize(20);
-        Assert.assertEquals("Field size invalid.", 10, field.getSize());
-
-        field.setType((byte) 0xD);
-        field.setSize(20);
-        Assert.assertEquals("Field size invalid.", 10, field.getSize());
-
-        field.setType((byte) 0xF);
-        field.setSize(20);
-        Assert.assertEquals("Field size invalid.", 10, field.getSize());
-
-        field.setType((byte) 0x18);
-        field.setSize(20);
-        Assert.assertEquals("Field size invalid.", 10, field.getSize());
-
-        // Not changed by type
-        field.setType((byte) 0xF);
-        field.setSize(20);
-        Assert.assertEquals("Physical field size invalid.", 20, field.getRealSize());
-
-        field.setType((byte) 0x1);
-        field.setSize(20);
-        Assert.assertEquals("Physical field size invalid.", 20, field.getRealSize());
-    }
-
-    /**
-     * Test for {@link ParadoxField#toString()} method.
      */
     @Test
     public void testToString() {

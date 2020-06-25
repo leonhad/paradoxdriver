@@ -10,99 +10,63 @@
  */
 package com.googlecode.paradox.rowset;
 
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
-import com.googlecode.paradox.metadata.BlobTable;
+import com.googlecode.paradox.ParadoxConnection;
 
 import java.io.*;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * CLOB for paradox file (MB).
  *
  * @author Leonardo Alves da Costa
  * @author Andre Mikhaylov
- * @version 1.3
+ * @version 1.4
  * @since 1.2
  */
 public final class ParadoxClob implements Clob {
 
     /**
-     * The clob table.
-     */
-    private BlobTable blob;
-
-    /**
-     * The clob length.
-     */
-    private long length;
-
-    /**
-     * The clob offset.
-     */
-    private long offset;
-
-    /**
-     * If this clob is already parsed.
-     */
-    private boolean parsed;
-
-    /**
      * The clob data.
      */
-    private byte[] value;
+    private String value;
 
-    private final ClobDescriptor descriptor;
+    private final ParadoxConnection connection;
 
     /**
      * Create a new instance.
      *
-     * @param descriptor the blob descriptor.
+     * @param connection the paradox connection.
+     * @param value      the clob value.
      */
-    public ParadoxClob(final ClobDescriptor descriptor) {
-        this.descriptor = descriptor;
-        this.offset = -1;
-        // If MB_Offset = 0 then the entire blob is contained in the leader.
-        if (descriptor.getOffset() == 0) {
-            if (descriptor.getLeader() != null) {
-                this.value = descriptor.getLeaderAsStr().getBytes(descriptor.getCharset());
-                this.length = this.value.length;
-            }
-            this.parsed = true;
-        } else {
-            this.offset = descriptor.getOffset();
-            this.blob = descriptor.getFile();
-        }
+    public ParadoxClob(final ParadoxConnection connection, final String value) {
+        this.connection = connection;
+        this.value = value;
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void free() throws SQLException {
-        if (this.blob != null) {
-            this.blob.close();
-        }
+    public void free() {
+        // Unused
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public InputStream getAsciiStream() throws SQLException {
-        this.parse();
-        this.isValid();
-        return new ByteArrayInputStream(this.value);
+    public InputStream getAsciiStream() {
+        return new ByteArrayInputStream(this.value.getBytes(connection.getCharset()));
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public Reader getCharacterStream() throws SQLException {
-        this.parse();
-        this.isValid();
-        return new InputStreamReader(new ByteArrayInputStream(this.value), descriptor.getCharset());
+    public Reader getCharacterStream() {
+        return new StringReader(value);
     }
 
     /**
@@ -110,17 +74,15 @@ public final class ParadoxClob implements Clob {
      */
     @Override
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
-        this.parse();
-        this.isValid();
-        if ((pos < 1) || (pos > this.length)) {
+        if ((pos < 1) || (pos > this.value.length())) {
             throw new SQLException("Invalid position in Clob object set");
-        } else if (((pos - 1) + length) > this.length) {
+        } else if (((pos - 1) + length) > this.value.length()) {
             throw new SQLException("Invalid position and substring length");
         } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-        return new InputStreamReader(new ByteArrayInputStream(this.value, (int) pos - 1, (int) length),
-                descriptor.getCharset());
+
+        return new StringReader(this.value.substring((int) pos - 1, (int) length));
     }
 
     /**
@@ -128,26 +90,23 @@ public final class ParadoxClob implements Clob {
      */
     @Override
     public String getSubString(final long pos, final int length) throws SQLException {
-        this.parse();
-        this.isValid();
-        if ((pos < 1) || (pos > this.length)) {
+        if ((pos < 1) || (pos > this.value.length())) {
             throw new SQLException("Invalid position '" + pos + "' in Clob object set");
-        } else if (((pos - 1) + length) > this.length) {
+        } else if (((pos - 1) + length) > this.value.length()) {
             throw new SQLException("Invalid position and substring length");
         } else if (length <= 0) {
             throw new SQLException("Invalid length specified");
         }
-        return new String(this.value, (int) pos - 1, length, descriptor.getCharset());
+
+        return this.value.substring((int) pos - 1, length);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public long length() throws SQLException {
-        this.parse();
-        this.isValid();
-        return this.length;
+    public long length() {
+        return value.length();
     }
 
     /**
@@ -203,40 +162,30 @@ public final class ParadoxClob implements Clob {
      */
     @Override
     public void truncate(final long length) throws SQLException {
-        this.parse();
-        this.isValid();
-        if (length > this.length) {
+        if (length > this.value.length()) {
             throw new SQLException("Length more than what can be truncated");
         }
         if (length == 0) {
-            this.value = new byte[]{};
+            this.value = "";
         } else {
-            this.value = this.getSubString(1, (int) length).getBytes(descriptor.getCharset());
-        }
-        this.length = this.value.length;
-    }
-
-    /**
-     * Check for the blob validate.
-     *
-     * @throws SQLException in case of invalid descriptor.
-     */
-    private void isValid() throws SQLException {
-        if (!this.parsed && (this.blob == null)) {
-            throw new SQLException("Invalid CLOB descriptor.");
+            this.value = this.value.substring(1, (int) length);
         }
     }
 
-    /**
-     * Parse the blob.
-     *
-     * @throws SQLException in case of parse errors.
-     */
-    private void parse() throws SQLException {
-        if (!this.parsed) {
-            this.value = this.blob.read(this.offset);
-            this.parsed = this.blob.isParsed();
-            this.length = this.value.length;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ParadoxClob that = (ParadoxClob) o;
+        return Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }

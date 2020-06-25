@@ -15,7 +15,6 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
-import com.googlecode.paradox.utils.Utils;
 
 import java.nio.ByteBuffer;
 import java.sql.Types;
@@ -54,7 +53,8 @@ public final class VarcharField implements FieldParser {
             valueString.put(buffer.get());
         }
 
-        final String value = Utils.parseString(valueString, table.getCharset());
+        // FIXME review this code
+        final String value = new String(valueString.array(), table.getCharset());
         if (value.isEmpty()) {
             return NULL;
         }

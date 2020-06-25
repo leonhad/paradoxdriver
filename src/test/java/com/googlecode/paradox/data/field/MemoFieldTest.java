@@ -89,11 +89,11 @@ public class MemoFieldTest {
                 "SELECT Id, FMEMO FROM fields.fmemo")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", 555, rs.getString("FMEMO").length());
+            Assert.assertEquals("Invalid value.", 895, rs.getString("FMEMO").length());
 
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", "01234567890\n", rs.getString("FMEMO"));
+            Assert.assertEquals("Invalid value.", 895, rs.getString("FMEMO").length());
 
             Assert.assertFalse("Invalid Result Set state.", rs.next());
         }

@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.data.table.value.BlobDescriptor;
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
 import com.googlecode.paradox.results.Column;
@@ -25,9 +23,11 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.sql.Date;
 import java.sql.*;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JDBC ResultSet implementation.
@@ -46,10 +46,6 @@ public final class ParadoxResultSet implements ResultSet {
      * Default fetch size.
      */
     private static final int FETCH_SIZE = 10;
-    /**
-     * Clob fields mapping.
-     */
-    private Map<Integer, Clob> clobMap;
     /**
      * If this {@link ResultSet} is closed.
      */
@@ -161,13 +157,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void close() throws SQLException {
-        if (this.clobMap != null) {
-            for (final Clob clob : this.clobMap.values()) {
-                clob.free();
-            }
-            this.clearClob();
-        }
+    public void close() {
         this.closed = true;
     }
 
@@ -201,7 +191,6 @@ public final class ParadoxResultSet implements ResultSet {
             return false;
         }
         this.position = 0;
-        this.clearClob();
         return true;
     }
 
@@ -303,10 +292,10 @@ public final class ParadoxResultSet implements ResultSet {
     public Blob getBlob(final int columnIndex) throws SQLException {
         final Object val = this.getObject(columnIndex);
         if (val != null) {
-            if (val instanceof BlobDescriptor) {
-                return new ParadoxBlob((BlobDescriptor) val);
+            if (val instanceof byte[]) {
+                return new ParadoxBlob((byte[]) val);
             } else {
-                throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
+                throw new SQLException("Filed is not a clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
             }
         }
         return null;
@@ -377,7 +366,15 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public byte[] getBytes(final int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        final Object val = this.getObject(columnIndex);
+        if (val != null) {
+            if (val instanceof byte[]) {
+                return (byte[]) val;
+            } else {
+                throw new SQLException("Filed is not a byte array.", SQLStates.INVALID_FIELD_VALUE.getValue());
+            }
+        }
+        return null;
     }
 
     /**
@@ -409,18 +406,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Clob getClob(final int columnIndex) throws SQLException {
-        if (this.clobMap == null) {
-            this.clobMap = new HashMap<>(1);
-        }
-        if (this.clobMap.containsKey(columnIndex)) {
-            return this.clobMap.get(columnIndex);
-        }
         final Object val = this.getObject(columnIndex);
         if (val != null) {
-            if (val instanceof ClobDescriptor) {
-                final ParadoxClob clob = new ParadoxClob((ClobDescriptor) val);
-                this.clobMap.put(columnIndex, clob);
-                return clob;
+            if (val instanceof String) {
+                return new ParadoxClob(conn, (String) val);
             } else {
                 throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
             }
@@ -838,12 +827,7 @@ public final class ParadoxResultSet implements ResultSet {
         }
         this.lastValue = row.get(columnIndex - 1);
         if ((this.lastValue != null) && (this.lastValue.getValue() != null)) {
-            if (this.lastValue.getValue() instanceof ClobDescriptor) {
-                //Special case
-                return ((ClobDescriptor) (this.lastValue.getValue())).getClobString();
-            } else {
-                return this.lastValue.getValue().toString();
-            }
+            return this.lastValue.getValue().toString();
         }
 
         return null;
@@ -1065,7 +1049,6 @@ public final class ParadoxResultSet implements ResultSet {
             return false;
         }
         this.position = this.values.size() - 1;
-        this.clearClob();
         return true;
     }
 
@@ -1091,11 +1074,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public boolean next() {
         this.position++;
-        if (this.hasNext()) {
-            this.clearClob();
-            return true;
-        }
-        return false;
+        return this.hasNext();
     }
 
     /**
@@ -1105,7 +1084,6 @@ public final class ParadoxResultSet implements ResultSet {
     public boolean previous() {
         if (this.position > -1) {
             this.position--;
-            this.clearClob();
             return true;
         }
         return false;
@@ -1848,15 +1826,6 @@ public final class ParadoxResultSet implements ResultSet {
             throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
         }
         return this.lastValue.isNull();
-    }
-
-    /**
-     * Clear the current clob.
-     */
-    private void clearClob() {
-        if (this.clobMap != null) {
-            this.clobMap.clear();
-        }
     }
 
     private boolean hasNext() {

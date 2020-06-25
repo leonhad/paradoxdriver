@@ -210,7 +210,7 @@ public class ParadoxClobTest {
     @Test
     public void testReadBlob() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
             Assert.assertEquals("Fields are not equals.", rs.getClob(1), rs.getClob("comments"));

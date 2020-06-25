@@ -108,8 +108,9 @@ public final class MemoField implements FieldParser {
         if (size <= 0) {
             return NULL;
         } else if (size <= leader) {
-            byte[] str = Arrays.copyOf(value.array(), size);
-            String strValue = new String(str, table.getCharset());
+            value.flip();
+            value.limit(size);
+            final String strValue = table.getCharset().decode(value).toString();
             return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
         }
 
@@ -159,11 +160,8 @@ public final class MemoField implements FieldParser {
                     blockData.clear();
                     channel.read(blockData);
                     blockData.flip();
-                    final byte[] values = new byte[blobLength];
-                    blockData.get(values);
-                    channel.position(offset + (blockSize * HEADER_BLOCK_SIZE));
 
-                    String strValue = new String(blockData.array(), table.getCharset());
+                    final String strValue = table.getCharset().decode(blockData).toString();
                     return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
                 }
                 case SUB_BLOCK: {
@@ -216,7 +214,7 @@ public final class MemoField implements FieldParser {
                         bytes[i] = blocks.get(i);
                     }
 
-                    String strValue = new String(bytes, table.getCharset());
+                    final String strValue = table.getCharset().decode(ByteBuffer.wrap(bytes)).toString();
                     return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
                 }
                 default:

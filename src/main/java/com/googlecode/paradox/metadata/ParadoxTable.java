@@ -26,11 +26,6 @@ import java.util.List;
 public final class ParadoxTable extends ParadoxDataFile {
 
     /**
-     * The blob instance used to read the file.
-     */
-    private BlobTable blobFile;
-
-    /**
      * Creates a new instance.
      *
      * @param file       table references file.
@@ -39,18 +34,6 @@ public final class ParadoxTable extends ParadoxDataFile {
      */
     public ParadoxTable(final File file, final String name, final ParadoxConnection connection) {
         super(file, name, connection);
-    }
-
-    /**
-     * Gets the blob table.
-     *
-     * @return the blob table.
-     */
-    public BlobTable getBlobTable() {
-        if (this.blobFile == null) {
-            this.blobFile = new BlobTable(this.getFile(), this.getName(), getConnection());
-        }
-        return this.blobFile;
     }
 
     /**

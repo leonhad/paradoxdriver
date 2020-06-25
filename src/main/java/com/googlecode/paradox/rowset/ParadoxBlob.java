@@ -10,10 +10,9 @@
  */
 package com.googlecode.paradox.rowset;
 
-import com.googlecode.paradox.data.table.value.BlobDescriptor;
-import com.googlecode.paradox.metadata.BlobTable;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -28,26 +27,6 @@ import java.util.Arrays;
 public final class ParadoxBlob implements Blob {
 
     /**
-     * The clob table.
-     */
-    private BlobTable blob;
-
-    /**
-     * The clob length.
-     */
-    private long length;
-
-    /**
-     * The clob offset.
-     */
-    private long offset;
-
-    /**
-     * If this clob is already parsed.
-     */
-    private boolean parsed;
-
-    /**
      * The clob data.
      */
     private byte[] value;
@@ -55,86 +34,65 @@ public final class ParadoxBlob implements Blob {
     /**
      * Create a new instance.
      *
-     * @param descriptor the blob descriptor.
+     * @param value the blob value.
      */
-    public ParadoxBlob(final BlobDescriptor descriptor) {
-        this.offset = -1;
-        // If MB_Offset = 0 then the entire blob is contained in the leader.
-        if (descriptor.getOffset() == 0) {
-            if (descriptor.getLeader() != null) {
-                this.value = descriptor.getLeader();
-                this.length = this.value.length;
-            }
-            this.parsed = true;
-        } else {
-            this.offset = descriptor.getOffset();
-            this.blob = descriptor.getFile();
-        }
+    public ParadoxBlob(final byte[] value) {
+        this.value = value;
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void free() throws SQLException {
-        if (this.blob != null) {
-            this.blob.close();
-        }
+    public void free() {
+        // Unused.
     }
 
     @Override
-    public InputStream getBinaryStream(long pos, long length) throws SQLException {
-        this.parse();
-        this.isValid();
-        return new ByteArrayInputStream(this.value);
+    public InputStream getBinaryStream(long pos, long length) {
+        return new ByteArrayInputStream(getBytes(pos, (int) length));
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public long length() throws SQLException {
-        this.parse();
-        this.isValid();
-        return this.length;
+    public long length() {
+        return this.value.length;
     }
 
     @Override
-    public byte[] getBytes(long pos, int length) throws SQLException {
-        this.parse();
-        this.isValid();
-        return this.value;
+    public byte[] getBytes(long pos, int length) {
+        return Arrays.copyOfRange(this.value, (int) pos - 1, length);
     }
 
     @Override
-    public InputStream getBinaryStream() throws SQLException {
-        this.parse();
-        this.isValid();
+    public InputStream getBinaryStream() {
         return new ByteArrayInputStream(this.value);
     }
 
     @Override
-    public long position(byte[] pattern, long start) throws SQLException {
+    public long position(byte[] pattern, long start) {
         return 0;
     }
 
     @Override
-    public long position(Blob pattern, long start) throws SQLException {
+    public long position(Blob pattern, long start) {
         return 0;
     }
 
     @Override
-    public int setBytes(long pos, byte[] bytes) throws SQLException {
+    public int setBytes(long pos, byte[] bytes) {
         return 0;
     }
 
     @Override
-    public int setBytes(long pos, byte[] bytes, int offset, int len) throws SQLException {
+    public int setBytes(long pos, byte[] bytes, int offset, int len) {
         return 0;
     }
 
     @Override
-    public OutputStream setBinaryStream(long pos) throws SQLException {
+    public OutputStream setBinaryStream(long pos) {
         return null;
     }
 
@@ -143,40 +101,30 @@ public final class ParadoxBlob implements Blob {
      */
     @Override
     public void truncate(final long length) throws SQLException {
-        this.parse();
-        this.isValid();
-        if (length > this.length) {
+        if (length > this.value.length) {
             throw new SQLException("Length more than what can be truncated");
         }
         if (length == 0) {
-            this.value = new byte[]{};
+            this.value = new byte[0];
         } else {
             this.value = Arrays.copyOf(this.value, (int) length);
         }
-        this.length = this.value.length;
     }
 
-    /**
-     * Check for the blob validate.
-     *
-     * @throws SQLException in case of invalid descriptor.
-     */
-    private void isValid() throws SQLException {
-        if (!this.parsed && (this.blob == null)) {
-            throw new SQLException("Invalid CLOB descriptor.");
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
         }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ParadoxBlob that = (ParadoxBlob) o;
+        return Arrays.equals(value, that.value);
     }
 
-    /**
-     * Parse the blob.
-     *
-     * @throws SQLException in case of parse errors.
-     */
-    private void parse() throws SQLException {
-        if (!this.parsed) {
-            this.value = this.blob.read(this.offset);
-            this.parsed = this.blob.isParsed();
-            this.length = this.value.length;
-        }
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(value);
     }
 }
