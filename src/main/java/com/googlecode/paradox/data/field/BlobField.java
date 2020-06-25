@@ -53,5 +53,4 @@ public final class BlobField extends AbstractLobField {
     public int getFieldType() {
         return Types.BLOB;
     }
-
 }
