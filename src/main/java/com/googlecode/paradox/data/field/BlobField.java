@@ -33,8 +33,7 @@ public final class BlobField extends AbstractLobField {
     public boolean match(final int type) {
         return type == ParadoxFieldType.BLOB.getType()
                 || type == ParadoxFieldType.OLE.getType()
-                || type == ParadoxFieldType.GRAPHIC.getType()
-                || type == ParadoxFieldType.FORMATTED_MEMO.getType();
+                || type == ParadoxFieldType.GRAPHIC.getType();
     }
 
     /**

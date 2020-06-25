@@ -12,12 +12,9 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.metadata.BlobTable;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
-import com.googlecode.paradox.utils.BlockOffset;
-import com.googlecode.paradox.utils.ClobBlock;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
@@ -30,7 +27,6 @@ import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Parses memo fields.
@@ -67,7 +63,8 @@ public final class MemoField implements FieldParser {
      */
     @Override
     public boolean match(final int type) {
-        return type == ParadoxFieldType.MEMO.getType();
+        return type == ParadoxFieldType.MEMO.getType()
+                || type == ParadoxFieldType.FORMATTED_MEMO.getType();
     }
 
     /**
@@ -84,10 +81,14 @@ public final class MemoField implements FieldParser {
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         int leader = field.getSize() - 10;
-        value.position(leader);
+        if (leader > 0) {
+            // Field size defined in DB file.
+            value.position(leader);
+        }
 
         long beginIndex = buffer.getInt();
-        long index = beginIndex & 0xFF;
+        // Index.
+        //long index = beginIndex & 0xFF;
         long offset = beginIndex & 0xFFFFFF00;
 
         int size = buffer.getInt();
@@ -144,36 +145,31 @@ public final class MemoField implements FieldParser {
                 case FREE_BLOCK:
                     throw new SQLException("Invalid MB header.");
                 case SINGLE_BLOCK: {
-                    // Goto the blob pointer with the passed index.
-                    channel.position(offset + 12 + index * 5);
+                    final ByteBuffer blockHead = ByteBuffer.allocate(hsize - 3);
+                    blockHead.order(ByteOrder.LITTLE_ENDIAN);
+                    blockHead.clear();
+                    channel.read(blockHead);
+                    blockHead.flip();
+                    final int blobLength = blockHead.getInt();
+                    // Modifier.
+                    blockHead.getShort();
 
-                    channel.read(head);
+                    final ByteBuffer blockData = ByteBuffer.allocate(blobLength);
+                    blockData.order(ByteOrder.LITTLE_ENDIAN);
+                    blockData.clear();
+                    channel.read(blockData);
+                    blockData.flip();
+                    final byte[] values = new byte[blobLength];
+                    blockData.get(values);
+                    channel.position(offset + (blockSize * HEADER_BLOCK_SIZE));
 
-                    // 0.
-                    int startIndex = buffer.get() & 0xFF;
-                    // 1.
-                    int page = buffer.get() & 0xFF;
-                    // 2 and 3.
-                    buffer.getShort();
-                    // 4.
-                    int off = buffer.get() & 0xFF;
-
-                    if (size != (page - 1) * 16 + off) {
-                        throw new SQLException(String.format("Blob does not have expected size (%d != %d).", size,
-                                (page - 1) * 16 + off));
-                    }
-
-                    ByteBuffer blobData = ByteBuffer.allocate(size);
-                    channel.position(offset + startIndex * 16);
-                    channel.read(blobData);
-
-                    String strValue = new String(blobData.array(), table.getCharset());
+                    String strValue = new String(blockData.array(), table.getCharset());
                     return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
                 }
                 case SUB_BLOCK: {
                     // Nine extra bytes here for remaining header.
 
-                    channel.position(channel.position() + 9);
+                    channel.position(channel.position() + hsize);
                     // Goto the blob pointer with the passed index.
                     //channel.position(offset + 12 + index * 5);
 
@@ -193,16 +189,7 @@ public final class MemoField implements FieldParser {
                         // This is reset to 1 by a table restructure.
                         // Data length modulo 16.
                         final int mdl = head.get();
-/*
-                    // 0.
-                    int startIndex = head.get() & 0xFF;
-                    // 1.
-                    int page = head.get() & 0xFF;
-                    // 2 and 3.
-                    head.getShort();
-                    // 4.
-                    int off = head.get() & 0xFF;
-*/
+
                         if (blockOffset != 0) {
                             final long position = channel.position();
                             final long start = blockOffset + offset;
@@ -216,7 +203,7 @@ public final class MemoField implements FieldParser {
                             final byte[] values = new byte[ln];
                             blockData.get(values);
 
-                            for (final byte b : values){
+                            for (final byte b : values) {
                                 blocks.add(b);
                             }
                             channel.position(position);
@@ -224,7 +211,7 @@ public final class MemoField implements FieldParser {
                         n++;
                     }
 
-                    byte [] bytes = new byte[blocks.size()];
+                    byte[] bytes = new byte[blocks.size()];
                     for (int i = 0; i < blocks.size(); i++) {
                         bytes[i] = blocks.get(i);
                     }

@@ -65,7 +65,7 @@ public class MemoFieldTest {
     @Test
     public void testReadMemo() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT * FROM fields.memo")) {
+                "SELECT Id, MEMO FROM fields.memo")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
             Assert.assertEquals("Invalid value.", 555, rs.getString("MEMO").length());
@@ -73,6 +73,27 @@ public class MemoFieldTest {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
             Assert.assertEquals("Invalid value.", "01234567890\n", rs.getString("MEMO"));
+
+            Assert.assertFalse("Invalid Result Set state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for formatted memo reading.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testReadFormattedMemo() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT Id, FMEMO FROM fields.fmemo")) {
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", 555, rs.getString("FMEMO").length());
+
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", "01234567890\n", rs.getString("FMEMO"));
 
             Assert.assertFalse("Invalid Result Set state.", rs.next());
         }
