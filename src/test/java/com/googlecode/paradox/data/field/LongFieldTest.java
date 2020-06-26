@@ -105,25 +105,22 @@ public class LongFieldTest {
     }
 
     /**
-     * Test for BLOB reading.
+     * Test for LONG reading.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadBlob() throws SQLException {
+    public void testReadLong() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT Id, LONG FROM fields.long")) {
+                "SELECT \"Time\" FROM fields.time")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", 1, rs.getInt("LONG"));
+            Assert.assertEquals("Invalid value.", "01:00:01", rs.getTime("Time").toString());
 
             Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", 2, rs.getInt("LONG"));
+            Assert.assertNull("Invalid value.", rs.getTime("Time"));
 
             Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 3, rs.getInt("Id"));
-            Assert.assertNull("Invalid value.", rs.getObject("LONG"));
+            Assert.assertEquals("Invalid value.", "03:00:03", rs.getTime("Time").toString());
 
             Assert.assertFalse("Invalid Result Set state.", rs.next());
         }
