@@ -10,44 +10,40 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.table.value.BlobDescriptor;
-import com.googlecode.paradox.data.table.value.ClobDescriptor;
+import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
-import java.sql.Types;
+import java.nio.ByteBuffer;
 
 /**
  * Parses memo fields.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public final class MemoField extends AbstractLobField {
+
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.MEMO.getSQLType());
 
     /**
      * {@inheritDoc}.
      */
     @Override
     public boolean match(final int type) {
-        return type == ParadoxFieldType.MEMO.getType();
+        return type == ParadoxFieldType.MEMO.getType()
+                || type == ParadoxFieldType.FORMATTED_MEMO.getType();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
-    public BlobDescriptor getDescriptor(final ParadoxTable table) {
-        return new ClobDescriptor(table.getBlobTable(), table.getCharset());
+    protected FieldValue getNull() {
+        return NULL;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
-    public int getFieldType() {
-        return Types.CLOB;
+    protected FieldValue getValue(final ParadoxTable table, final ByteBuffer value) {
+        final String strValue = table.getCharset().decode(value).toString();
+        return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
     }
-
 }

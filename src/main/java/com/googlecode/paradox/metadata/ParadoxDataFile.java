@@ -31,7 +31,7 @@ public class ParadoxDataFile {
     /**
      * Java file used to read the database.
      */
-    private final File file;
+    protected final File file;
     /**
      * The database connection;
      */
@@ -79,7 +79,7 @@ public class ParadoxDataFile {
     /**
      * The file name.
      */
-    private String name;
+    protected String name;
     /**
      * Primary key field count.
      */

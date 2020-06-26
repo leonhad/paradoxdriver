@@ -16,22 +16,22 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 /**
  * The MIN function.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.1
  */
 public final class Min extends AbstractCallableProcedure {
-
-    @Override
-    public boolean isNative() {
-        return true;
-    }
 
     /**
      * @param connection the Paradox connection.
      */
     public Min(ParadoxConnection connection) {
         super(connection);
+    }
+
+    @Override
+    public boolean isNative() {
+        return true;
     }
 
     /**

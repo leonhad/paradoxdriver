@@ -16,7 +16,6 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
-import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 /**

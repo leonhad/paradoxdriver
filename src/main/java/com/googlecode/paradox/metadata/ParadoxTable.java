@@ -11,8 +11,13 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,15 +25,10 @@ import java.util.List;
  * Stores a table data file.
  *
  * @author Leonardo Alves da Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ParadoxTable extends ParadoxDataFile {
-
-    /**
-     * The blob instance used to read the file.
-     */
-    private BlobTable blobFile;
 
     /**
      * Creates a new instance.
@@ -41,16 +41,19 @@ public final class ParadoxTable extends ParadoxDataFile {
         super(file, name, connection);
     }
 
-    /**
-     * Gets the blob table.
-     *
-     * @return the blob table.
-     */
-    public BlobTable getBlobTable() {
-        if (this.blobFile == null) {
-            this.blobFile = new BlobTable(this.getFile(), this.getName(), getConnection());
+    public FileInputStream openBlobs() throws SQLException, FileNotFoundException {
+        final File[] fileList = file.getParentFile().listFiles(new TableFilter(connection,
+                name, "mb"));
+        if ((fileList == null) || (fileList.length == 0)) {
+            throw new SQLException(String.format("Blob file not found for table '%s'", name),
+                    SQLStates.LOAD_DATA.getValue());
         }
-        return this.blobFile;
+        if (fileList.length > 1) {
+            throw new SQLException(String.format("Many blob files for table '%s'", name),
+                    SQLStates.LOAD_DATA.getValue());
+        }
+        File blobFile = fileList[0];
+        return new FileInputStream(blobFile);
     }
 
     /**

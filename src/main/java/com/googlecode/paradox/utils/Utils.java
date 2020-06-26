@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox.utils;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.sql.Wrapper;
 
@@ -44,29 +42,6 @@ public final class Utils {
      */
     public static boolean isWrapperFor(final Wrapper wrapper, final Class<?> iFace) {
         return wrapper.getClass().isAssignableFrom(iFace);
-    }
-
-    /**
-     * Convert the Paradox VARCHAR to {@link String}. The paradox fill the
-     * entire buffer with zeros at end of VARCHAR literals.
-     *
-     * @param buffer  VARCHAR Buffer to convert.
-     * @param charset Table charset.
-     * @return a formatted {@link String}.
-     */
-    public static String parseString(final ByteBuffer buffer, final Charset charset) {
-        final byte[] value = buffer.array();
-        int length = value.length;
-
-        for (; length > 0; length--) {
-            // array value starts with zero, not 1
-            if (value[length - 1] != 0) {
-                break;
-            }
-        }
-        buffer.flip();
-        buffer.limit(length);
-        return charset.decode(buffer).toString();
     }
 
     /**
