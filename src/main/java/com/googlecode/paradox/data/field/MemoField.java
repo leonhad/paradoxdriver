@@ -129,7 +129,7 @@ public final class MemoField implements FieldParser {
             channel.read(head);
             head.flip();
             byte type = head.get();
-            final int blockSize = head.getShort() & 0xFFFF;
+            head.getShort();
 
             switch (type) {
                 case 0x0:
@@ -139,22 +139,27 @@ public final class MemoField implements FieldParser {
                 case FREE_BLOCK:
                     throw new SQLException("Invalid MB header.");
                 case SINGLE_BLOCK: {
-                    final ByteBuffer blockHead = ByteBuffer.allocate(hsize - 3);
-                    blockHead.order(ByteOrder.LITTLE_ENDIAN);
-                    blockHead.clear();
-                    channel.read(blockHead);
-                    blockHead.flip();
-                    final int blobLength = blockHead.getInt();
-                    // Modifier.
-                    blockHead.getShort();
+                    if (index != 0xFF) {
+                        throw new SQLException("Offset points to a single blob block but index field is not 0xFF.");
+                    }
+                    // Read the remaining 6 bytes from the header.
+                    head = ByteBuffer.allocate(hsize - 3);
+                    head.order(ByteOrder.LITTLE_ENDIAN);
+                    channel.read(head);
+                    head.flip();
 
-                    final ByteBuffer blockData = ByteBuffer.allocate(blobLength);
-                    blockData.order(ByteOrder.LITTLE_ENDIAN);
-                    blockData.clear();
-                    channel.read(blockData);
-                    blockData.flip();
+                    int internalSize = head.getInt();
 
-                    final String strValue = table.getCharset().decode(blockData).toString();
+                    if (size != internalSize) {
+                        throw new SQLException(String.format("Blob does not have expected size (%d != %d).", size,
+                                internalSize));
+                    }
+
+                    ByteBuffer blocks = ByteBuffer.allocate(size);
+                    channel.read(blocks);
+                    blocks.flip();
+
+                    final String strValue = table.getCharset().decode(blocks).toString();
                     return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
                 }
                 case SUB_BLOCK: {

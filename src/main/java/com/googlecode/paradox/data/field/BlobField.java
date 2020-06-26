@@ -25,7 +25,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -86,7 +85,7 @@ public final class BlobField implements FieldParser {
         }
 
         long beginIndex = buffer.getInt();
-        // Index.
+        int index = (int) beginIndex & 0xFF;
         long offset = beginIndex & 0xFFFFFF00;
 
         int size = buffer.getInt();
@@ -95,10 +94,9 @@ public final class BlobField implements FieldParser {
         // All fields are 9, only graphics is 17.
         int hsize = 9;
 
-        int blobSize = size;
         // Graphic field?
-        if (false) {
-            blobSize -= 8;
+        if (field.getType() == ParadoxFieldType.GRAPHIC.getType()) {
+            size -= 8;
             hsize = 17;
         }
 
@@ -132,7 +130,7 @@ public final class BlobField implements FieldParser {
             channel.read(head);
             head.flip();
             byte type = head.get();
-            final int blockSize = head.getShort() & 0xFFFF;
+            head.getShort();
 
             switch (type) {
                 case 0x0:
@@ -142,71 +140,56 @@ public final class BlobField implements FieldParser {
                 case FREE_BLOCK:
                     throw new SQLException("Invalid MB header.");
                 case SINGLE_BLOCK: {
-                    final ByteBuffer blockHead = ByteBuffer.allocate(hsize - 3);
-                    blockHead.order(ByteOrder.LITTLE_ENDIAN);
-                    blockHead.clear();
-                    channel.read(blockHead);
-                    blockHead.flip();
-                    final int blobLength = blockHead.getInt();
-                    // Modifier.
-                    blockHead.getShort();
+                    if (index != 0xFF) {
+                        throw new SQLException("Offset points to a single blob block but index field is not 0xFF.");
+                    }
+                    // Read the remaining 6 bytes from the header.
+                    head = ByteBuffer.allocate(hsize - 3);
+                    head.order(ByteOrder.LITTLE_ENDIAN);
+                    channel.read(head);
+                    head.flip();
 
-                    final ByteBuffer blockData = ByteBuffer.allocate(blobLength);
-                    blockData.order(ByteOrder.LITTLE_ENDIAN);
-                    blockData.clear();
-                    channel.read(blockData);
+                    int internalSize = head.getInt();
 
-                    return new FieldValue(blockData.array(), ParadoxFieldType.BLOB.getSQLType());
+                    if (size != internalSize) {
+                        throw new SQLException(String.format("Blob does not have expected size (%d != %d).", size,
+                                internalSize));
+                    }
+
+                    ByteBuffer blocks = ByteBuffer.allocate(size);
+                    channel.read(blocks);
+
+                    return new FieldValue(blocks.array(), ParadoxFieldType.BLOB.getSQLType());
                 }
                 case SUB_BLOCK: {
-                    // Nine extra bytes here for remaining header.
-
+                    // The remaining header bytes.
                     channel.position(channel.position() + hsize);
 
-                    ArrayList<Byte> blocks = new ArrayList<>(blobSize);
-                    int n = 0;
-                    while (n < 64) {
-                        head = ByteBuffer.allocate(5);
-                        channel.read(head);
-                        head.order(ByteOrder.LITTLE_ENDIAN);
-                        head.flip();
+                    channel.position(offset + 12 + index * 5);
+                    head = ByteBuffer.allocate(5);
+                    channel.read(head);
+                    head.order(ByteOrder.LITTLE_ENDIAN);
+                    head.flip();
 
-                        // Data offset divided by 16.
-                        final int blockOffset = (head.get() & 0xFF) * 0x10;
-                        // Data length divided by 16 (rounded up).
-                        int ln = head.get() * 0x10;
-                        head.getShort();
-                        // This is reset to 1 by a table restructure.
-                        // Data length modulo 16.
-                        final int mdl = head.get();
+                    // Data offset divided by 16.
+                    final int blockOffset = head.get() & 0xFF;
+                    // Data length divided by 16 (rounded up).
+                    int dataLength = head.get() & 0xFF;
+                    head.getShort();
+                    // This is reset to 1 by a table restructure.
+                    // Data length modulo 16.
+                    final int modulo = head.get() & 0xFF;
 
-                        if (blockOffset != 0) {
-                            final long position = channel.position();
-                            final long start = blockOffset + offset;
-                            ln = (ln - 0x10) + mdl;
-                            final ByteBuffer blockData = ByteBuffer.allocate(ln);
-                            blockData.order(ByteOrder.LITTLE_ENDIAN);
-                            blockData.clear();
-                            channel.position(start);
-                            channel.read(blockData);
-                            blockData.flip();
-                            final byte[] values = new byte[ln];
-                            blockData.get(values);
-
-                            for (final byte b : values) {
-                                blocks.add(b);
-                            }
-                            channel.position(position);
-                        }
-                        n++;
+                    if (size != (dataLength - 1) * 0x10 + modulo) {
+                        throw new SQLException(String.format("Blob does not have expected size (%d != %d).", size,
+                                (dataLength - 1) * 0x10 + modulo));
                     }
 
-                    byte[] bytes = new byte[blocks.size()];
-                    for (int i = 0; i < blocks.size(); i++) {
-                        bytes[i] = blocks.get(i);
-                    }
+                    ByteBuffer blocks = ByteBuffer.allocate(size);
+                    channel.position(offset + blockOffset * 0x10);
+                    channel.read(blocks);
 
-                    return new FieldValue(bytes, ParadoxFieldType.BLOB.getSQLType());
+                    return new FieldValue(blocks.array(), ParadoxFieldType.BLOB.getSQLType());
                 }
                 default:
                     throw new SQLException("Invalid BLOB header type " + type);
