@@ -79,7 +79,7 @@ public final class BlobField implements FieldParser {
         value.flip();
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        int leader = field.getSize() - 10;
+        int leader = field.getSize();
         if (leader > 0) {
             // Field size defined in DB file.
             value.position(leader);
