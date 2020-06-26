@@ -131,9 +131,7 @@ public final class ViewData {
     private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
         final ParadoxField originalField = ViewData.getField(table, name);
         if (originalField == null) {
-            final ParadoxField newField = new ParadoxField(table.getConnection());
-            newField.setType((byte) 1);
-            return newField;
+            return new ParadoxField(table.getConnection(), (byte) 0x1);
         }
         return originalField;
     }
@@ -242,13 +240,12 @@ public final class ViewData {
 
             for (int loop = 1; loop < fields.length; loop++) {
                 final String name = fields[loop].trim();
-                final ParadoxField field = new ParadoxField(connection);
                 final ParadoxField original = ViewData.getFieldByName(
                         ViewData.getTable(table, currentSchema, connection), name);
 
+                final ParadoxField field = new ParadoxField(connection, original.getType());
                 field.setTableName(table);
                 field.setName(name);
-                field.setType(original.getType());
                 field.setSize(original.getSize());
                 fieldList.add(field);
             }
@@ -375,8 +372,8 @@ public final class ViewData {
         final String[] cols = line.toString().split(",");
         for (final String col : cols) {
             final String[] i = PATTERN_COL.split(col);
-            final ParadoxField field = new ParadoxField(connection);
 
+            String name;
             if (i.length <= 1) {
                 if (lastTable == null) {
                     throw new SQLException("Invalid table.");
@@ -384,11 +381,11 @@ public final class ViewData {
                 continue;
             } else {
                 lastTable = ViewData.getTable(i[0], currentSchema, connection);
-                field.setName(i[1].substring(1, i[1].length() - 1));
+                name = i[1].substring(1, i[1].length() - 1);
             }
-            final ParadoxField originalField = ViewData.getFieldByName(lastTable, field.getName());
+            final ParadoxField originalField = ViewData.getFieldByName(lastTable, name);
 
-            field.setType(originalField.getType());
+            final ParadoxField field = new ParadoxField(connection, originalField.getType());
             field.setSize(originalField.getSize());
             fields.add(field);
         }

@@ -29,8 +29,8 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link VarcharField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class VarcharFieldTest {
@@ -75,8 +75,7 @@ public class VarcharFieldTest {
     public void testParse() throws SQLException {
         final ParadoxTable table = new ParadoxTable(null, null, null);
         table.setCharset(StandardCharsets.ISO_8859_1);
-        final ParadoxField paradoxField = new ParadoxField(conn);
-        paradoxField.setType(ParadoxFieldType.VARCHAR.getType());
+        final ParadoxField paradoxField = new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType());
         paradoxField.setSize("test".length());
         final VarcharField field = new VarcharField();
         final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));

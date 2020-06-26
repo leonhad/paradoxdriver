@@ -254,9 +254,8 @@ public final class TableData extends ParadoxData {
             throws SQLException {
         final List<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(table.getConnection(), loop + 1);
-            field.setType(buffer.get());
-            field.setSize(buffer.get() & 0xff);
+            final ParadoxField field = new ParadoxField(table.getConnection(), buffer.get(), loop + 1);
+            field.setSize(buffer.get() & 0xFF);
             field.setTableName(table.getName());
             field.setTable(table);
             fields.add(field);

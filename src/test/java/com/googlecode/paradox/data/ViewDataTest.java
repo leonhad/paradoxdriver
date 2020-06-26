@@ -15,6 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.utils.TestUtil;
 import org.junit.*;
 
@@ -26,8 +27,8 @@ import java.util.List;
 /**
  * Unit test for {@link ViewData}.
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @author Leonardo Costa
+ * @version 1.3
  * @since 1.0
  */
 public class ViewDataTest {
@@ -86,7 +87,7 @@ public class ViewDataTest {
      */
     @Test
     public void testParseExpression() {
-        final ParadoxField field = new ParadoxField(conn);
+        final ParadoxField field = new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType());
         ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
         Assert.assertTrue("Field is not checked.", field.isChecked());
         Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());

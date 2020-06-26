@@ -22,6 +22,7 @@ import org.junit.*;
 import java.sql.DriverManager;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -82,20 +83,11 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testColumn() throws SQLException {
-        final Column column = new Column(new ParadoxField(conn));
-        column.getField().setType(ParadoxFieldType.INTEGER.getType());
+        final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.INTEGER.getType()));
         column.getField().setSize(255);
         column.setName("name");
-        column.setType(ParadoxFieldType.INTEGER.getSQLType());
         column.setPrecision(2);
         column.setTableName("table");
-        column.setAutoIncrement(false);
-        column.setCurrency(false);
-        column.setWritable(false);
-        column.setNullable(false);
-        column.setReadOnly(true);
-        column.setSearchable(true);
-        column.setSigned(true);
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn,
                 Collections.singletonList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
@@ -121,7 +113,7 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertTrue("Testing for searchable.", metaData.isSearchable(1));
         Assert.assertTrue("Testing for sign.", metaData.isSigned(1));
 
-        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
+        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNullable, metaData.isNullable(1));
     }
 
     /**
@@ -175,13 +167,14 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testNullColumn() throws SQLException {
-        final Column column = new Column(new ParadoxField(conn));
-        column.setName("name");
-        column.setNullable(true);
+        final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.AUTO_INCREMENT.getType()));
+        final Column column2 = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
         final ParadoxResultSetMetaData metaData =
-                new ParadoxResultSetMetaData(this.conn, Collections.singletonList(column));
+                new ParadoxResultSetMetaData(this.conn, Arrays.asList(column, column2));
         Assert.assertEquals("Testing for nullable.",
-                ResultSetMetaData.columnNullable, metaData.isNullable(1));
+                ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
+        Assert.assertEquals("Testing for nullable.",
+                ResultSetMetaData.columnNullable, metaData.isNullable(2));
     }
 
     /**

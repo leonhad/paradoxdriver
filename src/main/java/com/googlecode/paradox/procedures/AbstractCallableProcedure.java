@@ -45,9 +45,8 @@ public abstract class AbstractCallableProcedure {
     public final List<ParadoxField> getCols() {
         final ArrayList<ParadoxField> ret = new ArrayList<>();
 
-        final ParadoxField field = new ParadoxField(connection);
+        final ParadoxField field = new ParadoxField(connection, (byte) 0xC);
         field.setName("field");
-        field.setType((byte) 0xC);
         ret.add(field);
 
         return ret;

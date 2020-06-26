@@ -13,6 +13,7 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxFieldType;
 import org.junit.*;
 
 import java.sql.*;
@@ -72,11 +73,9 @@ public class ParadoxResultSetTest {
 
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with empty values.
-     *
-     * @throws SQLException in case of errors.
      */
     @Test
-    public void testAbsoluteEmpty() throws SQLException {
+    public void testAbsoluteEmpty() {
         final List<Column> columns = new ArrayList<>();
         final List<List<FieldValue>> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
@@ -88,11 +87,9 @@ public class ParadoxResultSetTest {
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with high row
      * number.
-     *
-     * @throws SQLException in case of errors.
      */
     @Test
-    public void testAbsoluteInvalidRow() throws SQLException {
+    public void testAbsoluteInvalidRow() {
         final List<Column> columns = new ArrayList<>();
         final List<List<FieldValue>> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
@@ -104,11 +101,9 @@ public class ParadoxResultSetTest {
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with low row
      * number.
-     *
-     * @throws SQLException in case of errors.
      */
     @Test
-    public void testAbsoluteLowRowValue() throws SQLException {
+    public void testAbsoluteLowRowValue() {
         final List<Column> columns = new ArrayList<>();
         final List<List<FieldValue>> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
@@ -125,10 +120,10 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testAbsoluteNegativeRowValue() throws SQLException {
-        final List<Column> columns = new ArrayList<>();
-        columns.add(new Column(new ParadoxField((ParadoxConnection) this.conn)));
-        final List<List<FieldValue>> values = new ArrayList<>();
-        values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
+        final List<Column> columns = Collections.singletonList(
+                new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType())));
+        final List<List<FieldValue>> values = Collections.singletonList(
+                Collections.singletonList(new FieldValue("Test", ParadoxFieldType.VARCHAR.getSQLType())));
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
@@ -142,10 +137,10 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testAfterLast() throws SQLException {
-        final List<Column> columns = new ArrayList<>();
-        columns.add(new Column(new ParadoxField((ParadoxConnection) this.conn)));
-        final List<List<FieldValue>> values = new ArrayList<>();
-        values.add(Collections.singletonList(new FieldValue("Test", Types.VARCHAR)));
+        final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType());
+        final List<Column> columns = Collections.singletonList(new Column(field));
+        final List<List<FieldValue>> values = Collections.singletonList(
+                Collections.singletonList(new FieldValue("Test", field.getSqlType())));
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             rs.afterLast();
@@ -161,7 +156,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testFirstResult() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT AC as 'ACode', State, CITIES FROM AREACODES")) {
+             ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
             Assert.assertTrue("No first row", rs.next());
             final String firstValue = rs.getString("ac");
             Assert.assertTrue("No first row", rs.next());
@@ -173,11 +168,9 @@ public class ParadoxResultSetTest {
 
     /**
      * Test for first result.
-     *
-     * @throws Exception in case of failures.
      */
     @Test
-    public void testNoFirstResult() throws Exception {
+    public void testNoFirstResult() {
         final ParadoxConnection paradoxConnection = (ParadoxConnection) this.conn;
         try (ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, new ParadoxStatement(paradoxConnection),
                 Collections.emptyList(), Collections.emptyList())) {
@@ -195,7 +188,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testResultSet() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT AC as 'ACode', State, CITIES FROM AREACODES")) {
+             ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Testing for column 'AC'.", "201", rs.getString("ac"));
             Assert.assertEquals("Testing for column 'State'.", "NJ", rs.getString("State"));

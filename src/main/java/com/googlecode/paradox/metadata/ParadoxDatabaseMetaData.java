@@ -1268,7 +1268,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsANSI92EntryLevelSQL() {
-        return false;
+        return true;
     }
 
     /**
@@ -1508,7 +1508,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMultipleOpenResults() {
-        return false;
+        return true;
     }
 
     /**
@@ -1516,7 +1516,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMultipleResultSets() {
-        return false;
+        return true;
     }
 
     /**
