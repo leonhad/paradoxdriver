@@ -70,7 +70,7 @@ public abstract class AbstractLobField implements FieldParser {
 
         long beginIndex = buffer.getInt();
 
-        int size = buffer.getInt();
+        final int size = buffer.getInt();
         buffer.getShort();
 
         // All fields are 9, only graphics is 17.
@@ -78,7 +78,6 @@ public abstract class AbstractLobField implements FieldParser {
 
         // Graphic field?
         if (field.getType() == ParadoxFieldType.GRAPHIC.getType()) {
-            size -= 8;
             hsize = 17;
         }
 
