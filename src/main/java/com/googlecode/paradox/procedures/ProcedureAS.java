@@ -14,15 +14,14 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.procedures.math.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Stores the procedures in this driver.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.3
  * @since 1.0
  */
 public final class ProcedureAS {

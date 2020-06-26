@@ -28,14 +28,14 @@ public abstract class AbstractCallableProcedure {
 
     protected final ParadoxConnection connection;
 
-    public abstract boolean isNative();
-
     /**
      * @param connection the Paradox connection.
      */
     public AbstractCallableProcedure(ParadoxConnection connection) {
         this.connection = connection;
     }
+
+    public abstract boolean isNative();
 
     /**
      * Get the procedure columns.

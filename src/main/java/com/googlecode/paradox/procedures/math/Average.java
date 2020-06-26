@@ -16,22 +16,22 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 /**
  * The average procedure.
  *
- * @author Leonardo Alves da Costa
+ * @author Leonardo Costa
  * @version 1.1
  * @since 1.1
  */
 public final class Average extends AbstractCallableProcedure {
-
-    @Override
-    public boolean isNative() {
-        return true;
-    }
 
     /**
      * @param connection the Paradox connection.
      */
     public Average(ParadoxConnection connection) {
         super(connection);
+    }
+
+    @Override
+    public boolean isNative() {
+        return true;
     }
 
     /**

@@ -18,8 +18,6 @@ import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.Date;
 
 /**
  * Parses timestamp fields.
