@@ -114,6 +114,7 @@ public final class FieldValue {
         switch (this.type) {
             case Types.INTEGER:
             case Types.NUMERIC:
+            case Types.DOUBLE:
                 return (Number) this.value;
             default:
                 throw new SQLDataException(FieldValue.ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());

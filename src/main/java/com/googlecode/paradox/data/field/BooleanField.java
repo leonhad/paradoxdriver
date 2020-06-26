@@ -22,8 +22,8 @@ import java.sql.Types;
 /**
  * Parses boolean fields.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public final class BooleanField implements FieldParser {
@@ -32,8 +32,8 @@ public final class BooleanField implements FieldParser {
     private static final int FALSE_VALUE = -128;
 
     private static final FieldValue NULL = new FieldValue(Types.BOOLEAN);
-    private static final FieldValue TRUE = new FieldValue(Boolean.TRUE, Types.BOOLEAN);
-    private static final FieldValue FALSE = new FieldValue(Boolean.FALSE, Types.BOOLEAN);
+    private static final FieldValue TRUE = new FieldValue(Boolean.TRUE, ParadoxFieldType.BOOLEAN.getSQLType());
+    private static final FieldValue FALSE = new FieldValue(Boolean.FALSE, ParadoxFieldType.BOOLEAN.getSQLType());
 
     /**
      * {@inheritDoc}.

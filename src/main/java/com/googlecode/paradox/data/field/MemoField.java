@@ -19,8 +19,8 @@ import java.nio.ByteBuffer;
 /**
  * Parses memo fields.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.3
  */
 public final class MemoField extends AbstractLobField {

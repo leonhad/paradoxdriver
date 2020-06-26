@@ -17,19 +17,18 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
-import java.sql.Types;
 import java.util.Arrays;
 
 /**
  * Parses a VARCHAR field.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class VarcharField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(Types.VARCHAR);
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.VARCHAR.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -70,7 +69,7 @@ public final class VarcharField implements FieldParser {
             return NULL;
         }
 
-        return new FieldValue(str, Types.VARCHAR);
+        return new FieldValue(str, ParadoxFieldType.VARCHAR.getSQLType());
     }
 
 }

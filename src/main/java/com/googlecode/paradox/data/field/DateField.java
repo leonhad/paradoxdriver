@@ -19,18 +19,17 @@ import com.googlecode.paradox.utils.DateUtils;
 
 import java.nio.ByteBuffer;
 import java.sql.Date;
-import java.sql.Types;
 
 /**
  * Parses date fields.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public final class DateField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(Types.DATE);
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.DATE.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -56,6 +55,6 @@ public final class DateField implements FieldParser {
             return NULL;
         }
 
-        return new FieldValue(date, Types.DATE);
+        return new FieldValue(date, ParadoxFieldType.DATE.getSQLType());
     }
 }

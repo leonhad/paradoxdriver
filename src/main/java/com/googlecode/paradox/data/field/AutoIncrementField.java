@@ -42,6 +42,6 @@ public final class AutoIncrementField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final int v = buffer.getInt() & 0x0FFF_FFFF;
-        return new FieldValue(v, Types.INTEGER);
+        return new FieldValue(v, ParadoxFieldType.AUTO_INCREMENT.getSQLType());
     }
 }
