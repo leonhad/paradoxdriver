@@ -82,7 +82,7 @@ public final class MemoField implements FieldParser {
 
         long beginIndex = buffer.getInt();
         // Index.
-        //long index = beginIndex & 0xFF;
+        int index = (int) beginIndex & 0xFF;
         long offset = beginIndex & 0xFFFFFF00;
 
         int size = buffer.getInt();
@@ -91,10 +91,9 @@ public final class MemoField implements FieldParser {
         // All fields are 9, only graphics is 17.
         int hsize = 9;
 
-        int blobSize = size;
         // Graphic field?
         if (false) {
-            blobSize -= 8;
+            size -= 8;
             hsize = 17;
         }
 
@@ -159,54 +158,35 @@ public final class MemoField implements FieldParser {
                     return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
                 }
                 case SUB_BLOCK: {
-                    // Nine extra bytes here for remaining header.
-
+                    // The remaining header bytes.
                     channel.position(channel.position() + hsize);
 
-                    byte[] blocks = new byte[blobSize];
-                    int currentOffset = 0;
-                    int n = 0;
-                    while (n < 64) {
-                        head = ByteBuffer.allocate(5);
-                        channel.read(head);
-                        head.order(ByteOrder.LITTLE_ENDIAN);
-                        head.flip();
+                    channel.position(offset + 12 + index * 5);
+                    head = ByteBuffer.allocate(5);
+                    channel.read(head);
+                    head.order(ByteOrder.LITTLE_ENDIAN);
+                    head.flip();
 
-                        // Data offset divided by 16.
-                        final int blockOffset = (head.get() & 0xFF) * 0x10;
-                        // Data length divided by 16 (rounded up).
-                        int ln = head.get() * 0x10;
-                        head.getShort();
-                        // This is reset to 1 by a table restructure.
-                        // Data length modulo 16.
-                        final int mdl = head.get();
+                    // Data offset divided by 16.
+                    final int blockOffset = head.get() & 0xFF;
+                    // Data length divided by 16 (rounded up).
+                    int dataLength = head.get() & 0xFF;
+                    head.getShort();
+                    // This is reset to 1 by a table restructure.
+                    // Data length modulo 16.
+                    final int modulo = head.get() & 0xFF;
 
-                        if (blockOffset != 0) {
-                            final long position = channel.position();
-                            final long start = blockOffset + offset;
-                            ln = (ln - 0x10) + mdl;
-                            final ByteBuffer blockData = ByteBuffer.allocate(ln);
-                            blockData.order(ByteOrder.LITTLE_ENDIAN);
-                            blockData.clear();
-                            channel.position(start);
-                            channel.read(blockData);
-                            blockData.flip();
-                            final byte[] values = new byte[ln];
-                            blockData.get(values);
-
-                            int copyLength = ln;
-                            if (currentOffset + copyLength > blocks.length) {
-                                copyLength = blocks.length - currentOffset;
-                            }
-                            System.arraycopy(values, 0, blocks, currentOffset, copyLength);
-                            currentOffset += copyLength;
-
-                            channel.position(position);
-                        }
-                        n++;
+                    if (size != (dataLength - 1) * 0x10 + modulo) {
+                        throw new SQLException(String.format("Blob does not have expected size (%d != %d).", size,
+                                (dataLength - 1) * 0x10 + modulo));
                     }
 
-                    final String strValue = table.getCharset().decode(ByteBuffer.wrap(blocks)).toString();
+                    ByteBuffer blocks = ByteBuffer.allocate(size);
+                    channel.position(offset + blockOffset * 0x10);
+                    channel.read(blocks);
+                    blocks.flip();
+
+                    final String strValue = table.getCharset().decode(blocks).toString();
                     return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
                 }
                 default:
