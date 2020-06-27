@@ -2,11 +2,6 @@ language: java
 
 dist: bionic
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-
 script:
   - jdk_switcher use oraclejdk8
   - mvn clean package
