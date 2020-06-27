@@ -14,7 +14,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.field.BCDField;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Objects;
 
@@ -85,11 +84,6 @@ public final class ParadoxField {
      * The fields owner.
      */
     private ParadoxTable table;
-
-    /**
-     * The field table name.
-     */
-    private String tableName;
 
     /**
      * Paradox field type.
@@ -188,15 +182,6 @@ public final class ParadoxField {
     }
 
     /**
-     * Gets the tables name.
-     *
-     * @return the tables name.
-     */
-    public String getTableName() {
-        return this.tableName;
-    }
-
-    /**
      * Gets the field type.
      *
      * @return the field type.
@@ -263,9 +248,8 @@ public final class ParadoxField {
      * Sets the field size.
      *
      * @param size the size to set.
-     * @throws SQLException in case of invalid field type.
      */
-    public void setSize(final int size) throws SQLException {
+    public void setSize(final int size) {
         this.realSize = size;
         int sqlType = this.getSqlType();
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
@@ -294,24 +278,15 @@ public final class ParadoxField {
     }
 
     /**
-     * Sets the table name.
-     *
-     * @param tableName the table name to set.
-     */
-    public void setTableName(final String tableName) {
-        this.tableName = tableName;
-    }
-
-    /**
      * {@inheritDoc}.
      */
     @Override
     public String toString() {
-        if (this.tableName == null) {
+        if (this.table == null) {
             return this.name;
         }
 
-        return this.tableName + "." + this.name;
+        return this.table.getName() + "." + this.name;
     }
 
     /**
@@ -327,9 +302,8 @@ public final class ParadoxField {
      * Gets the SQL field type.
      *
      * @return the SQL field type.
-     * @throws SQLException in case of type not found.
      */
-    public int getSqlType() throws SQLException {
+    public int getSqlType() {
         return ParadoxFieldType.getSQLTypeByType(this.type);
     }
 
@@ -368,13 +342,11 @@ public final class ParadoxField {
                 Objects.equals(expression, that.expression) &&
                 Objects.equals(joinName, that.joinName) &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(table, that.table) &&
-                Objects.equals(tableName, that.tableName);
+                Objects.equals(table, that.table);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(alias, checked, expression, joinName, name, orderNum, realSize, size, table, tableName
-                , type);
+        return Objects.hash(alias, checked, expression, joinName, name, orderNum, realSize, size, table, type);
     }
 }

@@ -90,7 +90,6 @@ public class TableNodeTest {
 
         final ArrayList<AbstractComparisonNode> list = new ArrayList<>();
         list.add(new EqualsNode(conn, fieldA, fieldB));
-        // FIXME test unit.
         //join.setConditions(list);
 
         node.addJoin(join);

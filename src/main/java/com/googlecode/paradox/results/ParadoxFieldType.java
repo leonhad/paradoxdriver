@@ -10,9 +10,6 @@
  */
 package com.googlecode.paradox.results;
 
-import com.googlecode.paradox.utils.SQLStates;
-
-import java.sql.SQLException;
 import java.sql.Types;
 
 /**
@@ -139,16 +136,15 @@ public enum ParadoxFieldType {
      *
      * @param type the type value.
      * @return the field type name.
-     * @throws SQLException in case of invalid type.
      */
-    public static int getSQLTypeByType(final int type) throws SQLException {
+    public static int getSQLTypeByType(final int type) {
         for (final ParadoxFieldType typeName : ParadoxFieldType.VALUES) {
             if (typeName.getType() == type) {
                 return typeName.getSQLType();
             }
         }
 
-        throw new SQLException("Type not found: " + type, SQLStates.TYPE_NOT_FOUND.getValue());
+        return Types.OTHER;
     }
 
     /**

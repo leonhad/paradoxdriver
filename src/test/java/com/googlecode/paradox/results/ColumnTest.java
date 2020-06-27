@@ -194,15 +194,6 @@ public class ColumnTest {
     }
 
     /**
-     * Test for table name.
-     */
-    @Test
-    public void testTableName() throws SQLException {
-        final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
-        Assert.assertEquals("Invalid field table name.", "name", column.getTableName());
-    }
-
-    /**
      * Test for type.
      */
     @Test

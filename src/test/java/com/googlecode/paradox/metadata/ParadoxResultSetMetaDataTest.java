@@ -84,6 +84,7 @@ public class ParadoxResultSetMetaDataTest {
     @Test
     public void testColumn() throws SQLException {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.INTEGER.getType()));
+        column.getField().setTable(new ParadoxTable(null, "NAME", conn));
         column.getField().setSize(255);
         column.setName("name");
         column.setPrecision(2);
@@ -101,7 +102,7 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertEquals("Testing for column type.", ParadoxFieldType.INTEGER.getSQLType(),
                 metaData.getColumnType(1));
         Assert.assertEquals("Testing for column type name.", TypeName.INTEGER.getName(), metaData.getColumnTypeName(1));
-        Assert.assertEquals("Testing for column precision.", 0, metaData.getPrecision(1));
+        Assert.assertEquals("Testing for column precision.", 2, metaData.getPrecision(1));
         Assert.assertEquals("Testing for column scale.", 2, metaData.getScale(1));
         Assert.assertEquals("Testing for table name.", "table", metaData.getTableName(1));
         Assert.assertFalse("Testing for auto increment value.", metaData.isAutoIncrement(1));

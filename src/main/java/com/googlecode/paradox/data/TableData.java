@@ -248,15 +248,13 @@ public final class TableData extends ParadoxData {
      * @param table  the Paradox table.
      * @param buffer the buffer to read of.
      * @return the Paradox field list.
-     * @throws SQLException in case of parse errors.
      */
-    private static List<ParadoxField> parseTableFields(final ParadoxTable table, final ByteBuffer buffer)
-            throws SQLException {
+    private static List<ParadoxField> parseTableFields(final ParadoxTable table, final ByteBuffer buffer) {
         final List<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(table.getConnection(), buffer.get(), loop + 1);
             field.setSize(buffer.get() & 0xFF);
-            field.setTableName(table.getName());
+            field.setTable(table);
             field.setTable(table);
             fields.add(field);
         }

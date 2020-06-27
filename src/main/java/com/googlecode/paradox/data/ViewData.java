@@ -236,15 +236,14 @@ public final class ViewData {
         while ((line != null) && !"EndQuery".equals(line)) {
             // Fields
             final String[] fields = line.split("\\|");
-            final String table = fields[0].trim();
+            final String tableName = fields[0].trim();
 
             for (int loop = 1; loop < fields.length; loop++) {
                 final String name = fields[loop].trim();
-                final ParadoxField original = ViewData.getFieldByName(
-                        ViewData.getTable(table, currentSchema, connection), name);
-
+                final ParadoxTable table = ViewData.getTable(tableName, currentSchema, connection);
+                final ParadoxField original = ViewData.getFieldByName(table, name);
                 final ParadoxField field = new ParadoxField(connection, original.getType());
-                field.setTableName(table);
+                field.setTable(table);
                 field.setName(name);
                 field.setSize(original.getSize());
                 fieldList.add(field);

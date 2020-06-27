@@ -65,7 +65,7 @@ public abstract class AbstractComparisonNode extends SQLNode {
             ret = row.stream().filter(v -> v.getField().getName().equalsIgnoreCase(field.getName()))
                     .findFirst().orElse(null);
         } else {
-            ret = row.stream().filter(v -> v.getField().getTableName().equalsIgnoreCase(tableName)
+            ret = row.stream().filter(v -> v.getField().getTable().getName().equalsIgnoreCase(tableName)
                     && v.getField().getName().equalsIgnoreCase(field.getName())).findFirst().orElse(null);
         }
 

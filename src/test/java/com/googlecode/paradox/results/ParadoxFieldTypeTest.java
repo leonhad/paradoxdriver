@@ -10,40 +10,35 @@
  */
 package com.googlecode.paradox.results;
 
-import java.sql.SQLException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.sql.Types;
 
 /**
  * Unit test for {@link ParadoxFieldType} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo  Costa
+ * @version 1.1
  * @since 1.3
  */
 public class ParadoxFieldTypeTest {
-    
+
     /**
      * Test for invalid type.
-     *
-     * @throws SQLException
-     *             if there is no errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testGetType() throws SQLException {
-        ParadoxFieldType.getSQLTypeByType(-1);
-    }
-    
-    /**
-     * Test for SQL type.
-     *
-     * @throws SQLException
-     *             in case of errors.
      */
     @Test
-    public void testSQLType() throws SQLException {
+    public void testGetType() {
+        Assert.assertEquals("Invalid SQL type.", Types.OTHER, ParadoxFieldType.getSQLTypeByType(-1));
+    }
+
+    /**
+     * Test for SQL type.
+     */
+    @Test
+    public void testSQLType() {
         Assert.assertEquals("Test for get SQL type.", ParadoxFieldType.AUTO_INCREMENT.getSQLType(),
                 ParadoxFieldType.getSQLTypeByType(ParadoxFieldType.AUTO_INCREMENT.getType()));
     }
-    
+
 }

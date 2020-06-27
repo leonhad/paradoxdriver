@@ -13,7 +13,6 @@ package com.googlecode.paradox.results;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -49,11 +48,6 @@ public final class Column {
     private int precision;
 
     /**
-     * The tables name.
-     */
-    private ParadoxTable table;
-
-    /**
      * The SQL data type.
      *
      * @see Types
@@ -64,12 +58,10 @@ public final class Column {
      * Create a new instance.
      *
      * @param field the paradox field.
-     * @throws SQLException in case of invalid SQL Type.
      */
     public Column(final ParadoxField field) {
-        this(field.getName(), field.getType());
+        this(field.getName(), field.getSqlType());
         this.field = field;
-        this.table = field.getTable();
         this.precision = field.getPrecision();
     }
 
@@ -91,8 +83,8 @@ public final class Column {
      * @return <code>true</code> if this column is from this table.
      */
     public boolean isThis(final ParadoxDataFile table) {
-        return this.table.getName().equalsIgnoreCase(table.getName())
-                && this.table.getSchemaName().equalsIgnoreCase(table.getSchemaName());
+        return this.field.getTable().getName().equalsIgnoreCase(table.getName())
+                && this.field.getTable().getSchemaName().equalsIgnoreCase(table.getSchemaName());
     }
 
     /**
@@ -157,7 +149,7 @@ public final class Column {
      * @return the tables name.
      */
     public String getTableName() {
-        return this.table.getName();
+        return this.field.getTable().getName();
     }
 
     /**

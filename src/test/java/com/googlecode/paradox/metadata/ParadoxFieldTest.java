@@ -124,7 +124,6 @@ public class ParadoxFieldTest {
         field.setExpression("expression");
         field.setJoinName("joinName");
         field.setName("name");
-        field.setTableName("tableName");
         field.setTable(null);
 
         Assert.assertEquals("Invalid field alias.", "alias", field.getAlias());
@@ -132,7 +131,6 @@ public class ParadoxFieldTest {
         Assert.assertEquals("Invalid field expression.", "expression", field.getExpression());
         Assert.assertEquals("Invalid field join name.", "joinName", field.getJoinName());
         Assert.assertEquals("Invalid field name.", "name", field.getName());
-        Assert.assertEquals("Invalid field table name.", "tableName", field.getTableName());
         Assert.assertNull("Invalid table", field.getTable());
     }
 
@@ -181,11 +179,9 @@ public class ParadoxFieldTest {
 
     /**
      * Test for {@link ParadoxField#getSize()} and {@link ParadoxField#setSize(int)} method.
-     *
-     * @throws SQLException in case of errors.
      */
     @Test
-    public void testSize() throws SQLException {
+    public void testSize() {
         // Not CLOB or BLOB type
         final ParadoxField field = new ParadoxField(conn, (byte) 0x1);
         field.setSize(10);
