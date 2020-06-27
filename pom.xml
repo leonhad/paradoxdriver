@@ -97,6 +97,7 @@
                     <applyJavadocSecurityFix>true</applyJavadocSecurityFix>
                     <charset>UTF-8</charset>
                     <debug>false</debug>
+                    <failOnError>false</failOnError>
                     <source>8</source>
                 </configuration>
             </plugin>
