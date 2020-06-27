@@ -3,7 +3,6 @@ language: java
 dist: bionic
 
 script:
-  - jdk_switcher use oraclejdk8
   - mvn clean package
 
 install: skip
@@ -11,6 +10,8 @@ install: skip
 before_install:
   - echo $LANG
   - echo $LC_ALL
+
+jdk: oraclejdk8
 
 os:
   - linux
