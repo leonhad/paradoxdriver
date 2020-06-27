@@ -93,7 +93,10 @@ public class TimestampFieldTest {
                 (byte) 0x99, (byte) 0x2A, (byte) 0xBC, (byte) 0x0F
         });
         final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid timestamp value.", timestamp, value.getTimestamp());
+
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Assert.assertEquals("Invalid timestamp value.", format.format(timestamp), format.format(value.getTimestamp()));
     }
 
     /**
