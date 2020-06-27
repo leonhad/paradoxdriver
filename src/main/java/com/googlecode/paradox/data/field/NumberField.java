@@ -22,13 +22,13 @@ import java.sql.Types;
 /**
  * Parses the numeric fields.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public final class NumberField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(Types.DOUBLE);
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.NUMBER.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -55,6 +55,6 @@ public final class NumberField implements FieldParser {
         if (Double.isNaN(v)) {
             return NULL;
         }
-        return new FieldValue(v, Types.DOUBLE);
+        return new FieldValue(v, ParadoxFieldType.NUMBER.getSQLType());
     }
 }

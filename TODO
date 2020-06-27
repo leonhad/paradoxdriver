@@ -2,7 +2,17 @@
 
 * Soon
 
-** Review issues in Sonar Qube and GitHub.
+** Rewrite the SQL parser to be accurate.
+** List of SQL error codes.
+** Line and column names in SQL errors.
+** Better SQL Warnings.
+** Wiki documentation.
+** Continuous integration for builds.
+
+* Later
+
+** Add INSERT, DELETE and UPDATE support.
+** IDE to create and use SQL commands.
 
 ----------------------------------------------------------------------------
 

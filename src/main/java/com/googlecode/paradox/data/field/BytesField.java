@@ -21,8 +21,8 @@ import java.nio.ByteBuffer;
 /**
  * Parses a VARCHAR field.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public final class BytesField implements FieldParser {

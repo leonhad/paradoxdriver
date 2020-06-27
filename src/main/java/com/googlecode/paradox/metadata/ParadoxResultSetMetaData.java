@@ -201,6 +201,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
         if (dto.isNullable()) {
             return ResultSetMetaData.columnNullable;
         }
+
         return ResultSetMetaData.columnNoNulls;
     }
 

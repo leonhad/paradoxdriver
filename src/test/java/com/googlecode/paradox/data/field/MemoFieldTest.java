@@ -12,24 +12,15 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.integration.MainTest;
 import org.junit.*;
 
-import java.nio.ByteBuffer;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * Unit test for {@link LongField} class.
- *
- * @author Leonardo Costa
- * @version 1.1
- * @since 1.3
- */
-public class LongFieldTest {
+public class MemoFieldTest {
 
     /**
      * The database connection.
@@ -67,60 +58,42 @@ public class LongFieldTest {
     }
 
     /**
-     * Test for invalid match.
-     */
-    @Test
-    public void testInvalidMatch() {
-        final LongField field = new LongField();
-        Assert.assertFalse("Invalid field type.", field.match(0));
-    }
-
-    /**
-     * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
-     */
-    @Test
-    public void testParse() throws SQLException {
-        final LongField field = new LongField();
-
-        // Test positive values
-        ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00});
-        FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", 256L, value.getNumber());
-
-        // Test negative values
-        buffer = ByteBuffer.wrap(new byte[]{(byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00});
-        value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", -256L, value.getNumber());
-    }
-
-    /**
-     * Test for valid match.
-     */
-    @Test
-    public void testValidMatch() {
-        final LongField field = new LongField();
-        Assert.assertTrue("Invalid field type.", field.match(4));
-    }
-
-    /**
-     * Test for LONG reading.
+     * Test for memo reading.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadLong() throws SQLException {
+    public void testReadMemo() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT \"Time\" FROM fields.time")) {
+                "SELECT Id, MEMO FROM fields.memo")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", "01:00:01", rs.getTime("Time").toString());
+            Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", 555, rs.getString("MEMO").length());
 
             Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertNull("Invalid value.", rs.getTime("Time"));
+            Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", "01234567890\n", rs.getString("MEMO"));
+
+            Assert.assertFalse("Invalid Result Set state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for formatted memo reading.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testReadFormattedMemo() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT Id, FMEMO FROM fields.fmemo")) {
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", 169, rs.getString("FMEMO").length());
 
             Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", "03:00:03", rs.getTime("Time").toString());
+            Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
+            Assert.assertEquals("Invalid value.", 726, rs.getString("FMEMO").length());
 
             Assert.assertFalse("Invalid Result Set state.", rs.next());
         }

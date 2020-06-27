@@ -84,11 +84,10 @@ public final class BCDField implements FieldParser {
             removeLeadingZeroes(sb);
         }
 
-        double value = Double.parseDouble(sb.toString());
         if (negative) {
-            value *= -1;
+            sb.insert(0, '-');
         }
-
+        double value = Double.parseDouble(sb.toString());
         return new FieldValue(value, ParadoxFieldType.BCD.getSQLType());
     }
 

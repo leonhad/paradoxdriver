@@ -84,7 +84,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * Default charset.
      */
-    private Charset charset;
+    private final Charset charset;
     /**
      * Connection locale.
      */
@@ -108,6 +108,8 @@ public final class ParadoxConnection implements Connection {
         final String charsetName = info.getProperty(Driver.CHARSET_KEY);
         if (charsetName != null && !charsetName.trim().isEmpty()) {
             this.charset = Charset.forName(charsetName);
+        } else {
+            this.charset = Charset.defaultCharset();
         }
 
         final String localeName = info.getProperty(Driver.LOCALE_KEY);

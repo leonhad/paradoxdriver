@@ -22,13 +22,13 @@ import java.sql.Types;
 /**
  * Parses long fields.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public final class LongField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(Types.BIGINT);
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.LONG.getSQLType());
 
     /**
      * {@inheritDoc}
@@ -48,6 +48,6 @@ public final class LongField implements FieldParser {
             return NULL;
         }
 
-        return new FieldValue(l, Types.BIGINT);
+        return new FieldValue(l, ParadoxFieldType.LONG.getSQLType());
     }
 }

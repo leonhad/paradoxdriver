@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox.utils;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.sql.Wrapper;
 
@@ -47,49 +45,6 @@ public final class Utils {
     }
 
     /**
-     * Convert the Paradox VARCHAR to {@link String}. The paradox fill the
-     * entire buffer with zeros at end of VARCHAR literals.
-     *
-     * @param buffer  VARCHAR Buffer to convert.
-     * @param charset Table charset.
-     * @return a formatted {@link String}.
-     */
-    public static String parseString(final ByteBuffer buffer, final Charset charset) {
-        final byte[] value = buffer.array();
-        int length = value.length;
-
-        for (; length > 0; length--) {
-            // array value starts with zero, not 1
-            if (value[length - 1] != 0) {
-                break;
-            }
-        }
-        buffer.flip();
-        buffer.limit(length);
-        return charset.decode(buffer).toString();
-    }
-
-    /**
-     * Remove the DB suffix from a {@link String}.
-     *
-     * @param name the {@link String} to format.
-     * @return the formatted {@link String}.
-     */
-    public static String removeDB(final String name) {
-        return Utils.removeSuffix(name, "DB");
-    }
-
-    /**
-     * Remove the MB suffix from a {@link String}.
-     *
-     * @param name the {@link String} to format.
-     * @return the formatted {@link String}.
-     */
-    public static String removeMB(final String name) {
-        return Utils.removeSuffix(name, "MB");
-    }
-
-    /**
      * Returns an object that implements the given interface to allow access to
      * non-standard methods, or standard methods not exposed by the proxy.
      *
@@ -116,7 +71,7 @@ public final class Utils {
      * @param suffix the suffix.
      * @return the formatted {@link String}.
      */
-    private static String removeSuffix(final String name, final String suffix) {
+    public static String removeSuffix(final String name, final String suffix) {
         if (name != null) {
             int index = name.lastIndexOf('.');
             if (index != -1 && name.substring(index + 1).equalsIgnoreCase(suffix)) {

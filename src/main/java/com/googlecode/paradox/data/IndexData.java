@@ -31,8 +31,8 @@ import java.util.List;
 /**
  * Reads index data files.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public final class IndexData extends ParadoxData {
@@ -56,7 +56,7 @@ public final class IndexData extends ParadoxData {
     public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
                                                  final ParadoxConnection connection) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
-        final String indexNamePattern = Utils.removeDB(tableName) + ".X??";
+        final String indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".X??";
         final File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connection, indexNamePattern));
         if (fileList != null) {
             for (final File file : fileList) {
@@ -159,9 +159,8 @@ public final class IndexData extends ParadoxData {
     private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(index.getConnection(), loop + 1);
-            field.setType(buffer.get());
-            field.setSize((int) buffer.get());
+            final ParadoxField field = new ParadoxField(index.getConnection(), buffer.get(), loop + 1);
+            field.setSize(buffer.get());
             fields.add(field);
         }
 

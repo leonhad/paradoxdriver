@@ -46,7 +46,7 @@ public final class TableNode extends SQLNode {
      */
     public TableNode(final ParadoxConnection connection, final String schemaName, final String name,
                      final String alias) {
-        super(connection, Utils.removeDB(name), alias);
+        super(connection, Utils.removeSuffix(name, "DB"), alias);
 
         this.schemaName = schemaName;
     }

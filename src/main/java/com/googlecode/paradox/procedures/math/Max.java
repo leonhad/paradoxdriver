@@ -16,8 +16,8 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 /**
  * The MAX function.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.1
  */
 public final class Max extends AbstractCallableProcedure {
@@ -27,6 +27,11 @@ public final class Max extends AbstractCallableProcedure {
      */
     public Max(ParadoxConnection connection) {
         super(connection);
+    }
+
+    @Override
+    public boolean isNative() {
+        return true;
     }
 
     /**

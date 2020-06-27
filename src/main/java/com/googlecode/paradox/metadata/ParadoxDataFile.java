@@ -31,7 +31,7 @@ public class ParadoxDataFile {
     /**
      * Java file used to read the database.
      */
-    private final File file;
+    protected final File file;
     /**
      * The database connection;
      */
@@ -79,7 +79,7 @@ public class ParadoxDataFile {
     /**
      * The file name.
      */
-    private String name;
+    protected String name;
     /**
      * Primary key field count.
      */
@@ -131,7 +131,7 @@ public class ParadoxDataFile {
      */
     protected ParadoxDataFile(final File file, final String name, final ParadoxConnection connection) {
         this.file = file;
-        this.name = Utils.removeDB(name);
+        this.name = Utils.removeSuffix(name, "DB");
         if (connection != null) {
             this.charset = connection.getCharset();
         }

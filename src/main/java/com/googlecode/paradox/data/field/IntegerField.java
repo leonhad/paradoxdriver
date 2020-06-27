@@ -22,14 +22,14 @@ import java.sql.Types;
 /**
  * Parses integer fields.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public final class IntegerField implements FieldParser {
 
     private static final int NULL_VALUE = -32768;
-    private static final FieldValue NULL = new FieldValue(Types.INTEGER);
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.INTEGER.getSQLType());
 
     /**
      * {@inheritDoc}
@@ -52,6 +52,6 @@ public final class IntegerField implements FieldParser {
             return NULL;
         }
 
-        return new FieldValue(v, Types.INTEGER);
+        return new FieldValue(v, ParadoxFieldType.INTEGER.getSQLType());
     }
 }

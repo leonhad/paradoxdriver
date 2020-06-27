@@ -10,6 +10,15 @@ To use it, install the driver class `com.googlecode.paradox.Driver` and use the 
     java.sql.Connection conn = DriverManager.getConnection("jdbc:paradox:./db");
 ```
 
+## What's new in this version
+
+- Added encryption support.
+- Added all field types support.
+- Fixed null values.
+- Fixed various memory and performances issues.
+- Now the database uses the table charset to parse String values.
+- Force Charset and Locale support in connection properties.
+
 # Downloads #
 If you're using Maven, you can use the dependencies below:
 
@@ -17,13 +26,13 @@ If you're using Maven, you can use the dependencies below:
 <dependency>
     <groupId>com.googlecode.paradoxdriver</groupId>
     <artifactId>paradoxdriver</artifactId>
-    <version>1.4.1</version>
+    <version>1.5.0</version>
 </dependency>
 ```
 
 If you're using Gradle, add the following line to your dependencies section:
 
-    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.4.1'
+    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.5.0'
 
 If you just want the files, you can grab the [latest release](https://github.com/leonhad/paradoxdriver/releases/latest).
 

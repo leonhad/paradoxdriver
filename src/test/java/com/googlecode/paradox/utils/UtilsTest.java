@@ -115,24 +115,13 @@ public class UtilsTest {
     }
 
     /**
-     * Test for remove DB extension.
+     * Test for remove suffix extension.
      */
     @Test
-    public void testRemoveDB() {
-        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeDB("FILE.DB"));
-        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeDB("FILE"));
-        Assert.assertEquals("Invalid file name.", "FILE.TXT", Utils.removeDB("FILE.TXT"));
-        Assert.assertNull("Invalid file name.", Utils.removeDB(null));
-    }
-
-    /**
-     * Test for remove MB extension.
-     */
-    @Test
-    public void testRemoveMB() {
-        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeMB("FILE.MB"));
-        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeMB("FILE"));
-        Assert.assertEquals("Invalid file name.", "FILE.TXT", Utils.removeMB("FILE.TXT"));
-        Assert.assertNull("Invalid file name.", Utils.removeMB(null));
+    public void testRemoveSuffix() {
+        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeSuffix("FILE.DB", "DB"));
+        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeSuffix("FILE", "DB"));
+        Assert.assertEquals("Invalid file name.", "FILE.TXT", Utils.removeSuffix("FILE.TXT", "DB"));
+        Assert.assertNull("Invalid file name.", Utils.removeSuffix(null, null));
     }
 }

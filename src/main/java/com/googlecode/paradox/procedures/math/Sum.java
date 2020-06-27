@@ -16,8 +16,8 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 /**
  * The SUM function.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.1
  */
 public final class Sum extends AbstractCallableProcedure {
@@ -27,6 +27,11 @@ public final class Sum extends AbstractCallableProcedure {
      */
     public Sum(ParadoxConnection connection) {
         super(connection);
+    }
+
+    @Override
+    public boolean isNative() {
+        return true;
     }
 
     /**

@@ -10,21 +10,22 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.table.value.BlobDescriptor;
+import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
-import java.sql.Types;
+import java.nio.ByteBuffer;
 
 /**
  * Parses blob fields.
  *
  * @author Leonardo Alves da Costa
- * @author Michael Berry
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public final class BlobField extends AbstractLobField {
+
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.BLOB.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -33,25 +34,16 @@ public final class BlobField extends AbstractLobField {
     public boolean match(final int type) {
         return type == ParadoxFieldType.BLOB.getType()
                 || type == ParadoxFieldType.OLE.getType()
-                || type == ParadoxFieldType.GRAPHIC.getType()
-                || type == ParadoxFieldType.FORMATTED_MEMO.getType();
+                || type == ParadoxFieldType.GRAPHIC.getType();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
-    public BlobDescriptor getDescriptor(final ParadoxTable table) {
-
-        return new BlobDescriptor(table.getBlobTable());
+    protected FieldValue getNull() {
+        return NULL;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
-    public int getFieldType() {
-        return Types.BLOB;
+    protected FieldValue getValue(final ParadoxTable table, final ByteBuffer value) {
+        return new FieldValue(value.array(), ParadoxFieldType.BLOB.getSQLType());
     }
-
 }

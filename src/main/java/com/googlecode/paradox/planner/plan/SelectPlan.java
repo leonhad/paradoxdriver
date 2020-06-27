@@ -111,8 +111,9 @@ public final class SelectPlan implements Plan {
      * Associate all columns from a table.
      *
      * @param table the table to scan.
+     * @throws SQLException in case of failures.
      */
-    public void addColumnFromTable(final ParadoxDataFile table) {
+    public void addColumnFromTable(final ParadoxDataFile table) throws SQLException {
         for (final ParadoxField field : table.getFields()) {
             this.columns.add(new Column(field));
         }
@@ -122,8 +123,9 @@ public final class SelectPlan implements Plan {
      * Associate all columns from a list of tables.
      *
      * @param tables the table list to scan.
+     * @throws SQLException in case of failures.
      */
-    public void addColumnFromTables(final Iterable<PlanTableNode> tables) {
+    public void addColumnFromTables(final Iterable<PlanTableNode> tables) throws SQLException {
         for (final PlanTableNode table : tables) {
             addColumnFromTable(table.getTable());
         }

@@ -94,7 +94,7 @@ public final class ParadoxField {
     /**
      * Paradox field type.
      */
-    private byte type;
+    private final byte type;
 
     private final ParadoxConnection connection;
 
@@ -102,19 +102,22 @@ public final class ParadoxField {
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.
      *
      * @param connection the Paradox connection.
+     * @param type       the Paradox field type.
      */
-    public ParadoxField(final ParadoxConnection connection) {
-        this(connection, 1);
+    public ParadoxField(final ParadoxConnection connection, final byte type) {
+        this(connection, type, 1);
     }
 
     /**
      * Creates a new instance.
      *
      * @param connection the Paradox connection.
+     * @param type       the Paradox field type.
      * @param orderNum   order number to start.
      */
-    public ParadoxField(final ParadoxConnection connection, final int orderNum) {
+    public ParadoxField(final ParadoxConnection connection, final byte type, final int orderNum) {
         this.connection = connection;
+        this.type = type;
         this.orderNum = orderNum;
     }
 
@@ -273,7 +276,7 @@ public final class ParadoxField {
         } else if (type == ParadoxFieldType.BCD.getType()) {
             this.precision = size;
             this.size = BCDField.MAX_DIGITS;
-        } else if (sqlType == Types.DECIMAL) {
+        } else if (sqlType == Types.NUMERIC) {
             this.precision = NUMBER_PRECISION;
             this.size = size;
         } else {
@@ -297,15 +300,6 @@ public final class ParadoxField {
      */
     public void setTableName(final String tableName) {
         this.tableName = tableName;
-    }
-
-    /**
-     * Sets the field type.
-     *
-     * @param type the type to set.
-     */
-    public void setType(final byte type) {
-        this.type = type;
     }
 
     /**
@@ -335,7 +329,7 @@ public final class ParadoxField {
      * @return the SQL field type.
      * @throws SQLException in case of type not found.
      */
-    int getSqlType() throws SQLException {
+    public int getSqlType() throws SQLException {
         return ParadoxFieldType.getSQLTypeByType(this.type);
     }
 

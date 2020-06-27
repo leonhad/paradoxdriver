@@ -25,13 +25,13 @@ import java.util.GregorianCalendar;
 /**
  * Parses time fields.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public final class TimeField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(Types.TIME);
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.TIME.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -52,7 +52,7 @@ public final class TimeField implements FieldParser {
             final Calendar calendar = new GregorianCalendar(1, Calendar.JANUARY, 0);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
             final Time time = new Time(calendar.getTimeInMillis());
-            return new FieldValue(time, Types.TIME);
+            return new FieldValue(time, ParadoxFieldType.TIME.getSQLType());
         }
 
         return NULL;

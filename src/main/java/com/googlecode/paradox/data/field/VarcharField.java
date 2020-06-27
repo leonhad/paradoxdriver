@@ -15,22 +15,20 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
-import com.googlecode.paradox.utils.Utils;
 
 import java.nio.ByteBuffer;
-import java.sql.Types;
 import java.util.Arrays;
 
 /**
  * Parses a VARCHAR field.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.3
  */
 public final class VarcharField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(Types.VARCHAR);
+    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.VARCHAR.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -54,12 +52,24 @@ public final class VarcharField implements FieldParser {
             valueString.put(buffer.get());
         }
 
-        final String value = Utils.parseString(valueString, table.getCharset());
-        if (value.isEmpty()) {
+        final byte[] value = valueString.array();
+        int length = value.length;
+
+        for (; length > 0; length--) {
+            // array value starts with zero, not 1
+            if (value[length - 1] != 0) {
+                break;
+            }
+        }
+        valueString.flip();
+        valueString.limit(length);
+        final String str = table.getCharset().decode(valueString).toString();
+
+        if (str.isEmpty()) {
             return NULL;
         }
 
-        return new FieldValue(value, Types.VARCHAR);
+        return new FieldValue(str, ParadoxFieldType.VARCHAR.getSQLType());
     }
 
 }

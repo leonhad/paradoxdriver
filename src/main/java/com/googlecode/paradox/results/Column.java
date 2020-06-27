@@ -29,16 +29,6 @@ import java.sql.Types;
 public final class Column {
 
     /**
-     * If this column is auto incremented.
-     */
-    private boolean autoIncrement;
-
-    /**
-     * If this column is currency type.
-     */
-    private boolean currency;
-
-    /**
      * The paradox field associated to this field.
      */
     private ParadoxField field;
@@ -54,29 +44,9 @@ public final class Column {
     private String name;
 
     /**
-     * If this field can be null.
-     */
-    private boolean nullable = true;
-
-    /**
      * The field precision.
      */
     private int precision;
-
-    /**
-     * If this field is read only.
-     */
-    private boolean readOnly;
-
-    /**
-     * If this field is searchable.
-     */
-    private boolean searchable = true;
-
-    /**
-     * If this field has sign.
-     */
-    private boolean signed;
 
     /**
      * The tables name.
@@ -91,14 +61,10 @@ public final class Column {
     private final int type;
 
     /**
-     * If this field is writable.
-     */
-    private boolean writable;
-
-    /**
      * Create a new instance.
      *
      * @param field the paradox field.
+     * @throws SQLException in case of invalid SQL Type.
      */
     public Column(final ParadoxField field) {
         this(field.getName(), field.getType());
@@ -209,7 +175,7 @@ public final class Column {
      * @return true if this field is auto incremented.
      */
     public boolean isAutoIncrement() {
-        return this.autoIncrement;
+        return field != null && field.getType() == ParadoxFieldType.AUTO_INCREMENT.getType();
     }
 
     /**
@@ -218,7 +184,7 @@ public final class Column {
      * @return true if this field is a current.
      */
     public boolean isCurrency() {
-        return this.currency;
+        return field != null && field.getType() == ParadoxFieldType.CURRENCY.getType();
     }
 
     /**
@@ -227,7 +193,7 @@ public final class Column {
      * @return true if this field can be null.
      */
     public boolean isNullable() {
-        return this.nullable;
+        return field == null || field.getType() != ParadoxFieldType.AUTO_INCREMENT.getType();
     }
 
     /**
@@ -236,7 +202,7 @@ public final class Column {
      * @return true if this field is read only.
      */
     public boolean isReadOnly() {
-        return this.readOnly;
+        return true;
     }
 
     /**
@@ -245,7 +211,7 @@ public final class Column {
      * @return true if this field can be search.
      */
     public boolean isSearchable() {
-        return this.searchable;
+        return type != Types.BLOB && type != Types.BINARY;
     }
 
     /**
@@ -254,7 +220,7 @@ public final class Column {
      * @return true if this field have sign.
      */
     public boolean isSigned() {
-        return this.signed;
+        return type == Types.DECIMAL || type == Types.NUMERIC || type == Types.DOUBLE || type == Types.INTEGER;
     }
 
     /**
@@ -263,34 +229,7 @@ public final class Column {
      * @return true if this field is writable.
      */
     public boolean isWritable() {
-        return this.writable;
-    }
-
-    /**
-     * Sets the auto increment value.
-     *
-     * @param autoIncrement the auto increment value to set.
-     */
-    public void setAutoIncrement(final boolean autoIncrement) {
-        this.autoIncrement = autoIncrement;
-    }
-
-    /**
-     * Sets if this field is a current.
-     *
-     * @param currency the currency to set.
-     */
-    public void setCurrency(final boolean currency) {
-        this.currency = currency;
-    }
-
-    /**
-     * Sets the paradox field.
-     *
-     * @param field the paradox field to set.
-     */
-    public void setField(final ParadoxField field) {
-        this.field = field;
+        return false;
     }
 
     /**
@@ -312,15 +251,6 @@ public final class Column {
     }
 
     /**
-     * Sets if this field can be null.
-     *
-     * @param nullable the nullable to set.
-     */
-    public void setNullable(final boolean nullable) {
-        this.nullable = nullable;
-    }
-
-    /**
      * Sets the field precision.
      *
      * @param precision the precision to set.
@@ -328,41 +258,4 @@ public final class Column {
     public void setPrecision(final int precision) {
         this.precision = precision;
     }
-
-    /**
-     * Sets if this field is read only.
-     *
-     * @param readOnly the read only to set.
-     */
-    public void setReadOnly(final boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
-    /**
-     * Sets if this field is searchable.
-     *
-     * @param searchable the searchable to set.
-     */
-    public void setSearchable(final boolean searchable) {
-        this.searchable = searchable;
-    }
-
-    /**
-     * Sets if this field has sign.
-     *
-     * @param signed the signed to set.
-     */
-    public void setSigned(final boolean signed) {
-        this.signed = signed;
-    }
-
-    /**
-     * Sets if this field is writable.
-     *
-     * @param writable the writable to set.
-     */
-    public void setWritable(final boolean writable) {
-        this.writable = writable;
-    }
-
 }
