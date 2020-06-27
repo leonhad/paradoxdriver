@@ -97,6 +97,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * The type name field.
      */
     private static final String TYPE_NAME = "TYPE_NAME";
+    public static final int DEFAULT_NUMBER_RADIX = 10;
     /**
      * The database connection.
      */
@@ -1835,12 +1836,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getTableTypes() {
         final List<Column> columns = Collections.singletonList(new Column("TABLE_TYPE", Types.VARCHAR));
 
-        final List<FieldValue[]> values = Arrays.asList(
-                new FieldValue[]{new FieldValue(ParadoxDatabaseMetaData.TABLE, Types.VARCHAR)},
-                new FieldValue[]{new FieldValue("VIEW", Types.VARCHAR)},
-                new FieldValue[]{new FieldValue("SYSTEM TABLE", Types.VARCHAR)}
-        );
-
+        final List<FieldValue[]> values = new ArrayList<>(4);
+        values.add(new FieldValue[]{new FieldValue(ParadoxDatabaseMetaData.TABLE, Types.VARCHAR)});
+        values.add(new FieldValue[]{new FieldValue("VIEW", Types.VARCHAR)});
+        values.add(new FieldValue[]{new FieldValue("SYSTEM TABLE", Types.VARCHAR)});
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
 
@@ -1867,33 +1866,62 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             final List<FieldValue> row = new ArrayList<>();
 
             final int type = field.getSqlType();
+            // Table catalog.
             row.add(new FieldValue(catalog, Types.VARCHAR));
+            // Table schema.
             row.add(new FieldValue(schema, Types.VARCHAR));
+            // Table name.
             row.add(new FieldValue(tableName, Types.VARCHAR));
+            // Column name.
             row.add(new FieldValue(field.getAlias(), Types.VARCHAR));
+            // Data type.
             row.add(new FieldValue(type, Types.INTEGER));
+            // Type name.
             row.add(new FieldValue(Column.getTypeName(type), Types.VARCHAR));
+            // Column size.
             row.add(new FieldValue(field.getSize(), Types.INTEGER));
+            // Buffer length.
             row.add(new FieldValue(ParadoxDatabaseMetaData.MAX_INT_SIZE, Types.INTEGER));
+            // Decimal digits.
             row.add(new FieldValue(field.getPrecision(), Types.INTEGER));
-            row.add(new FieldValue(10, Types.INTEGER));
+            // Number precision radix.
+            row.add(new FieldValue(DEFAULT_NUMBER_RADIX, Types.INTEGER));
+            // Nullabble.
             row.add(new FieldValue(DatabaseMetaData.columnNullableUnknown));
+            // Column remarks.
             row.add(new FieldValue(Types.INTEGER));
+            // Column default value.
             row.add(new FieldValue(Types.VARCHAR));
+            // Column SQL data type.
+            row.add(new FieldValue(field.getSqlType(), Types.INTEGER));
+            // Subtype code for datetime and SQL-92 interval data types. For other data types, this column returns NULL.
             row.add(new FieldValue(Types.INTEGER));
-            row.add(new FieldValue(Types.INTEGER));
-            row.add(new FieldValue(ParadoxDatabaseMetaData.STRING_MAX_SIZE, Types.INTEGER));
+            // Column type in byte octects.
+            row.add(new FieldValue(field.getSize(), Types.INTEGER));
+            // Ordinal position.
             row.add(new FieldValue(ordinal));
-            row.add(new FieldValue("YES", Types.VARCHAR));
+            // Is field nullable.
+            if (field.isAutoIncrement()) {
+                row.add(new FieldValue("NO", Types.VARCHAR));
+            } else {
+                row.add(new FieldValue("YES", Types.VARCHAR));
+            }
+            // Scope catalog.
             row.add(new FieldValue(Types.VARCHAR));
+            // Scope schema.
             row.add(new FieldValue(Types.VARCHAR));
+            // Scope table.
             row.add(new FieldValue(Types.INTEGER));
+            // Source datatype.
             row.add(new FieldValue(type, Types.INTEGER));
+
+            // Is autoincrement.
             if (field.isAutoIncrement()) {
                 row.add(new FieldValue("YES", Types.VARCHAR));
             } else {
                 row.add(new FieldValue("NO", Types.VARCHAR));
             }
+
             ordinal++;
             values.add(row.toArray(new FieldValue[0]));
         }

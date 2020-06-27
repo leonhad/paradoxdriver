@@ -28,11 +28,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * JDBC ResultSet implementation.
@@ -963,6 +960,8 @@ public final class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}.
+     *
+     * @deprecated use {@link #getAsciiStream(String)} method.
      */
     @SuppressWarnings("squid:S1133")
     @Deprecated
@@ -1111,20 +1110,14 @@ public final class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}.
+     *
+     * @deprecated use {@link #getAsciiStream(int)} method.
      */
     @SuppressWarnings("squid:S1133")
     @Deprecated
     @Override
     public InputStream getUnicodeStream(final int columnIndex) throws SQLException {
-        final Object val = this.getObject(columnIndex);
-        if (val != null) {
-            if (val instanceof String) {
-                new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.UTF_8));
-            } else {
-                throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
-            }
-        }
-        return null;
+        return getAsciiStream(columnIndex);
     }
 
     /**
