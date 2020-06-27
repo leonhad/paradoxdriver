@@ -1,0 +1,25 @@
+language: java
+
+dist: trusty
+
+script:
+  - mvn clean package
+
+install: skip
+
+before_install:
+  - echo $LANG
+  - echo $LC_ALL
+
+jdk: oraclejdk8
+
+os:
+  - linux
+
+branches:
+  only:
+    - master
+
+notifications:
+  email: true
+

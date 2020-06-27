@@ -77,26 +77,6 @@ public class TimestampFieldTest {
     }
 
     /**
-     * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
-     */
-    @Test
-    public void testParse() throws SQLException {
-        final Calendar calendar = new GregorianCalendar(2013, Calendar.NOVEMBER
-                , 24, 9, 29, 31);
-        final Timestamp timestamp = new Timestamp(calendar.getTimeInMillis());
-
-        final TimestampField field = new TimestampField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{
-                (byte) 0xC2, (byte) 0xCC, (byte) 0xE2, (byte) 0xD0,
-                (byte) 0x99, (byte) 0x2A, (byte) 0xBC, (byte) 0x0F
-        });
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid timestamp value.", timestamp, value.getTimestamp());
-    }
-
-    /**
      * Test for valid match.
      */
     @Test
