@@ -221,7 +221,7 @@ public final class ParadoxResultSet implements ResultSet {
         final Object val = this.getObject(columnIndex);
         if (val != null) {
             if (val instanceof String) {
-                new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.ISO_8859_1));
+                new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.UTF_8));
             } else {
                 throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
             }
@@ -965,7 +965,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Deprecated
     @Override
     public InputStream getUnicodeStream(final String columnLabel) throws SQLException {
-        return this.getUnicodeStream(this.findColumn(columnLabel));
+        return this.getAsciiStream(this.findColumn(columnLabel));
     }
 
     /**
