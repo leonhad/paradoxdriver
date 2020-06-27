@@ -18,11 +18,14 @@ import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.Collections;
@@ -214,7 +217,15 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public InputStream getAsciiStream(final int columnIndex) {
+    public InputStream getAsciiStream(final int columnIndex) throws SQLException {
+        final Object val = this.getObject(columnIndex);
+        if (val != null) {
+            if (val instanceof String) {
+                new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.ISO_8859_1));
+            } else {
+                throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
+            }
+        }
         return null;
     }
 
@@ -273,7 +284,15 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public InputStream getBinaryStream(final int columnIndex) {
+    public InputStream getBinaryStream(final int columnIndex) throws SQLException {
+        final Object val = this.getObject(columnIndex);
+        if (val != null) {
+            if (val instanceof byte[]) {
+                return new ByteArrayInputStream((byte[]) val);
+            } else {
+                throw new SQLException("Filed is not a blob type", SQLStates.INVALID_FIELD_VALUE.getValue());
+            }
+        }
         return null;
     }
 
@@ -390,7 +409,11 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Reader getCharacterStream(final int columnIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        final Object val = this.getObject(columnIndex);
+        if (val != null) {
+            return new StringReader(val.toString());
+        }
+        return null;
     }
 
     /**
@@ -409,7 +432,7 @@ public final class ParadoxResultSet implements ResultSet {
         final Object val = this.getObject(columnIndex);
         if (val != null) {
             if (val instanceof String) {
-                return new ParadoxClob(conn, (String) val);
+                return new ParadoxClob((String) val);
             } else {
                 throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
             }
@@ -514,7 +537,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getFetchDirection() throws SQLException {
-        throw new SQLException("No fetch direction");
+        return ResultSet.FETCH_FORWARD;
     }
 
     /**
@@ -929,20 +952,14 @@ public final class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}.
-     *
-     * @deprecated this method is only used for JDBC compatibility.
      */
-    @SuppressWarnings("squid:S1133")
-    @Deprecated
     @Override
-    public InputStream getUnicodeStream(final int columnIndex) {
-        return null;
+    public void setFetchDirection(final int direction) throws SQLException {
+        throw new SQLException("No fetch direction supported yet.");
     }
 
     /**
      * {@inheritDoc}.
-     *
-     * @deprecated this method is only used for JDBC compatibility.
      */
     @SuppressWarnings("squid:S1133")
     @Deprecated
@@ -965,15 +982,6 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public URL getURL(final String columnLabel) {
         return null;
-    }
-
-    /**
-     * Gets the all row values.
-     *
-     * @return the row values.
-     */
-    public List<List<FieldValue>> getValues() {
-        return Collections.unmodifiableList(this.values);
     }
 
     /**
@@ -1092,9 +1100,19 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * {@inheritDoc}.
      */
+    @SuppressWarnings("squid:S1133")
+    @Deprecated
     @Override
-    public void refreshRow() {
-        throw new UnsupportedOperationException();
+    public InputStream getUnicodeStream(final int columnIndex) throws SQLException {
+        final Object val = this.getObject(columnIndex);
+        if (val != null) {
+            if (val instanceof String) {
+                new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.UTF_8));
+            } else {
+                throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
+            }
+        }
+        return null;
     }
 
     /**
@@ -1133,8 +1151,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void setFetchDirection(final int direction) throws SQLException {
-        throw new SQLException("No fetch direction");
+    public void refreshRow() {
+        // Nothing to do.
     }
 
     /**

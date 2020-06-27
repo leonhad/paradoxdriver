@@ -10,9 +10,8 @@
  */
 package com.googlecode.paradox.rowset;
 
-import com.googlecode.paradox.ParadoxConnection;
-
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -32,16 +31,12 @@ public final class ParadoxClob implements Clob {
      */
     private String value;
 
-    private final ParadoxConnection connection;
-
     /**
      * Create a new instance.
      *
-     * @param connection the paradox connection.
-     * @param value      the clob value.
+     * @param value the clob value.
      */
-    public ParadoxClob(final ParadoxConnection connection, final String value) {
-        this.connection = connection;
+    public ParadoxClob(final String value) {
         this.value = value;
     }
 
@@ -59,7 +54,7 @@ public final class ParadoxClob implements Clob {
     @Override
     public InputStream getAsciiStream() {
         if (this.value != null) {
-            return new ByteArrayInputStream(this.value.getBytes(connection.getCharset()));
+            return new ByteArrayInputStream(this.value.getBytes(StandardCharsets.UTF_8));
         }
 
         return null;
