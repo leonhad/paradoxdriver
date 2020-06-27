@@ -1,7 +1,9 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-06-26 Review all database and table metadata and fixed various memory and performances issues.
+2020-06-25 Rewrite the code for all BLOB and CLOB types.
 2020-06-21 Added schema support in SQL and queries.
-2020-06-20 Added CBD file type support.
+2020-06-20 Added BCD file type support.
 2020-06-19 Added Graph, OLE and Formatted Memo types.
 2020-06-18 Added encrypted file support.
 2020-06-17 Fixed the charset support.
