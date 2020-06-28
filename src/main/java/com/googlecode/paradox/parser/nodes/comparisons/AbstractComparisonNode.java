@@ -51,7 +51,7 @@ public abstract class AbstractComparisonNode extends SQLNode {
         this(connection, name, null);
     }
 
-    public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
+    public boolean evaluate(final FieldValue[] row, final List<PlanTableNode> tables) {
         return false;
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractComparisonNode extends SQLNode {
         // Field not found probably because it is a single value.
     }
 
-    protected Object getValue(final List<FieldValue> row, final FieldNode field) {
+    protected Object getValue(final FieldValue[] row, final FieldNode field) {
         // FIXME type converter
 
         if (field.getIndex() == -1) {
@@ -85,7 +85,7 @@ public abstract class AbstractComparisonNode extends SQLNode {
             return field.getName();
         }
 
-        return row.get(field.getIndex()).getValue();
+        return row[field.getIndex()].getValue();
     }
 
     @Override

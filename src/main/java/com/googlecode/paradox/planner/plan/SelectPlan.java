@@ -198,40 +198,37 @@ public final class SelectPlan implements Plan {
             }
         }
 
-        filter(rawData, 0, null, mapColumns);
+        final FieldValue[] row = new FieldValue[firstLine.size()];
+        filter(rawData, 0, row, 0, mapColumns);
     }
 
-    private void filter(final List<List<List<FieldValue>>> tables, final int tableIndex, final List<FieldValue> row,
-                        final int[] mapColumns) {
+    private void filter(final List<List<List<FieldValue>>> tables, final int tableIndex, final FieldValue[] row,
+                      final int rowIndex,   final int[] mapColumns) {
 
         List<List<FieldValue>> rowValues = tables.get(tableIndex);
         for (final List<FieldValue> tableRow : rowValues) {
-            List<FieldValue> rawLine;
-            if (row == null) {
-                // First line.
-                rawLine = new ArrayList<>();
-            } else {
-                rawLine = new ArrayList<>(row);
+            // Fill row.
+            for (int loop = 0; loop < tableRow.size(); loop++) {
+                row[rowIndex + loop] = tableRow.get(loop);
             }
-            rawLine.addAll(tableRow);
 
             // Last table?
             if (tableIndex + 1 == tables.size()) {
                 // Filter joins
 
-                if (condition != null && !condition.evaluate(rawLine, this.tables)) {
+                if (condition != null && !condition.evaluate(row, this.tables)) {
                     continue;
                 }
 
                 final FieldValue[] finalRow = new FieldValue[mapColumns.length];
                 for (int i = 0; i < mapColumns.length; i++) {
                     int index = mapColumns[i];
-                    finalRow[i] = rawLine.get(index);
+                    finalRow[i] = row[index];
                 }
                 this.values.add(finalRow);
             } else {
                 // There is more tables.
-                filter(tables, tableIndex + 1, rawLine, mapColumns);
+                filter(tables, tableIndex + 1, row, rowIndex + tableRow.size(), mapColumns);
             }
         }
     }

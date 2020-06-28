@@ -39,7 +39,7 @@ public class ORNode extends AbstractComparisonNode {
     }
 
     @Override
-    public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
+    public boolean evaluate(final FieldValue[] row, final List<PlanTableNode> tables) {
         for (final SQLNode node : childhood) {
             final AbstractComparisonNode comparisonNode = (AbstractComparisonNode) node;
             if (comparisonNode.evaluate(row, tables)) {

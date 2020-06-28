@@ -68,7 +68,7 @@ public final class EqualsNode extends AbstractComparisonNode {
     }
 
     @Override
-    public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
+    public boolean evaluate(final FieldValue[] row, final List<PlanTableNode> tables) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
         return Objects.equals(value1, value2);
