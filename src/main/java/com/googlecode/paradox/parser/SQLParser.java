@@ -92,22 +92,15 @@ public final class SQLParser {
     /**
      * Test for expected tokens.
      *
-     * @param rparens the tokens to validate.
+     * @param token the token to validate.
      * @throws SQLException in case of unexpected tokens.
      */
-    private void expect(final TokenType... rparens) throws SQLException {
-        boolean found = false;
-        for (final TokenType rparen : rparens) {
-            if (this.token.getType() == rparen) {
-                // Expected do not happen
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+    private void expect(final TokenType token) throws SQLException {
+        if (this.token.getType() != token) {
             throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", this.token.getValue()),
                     SQLStates.INVALID_SQL.getValue());
         }
+
         if (this.scanner.hasNext()) {
             this.token = this.scanner.nextToken();
         } else {
@@ -231,16 +224,30 @@ public final class SQLParser {
         String tableName = null;
         String fieldName = this.token.getValue();
 
-        this.expect(TokenType.IDENTIFIER, TokenType.NUMERIC, TokenType.CHARACTER);
-
-        // If it has a Table Name
-        if (this.scanner.hasNext() && (this.token.getType() == TokenType.PERIOD)) {
-            this.expect(TokenType.PERIOD);
-            tableName = fieldName;
-            fieldName = this.token.getValue();
+        FieldNode ret;
+        if (this.token.getType() == TokenType.CHARACTER) {
+            // Found a String value.
+            this.expect(TokenType.CHARACTER);
+            ret = new StringNode(connection, fieldName);
+        } else if (this.token.getType() == TokenType.NUMERIC) {
+            // Found a numeric value.
+            this.expect(TokenType.NUMERIC);
+            ret = new StringNode(connection, fieldName);
+        } else {
+            // Found a table field.
             this.expect(TokenType.IDENTIFIER);
+
+            // If it has a Table Name
+            if (this.scanner.hasNext() && (this.token.getType() == TokenType.PERIOD)) {
+                this.expect(TokenType.PERIOD);
+                tableName = fieldName;
+                fieldName = this.token.getValue();
+                this.expect(TokenType.IDENTIFIER);
+            }
+            ret = new FieldNode(connection, tableName, fieldName, fieldName);
         }
-        return new FieldNode(connection, tableName, fieldName, fieldName);
+
+        return ret;
     }
 
     /**
@@ -405,8 +412,7 @@ public final class SQLParser {
                 fieldAlias = this.token.getValue();
                 // may be: select field as name
                 // select field as "Name"
-                // select field as 'Name'
-                this.expect(TokenType.CHARACTER, TokenType.IDENTIFIER);
+                this.expect(TokenType.IDENTIFIER);
             } else if (this.token.getType() == TokenType.IDENTIFIER) {
                 // Field alias (without AS identifier)
                 fieldAlias = this.token.getValue();

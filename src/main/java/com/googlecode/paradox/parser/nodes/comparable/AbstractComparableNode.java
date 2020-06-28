@@ -14,7 +14,9 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.parser.nodes.NumberNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.StringNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 
 import java.sql.SQLException;
@@ -65,6 +67,11 @@ public abstract class AbstractComparableNode extends SQLNode {
                 .map(PlanTableNode::getTable).map(ParadoxTable::getName)
                 .findFirst().orElse(field.getTableName());
 
+        if (field instanceof StringNode || field instanceof NumberNode) {
+            // Do not set indexes in value nodes.
+            return;
+        }
+
         int index = -1;
         for (int i = 0; i < row.size(); i++) {
             final FieldValue value = row.get(i);
@@ -82,9 +89,11 @@ public abstract class AbstractComparableNode extends SQLNode {
             }
         }
 
-        if (index != -1) {
-            field.setIndex(index);
+        if (index == -1) {
+            throw new SQLException("Field " + field + " not found.");
         }
+
+        field.setIndex(index);
     }
 
     protected Object getValue(final FieldValue[] row, final FieldNode field) {

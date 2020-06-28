@@ -21,7 +21,7 @@ import java.util.Objects;
  * @version 1.2
  * @since 1.0
  */
-public final class FieldNode extends SQLNode {
+public class FieldNode extends SQLNode {
 
     /**
      * This field table name.

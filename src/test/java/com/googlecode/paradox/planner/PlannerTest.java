@@ -241,7 +241,7 @@ public class PlannerTest {
      */
     @Test
     public void testSelectWhereMultipleColumns() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from areacodes where state = ny and ac < 320");
+        final SQLParser parser = new SQLParser(conn, "select * from areacodes where state = 'NY' and ac < 320");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute(conn);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
