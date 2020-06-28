@@ -86,7 +86,7 @@ public final class BetweenNode extends AbstractComparableNode {
     @Override
     public boolean evaluate(final FieldValue[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
-        final Object value2 = getValue(row, last);
+        final Object value2 = getValue(row, first);
         final Object value3 = getValue(row, last);
         return Objects.compare(value1, value2, comparator) >= 0
                 && Objects.compare(value1, value3, comparator) <= 0;
