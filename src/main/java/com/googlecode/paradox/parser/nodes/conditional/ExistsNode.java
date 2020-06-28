@@ -33,7 +33,6 @@ public class ExistsNode extends AbstractComparisonNode {
      */
     public ExistsNode(final ParadoxConnection connection, final SelectNode child) {
         super(connection, "EXISTS");
-        this.setChildhood(Collections.singletonList(child));
+        this.addChild(child);
     }
-
 }

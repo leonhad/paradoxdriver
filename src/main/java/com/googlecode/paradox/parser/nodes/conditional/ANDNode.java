@@ -11,16 +11,20 @@
 package com.googlecode.paradox.parser.nodes.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
+import com.googlecode.paradox.planner.nodes.PlanTableNode;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Stores the AND node.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.1
  */
 public class ANDNode extends AbstractComparisonNode {
@@ -33,7 +37,50 @@ public class ANDNode extends AbstractComparisonNode {
      */
     public ANDNode(final ParadoxConnection connection, final SQLNode child) {
         super(connection, "AND");
-        this.setChildhood(Collections.singletonList(child));
+        this.childhood.add(child);
     }
 
+    @Override
+    public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
+        for (final SQLNode node : childhood) {
+            final AbstractComparisonNode comparisonNode = (AbstractComparisonNode) node;
+            if (!comparisonNode.evaluate(row, tables)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) {
+        for (final SQLNode node : childhood) {
+            ((AbstractComparisonNode) node).setFieldIndexes(row, tables);
+        }
+    }
+
+    @Override
+    public Set<FieldNode> getClauseFields() {
+        final Set<FieldNode> nodes = super.getClauseFields();
+        for (final SQLNode node : childhood) {
+            nodes.addAll(node.getClauseFields());
+        }
+        return nodes;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (final SQLNode node : childhood) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(" ");
+                builder.append(this.name);
+                builder.append(" ");
+            }
+            builder.append(node.toString());
+        }
+        return builder.toString();
+    }
 }

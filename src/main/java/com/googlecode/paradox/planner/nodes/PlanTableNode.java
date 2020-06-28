@@ -21,8 +21,8 @@ import java.sql.SQLException;
 /**
  * Stores the execution plan table node.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.1
  */
 public final class PlanTableNode {
@@ -113,5 +113,13 @@ public final class PlanTableNode {
         }
 
         return aliasOrName.equalsIgnoreCase(table.getName()) || aliasOrName.equalsIgnoreCase(alias);
+    }
+
+    @Override
+    public String toString() {
+        if (alias != null) {
+            return table.getName() + " as " + alias;
+        }
+        return table.getName();
     }
 }

@@ -17,8 +17,8 @@ import java.util.Objects;
 /**
  * Stores the field values.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public final class FieldNode extends SQLNode {
@@ -27,6 +27,11 @@ public final class FieldNode extends SQLNode {
      * This field table name.
      */
     private final String tableName;
+
+    /**
+     * Field index used in filter values.
+     */
+    private int index = -1;
 
     /**
      * Stores field values (from select statements).
@@ -61,13 +66,27 @@ public final class FieldNode extends SQLNode {
             builder.append(this.tableName);
             builder.append('.');
         }
-        builder.append(this.getName());
+        builder.append(this.name);
 
         if ((this.alias != null) && !this.getName().equals(this.alias)) {
             builder.append(" AS ");
             builder.append(this.alias);
         }
+
+        if (index != -1) {
+            builder.append("[");
+            builder.append(index);
+            builder.append("]");
+        }
         return builder.toString();
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     @Override

@@ -24,8 +24,8 @@ import java.util.List;
 /**
  * Unit test for {@link ParadoxResultSet} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @author Leonardo Costa
+ * @version 1.3
  * @since 1.3
  */
 public class ParadoxResultSetTest {
@@ -257,6 +257,22 @@ public class ParadoxResultSetTest {
              ResultSet rs = stmt.executeQuery("select ac.AreaCode as a, st.State, st.Capital " +
                      " from geog.tblAC ac, geog.tblsttes st" +
                      " where st.State = ac.State")) {
+            Assert.assertTrue("No First row", rs.next());
+        }
+    }
+
+    /**
+     * Test for two joins and where.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testTwoJoinsAndWhere() throws SQLException {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select ac.AreaCode, st.State, st.Capital, c.County " +
+                     "from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                     "where c.StateID = st.State " +
+                     "  and st.State = ac.State")) {
             Assert.assertTrue("No First row", rs.next());
         }
     }

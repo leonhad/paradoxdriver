@@ -11,16 +11,18 @@
 package com.googlecode.paradox.parser.nodes.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
+import com.googlecode.paradox.planner.nodes.PlanTableNode;
 
-import java.util.Collections;
+import java.util.List;
 
 /**
  * Store the OR node.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.1
  */
 public class ORNode extends AbstractComparisonNode {
@@ -33,7 +35,34 @@ public class ORNode extends AbstractComparisonNode {
      */
     public ORNode(final ParadoxConnection connection, final SQLNode child) {
         super(connection, "OR");
-        this.setChildhood(Collections.singletonList(child));
+        this.childhood.add(child);
     }
 
+    @Override
+    public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
+        for (final SQLNode node : childhood) {
+            final AbstractComparisonNode comparisonNode = (AbstractComparisonNode) node;
+            if (comparisonNode.evaluate(row, tables)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        boolean first = true;
+        for (final SQLNode node : childhood) {
+            if (first) {
+                first = false;
+            } else {
+                builder.append(" ");
+                builder.append(this.name);
+                builder.append(" ");
+            }
+            builder.append(node.toString());
+        }
+        return builder.toString();
+    }
 }

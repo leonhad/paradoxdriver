@@ -19,7 +19,6 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
  * Unit test for {@link SQLNode} class.
@@ -68,10 +67,8 @@ public class SQLNodeTest {
      */
     @Test
     public void testConditions() {
-        final ArrayList<SQLNode> list = new ArrayList<>();
         final SQLNode node = new JoinNode(conn);
-        node.setChildhood(list);
-        Assert.assertEquals("Conditional is not the same.", list.size(), node.getChildhood().size());
+        Assert.assertEquals("Conditional is not the same.", 0, node.getChildhood().size());
     }
 
 }

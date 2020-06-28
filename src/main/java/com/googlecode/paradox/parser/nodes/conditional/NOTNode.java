@@ -14,8 +14,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
 
-import java.util.Collections;
-
 /**
  * Store the NOT node.
  *
@@ -33,7 +31,6 @@ public class NOTNode extends AbstractComparisonNode {
      */
     public NOTNode(final ParadoxConnection connection, final SQLNode child) {
         super(connection, "NOT");
-        this.setChildhood(Collections.singletonList(child));
+        this.addChild(child);
     }
-
 }

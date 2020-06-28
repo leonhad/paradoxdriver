@@ -12,15 +12,16 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Stores a SQL node.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public class SQLNode {
@@ -28,7 +29,7 @@ public class SQLNode {
     /**
      * Node childhood.
      */
-    private Collection<? extends SQLNode> childhood;
+    protected final List<SQLNode> childhood = new ArrayList<>();
 
     /**
      * The node alias.
@@ -66,7 +67,7 @@ public class SQLNode {
         this.alias = alias;
     }
 
-    public Set<FieldNode> getClausuleFields() {
+    public Set<FieldNode> getClauseFields() {
         return Collections.emptySet();
     }
 
@@ -80,13 +81,21 @@ public class SQLNode {
     }
 
     /**
+     * Add a child.
+     *
+     * @param node the child to add.
+     */
+    public final void addChild(final SQLNode node) {
+        this.childhood.add(node);
+    }
+
+    /**
      * Gets the childhood.
      *
      * @return the childhood.
      */
-    @SuppressWarnings("unchecked")
-    public final Collection<SQLNode> getChildhood() {
-        return (Collection<SQLNode>) this.childhood;
+    public final List<SQLNode> getChildhood() {
+        return this.childhood;
     }
 
     /**
@@ -105,14 +114,5 @@ public class SQLNode {
      */
     public final void setAlias(final String alias) {
         this.alias = alias;
-    }
-
-    /**
-     * Sets the childhood.
-     *
-     * @param childhood the childhood.
-     */
-    public final void setChildhood(final Collection<? extends SQLNode> childhood) {
-        this.childhood = Collections.unmodifiableCollection(childhood);
     }
 }

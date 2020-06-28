@@ -40,6 +40,7 @@ public abstract class AbstractComparisonNode extends SQLNode {
      *
      * @param connection the Paradox connection.
      * @param name       the condition name.
+     * @param field      the field node to compare.
      */
     public AbstractComparisonNode(final ParadoxConnection connection, final String name, final FieldNode field) {
         super(connection, name);
@@ -54,38 +55,46 @@ public abstract class AbstractComparisonNode extends SQLNode {
         return false;
     }
 
-    protected Object getValue(final List<FieldValue> row, final FieldNode field, final List<PlanTableNode> tables) {
+    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) {
+        getIndex(field, row, tables);
+    }
+
+    protected void getIndex(final FieldNode field, final List<FieldValue> row, final List<PlanTableNode> tables) {
         final String tableName = tables.stream()
                 .filter(t -> t.getAlias().equals(field.getTableName()))
                 .map(PlanTableNode::getTable).map(ParadoxTable::getName)
                 .findFirst().orElse(field.getTableName());
 
-        FieldValue ret = null;
-        if (tableName == null) {
-            ret = row.stream().filter(v -> v.getField().getName().equalsIgnoreCase(field.getName()))
-                    .findFirst().orElse(null);
-        } else {
-            ret = row.stream().filter(v -> v.getField().getTable().getName().equalsIgnoreCase(tableName)
-                    && v.getField().getName().equalsIgnoreCase(field.getName())).findFirst().orElse(null);
+        for (int i = 0; i < row.size(); i++) {
+            final FieldValue value = row.get(i);
+            if (tableName.equals(value.getField().getTable().getName())
+                    && value.getField().getName().equalsIgnoreCase(field.getName())) {
+                field.setIndex(i);
+                return;
+            }
         }
 
+        // Field not found probably because it is a single value.
+    }
+
+    protected Object getValue(final List<FieldValue> row, final FieldNode field) {
         // FIXME type converter
 
-        if (ret != null) {
-            if (ret.getValue() != null) {
-                return ret.getValue().toString();
-            }
-            return null;
+        if (field.getIndex() == -1) {
+            // Not a table field.
+            return field.getName();
         }
 
-        return field.getName();
+        return row.get(field.getIndex()).getValue();
     }
 
     @Override
-    public Set<FieldNode> getClausuleFields() {
+    public Set<FieldNode> getClauseFields() {
         final Set<FieldNode> set = new HashSet<>();
-        set.add(field);
-        set.addAll(super.getClausuleFields());
+        if (field != null) {
+            set.add(field);
+        }
+        set.addAll(super.getClauseFields());
         return set;
     }
 

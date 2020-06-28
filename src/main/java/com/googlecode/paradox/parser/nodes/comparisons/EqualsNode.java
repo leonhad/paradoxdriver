@@ -23,7 +23,7 @@ import java.util.Set;
  * Stores the equals node.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.1
  */
 public final class EqualsNode extends AbstractComparisonNode {
@@ -50,8 +50,8 @@ public final class EqualsNode extends AbstractComparisonNode {
     }
 
     @Override
-    public Set<FieldNode> getClausuleFields() {
-        final Set<FieldNode> nodes = super.getClausuleFields();
+    public Set<FieldNode> getClauseFields() {
+        final Set<FieldNode> nodes = super.getClauseFields();
         nodes.add(last);
         return nodes;
     }
@@ -62,9 +62,15 @@ public final class EqualsNode extends AbstractComparisonNode {
     }
 
     @Override
+    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) {
+        super.setFieldIndexes(row, tables);
+        getIndex(last, row, tables);
+    }
+
+    @Override
     public boolean evaluate(final List<FieldValue> row, final List<PlanTableNode> tables) {
-        final Object value1 = getValue(row, field, tables);
-        final Object value2 = getValue(row, last, tables);
+        final Object value1 = getValue(row, field);
+        final Object value2 = getValue(row, last);
         return Objects.equals(value1, value2);
     }
 }

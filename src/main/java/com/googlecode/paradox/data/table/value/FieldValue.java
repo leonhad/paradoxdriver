@@ -18,12 +18,12 @@ import java.sql.*;
 /**
  * Stores the database values in Java format.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.0
  */
 public final class FieldValue {
-    
+
     /**
      * Invalid field message error.
      */
@@ -42,36 +42,32 @@ public final class FieldValue {
      * Database value converted to Java.
      */
     private Object value;
-    
+
     /**
      * Constructor used for NULL values.
      *
-     * @param type
-     *            field type.
+     * @param type field type.
      */
     public FieldValue(final int type) {
         this.type = type;
     }
-    
+
     /**
      * Store a database value already loaded in Java format.
      *
-     * @param value
-     *            Java value.
-     * @param type
-     *            Database value type.
+     * @param value Java value.
+     * @param type  Database value type.
      */
     public FieldValue(final Object value, final int type) {
         this.type = type;
         this.value = value;
     }
-    
+
     /**
      * Check for value type and return an Boolean value.
      *
      * @return a valid Boolean value.
-     * @throws SQLDataException
-     *             if this is not a Boolean value.
+     * @throws SQLDataException if this is not a Boolean value.
      */
     public Boolean getBoolean() throws SQLDataException {
         if (this.type != Types.BOOLEAN) {
@@ -79,13 +75,12 @@ public final class FieldValue {
         }
         return (Boolean) this.value;
     }
-    
+
     /**
      * Check for value type and return an Date value.
      *
      * @return a valid Date value.
-     * @throws SQLDataException
-     *             if this is not a Date value.
+     * @throws SQLDataException if this is not a Date value.
      */
     public Date getDate() throws SQLDataException {
         if (this.type != Types.DATE) {
@@ -93,7 +88,7 @@ public final class FieldValue {
         }
         return (Date) this.value;
     }
-    
+
     /**
      * Gets the Paradox field.
      *
@@ -102,13 +97,12 @@ public final class FieldValue {
     public ParadoxField getField() {
         return this.field;
     }
-    
+
     /**
      * Check for value type and return an Number value.
      *
      * @return a valid Number value.
-     * @throws SQLDataException
-     *             if this is not a numeric value.
+     * @throws SQLDataException if this is not a numeric value.
      */
     public Number getNumber() throws SQLDataException {
         switch (this.type) {
@@ -120,13 +114,12 @@ public final class FieldValue {
                 throw new SQLDataException(FieldValue.ERROR_INVALID_TYPE, SQLStates.INVALID_FIELD_VALUE.getValue());
         }
     }
-    
+
     /**
      * Check for value type and return an Time value.
      *
      * @return a valid Time value.
-     * @throws SQLDataException
-     *             if this is not a Time value.
+     * @throws SQLDataException if this is not a Time value.
      */
     public Time getTime() throws SQLDataException {
         if (this.type != Types.TIME) {
@@ -134,13 +127,12 @@ public final class FieldValue {
         }
         return (Time) this.value;
     }
-    
+
     /**
      * Check for value type and return an Timestamp value.
      *
      * @return a valid Timestamp value.
-     * @throws SQLDataException
-     *             if this is not a Timestamp value.
+     * @throws SQLDataException if this is not a Timestamp value.
      */
     public Timestamp getTimestamp() throws SQLDataException {
         if (this.type != Types.TIMESTAMP) {
@@ -148,7 +140,7 @@ public final class FieldValue {
         }
         return (Timestamp) this.value;
     }
-    
+
     /**
      * The Java {@link Types} value.
      *
@@ -157,7 +149,7 @@ public final class FieldValue {
     public int getType() {
         return this.type;
     }
-    
+
     /**
      * Return the field value in Java format.
      *
@@ -166,7 +158,7 @@ public final class FieldValue {
     public Object getValue() {
         return this.value;
     }
-    
+
     /**
      * Check for null value.
      *
@@ -175,14 +167,18 @@ public final class FieldValue {
     public boolean isNull() {
         return this.value == null;
     }
-    
+
     /**
      * Sets the Paradox field.
      *
-     * @param field
-     *            the Paradox field.
+     * @param field the Paradox field.
      */
     public void setField(final ParadoxField field) {
         this.field = field;
+    }
+
+    @Override
+    public String toString() {
+        return field.toString();
     }
 }

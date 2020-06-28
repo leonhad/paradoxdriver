@@ -28,8 +28,8 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @author Leonardo Alves da Costa
- * @version 1.4
+ * @author Leonardo Costa
+ * @version 1.5
  * @since 1.0
  */
 public final class SQLParser {
@@ -190,20 +190,25 @@ public final class SQLParser {
      */
     private AbstractComparisonNode parseCondition() throws SQLException {
         AbstractComparisonNode ret = null;
-        // FIXME redo the tree.
         while (this.scanner.hasNext() && !this.token.isConditionBreak()) {
             if (this.token.getType() == TokenType.NOT) {
                 ret = new NOTNode(connection, this.parseCondition());
             } else if (this.token.isOperator()) {
-                ret = this.parseOperators();
+                ret = this.parseOperators(ret);
             } else if (this.token.getType() == TokenType.LPAREN) {
                 this.expect(TokenType.RPAREN, "Right parenthesis expected");
             } else if (this.token.getType() == TokenType.EXISTS) {
+                // FIXME redo the exists tree.
                 ret = this.parseExists();
             } else {
-                ret = this.parseFieldNode();
+                if (ret == null) {
+                    ret = this.parseFieldNode();
+                } else {
+                    ret.addChild(this.parseFieldNode());
+                }
             }
         }
+
         return ret;
     }
 
@@ -579,20 +584,21 @@ public final class SQLParser {
     /**
      * Parses the operators token.
      *
+     * @param child the node child.
      * @return the conditional operator node.
      * @throws SQLException in case or errors.
      */
-    private AbstractComparisonNode parseOperators() throws SQLException {
+    private AbstractComparisonNode parseOperators(final AbstractComparisonNode child) throws SQLException {
         switch (this.token.getType()) {
             case AND:
                 this.expect(TokenType.AND);
-                return new ANDNode(connection, null);
+                return new ANDNode(connection, child);
             case OR:
                 this.expect(TokenType.OR);
-                return new ORNode(connection, null);
+                return new ORNode(connection, child);
             case XOR:
                 this.expect(TokenType.XOR);
-                return new XORNode(connection, null);
+                return new XORNode(connection, child);
             default:
                 throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL.getValue());
         }

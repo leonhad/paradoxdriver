@@ -111,9 +111,8 @@ public final class SelectPlan implements Plan {
      * Associate all columns from a table.
      *
      * @param table the table to scan.
-     * @throws SQLException in case of failures.
      */
-    public void addColumnFromTable(final ParadoxDataFile table) throws SQLException {
+    public void addColumnFromTable(final ParadoxDataFile table) {
         for (final ParadoxField field : table.getFields()) {
             this.columns.add(new Column(field));
         }
@@ -123,9 +122,8 @@ public final class SelectPlan implements Plan {
      * Associate all columns from a list of tables.
      *
      * @param tables the table list to scan.
-     * @throws SQLException in case of failures.
      */
-    public void addColumnFromTables(final Iterable<PlanTableNode> tables) throws SQLException {
+    public void addColumnFromTables(final Iterable<PlanTableNode> tables) {
         for (final PlanTableNode table : tables) {
             addColumnFromTable(table.getTable());
         }
@@ -149,7 +147,7 @@ public final class SelectPlan implements Plan {
             return;
         }
 
-        List<List<FieldValue>> rawData = new ArrayList<>();
+        final List<List<List<FieldValue>>> rawData = new ArrayList<>();
         for (final PlanTableNode table : this.tables) {
             // From columns
             final Set<Column> columnsToLoad =
@@ -157,7 +155,7 @@ public final class SelectPlan implements Plan {
                             .collect(Collectors.toSet());
 
             if (condition != null) {
-                final Set<FieldNode> fields = this.condition.getClausuleFields();
+                final Set<FieldNode> fields = this.condition.getClauseFields();
                 fields.forEach((FieldNode node) -> {
                     if (table.isThis(node.getTableName())) {
                         table.getTable().getFields().stream()
@@ -168,34 +166,76 @@ public final class SelectPlan implements Plan {
             }
 
             if (!columnsToLoad.isEmpty()) {
-                // FIXME Filter non join.
                 final List<List<FieldValue>> tableData = TableData.loadData(table.getTable(),
                         columnsToLoad.stream().map(Column::getField).collect(Collectors.toList()));
 
-                if (rawData.isEmpty()) {
-                    // First row.
-                    rawData.addAll(tableData);
-                } else {
-                    // Cartesian product.
-                    final List<List<FieldValue>> newList = new ArrayList<>();
-                    rawData.forEach((List<FieldValue> list) ->
-                            tableData.forEach((List<FieldValue> fromTable) -> {
-                                final List<FieldValue> newRow = new ArrayList<>(list);
-                                newRow.addAll(fromTable);
-                                newList.add(newRow);
-                            })
-                    );
-                    rawData = newList;
+                rawData.add(tableData);
+            }
+        }
+
+        if (rawData.isEmpty() || rawData.stream().allMatch(List::isEmpty)) {
+            return;
+        }
+
+        final List<FieldValue> firstLine = new ArrayList<>(1);
+        for (List<List<FieldValue>> tableValues : rawData) {
+            firstLine.addAll(tableValues.get(0));
+        }
+
+        if (this.condition != null) {
+            this.condition.setFieldIndexes(firstLine, tables);
+        }
+
+        // Find column indexes.
+        final int[] mapColumns = new int[this.columns.size()];
+        for (int i = 0; i < this.columns.size(); i++) {
+            Column column = this.columns.get(i);
+            for (int loop = 0; loop < firstLine.size(); loop++) {
+                if (firstLine.get(loop).getField().equals(column.getField())) {
+                    mapColumns[i] = loop;
+                    break;
                 }
             }
         }
 
-        // FIXME filter joins
+        filter(rawData, 0, null, mapColumns);
+    }
 
-        if (rawData.isEmpty()) {
-            return;
+    private void filter(final List<List<List<FieldValue>>> tables, final int tableIndex, final List<FieldValue> row,
+                        final int[] mapColumns) {
+
+        List<List<FieldValue>> rowValues = tables.get(tableIndex);
+        for (final List<FieldValue> tableRow : rowValues) {
+            List<FieldValue> rawLine;
+            if (row == null) {
+                // First line.
+                rawLine = new ArrayList<>();
+            } else {
+                rawLine = new ArrayList<>(row);
+            }
+            rawLine.addAll(tableRow);
+
+            // Last table?
+            if (tableIndex + 1 == tables.size()) {
+                // Filter joins
+
+                if (condition != null && !condition.evaluate(rawLine, this.tables)) {
+                    continue;
+                }
+
+                final FieldValue[] finalRow = new FieldValue[mapColumns.length];
+                for (int i = 0; i < mapColumns.length; i++) {
+                    int index = mapColumns[i];
+                    finalRow[i] = rawLine.get(index);
+                }
+                this.values.add(finalRow);
+            } else {
+                // There is more tables.
+                filter(tables, tableIndex + 1, rawLine, mapColumns);
+            }
         }
-
+    }
+/*
         // Find indexes.
         final int[] mapColumns = new int[this.columns.size()];
         final List<FieldValue> firstLine = rawData.get(0);
@@ -222,7 +262,7 @@ public final class SelectPlan implements Plan {
             }
             this.values.add(finalRow);
         }
-    }
+    }*/
 
     /**
      * Gets the columns in SELECT statement.
@@ -230,7 +270,7 @@ public final class SelectPlan implements Plan {
      * @return the columns in SELECT statement.
      */
     public List<Column> getColumns() {
-        return Collections.unmodifiableList(this.columns);
+        return this.columns;
     }
 
     /**
@@ -239,15 +279,15 @@ public final class SelectPlan implements Plan {
      * @return the tables in this plan.
      */
     public List<PlanTableNode> getTables() {
-        return Collections.unmodifiableList(this.tables);
+        return this.tables;
     }
 
     /**
      * Values from tables in column order.
      *
-     * @return array of array of values/ Can be null (empty result set);
+     * @return array of array of values / Can be null (empty result set);
      */
     public List<FieldValue[]> getValues() {
-        return Collections.unmodifiableList(this.values);
+        return this.values;
     }
 }

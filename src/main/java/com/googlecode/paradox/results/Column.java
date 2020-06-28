@@ -16,12 +16,13 @@ import com.googlecode.paradox.metadata.ParadoxField;
 
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * Column values from a ResultSet.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -249,5 +250,31 @@ public final class Column {
      */
     public void setPrecision(final int precision) {
         this.precision = precision;
+    }
+
+    @Override
+    public String toString() {
+        if (field == null) {
+            return name;
+        }
+
+        return field.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Column column = (Column) o;
+        return Objects.equals(field, column.field);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(field);
     }
 }
