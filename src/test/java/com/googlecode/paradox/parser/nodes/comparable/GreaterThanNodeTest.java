@@ -24,8 +24,8 @@ import java.sql.SQLException;
 /**
  * Unit test {@link GreaterThanNode} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class GreaterThanNodeTest {

@@ -114,12 +114,12 @@ public class TimeFieldTest {
     }
 
     /**
-     * Test for BLOB reading.
+     * Test for TIME reading.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadBlob() throws SQLException {
+    public void testReadTime() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
                 "SELECT Id, LONG FROM fields.long")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());

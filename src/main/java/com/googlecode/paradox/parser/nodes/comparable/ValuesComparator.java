@@ -80,6 +80,17 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
             }
         }
 
+        // Try to compare with Long values.
+        if (o1 instanceof Long || o2 instanceof Long) {
+            try {
+                final Long n1 = getLong(o1);
+                final Long n2 = getLong(o2);
+                return n1.compareTo(n2);
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
+        }
+
         // Try to compare with Double values.
         if (o1 instanceof Double || o2 instanceof Double) {
             try {
@@ -134,6 +145,14 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         }
 
         return Integer.valueOf(value.toString());
+    }
+
+    private static Long getLong(final Object value) {
+        if (value instanceof Long) {
+            return (Long) value;
+        }
+
+        return Long.valueOf(value.toString());
     }
 
     private static Double getDouble(final Object value) {
