@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.conditional;
+package com.googlecode.paradox.parser.nodes.join;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
@@ -23,13 +23,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link ORNode} class.
+ * Unit test for {@link ANDNode} class.
  *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */
-public class ORNodeTest {
+public class ANDNodeTest {
 
     /**
      * The connection string used in this tests.
@@ -60,8 +60,8 @@ public class ORNodeTest {
     @Test
     public void testChildhood() {
         final SQLNode node = new StatementNode(conn, null);
-        final ORNode and = new ORNode(conn, node);
-        Assert.assertEquals("Invalid node size.", 1, and.getChildhood().size());
+        final ANDNode and = new ANDNode(conn, node);
+        Assert.assertEquals("Invalid node typesize.", 1, and.getChildhood().size());
         Assert.assertEquals("Invalid node value.", node, and.getChildhood().iterator().next());
     }
 
@@ -70,7 +70,7 @@ public class ORNodeTest {
      */
     @Test
     public void testName() {
-        final ORNode node = new ORNode(conn, null);
-        Assert.assertEquals("Invalid node name.", "OR", node.getName());
+        final ANDNode node = new ANDNode(conn, null);
+        Assert.assertEquals("Invalid node name.", "AND", node.getName());
     }
 }

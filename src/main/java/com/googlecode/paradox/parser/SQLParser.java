@@ -13,8 +13,8 @@ package com.googlecode.paradox.parser;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.comparable.*;
-import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
-import com.googlecode.paradox.parser.nodes.conditional.ORNode;
+import com.googlecode.paradox.parser.nodes.join.ANDNode;
+import com.googlecode.paradox.parser.nodes.join.ORNode;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
@@ -160,9 +160,14 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseCharacter(final SelectNode select, final String fieldName) throws SQLException {
-        String fieldAlias = fieldName;
         this.expect(TokenType.CHARACTER);
 
+        final String fieldAlias = getFieldAlias(fieldName);
+        select.addField(new CharacterNode(connection, fieldName, fieldAlias));
+    }
+
+    private String getFieldAlias(String fieldName) throws SQLException {
+        String fieldAlias = fieldName;
         // Field alias (with AS identifier)
         if (this.token.getType() == TokenType.AS) {
             this.expect(TokenType.AS);
@@ -173,7 +178,7 @@ public final class SQLParser {
             fieldAlias = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
         }
-        select.addField(new CharacterNode(connection, fieldName, fieldAlias));
+        return fieldAlias;
     }
 
     /**
@@ -188,6 +193,13 @@ public final class SQLParser {
             if (this.token.isOperator()) {
                 ret = this.parseOperators(ret);
             } else if (this.token.getType() == TokenType.LPAREN) {
+                this.expect(TokenType.LPAREN);
+                AbstractComparableNode retValue = parseCondition();
+                if (ret == null) {
+                    ret = retValue;
+                } else {
+                    ret.addChild(retValue);
+                }
                 this.expect(TokenType.RPAREN, "Right parenthesis expected");
             } else {
                 if (ret == null) {
@@ -406,19 +418,10 @@ public final class SQLParser {
 
                 this.expect(TokenType.IDENTIFIER);
             }
-            // Field alias (with AS identifier)
-            if (this.token.getType() == TokenType.AS) {
-                this.expect(TokenType.AS);
-                fieldAlias = this.token.getValue();
-                // may be: select field as name
-                // select field as "Name"
-                this.expect(TokenType.IDENTIFIER);
-            } else if (this.token.getType() == TokenType.IDENTIFIER) {
-                // Field alias (without AS identifier)
-                fieldAlias = this.token.getValue();
-                this.expect(TokenType.IDENTIFIER);
-            }
+
+            fieldAlias = getFieldAlias(fieldAlias);
         }
+
         select.addField(new FieldNode(connection, newTableName, newFieldName, fieldAlias));
     }
 
@@ -551,19 +554,9 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseNumeric(final SelectNode select, final String fieldName) throws SQLException {
-        String fieldAlias = fieldName;
-
         this.expect(TokenType.NUMERIC);
-        // Field alias (with AS identifier)
-        if (this.token.getType() == TokenType.AS) {
-            this.expect(TokenType.AS);
-            fieldAlias = this.token.getValue();
-            this.expect(TokenType.IDENTIFIER);
-        } else if (this.token.getType() == TokenType.IDENTIFIER) {
-            // Field alias (without AS identifier)
-            fieldAlias = this.token.getValue();
-            this.expect(TokenType.IDENTIFIER);
-        }
+
+        final String fieldAlias = getFieldAlias(fieldName);
         select.addField(new NumericNode(connection, fieldName, fieldAlias));
     }
 
