@@ -12,6 +12,9 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.nodes.comparable.EqualsNode;
+import com.googlecode.paradox.parser.nodes.comparable.NotEqualsNode;
+import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -135,19 +138,19 @@ public class SelectNodeTest {
         node.addOrderBy(new IdentifierNode(conn, "f"));
         node.addOrderBy(new IdentifierNode(conn, "f2"));
 
-        /* FIXME review unit tests.
-        final ArrayList<AbstractComparisonNode> conditions = new ArrayList<>();
-        conditions.add(new EqualsNode(conn, new FieldNode(conn, "t", "field", null), new FieldNode(conn, "t", "field2"
-                , null)));
-        conditions.add(new NotEqualsNode(conn, new FieldNode(conn, "t", "field", null), new FieldNode(conn, "t",
-                "field2", null)));
-        node.setConditions(conditions);
+        ANDNode andNode = new ANDNode(conn, null);
+        andNode.addChild(new EqualsNode(conn,
+                new FieldNode(conn, "t", "field", null),
+                new FieldNode(conn, "t", "field2", null)));
+        andNode.addChild(new NotEqualsNode(conn,
+                new FieldNode(conn, "t", "field", null),
+                new FieldNode(conn, "t", "field2", null)));
+        node.setCondition(andNode);
 
         Assert.assertEquals("Invalid node value.",
                 "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b " +
-                        "WHERE t.field = t.field2 t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
+                        "WHERE t.field = t.field2 AND t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
                 node.toString());
-         */
     }
 
     /**

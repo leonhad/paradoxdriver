@@ -39,7 +39,9 @@ public class ANDNode extends AbstractComparableNode {
      */
     public ANDNode(final ParadoxConnection connection, final SQLNode child) {
         super(connection, "AND");
-        this.childhood.add(child);
+        if (child != null) {
+            this.childhood.add(child);
+        }
     }
 
     @Override

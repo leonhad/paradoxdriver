@@ -237,7 +237,6 @@ public final class SelectNode extends StatementNode {
     private void buildWhere(final StringBuilder builder) {
         if (this.condition != null) {
             builder.append(" WHERE ");
-            builder.append(' ');
             builder.append(condition);
         }
     }

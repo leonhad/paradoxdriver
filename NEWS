@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-06-28 Added table join support.
 2020-06-26 Review all database and table metadata and fixed various memory and performances issues.
 2020-06-25 Rewrite the code for all BLOB and CLOB types.
 2020-06-21 Added schema support in SQL and queries.
