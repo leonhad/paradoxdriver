@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
 import java.sql.Time;
-import java.sql.Types;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -26,7 +25,7 @@ import java.util.GregorianCalendar;
  * Parses time fields.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class TimeField implements FieldParser {

@@ -17,13 +17,12 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
-import java.sql.Types;
 
 /**
  * Parses long fields.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class LongField implements FieldParser {
