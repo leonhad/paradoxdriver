@@ -11,7 +11,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
+import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
 
 /**
  * Stores a join node.
@@ -25,7 +25,7 @@ public final class JoinNode extends SQLNode {
     /**
      * The condition list.
      */
-    private AbstractComparisonNode condition;
+    private AbstractComparableNode condition;
 
     /**
      * The table name.
@@ -108,7 +108,7 @@ public final class JoinNode extends SQLNode {
      *
      * @return the condition tree.
      */
-    AbstractComparisonNode getCondition() {
+    AbstractComparableNode getCondition() {
         return this.condition;
     }
 
@@ -117,7 +117,7 @@ public final class JoinNode extends SQLNode {
      *
      * @param condition the condition list.
      */
-    public void setCondition(final AbstractComparisonNode condition) {
+    public void setCondition(final AbstractComparableNode condition) {
         this.condition = condition;
     }
 

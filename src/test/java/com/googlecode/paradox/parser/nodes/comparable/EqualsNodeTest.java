@@ -8,11 +8,11 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.conditional;
+package com.googlecode.paradox.parser.nodes.comparable;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.FieldNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -22,13 +22,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link ExistsNode} class.
+ * Unit test for {@link EqualsNode} class.
  *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */
-public class ExistsNodeTest {
+public class EqualsNodeTest {
     /**
      * The connection string used in this tests.
      */
@@ -53,22 +53,13 @@ public class ExistsNodeTest {
     }
 
     /**
-     * Test for childhood.
+     * Test for {@link BetweenNode#toString()} method.
      */
     @Test
-    public void testChildhood() {
-        final SelectNode node = new SelectNode(conn);
-        final ExistsNode and = new ExistsNode(conn, node);
-        Assert.assertEquals("Invalid node size.", 1, and.getChildhood().size());
-        Assert.assertEquals("Invalid node value.", node, and.getChildhood().iterator().next());
-    }
-
-    /**
-     * Test for name.
-     */
-    @Test
-    public void testName() {
-        final ExistsNode node = new ExistsNode(conn, null);
-        Assert.assertEquals("Invalid node name.", "EXISTS", node.getName());
+    public void testToString() {
+        final FieldNode first = new FieldNode(conn, "table", "first", "first");
+        final FieldNode last = new FieldNode(conn, "table", "last", "last");
+        final EqualsNode node = new EqualsNode(conn, first, last);
+        Assert.assertEquals("Invalid node value.", "table.first = table.last", node.toString());
     }
 }

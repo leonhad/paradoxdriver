@@ -115,11 +115,9 @@ public class ParadoxResultSetTest {
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with negative row
      * value.
-     *
-     * @throws SQLException in case of errors.
      */
     @Test
-    public void testAbsoluteNegativeRowValue() throws SQLException {
+    public void testAbsoluteNegativeRowValue() {
         final List<Column> columns = Collections.singletonList(
                 new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType())));
         final List<FieldValue[]> values = Collections.singletonList(new FieldValue[]{
@@ -133,11 +131,9 @@ public class ParadoxResultSetTest {
 
     /**
      * Test for {@link ParadoxResultSet#afterLast()} method.
-     *
-     * @throws SQLException in case of errors.
      */
     @Test
-    public void testAfterLast() throws SQLException {
+    public void testAfterLast() {
         final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType());
         final List<Column> columns = Collections.singletonList(new Column(field));
         final List<FieldValue[]> values = Collections.singletonList(new FieldValue[]{

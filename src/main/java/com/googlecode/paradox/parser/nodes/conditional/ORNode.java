@@ -13,10 +13,8 @@ package com.googlecode.paradox.parser.nodes.conditional;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
-
-import java.util.List;
+import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
+import com.googlecode.paradox.parser.nodes.comparable.ValuesComparator;
 
 /**
  * Store the OR node.
@@ -25,7 +23,7 @@ import java.util.List;
  * @version 1.1
  * @since 1.1
  */
-public class ORNode extends AbstractComparisonNode {
+public class ORNode extends AbstractComparableNode {
 
     /**
      * Create a new instance.
@@ -39,10 +37,10 @@ public class ORNode extends AbstractComparisonNode {
     }
 
     @Override
-    public boolean evaluate(final FieldValue[] row, final List<PlanTableNode> tables) {
+    public boolean evaluate(final FieldValue[] row, final ValuesComparator comparator) {
         for (final SQLNode node : childhood) {
-            final AbstractComparisonNode comparisonNode = (AbstractComparisonNode) node;
-            if (comparisonNode.evaluate(row, tables)) {
+            final AbstractComparableNode comparisonNode = (AbstractComparableNode) node;
+            if (comparisonNode.evaluate(row, comparator)) {
                 return true;
             }
         }

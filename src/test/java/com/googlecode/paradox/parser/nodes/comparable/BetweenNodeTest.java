@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.comparisons;
+package com.googlecode.paradox.parser.nodes.comparable;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
@@ -22,13 +22,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link NotEqualsNode} class.
+ * Unit test for {@link BetweenNode} class.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
-public class NotEqualsNodeTest {
+public class BetweenNodeTest {
+
     /**
      * The connection string used in this tests.
      */
@@ -53,13 +54,24 @@ public class NotEqualsNodeTest {
     }
 
     /**
+     * Test the field node.
+     */
+    @Test
+    public void testField() {
+        final FieldNode field = new FieldNode(conn, "table", "field", "alias");
+        final BetweenNode node = new BetweenNode(conn, field, null, null);
+        Assert.assertEquals("Invalid field value.", field, node.getField());
+    }
+
+    /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
     public void testToString() {
+        final FieldNode field = new FieldNode(conn, "table", "field", "field");
         final FieldNode first = new FieldNode(conn, "table", "first", "first");
         final FieldNode last = new FieldNode(conn, "table", "last", "last");
-        final NotEqualsNode node = new NotEqualsNode(conn, first, last);
-        Assert.assertEquals("Invalid node value.", "table.first <> table.last", node.toString());
+        final BetweenNode node = new BetweenNode(conn, field, first, last);
+        Assert.assertEquals("Invalid node values.", "table.field BETWEEN table.first AND table.last", node.toString());
     }
 }

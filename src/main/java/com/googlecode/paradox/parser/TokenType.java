@@ -13,8 +13,8 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @author Leonardo Costa
+ * @version 1.3
  * @since 1.0
  */
 public enum TokenType {
@@ -22,244 +22,222 @@ public enum TokenType {
      * And token.
      */
     AND,
-    
+
     /**
      * AS token.
      */
     AS,
-    
+
     /**
      * All fields token.
      */
     ASTERISK("*"),
-    
+
     /**
      * Between token.
      */
     BETWEEN,
-    
+
     /**
      * By token.
      */
     BY,
-    
+
     /**
      * Character literal.
      */
     CHARACTER(null),
-    
+
     /**
      * Comma token.
      */
     COMMA(","),
-    
+
     /**
      * Delete token.
      */
     DELETE,
-    
+
     /**
      * Distinct token.
      */
     DISTINCT,
-    
+
     /**
      * Equals token.
      */
     EQUALS("="),
-    
-    /**
-     * Exists token.
-     */
-    EXISTS,
-    
+
     /**
      * From token.
      */
     FROM,
-    
-    /**
-     * Having token.
-     */
-    HAVING,
-    
+
     /**
      * Identifier token.
      */
     IDENTIFIER,
-    
+
     /**
      * Inner token.
      */
     INNER,
-    
+
     /**
      * Insert token.
      */
     INSERT,
-    
+
     /**
      * Into token.
      */
     INTO,
-    
+
     /**
      * Join token.
      */
     JOIN,
-    
+
     /**
      * Left token.
      */
     LEFT,
-    
+
     /**
      * Less token.
      */
     LESS("<"),
-    
+
     /**
      * Left parenthesis token.
      */
     LPAREN("("),
-    
+
     /**
      * Minus token.
      */
     MINUS("-"),
-    
+
     /**
      * More token.
      */
     MORE(">"),
-    
-    /**
-     * Not token.
-     */
-    NOT,
-    
+
     /**
      * Not equals token.
      */
-    NOTEQUALS("<>"),
-    
+    NOT_EQUALS("<>"),
+
     /**
      * Variant not equals token.
      */
-    NOTEQUALS2("!="),
-    
+    NOT_EQUALS_VARIANT("!="),
+
     /**
      * Null token.
      */
     NULL,
-    
+
     /**
      * Numeric token.
      */
     NUMERIC(null),
-    
+
     /**
      * ON token.
      */
     ON,
-    
+
     /**
      * OR token.
      */
     OR,
-    
+
     /**
      * Order token.
      */
     ORDER,
-    
+
     /**
      * Outer token.
      */
     OUTER,
-    
+
     /**
      * Period token.
      */
     PERIOD("."),
-    
+
     /**
      * Plus token.
      */
     PLUS("+"),
-    
+
     /**
      * Right token.
      */
     RIGHT,
-    
+
     /**
      * Right parenthesis token.
      */
     RPAREN(")"),
-    
+
     /**
      * Select token.
      */
     SELECT,
-    
+
     /**
      * Semicolon token.
      */
     SEMI(";"),
-    
+
     /**
      * Update token.
      */
     UPDATE,
-    
+
     /**
      * Where token.
      */
-    WHERE,
-    
-    /**
-     * XOR token.
-     */
-    XOR;
-    
+    WHERE;
+
     /**
      * Stores the conditional break values.
      */
-    private static final TokenType[] CONDITIONAL_BREAKS = { ORDER, HAVING, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN };
-    
+    private static final TokenType[] CONDITIONAL_BREAKS = {ORDER, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN};
+
     /**
      * Stores the operator values.
      */
-    private static final TokenType[] OPERATORS = { AND, OR, XOR };
-    
+    private static final TokenType[] OPERATORS = {AND, OR};
+
     /**
      * Token value.
      */
     private final String value;
-    
+
     /**
      * Creates a new instance.
      */
     TokenType() {
         this.value = this.name();
     }
-    
+
     /**
      * Creates a new instance.
      *
-     * @param value
-     *            the token value.
+     * @param value the token value.
      */
     TokenType(final String value) {
         this.value = value;
     }
-    
+
     /**
      * Gets the token by value.
      *
-     * @param value
-     *            the value to search in the token list.
+     * @param value the value to search in the token list.
      * @return the token by value.
      */
     public static TokenType get(final String value) {
@@ -270,12 +248,11 @@ public enum TokenType {
         }
         return null;
     }
-    
+
     /**
      * Gets if the token is a conditional break.
      *
-     * @param tokenType
-     *            the type to test of.
+     * @param tokenType the type to test of.
      * @return true if this token is a conditional break.
      */
     public static boolean isConditionalBreak(final TokenType tokenType) {
@@ -286,12 +263,11 @@ public enum TokenType {
         }
         return false;
     }
-    
+
     /**
      * Gets if the token for operator types.
      *
-     * @param tokenType
-     *            the type to test of.
+     * @param tokenType the type to test of.
      * @return true if this token is an operator.
      */
     public static boolean isOperator(final TokenType tokenType) {

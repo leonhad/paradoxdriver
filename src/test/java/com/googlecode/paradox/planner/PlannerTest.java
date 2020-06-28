@@ -187,7 +187,7 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser(conn,
                 "select ac from areacodes where state = ny and ac = 212 or ac=315 or ac=917");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute();
+        plan.execute(conn);
         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
         Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0)[0].getValue());
         Assert.assertEquals("Test the result value.", "315", plan.getValues().get(1)[0].getValue());
@@ -204,7 +204,7 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser(conn,
                 "select ac from areacodes where state <> ny and ac = 212 or ac=315 or ac=917");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute();
+        plan.execute(conn);
         Assert.assertEquals("Test the result size.", 0, plan.getValues().size());
     }
 
@@ -217,7 +217,7 @@ public class PlannerTest {
     public void testSelectWhereGreaterThan() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select ac from areacodes where state = ny and ac > 845");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute();
+        plan.execute(conn);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
     }
 
@@ -228,9 +228,9 @@ public class PlannerTest {
      */
     @Test
     public void testSelectWhereLessThan() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select ac from areacodes where state = ny and ac < 320");
+        final SQLParser parser = new SQLParser(conn, "select ac from areacodes where state = 'NY' and ac < 320");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute();
+        plan.execute(conn);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
     }
 
@@ -243,7 +243,7 @@ public class PlannerTest {
     public void testSelectWhereMultipleColumns() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select * from areacodes where state = ny and ac < 320");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute();
+        plan.execute(conn);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
         Assert.assertEquals("Field expected", "AC", plan.getValues().get(0)[0].getField().getName());
         Assert.assertEquals("Field expected", "State", plan.getValues().get(0)[1].getField().getName());

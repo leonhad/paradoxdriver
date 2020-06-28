@@ -16,8 +16,8 @@ import org.junit.Test;
 /**
  * Unit test for {@link TokenType} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class TokenTypeTest {
@@ -25,13 +25,13 @@ public class TokenTypeTest {
     /**
      * Used to test the conditional breaks.
      */
-    private static final TokenType[] CONDITIONAL_BREAKS = {TokenType.ORDER, TokenType.HAVING, TokenType.RPAREN,
+    private static final TokenType[] CONDITIONAL_BREAKS = {TokenType.ORDER, TokenType.RPAREN,
             TokenType.LEFT, TokenType.RIGHT, TokenType.OUTER, TokenType.INNER, TokenType.JOIN};
 
     /**
      * Used to test the operator values.
      */
-    private static final TokenType[] OPERATORS = {TokenType.AND, TokenType.OR, TokenType.XOR};
+    private static final TokenType[] OPERATORS = {TokenType.AND, TokenType.OR};
 
     /**
      * Test for conditional breaks.

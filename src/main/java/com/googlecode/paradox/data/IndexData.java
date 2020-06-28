@@ -32,7 +32,7 @@ import java.util.List;
  * Reads index data files.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class IndexData extends ParadoxData {
@@ -77,11 +77,10 @@ public final class IndexData extends ParadoxData {
      * @param file       the database {@link File}.
      * @param connection the database connection.
      * @return the {@link ParadoxIndex} reference.
-     * @throws IOException  if case of I/O exceptions.
-     * @throws SQLException in case of database errors.
+     * @throws IOException if case of I/O exceptions.
      */
-    private static ParadoxIndex loadIndexHeader(final File file, final ParadoxConnection connection) throws IOException,
-            SQLException {
+    private static ParadoxIndex loadIndexHeader(final File file, final ParadoxConnection connection)
+            throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -154,9 +153,8 @@ public final class IndexData extends ParadoxData {
      *
      * @param buffer the buffer to parse.
      * @param index  the paradox index.
-     * @throws SQLException in case of parse errors.
      */
-    private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) throws SQLException {
+    private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) {
         final ArrayList<ParadoxField> fields = new ArrayList<>();
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(index.getConnection(), buffer.get(), loop + 1);

@@ -14,4 +14,4 @@
  *
  * @since 1.0
  */
-package com.googlecode.paradox.parser.nodes.comparisons;
+package com.googlecode.paradox.parser.nodes.comparable;

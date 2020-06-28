@@ -12,8 +12,9 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.*;
-import com.googlecode.paradox.parser.nodes.comparisons.*;
-import com.googlecode.paradox.parser.nodes.conditional.*;
+import com.googlecode.paradox.parser.nodes.comparable.*;
+import com.googlecode.paradox.parser.nodes.conditional.ANDNode;
+import com.googlecode.paradox.parser.nodes.conditional.ORNode;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
@@ -29,7 +30,7 @@ import java.util.List;
  * Parses a SQL statement.
  *
  * @author Leonardo Costa
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public final class SQLParser {
@@ -188,18 +189,13 @@ public final class SQLParser {
      * @return the node.
      * @throws SQLException in case of parse errors.
      */
-    private AbstractComparisonNode parseCondition() throws SQLException {
-        AbstractComparisonNode ret = null;
+    private AbstractComparableNode parseCondition() throws SQLException {
+        AbstractComparableNode ret = null;
         while (this.scanner.hasNext() && !this.token.isConditionBreak()) {
-            if (this.token.getType() == TokenType.NOT) {
-                ret = new NOTNode(connection, this.parseCondition());
-            } else if (this.token.isOperator()) {
+            if (this.token.isOperator()) {
                 ret = this.parseOperators(ret);
             } else if (this.token.getType() == TokenType.LPAREN) {
                 this.expect(TokenType.RPAREN, "Right parenthesis expected");
-            } else if (this.token.getType() == TokenType.EXISTS) {
-                // FIXME redo the exists tree.
-                ret = this.parseExists();
             } else {
                 if (ret == null) {
                     ret = this.parseFieldNode();
@@ -223,20 +219,6 @@ public final class SQLParser {
         this.expect(TokenType.EQUALS);
         final FieldNode value = this.parseField();
         return new EqualsNode(connection, field, value);
-    }
-
-    /**
-     * Parses the exists token.
-     *
-     * @return the exists node.
-     * @throws SQLException in case of parse errors.
-     */
-    private ExistsNode parseExists() throws SQLException {
-        this.expect(TokenType.EXISTS);
-        this.expect(TokenType.LPAREN, "Left parenthesis expected.");
-        final SelectNode select = this.parseSelect();
-        this.expect(TokenType.RPAREN, "Left parenthesis expected.");
-        return new ExistsNode(connection, select);
     }
 
     /**
@@ -267,9 +249,9 @@ public final class SQLParser {
      * @return the field node.
      * @throws SQLException in case of parse errors.
      */
-    private AbstractComparisonNode parseFieldNode() throws SQLException {
+    private AbstractComparableNode parseFieldNode() throws SQLException {
         final FieldNode firstField = this.parseField();
-        AbstractComparisonNode node;
+        AbstractComparableNode node;
 
         switch (this.token.getType()) {
             case BETWEEN:
@@ -278,10 +260,10 @@ public final class SQLParser {
             case EQUALS:
                 node = this.parseEquals(firstField);
                 break;
-            case NOTEQUALS:
+            case NOT_EQUALS:
                 node = this.parseNotEquals(firstField);
                 break;
-            case NOTEQUALS2:
+            case NOT_EQUALS_VARIANT:
                 node = this.parseNotEqualsVariant(firstField);
                 break;
             case LESS:
@@ -348,13 +330,11 @@ public final class SQLParser {
             // Field alias (with AS identifier)
             if (this.token.getType() == TokenType.AS) {
                 this.expect(TokenType.AS);
-                tableAlias = this.token.getValue();
-                this.expect(TokenType.IDENTIFIER);
-            } else {
-                // Field alias (without AS identifier)
-                tableAlias = this.token.getValue();
-                this.expect(TokenType.IDENTIFIER);
             }
+
+            // Field alias (without AS identifier)
+            tableAlias = this.token.getValue();
+            this.expect(TokenType.IDENTIFIER);
         }
 
         return tableAlias;
@@ -539,7 +519,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private NotEqualsNode parseNotEquals(final FieldNode firstField) throws SQLException {
-        this.expect(TokenType.NOTEQUALS);
+        this.expect(TokenType.NOT_EQUALS);
         final FieldNode value = this.parseField();
         return new NotEqualsNode(connection, firstField, value);
     }
@@ -552,7 +532,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private NotEqualsNode parseNotEqualsVariant(final FieldNode firstField) throws SQLException {
-        this.expect(TokenType.NOTEQUALS2);
+        this.expect(TokenType.NOT_EQUALS_VARIANT);
         final FieldNode value = this.parseField();
         return new NotEqualsNode(connection, firstField, value);
     }
@@ -588,7 +568,7 @@ public final class SQLParser {
      * @return the conditional operator node.
      * @throws SQLException in case or errors.
      */
-    private AbstractComparisonNode parseOperators(final AbstractComparisonNode child) throws SQLException {
+    private AbstractComparableNode parseOperators(final AbstractComparableNode child) throws SQLException {
         switch (this.token.getType()) {
             case AND:
                 this.expect(TokenType.AND);
@@ -596,9 +576,6 @@ public final class SQLParser {
             case OR:
                 this.expect(TokenType.OR);
                 return new ORNode(connection, child);
-            case XOR:
-                this.expect(TokenType.XOR);
-                return new XORNode(connection, child);
             default:
                 throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL.getValue());
         }

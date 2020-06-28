@@ -10,12 +10,14 @@
  */
 package com.googlecode.paradox.planner.plan;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
+import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
+import com.googlecode.paradox.parser.nodes.comparable.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
@@ -54,21 +56,14 @@ public final class SelectPlan implements Plan {
     /**
      * The conditions to filter values
      */
-    private final AbstractComparisonNode condition;
-
-    /**
-     * Creates a new instance.
-     */
-    SelectPlan() {
-        this(null);
-    }
+    private final AbstractComparableNode condition;
 
     /**
      * Creates a SELECT plan with conditions.
      *
      * @param condition the conditions to filter results
      */
-    public SelectPlan(final AbstractComparisonNode condition) {
+    public SelectPlan(final AbstractComparableNode condition) {
         this.condition = condition;
     }
 
@@ -142,7 +137,7 @@ public final class SelectPlan implements Plan {
      * {@inheritDoc}.
      */
     @Override
-    public void execute() throws SQLException {
+    public void execute(final ParadoxConnection connection) throws SQLException {
         if (this.columns.isEmpty() || this.tables.isEmpty()) {
             return;
         }
@@ -198,12 +193,13 @@ public final class SelectPlan implements Plan {
             }
         }
 
+        final ValuesComparator comparator = new ValuesComparator(connection);
         final FieldValue[] row = new FieldValue[firstLine.size()];
-        filter(rawData, 0, row, 0, mapColumns);
+        filter(rawData, 0, row, 0, mapColumns, comparator);
     }
 
     private void filter(final List<List<List<FieldValue>>> tables, final int tableIndex, final FieldValue[] row,
-                      final int rowIndex,   final int[] mapColumns) {
+                        final int rowIndex, final int[] mapColumns, final ValuesComparator comparator) {
 
         List<List<FieldValue>> rowValues = tables.get(tableIndex);
         for (final List<FieldValue> tableRow : rowValues) {
@@ -216,7 +212,7 @@ public final class SelectPlan implements Plan {
             if (tableIndex + 1 == tables.size()) {
                 // Filter joins
 
-                if (condition != null && !condition.evaluate(row, this.tables)) {
+                if (condition != null && !condition.evaluate(row, comparator)) {
                     continue;
                 }
 
@@ -228,38 +224,10 @@ public final class SelectPlan implements Plan {
                 this.values.add(finalRow);
             } else {
                 // There is more tables.
-                filter(tables, tableIndex + 1, row, rowIndex + tableRow.size(), mapColumns);
+                filter(tables, tableIndex + 1, row, rowIndex + tableRow.size(), mapColumns, comparator);
             }
         }
     }
-/*
-        // Find indexes.
-        final int[] mapColumns = new int[this.columns.size()];
-        final List<FieldValue> firstLine = rawData.get(0);
-        for (int i = 0; i < this.columns.size(); i++) {
-            Column column = this.columns.get(i);
-            for (int loop = 0; loop < firstLine.size(); loop++) {
-                if (firstLine.get(loop).getField().equals(column.getField())) {
-                    mapColumns[i] = loop;
-                    break;
-                }
-            }
-        }
-
-        // Filter joins
-        for (final List<FieldValue> row : rawData) {
-            if (condition != null && !condition.evaluate(row, this.tables)) {
-                continue;
-            }
-
-            final FieldValue[] finalRow = new FieldValue[mapColumns.length];
-            for (int i = 0; i < mapColumns.length; i++) {
-                int index = mapColumns[i];
-                finalRow[i] = row.get(index);
-            }
-            this.values.add(finalRow);
-        }
-    }*/
 
     /**
      * Gets the columns in SELECT statement.

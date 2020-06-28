@@ -10,22 +10,24 @@
  */
 package com.googlecode.paradox.planner.plan;
 
+import com.googlecode.paradox.ParadoxConnection;
+
 import java.sql.SQLException;
 
 /**
  * Used to creates and execute SQL plans.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.1
  */
 public interface Plan {
-    
+
     /**
      * Execute this plan.
      *
-     * @throws SQLException
-     *             in case of failures.
+     * @param connection the Paradox connection.
+     * @throws SQLException in case of failures.
      */
-    void execute() throws SQLException;
+    void execute(final ParadoxConnection connection) throws SQLException;
 }

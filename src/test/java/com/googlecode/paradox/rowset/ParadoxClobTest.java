@@ -23,8 +23,8 @@ import java.util.Properties;
 /**
  * Unit test for {@link ParadoxClob} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @author Leonardo Costa
+ * @version 1.3
  * @since 1.3
  */
 public class ParadoxClobTest {
@@ -95,7 +95,7 @@ public class ParadoxClobTest {
     @Test
     public void testCharacterStream() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -115,7 +115,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithHighPosition() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -133,7 +133,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithInvalidLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -151,7 +151,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithLongLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -169,7 +169,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testCharacterStreamWithLowPosition() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -187,7 +187,7 @@ public class ParadoxClobTest {
     @Test
     public void testCharacterStreamWithParameters() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -237,7 +237,7 @@ public class ParadoxClobTest {
 
         try (final Connection conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db", properties);
              final Statement stmt = conn.createStatement();
-             final ResultSet rs = stmt.executeQuery("SELECT note FROM note1251 WHERE id=2")) {
+             final ResultSet rs = stmt.executeQuery("SELECT Note FROM NOTE1251 WHERE Id=2")) {
 
             Assert.assertTrue("Nation locale: record not exists", rs.next());
             final Clob c = rs.getClob("note");
@@ -255,7 +255,7 @@ public class ParadoxClobTest {
     @Test
     public void testSubString() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -273,7 +273,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testSubStringWithHighLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -291,7 +291,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testSubStringWithHighPos() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -309,7 +309,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testSubStringWithInvalidLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -327,7 +327,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testSubStringWithLowPos() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -345,7 +345,7 @@ public class ParadoxClobTest {
     @Test
     public void testTruncate() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -364,7 +364,7 @@ public class ParadoxClobTest {
     @Test(expected = SQLException.class)
     public void testTruncateHighValue() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
@@ -383,7 +383,7 @@ public class ParadoxClobTest {
     @Test
     public void testTruncateWithZeroSize() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT comments FROM customer")) {
+             ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");

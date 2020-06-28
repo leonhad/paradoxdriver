@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.comparisons;
+package com.googlecode.paradox.parser.nodes.comparable;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
@@ -22,13 +22,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link EqualsNode} class.
+ * Unit test {@link GreaterThanNode} class.
  *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */
-public class EqualsNodeTest {
+public class GreaterThanNodeTest {
     /**
      * The connection string used in this tests.
      */
@@ -59,7 +59,7 @@ public class EqualsNodeTest {
     public void testToString() {
         final FieldNode first = new FieldNode(conn, "table", "first", "first");
         final FieldNode last = new FieldNode(conn, "table", "last", "last");
-        final EqualsNode node = new EqualsNode(conn, first, last);
-        Assert.assertEquals("Invalid node value.", "table.first = table.last", node.toString());
+        final GreaterThanNode node = new GreaterThanNode(conn, first, last);
+        Assert.assertEquals("Invalid node value.", "table.first > table.last", node.toString());
     }
 }

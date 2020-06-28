@@ -14,9 +14,11 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.comparisons.AbstractComparisonNode;
+import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
+import com.googlecode.paradox.parser.nodes.comparable.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +29,7 @@ import java.util.Set;
  * @version 1.2
  * @since 1.1
  */
-public class ANDNode extends AbstractComparisonNode {
+public class ANDNode extends AbstractComparableNode {
 
     /**
      * Create a new instance.
@@ -41,10 +43,10 @@ public class ANDNode extends AbstractComparisonNode {
     }
 
     @Override
-    public boolean evaluate(final FieldValue[] row, final List<PlanTableNode> tables) {
+    public boolean evaluate(final FieldValue[] row, final ValuesComparator comparator) {
         for (final SQLNode node : childhood) {
-            final AbstractComparisonNode comparisonNode = (AbstractComparisonNode) node;
-            if (!comparisonNode.evaluate(row, tables)) {
+            final AbstractComparableNode comparisonNode = (AbstractComparableNode) node;
+            if (!comparisonNode.evaluate(row, comparator)) {
                 return false;
             }
         }
@@ -52,9 +54,9 @@ public class ANDNode extends AbstractComparisonNode {
     }
 
     @Override
-    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) {
+    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) throws SQLException {
         for (final SQLNode node : childhood) {
-            ((AbstractComparisonNode) node).setFieldIndexes(row, tables);
+            ((AbstractComparableNode) node).setFieldIndexes(row, tables);
         }
     }
 
