@@ -24,7 +24,7 @@ import java.util.Set;
  * Stores the not equals node.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public final class NotEqualsNode extends AbstractComparableNode {
@@ -59,7 +59,7 @@ public final class NotEqualsNode extends AbstractComparableNode {
 
     @Override
     public String toString() {
-        return String.format("%s = %s", field, last);
+        return String.format("%s <> %s", field, last);
     }
 
     @Override

@@ -12,9 +12,15 @@ package com.googlecode.paradox.parser.nodes.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
 import com.googlecode.paradox.parser.nodes.comparable.ValuesComparator;
+import com.googlecode.paradox.planner.nodes.PlanTableNode;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Store the OR node.
@@ -45,6 +51,22 @@ public class ORNode extends AbstractComparableNode {
             }
         }
         return false;
+    }
+
+    @Override
+    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) throws SQLException {
+        for (final SQLNode node : childhood) {
+            ((AbstractComparableNode) node).setFieldIndexes(row, tables);
+        }
+    }
+
+    @Override
+    public Set<FieldNode> getClauseFields() {
+        final Set<FieldNode> nodes = super.getClauseFields();
+        for (final SQLNode node : childhood) {
+            nodes.addAll(node.getClauseFields());
+        }
+        return nodes;
     }
 
     @Override

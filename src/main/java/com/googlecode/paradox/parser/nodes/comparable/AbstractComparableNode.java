@@ -62,22 +62,23 @@ public abstract class AbstractComparableNode extends SQLNode {
 
     protected void getIndex(final FieldNode field, final List<FieldValue> row, final List<PlanTableNode> tables)
             throws SQLException {
+
+        // Do not set indexes in value nodes.
+        if (field instanceof StringNode || field instanceof NumberNode) {
+            return;
+        }
+
         final String tableName = tables.stream()
                 .filter(t -> t.getAlias().equals(field.getTableName()))
                 .map(PlanTableNode::getTable).map(ParadoxTable::getName)
                 .findFirst().orElse(field.getTableName());
-
-        if (field instanceof StringNode || field instanceof NumberNode) {
-            // Do not set indexes in value nodes.
-            return;
-        }
 
         int index = -1;
         for (int i = 0; i < row.size(); i++) {
             final FieldValue value = row.get(i);
 
             // Invalid table name.
-            if (tableName != null && !tableName.equals(value.getField().getTable().getName())) {
+            if (tableName != null && !tableName.equalsIgnoreCase(value.getField().getTable().getName())) {
                 continue;
             }
 
@@ -90,7 +91,7 @@ public abstract class AbstractComparableNode extends SQLNode {
         }
 
         if (index == -1) {
-            throw new SQLException("Field " + field + " not found.");
+            throw new SQLException("Column " + field + " not found.");
         }
 
         field.setIndex(index);

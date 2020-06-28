@@ -14,7 +14,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -88,7 +87,7 @@ public final class TableNode extends SQLNode {
      * @return the join tables.
      */
     public List<JoinNode> getJoins() {
-        return Collections.unmodifiableList(this.joins);
+        return this.joins;
     }
 
     /**

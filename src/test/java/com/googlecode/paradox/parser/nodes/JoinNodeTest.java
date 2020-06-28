@@ -23,8 +23,8 @@ import java.sql.SQLException;
 /**
  * Unit test {@link JoinNode} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class JoinNodeTest {
@@ -58,7 +58,7 @@ public class JoinNodeTest {
     @Test
     public void testInstance() {
         final JoinNode node = new JoinNode(conn);
-        Assert.assertEquals("Invalid node name.", "JOIN", node.getName());
+        Assert.assertNull("Invalid node name.", node.getName());
     }
 
     /**

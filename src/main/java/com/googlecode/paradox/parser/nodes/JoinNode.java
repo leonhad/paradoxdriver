@@ -16,8 +16,8 @@ import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
 /**
  * Stores a join node.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public final class JoinNode extends SQLNode {
@@ -43,7 +43,7 @@ public final class JoinNode extends SQLNode {
      * @param connection the Paradox connection.
      */
     public JoinNode(final ParadoxConnection connection) {
-        super(connection, "JOIN");
+        super(connection, null);
     }
 
     /**
@@ -101,15 +101,6 @@ public final class JoinNode extends SQLNode {
      */
     public void setType(final JoinType type) {
         this.type = type;
-    }
-
-    /**
-     * Gets the condition tree.
-     *
-     * @return the condition tree.
-     */
-    AbstractComparableNode getCondition() {
-        return this.condition;
     }
 
     /**

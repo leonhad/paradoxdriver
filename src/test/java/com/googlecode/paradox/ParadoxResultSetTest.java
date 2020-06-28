@@ -256,20 +256,4 @@ public class ParadoxResultSetTest {
             Assert.assertTrue("No First row", rs.next());
         }
     }
-
-    /**
-     * Test for two joins and where.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    public void testTwoJoinsAndWhere() throws SQLException {
-        try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select ac.AreaCode, st.State, st.Capital, c.County " +
-                     "from geog.tblAC ac, geog.tblsttes st, geog.County c " +
-                     "where c.StateID = st.State " +
-                     "  and st.State = ac.State")) {
-            Assert.assertTrue("No First row", rs.next());
-        }
-    }
 }

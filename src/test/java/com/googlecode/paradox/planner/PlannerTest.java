@@ -27,8 +27,8 @@ import java.sql.SQLFeatureNotSupportedException;
 /**
  * Unit test for {@link Planner}.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.1
  */
 public class PlannerTest {
@@ -185,7 +185,7 @@ public class PlannerTest {
     @Test
     public void testSelectWhereEquals() throws SQLException {
         final SQLParser parser = new SQLParser(conn,
-                "select ac from areacodes where state = ny and ac = 212 or ac=315 or ac=917");
+                "select ac from areacodes where state = 'NY' and ac = 212 or ac=315 or ac=917");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute(conn);
         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
@@ -202,7 +202,7 @@ public class PlannerTest {
     @Test
     public void testSelectWhereNotEquals() throws SQLException {
         final SQLParser parser = new SQLParser(conn,
-                "select ac from areacodes where state <> ny and ac = 212 or ac=315 or ac=917");
+                "select ac from areacodes where state <> 'NY' and (ac = 212 or ac=315 or ac=917)");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute(conn);
         Assert.assertEquals("Test the result size.", 0, plan.getValues().size());
@@ -215,7 +215,7 @@ public class PlannerTest {
      */
     @Test
     public void testSelectWhereGreaterThan() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select ac from areacodes where state = ny and ac > 845");
+        final SQLParser parser = new SQLParser(conn, "select ac from areacodes where state = 'NY' and ac > 845");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute(conn);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());

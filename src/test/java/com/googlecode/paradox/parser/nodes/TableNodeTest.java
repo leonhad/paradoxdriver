@@ -12,7 +12,6 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
 import com.googlecode.paradox.parser.nodes.comparable.EqualsNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -21,7 +20,6 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 /**
  * Unit test for {@link TableNode} class.
@@ -88,9 +86,7 @@ public class TableNodeTest {
         final FieldNode fieldA = new FieldNode(conn, null, "a", null);
         final FieldNode fieldB = new FieldNode(conn, null, "b", null);
 
-        final ArrayList<AbstractComparableNode> list = new ArrayList<>();
-        list.add(new EqualsNode(conn, fieldA, fieldB));
-        //join.setConditions(list);
+        join.setCondition(new EqualsNode(conn, fieldA, fieldB));
 
         node.addJoin(join);
         Assert.assertEquals("Testing for toString().", "table AS alias CROSS JOIN table2 ON a = b ", node.toString());
