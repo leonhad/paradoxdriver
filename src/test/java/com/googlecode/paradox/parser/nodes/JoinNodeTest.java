@@ -80,13 +80,14 @@ public class JoinNodeTest {
     @Test
     public void testJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "select ac.AreaCode ac, st.State, st.Capital, c.County " +
+                "select c.CountyID, ac.AreaCode ac, st.State, st.Capital, c.County " +
                         "from geog.tblAC ac " +
                         "     join geog.tblsttes st on st.State = ac.State " +
                         "     join geog.County c on c.StateID = st.State " +
                         "where c.CountyID = 205")) {
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertNull("Invalid value.", rs.getString("ac"));
+            while (rs.next()) {
+                Assert.assertEquals("Invalid county id value.", 205, rs.getInt("CountyID"));
+            }
         }
     }
 }

@@ -20,8 +20,8 @@ import java.sql.*;
 /**
  * Generic integration tests for Paradox Driver.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public class MainTest {
@@ -179,7 +179,7 @@ public class MainTest {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
                 "SELECT AC as ACode, State, Cities FROM AREACODES")) {
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertEquals("Column 'AC':", "201", rs.getString("AC"));
+            Assert.assertEquals("Column 'AC':", "201", rs.getString("ACode"));
             Assert.assertEquals("Column 'State':", "NJ", rs.getString("State"));
             Assert.assertEquals("Column 'Cities':", "Hackensack, Jersey City (201/551 overlay)",
                     rs.getString("Cities"));

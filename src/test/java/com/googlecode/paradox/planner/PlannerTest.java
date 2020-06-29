@@ -28,7 +28,7 @@ import java.sql.SQLFeatureNotSupportedException;
  * Unit test for {@link Planner}.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public class PlannerTest {
@@ -117,7 +117,7 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser(conn, "select ac from areacodes a");
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         Assert.assertEquals("Test the column size.", 1, plan.getColumns().size());
-        Assert.assertEquals("Test the column name.", "AC", plan.getColumns().get(0).getName());
+        Assert.assertEquals("Test the column name.", "ac", plan.getColumns().get(0).getName());
     }
 
     /**

@@ -24,8 +24,8 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link TableNode} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class TableNodeTest {
@@ -74,7 +74,7 @@ public class TableNodeTest {
 
         join.setCondition(new EqualsNode(conn, fieldA, fieldB));
 
-        Assert.assertEquals("Invalid JoinNode for toString().", "table AS alias CROSS JOIN table2 ON a = b ",
+        Assert.assertEquals("Invalid JoinNode for toString().", "CROSS JOIN table AS alias ON a = b ",
                 join.toString());
     }
 }

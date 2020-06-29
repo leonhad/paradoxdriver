@@ -25,7 +25,7 @@ import java.util.List;
  * Unit test for {@link ParadoxResultSet} class.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public class ParadoxResultSetTest {
@@ -156,11 +156,11 @@ public class ParadoxResultSetTest {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
             Assert.assertTrue("No first row", rs.next());
-            final String firstValue = rs.getString("ac");
+            final String firstValue = rs.getString("ACode");
             Assert.assertTrue("No first row", rs.next());
-            Assert.assertNotEquals("Rows with same value.", firstValue, rs.getString("ac"));
+            Assert.assertNotEquals("Rows with same value.", firstValue, rs.getString("ACode"));
             Assert.assertTrue("Not in first row.", rs.first());
-            Assert.assertEquals("Rows with different values.", firstValue, rs.getString("ac"));
+            Assert.assertEquals("Rows with different values.", firstValue, rs.getString("ACode"));
         }
     }
 
@@ -186,9 +186,9 @@ public class ParadoxResultSetTest {
     @Test
     public void testResultSet() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
+             ResultSet rs = stmt.executeQuery("SELECT AC as ACode, State, Cities FROM AREACODES")) {
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertEquals("Testing for column 'AC'.", "201", rs.getString("ac"));
+            Assert.assertEquals("Testing for column 'AC'.", "201", rs.getString("ACode"));
             Assert.assertEquals("Testing for column 'State'.", "NJ", rs.getString("State"));
             Assert.assertEquals("Testing for column 'Cities'.", "Hackensack, Jersey City (201/551 overlay)",
                     rs.getString("Cities"));
