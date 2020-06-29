@@ -82,4 +82,12 @@ public final class JoinNode extends TableNode {
         this.condition = condition;
     }
 
+    /**
+     * Gets the join condition.
+     *
+     * @return the join condition.
+     */
+    public AbstractConditionalNode getCondition() {
+        return condition;
+    }
 }

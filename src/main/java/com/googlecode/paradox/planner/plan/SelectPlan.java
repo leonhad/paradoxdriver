@@ -149,15 +149,11 @@ public final class SelectPlan implements Plan {
                             .collect(Collectors.toSet());
 
             // Fields from WHERE clause.
-            if (condition != null) {
-                final Set<FieldNode> fields = this.condition.getClauseFields();
-                fields.forEach((FieldNode node) -> {
-                    if (table.isThis(node.getTableName())) {
-                        table.getTable().getFields().stream()
-                                .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                                .map(Column::new).forEach(columnsToLoad::add);
-                    }
-                });
+            getConditionalFields(table, columnsToLoad, this.condition);
+
+            // Get fields from other tables join.
+            for (final PlanTableNode tableToField : this.tables) {
+                getConditionalFields(table, columnsToLoad, tableToField.getConditionalJoin());
             }
 
             // If there is a column to load.
@@ -175,17 +171,41 @@ public final class SelectPlan implements Plan {
         }
 
         final List<FieldValue> firstLine = extractFirstLine(rawData);
+        setIndexes(firstLine);
 
+        // Find column indexes.
+        final int[] mapColumns = mapColumnIndexes(firstLine);
+        final FieldValue[] row = new FieldValue[firstLine.size()];
+        final ValuesComparator comparator = new ValuesComparator(connection);
+        filter(rawData, 0, row, 0, mapColumns, comparator);
+    }
+
+    private void setIndexes(List<FieldValue> firstLine) throws SQLException {
+        // Set conditional indexes.
         if (this.condition != null) {
             this.condition.setFieldIndexes(firstLine, tables);
         }
 
-        // Find column indexes.
-        final int[] mapColumns = mapColumnIndexes(firstLine);
+        // Set table join indexes.
+        for (final PlanTableNode table : this.tables) {
+            if (table.getConditionalJoin() != null) {
+                table.getConditionalJoin().setFieldIndexes(firstLine, tables);
+            }
+        }
+    }
 
-        final ValuesComparator comparator = new ValuesComparator(connection);
-        final FieldValue[] row = new FieldValue[firstLine.size()];
-        filter(rawData, 0, row, 0, mapColumns, comparator);
+    private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
+                                             final AbstractConditionalNode condition) {
+        if (condition != null) {
+            final Set<FieldNode> fields = condition.getClauseFields();
+            fields.forEach((FieldNode node) -> {
+                if (table.isThis(node.getTableName())) {
+                    table.getTable().getFields().stream()
+                            .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
+                            .map(Column::new).forEach(columnsToLoad::add);
+                }
+            });
+        }
     }
 
     private int[] mapColumnIndexes(List<FieldValue> firstLine) {
@@ -216,6 +236,7 @@ public final class SelectPlan implements Plan {
                         final int rowIndex, final int[] mapColumns, final ValuesComparator comparator) {
 
         List<List<FieldValue>> rowValues = tables.get(tableIndex);
+        mainLoop:
         for (final List<FieldValue> tableRow : rowValues) {
             // Fill row.
             for (int loop = 0; loop < tableRow.size(); loop++) {
@@ -224,8 +245,15 @@ public final class SelectPlan implements Plan {
 
             // Last table?
             if (tableIndex + 1 == tables.size()) {
-                // Filter joins
+                // Filter FROM joins.
+                for (final PlanTableNode table : this.tables) {
+                    if (table.getConditionalJoin() != null && !table.getConditionalJoin().evaluate(row, comparator)) {
+                        // FIXME move to table load. Here is not possible to do LEFT or RIGHT join.
+                        continue mainLoop;
+                    }
+                }
 
+                // Filter WHERE joins.
                 if (condition != null && !condition.evaluate(row, comparator)) {
                     continue;
                 }

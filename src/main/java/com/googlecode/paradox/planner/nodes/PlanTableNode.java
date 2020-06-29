@@ -13,6 +13,9 @@ package com.googlecode.paradox.planner.nodes;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
+import com.googlecode.paradox.parser.nodes.JoinNode;
+import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.utils.SQLStates;
 
@@ -71,6 +74,10 @@ public final class PlanTableNode {
         this.alias = alias;
     }
 
+    private AbstractConditionalNode conditionalJoin;
+
+    private JoinType joinType;
+
     /**
      * Sets the plan table.
      *
@@ -99,6 +106,15 @@ public final class PlanTableNode {
         }
 
         this.alias = table.getAlias();
+
+        if (table instanceof JoinNode) {
+            final JoinNode join = (JoinNode) table;
+            conditionalJoin = join.getCondition();
+            joinType = join.getJoinType();
+        } else {
+            conditionalJoin = null;
+            joinType = null;
+        }
     }
 
     /**
@@ -121,5 +137,23 @@ public final class PlanTableNode {
             return table.getName() + " as " + alias;
         }
         return table.getName();
+    }
+
+    /**
+     * Gets the conditional join.
+     *
+     * @return the conditional join.
+     */
+    public AbstractConditionalNode getConditionalJoin() {
+        return conditionalJoin;
+    }
+
+    /**
+     * Gets the join type.
+     *
+     * @return the join type.
+     */
+    public JoinType getJoinType() {
+        return joinType;
     }
 }

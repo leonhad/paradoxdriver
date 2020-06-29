@@ -80,7 +80,7 @@ public class JoinNodeTest {
     @Test
     public void testJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "select c.CountyID, ac.AreaCode ac, st.State, st.Capital, c.County " +
+                "select c.CountyID, ac.AreaCode " +
                         "from geog.tblAC ac " +
                         "     join geog.tblsttes st on st.State = ac.State " +
                         "     join geog.County c on c.StateID = st.State " +
