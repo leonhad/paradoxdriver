@@ -15,9 +15,9 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.ValuesComparator;
+import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
+import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
@@ -143,11 +143,12 @@ public final class SelectPlan implements Plan {
 
         final List<List<List<FieldValue>>> rawData = new ArrayList<>();
         for (final PlanTableNode table : this.tables) {
-            // From columns
+            // From columns in SELECT clause.
             final Set<Column> columnsToLoad =
                     this.columns.stream().filter(c -> c.isThis(table.getTable()))
                             .collect(Collectors.toSet());
 
+            // Fields from WHERE clause.
             if (condition != null) {
                 final Set<FieldNode> fields = this.condition.getClauseFields();
                 fields.forEach((FieldNode node) -> {
@@ -159,6 +160,7 @@ public final class SelectPlan implements Plan {
                 });
             }
 
+            // If there is a column to load.
             if (!columnsToLoad.isEmpty()) {
                 final List<List<FieldValue>> tableData = TableData.loadData(table.getTable(),
                         columnsToLoad.stream().map(Column::getField).collect(Collectors.toList()));
@@ -167,23 +169,29 @@ public final class SelectPlan implements Plan {
             }
         }
 
+        // Stop here if there is no value to process.
         if (rawData.isEmpty() || rawData.stream().allMatch(List::isEmpty)) {
             return;
         }
 
-        final List<FieldValue> firstLine = new ArrayList<>(1);
-        for (List<List<FieldValue>> tableValues : rawData) {
-            firstLine.addAll(tableValues.get(0));
-        }
+        final List<FieldValue> firstLine = extractFirstLine(rawData);
 
         if (this.condition != null) {
             this.condition.setFieldIndexes(firstLine, tables);
         }
 
         // Find column indexes.
+        final int[] mapColumns = mapColumnIndexes(firstLine);
+
+        final ValuesComparator comparator = new ValuesComparator(connection);
+        final FieldValue[] row = new FieldValue[firstLine.size()];
+        filter(rawData, 0, row, 0, mapColumns, comparator);
+    }
+
+    private int[] mapColumnIndexes(List<FieldValue> firstLine) {
         final int[] mapColumns = new int[this.columns.size()];
         for (int i = 0; i < this.columns.size(); i++) {
-            Column column = this.columns.get(i);
+            final Column column = this.columns.get(i);
             for (int loop = 0; loop < firstLine.size(); loop++) {
                 if (firstLine.get(loop).getField().equals(column.getField())) {
                     mapColumns[i] = loop;
@@ -192,9 +200,16 @@ public final class SelectPlan implements Plan {
             }
         }
 
-        final ValuesComparator comparator = new ValuesComparator(connection);
-        final FieldValue[] row = new FieldValue[firstLine.size()];
-        filter(rawData, 0, row, 0, mapColumns, comparator);
+        return mapColumns;
+    }
+
+    private static List<FieldValue> extractFirstLine(List<List<List<FieldValue>>> rawData) {
+        final List<FieldValue> firstLine = new ArrayList<>(1);
+        for (final List<List<FieldValue>> tableValues : rawData) {
+            firstLine.addAll(tableValues.get(0));
+        }
+
+        return firstLine;
     }
 
     private void filter(final List<List<List<FieldValue>>> tables, final int tableIndex, final FieldValue[] row,
