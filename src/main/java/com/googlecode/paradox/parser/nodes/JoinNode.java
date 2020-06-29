@@ -17,10 +17,10 @@ import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
  * Stores a join node.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
-public final class JoinNode extends SQLNode {
+public final class JoinNode extends TableNode {
 
     /**
      * The condition list.
@@ -28,31 +28,22 @@ public final class JoinNode extends SQLNode {
     private AbstractComparableNode condition;
 
     /**
-     * The table name.
-     */
-    private TableNode table;
-
-    /**
      * The join type.
      */
-    private JoinType type = JoinType.CROSS;
+    private final JoinType joinType;
 
     /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
+     * @param schemaName the schema name.
+     * @param name       the table name.
+     * @param alias      the table alias.
      */
-    public JoinNode(final ParadoxConnection connection) {
-        super(connection, null);
-    }
-
-    /**
-     * Gets the table node.
-     *
-     * @return the table node.
-     */
-    public TableNode getTable() {
-        return this.table;
+    public JoinNode(final ParadoxConnection connection, final String schemaName, final String name,
+                    final String alias, final JoinType joinType) {
+        super(connection, schemaName, name, alias);
+        this.joinType = joinType;
     }
 
     /**
@@ -60,8 +51,8 @@ public final class JoinNode extends SQLNode {
      *
      * @return the join type.
      */
-    public JoinType getType() {
-        return this.type;
+    public JoinType getJoinType() {
+        return this.joinType;
     }
 
     /**
@@ -70,9 +61,9 @@ public final class JoinNode extends SQLNode {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append(this.type);
+        builder.append(this.joinType);
         builder.append(" JOIN ");
-        builder.append(this.table);
+        builder.append(super.toString());
 
         if (this.condition != null) {
             builder.append(" ON ");
@@ -80,24 +71,6 @@ public final class JoinNode extends SQLNode {
             builder.append(' ');
         }
         return builder.toString();
-    }
-
-    /**
-     * Sets the table node.
-     *
-     * @param table the table node.
-     */
-    public void setTable(final TableNode table) {
-        this.table = table;
-    }
-
-    /**
-     * Sets the join type.
-     *
-     * @param type the join type.
-     */
-    public void setType(final JoinType type) {
-        this.type = type;
     }
 
     /**

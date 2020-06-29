@@ -12,8 +12,6 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.SQLParser;
-import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -23,15 +21,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Unit test {@link JoinNode} class.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class JoinNodeTest {
@@ -64,7 +59,7 @@ public class JoinNodeTest {
      */
     @Test
     public void testInstance() {
-        final JoinNode node = new JoinNode(conn);
+        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.CROSS);
         Assert.assertNull("Invalid node name.", node.getName());
     }
 
@@ -73,9 +68,8 @@ public class JoinNodeTest {
      */
     @Test
     public void testJoinType() {
-        final JoinNode node = new JoinNode(conn);
-        node.setType(JoinType.LEFT);
-        Assert.assertEquals("Invalid node type.", JoinType.LEFT, node.getType());
+        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.LEFT);
+        Assert.assertEquals("Invalid node type.", JoinType.LEFT, node.getJoinType());
     }
 
     /**
@@ -86,22 +80,13 @@ public class JoinNodeTest {
     @Test
     public void testJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "select ac.AreaCode, st.State, st.Capital, c.County " +
+                "select ac.AreaCode ac, st.State, st.Capital, c.County " +
                         "from geog.tblAC ac " +
                         "     join geog.tblsttes st on st.State = ac.State " +
                         "     join geog.County c on c.StateID = st.State " +
                         "where c.CountyID = 205")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertNull("Invalid value.", rs.getTimestamp("Timestamp"));
-
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Assert.assertEquals("Invalid value.", "2020-02-01 01:00:01",
-                    format.format(rs.getTimestamp("Timestamp")));
-
-            Assert.assertFalse("Invalid Result Set state.", rs.next());
+            Assert.assertNull("Invalid value.", rs.getString("ac"));
         }
     }
 }

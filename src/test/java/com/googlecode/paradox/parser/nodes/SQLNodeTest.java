@@ -23,8 +23,8 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link SQLNode} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class SQLNodeTest {
@@ -57,7 +57,7 @@ public class SQLNodeTest {
      */
     @Test
     public void testAlias() {
-        final JoinNode node = new JoinNode(conn);
+        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.CROSS);
         node.setAlias("alias");
         Assert.assertEquals("Invalid node alias.", "alias", node.getAlias());
     }
@@ -67,7 +67,7 @@ public class SQLNodeTest {
      */
     @Test
     public void testConditions() {
-        final SQLNode node = new JoinNode(conn);
+        final SQLNode node = new JoinNode(conn, null, null, null, JoinType.CROSS);
         Assert.assertEquals("Conditional is not the same.", 0, node.getChildhood().size());
     }
 }

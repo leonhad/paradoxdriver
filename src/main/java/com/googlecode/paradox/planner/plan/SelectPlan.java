@@ -95,7 +95,10 @@ public final class SelectPlan implements Plan {
                     SQLStates.INVALID_COLUMN.getValue());
         }
 
-        this.columns.add(fields.stream().map(Column::new).findFirst().orElse(null));
+        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
+            c.setName(node.getAlias());
+            this.columns.add(c);
+        });
     }
 
     /**

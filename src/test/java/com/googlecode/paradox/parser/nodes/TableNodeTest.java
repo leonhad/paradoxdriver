@@ -59,19 +59,8 @@ public class TableNodeTest {
     @Test
     public void testInstance() {
         final TableNode node = new TableNode(conn, null, "table.db", "alias");
-        Assert.assertEquals("Testing for name.", "table", node.getName());
-        Assert.assertEquals("Testing for alias", "alias", node.getAlias());
-    }
-
-    /**
-     * Test for joins.
-     */
-    @Test
-    public void testJoin() {
-        final TableNode node = new TableNode(conn, null, "table.db", "alias");
-        Assert.assertEquals("Testing for initial join size.", 0, node.getJoins().size());
-        node.addJoin(new JoinNode(conn));
-        Assert.assertEquals("Testing for changed join size.", 1, node.getJoins().size());
+        Assert.assertEquals("Invalid table name.", "table", node.getName());
+        Assert.assertEquals("Invalid table alias.", "alias", node.getAlias());
     }
 
     /**
@@ -79,16 +68,13 @@ public class TableNodeTest {
      */
     @Test
     public void testToString() {
-        final TableNode node = new TableNode(conn, null, "table.db", "alias");
-        final JoinNode join = new JoinNode(conn);
-        join.setTable(node);
-
+        final JoinNode join = new JoinNode(conn, null, "table.db", "alias", JoinType.CROSS);
         final FieldNode fieldA = new FieldNode(conn, null, "a", null);
         final FieldNode fieldB = new FieldNode(conn, null, "b", null);
 
         join.setCondition(new EqualsNode(conn, fieldA, fieldB));
 
-        node.addJoin(join);
-        Assert.assertEquals("Testing for toString().", "table AS alias CROSS JOIN table2 ON a = b ", node.toString());
+        Assert.assertEquals("Invalid JoinNode for toString().", "table AS alias CROSS JOIN table2 ON a = b ",
+                join.toString());
     }
 }

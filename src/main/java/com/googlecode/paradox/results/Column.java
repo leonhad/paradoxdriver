@@ -256,6 +256,8 @@ public final class Column {
     public String toString() {
         if (field == null) {
             return name;
+        } else if (!field.getName().equals(name)) {
+            return field.getName() + " AS " + name;
         }
 
         return field.toString();

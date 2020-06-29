@@ -430,20 +430,20 @@ public final class SQLParser {
     /**
      * Parses the join tokens.
      *
-     * @param table the table.
+     * @param select the select node.
      * @throws SQLException in case of errors.
      */
-    private void parseJoin(final TableNode table) throws SQLException {
+    private void parseJoin(final SelectNode select) throws SQLException {
         while (this.scanner.hasNext() && (this.token.getType() != TokenType.COMMA)
                 && (this.token.getType() != TokenType.WHERE)) {
-            final JoinNode join = new JoinNode(connection);
 
             // Inner join
+            JoinType joinType = JoinType.CROSS;
             if (this.token.getType() == TokenType.LEFT) {
-                join.setType(JoinType.LEFT);
+                joinType = JoinType.LEFT;
                 this.expect(TokenType.LEFT);
             } else if (this.token.getType() == TokenType.RIGHT) {
-                join.setType(JoinType.RIGHT);
+                joinType = JoinType.RIGHT;
                 this.expect(TokenType.RIGHT);
             }
 
@@ -467,11 +467,11 @@ public final class SQLParser {
             }
 
             final String tableAlias = this.parseFields(tableName);
-            join.setTable(new TableNode(connection, schemaName, tableName, tableAlias));
-
             this.expect(TokenType.ON);
-            join.setCondition(this.parseCondition());
-            table.addJoin(join);
+
+            final JoinNode joinTable = new JoinNode(connection, schemaName, tableName, tableAlias, joinType);
+            joinTable.setCondition(this.parseCondition());
+            select.addTable(joinTable);
         }
     }
 
@@ -497,9 +497,10 @@ public final class SQLParser {
         final String tableAlias = this.parseFields(tableName);
 
         final TableNode table = new TableNode(connection, schemaName, tableName, tableAlias);
-        this.parseJoin(table);
-
         select.addTable(table);
+
+        // Parse possible table joins.
+        this.parseJoin(select);
     }
 
     /**
