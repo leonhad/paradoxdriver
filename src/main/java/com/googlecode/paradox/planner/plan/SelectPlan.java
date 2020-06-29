@@ -88,14 +88,10 @@ public final class SelectPlan implements Plan {
         }
 
         if (fields.isEmpty()) {
-            String fieldName = node.getName();
-            if (!node.getName().equalsIgnoreCase(node.getAlias())) {
-                fieldName = node.getAlias() + "." + node.getName();
-            }
-            throw new SQLException(String.format("Invalid column name: '%s'", fieldName),
+            throw new SQLException(String.format("Invalid column name: '%s'", node.toString()),
                     SQLStates.INVALID_COLUMN.getValue());
         } else if (fields.size() > 1) {
-            throw new SQLException(String.format("Column '%s' ambiguous defined.", node.getName()),
+            throw new SQLException(String.format("Column '%s' ambiguous defined.", node.toString()),
                     SQLStates.INVALID_COLUMN.getValue());
         }
 

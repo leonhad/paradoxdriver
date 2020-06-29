@@ -81,7 +81,7 @@ public class TableNodeTest {
     public void testToString() {
         final TableNode node = new TableNode(conn, null, "table.db", "alias");
         final JoinNode join = new JoinNode(conn);
-        join.setTableName("table2");
+        join.setTable(node);
 
         final FieldNode fieldA = new FieldNode(conn, null, "a", null);
         final FieldNode fieldB = new FieldNode(conn, null, "b", null);

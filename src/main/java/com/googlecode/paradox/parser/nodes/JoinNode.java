@@ -30,7 +30,7 @@ public final class JoinNode extends SQLNode {
     /**
      * The table name.
      */
-    private String tableName;
+    private TableNode table;
 
     /**
      * The join type.
@@ -47,12 +47,12 @@ public final class JoinNode extends SQLNode {
     }
 
     /**
-     * Gets the table name.
+     * Gets the table node.
      *
-     * @return the table name.
+     * @return the table node.
      */
-    public String getTableName() {
-        return this.tableName;
+    public TableNode getTable() {
+        return this.table;
     }
 
     /**
@@ -72,11 +72,8 @@ public final class JoinNode extends SQLNode {
         final StringBuilder builder = new StringBuilder();
         builder.append(this.type);
         builder.append(" JOIN ");
-        builder.append(this.tableName);
-        if ((this.getAlias() != null) && !this.tableName.equals(this.getAlias())) {
-            builder.append(" AS ");
-            builder.append(this.getAlias());
-        }
+        builder.append(this.table);
+
         if (this.condition != null) {
             builder.append(" ON ");
             builder.append(condition);
@@ -86,12 +83,12 @@ public final class JoinNode extends SQLNode {
     }
 
     /**
-     * Sets the table name.
+     * Sets the table node.
      *
-     * @param tableName the table name.
+     * @param table the table node.
      */
-    public void setTableName(final String tableName) {
-        this.tableName = tableName;
+    public void setTable(final TableNode table) {
+        this.table = table;
     }
 
     /**

@@ -12,13 +12,20 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.SQLParser;
+import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Unit test {@link JoinNode} class.
@@ -72,34 +79,29 @@ public class JoinNodeTest {
     }
 
     /**
-     * Test for table name.
+     * Test for join name.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testName() {
-        final JoinNode node = new JoinNode(conn);
-        node.setTableName("name");
-        Assert.assertEquals("Invalid node name.", "name", node.getTableName());
-    }
+    public void testJoin() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select ac.AreaCode, st.State, st.Capital, c.County " +
+                        "from geog.tblAC ac " +
+                        "     join geog.tblsttes st on st.State = ac.State " +
+                        "     join geog.County c on c.StateID = st.State " +
+                        "where c.CountyID = 205")) {
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertNull("Invalid value.", rs.getTimestamp("Timestamp"));
 
-    /**
-     * Test for {@link JoinNode#toString()} method.
-     */
-    @Test
-    public void testToString() {
-        final JoinNode node = new JoinNode(conn);
-        node.setTableName("table");
-        node.setAlias("alias");
-        Assert.assertEquals("Invalid node value.", "CROSS JOIN table AS alias", node.toString());
-    }
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
 
-    /**
-     * Test for {@link JoinNode#toString()} method with no alias.
-     */
-    @Test
-    public void testToStringWithoutAlias() {
-        final JoinNode node = new JoinNode(conn);
-        node.setTableName("table");
-        node.setAlias("table");
-        Assert.assertEquals("Invalid node value.", "CROSS JOIN table", node.toString());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Assert.assertEquals("Invalid value.", "2020-02-01 01:00:01",
+                    format.format(rs.getTimestamp("Timestamp")));
+
+            Assert.assertFalse("Invalid Result Set state.", rs.next());
+        }
     }
 }

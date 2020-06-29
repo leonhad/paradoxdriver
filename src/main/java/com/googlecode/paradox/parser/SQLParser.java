@@ -201,6 +201,8 @@ public final class SQLParser {
                     ret.addChild(retValue);
                 }
                 this.expect(TokenType.RPAREN, "Right parenthesis expected");
+            } else if (token.getType() == TokenType.WHERE || token.getType() == TokenType.ORDER) {
+                return ret;
             } else {
                 if (ret == null) {
                     ret = this.parseFieldNode();
@@ -444,23 +446,29 @@ public final class SQLParser {
                 join.setType(JoinType.RIGHT);
                 this.expect(TokenType.RIGHT);
             }
+
             if (this.token.getType() == TokenType.INNER) {
                 this.expect(TokenType.INNER);
             } else if (this.token.getType() == TokenType.OUTER) {
                 this.expect(TokenType.OUTER);
             }
             this.expect(TokenType.JOIN);
-            join.setTableName(this.token.getValue());
-            join.setAlias(this.token.getValue());
+
+            String schemaName = null;
+            String tableName = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
-            if (this.token.getType() == TokenType.AS) {
-                this.expect(TokenType.AS);
-                join.setAlias(this.token.getValue());
-                this.expect(TokenType.IDENTIFIER);
-            } else if (this.token.getType() != TokenType.ON) {
-                join.setAlias(this.token.getValue());
+
+            // Have schema name.
+            if (this.scanner.hasNext() && this.token.getType() == TokenType.PERIOD) {
+                expect(TokenType.PERIOD);
+                schemaName = tableName;
+                tableName = this.token.getValue();
                 this.expect(TokenType.IDENTIFIER);
             }
+
+            final String tableAlias = this.parseFields(tableName);
+            join.setTable(new TableNode(connection, schemaName, tableName, tableAlias));
+
             this.expect(TokenType.ON);
             join.setCondition(this.parseCondition());
             table.addJoin(join);

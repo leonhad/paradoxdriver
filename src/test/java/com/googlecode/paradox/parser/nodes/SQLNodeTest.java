@@ -70,5 +70,4 @@ public class SQLNodeTest {
         final SQLNode node = new JoinNode(conn);
         Assert.assertEquals("Conditional is not the same.", 0, node.getChildhood().size());
     }
-
 }
