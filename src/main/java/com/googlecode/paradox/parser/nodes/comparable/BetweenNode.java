@@ -12,27 +12,19 @@ package com.googlecode.paradox.parser.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Stores the between node.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
-
-    /**
-     * The last node.
-     */
-    private final FieldNode last;
 
     /**
      * The field node.
@@ -49,17 +41,12 @@ public final class BetweenNode extends AbstractComparableNode {
      */
     public BetweenNode(final ParadoxConnection connection, final FieldNode field, final FieldNode first,
                        final FieldNode last) {
-        super(connection, "BETWEEN", field);
+        super(connection, "BETWEEN", field, last);
         this.first = first;
-        this.last = last;
     }
 
     public FieldNode getFirst() {
         return first;
-    }
-
-    public FieldNode getLast() {
-        return last;
     }
 
     /**
@@ -68,19 +55,6 @@ public final class BetweenNode extends AbstractComparableNode {
     @Override
     public String toString() {
         return this.field + " BETWEEN " + first + " AND " + last;
-    }
-
-    @Override
-    public Set<FieldNode> getClauseFields() {
-        final Set<FieldNode> nodes = super.getClauseFields();
-        nodes.add(last);
-        return nodes;
-    }
-
-    @Override
-    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) throws SQLException {
-        super.setFieldIndexes(row, tables);
-        getIndex(last, row, tables);
     }
 
     @Override

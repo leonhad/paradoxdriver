@@ -16,8 +16,8 @@ import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
-import com.googlecode.paradox.parser.nodes.comparable.ValuesComparator;
+import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
+import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
@@ -56,14 +56,14 @@ public final class SelectPlan implements Plan {
     /**
      * The conditions to filter values
      */
-    private final AbstractComparableNode condition;
+    private final AbstractConditionalNode condition;
 
     /**
      * Creates a SELECT plan with conditions.
      *
      * @param condition the conditions to filter results
      */
-    public SelectPlan(final AbstractComparableNode condition) {
+    public SelectPlan(final AbstractConditionalNode condition) {
         this.condition = condition;
     }
 

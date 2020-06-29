@@ -11,7 +11,6 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +28,7 @@ public final class SelectNode extends StatementNode {
     /**
      * The conditions list.
      */
-    private AbstractComparableNode condition;
+    private AbstractConditionalNode condition;
     /**
      * If has a distinct token.
      */
@@ -83,7 +82,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return the condition list.
      */
-    public AbstractComparableNode getCondition() {
+    public AbstractConditionalNode getCondition() {
         return this.condition;
     }
 
@@ -92,7 +91,7 @@ public final class SelectNode extends StatementNode {
      *
      * @param condition the condition tree.
      */
-    public void setCondition(final AbstractComparableNode condition) {
+    public void setCondition(final AbstractConditionalNode condition) {
         this.condition = condition;
     }
 

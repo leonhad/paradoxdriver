@@ -187,14 +187,14 @@ public final class SQLParser {
      * @return the node.
      * @throws SQLException in case of parse errors.
      */
-    private AbstractComparableNode parseCondition() throws SQLException {
-        AbstractComparableNode ret = null;
+    private AbstractConditionalNode parseCondition() throws SQLException {
+        AbstractConditionalNode ret = null;
         while (this.scanner.hasNext() && !this.token.isConditionBreak()) {
             if (this.token.isOperator()) {
                 ret = this.parseOperators(ret);
             } else if (this.token.getType() == TokenType.LPAREN) {
                 this.expect(TokenType.LPAREN);
-                AbstractComparableNode retValue = parseCondition();
+                AbstractConditionalNode retValue = parseCondition();
                 if (ret == null) {
                     ret = retValue;
                 } else {
@@ -270,9 +270,9 @@ public final class SQLParser {
      * @return the field node.
      * @throws SQLException in case of parse errors.
      */
-    private AbstractComparableNode parseFieldNode() throws SQLException {
+    private AbstractConditionalNode parseFieldNode() throws SQLException {
         final FieldNode firstField = this.parseField();
-        AbstractComparableNode node;
+        AbstractConditionalNode node;
 
         switch (this.token.getType()) {
             case BETWEEN:
@@ -576,7 +576,7 @@ public final class SQLParser {
      * @return the conditional operator node.
      * @throws SQLException in case or errors.
      */
-    private AbstractComparableNode parseOperators(final AbstractComparableNode child) throws SQLException {
+    private AbstractConditionalNode parseOperators(final AbstractConditionalNode child) throws SQLException {
         switch (this.token.getType()) {
             case AND:
                 this.expect(TokenType.AND);

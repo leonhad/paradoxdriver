@@ -11,13 +11,12 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
 
 /**
  * Stores a join node.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class JoinNode extends TableNode {
@@ -25,7 +24,7 @@ public final class JoinNode extends TableNode {
     /**
      * The condition list.
      */
-    private AbstractComparableNode condition;
+    private AbstractConditionalNode condition;
 
     /**
      * The join type.
@@ -39,6 +38,7 @@ public final class JoinNode extends TableNode {
      * @param schemaName the schema name.
      * @param name       the table name.
      * @param alias      the table alias.
+     * @param joinType   the table join type.
      */
     public JoinNode(final ParadoxConnection connection, final String schemaName, final String name,
                     final String alias, final JoinType joinType) {
@@ -78,7 +78,7 @@ public final class JoinNode extends TableNode {
      *
      * @param condition the condition list.
      */
-    public void setCondition(final AbstractComparableNode condition) {
+    public void setCondition(final AbstractConditionalNode condition) {
         this.condition = condition;
     }
 

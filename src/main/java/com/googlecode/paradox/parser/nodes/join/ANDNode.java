@@ -12,24 +12,18 @@ package com.googlecode.paradox.parser.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
-import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.parser.ValuesComparator;
+import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.comparable.AbstractComparableNode;
-import com.googlecode.paradox.parser.nodes.comparable.ValuesComparator;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Stores the AND node.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
-public class ANDNode extends AbstractComparableNode {
+public class ANDNode extends AbstractJoinNode {
 
     /**
      * Create a new instance.
@@ -38,53 +32,17 @@ public class ANDNode extends AbstractComparableNode {
      * @param child      the child node.
      */
     public ANDNode(final ParadoxConnection connection, final SQLNode child) {
-        super(connection, "AND");
-        if (child != null) {
-            this.childhood.add(child);
-        }
+        super(connection, "AND", child);
     }
 
     @Override
     public boolean evaluate(final FieldValue[] row, final ValuesComparator comparator) {
         for (final SQLNode node : childhood) {
-            final AbstractComparableNode comparisonNode = (AbstractComparableNode) node;
+            final AbstractConditionalNode comparisonNode = (AbstractConditionalNode) node;
             if (!comparisonNode.evaluate(row, comparator)) {
                 return false;
             }
         }
         return true;
-    }
-
-    @Override
-    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) throws SQLException {
-        for (final SQLNode node : childhood) {
-            ((AbstractComparableNode) node).setFieldIndexes(row, tables);
-        }
-    }
-
-    @Override
-    public Set<FieldNode> getClauseFields() {
-        final Set<FieldNode> nodes = super.getClauseFields();
-        for (final SQLNode node : childhood) {
-            nodes.addAll(node.getClauseFields());
-        }
-        return nodes;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        boolean first = true;
-        for (final SQLNode node : childhood) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(" ");
-                builder.append(this.name);
-                builder.append(" ");
-            }
-            builder.append(node.toString());
-        }
-        return builder.toString();
     }
 }

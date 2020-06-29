@@ -12,27 +12,19 @@ package com.googlecode.paradox.parser.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
+import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Stores the greater than node.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public final class GreaterThanNode extends AbstractComparableNode {
-
-    /**
-     * The last node.
-     */
-    private final FieldNode last;
 
     /**
      * Create a new instance.
@@ -42,30 +34,7 @@ public final class GreaterThanNode extends AbstractComparableNode {
      * @param last       the last node.
      */
     public GreaterThanNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, ">", field);
-        this.last = last;
-    }
-
-    public FieldNode getLast() {
-        return last;
-    }
-
-    @Override
-    public Set<FieldNode> getClauseFields() {
-        final Set<FieldNode> nodes = super.getClauseFields();
-        nodes.add(last);
-        return nodes;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s > %s", field, last);
-    }
-
-    @Override
-    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) throws SQLException {
-        super.setFieldIndexes(row, tables);
-        getIndex(last, row, tables);
+        super(connection, ">", field, last);
     }
 
     @Override

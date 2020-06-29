@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.comparable;
+package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
 
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * Compare Paradox values.
  *
  * @author Leonardo Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.5.1
  */
 public class ValuesComparator implements Comparator<Object>, Serializable {
