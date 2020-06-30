@@ -314,12 +314,13 @@ public final class TableData extends ParadoxData {
         final List<FieldValue> row = new ArrayList<>();
 
         for (final ParadoxField field : table.getFields()) {
-            final FieldValue fieldValue = FieldFactory.parse(table, buffer, field);
-
             // Field filter
-            if (fields.contains(field) && (fieldValue != null)) {
+            if (fields.contains(field)) {
+                final FieldValue fieldValue = FieldFactory.parse(table, buffer, field);
                 fieldValue.setField(field);
                 row.add(fieldValue);
+            } else {
+                buffer.position(buffer.position() + field.getRealSize());
             }
         }
         return row;
