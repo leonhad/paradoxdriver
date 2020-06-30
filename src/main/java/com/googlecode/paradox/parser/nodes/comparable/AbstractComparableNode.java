@@ -15,6 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Set;
  * Comparable node common code.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.5.1
  */
 public abstract class AbstractComparableNode extends AbstractConditionalNode {
@@ -70,8 +71,8 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
     }
 
     @Override
-    public void setFieldIndexes(final List<Object> row, final List<PlanTableNode> tables) throws SQLException {
-        super.setFieldIndexes(row, tables);
-        getIndex(last, row, tables);
+    public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
+        super.setFieldIndexes(columns, tables);
+        getIndex(last, columns, tables);
     }
 }

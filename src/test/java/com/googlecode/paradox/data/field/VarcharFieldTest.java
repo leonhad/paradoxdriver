@@ -29,7 +29,7 @@ import java.sql.SQLException;
  * Unit test for {@link VarcharField} class.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class VarcharFieldTest {
@@ -76,8 +76,8 @@ public class VarcharFieldTest {
         paradoxField.setSize("test".length());
         final VarcharField field = new VarcharField();
         final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));
-        final FieldValue value = field.parse(table, buffer, paradoxField);
-        Assert.assertEquals("Value not equals.", "test", value.getValue());
+        final Object value = field.parse(table, buffer, paradoxField);
+        Assert.assertEquals("Value not equals.", "test", value);
     }
 
     /**

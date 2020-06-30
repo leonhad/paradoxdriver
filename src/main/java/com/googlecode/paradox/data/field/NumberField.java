@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
  * Parses the numeric fields.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public final class NumberField implements FieldParser {
@@ -38,7 +38,7 @@ public final class NumberField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Double parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long value = buffer.getLong();
         if ((value & 0x8000_0000_0000_0000L) != 0) {
             value &= 0x7FFF_FFFF_FFFF_FFFFL;

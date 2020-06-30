@@ -189,13 +189,13 @@ public final class ViewData {
                 // Extra Line
                 line = ViewData.fixExtraLine(reader);
 
-                // FIELDORDER.
+                // FIELD ORDER.
                 line = ViewData.parseFileOrder(view, reader, line, currentSchema, connection);
 
                 // SORT.
                 line = ViewData.parseSort(view, reader, line, currentSchema, connection);
 
-                view.getFields().addAll(ViewData.parseFields(reader, line, currentSchema, connection));
+                view.setFields(ViewData.parseFields(reader, line, currentSchema, connection));
             }
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
@@ -228,8 +228,8 @@ public final class ViewData {
      * @throws SQLException in case of parse errors.
      * @throws IOException  in case of I/O errors.
      */
-    private static ArrayList<ParadoxField> parseFields(final BufferedReader reader, final String oldLine,
-                                                       final File currentSchema, final ParadoxConnection connection)
+    private static ParadoxField[] parseFields(final BufferedReader reader, final String oldLine,
+                                              final File currentSchema, final ParadoxConnection connection)
             throws SQLException, IOException {
         String line = oldLine;
         final ArrayList<ParadoxField> fieldList = new ArrayList<>();
@@ -264,7 +264,7 @@ public final class ViewData {
             // Extra Line
             line = ViewData.fixExtraLine(reader);
         }
-        return fieldList;
+        return fieldList.toArray(new ParadoxField[0]);
     }
 
     /**

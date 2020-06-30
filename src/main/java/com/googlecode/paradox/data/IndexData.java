@@ -32,7 +32,7 @@ import java.util.List;
  * Reads index data files.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class IndexData extends ParadoxData {
@@ -155,21 +155,21 @@ public final class IndexData extends ParadoxData {
      * @param index  the paradox index.
      */
     private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) {
-        final ArrayList<ParadoxField> fields = new ArrayList<>();
+        final ParadoxField[] fields = new ParadoxField[index.getFieldCount()];
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(index.getConnection(), buffer.get(), loop + 1);
             field.setSize(buffer.get());
-            fields.add(field);
+            fields[loop] = field;
         }
 
         if (index.getVersionId() > Constants.PARADOX_VERSION_4) {
             if (index.getVersionId() == 0xC) {
-                buffer.position(0x78 + 261 + 4 + (6 * fields.size()));
+                buffer.position(0x78 + 261 + 4 + (6 * fields.length));
             } else {
-                buffer.position(0x78 + 83 + (6 * fields.size()));
+                buffer.position(0x78 + 83 + (6 * fields.length));
             }
         } else {
-            buffer.position(0x58 + 83 + (6 * fields.size()));
+            buffer.position(0x58 + 83 + (6 * fields.length));
         }
 
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
@@ -183,7 +183,7 @@ public final class IndexData extends ParadoxData {
                 name.put(c);
             }
             name.flip();
-            fields.get(loop).setName(index.getCharset().decode(name).toString());
+            fields[loop].setName(index.getCharset().decode(name).toString());
         }
         index.setFields(fields);
 

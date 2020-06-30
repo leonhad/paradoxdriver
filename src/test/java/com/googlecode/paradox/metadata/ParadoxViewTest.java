@@ -18,8 +18,8 @@ import java.util.ArrayList;
 /**
  * Unit test for {@link ParadoxView} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class ParadoxViewTest {
@@ -40,10 +40,10 @@ public class ParadoxViewTest {
      */
     @Test
     public void testFields() {
-        final ArrayList<ParadoxField> list = new ArrayList<>();
+        final ParadoxField[] list = new ParadoxField[0];
         final ParadoxView view = new ParadoxView(null, null, null);
         view.setFields(list);
-        Assert.assertEquals("Invalid value.", list, view.getFields());
+        Assert.assertArrayEquals("Invalid value.", list, view.getFields());
     }
 
     /**

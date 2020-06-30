@@ -23,8 +23,8 @@ import java.util.GregorianCalendar;
 /**
  * Unit test for {@link TimeField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class TimeFieldTest {
@@ -75,32 +75,28 @@ public class TimeFieldTest {
 
     /**
      * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParse() throws SQLException {
-        final Calendar calendar = new GregorianCalendar(1, 0, 0);
+    public void testParse() {
+        final Calendar calendar = new GregorianCalendar(1, Calendar.JANUARY, 0);
         calendar.add(Calendar.MILLISECOND, 30000);
         final Time time = new Time(calendar.getTimeInMillis());
 
         final TimeField field = new TimeField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, 0x75, 0x30});
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid time value.", time, value.getTime());
+        final Object value = field.parse(null, buffer, null);
+        Assert.assertEquals("Invalid time value.", time, value);
     }
 
     /**
      * Test for null time.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParseNull() throws SQLException {
+    public void testParseNull() {
         final TimeField field = new TimeField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, 0, 0});
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertNull("Invalid time value.", value.getTime());
+        final Object value = field.parse(null, buffer, null);
+        Assert.assertNull("Invalid time value.", value);
     }
 
     /**

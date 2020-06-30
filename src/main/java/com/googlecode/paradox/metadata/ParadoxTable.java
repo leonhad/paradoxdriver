@@ -18,14 +18,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Stores a table data file.
  *
- * @author Leonardo Alves da Costa
- * @version 1.4
+ * @author Leonardo Costa
+ * @version 1.5
  * @since 1.0
  */
 public final class ParadoxTable extends ParadoxDataFile {
@@ -81,11 +79,12 @@ public final class ParadoxTable extends ParadoxDataFile {
      *
      * @return the primary keys list.
      */
-    public List<ParadoxField> getPrimaryKeys() {
-        final ArrayList<ParadoxField> ret = new ArrayList<>();
-        for (int loop = 0; loop < this.getPrimaryFieldCount(); loop++) {
-            ret.add(this.getFields().get(loop));
+    public ParadoxField[] getPrimaryKeys() {
+        final ParadoxField[] ret = new ParadoxField[this.getPrimaryFieldCount()];
+        if (this.getPrimaryFieldCount() >= 0) {
+            System.arraycopy(this.getFields(), 0, ret, 0, this.getPrimaryFieldCount());
         }
+
         return ret;
     }
 }

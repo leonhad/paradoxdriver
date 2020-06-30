@@ -76,7 +76,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testAbsoluteEmpty() {
         final List<Column> columns = new ArrayList<>();
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertTrue("Invalid absolute value.", rs.absolute(0));
@@ -90,7 +90,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testAbsoluteInvalidRow() {
         final List<Column> columns = new ArrayList<>();
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
@@ -104,7 +104,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testAbsoluteLowRowValue() {
         final List<Column> columns = new ArrayList<>();
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
@@ -119,9 +119,7 @@ public class ParadoxResultSetTest {
     public void testAbsoluteNegativeRowValue() {
         final List<Column> columns = Collections.singletonList(
                 new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType())));
-        final List<FieldValue[]> values = Collections.singletonList(new FieldValue[]{
-                new FieldValue("Test", Types.VARCHAR)
-        });
+        final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
@@ -135,9 +133,7 @@ public class ParadoxResultSetTest {
     public void testAfterLast() {
         final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType());
         final List<Column> columns = Collections.singletonList(new Column(field));
-        final List<FieldValue[]> values = Collections.singletonList(new FieldValue[]{
-                new FieldValue("Test", Types.VARCHAR)
-        });
+        final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             rs.afterLast();

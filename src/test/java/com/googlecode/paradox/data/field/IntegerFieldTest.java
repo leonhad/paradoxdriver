@@ -14,13 +14,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link IntegerField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class IntegerFieldTest {
@@ -35,22 +34,20 @@ public class IntegerFieldTest {
 
     /**
      * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParse() throws SQLException {
+    public void testParse() {
         final IntegerField field = new IntegerField();
 
         // Test positive numbers
         ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x87, (byte) 0xE1});
-        FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", 2017, value.getNumber());
+        Object value = field.parse(null, buffer, null);
+        Assert.assertEquals("Invalid number value.", 2017, value);
 
         // Test negative numbers
         buffer = ByteBuffer.wrap(new byte[]{(byte) 0x40, (byte) 0x59});
         value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", -16295, value.getNumber());
+        Assert.assertEquals("Invalid number value.", -16295, value);
     }
 
     /**

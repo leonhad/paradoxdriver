@@ -34,7 +34,7 @@ import java.util.List;
  * Creates an database metadata.
  *
  * @author Leonardo Alves da Costa
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
@@ -193,8 +193,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
     }
 
-    private static void getPrimaryKeyIndex(String catalog, List<Object[]> values, Object fieldZero,
-                                           File currentSchema, ParadoxTable table) {
+    private static void getPrimaryKeyIndex(String catalog, List<Object[]> values, File currentSchema,
+                                           ParadoxTable table) {
         for (final ParadoxField pk : table.getPrimaryKeys()) {
             final Object[] row = new Object[]{
                     catalog,
@@ -207,8 +207,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     pk.getOrderNum() - 1,
                     pk.getName(),
                     "A",
-                    fieldZero,
-                    fieldZero,
+                    0,
+                    0,
                     null
             };
 
@@ -501,8 +501,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
-                getPrimaryKeyIndex(catalog, values, 0, currentSchema, table);
-                getSecondaryIndexInfo(catalog, table, values, 0, currentSchema);
+                getPrimaryKeyIndex(catalog, values, currentSchema, table);
+                getSecondaryIndexInfo(catalog, table, values, currentSchema);
             }
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
@@ -692,11 +692,11 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return "AVERAGE,SUM";
     }
 
-    private void getSecondaryIndexInfo(String catalog, ParadoxTable table, List<Object[]> values,
-                                       Object fieldZero, File currentSchema) throws SQLException {
+    private void getSecondaryIndexInfo(String catalog, ParadoxTable table, List<Object[]> values, File currentSchema)
+            throws SQLException {
         for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, table.getName(), this.conn)) {
             for (int loop = 0; loop < index.getFieldCount() - index.getPrimaryFieldCount(); loop++) {
-                final ParadoxField field = index.getFields().get(0);
+                final ParadoxField field = index.getFields()[0];
                 final Object[] row = new Object[]{
                         catalog,
                         currentSchema.getName(),
@@ -708,8 +708,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         field.getOrderNum() - 1,
                         field.getName(),
                         index.getOrder(),
-                        fieldZero,
-                        fieldZero,
+                        0,
+                        0,
                         null
                 };
 
@@ -1852,7 +1852,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     private void fieldMetadata(final String catalog, final String schema, final String columnNamePattern,
                                final List<Object[]> values,
-                               final String tableName, final List<ParadoxField> fields) throws SQLException {
+                               final String tableName, final ParadoxField[] fields) throws SQLException {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
             if ((columnNamePattern != null) && !Expressions.accept(conn, field.getName(), columnNamePattern)) {
@@ -1882,7 +1882,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(field.getPrecision());
             // Number precision radix.
             row.add(DEFAULT_NUMBER_RADIX);
-            // Nullabble.
+            // Nullable.
             row.add(DatabaseMetaData.columnNullableUnknown);
             // Column remarks.
             row.add(null);
@@ -1892,7 +1892,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(field.getSqlType());
             // Subtype code for datetime and SQL-92 interval data types. For other data types, this column returns NULL.
             row.add(null);
-            // Column type in byte octects.
+            // Column type in byte octets.
             row.add(field.getSize());
             // Ordinal position.
             row.add(ordinal);

@@ -14,13 +14,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link AutoIncrementField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.1
  * @since 1.3
  */
 public class AutoIncrementFieldTest {
@@ -36,15 +35,13 @@ public class AutoIncrementFieldTest {
 
     /**
      * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParse() throws SQLException {
+    public void testParse() {
         final AutoIncrementField field = new AutoIncrementField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, 1, 0});
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number.", 256, value.getNumber());
+        final Object value = field.parse(null, buffer, null);
+        Assert.assertEquals("Invalid number.", 256, value);
     }
 
     /**

@@ -14,13 +14,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link BooleanField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.3
  */
 public class BooleanFieldTest {
@@ -35,41 +34,35 @@ public class BooleanFieldTest {
 
     /**
      * Test for parse false value.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParseFalse() throws SQLException {
+    public void testParseFalse() {
         final BooleanField field = new BooleanField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{-128});
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertFalse("Invalid boolean value.", value.getBoolean());
+        final Boolean value = field.parse(null, buffer, null);
+        Assert.assertFalse("Invalid boolean value.", value);
     }
 
     /**
      * Test for parse null value.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParseNull() throws SQLException {
+    public void testParseNull() {
         final BooleanField field = new BooleanField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0});
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertNull("Invalid boolean value.", value.getBoolean());
+        final Boolean value = field.parse(null, buffer, null);
+        Assert.assertNull("Invalid boolean value.", value);
     }
 
     /**
      * Test for parse true value.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParseTrue() throws SQLException {
+    public void testParseTrue() {
         final BooleanField field = new BooleanField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{-127});
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertTrue("Invalid boolean value.", value.getBoolean());
+        final Boolean value = field.parse(null, buffer, null);
+        Assert.assertTrue("Invalid boolean value.", value);
     }
 
     /**

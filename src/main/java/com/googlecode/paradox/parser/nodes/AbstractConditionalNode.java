@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -52,11 +53,11 @@ public abstract class AbstractConditionalNode extends SQLNode {
 
     public abstract boolean evaluate(final Object[] row, final ValuesComparator comparator);
 
-    public void setFieldIndexes(final List<Object> row, final List<PlanTableNode> tables) throws SQLException {
-        getIndex(field, row, tables);
+    public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
+        getIndex(field, columns, tables);
     }
 
-    protected void getIndex(final FieldNode field, final List<Object> row, final List<PlanTableNode> tables)
+    protected void getIndex(final FieldNode field, final List<Column> columns, final List<PlanTableNode> tables)
             throws SQLException {
 
         // Do not set indexes in value nodes.
@@ -70,15 +71,15 @@ public abstract class AbstractConditionalNode extends SQLNode {
                 .findFirst().orElse(field.getTableName());
 
         int index = -1;
-        for (int i = 0; i < row.size(); i++) {
-            final Object value = row.get(i);
+        for (int i = 0; i < columns.size(); i++) {
+            final Column column = columns.get(i);
 
             // Invalid table name.
-            if (tableName != null && !tableName.equalsIgnoreCase(value.getField().getTable().getName())) {
+            if (tableName != null && !tableName.equalsIgnoreCase(column.getField().getTable().getName())) {
                 continue;
             }
 
-            if (value.getField().getName().equalsIgnoreCase(field.getName())) {
+            if (column.getField().getName().equalsIgnoreCase(field.getName())) {
                 if (index != -1) {
                     throw new SQLException("Column " + field + " ambiguous defined.");
                 }

@@ -14,13 +14,16 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * Unit test for {@link NumberField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.3
  */
 public class NumberFieldTest {
@@ -51,17 +54,16 @@ public class NumberFieldTest {
 
     /**
      * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParse() throws SQLException {
+    public void testParse() {
         final NumberField field = new NumberField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{
                 (byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0}
         );
-        final FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Different values.", 100.5d, value.getNumber().doubleValue(), 0);
+        final Double value = field.parse(null, buffer, null);
+        Assert.assertNotNull("Invalid value.", value);
+        Assert.assertEquals("Different values.", 100.5d, value, 0);
     }
 
     /**

@@ -15,8 +15,6 @@ import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Defines the paradox default file structure.
@@ -38,7 +36,7 @@ public class ParadoxDataFile {
     /**
      * Fields in this file.
      */
-    protected List<ParadoxField> fields = new ArrayList<>();
+    protected ParadoxField[] fields;
     /**
      * The field with auto increment value.
      */
@@ -224,7 +222,7 @@ public class ParadoxDataFile {
      *
      * @return the field list.
      */
-    public final List<ParadoxField> getFields() {
+    public final ParadoxField[] getFields() {
         return this.fields;
     }
 
@@ -233,7 +231,7 @@ public class ParadoxDataFile {
      *
      * @param fields the field list.
      */
-    public final void setFields(final List<ParadoxField> fields) {
+    public final void setFields(final ParadoxField[] fields) {
         this.fields = fields;
     }
 

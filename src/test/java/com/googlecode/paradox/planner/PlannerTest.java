@@ -28,7 +28,7 @@ import java.sql.SQLFeatureNotSupportedException;
  * Unit test for {@link Planner}.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public class PlannerTest {
@@ -189,9 +189,9 @@ public class PlannerTest {
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute(conn);
         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
-        Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0)[0].getValue());
-        Assert.assertEquals("Test the result value.", "315", plan.getValues().get(1)[0].getValue());
-        Assert.assertEquals("Test the result value.", "917", plan.getValues().get(2)[0].getValue());
+        Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0)[0]);
+        Assert.assertEquals("Test the result value.", "315", plan.getValues().get(1)[0]);
+        Assert.assertEquals("Test the result value.", "917", plan.getValues().get(2)[0]);
     }
 
     /**
@@ -245,9 +245,9 @@ public class PlannerTest {
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute(conn);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
-        Assert.assertEquals("Field expected", "AC", plan.getValues().get(0)[0].getField().getName());
-        Assert.assertEquals("Field expected", "State", plan.getValues().get(0)[1].getField().getName());
-        Assert.assertEquals("Field expected", "Cities", plan.getValues().get(0)[2].getField().getName());
+        Assert.assertEquals("Field expected", "AC", plan.getColumns().get(0).getField().getName());
+        Assert.assertEquals("Field expected", "State", plan.getColumns().get(1).getField().getName());
+        Assert.assertEquals("Field expected", "Cities", plan.getColumns().get(2).getField().getName());
     }
 
 }

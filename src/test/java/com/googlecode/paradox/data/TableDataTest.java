@@ -20,14 +20,13 @@ import org.junit.*;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Unit test for {@link TableData}.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @author Leonardo Costa
+ * @version 1.2
  * @since 1.0
  */
 public class TableDataTest {
@@ -93,7 +92,7 @@ public class TableDataTest {
         Assert.assertNotNull("List tables is null", tables);
         Assert.assertFalse("List tables is empty", tables.isEmpty());
         final ParadoxTable table = tables.get(0);
-        final List<List<FieldValue>> data = TableData.loadData(table, table.getFields());
+        final List<Object[]> data = TableData.loadData(table, table.getFields());
         Assert.assertEquals("Error in load areacodes.db table.", table.getRowCount(), data.size());
     }
 
@@ -105,8 +104,7 @@ public class TableDataTest {
     @Test
     public void testLoadContacts() throws SQLException {
         final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "contacts.db", this.conn).get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<>();
-        fields.add(table.getFields().get(0));
+        final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading contacts.db table data.", TableData.loadData(table, fields));
     }
 
@@ -118,8 +116,7 @@ public class TableDataTest {
     @Test
     public void testLoadCustomer() throws SQLException {
         final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "customer.db", this.conn).get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<>();
-        fields.add(table.getFields().get(0));
+        final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading customer.db table data.", TableData.loadData(table, fields));
     }
 
@@ -142,8 +139,7 @@ public class TableDataTest {
     @Test
     public void testLoadOrders() throws SQLException {
         final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "orders.db", this.conn).get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<>();
-        fields.add(table.getFields().get(0));
+        final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading table data.", TableData.loadData(table, fields));
     }
 
@@ -155,8 +151,7 @@ public class TableDataTest {
     @Test
     public void testLoadServer() throws SQLException {
         final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "server.db", this.conn).get(0);
-        final ArrayList<ParadoxField> fields = new ArrayList<>();
-        fields.add(table.getFields().get(0));
+        final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading table data.", TableData.loadData(table, fields));
     }
 

@@ -25,7 +25,7 @@ import java.sql.Statement;
  * Unit test for {@link LongField} class.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class LongFieldTest {
@@ -76,22 +76,20 @@ public class LongFieldTest {
 
     /**
      * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParse() throws SQLException {
+    public void testParse() {
         final LongField field = new LongField();
 
         // Test positive values
         ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00});
-        FieldValue value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", 256L, value.getNumber());
+        Object value = field.parse(null, buffer, null);
+        Assert.assertEquals("Invalid number value.", 256L, value);
 
         // Test negative values
         buffer = ByteBuffer.wrap(new byte[]{(byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00});
         value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", -256L, value.getNumber());
+        Assert.assertEquals("Invalid number value.", -256L, value);
     }
 
     /**

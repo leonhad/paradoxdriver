@@ -534,7 +534,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public int getFetchDirection() throws SQLException {
+    public int getFetchDirection() {
         return ResultSet.FETCH_FORWARD;
     }
 

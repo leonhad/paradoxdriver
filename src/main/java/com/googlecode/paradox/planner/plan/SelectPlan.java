@@ -22,10 +22,7 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -66,38 +63,18 @@ public final class SelectPlan implements Plan {
         this.condition = condition;
     }
 
-    /**
-     * Add column from select list.
-     *
-     * @param node SQL node with column attributes.
-     * @throws SQLException search column exception.
-     */
-    public void addColumn(final FieldNode node) throws SQLException {
-        List<ParadoxField> fields = Collections.emptyList();
-
-        for (final PlanTableNode table : this.tables) {
-            if (node.getTableName() == null || table.isThis(node.getTableName())) {
-                fields = table.getTable().getFields().stream()
-                        .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                        .collect(Collectors.toList());
-                if (!fields.isEmpty()) {
-                    break;
+    private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
+                                             final AbstractConditionalNode condition) {
+        if (condition != null) {
+            final Set<FieldNode> fields = condition.getClauseFields();
+            fields.forEach((FieldNode node) -> {
+                if (table.isThis(node.getTableName())) {
+                    Arrays.stream(table.getTable().getFields())
+                            .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
+                            .map(Column::new).forEach(columnsToLoad::add);
                 }
-            }
+            });
         }
-
-        if (fields.isEmpty()) {
-            throw new SQLException(String.format("Invalid column name: '%s'", node.toString()),
-                    SQLStates.INVALID_COLUMN.getValue());
-        } else if (fields.size() > 1) {
-            throw new SQLException(String.format("Column '%s' ambiguous defined.", node.toString()),
-                    SQLStates.INVALID_COLUMN.getValue());
-        }
-
-        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
-            c.setName(node.getAlias());
-            this.columns.add(c);
-        });
     }
 
     /**
@@ -132,6 +109,40 @@ public final class SelectPlan implements Plan {
     }
 
     /**
+     * Add column from select list.
+     *
+     * @param node SQL node with column attributes.
+     * @throws SQLException search column exception.
+     */
+    public void addColumn(final FieldNode node) throws SQLException {
+        List<ParadoxField> fields = Collections.emptyList();
+
+        for (final PlanTableNode table : this.tables) {
+            if (node.getTableName() == null || table.isThis(node.getTableName())) {
+                fields = Arrays.stream(table.getTable().getFields())
+                        .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
+                        .collect(Collectors.toList());
+                if (!fields.isEmpty()) {
+                    break;
+                }
+            }
+        }
+
+        if (fields.isEmpty()) {
+            throw new SQLException(String.format("Invalid column name: '%s'", node.toString()),
+                    SQLStates.INVALID_COLUMN.getValue());
+        } else if (fields.size() > 1) {
+            throw new SQLException(String.format("Column '%s' ambiguous defined.", node.toString()),
+                    SQLStates.INVALID_COLUMN.getValue());
+        }
+
+        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
+            c.setName(node.getAlias());
+            this.columns.add(c);
+        });
+    }
+
+    /**
      * {@inheritDoc}.
      */
     @Override
@@ -140,7 +151,8 @@ public final class SelectPlan implements Plan {
             return;
         }
 
-        final List<List<List<Object>>> rawData = new ArrayList<>();
+        final List<Column> columnsLoaded = new ArrayList<>();
+        final List<List<Object[]>> rawData = new ArrayList<>();
         for (final PlanTableNode table : this.tables) {
             // From columns in SELECT clause.
             final Set<Column> columnsToLoad =
@@ -157,8 +169,10 @@ public final class SelectPlan implements Plan {
 
             // If there is a column to load.
             if (!columnsToLoad.isEmpty()) {
-                final List<List<Object>> tableData = TableData.loadData(table.getTable(),
-                        columnsToLoad.stream().map(Column::getField).collect(Collectors.toList()));
+                columnsLoaded.addAll(columnsToLoad);
+
+                final List<Object[]> tableData = TableData.loadData(table.getTable(),
+                        columnsToLoad.stream().map(Column::getField).toArray(ParadoxField[]::new));
 
                 rawData.add(tableData);
             }
@@ -169,50 +183,35 @@ public final class SelectPlan implements Plan {
             return;
         }
 
-        final List<Object> firstLine = extractFirstLine(rawData);
-        setIndexes(firstLine);
+        setIndexes(columnsLoaded);
 
         // Find column indexes.
-        final int[] mapColumns = mapColumnIndexes(firstLine);
-        final Object[] row = new Object[firstLine.size()];
+        final int[] mapColumns = mapColumnIndexes(columnsLoaded);
+        final Object[] row = new Object[columnsLoaded.size()];
         final ValuesComparator comparator = new ValuesComparator(connection);
         filter(rawData, 0, row, 0, mapColumns, comparator);
     }
 
-    private void setIndexes(List<Object> firstLine) throws SQLException {
+    private void setIndexes(List<Column> columns) throws SQLException {
         // Set conditional indexes.
         if (this.condition != null) {
-            this.condition.setFieldIndexes(firstLine, tables);
+            this.condition.setFieldIndexes(columns, tables);
         }
 
         // Set table join indexes.
         for (final PlanTableNode table : this.tables) {
             if (table.getConditionalJoin() != null) {
-                table.getConditionalJoin().setFieldIndexes(firstLine, tables);
+                table.getConditionalJoin().setFieldIndexes(columns, tables);
             }
         }
     }
 
-    private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
-                                             final AbstractConditionalNode condition) {
-        if (condition != null) {
-            final Set<FieldNode> fields = condition.getClauseFields();
-            fields.forEach((FieldNode node) -> {
-                if (table.isThis(node.getTableName())) {
-                    table.getTable().getFields().stream()
-                            .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                            .map(Column::new).forEach(columnsToLoad::add);
-                }
-            });
-        }
-    }
-
-    private int[] mapColumnIndexes(List<Object> firstLine) {
+    private int[] mapColumnIndexes(final List<Column> loadedColumns) {
         final int[] mapColumns = new int[this.columns.size()];
         for (int i = 0; i < this.columns.size(); i++) {
             final Column column = this.columns.get(i);
-            for (int loop = 0; loop < firstLine.size(); loop++) {
-                if (firstLine.get(loop).getField().equals(column.getField())) {
+            for (int loop = 0; loop < loadedColumns.size(); loop++) {
+                if (loadedColumns.get(loop).getField().equals(column.getField())) {
                     mapColumns[i] = loop;
                     break;
                 }
@@ -222,25 +221,14 @@ public final class SelectPlan implements Plan {
         return mapColumns;
     }
 
-    private static List<Object> extractFirstLine(List<List<List<Object>>> rawData) {
-        final List<Object> firstLine = new ArrayList<>(1);
-        for (final List<List<Object>> tableValues : rawData) {
-            firstLine.addAll(tableValues.get(0));
-        }
-
-        return firstLine;
-    }
-
-    private void filter(final List<List<List<Object>>> tables, final int tableIndex, final Object[] row,
+    private void filter(final List<List<Object[]>> tables, final int tableIndex, final Object[] row,
                         final int rowIndex, final int[] mapColumns, final ValuesComparator comparator) {
 
-        List<List<Object>> rowValues = tables.get(tableIndex);
+        List<Object[]> rowValues = tables.get(tableIndex);
         mainLoop:
-        for (final List<Object> tableRow : rowValues) {
+        for (final Object[] tableRow : rowValues) {
             // Fill row.
-            for (int loop = 0; loop < tableRow.size(); loop++) {
-                row[rowIndex + loop] = tableRow.get(loop);
-            }
+            System.arraycopy(tableRow, 0, row, rowIndex, tableRow.length);
 
             // Last table?
             if (tableIndex + 1 == tables.size()) {
@@ -265,7 +253,7 @@ public final class SelectPlan implements Plan {
                 this.values.add(finalRow);
             } else {
                 // There is more tables.
-                filter(tables, tableIndex + 1, row, rowIndex + tableRow.size(), mapColumns, comparator);
+                filter(tables, tableIndex + 1, row, rowIndex + tableRow.length, mapColumns, comparator);
             }
         }
     }
