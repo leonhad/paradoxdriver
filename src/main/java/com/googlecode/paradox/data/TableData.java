@@ -316,26 +316,26 @@ public final class TableData extends ParadoxData {
                                     final ByteBuffer buffer) throws SQLException {
         final Object[] row = new Object[fields.length];
 
-        int index = 0;
         for (final ParadoxField field : table.getFields()) {
             // Field filter
-            if (contains(fields, field)) {
+            final int index = search(fields, field);
+            if (index != -1) {
                 row[index] = FieldFactory.parse(table, buffer, field);
-                index++;
             } else {
                 buffer.position(buffer.position() + field.getSize());
             }
         }
+        
         return row;
     }
 
-    private static boolean contains(final Object[] values, Object find) {
-        for (final Object value : values) {
-            if (Objects.equals(value, find)) {
-                return true;
+    private static int search(final Object[] values, Object find) {
+        for (int i = 0; i < values.length; i++) {
+            if (Objects.equals(values[i], find)) {
+                return i;
             }
         }
 
-        return false;
+        return -1;
     }
 }
