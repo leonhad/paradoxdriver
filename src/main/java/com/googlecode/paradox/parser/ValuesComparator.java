@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author Leonardo Costa
  * @version 1.1
- * @since 1.5.1
+ * @since 1.6.0
  */
 public class ValuesComparator implements Comparator<Object>, Serializable {
 

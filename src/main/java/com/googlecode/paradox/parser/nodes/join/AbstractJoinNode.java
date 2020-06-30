@@ -26,7 +26,7 @@ import java.util.Set;
  *
  * @author Leonardo Costa
  * @version 1.2
- * @since 1.5.1
+ * @since 1.6.0
  */
 public abstract class AbstractJoinNode extends AbstractConditionalNode {
 
