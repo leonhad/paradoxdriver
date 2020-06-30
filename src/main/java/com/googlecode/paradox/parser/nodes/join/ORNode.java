@@ -11,7 +11,6 @@
 package com.googlecode.paradox.parser.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -20,7 +19,7 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
  * Store the OR node.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public class ORNode extends AbstractJoinNode {
@@ -36,7 +35,7 @@ public class ORNode extends AbstractJoinNode {
     }
 
     @Override
-    public boolean evaluate(final FieldValue[] row, final ValuesComparator comparator) {
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         for (final SQLNode node : childhood) {
             final AbstractConditionalNode comparisonNode = (AbstractConditionalNode) node;
             if (comparisonNode.evaluate(row, comparator)) {

@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -22,12 +21,10 @@ import java.nio.ByteBuffer;
  * Parses the numeric fields.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public final class NumberField implements FieldParser {
-
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.NUMBER.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -41,7 +38,7 @@ public final class NumberField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long value = buffer.getLong();
         if ((value & 0x8000_0000_0000_0000L) != 0) {
             value &= 0x7FFF_FFFF_FFFF_FFFFL;
@@ -52,8 +49,9 @@ public final class NumberField implements FieldParser {
         double v = Double.longBitsToDouble(value);
 
         if (Double.isNaN(v)) {
-            return NULL;
+            return null;
         }
-        return new FieldValue(v, ParadoxFieldType.NUMBER.getSQLType());
+
+        return v;
     }
 }

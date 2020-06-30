@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -22,7 +21,7 @@ import java.nio.ByteBuffer;
  * Parses auto increment fields.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class AutoIncrementField implements FieldParser {
@@ -39,8 +38,7 @@ public final class AutoIncrementField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
-        final int v = buffer.getInt() & 0x0FFF_FFFF;
-        return new FieldValue(v, ParadoxFieldType.AUTO_INCREMENT.getSQLType());
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+        return buffer.getInt() & 0x0FFF_FFFF;
     }
 }

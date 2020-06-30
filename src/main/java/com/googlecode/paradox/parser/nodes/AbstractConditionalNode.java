@@ -11,7 +11,6 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
@@ -51,13 +50,13 @@ public abstract class AbstractConditionalNode extends SQLNode {
         this(connection, name, null);
     }
 
-    public abstract boolean evaluate(final FieldValue[] row, final ValuesComparator comparator);
+    public abstract boolean evaluate(final Object[] row, final ValuesComparator comparator);
 
-    public void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables) throws SQLException {
+    public void setFieldIndexes(final List<Object> row, final List<PlanTableNode> tables) throws SQLException {
         getIndex(field, row, tables);
     }
 
-    protected void getIndex(final FieldNode field, final List<FieldValue> row, final List<PlanTableNode> tables)
+    protected void getIndex(final FieldNode field, final List<Object> row, final List<PlanTableNode> tables)
             throws SQLException {
 
         // Do not set indexes in value nodes.
@@ -72,7 +71,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
 
         int index = -1;
         for (int i = 0; i < row.size(); i++) {
-            final FieldValue value = row.get(i);
+            final Object value = row.get(i);
 
             // Invalid table name.
             if (tableName != null && !tableName.equalsIgnoreCase(value.getField().getTable().getName())) {
@@ -94,13 +93,13 @@ public abstract class AbstractConditionalNode extends SQLNode {
         field.setIndex(index);
     }
 
-    protected Object getValue(final FieldValue[] row, final FieldNode field) {
+    protected Object getValue(final Object[] row, final FieldNode field) {
         if (field.getIndex() == -1) {
             // Not a table field.
             return field.getName();
         }
 
-        return row[field.getIndex()].getValue();
+        return row[field.getIndex()];
     }
 
     @Override

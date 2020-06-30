@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -28,7 +27,7 @@ import java.util.Arrays;
  * Parses LOB fields.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
@@ -47,15 +46,13 @@ public abstract class AbstractLobField implements FieldParser {
      */
     private static final int SUB_BLOCK = 3;
 
-    protected abstract FieldValue getNull();
-
-    protected abstract FieldValue getValue(final ParadoxTable table, final ByteBuffer value);
+    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value);
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException {
         final ByteBuffer value = ByteBuffer.allocate(field.getRealSize());
 
@@ -81,7 +78,7 @@ public abstract class AbstractLobField implements FieldParser {
 
         buffer.order(ByteOrder.BIG_ENDIAN);
         if (size <= 0) {
-            return getNull();
+            return null;
         } else if (size <= leader) {
             byte[] currentValue = Arrays.copyOf(value.array(), size);
             return getValue(table, ByteBuffer.wrap(currentValue));
@@ -118,8 +115,8 @@ public abstract class AbstractLobField implements FieldParser {
         }
     }
 
-    private FieldValue parseSubBlock(final ParadoxTable table, final int index, final long offset, final int size,
-                                     final int headerSize, final FileChannel channel) throws IOException, SQLException {
+    private Object parseSubBlock(final ParadoxTable table, final int index, final long offset, final int size,
+                                 final int headerSize, final FileChannel channel) throws IOException, SQLException {
         channel.position(channel.position() + headerSize);
 
         channel.position(offset + 12 + index * 5);
@@ -150,7 +147,7 @@ public abstract class AbstractLobField implements FieldParser {
         return getValue(table, blocks);
     }
 
-    private FieldValue parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, FileChannel channel)
+    private Object parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, FileChannel channel)
             throws SQLException, IOException {
         if (index != 0xFF) {
             throw new SQLException("Offset points to a single blob block but index field is not 0xFF.");

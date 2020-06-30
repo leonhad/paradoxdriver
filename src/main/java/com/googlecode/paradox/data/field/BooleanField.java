@@ -11,29 +11,23 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
-import java.sql.Types;
 
 /**
  * Parses boolean fields.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class BooleanField implements FieldParser {
 
     private static final int TRUE_VALUE = -127;
     private static final int FALSE_VALUE = -128;
-
-    private static final FieldValue NULL = new FieldValue(Types.BOOLEAN);
-    private static final FieldValue TRUE = new FieldValue(Boolean.TRUE, ParadoxFieldType.BOOLEAN.getSQLType());
-    private static final FieldValue FALSE = new FieldValue(Boolean.FALSE, ParadoxFieldType.BOOLEAN.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -47,13 +41,13 @@ public final class BooleanField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Boolean parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final byte v = buffer.get();
-        FieldValue ret = NULL;
+        Boolean ret = null;
         if (v == TRUE_VALUE) {
-            ret = TRUE;
+            ret = Boolean.TRUE;
         } else if (v == FALSE_VALUE) {
-            ret = FALSE;
+            ret = Boolean.FALSE;
         }
 
         return ret;

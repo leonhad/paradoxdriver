@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ParadoxBlob;
@@ -35,7 +34,7 @@ import java.util.Map;
  * JDBC ResultSet implementation.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class ParadoxResultSet implements ResultSet {
@@ -67,7 +66,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Last got value.
      */
-    private FieldValue lastValue;
+    private Object lastValue;
     /**
      * Row position.
      */
@@ -79,7 +78,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * The list of all {@link ResultSet} rows.
      */
-    private final List<FieldValue[]> values;
+    private final List<Object[]> values;
 
     /**
      * Creates a new {@link ResultSet}.
@@ -90,7 +89,7 @@ public final class ParadoxResultSet implements ResultSet {
      * @param columns   the columns name.
      */
     public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
-                            final List<FieldValue[]> values, final List<Column> columns) {
+                            final List<Object[]> values, final List<Column> columns) {
         this.statement = statement;
         this.values = values;
         this.columns = columns;
@@ -334,13 +333,13 @@ public final class ParadoxResultSet implements ResultSet {
     public boolean getBoolean(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if (!this.lastValue.isNull()) {
-            return this.lastValue.getBoolean();
+        if (this.lastValue != null) {
+            return (Boolean) this.lastValue;
         }
         return false;
     }
@@ -360,15 +359,15 @@ public final class ParadoxResultSet implements ResultSet {
     public byte getByte(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if (this.lastValue.isNull()) {
+        if (this.lastValue == null) {
             return (byte) 0;
         }
-        return this.lastValue.getNumber().byteValue();
+        return ((Number) this.lastValue).byteValue();
     }
 
     /**
@@ -473,12 +472,12 @@ public final class ParadoxResultSet implements ResultSet {
     public Date getDate(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        return this.lastValue.getDate();
+        return (Date) this.lastValue;
     }
 
     /**
@@ -512,15 +511,15 @@ public final class ParadoxResultSet implements ResultSet {
     public double getDouble(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if (this.lastValue.isNull()) {
+        if (this.lastValue == null) {
             return 0D;
         }
-        return this.lastValue.getNumber().doubleValue();
+        return ((Number) this.lastValue).doubleValue();
     }
 
     /**
@@ -554,15 +553,15 @@ public final class ParadoxResultSet implements ResultSet {
     public float getFloat(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if (this.lastValue.isNull()) {
+        if (this.lastValue == null) {
             return 0F;
         }
-        return this.lastValue.getNumber().floatValue();
+        return ((Number) this.lastValue).floatValue();
     }
 
     /**
@@ -588,15 +587,15 @@ public final class ParadoxResultSet implements ResultSet {
     public int getInt(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if (this.lastValue.isNull()) {
+        if (this.lastValue == null) {
             return 0;
         }
-        return this.lastValue.getNumber().intValue();
+        return ((Number) this.lastValue).intValue();
     }
 
     /**
@@ -614,15 +613,15 @@ public final class ParadoxResultSet implements ResultSet {
     public long getLong(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if (this.lastValue.isNull()) {
+        if (this.lastValue == null) {
             return 0L;
         }
-        return this.lastValue.getNumber().longValue();
+        return ((Number) this.lastValue).longValue();
     }
 
     /**
@@ -696,12 +695,12 @@ public final class ParadoxResultSet implements ResultSet {
     public Object getObject(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        return this.lastValue.getValue();
+        return this.lastValue;
     }
 
     /**
@@ -793,15 +792,15 @@ public final class ParadoxResultSet implements ResultSet {
     public short getShort(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if (this.lastValue.isNull()) {
+        if (this.lastValue == null) {
             return (short) 0;
         }
-        return this.lastValue.getNumber().shortValue();
+        return ((Number) this.lastValue).shortValue();
     }
 
     /**
@@ -843,13 +842,13 @@ public final class ParadoxResultSet implements ResultSet {
     public String getString(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        if ((this.lastValue != null) && (this.lastValue.getValue() != null)) {
-            return this.lastValue.getValue().toString();
+        if (this.lastValue != null) {
+            return this.lastValue.toString();
         }
 
         return null;
@@ -870,13 +869,12 @@ public final class ParadoxResultSet implements ResultSet {
     public Time getTime(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        this.lastValue = row[columnIndex - 1];
-        return this.lastValue.getTime();
+        return (Time) this.lastValue;
     }
 
     /**
@@ -910,12 +908,12 @@ public final class ParadoxResultSet implements ResultSet {
     public Timestamp getTimestamp(final int columnIndex) throws SQLException {
         this.verifyRow();
 
-        final FieldValue[] row = this.values.get(this.position);
+        final Object[] row = this.values.get(this.position);
         if (columnIndex > row.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
         this.lastValue = row[columnIndex - 1];
-        return this.lastValue.getTimestamp();
+        return (Timestamp) this.lastValue;
     }
 
     /**
@@ -984,15 +982,6 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public URL getURL(final String columnLabel) {
         return null;
-    }
-
-    /**
-     * Gets the all row values.
-     *
-     * @return the row values.
-     */
-    public List<FieldValue[]> getValues() {
-        return this.values;
     }
 
     /**
@@ -1848,7 +1837,7 @@ public final class ParadoxResultSet implements ResultSet {
         if (this.closed) {
             throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
         }
-        return this.lastValue.isNull();
+        return this.lastValue == null;
     }
 
     private boolean hasNext() {

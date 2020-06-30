@@ -11,7 +11,6 @@
 package com.googlecode.paradox.parser.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 
@@ -21,7 +20,7 @@ import java.util.Objects;
  * Store the less than node.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public final class LessThanNode extends AbstractComparableNode {
@@ -38,7 +37,7 @@ public final class LessThanNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final FieldValue[] row, final ValuesComparator comparator) {
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
         return Objects.compare(value1, value2, comparator) == -1;

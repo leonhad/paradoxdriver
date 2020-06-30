@@ -12,7 +12,6 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.ValuesComparator;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
  * Creates a SELECT plan for execution.
  *
  * @author Leonardo Alves da Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -51,7 +50,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private final List<FieldValue[]> values = new ArrayList<>();
+    private final List<Object[]> values = new ArrayList<>();
 
     /**
      * The conditions to filter values
@@ -141,7 +140,7 @@ public final class SelectPlan implements Plan {
             return;
         }
 
-        final List<List<List<FieldValue>>> rawData = new ArrayList<>();
+        final List<List<List<Object>>> rawData = new ArrayList<>();
         for (final PlanTableNode table : this.tables) {
             // From columns in SELECT clause.
             final Set<Column> columnsToLoad =
@@ -158,7 +157,7 @@ public final class SelectPlan implements Plan {
 
             // If there is a column to load.
             if (!columnsToLoad.isEmpty()) {
-                final List<List<FieldValue>> tableData = TableData.loadData(table.getTable(),
+                final List<List<Object>> tableData = TableData.loadData(table.getTable(),
                         columnsToLoad.stream().map(Column::getField).collect(Collectors.toList()));
 
                 rawData.add(tableData);
@@ -170,17 +169,17 @@ public final class SelectPlan implements Plan {
             return;
         }
 
-        final List<FieldValue> firstLine = extractFirstLine(rawData);
+        final List<Object> firstLine = extractFirstLine(rawData);
         setIndexes(firstLine);
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(firstLine);
-        final FieldValue[] row = new FieldValue[firstLine.size()];
+        final Object[] row = new Object[firstLine.size()];
         final ValuesComparator comparator = new ValuesComparator(connection);
         filter(rawData, 0, row, 0, mapColumns, comparator);
     }
 
-    private void setIndexes(List<FieldValue> firstLine) throws SQLException {
+    private void setIndexes(List<Object> firstLine) throws SQLException {
         // Set conditional indexes.
         if (this.condition != null) {
             this.condition.setFieldIndexes(firstLine, tables);
@@ -208,7 +207,7 @@ public final class SelectPlan implements Plan {
         }
     }
 
-    private int[] mapColumnIndexes(List<FieldValue> firstLine) {
+    private int[] mapColumnIndexes(List<Object> firstLine) {
         final int[] mapColumns = new int[this.columns.size()];
         for (int i = 0; i < this.columns.size(); i++) {
             final Column column = this.columns.get(i);
@@ -223,21 +222,21 @@ public final class SelectPlan implements Plan {
         return mapColumns;
     }
 
-    private static List<FieldValue> extractFirstLine(List<List<List<FieldValue>>> rawData) {
-        final List<FieldValue> firstLine = new ArrayList<>(1);
-        for (final List<List<FieldValue>> tableValues : rawData) {
+    private static List<Object> extractFirstLine(List<List<List<Object>>> rawData) {
+        final List<Object> firstLine = new ArrayList<>(1);
+        for (final List<List<Object>> tableValues : rawData) {
             firstLine.addAll(tableValues.get(0));
         }
 
         return firstLine;
     }
 
-    private void filter(final List<List<List<FieldValue>>> tables, final int tableIndex, final FieldValue[] row,
+    private void filter(final List<List<List<Object>>> tables, final int tableIndex, final Object[] row,
                         final int rowIndex, final int[] mapColumns, final ValuesComparator comparator) {
 
-        List<List<FieldValue>> rowValues = tables.get(tableIndex);
+        List<List<Object>> rowValues = tables.get(tableIndex);
         mainLoop:
-        for (final List<FieldValue> tableRow : rowValues) {
+        for (final List<Object> tableRow : rowValues) {
             // Fill row.
             for (int loop = 0; loop < tableRow.size(); loop++) {
                 row[rowIndex + loop] = tableRow.get(loop);
@@ -258,7 +257,7 @@ public final class SelectPlan implements Plan {
                     continue;
                 }
 
-                final FieldValue[] finalRow = new FieldValue[mapColumns.length];
+                final Object[] finalRow = new Object[mapColumns.length];
                 for (int i = 0; i < mapColumns.length; i++) {
                     int index = mapColumns[i];
                     finalRow[i] = row[index];
@@ -294,7 +293,7 @@ public final class SelectPlan implements Plan {
      *
      * @return array of array of values / Can be null (empty result set);
      */
-    public List<FieldValue[]> getValues() {
+    public List<Object[]> getValues() {
         return this.values;
     }
 }

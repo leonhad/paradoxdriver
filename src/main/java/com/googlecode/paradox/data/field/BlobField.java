@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
@@ -20,12 +19,10 @@ import java.nio.ByteBuffer;
  * Parses blob fields.
  *
  * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class BlobField extends AbstractLobField {
-
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.BLOB.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -38,12 +35,7 @@ public final class BlobField extends AbstractLobField {
     }
 
     @Override
-    protected FieldValue getNull() {
-        return NULL;
-    }
-
-    @Override
-    protected FieldValue getValue(final ParadoxTable table, final ByteBuffer value) {
-        return new FieldValue(value.array(), ParadoxFieldType.BLOB.getSQLType());
+    protected Object getValue(final ParadoxTable table, final ByteBuffer value) {
+        return value.array();
     }
 }

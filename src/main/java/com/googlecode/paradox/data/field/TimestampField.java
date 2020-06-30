@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -24,13 +23,11 @@ import java.sql.Timestamp;
  *
  * @author Michael Berry
  * @author Leonardo Costa
- *
- * @version 1.1
+ * @version 1.2
  * @since 1.2
  */
 public final class TimestampField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.TIMESTAMP.getSQLType());
     private static final long MILLIS_UNTIL_1970 = 62_135_683_200_000L;
 
     /**
@@ -45,11 +42,11 @@ public final class TimestampField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         long rawValue = buffer.getLong();
 
         if (rawValue == 0) {
-            return NULL;
+            return null;
         }
 
         if ((rawValue & 0x8000_0000_0000_0000L) != 0) {
@@ -59,6 +56,6 @@ public final class TimestampField implements FieldParser {
         }
         long value = (long) Double.longBitsToDouble(rawValue);
 
-        return new FieldValue(new Timestamp(value - MILLIS_UNTIL_1970), ParadoxFieldType.TIMESTAMP.getSQLType());
+        return new Timestamp(value - MILLIS_UNTIL_1970);
     }
 }

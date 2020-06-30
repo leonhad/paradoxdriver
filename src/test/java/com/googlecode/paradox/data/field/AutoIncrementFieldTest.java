@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.table.value.FieldValue;
 import org.junit.Assert;
 import org.junit.Test;
 

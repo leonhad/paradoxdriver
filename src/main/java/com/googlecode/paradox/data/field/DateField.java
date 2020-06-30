@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -24,12 +23,10 @@ import java.sql.Date;
  * Parses date fields.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class DateField implements FieldParser {
-
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.DATE.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -43,7 +40,7 @@ public final class DateField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final long days = buffer.getInt() & 0x0FFF_FFFFL;
 
         Date date = null;
@@ -51,10 +48,6 @@ public final class DateField implements FieldParser {
             date = DateUtils.sdnToGregorian(days + 1_721_425);
         }
 
-        if (date == null) {
-            return NULL;
-        }
-
-        return new FieldValue(date, ParadoxFieldType.DATE.getSQLType());
+        return date;
     }
 }

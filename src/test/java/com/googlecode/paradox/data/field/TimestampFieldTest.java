@@ -12,15 +12,11 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.integration.MainTest;
 import org.junit.*;
 
-import java.nio.ByteBuffer;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**

@@ -11,7 +11,6 @@
 package com.googlecode.paradox.parser.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -25,7 +24,7 @@ import java.util.Set;
  * Join node common code.
  *
  * @author Leonardo Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.5.1
  */
 public abstract class AbstractJoinNode extends AbstractConditionalNode {
@@ -45,7 +44,7 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
     }
 
     @Override
-    public final void setFieldIndexes(final List<FieldValue> row, final List<PlanTableNode> tables)
+    public final void setFieldIndexes(final List<Object> row, final List<PlanTableNode> tables)
             throws SQLException {
         for (final SQLNode node : childhood) {
             ((AbstractConditionalNode) node).setFieldIndexes(row, tables);

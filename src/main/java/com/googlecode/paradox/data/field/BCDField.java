@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -22,12 +21,11 @@ import java.nio.ByteBuffer;
  * Parses boolean fields.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public final class BCDField implements FieldParser {
 
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.BCD.getSQLType());
     public static final int BCD_SIZE = 17;
     public static final int MAX_DIGITS = 32;
     public static final byte SECOND_BYTE = 4;
@@ -44,14 +42,14 @@ public final class BCDField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final byte[] valueBuffer = new byte[BCD_SIZE];
 
         System.arraycopy(buffer.array(), buffer.position(), valueBuffer, 0, valueBuffer.length);
         buffer.position(buffer.position() + valueBuffer.length);
 
         if (valueBuffer[0] == 0) {
-            return NULL;
+            return null;
         }
 
         boolean negative = (valueBuffer[0] & 0x80) == 0;
@@ -86,8 +84,7 @@ public final class BCDField implements FieldParser {
         if (negative) {
             sb.insert(0, '-');
         }
-        double value = Double.parseDouble(sb.toString());
-        return new FieldValue(value, ParadoxFieldType.BCD.getSQLType());
+        return Double.parseDouble(sb.toString());
     }
 
     private static void removeLeadingZeroes(final StringBuilder builder) {

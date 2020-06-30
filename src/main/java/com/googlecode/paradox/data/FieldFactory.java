@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.data.field.*;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.SQLStates;
@@ -23,7 +22,7 @@ import java.sql.SQLException;
  * Handles field parsers.
  *
  * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public final class FieldFactory {
@@ -63,7 +62,7 @@ public final class FieldFactory {
      * @return the parsed value.
      * @throws SQLException in case of parse errors.
      */
-    public static FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
+    public static Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException {
         for (final FieldParser parser : ALL_PARSES) {
             if (parser.match(field.getType())) {

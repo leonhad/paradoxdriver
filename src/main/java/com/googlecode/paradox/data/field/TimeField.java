@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -25,12 +24,10 @@ import java.util.GregorianCalendar;
  * Parses time fields.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public final class TimeField implements FieldParser {
-
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.TIME.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -44,16 +41,16 @@ public final class TimeField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final long timeInMillis = buffer.getInt() & 0x0FFF_FFFFL;
 
         if (timeInMillis != 0) {
             final Calendar calendar = new GregorianCalendar(1, Calendar.JANUARY, 0);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
             final Time time = new Time(calendar.getTimeInMillis());
-            return new FieldValue(time, ParadoxFieldType.TIME.getSQLType());
+            return time;
         }
 
-        return NULL;
+        return null;
     }
 }

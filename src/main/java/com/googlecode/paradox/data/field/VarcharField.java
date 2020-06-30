@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -22,12 +21,10 @@ import java.nio.ByteBuffer;
  * Parses a VARCHAR field.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public final class VarcharField implements FieldParser {
-
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.VARCHAR.getSQLType());
 
     /**
      * {@inheritDoc}.
@@ -41,7 +38,7 @@ public final class VarcharField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final ByteBuffer valueString = ByteBuffer.allocate(field.getSize());
 
         System.arraycopy(buffer.array(), buffer.position(), valueString.array(), 0, field.getSize());
@@ -61,10 +58,10 @@ public final class VarcharField implements FieldParser {
         final String str = table.getCharset().decode(valueString).toString();
 
         if (str.isEmpty()) {
-            return NULL;
+            return null;
         }
 
-        return new FieldValue(str, ParadoxFieldType.VARCHAR.getSQLType());
+        return str;
     }
 
 }

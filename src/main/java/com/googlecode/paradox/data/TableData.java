@@ -11,7 +11,6 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Constants;
@@ -35,7 +34,7 @@ import java.util.List;
  * Utility class for loading table files.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -101,8 +100,8 @@ public final class TableData extends ParadoxData {
      * @return the row values.
      * @throws SQLException in case of failures.
      */
-    public static List<List<FieldValue>> loadData(final ParadoxTable table,
-                                                  final Collection<ParadoxField> fields)
+    public static List<List<Object>> loadData(final ParadoxTable table,
+                                              final Collection<ParadoxField> fields)
             throws SQLException {
 
         final int blockSize = table.getBlockSizeBytes();
@@ -111,7 +110,7 @@ public final class TableData extends ParadoxData {
 
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
 
-        final List<List<FieldValue>> ret = new ArrayList<>();
+        final List<List<Object>> ret = new ArrayList<>();
         try (final FileInputStream fs = new FileInputStream(table.getFile());
              final FileChannel channel = fs.getChannel()) {
             if (table.getUsedBlocks() == 0) {
@@ -311,16 +310,14 @@ public final class TableData extends ParadoxData {
      * @return the row.
      * @throws SQLException in case of parse errors.
      */
-    private static List<FieldValue> readRow(final ParadoxTable table, final Collection<ParadoxField> fields,
-                                            final ByteBuffer buffer) throws SQLException {
-        final List<FieldValue> row = new ArrayList<>();
+    private static List<Object> readRow(final ParadoxTable table, final Collection<ParadoxField> fields,
+                                        final ByteBuffer buffer) throws SQLException {
+        final List<Object> row = new ArrayList<>();
 
         for (final ParadoxField field : table.getFields()) {
             // Field filter
             if (fields.contains(field)) {
-                final FieldValue fieldValue = FieldFactory.parse(table, buffer, field);
-                fieldValue.setField(field);
-                row.add(fieldValue);
+                row.add(FieldFactory.parse(table, buffer, field));
             } else {
                 buffer.position(buffer.position() + field.getSize());
             }

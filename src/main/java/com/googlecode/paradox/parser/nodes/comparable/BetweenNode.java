@@ -11,7 +11,6 @@
 package com.googlecode.paradox.parser.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 
@@ -58,7 +57,7 @@ public final class BetweenNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final FieldValue[] row, final ValuesComparator comparator) {
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, first);
         final Object value3 = getValue(row, last);

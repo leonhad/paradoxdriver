@@ -23,7 +23,7 @@ import java.sql.Statement;
  * Unit test {@link JoinNode} class.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class JoinNodeTest {

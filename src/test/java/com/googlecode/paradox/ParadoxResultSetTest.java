@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxFieldType;

@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
@@ -25,8 +24,6 @@ import java.nio.ByteBuffer;
  */
 public final class MemoField extends AbstractLobField {
 
-    private static final FieldValue NULL = new FieldValue(ParadoxFieldType.MEMO.getSQLType());
-
     /**
      * {@inheritDoc}.
      */
@@ -37,13 +34,7 @@ public final class MemoField extends AbstractLobField {
     }
 
     @Override
-    protected FieldValue getNull() {
-        return NULL;
-    }
-
-    @Override
-    protected FieldValue getValue(final ParadoxTable table, final ByteBuffer value) {
-        final String strValue = table.getCharset().decode(value).toString();
-        return new FieldValue(strValue, ParadoxFieldType.MEMO.getSQLType());
+    protected Object getValue(final ParadoxTable table, final ByteBuffer value) {
+        return table.getCharset().decode(value).toString();
     }
 }

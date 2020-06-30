@@ -15,7 +15,6 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
-import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 import com.googlecode.paradox.procedures.ProcedureAS;
 import com.googlecode.paradox.results.Column;
@@ -35,7 +34,7 @@ import java.util.List;
  * Creates an database metadata.
  *
  * @author Leonardo Alves da Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
@@ -194,20 +193,20 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
     }
 
-    private static void getPrimaryKeyIndex(String catalog, List<FieldValue[]> values, FieldValue fieldZero,
+    private static void getPrimaryKeyIndex(String catalog, List<Object[]> values, Object fieldZero,
                                            File currentSchema, ParadoxTable table) {
         for (final ParadoxField pk : table.getPrimaryKeys()) {
-            final FieldValue[] row = new FieldValue[]{
-                    new FieldValue(catalog, Types.VARCHAR),
-                    new FieldValue(currentSchema.getName(), Types.VARCHAR),
-                    new FieldValue(table.getName(), Types.VARCHAR),
-                    new FieldValue(Boolean.FALSE, Types.BOOLEAN),
-                    new FieldValue(catalog, Types.VARCHAR),
-                    new FieldValue(table.getName() + ".PX", Types.VARCHAR),
-                    new FieldValue(DatabaseMetaData.tableIndexHashed),
-                    new FieldValue(pk.getOrderNum() - 1, Types.INTEGER),
-                    new FieldValue(pk.getName(), Types.VARCHAR),
-                    new FieldValue("A", Types.VARCHAR),
+            final Object[] row = new Object[]{
+                    catalog,
+                    currentSchema.getName(),
+                    table.getName(),
+                    Boolean.FALSE,
+                    catalog,
+                    table.getName() + ".PX",
+                    DatabaseMetaData.tableIndexHashed,
+                    pk.getOrderNum() - 1,
+                    pk.getName(),
+                    "A",
                     fieldZero,
                     fieldZero,
                     null
@@ -257,19 +256,19 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param type the row type.
      * @return the row.
      */
-    private static FieldValue[] formatRow(final String name, final String type, final String catalog,
-                                          final String schema) {
-        return new FieldValue[]{
-                new FieldValue(catalog, Types.VARCHAR),
-                new FieldValue(schema, Types.VARCHAR),
-                new FieldValue(name, Types.VARCHAR),
-                new FieldValue(type, Types.VARCHAR),
-                new FieldValue(Types.VARCHAR),
-                new FieldValue(Types.VARCHAR),
-                new FieldValue(Types.VARCHAR),
-                new FieldValue(Types.VARCHAR),
-                new FieldValue(Types.VARCHAR),
-                new FieldValue(Types.VARCHAR)
+    private static Object[] formatRow(final String name, final String type, final String catalog,
+                                      final String schema) {
+        return new Object[]{
+                catalog,
+                schema,
+                name,
+                type,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
         };
     }
 
@@ -421,8 +420,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<Column> columns = Collections.singletonList(
                 new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
 
-        final List<FieldValue[]> values = Collections.singletonList(
-                new FieldValue[]{new FieldValue(this.conn.getCatalog(), Types.VARCHAR)});
+        final List<Object[]> values = Collections.singletonList(
+                new Object[]{this.conn.getCatalog()});
 
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
@@ -458,7 +457,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("SOURCE_DATA_TYPE", Types.SMALLINT));
         columns.add(new Column("IS_AUTOINCREMENT", Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
 
         for (final File currentSchema : this.conn.getSchema(catalog, schemaPattern)) {
             final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableNamePattern, this.conn);
@@ -498,13 +497,12 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("PAGES", Types.INTEGER));
         columns.add(new Column("FILTER_CONDITION", Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>();
-        final FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
+        final List<Object[]> values = new ArrayList<>();
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
-                getPrimaryKeyIndex(catalog, values, fieldZero, currentSchema, table);
-                getSecondaryIndexInfo(catalog, table, values, fieldZero, currentSchema);
+                getPrimaryKeyIndex(catalog, values, 0, currentSchema, table);
+                getSecondaryIndexInfo(catalog, table, values, 0, currentSchema);
             }
         }
         return new ParadoxResultSet(this.conn, null, values, columns);
@@ -694,22 +692,22 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return "AVERAGE,SUM";
     }
 
-    private void getSecondaryIndexInfo(String catalog, ParadoxTable table, List<FieldValue[]> values,
-                                       FieldValue fieldZero, File currentSchema) throws SQLException {
+    private void getSecondaryIndexInfo(String catalog, ParadoxTable table, List<Object[]> values,
+                                       Object fieldZero, File currentSchema) throws SQLException {
         for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, table.getName(), this.conn)) {
             for (int loop = 0; loop < index.getFieldCount() - index.getPrimaryFieldCount(); loop++) {
                 final ParadoxField field = index.getFields().get(0);
-                final FieldValue[] row = new FieldValue[]{
-                        new FieldValue(catalog, Types.VARCHAR),
-                        new FieldValue(currentSchema.getName(), Types.VARCHAR),
-                        new FieldValue(table.getName(), Types.VARCHAR),
-                        new FieldValue(!index.isUnique(), Types.BOOLEAN),
-                        new FieldValue(catalog, Types.VARCHAR),
-                        new FieldValue(index.getName(), Types.VARCHAR),
-                        new FieldValue(DatabaseMetaData.tableIndexHashed, Types.INTEGER),
-                        new FieldValue(field.getOrderNum() - 1, Types.INTEGER),
-                        new FieldValue(field.getName(), Types.VARCHAR),
-                        new FieldValue(index.getOrder(), Types.VARCHAR),
+                final Object[] row = new Object[]{
+                        catalog,
+                        currentSchema.getName(),
+                        table.getName(),
+                        !index.isUnique(),
+                        catalog,
+                        index.getName(),
+                        DatabaseMetaData.tableIndexHashed,
+                        field.getOrderNum() - 1,
+                        field.getName(),
+                        index.getOrder(),
                         fieldZero,
                         fieldZero,
                         null
@@ -734,18 +732,18 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("KEY_SEQ", Types.INTEGER));
         columns.add(new Column("PK_NAME", Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
                 for (final ParadoxField pk : table.getPrimaryKeys()) {
-                    final FieldValue[] row = new FieldValue[]{
-                            new FieldValue(catalog, Types.VARCHAR),
-                            new FieldValue(currentSchema.getName(), Types.VARCHAR),
-                            new FieldValue(table.getName(), Types.VARCHAR),
-                            new FieldValue(pk.getName(), Types.VARCHAR),
-                            new FieldValue(pk.getOrderNum() - 1, Types.INTEGER),
-                            new FieldValue(table.getName() + ".PX", Types.VARCHAR)
+                    final Object[] row = new Object[]{
+                            catalog,
+                            currentSchema.getName(),
+                            table.getName(),
+                            pk.getName(),
+                            pk.getOrderNum() - 1,
+                            table.getName() + ".PX",
                     };
                     values.add(row);
                 }
@@ -782,34 +780,32 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("IS_NULLABLE", Types.VARCHAR));
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>();
-        final FieldValue fieldZero = new FieldValue(0, Types.INTEGER);
-        final FieldValue fieldVarchar = new FieldValue(Types.VARCHAR);
+        final List<Object[]> values = new ArrayList<>();
 
         for (final AbstractCallableProcedure procedure : new ProcedureAS(conn).list()) {
             if (Expressions.accept(conn, procedure.getName(), procedureNamePattern)) {
                 for (final ParadoxField field : procedure.getCols()) {
-                    final FieldValue[] row = new FieldValue[]{
-                            new FieldValue(catalog, Types.VARCHAR),
-                            new FieldValue(this.conn.getCurrentSchema(), Types.VARCHAR),
-                            new FieldValue(procedure.getName(), Types.VARCHAR),
-                            new FieldValue(field.getName(), Types.VARCHAR),
-                            new FieldValue(DatabaseMetaData.procedureColumnIn, Types.INTEGER),
-                            new FieldValue(field.getSqlType(), Types.INTEGER),
-                            new FieldValue(Column.getTypeName(field.getSqlType()), Types.VARCHAR),
-                            fieldZero,
-                            new FieldValue(field.getSize(), Types.INTEGER),
-                            fieldZero,
-                            fieldZero,
-                            new FieldValue(DatabaseMetaData.procedureNullable),
-                            fieldVarchar,
-                            fieldVarchar,
-                            fieldVarchar,
-                            fieldVarchar,
-                            fieldVarchar,
-                            fieldVarchar,
-                            new FieldValue("NO", Types.VARCHAR),
-                            new FieldValue(procedure.getName(), Types.VARCHAR)
+                    final Object[] row = new Object[]{
+                            catalog,
+                            this.conn.getCurrentSchema(),
+                            procedure.getName(),
+                            field.getName(),
+                            DatabaseMetaData.procedureColumnIn,
+                            field.getSqlType(),
+                            Column.getTypeName(field.getSqlType()),
+                            0,
+                            field.getSize(),
+                            0,
+                            0,
+                            DatabaseMetaData.procedureNullable,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            "NO",
+                            procedure.getName()
                     };
                     values.add(row);
                 }
@@ -869,19 +865,19 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("PROCEDURE_TYPE", Types.INTEGER));
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
 
         for (final AbstractCallableProcedure procedure : new ProcedureAS(conn).list()) {
-            final FieldValue[] row = new FieldValue[]{
-                    new FieldValue(catalog, Types.VARCHAR),
-                    new FieldValue(this.conn.getSchema(), Types.VARCHAR),
-                    new FieldValue(procedure.getName(), Types.VARCHAR),
-                    new FieldValue(Types.VARCHAR),
-                    new FieldValue(Types.VARCHAR),
-                    new FieldValue(Types.VARCHAR),
-                    new FieldValue(procedure.getRemarks(), Types.VARCHAR),
-                    new FieldValue(procedure.getReturnType(), Types.INTEGER),
-                    new FieldValue(procedure.getName(), Types.VARCHAR)
+            final Object[] row = new Object[]{
+                    catalog,
+                    this.conn.getSchema(),
+                    procedure.getName(),
+                    null,
+                    null,
+                    null,
+                    procedure.getRemarks(),
+                    procedure.getReturnType(),
+                    procedure.getName()
             };
             values.add(row);
         }
@@ -983,7 +979,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column(TABLE_CATALOG, Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
 
         final File catalog = conn.getCurrentCatalog();
         final File[] schemas = catalog.listFiles(new DirectoryFilter(conn));
@@ -991,9 +987,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         if (schemas != null) {
             Arrays.sort(schemas);
             for (final File schema : schemas) {
-                final FieldValue[] row = new FieldValue[]{
-                        new FieldValue(schema.getName().toLowerCase(conn.getLocale()), Types.VARCHAR),
-                        new FieldValue(catalog.getName().toLowerCase(conn.getLocale()), Types.VARCHAR)
+                final Object[] row = new Object[]{
+                        schema.getName().toLowerCase(conn.getLocale()),
+                        catalog.getName().toLowerCase(conn.getLocale()),
                 };
                 values.add(row);
             }
@@ -1020,7 +1016,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("SELF_REFERENCING_COL_NAME", Types.VARCHAR));
         columns.add(new Column("REF_GENERATION", Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>();
+        final List<Object[]> values = new ArrayList<>();
         if (types != null) {
             for (final File currentSchema : this.conn.getSchema(catalog, schemaPattern)) {
                 for (final String type : types) {
@@ -1836,10 +1832,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getTableTypes() {
         final List<Column> columns = Collections.singletonList(new Column("TABLE_TYPE", Types.VARCHAR));
 
-        final List<FieldValue[]> values = new ArrayList<>(4);
-        values.add(new FieldValue[]{new FieldValue(ParadoxDatabaseMetaData.TABLE, Types.VARCHAR)});
-        values.add(new FieldValue[]{new FieldValue("VIEW", Types.VARCHAR)});
-        values.add(new FieldValue[]{new FieldValue("SYSTEM TABLE", Types.VARCHAR)});
+        final List<Object[]> values = new ArrayList<>(4);
+        values.add(new Object[]{ParadoxDatabaseMetaData.TABLE});
+        values.add(new Object[]{"VIEW"});
+        values.add(new Object[]{"SYSTEM TABLE"});
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
 
@@ -1855,7 +1851,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @throws SQLException in case of errors.
      */
     private void fieldMetadata(final String catalog, final String schema, final String columnNamePattern,
-                               final List<FieldValue[]> values,
+                               final List<Object[]> values,
                                final String tableName, final List<ParadoxField> fields) throws SQLException {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
@@ -1863,67 +1859,67 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                 continue;
             }
 
-            final List<FieldValue> row = new ArrayList<>();
+            final List<Object> row = new ArrayList<>();
 
             final int type = field.getSqlType();
             // Table catalog.
-            row.add(new FieldValue(catalog, Types.VARCHAR));
+            row.add(catalog);
             // Table schema.
-            row.add(new FieldValue(schema, Types.VARCHAR));
+            row.add(schema);
             // Table name.
-            row.add(new FieldValue(tableName, Types.VARCHAR));
+            row.add(tableName);
             // Column name.
-            row.add(new FieldValue(field.getAlias(), Types.VARCHAR));
+            row.add(field.getAlias());
             // Data type.
-            row.add(new FieldValue(type, Types.INTEGER));
+            row.add(type);
             // Type name.
-            row.add(new FieldValue(Column.getTypeName(type), Types.VARCHAR));
+            row.add(Column.getTypeName(type));
             // Column size.
-            row.add(new FieldValue(field.getSize(), Types.INTEGER));
+            row.add(field.getSize());
             // Buffer length.
-            row.add(new FieldValue(ParadoxDatabaseMetaData.MAX_INT_SIZE, Types.INTEGER));
+            row.add(ParadoxDatabaseMetaData.MAX_INT_SIZE);
             // Decimal digits.
-            row.add(new FieldValue(field.getPrecision(), Types.INTEGER));
+            row.add(field.getPrecision());
             // Number precision radix.
-            row.add(new FieldValue(DEFAULT_NUMBER_RADIX, Types.INTEGER));
+            row.add(DEFAULT_NUMBER_RADIX);
             // Nullabble.
-            row.add(new FieldValue(DatabaseMetaData.columnNullableUnknown));
+            row.add(DatabaseMetaData.columnNullableUnknown);
             // Column remarks.
-            row.add(new FieldValue(Types.INTEGER));
+            row.add(null);
             // Column default value.
-            row.add(new FieldValue(Types.VARCHAR));
+            row.add(null);
             // Column SQL data type.
-            row.add(new FieldValue(field.getSqlType(), Types.INTEGER));
+            row.add(field.getSqlType());
             // Subtype code for datetime and SQL-92 interval data types. For other data types, this column returns NULL.
-            row.add(new FieldValue(Types.INTEGER));
+            row.add(null);
             // Column type in byte octects.
-            row.add(new FieldValue(field.getSize(), Types.INTEGER));
+            row.add(field.getSize());
             // Ordinal position.
-            row.add(new FieldValue(ordinal));
+            row.add(ordinal);
             // Is field nullable.
             if (field.isAutoIncrement()) {
-                row.add(new FieldValue("NO", Types.VARCHAR));
+                row.add("NO");
             } else {
-                row.add(new FieldValue("YES", Types.VARCHAR));
+                row.add("YES");
             }
             // Scope catalog.
-            row.add(new FieldValue(Types.VARCHAR));
+            row.add(null);
             // Scope schema.
-            row.add(new FieldValue(Types.VARCHAR));
+            row.add(null);
             // Scope table.
-            row.add(new FieldValue(Types.INTEGER));
+            row.add(null);
             // Source datatype.
-            row.add(new FieldValue(type, Types.INTEGER));
+            row.add(type);
 
             // Is autoincrement.
             if (field.isAutoIncrement()) {
-                row.add(new FieldValue("YES", Types.VARCHAR));
+                row.add("YES");
             } else {
-                row.add(new FieldValue("NO", Types.VARCHAR));
+                row.add("NO");
             }
 
             ordinal++;
-            values.add(row.toArray(new FieldValue[0]));
+            values.add(row.toArray(new Object[0]));
         }
     }
 
@@ -1936,7 +1932,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @throws SQLException in case of errors.
      */
     private void formatTable(final String catalog, final String schemaPattern, final String tableNamePattern,
-                             final List<FieldValue[]> values) throws SQLException {
+                             final List<Object[]> values) throws SQLException {
         for (final File schema : this.conn.getSchema(catalog, schemaPattern)) {
             for (final ParadoxTable table : TableData.listTables(schema, tableNamePattern, this.conn)) {
                 values.add(formatRow(table.getName(), TABLE, catalog, schema.getName()));
@@ -1952,7 +1948,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param currentSchema    the current schema file.
      * @throws SQLException in case of errors.
      */
-    private void formatView(final String tableNamePattern, final List<FieldValue[]> values,
+    private void formatView(final String tableNamePattern, final List<Object[]> values,
                             final File currentSchema) throws SQLException {
         for (final ParadoxView view : ViewData.listViews(currentSchema, tableNamePattern, this.conn)) {
             values.add(formatRow(view.getName(), "VIEW", this.conn.getCatalog(), currentSchema.getName()));
