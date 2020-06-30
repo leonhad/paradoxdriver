@@ -47,7 +47,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private final List<Object[]> values = new ArrayList<>();
+    private List<Object[]> values;
 
     /**
      * The conditions to filter values
@@ -189,6 +189,8 @@ public final class SelectPlan implements Plan {
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
         final Object[] row = new Object[columnsLoaded.size()];
         final ValuesComparator comparator = new ValuesComparator(connection);
+
+        this.values = new ArrayList<>(rawData.get(0).size());
         filter(rawData, 0, row, 0, mapColumns, comparator);
     }
 

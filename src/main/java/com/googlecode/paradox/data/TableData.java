@@ -25,10 +25,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Utility class for loading table files.
@@ -109,12 +106,13 @@ public final class TableData extends ParadoxData {
 
         final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
 
-        final List<Object[]> ret = new ArrayList<>();
         try (final FileInputStream fs = new FileInputStream(table.getFile());
              final FileChannel channel = fs.getChannel()) {
             if (table.getUsedBlocks() == 0) {
-                return ret;
+                return Collections.emptyList();
             }
+
+            final List<Object[]> ret = new ArrayList<>(table.getRowCount());
             long nextBlock = table.getFirstBlock();
             do {
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -140,11 +138,11 @@ public final class TableData extends ParadoxData {
                     ret.add(TableData.readRow(table, fields, buffer));
                 }
             } while (nextBlock != 0);
+
+            return ret;
         } catch (final IOException e) {
             throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
         }
-
-        return ret;
     }
 
     /**
@@ -325,7 +323,7 @@ public final class TableData extends ParadoxData {
                 buffer.position(buffer.position() + field.getSize());
             }
         }
-        
+
         return row;
     }
 
