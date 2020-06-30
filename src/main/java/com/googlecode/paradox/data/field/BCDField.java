@@ -73,7 +73,7 @@ public final class BCDField implements FieldParser {
             sb.append(low);
         }
 
-        int realSize = field.getSize();
+        int realSize = field.getRealSize();
         if (realSize == MAX_DIGITS) {
             sb.insert(0, "0.");
         } else {

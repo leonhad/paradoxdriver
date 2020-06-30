@@ -320,7 +320,7 @@ public final class TableData extends ParadoxData {
                 fieldValue.setField(field);
                 row.add(fieldValue);
             } else {
-                buffer.position(buffer.position() + field.getRealSize());
+                buffer.position(buffer.position() + field.getSize());
             }
         }
         return row;
