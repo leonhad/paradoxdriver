@@ -65,7 +65,7 @@ public class BCDFieldTest {
     @Test
     public void testReadBCD() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT * FROM fields.bcd")) {
+                "SELECT A, B, C FROM fields.bcd")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 1.23D, rs.getDouble("A"), 0.001D);
             Assert.assertEquals("Invalid value.", 1.0D, rs.getDouble("B"), 0.001D);
@@ -79,6 +79,28 @@ public class BCDFieldTest {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 0.0D, rs.getDouble("A"), 0.001D);
             Assert.assertNull("Invalid value.", rs.getObject("B"));
+            Assert.assertEquals("Invalid value.", 0.9999D, rs.getDouble("C"), 0.001D);
+
+            Assert.assertFalse("Invalid Result Set state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for BCD reading with skipping.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testReadBCDSkipping() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT C FROM fields.bcd")) {
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 0.123D, rs.getDouble("C"), 0.001D);
+
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", -0.123D, rs.getDouble("C"), 0.001D);
+
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 0.9999D, rs.getDouble("C"), 0.001D);
 
             Assert.assertFalse("Invalid Result Set state.", rs.next());

@@ -260,7 +260,7 @@ public final class ParadoxField {
             this.size = size;
         } else if (type == ParadoxFieldType.BCD.getType()) {
             this.precision = size;
-            this.size = BCDField.MAX_DIGITS;
+            this.size = BCDField.BCD_SIZE;
         } else if (sqlType == Types.NUMERIC) {
             this.precision = NUMBER_PRECISION;
             this.size = size;
