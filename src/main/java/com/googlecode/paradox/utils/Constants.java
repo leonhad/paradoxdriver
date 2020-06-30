@@ -46,7 +46,7 @@ public final class Constants {
     /**
      * Minor version of the Driver.
      */
-    public static final int MINOR_VERSION = 5;
+    public static final int MINOR_VERSION = 6;
     /**
      * Driver prefix.
      */

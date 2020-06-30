@@ -59,7 +59,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     /**
      * JDBC minor version.
      */
-    private static final int JDBC_MINOR_VERSION = 0;
+    private static final int JDBC_MINOR_VERSION = 2;
     /**
      * Max field size.
      */
@@ -376,7 +376,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getExtraNameCharacters() {
-        return "";
+        return "*";
     }
 
     /**
@@ -987,8 +987,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             Arrays.sort(schemas);
             for (final File schema : schemas) {
                 final Object[] row = new Object[]{
-                        schema.getName().toLowerCase(conn.getLocale()),
-                        catalog.getName().toLowerCase(conn.getLocale()),
+                        schema.getName(),
+                        catalog.getName(),
                 };
                 values.add(row);
             }
@@ -1213,7 +1213,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesLowerCaseIdentifiers() {
-        return true;
+        return false;
     }
 
     /**
@@ -1221,7 +1221,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesLowerCaseQuotedIdentifiers() {
-        return true;
+        return false;
     }
 
     /**
@@ -1245,7 +1245,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesUpperCaseIdentifiers() {
-        return true;
+        return false;
     }
 
     /**
@@ -1253,7 +1253,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean storesUpperCaseQuotedIdentifiers() {
-        return true;
+        return false;
     }
 
     /**
@@ -1429,7 +1429,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsFullOuterJoins() {
-        return false;
+        return true;
     }
 
     /**
@@ -1477,7 +1477,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsLikeEscapeClause() {
-        return false;
+        return true;
     }
 
     /**
@@ -1485,7 +1485,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsLimitedOuterJoins() {
-        return false;
+        return true;
     }
 
     /**
@@ -1501,7 +1501,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMixedCaseIdentifiers() {
-        return true;
+        return false;
     }
 
     /**
@@ -1509,7 +1509,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsMixedCaseQuotedIdentifiers() {
-        return true;
+        return false;
     }
 
     /**
@@ -1597,7 +1597,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOuterJoins() {
-        return false;
+        return true;
     }
 
     /**
@@ -1653,7 +1653,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInDataManipulation() {
-        return false;
+        return true;
     }
 
     /**
@@ -1661,7 +1661,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInIndexDefinitions() {
-        return false;
+        return true;
     }
 
     /**
@@ -1669,7 +1669,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInPrivilegeDefinitions() {
-        return false;
+        return true;
     }
 
     /**
@@ -1677,7 +1677,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInProcedureCalls() {
-        return false;
+        return true;
     }
 
     /**
@@ -1685,7 +1685,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsSchemasInTableDefinitions() {
-        return false;
+        return true;
     }
 
     /**

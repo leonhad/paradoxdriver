@@ -46,6 +46,14 @@ public final class ParadoxConnection implements Connection {
      */
     private final String url;
     /**
+     * Default charset.
+     */
+    private final Charset charset;
+    /**
+     * Connection locale.
+     */
+    private final Locale locale;
+    /**
      * Auto Commit flag.
      */
     private boolean autocommit = true;
@@ -81,14 +89,6 @@ public final class ParadoxConnection implements Connection {
      * Stores the JDBC type mapping.
      */
     private Map<String, Class<?>> typeMap;
-    /**
-     * Default charset.
-     */
-    private final Charset charset;
-    /**
-     * Connection locale.
-     */
-    private Locale locale = Locale.getDefault();
 
     /**
      * Creates a new paradox connection.
@@ -115,6 +115,8 @@ public final class ParadoxConnection implements Connection {
         final String localeName = info.getProperty(Driver.LOCALE_KEY);
         if (localeName != null && !localeName.trim().isEmpty()) {
             this.locale = Locale.forLanguageTag(localeName);
+        } else {
+            this.locale = Locale.ENGLISH;
         }
 
         // Is a schema.

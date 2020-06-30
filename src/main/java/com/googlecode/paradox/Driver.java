@@ -13,10 +13,12 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.utils.Constants;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,6 +109,13 @@ public final class Driver implements java.sql.Driver {
             password = info.getProperty("password");
             charsetValue = info.getProperty(CHARSET_KEY);
             localeValue = info.getProperty(LOCALE_KEY);
+        }
+
+        if (charsetValue == null) {
+            charsetValue = Charset.defaultCharset().displayName();
+        }
+        if (localeValue == null) {
+            localeValue = Locale.ENGLISH.getLanguage();
         }
 
         final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, charsetValue);

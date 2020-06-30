@@ -297,7 +297,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseProductVersion() throws SQLException {
-        Assert.assertEquals("Testing for database product version.", "Paradox 1.5",
+        Assert.assertEquals("Testing for database product version.", "Paradox 1.6",
                 this.conn.getMetaData().getDatabaseProductVersion());
     }
 
@@ -350,7 +350,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverMinorVersion() throws SQLException {
-        Assert.assertEquals("Testing for driver minor version.", 5, this.conn.getMetaData().getDriverMinorVersion());
+        Assert.assertEquals("Testing for driver minor version.", 6, this.conn.getMetaData().getDriverMinorVersion());
     }
 
     /**
@@ -370,7 +370,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverVersion() throws SQLException {
-        Assert.assertEquals("Testing for driver version.", "1.5", this.conn.getMetaData().getDriverVersion());
+        Assert.assertEquals("Testing for driver version.", "1.6", this.conn.getMetaData().getDriverVersion());
     }
 
     /**
@@ -392,7 +392,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testExtraNameChars() throws SQLException {
-        Assert.assertEquals("Testing for extra name chars.", "", this.conn.getMetaData().getExtraNameCharacters());
+        Assert.assertEquals("Testing for extra name chars.", "*", this.conn.getMetaData().getExtraNameCharacters());
     }
 
     /**
@@ -473,7 +473,7 @@ public class ParadoxDatabaseMetaDataTest {
     public void testJDBCVersion() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
         Assert.assertEquals("Test for major version", 4, meta.getJDBCMajorVersion());
-        Assert.assertEquals("Test for minor version", 0, meta.getJDBCMinorVersion());
+        Assert.assertEquals("Test for minor version", 2, meta.getJDBCMinorVersion());
     }
 
     /**
