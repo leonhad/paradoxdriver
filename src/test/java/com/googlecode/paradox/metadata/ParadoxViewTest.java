@@ -29,7 +29,7 @@ public class ParadoxViewTest {
      */
     @Test
     public void testFieldOrder() {
-        final ArrayList<Short> list = new ArrayList<>();
+        final short[] list = new short[0];
         final ParadoxView view = new ParadoxView(null, null, null);
         view.setFieldsOrder(list);
         Assert.assertEquals("Invalid value.", list, view.getFieldsOrder());

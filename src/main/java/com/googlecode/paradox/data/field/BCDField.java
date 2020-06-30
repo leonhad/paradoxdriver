@@ -47,9 +47,8 @@ public final class BCDField implements FieldParser {
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final byte[] valueBuffer = new byte[BCD_SIZE];
 
-        for (int i = 0; i < valueBuffer.length; i++) {
-            valueBuffer[i] = buffer.get();
-        }
+        System.arraycopy(buffer.array(), buffer.position(), valueBuffer, 0, valueBuffer.length);
+        buffer.position(buffer.position() + valueBuffer.length);
 
         if (valueBuffer[0] == 0) {
             return NULL;

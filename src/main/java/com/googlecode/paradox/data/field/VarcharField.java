@@ -44,8 +44,8 @@ public final class VarcharField implements FieldParser {
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final ByteBuffer valueString = ByteBuffer.allocate(field.getSize());
 
-        // reset buffer to zeros
-        buffer.get(valueString.array());
+        System.arraycopy(buffer.array(), buffer.position(), valueString.array(), 0, field.getSize());
+        buffer.position(buffer.position() + field.getSize());
 
         final byte[] value = valueString.array();
         int length = value.length;

@@ -58,11 +58,9 @@ public abstract class AbstractLobField implements FieldParser {
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException {
         final ByteBuffer value = ByteBuffer.allocate(field.getRealSize());
-        for (int chars = 0; chars < field.getRealSize(); chars++) {
-            value.put(buffer.get());
-        }
 
-        value.flip();
+        System.arraycopy(buffer.array(), buffer.position(), value.array(), 0, field.getRealSize());
+        buffer.position(buffer.position() + field.getRealSize());
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         int leader = field.getRealSize();
@@ -74,11 +72,11 @@ public abstract class AbstractLobField implements FieldParser {
         buffer.getShort();
 
         // All fields are 9, only graphics is 17.
-        int hsize = 9;
+        int headerSize = 9;
 
         // Graphic field?
         if (field.getType() == ParadoxFieldType.GRAPHIC.getType()) {
-            hsize = 17;
+            headerSize = 17;
         }
 
         buffer.order(ByteOrder.BIG_ENDIAN);
@@ -109,9 +107,9 @@ public abstract class AbstractLobField implements FieldParser {
                 case FREE_BLOCK:
                     throw new SQLException("Invalid MB header.");
                 case SINGLE_BLOCK:
-                    return parseSingleBlock(table, index, size, hsize, channel);
+                    return parseSingleBlock(table, index, size, headerSize, channel);
                 case SUB_BLOCK:
-                    return parseSubBlock(table, index, offset, size, hsize, channel);
+                    return parseSubBlock(table, index, offset, size, headerSize, channel);
                 default:
                     throw new SQLException("Invalid BLOB header type " + type);
             }
@@ -121,8 +119,8 @@ public abstract class AbstractLobField implements FieldParser {
     }
 
     private FieldValue parseSubBlock(final ParadoxTable table, final int index, final long offset, final int size,
-                                     final int hsize, final FileChannel channel) throws IOException, SQLException {
-        channel.position(channel.position() + hsize);
+                                     final int headerSize, final FileChannel channel) throws IOException, SQLException {
+        channel.position(channel.position() + headerSize);
 
         channel.position(offset + 12 + index * 5);
         final ByteBuffer head = ByteBuffer.allocate(5);
@@ -152,13 +150,13 @@ public abstract class AbstractLobField implements FieldParser {
         return getValue(table, blocks);
     }
 
-    private FieldValue parseSingleBlock(ParadoxTable table, int index, int size, int hsize, FileChannel channel)
+    private FieldValue parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, FileChannel channel)
             throws SQLException, IOException {
         if (index != 0xFF) {
             throw new SQLException("Offset points to a single blob block but index field is not 0xFF.");
         }
         // Read the remaining 6 bytes from the header.
-        final ByteBuffer head = ByteBuffer.allocate(hsize - HEAD_SIZE);
+        final ByteBuffer head = ByteBuffer.allocate(headerSize - HEAD_SIZE);
         head.order(ByteOrder.LITTLE_ENDIAN);
         channel.read(head);
         head.flip();

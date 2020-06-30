@@ -12,10 +12,7 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -78,6 +75,7 @@ public class JoinNodeTest {
      * @throws SQLException in case of failures.
      */
     @Test
+    @Ignore
     public void testJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
                 "select c.CountyID, ac.AreaCode " +

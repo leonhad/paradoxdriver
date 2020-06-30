@@ -285,11 +285,13 @@ public final class ViewData {
         String line = oldLine;
         if ((line != null) && line.startsWith("FIELDORDER: ")) {
             final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema, connection);
-            final ArrayList<Short> fieldsOrder = new ArrayList<>(fields.size());
+            final short[] fieldsOrder = new short[fields.size()];
+            int index = 0;
             for (final ParadoxField field : fields) {
                 ParadoxField fieldByName = ViewData.getField(view, field.getName());
                 if (fieldByName != null) {
-                    fieldsOrder.add((short) fieldByName.getOrderNum());
+                    fieldsOrder[index] = (short) fieldByName.getOrderNum();
+                    index++;
                 }
             }
             view.setFieldsOrder(fieldsOrder);

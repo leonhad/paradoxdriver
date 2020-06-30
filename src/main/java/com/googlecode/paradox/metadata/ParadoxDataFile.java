@@ -16,7 +16,6 @@ import com.googlecode.paradox.utils.Utils;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,7 +58,7 @@ public class ParadoxDataFile {
     /**
      * Fields index order.
      */
-    private List<Short> fieldsOrder;
+    private short[] fieldsOrder;
     /**
      * The first block in the file.
      */
@@ -243,8 +242,8 @@ public class ParadoxDataFile {
      *
      * @return the file orders.
      */
-    public List<Short> getFieldsOrder() {
-        return Collections.unmodifiableList(this.fieldsOrder);
+    public short[] getFieldsOrder() {
+        return this.fieldsOrder;
     }
 
     /**
@@ -252,8 +251,8 @@ public class ParadoxDataFile {
      *
      * @param fieldsOrder the fields order to set.
      */
-    public void setFieldsOrder(final List<Short> fieldsOrder) {
-        this.fieldsOrder = Collections.unmodifiableList(fieldsOrder);
+    public void setFieldsOrder(final short[] fieldsOrder) {
+        this.fieldsOrder = fieldsOrder;
     }
 
     /**

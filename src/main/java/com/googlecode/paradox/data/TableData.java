@@ -14,7 +14,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.table.value.FieldValue;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
@@ -36,7 +35,7 @@ import java.util.List;
  * Utility class for loading table files.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -294,10 +293,12 @@ public final class TableData extends ParadoxData {
      * @param buffer the buffer to read of.
      */
     private static void parseTableFieldsOrder(final ParadoxTable table, final ByteBuffer buffer) {
-        final List<Short> fieldsOrder = new ArrayList<>();
+        final short[] fieldsOrder = new short[table.getFieldCount()];
+
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            fieldsOrder.add(buffer.getShort());
+            fieldsOrder[loop] = buffer.getShort();
         }
+
         table.setFieldsOrder(fieldsOrder);
     }
 
