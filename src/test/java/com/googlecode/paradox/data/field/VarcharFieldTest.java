@@ -68,11 +68,9 @@ public class VarcharFieldTest {
 
     /**
      * Test for parse method.
-     *
-     * @throws SQLException in case of parse errors.
      */
     @Test
-    public void testParse() throws SQLException {
+    public void testParse() {
         final ParadoxTable table = new ParadoxTable(null, null, null);
         table.setCharset(StandardCharsets.ISO_8859_1);
         final ParadoxField paradoxField = new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType());

@@ -17,7 +17,6 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * Parses a VARCHAR field.
@@ -46,11 +45,7 @@ public final class VarcharField implements FieldParser {
         final ByteBuffer valueString = ByteBuffer.allocate(field.getSize());
 
         // reset buffer to zeros
-        Arrays.fill(valueString.array(), (byte) 0);
-
-        for (int chars = 0; chars < field.getSize(); chars++) {
-            valueString.put(buffer.get());
-        }
+        buffer.get(valueString.array());
 
         final byte[] value = valueString.array();
         int length = value.length;
