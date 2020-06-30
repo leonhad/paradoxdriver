@@ -466,9 +466,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         table.getFields());
             }
 
-            final List<? extends ParadoxDataFile> views = ViewData.listViews(currentSchema, tableNamePattern,
-                    this.conn);
-            for (final ParadoxDataFile view : views) {
+            final List<ParadoxView> views = ViewData.listViews(currentSchema, tableNamePattern, this.conn);
+            for (final ParadoxView view : views) {
                 this.fieldMetadata(catalog, currentSchema.getName(), columnNamePattern, values, view.getName(),
                         view.getFields());
             }
@@ -1883,7 +1882,11 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             // Number precision radix.
             row.add(DEFAULT_NUMBER_RADIX);
             // Nullable.
-            row.add(DatabaseMetaData.columnNullableUnknown);
+            if (field.isAutoIncrement()) {
+                row.add(DatabaseMetaData.columnNoNulls);
+            } else {
+                row.add(DatabaseMetaData.columnNullable);
+            }
             // Column remarks.
             row.add(null);
             // Column default value.

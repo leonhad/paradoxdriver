@@ -286,7 +286,7 @@ public class MainTest {
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
             Assert.assertEquals("Testing for column size.", 5, rs.getInt("COLUMN_SIZE"));
-            Assert.assertNull("Testing for nullable.", rs.getString("NULLABLE"));
+            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
@@ -299,7 +299,7 @@ public class MainTest {
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
             Assert.assertEquals("Testing for column size.", 3, rs.getInt("COLUMN_SIZE"));
-            Assert.assertNull("Testing for nullable.", rs.getString("NULLABLE"));
+            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
@@ -312,7 +312,7 @@ public class MainTest {
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
             Assert.assertEquals("Testing for column size.", 157, rs.getInt("COLUMN_SIZE"));
-            Assert.assertNull("Testing for nullable.", rs.getString("NULLABLE"));
+            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
