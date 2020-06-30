@@ -14,12 +14,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
+import java.sql.Date;
 
 /**
  * Unit test for {@link DateField} class.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class DateFieldTest {
@@ -40,8 +41,8 @@ public class DateFieldTest {
     public void testParse() {
         final DateField field = new DateField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x8D, (byte) 0x40});
-        final Object value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid date value.", "0100-01-01", value);
+        final Date value = field.parse(null, buffer, null);
+        Assert.assertEquals("Invalid date value.", "0100-01-01", value.toString());
     }
 
     /**
@@ -51,8 +52,8 @@ public class DateFieldTest {
     public void testParse2() {
         final DateField field = new DateField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x00, (byte) 0x0B, (byte) 0x1E, (byte) 0xCF});
-        final Object value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid date value.", "1996-05-04", value);
+        final Date value = field.parse(null, buffer, null);
+        Assert.assertEquals("Invalid date value.", "1996-05-04", value.toString());
     }
 
     /**

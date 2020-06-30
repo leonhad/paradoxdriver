@@ -23,7 +23,7 @@ import java.sql.Date;
  * Parses date fields.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public final class DateField implements FieldParser {
@@ -40,7 +40,7 @@ public final class DateField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Date parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
         final long days = buffer.getInt() & 0x0FFF_FFFFL;
 
         Date date = null;
