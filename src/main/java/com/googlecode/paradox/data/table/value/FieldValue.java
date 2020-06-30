@@ -179,6 +179,10 @@ public final class FieldValue {
 
     @Override
     public String toString() {
-        return field.toString();
+        if (field != null) {
+            return field.toString();
+        }
+
+        return "null";
     }
 }

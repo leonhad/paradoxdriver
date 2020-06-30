@@ -253,7 +253,8 @@ public final class ParadoxField {
         this.realSize = size;
         int sqlType = this.getSqlType();
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
-            this.size = size - BLOB_SIZE_PADDING;
+            this.realSize -= BLOB_SIZE_PADDING;
+            this.size = size;
         } else if (type == ParadoxFieldType.CURRENCY.getType()) {
             this.precision = CURRENCY_PRECISION;
             this.size = size;

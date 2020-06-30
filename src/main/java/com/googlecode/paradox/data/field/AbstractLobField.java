@@ -57,15 +57,15 @@ public abstract class AbstractLobField implements FieldParser {
     @Override
     public FieldValue parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
             throws SQLException {
-        final ByteBuffer value = ByteBuffer.allocate(field.getSize());
-        for (int chars = 0; chars < field.getSize(); chars++) {
+        final ByteBuffer value = ByteBuffer.allocate(field.getRealSize());
+        for (int chars = 0; chars < field.getRealSize(); chars++) {
             value.put(buffer.get());
         }
 
         value.flip();
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        int leader = field.getSize();
+        int leader = field.getRealSize();
         value.position(leader);
 
         long beginIndex = buffer.getInt();
