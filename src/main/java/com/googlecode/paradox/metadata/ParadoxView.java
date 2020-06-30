@@ -13,15 +13,12 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.ParadoxConnection;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Stores the paradox view data.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @author Leonardo Costa
+ * @version 1.`1
  * @since 1.0
  */
 public final class ParadoxView extends ParadoxDataFile {
@@ -29,7 +26,7 @@ public final class ParadoxView extends ParadoxDataFile {
     /**
      * Stores the field list sort.
      */
-    private List<ParadoxField> fieldsSort;
+    private ParadoxField[] fieldsSort;
 
     /**
      * Creates a new instance.
@@ -47,8 +44,8 @@ public final class ParadoxView extends ParadoxDataFile {
      *
      * @return the fieldsSort the fields sort.
      */
-    public List<ParadoxField> getFieldsSort() {
-        return Collections.unmodifiableList(this.fieldsSort);
+    public ParadoxField[] getFieldsSort() {
+        return this.fieldsSort;
     }
 
     /**
@@ -56,7 +53,7 @@ public final class ParadoxView extends ParadoxDataFile {
      *
      * @param fieldsSort the fields sort to set.
      */
-    public void setFieldsSort(final List<ParadoxField> fieldsSort) {
-        this.fieldsSort = new ArrayList<>(fieldsSort);
+    public void setFieldsSort(final ParadoxField[] fieldsSort) {
+        this.fieldsSort = fieldsSort;
     }
 }

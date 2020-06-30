@@ -108,12 +108,12 @@ public final class ViewData {
     /**
      * Get a field by its name.
      *
-     * @param field the Paradox table.
-     * @param name  the field name.
+     * @param dataFile the Paradox table.
+     * @param name     the field name.
      * @return the Paradox field.
      */
-    private static ParadoxField getField(final ParadoxDataFile field, final String name) {
-        for (final ParadoxField f : field.getFields()) {
+    private static ParadoxField getField(final ParadoxDataFile dataFile, final String name) {
+        for (final ParadoxField f : dataFile.getFields()) {
             if (f != null && f.getName().equalsIgnoreCase(name)) {
                 return f;
             }
@@ -284,10 +284,10 @@ public final class ViewData {
             throws IOException, SQLException {
         String line = oldLine;
         if ((line != null) && line.startsWith("FIELDORDER: ")) {
-            final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema, connection);
-            final short[] fieldsOrder = new short[fields.size()];
+            view.setFields(ViewData.readFields(reader, line, currentSchema, connection));
+            final short[] fieldsOrder = new short[view.getFields().length];
             int index = 0;
-            for (final ParadoxField field : fields) {
+            for (final ParadoxField field : view.getFields()) {
                 ParadoxField fieldByName = ViewData.getField(view, field.getName());
                 if (fieldByName != null) {
                     fieldsOrder[index] = (short) fieldByName.getOrderNum();
@@ -340,8 +340,7 @@ public final class ViewData {
             SQLException {
         String line = oldLine;
         if ((line != null) && line.startsWith("SORT: ")) {
-            final ArrayList<ParadoxField> fields = ViewData.readFields(reader, line, currentSchema, connection);
-            view.setFieldsSort(fields);
+            view.setFieldsSort(ViewData.readFields(reader, line, currentSchema, connection));
 
             // Extra Line.
             line = ViewData.fixExtraLine(reader);
@@ -359,8 +358,8 @@ public final class ViewData {
      * @throws IOException  in case of I/O errors.
      * @throws SQLException in case of syntax errors.
      */
-    private static ArrayList<ParadoxField> readFields(final BufferedReader reader, final String firstLine,
-                                                      final File currentSchema, final ParadoxConnection connection)
+    private static ParadoxField[] readFields(final BufferedReader reader, final String firstLine,
+                                             final File currentSchema, final ParadoxConnection connection)
             throws IOException, SQLException {
 
         final StringBuilder line = new StringBuilder(firstLine.substring(firstLine.indexOf(':') + 1));
@@ -384,13 +383,10 @@ public final class ViewData {
                 lastTable = ViewData.getTable(i[0], currentSchema, connection);
                 name = i[1].substring(1, i[1].length() - 1);
             }
-            final ParadoxField originalField = ViewData.getFieldByName(lastTable, name);
-
-            final ParadoxField field = new ParadoxField(connection, originalField.getType());
-            field.setSize(originalField.getSize());
-            fields.add(field);
+            fields.add(ViewData.getFieldByName(lastTable, name));
         }
-        return fields;
+
+        return fields.toArray(new ParadoxField[0]);
     }
 
     /**

@@ -13,13 +13,11 @@ package com.googlecode.paradox.metadata;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 /**
  * Unit test for {@link ParadoxView} class.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class ParadoxViewTest {
@@ -51,9 +49,9 @@ public class ParadoxViewTest {
      */
     @Test
     public void testFieldSort() {
-        final ArrayList<ParadoxField> list = new ArrayList<>();
+        final ParadoxField[] list = new ParadoxField[0];
         final ParadoxView view = new ParadoxView(null, null, null);
         view.setFieldsSort(list);
-        Assert.assertEquals("Invalid value.", list, view.getFieldsSort());
+        Assert.assertArrayEquals("Invalid value.", list, view.getFieldsSort());
     }
 }
