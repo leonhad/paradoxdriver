@@ -15,13 +15,13 @@ import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 
 /**
- * Stores the greater than node.
+ * Store the less than or equals node.
  *
  * @author Leonardo Costa
- * @version 1.5
- * @since 1.1
+ * @version 1.1
+ * @since 1.6.0
  */
-public final class GreaterThanNode extends AbstractComparableNode {
+public final class LessThanOrEqualsNode extends AbstractComparableNode {
 
     /**
      * Create a new instance.
@@ -30,14 +30,14 @@ public final class GreaterThanNode extends AbstractComparableNode {
      * @param field      the first node.
      * @param last       the last node.
      */
-    public GreaterThanNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, ">", field, last);
+    public LessThanOrEqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
+        super(connection, "<", field, last);
     }
 
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
-        return comparator.compare(value1, value2, i -> i == 1);
+        return comparator.compare(value1, value2, i -> i <= 0);
     }
 }

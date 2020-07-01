@@ -503,14 +503,19 @@ public final class SQLParser {
     /**
      * Parses less token.
      *
-     * @param field the left token field.
+     * @param firstField the left token field.
      * @return the less token.
      * @throws SQLException in case of parse errors.
      */
-    private LessThanNode parseLess(final FieldNode field) throws SQLException {
+    private AbstractComparableNode parseLess(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.LESS);
-        final FieldNode value = this.parseField();
-        return new LessThanNode(connection, field, value);
+
+        if (token.getType() == TokenType.EQUALS) {
+            this.expect(TokenType.EQUALS);
+            return new LessThanOrEqualsNode(connection, firstField, this.parseField());
+        }
+
+        return new LessThanNode(connection, firstField, parseField());
     }
 
     /**

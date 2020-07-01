@@ -14,13 +14,11 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 
-import java.util.Objects;
-
 /**
  * Store the less than node.
  *
  * @author Leonardo Costa
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public final class LessThanNode extends AbstractComparableNode {
@@ -40,6 +38,6 @@ public final class LessThanNode extends AbstractComparableNode {
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
-        return Objects.compare(value1, value2, comparator) == -1;
+        return comparator.compare(value1, value2, i -> i == -1);
     }
 }
