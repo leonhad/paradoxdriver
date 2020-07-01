@@ -14,6 +14,9 @@ import com.googlecode.paradox.ParadoxConnection;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -51,6 +54,70 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         return condition.test(compare(o1, o2));
     }
 
+    private static Time getTime(final Object value) {
+        if (value instanceof Time) {
+            return (Time) value;
+        }
+
+        return Time.valueOf(value.toString());
+    }
+
+    private static Boolean getBoolean(final Object value) {
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+
+        return Boolean.valueOf(value.toString());
+    }
+
+    private static Byte getByte(final Object value) {
+        if (value instanceof Byte) {
+            return (Byte) value;
+        }
+
+        return Byte.valueOf(value.toString());
+    }
+
+    private static Integer getInteger(final Object value) {
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+
+        return Integer.valueOf(value.toString());
+    }
+
+    private static Long getLong(final Object value) {
+        if (value instanceof Long) {
+            return (Long) value;
+        }
+
+        return Long.valueOf(value.toString());
+    }
+
+    private static Double getDouble(final Object value) {
+        if (value instanceof Double) {
+            return (Double) value;
+        }
+
+        return Double.valueOf(value.toString());
+    }
+
+    private static Timestamp getTimestamp(final Object value) {
+        if (value instanceof Timestamp) {
+            return (Timestamp) value;
+        }
+
+        return Timestamp.valueOf(value.toString());
+    }
+
+    private static Date getDate(final Object value) {
+        if (value instanceof Date) {
+            return (Date) value;
+        }
+
+        return Date.valueOf(value.toString());
+    }
+
     @Override
     public int compare(final Object o1, final Object o2) {
         // Try to compare with Boolean values.
@@ -59,6 +126,8 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
             final Boolean n2 = getBoolean(o2);
             return n1.compareTo(n2);
         }
+
+        // FIXME move conversions to a unique class only for this.
 
         // Try to compare with Byte values.
         if (o1 instanceof Byte || o2 instanceof Byte) {
@@ -104,6 +173,27 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
             }
         }
 
+        // Try to compare with Time values.
+        if (o1 instanceof Time || o2 instanceof Time) {
+            final Time n1 = getTime(o1);
+            final Time n2 = getTime(o2);
+            return n1.compareTo(n2);
+        }
+
+        // Try to compare with Timestamp values.
+        if (o1 instanceof Timestamp || o2 instanceof Timestamp) {
+            final Timestamp n1 = getTimestamp(o1);
+            final Timestamp n2 = getTimestamp(o2);
+            return n1.compareTo(n2);
+        }
+
+        // Try to compare with Date values.
+        if (o1 instanceof Date || o2 instanceof Date) {
+            final Date n1 = getDate(o1);
+            final Date n2 = getDate(o2);
+            return n1.compareTo(n2);
+        }
+
         // Try to compare with String values.
         if (o1 instanceof String || o2 instanceof String) {
             final String n1 = String.valueOf(o1);
@@ -123,46 +213,6 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         }
 
         return -1;
-    }
-
-    private static Boolean getBoolean(final Object value) {
-        if (value instanceof Boolean) {
-            return (Boolean) value;
-        }
-
-        return Boolean.valueOf(value.toString());
-    }
-
-    private static Byte getByte(final Object value) {
-        if (value instanceof Byte) {
-            return (Byte) value;
-        }
-
-        return Byte.valueOf(value.toString());
-    }
-
-    private static Integer getInteger(final Object value) {
-        if (value instanceof Integer) {
-            return (Integer) value;
-        }
-
-        return Integer.valueOf(value.toString());
-    }
-
-    private static Long getLong(final Object value) {
-        if (value instanceof Long) {
-            return (Long) value;
-        }
-
-        return Long.valueOf(value.toString());
-    }
-
-    private static Double getDouble(final Object value) {
-        if (value instanceof Double) {
-            return (Double) value;
-        }
-
-        return Double.valueOf(value.toString());
     }
 
     private static byte[] getByteArray(final Object value) {
