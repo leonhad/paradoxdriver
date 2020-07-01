@@ -19,7 +19,7 @@ import com.googlecode.paradox.planner.ValuesComparator;
  * Store the OR node.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public class ORNode extends AbstractJoinNode {
@@ -37,8 +37,8 @@ public class ORNode extends AbstractJoinNode {
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         for (final SQLNode node : childhood) {
-            final AbstractConditionalNode comparisonNode = (AbstractConditionalNode) node;
-            if (comparisonNode.evaluate(row, comparator)) {
+            final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
+            if (conditionalNode.evaluate(row, comparator)) {
                 return true;
             }
         }

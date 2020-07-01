@@ -14,13 +14,11 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.planner.ValuesComparator;
 
-import java.util.Objects;
-
 /**
  * Stores the between node.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
@@ -61,7 +59,8 @@ public final class BetweenNode extends AbstractComparableNode {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, first);
         final Object value3 = getValue(row, last);
-        return Objects.compare(value1, value2, comparator) >= 0
-                && Objects.compare(value1, value3, comparator) <= 0;
+
+        return comparator.compare(value1, value2, i -> i >= 0) &&
+                comparator.compare(value1, value3, i -> i <= 0);
     }
 }

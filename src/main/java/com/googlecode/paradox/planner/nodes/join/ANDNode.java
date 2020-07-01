@@ -19,7 +19,7 @@ import com.googlecode.paradox.planner.ValuesComparator;
  * Stores the AND node.
  *
  * @author Leonardo Costa
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public class ANDNode extends AbstractJoinNode {
@@ -37,8 +37,8 @@ public class ANDNode extends AbstractJoinNode {
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         for (final SQLNode node : childhood) {
-            final AbstractConditionalNode comparisonNode = (AbstractConditionalNode) node;
-            if (!comparisonNode.evaluate(row, comparator)) {
+            final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
+            if (!conditionalNode.evaluate(row, comparator)) {
                 return false;
             }
         }

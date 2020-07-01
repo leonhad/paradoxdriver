@@ -18,7 +18,7 @@ import com.googlecode.paradox.planner.ValuesComparator;
  * Store the less than or equals node.
  *
  * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public final class LessThanOrEqualsNode extends AbstractComparableNode {

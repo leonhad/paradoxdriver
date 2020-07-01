@@ -14,13 +14,11 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.planner.ValuesComparator;
 
-import java.util.Objects;
-
 /**
  * Stores the not equals node.
  *
  * @author Leonardo Costa
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public final class NotEqualsNode extends AbstractComparableNode {
@@ -40,6 +38,6 @@ public final class NotEqualsNode extends AbstractComparableNode {
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
-        return Objects.compare(value1, value2, comparator) != 0;
+        return comparator.compare(value1, value2, i -> i != 0);
     }
 }

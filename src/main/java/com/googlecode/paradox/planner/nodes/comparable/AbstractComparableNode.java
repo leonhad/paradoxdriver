@@ -24,7 +24,7 @@ import java.util.Set;
  * Comparable node common code.
  *
  * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public abstract class AbstractComparableNode extends AbstractConditionalNode {
