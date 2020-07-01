@@ -23,8 +23,8 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Scanner}.
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @author Leonardo Costa
+ * @version 1.3
  * @since 1.0
  */
 public class ScannerTest {
@@ -134,6 +134,47 @@ public class ScannerTest {
         token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.NUMERIC, token.getType());
         Assert.assertEquals("Invalid token value.", "123.8", token.getValue());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+    }
+
+    /**
+     * Test for negative numbers.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testNegativeNumbers() throws Exception {
+        final Scanner scanner = new Scanner(conn, "-123.2");
+        final Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type.", TokenType.NUMERIC, token.getType());
+        Assert.assertEquals("Invalid token value.", "-123.2", token.getValue());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+    }
+
+    /**
+     * Test for numeric validation.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testNumericValidation() throws Exception {
+        final Scanner scanner = new Scanner(conn, "12a");
+        Assert.assertEquals("Invalid value.", "12a", scanner.nextToken().getValue());
+    }
+
+    /**
+     * Test for minus sign.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testMinusSign() throws Exception {
+        final Scanner scanner = new Scanner(conn, "- 123.2");
+        Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type.", TokenType.MINUS, token.getType());
+        token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type.", TokenType.NUMERIC, token.getType());
+        Assert.assertEquals("Invalid token value.", "123.2", token.getValue());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
     }
 

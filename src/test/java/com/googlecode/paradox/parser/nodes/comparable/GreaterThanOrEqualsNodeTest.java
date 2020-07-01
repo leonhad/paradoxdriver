@@ -19,16 +19,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
- * Unit test {@link GreaterThanNode} class.
+ * Unit test for {@link GreaterThanOrEqualsNode} class.
  *
  * @author Leonardo Costa
- * @version 1.1
- * @since 1.3
+ * @version 1.0
+ * @since 1.6.0
  */
-public class GreaterThanNodeTest {
+public class GreaterThanOrEqualsNodeTest {
     /**
      * The connection string used in this tests.
      */
@@ -59,7 +61,24 @@ public class GreaterThanNodeTest {
     public void testToString() {
         final FieldNode first = new FieldNode(conn, "table", "first", "first");
         final FieldNode last = new FieldNode(conn, "table", "last", "last");
-        final GreaterThanNode node = new GreaterThanNode(conn, first, last);
-        Assert.assertEquals("Invalid node value.", "table.first > table.last", node.toString());
+        final GreaterThanOrEqualsNode node = new GreaterThanOrEqualsNode(conn, first, last);
+        Assert.assertEquals("Invalid node value.", "table.first >= table.last", node.toString());
+    }
+
+    /**
+     * Test for {@link ResultSet} execution.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testResultSet() throws Exception {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT B FROM fields.bcd where B >= -1")) {
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", 1, rs.getInt("B"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value", -1, rs.getInt("B"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
     }
 }

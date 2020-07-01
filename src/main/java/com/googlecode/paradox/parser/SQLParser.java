@@ -284,9 +284,6 @@ public final class SQLParser {
             case NOT_EQUALS:
                 node = this.parseNotEquals(firstField);
                 break;
-            case NOT_EQUALS_VARIANT:
-                node = this.parseNotEqualsVariant(firstField);
-                break;
             case LESS:
                 node = this.parseLess(firstField);
                 break;
@@ -523,10 +520,15 @@ public final class SQLParser {
      * @return the grater than node.
      * @throws SQLException in case of parse errors.
      */
-    private GreaterThanNode parseMore(final FieldNode firstField) throws SQLException {
+    private AbstractComparableNode parseMore(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.MORE);
-        final FieldNode value = this.parseField();
-        return new GreaterThanNode(connection, firstField, value);
+
+        if (token.getType() == TokenType.EQUALS) {
+            this.expect(TokenType.EQUALS);
+            return new GreaterThanOrEqualsNode(connection, firstField, this.parseField());
+        }
+
+        return new GreaterThanNode(connection, firstField, this.parseField());
     }
 
     /**
@@ -538,19 +540,6 @@ public final class SQLParser {
      */
     private NotEqualsNode parseNotEquals(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.NOT_EQUALS);
-        final FieldNode value = this.parseField();
-        return new NotEqualsNode(connection, firstField, value);
-    }
-
-    /**
-     * Parses a not equals token variant (2).
-     *
-     * @param firstField the left not equals field.
-     * @return the not equals node.
-     * @throws SQLException in case of parse errors.
-     */
-    private NotEqualsNode parseNotEqualsVariant(final FieldNode firstField) throws SQLException {
-        this.expect(TokenType.NOT_EQUALS_VARIANT);
         final FieldNode value = this.parseField();
         return new NotEqualsNode(connection, firstField, value);
     }

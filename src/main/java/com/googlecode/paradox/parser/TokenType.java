@@ -129,11 +129,6 @@ public enum TokenType {
     NOT_EQUALS("<>"),
 
     /**
-     * Variant not equals token.
-     */
-    NOT_EQUALS_VARIANT("!="),
-
-    /**
      * Null token.
      */
     NULL,

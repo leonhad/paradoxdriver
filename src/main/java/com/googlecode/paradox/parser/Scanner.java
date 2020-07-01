@@ -34,7 +34,7 @@ public class Scanner {
     /**
      * Special chars.
      */
-    private static final char[] SPECIAL = {'(', ')', '+', '-', ',', '.', '=', ';'};
+    private static final char[] SPECIAL = {'(', ')', '+', '-', ',', '.', '=', ';', '*'};
 
     /**
      * Character buffer used to parse the SQL.
@@ -153,33 +153,19 @@ public class Scanner {
 
     /**
      * Parses identifier tokens.
-     *
-     * @return if this token is an character token.
-     * @throws SQLException in case of parser errors.
      */
-    private boolean parseIdentifier() throws SQLException {
-        boolean ret = false;
-        while (this.hasNext()) {
-            final char c = this.nextChar();
-
-            // Ignore separators.
-            if (!Scanner.isSeparator(c)) {
-                if (Scanner.isSpecial(c)) {
-                    this.value.append(c);
-                    break;
-                } else if ((c == '"') || (c == '\'')) {
-                    // identifiers with special chars
-                    final boolean characters = Scanner.isCharacters(c);
-                    this.parseString(c);
-                    ret = characters;
-                    break;
-                } else {
-                    this.parseNumber(c);
-                    break;
-                }
+    private void parseIdentifier() {
+        do {
+            char c = nextChar();
+            if (isSeparator(c)) {
+                return;
+            } else if (isSpecial(c)) {
+                pushBack();
+                return;
             }
-        }
-        return ret;
+
+            this.value.append(c);
+        } while (this.hasNext());
     }
 
     /**
@@ -190,13 +176,10 @@ public class Scanner {
      */
     private void parseNumber(final char start) throws SQLException {
         char c = start;
-        boolean numeric = false;
         int dotCount = 0;
-        while (!Scanner.isSeparator(c) && ((numeric && (c == '.')) || !Scanner.isSpecial(c))) {
+        do {
             this.value.append(c);
-            if (this.value.length() == 1) {
-                numeric = Character.isDigit(this.value.charAt(0));
-            } else if (c == '.') {
+            if (c == '.') {
                 dotCount++;
 
                 // Only one dot per numeric value
@@ -207,8 +190,9 @@ public class Scanner {
             } else {
                 break;
             }
-        }
-        if (Scanner.isSeparator(c) || Scanner.isSpecial(c)) {
+        } while ((!Scanner.isSeparator(c) && !Scanner.isSpecial(c)) || c == '.');
+
+        if (Scanner.isSpecial(c)) {
             this.pushBack();
         }
     }
@@ -279,12 +263,47 @@ public class Scanner {
             throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL.getValue());
         }
         this.value.delete(0, this.value.length());
-        final boolean characters = this.parseIdentifier();
-        if (characters) {
-            return new Token(TokenType.CHARACTER, this.value.toString());
-        } else if (Character.isDigit(this.value.charAt(0))) {
-            return new Token(TokenType.NUMERIC, this.value.toString());
+
+        // Ignore separators
+        char c = this.nextChar();
+        while (isSeparator(c)) {
+            c = this.nextChar();
         }
+
+        if ((c == '"') || (c == '\'')) {
+            // identifiers with special chars
+            final boolean characters = Scanner.isCharacters(c);
+            this.parseString(c);
+
+            if (characters) {
+                return new Token(TokenType.CHARACTER, this.value.toString());
+            } else {
+                return new Token(TokenType.IDENTIFIER, this.value.toString());
+            }
+        } else if (Character.isDigit(c)) {
+            parseNumber(c);
+            return new Token(TokenType.NUMERIC, this.value.toString());
+        } else if (c == '-') {
+            // Can be a minus sign only or a negative number.
+            char nextChar = this.nextChar();
+            // Restore the original scanner state.
+            pushBack();
+
+            if (Character.isDigit(nextChar)) {
+                // It is a number.
+                parseNumber(c);
+                return new Token(TokenType.NUMERIC, this.value.toString());
+            }
+
+            // Only a minus sign.
+            return getToken(Character.toString(c));
+        } else if (isSpecial(c)) {
+            return getToken(Character.toString(c));
+        }
+
+        pushBack();
+        parseIdentifier();
+
         return getToken(this.value.toString());
     }
 
