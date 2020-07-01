@@ -15,6 +15,9 @@ import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.value.NullNode;
+import com.googlecode.paradox.planner.nodes.value.StringNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
@@ -247,6 +250,9 @@ public final class SQLParser {
             // Found a numeric value.
             this.expect(TokenType.NUMERIC);
             ret = new StringNode(connection, fieldName);
+        } else if (this.token.getType() == TokenType.NULL) {
+            this.expect(TokenType.NULL);
+            ret = new NullNode(connection);
         } else {
             // Found a table field.
             this.expect(TokenType.IDENTIFIER);
@@ -289,6 +295,9 @@ public final class SQLParser {
                 break;
             case MORE:
                 node = this.parseMore(firstField);
+                break;
+            case IS:
+                node = this.parseNull(firstField);
                 break;
             default:
                 throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL.getValue());
@@ -534,6 +543,27 @@ public final class SQLParser {
         }
 
         return new GreaterThanNode(connection, firstField, this.parseField());
+    }
+
+    /**
+     * Parses null conditional token.
+     *
+     * @param firstField the left more token field.
+     * @return the null than node.
+     * @throws SQLException in case of parse errors.
+     */
+    private AbstractComparableNode parseNull(final FieldNode firstField) throws SQLException {
+        this.expect(TokenType.IS);
+        AbstractComparableNode ret;
+        if (token.getType() == TokenType.NOT) {
+            this.expect(TokenType.NOT);
+            ret = new IsNotNullNode(connection, firstField);
+        } else {
+            ret = new IsNullNode(connection, firstField);
+        }
+
+        this.expect(TokenType.NULL);
+        return ret;
     }
 
     /**

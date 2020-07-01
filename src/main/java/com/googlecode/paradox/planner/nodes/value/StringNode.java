@@ -8,20 +8,21 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes;
+package com.googlecode.paradox.planner.nodes.value;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.IFieldValue;
 
 /**
- * Stores a Number value.
+ * Stores a String value.
  *
- * @author Leonardo Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class NumberNode extends FieldNode {
+public class StringNode extends FieldNode implements IFieldValue {
 
-    public NumberNode(final ParadoxConnection connection, final String name) {
+    public StringNode(final ParadoxConnection connection, final String name) {
         super(connection, null, name, null);
     }
 }

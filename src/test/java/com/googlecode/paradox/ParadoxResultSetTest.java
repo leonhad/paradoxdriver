@@ -251,4 +251,41 @@ public class ParadoxResultSetTest {
             Assert.assertTrue("No First row", rs.next());
         }
     }
+
+    /**
+     * Test for is null.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testIsNull() throws SQLException {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery(
+                     "select \"date\", \"time\" from \"date\".DATE7 where \"date\" is null")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("Invalid time.", "10:00:00", rs.getString("time"));
+            Assert.assertFalse("No First row", rs.next());
+        }
+    }
+
+    /**
+     * Test for is not null.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testIsNotNull() throws SQLException {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select \"date\" from \"date\".DATE7 where \"date\" is not null")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("Invalid time.", "2018-01-01", rs.getString("date"));
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("Invalid time.", "2018-02-01", rs.getString("date"));
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("Invalid time.", "2018-01-02", rs.getString("date"));
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("Invalid time.", "2018-01-01", rs.getString("date"));
+            Assert.assertFalse("No First row", rs.next());
+        }
+    }
 }

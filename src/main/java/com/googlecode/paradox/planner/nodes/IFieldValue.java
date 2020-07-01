@@ -8,20 +8,13 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes;
-
-import com.googlecode.paradox.ParadoxConnection;
+package com.googlecode.paradox.planner.nodes;
 
 /**
- * Stores a String value.
+ * Identify a constant value field.
  *
- * @author Leonardo Costa
  * @version 1.0
  * @since 1.6.0
  */
-public class StringNode extends FieldNode {
-
-    public StringNode(final ParadoxConnection connection, final String name) {
-        super(connection, null, name, null);
-    }
+public interface IFieldValue {
 }

@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import org.junit.*;

@@ -15,7 +15,7 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;

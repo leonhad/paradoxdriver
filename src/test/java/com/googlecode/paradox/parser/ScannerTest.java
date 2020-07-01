@@ -163,6 +163,19 @@ public class ScannerTest {
     }
 
     /**
+     * Test for is null tokens.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testIsNull() throws Exception {
+        final Scanner scanner = new Scanner(conn, "is null");
+        Assert.assertEquals("Invalid token type.", TokenType.IS, scanner.nextToken().getType());
+        Assert.assertEquals("Invalid token type.", TokenType.NULL, scanner.nextToken().getType());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+    }
+
+    /**
      * Test for minus sign.
      *
      * @throws Exception in case of failures.

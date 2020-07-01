@@ -12,14 +12,17 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.value.NullNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
+import com.googlecode.paradox.planner.nodes.comparable.IsNotNullNode;
+import com.googlecode.paradox.planner.nodes.comparable.IsNullNode;
 import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import org.junit.AfterClass;
@@ -35,7 +38,7 @@ import java.util.List;
  * Unit test for {@link SQLParser}.
  *
  * @author Leonardo Alves da Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public class SQLParserTest {
@@ -45,6 +48,9 @@ public class SQLParserTest {
      */
     public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
+    /**
+     * The database connection.
+     */
     private static ParadoxConnection conn;
 
     /**
@@ -58,9 +64,71 @@ public class SQLParserTest {
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
+    /**
+     * Close the database connection.
+     *
+     * @throws SQLException in case of failures.
+     */
     @AfterClass
     public static void tearDown() throws SQLException {
         conn.close();
+    }
+
+    /**
+     * Test for is null expressions.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testIsNull() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "SELECT A FROM db.B WHERE A is NULL");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof IsNullNode);
+        final IsNullNode node = (IsNullNode) select.getCondition();
+        Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
+        Assert.assertNull("Invalid field value.", node.getLast());
+    }
+
+    /**
+     * Test for is not null expressions.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testIsNotNull() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "SELECT A FROM db.B WHERE A is not NULL");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof IsNotNullNode);
+        final IsNotNullNode node = (IsNotNullNode) select.getCondition();
+        Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
+        Assert.assertNull("Invalid field value.", node.getLast());
+    }
+
+    /**
+     * Test for not as a value.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNullAsValue() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "SELECT A FROM db.B WHERE A = NULL");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof EqualsNode);
+        final EqualsNode node = (EqualsNode) select.getCondition();
+        Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
+        Assert.assertTrue("Invalid field value.", node.getLast() instanceof NullNode);
     }
 
     /**
@@ -321,7 +389,7 @@ public class SQLParserTest {
         EqualsNode node = ((EqualsNode) select.getCondition());
         Assert.assertEquals("Invalid node table name.", "test", node.getField().getTableName());
         Assert.assertEquals("Invalid node name.", "a", node.getField().getName());
-        Assert.assertEquals("Invalid node tablename.", "c", node.getLast().getTableName());
+        Assert.assertEquals("Invalid node table name.", "c", node.getLast().getTableName());
         Assert.assertEquals("Invalid node name.", "b", node.getLast().getName());
     }
 }

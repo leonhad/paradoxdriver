@@ -13,6 +13,8 @@ package com.googlecode.paradox.parser.nodes;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.planner.ValuesComparator;
+import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.IFieldValue;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 
@@ -24,8 +26,7 @@ import java.util.Set;
 /**
  * Stores a abstract comparable node.
  *
- * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
@@ -61,7 +62,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
             throws SQLException {
 
         // Do not set indexes in value nodes.
-        if (field instanceof StringNode || field instanceof NumberNode) {
+        if (field == null || field instanceof IFieldValue) {
             return;
         }
 

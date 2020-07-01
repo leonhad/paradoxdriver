@@ -15,29 +15,26 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.ValuesComparator;
 
 /**
- * Stores the greater than or equals node.
+ * Is not null node.
  *
- * @author Leonardo Costa
- * @version 1.1
+ * @version 1.0
  * @since 1.6.0
  */
-public final class GreaterThanOrEqualsNode extends AbstractComparableNode {
+public class IsNotNullNode extends AbstractComparableNode {
 
     /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
      * @param field      the first node.
-     * @param last       the last node.
      */
-    public GreaterThanOrEqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, ">=", field, last);
+    public IsNotNullNode(final ParadoxConnection connection, final FieldNode field) {
+        super(connection, "IS NOT", field, null);
     }
 
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
-        final Object value2 = getValue(row, last);
-        return comparator.compare(value1, value2, i -> i >= 0);
+        return value1 != null;
     }
 }

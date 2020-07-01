@@ -12,7 +12,7 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 
@@ -23,8 +23,7 @@ import java.util.Set;
 /**
  * Comparable node common code.
  *
- * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public abstract class AbstractComparableNode extends AbstractConditionalNode {
@@ -60,7 +59,10 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
     @Override
     public Set<FieldNode> getClauseFields() {
         final Set<FieldNode> nodes = super.getClauseFields();
-        nodes.add(last);
+        if (last != null) {
+            nodes.add(last);
+        }
+
         return nodes;
     }
 

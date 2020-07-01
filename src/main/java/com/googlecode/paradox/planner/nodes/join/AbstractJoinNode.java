@@ -12,7 +12,7 @@ package com.googlecode.paradox.planner.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
