@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.function.IntPredicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,15 +43,16 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         this.connection = connection;
     }
 
-    @Override
-    public int compare(final Object o1, final Object o2) {
-        // Treat null values.
-        if (o1 == null) {
-            return 1;
-        } else if (o2 == null) {
-            return -1;
+    public boolean compare(final Object o1, final Object o2, IntPredicate condition) {
+        if (o1 == null || o2 == null) {
+            return false;
         }
 
+        return condition.test(compare(o1, o2));
+    }
+
+    @Override
+    public int compare(final Object o1, final Object o2) {
         // Try to compare with Boolean values.
         if (o1 instanceof Boolean || o2 instanceof Boolean) {
             final Boolean n1 = getBoolean(o1);

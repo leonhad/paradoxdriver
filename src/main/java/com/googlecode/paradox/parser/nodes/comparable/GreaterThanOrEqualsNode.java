@@ -14,8 +14,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
 
-import java.util.Objects;
-
 /**
  * Stores the greater than or equals node.
  *
@@ -40,6 +38,6 @@ public final class GreaterThanOrEqualsNode extends AbstractComparableNode {
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
-        return Objects.compare(value1, value2, comparator) >= 0;
+        return comparator.compare(value1, value2, i -> i >= 0);
     }
 }
