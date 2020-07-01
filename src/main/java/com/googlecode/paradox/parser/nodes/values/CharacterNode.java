@@ -30,7 +30,7 @@ public final class CharacterNode extends SQLNode {
      * @param alias      the characters alias.
      */
     public CharacterNode(final ParadoxConnection connection, final String value, final String alias) {
-        super(connection, value.toUpperCase(connection.getLocale()), alias.toUpperCase(connection.getLocale()));
+        super(connection, value, alias);
     }
 
 }

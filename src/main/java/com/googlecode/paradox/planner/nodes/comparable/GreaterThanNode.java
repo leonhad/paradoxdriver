@@ -8,22 +8,20 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.comparable;
+package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
-
-import java.util.Objects;
+import com.googlecode.paradox.planner.ValuesComparator;
 
 /**
- * Stores the equals node.
+ * Stores the greater than node.
  *
  * @author Leonardo Costa
  * @version 1.5
  * @since 1.1
  */
-public final class EqualsNode extends AbstractComparableNode {
+public final class GreaterThanNode extends AbstractComparableNode {
 
     /**
      * Create a new instance.
@@ -32,14 +30,14 @@ public final class EqualsNode extends AbstractComparableNode {
      * @param field      the first node.
      * @param last       the last node.
      */
-    public EqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, "=", field, last);
+    public GreaterThanNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
+        super(connection, ">", field, last);
     }
 
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
-        return Objects.compare(value1, value2, comparator) == 0;
+        return comparator.compare(value1, value2, i -> i == 1);
     }
 }

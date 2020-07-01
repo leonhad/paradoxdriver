@@ -8,36 +8,60 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.comparable;
+package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.FieldNode;
+import com.googlecode.paradox.planner.ValuesComparator;
+
+import java.util.Objects;
 
 /**
- * Store the less than node.
+ * Stores the between node.
  *
  * @author Leonardo Costa
- * @version 1.5
+ * @version 1.3
  * @since 1.1
  */
-public final class LessThanNode extends AbstractComparableNode {
+public final class BetweenNode extends AbstractComparableNode {
+
+    /**
+     * The field node.
+     */
+    private final FieldNode first;
 
     /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
-     * @param field      the first node.
+     * @param field      the middle node.
+     * @param first      the first node.
      * @param last       the last node.
      */
-    public LessThanNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, "<", field, last);
+    public BetweenNode(final ParadoxConnection connection, final FieldNode field, final FieldNode first,
+                       final FieldNode last) {
+        super(connection, "BETWEEN", field, last);
+        this.first = first;
+    }
+
+    public FieldNode getFirst() {
+        return first;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public String toString() {
+        return this.field + " BETWEEN " + first + " AND " + last;
     }
 
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
-        final Object value2 = getValue(row, last);
-        return comparator.compare(value1, value2, i -> i == -1);
+        final Object value2 = getValue(row, first);
+        final Object value3 = getValue(row, last);
+        return Objects.compare(value1, value2, comparator) >= 0
+                && Objects.compare(value1, value3, comparator) <= 0;
     }
 }

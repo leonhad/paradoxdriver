@@ -16,12 +16,12 @@ import com.googlecode.paradox.parser.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.parser.nodes.comparable.EqualsNode;
-import com.googlecode.paradox.parser.nodes.comparable.NotEqualsNode;
-import com.googlecode.paradox.parser.nodes.join.ANDNode;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
+import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
+import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
+import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -124,7 +124,7 @@ public class SQLParserTest {
 
         Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
         Assert.assertTrue("Invalid node type.", select.getFields().get(0) instanceof CharacterNode);
-        Assert.assertEquals("Invalid node name.", "TEST", select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node name.", "test", select.getFields().get(0).getName());
         Assert.assertTrue("Invalid node type.", select.getFields().get(1) instanceof NumericNode);
         Assert.assertEquals("Invalid node name.", "123", select.getFields().get(1).getName());
         Assert.assertEquals("Invalid node alias.", "number", select.getFields().get(1).getAlias());

@@ -8,12 +8,11 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.join;
+package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.StatementNode;
+import com.googlecode.paradox.parser.nodes.FieldNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -23,14 +22,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link ANDNode} class.
+ * Unit test for {@link LessThanNode} class.
  *
  * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */
-public class ANDNodeTest {
-
+public class LessThanNodeTest {
     /**
      * The connection string used in this tests.
      */
@@ -55,22 +53,13 @@ public class ANDNodeTest {
     }
 
     /**
-     * Test for childhood.
+     * Test for {@link BetweenNode#toString()} method.
      */
     @Test
-    public void testChildhood() {
-        final SQLNode node = new StatementNode(conn, null);
-        final ANDNode and = new ANDNode(conn, node);
-        Assert.assertEquals("Invalid node typesize.", 1, and.getChildhood().size());
-        Assert.assertEquals("Invalid node value.", node, and.getChildhood().iterator().next());
-    }
-
-    /**
-     * Test for name.
-     */
-    @Test
-    public void testName() {
-        final ANDNode node = new ANDNode(conn, null);
-        Assert.assertEquals("Invalid node name.", "AND", node.getName());
+    public void testToString() {
+        final FieldNode first = new FieldNode(conn, "table", "first", "first");
+        final FieldNode last = new FieldNode(conn, "table", "last", "last");
+        final LessThanNode node = new LessThanNode(conn, first, last);
+        Assert.assertEquals("Invalid node value.", "table.first < table.last", node.toString());
     }
 }

@@ -12,9 +12,9 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.comparable.EqualsNode;
-import com.googlecode.paradox.parser.nodes.comparable.NotEqualsNode;
-import com.googlecode.paradox.parser.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
+import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
+import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

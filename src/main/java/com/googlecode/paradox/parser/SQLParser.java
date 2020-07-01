@@ -12,12 +12,12 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.*;
-import com.googlecode.paradox.parser.nodes.comparable.*;
-import com.googlecode.paradox.parser.nodes.join.ANDNode;
-import com.googlecode.paradox.parser.nodes.join.ORNode;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
+import com.googlecode.paradox.planner.nodes.comparable.*;
+import com.googlecode.paradox.planner.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
 

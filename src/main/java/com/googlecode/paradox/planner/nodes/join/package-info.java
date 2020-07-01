@@ -10,8 +10,8 @@
  */
 
 /**
- * SQL values comparisons.
+ * Conditional nodes logic.
  *
  * @since 1.0
  */
-package com.googlecode.paradox.parser.nodes.comparable;
+package com.googlecode.paradox.planner.nodes.join;

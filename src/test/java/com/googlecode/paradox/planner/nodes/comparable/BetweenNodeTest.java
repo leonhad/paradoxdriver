@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.comparable;
+package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
@@ -19,18 +19,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
- * Unit test for {@link GreaterThanOrEqualsNode} class.
+ * Unit test for {@link BetweenNode} class.
  *
- * @author Leonardo Costa
- * @version 1.0
- * @since 1.6.0
+ * @author Leonardo Alves da Costa
+ * @version 1.1
+ * @since 1.3
  */
-public class GreaterThanOrEqualsNodeTest {
+public class BetweenNodeTest {
+
     /**
      * The connection string used in this tests.
      */
@@ -55,30 +54,24 @@ public class GreaterThanOrEqualsNodeTest {
     }
 
     /**
+     * Test the field node.
+     */
+    @Test
+    public void testField() {
+        final FieldNode field = new FieldNode(conn, "table", "field", "alias");
+        final BetweenNode node = new BetweenNode(conn, field, null, null);
+        Assert.assertEquals("Invalid field value.", field, node.getField());
+    }
+
+    /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
     public void testToString() {
+        final FieldNode field = new FieldNode(conn, "table", "field", "field");
         final FieldNode first = new FieldNode(conn, "table", "first", "first");
         final FieldNode last = new FieldNode(conn, "table", "last", "last");
-        final GreaterThanOrEqualsNode node = new GreaterThanOrEqualsNode(conn, first, last);
-        Assert.assertEquals("Invalid node value.", "table.first >= table.last", node.toString());
-    }
-
-    /**
-     * Test for {@link ResultSet} execution.
-     *
-     * @throws Exception in case of failures.
-     */
-    @Test
-    public void testResultSet() throws Exception {
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT B FROM fields.bcd where B >= -1")) {
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid value.", 1, rs.getInt("B"));
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid value", -1, rs.getInt("B"));
-            Assert.assertFalse("Invalid ResultSet state.", rs.next());
-        }
+        final BetweenNode node = new BetweenNode(conn, field, first, last);
+        Assert.assertEquals("Invalid node values.", "table.field BETWEEN table.first AND table.last", node.toString());
     }
 }

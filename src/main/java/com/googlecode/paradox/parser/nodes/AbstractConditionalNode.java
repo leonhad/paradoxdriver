@@ -12,7 +12,7 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.parser.ValuesComparator;
+import com.googlecode.paradox.planner.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 

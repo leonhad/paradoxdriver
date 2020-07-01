@@ -8,21 +8,21 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.parser.nodes.join;
+package com.googlecode.paradox.planner.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.ValuesComparator;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.ValuesComparator;
 
 /**
- * Store the OR node.
+ * Stores the AND node.
  *
  * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
-public class ORNode extends AbstractJoinNode {
+public class ANDNode extends AbstractJoinNode {
 
     /**
      * Create a new instance.
@@ -30,18 +30,18 @@ public class ORNode extends AbstractJoinNode {
      * @param connection the Paradox connection.
      * @param child      the child node.
      */
-    public ORNode(final ParadoxConnection connection, final SQLNode child) {
-        super(connection, "OR", child);
+    public ANDNode(final ParadoxConnection connection, final SQLNode child) {
+        super(connection, "AND", child);
     }
 
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         for (final SQLNode node : childhood) {
             final AbstractConditionalNode comparisonNode = (AbstractConditionalNode) node;
-            if (comparisonNode.evaluate(row, comparator)) {
-                return true;
+            if (!comparisonNode.evaluate(row, comparator)) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 }
