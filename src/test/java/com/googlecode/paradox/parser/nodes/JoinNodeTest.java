@@ -172,4 +172,36 @@ public class JoinNodeTest {
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }
+
+    /**
+     * Test for cross join with WHERE clause.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCrossJoinWithWhere() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select Id from fields.long cross join fields.bcd where Id = B")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 1, rs.getInt("Id"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for manual join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testManualJoin() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select Id from fields.long, fields.bcd where Id = B")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 1, rs.getInt("Id"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
 }
