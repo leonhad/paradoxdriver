@@ -59,7 +59,7 @@ public class JoinNodeTest {
      */
     @Test
     public void testInstance() {
-        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.CROSS);
+        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.INNER);
         Assert.assertNull("Invalid node name.", node.getName());
     }
 
@@ -73,7 +73,7 @@ public class JoinNodeTest {
     }
 
     /**
-     * Test for join.
+     * Test for inner join.
      *
      * @throws SQLException in case of failures.
      */
@@ -83,11 +83,11 @@ public class JoinNodeTest {
                 "select c.CountyID, ac.AreaCode " +
                         "from geog.tblAC ac " +
                         "     join geog.tblsttes st on st.State = ac.State " +
-                        "     join geog.County c on c.StateID = st.State " +
+                        "     inner join geog.County c on c.StateID = st.State " +
                         "where c.CountyID = 205")) {
-            while (rs.next()) {
-                Assert.assertEquals("Invalid county id value.", 205, rs.getInt("CountyID"));
-            }
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid county id value.", 205, rs.getInt("CountyID"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }
 

@@ -69,13 +69,13 @@ public class TableNodeTest {
      */
     @Test
     public void testToString() {
-        final JoinNode join = new JoinNode(conn, null, "table.db", "alias", JoinType.CROSS);
+        final JoinNode join = new JoinNode(conn, null, "table.db", "alias", JoinType.INNER);
         final FieldNode fieldA = new FieldNode(conn, null, "a", null);
         final FieldNode fieldB = new FieldNode(conn, null, "b", null);
 
         join.setCondition(new EqualsNode(conn, fieldA, fieldB));
 
-        Assert.assertEquals("Invalid JoinNode for toString().", "CROSS JOIN table AS alias ON a = b ",
+        Assert.assertEquals("Invalid JoinNode for toString().", "INNER JOIN table AS alias ON a = b ",
                 join.toString());
     }
 }

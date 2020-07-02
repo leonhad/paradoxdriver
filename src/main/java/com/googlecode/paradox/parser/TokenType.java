@@ -13,8 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @author Leonardo Costa
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public enum TokenType {
@@ -82,6 +81,16 @@ public enum TokenType {
      * Inner token.
      */
     INNER,
+
+    /**
+     * Full token.
+     */
+    FULL,
+
+    /**
+     * Cross token.
+     */
+    CROSS,
 
     /**
      * Insert token.

@@ -42,7 +42,7 @@ public final class PlanTableNode {
 
     private AbstractConditionalNode conditionalJoin;
 
-    private JoinType joinType = JoinType.CROSS;
+    private JoinType joinType = JoinType.INNER;
 
     /**
      * Creates a new instance.
@@ -113,7 +113,7 @@ public final class PlanTableNode {
             joinType = join.getJoinType();
         } else {
             conditionalJoin = null;
-            joinType = JoinType.CROSS;
+            joinType = JoinType.INNER;
         }
     }
 

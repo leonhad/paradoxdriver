@@ -13,23 +13,27 @@ package com.googlecode.paradox.parser.nodes;
 /**
  * The join type list.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public enum JoinType {
     /**
-     * Cross join type.
+     * Inner join.
      */
-    CROSS,
-    
+    INNER,
+
     /**
-     * Left join type.
+     * Full outer join.
+     */
+    FULL,
+
+    /**
+     * Left outer join.
      */
     LEFT,
-    
+
     /**
-     * Right join type.
+     * Right outer join.
      */
     RIGHT
 }

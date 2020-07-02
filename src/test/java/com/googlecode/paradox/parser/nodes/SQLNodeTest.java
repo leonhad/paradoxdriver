@@ -57,7 +57,7 @@ public class SQLNodeTest {
      */
     @Test
     public void testAlias() {
-        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.CROSS);
+        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.INNER);
         node.setAlias("alias");
         Assert.assertEquals("Invalid node alias.", "alias", node.getAlias());
     }
@@ -67,7 +67,7 @@ public class SQLNodeTest {
      */
     @Test
     public void testConditions() {
-        final SQLNode node = new JoinNode(conn, null, null, null, JoinType.CROSS);
+        final SQLNode node = new JoinNode(conn, null, null, null, JoinType.INNER);
         Assert.assertEquals("Conditional is not the same.", 0, node.getChildren().size());
     }
 }

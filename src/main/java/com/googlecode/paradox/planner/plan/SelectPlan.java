@@ -15,7 +15,6 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.planner.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
@@ -148,26 +147,6 @@ public final class SelectPlan implements Plan {
      */
     @Override
     public void execute(final ParadoxConnection connection) throws SQLException {
-        /**
-         this.values = new TreeSet<>((a, b) -> {
-         for (int loop = 0; loop < a.length; loop++) {
-         Object v1 = a[loop];
-         Object v2 = b[loop];
-
-         if (v1 == null) {
-         return 1;
-         } else if (v2 == null) {
-         return -1;
-         }
-         int r = v1.toString().compareTo(v2.toString());
-         if (r != 0) {
-         return r;
-         }
-         }
-         return 1;
-         });
-         */
-
         if (this.columns.isEmpty() || this.tables.isEmpty()) {
             return;
         }
@@ -196,7 +175,6 @@ public final class SelectPlan implements Plan {
 
             columnsLoaded.addAll(columnsToLoad);
 
-            // TODO: Filter constants.
             final List<Object[]> tableData = TableData.loadData(table.getTable(), columnsToLoad.stream()
                     .map(Column::getField).toArray(ParadoxField[]::new));
 
@@ -216,7 +194,8 @@ public final class SelectPlan implements Plan {
                         localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
                         break;
                     default:
-                        localValues = processCrossJoin(comparator, columnsLoaded, rawData, table, tableData);
+                        localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
+                        break;
                 }
 
                 rawData.clear();
@@ -238,7 +217,7 @@ public final class SelectPlan implements Plan {
 
     }
 
-    private List<Object[]> processCrossJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+    private List<Object[]> processInnerJoin(ValuesComparator comparator, List<Column> columnsLoaded,
                                             List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
