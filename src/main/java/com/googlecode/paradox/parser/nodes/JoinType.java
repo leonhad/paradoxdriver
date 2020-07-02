@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser.nodes;
 /**
  * The join type list.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public enum JoinType {
@@ -35,5 +35,10 @@ public enum JoinType {
     /**
      * Right outer join.
      */
-    RIGHT
+    RIGHT,
+
+    /**
+     * The cross join.
+     */
+    CROSS;
 }

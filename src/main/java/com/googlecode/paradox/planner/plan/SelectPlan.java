@@ -170,7 +170,8 @@ public final class SelectPlan implements Plan {
 
             // If there is a column to load.
             if (columnsToLoad.isEmpty()) {
-                continue;
+                // Force the table loading (used in joins).
+                columnsToLoad.add(new Column(table.getTable().getFields()[0]));
             }
 
             columnsLoaded.addAll(columnsToLoad);

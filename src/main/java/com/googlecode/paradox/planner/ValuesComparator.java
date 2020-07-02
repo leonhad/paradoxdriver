@@ -190,7 +190,6 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         if (o1 instanceof String || o2 instanceof String) {
             final String n1 = String.valueOf(o1);
             final String n2 = String.valueOf(o2);
-            // FIXME: find a better string comparator. The Java collator is extremely slow.
             return n1.compareTo(n2);
         }
 

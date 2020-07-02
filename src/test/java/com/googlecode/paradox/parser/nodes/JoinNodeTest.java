@@ -117,6 +117,38 @@ public class JoinNodeTest {
     }
 
     /**
+     * Test for cross join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCrossJoin() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select Id from fields.long cross join fields.bcd")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 1, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 1, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 1, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 2, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 2, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 2, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 3, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 3, rs.getInt("Id"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 3, rs.getInt("Id"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
      * Test for right join.
      *
      * @throws SQLException in case of failures.

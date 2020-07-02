@@ -16,11 +16,11 @@ import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.value.NullNode;
-import com.googlecode.paradox.planner.nodes.value.StringNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
+import com.googlecode.paradox.planner.nodes.value.NullNode;
+import com.googlecode.paradox.planner.nodes.value.StringNode;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.SQLStates;
 
@@ -443,21 +443,27 @@ public final class SQLParser {
         while (this.scanner.hasNext() && (this.token.getType() != TokenType.COMMA)
                 && (this.token.getType() != TokenType.WHERE)) {
 
-            // Inner join
+            // Inner, right or cross join.
             JoinType joinType = JoinType.INNER;
             if (this.token.getType() == TokenType.LEFT) {
                 joinType = JoinType.LEFT;
                 this.expect(TokenType.LEFT);
+                if (this.token.getType() == TokenType.OUTER) {
+                    this.expect(TokenType.OUTER);
+                }
             } else if (this.token.getType() == TokenType.RIGHT) {
                 joinType = JoinType.RIGHT;
                 this.expect(TokenType.RIGHT);
+                if (this.token.getType() == TokenType.OUTER) {
+                    this.expect(TokenType.OUTER);
+                }
+            } else if (this.token.getType() == TokenType.CROSS) {
+                joinType = JoinType.CROSS;
+                this.expect(TokenType.CROSS);
+            } else if (this.token.getType() == TokenType.INNER) {
+                this.expect(TokenType.INNER);
             }
 
-            if (this.token.getType() == TokenType.INNER) {
-                this.expect(TokenType.INNER);
-            } else if (this.token.getType() == TokenType.OUTER) {
-                this.expect(TokenType.OUTER);
-            }
             this.expect(TokenType.JOIN);
 
             String schemaName = null;
@@ -473,10 +479,13 @@ public final class SQLParser {
             }
 
             final String tableAlias = this.parseFields(tableName);
-            this.expect(TokenType.ON);
 
             final JoinNode joinTable = new JoinNode(connection, schemaName, tableName, tableAlias, joinType);
-            joinTable.setCondition(this.parseCondition());
+            if (joinType != JoinType.CROSS) {
+                // Cross join don't have join clause.
+                this.expect(TokenType.ON);
+                joinTable.setCondition(this.parseCondition());
+            }
             select.addTable(joinTable);
         }
     }
