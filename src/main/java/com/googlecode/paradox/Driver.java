@@ -13,7 +13,6 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.utils.Constants;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
@@ -26,8 +25,7 @@ import java.util.logging.Logger;
 /**
  * PARADOX JDBC Driver type 4.
  *
- * @author Leonardo Alves da Costa
- * @version 2.2
+ * @version 2.3
  * @since 1.0
  */
 @SuppressWarnings("squid:S2176")
@@ -111,9 +109,6 @@ public final class Driver implements java.sql.Driver {
             localeValue = info.getProperty(LOCALE_KEY);
         }
 
-        if (charsetValue == null) {
-            charsetValue = Charset.defaultCharset().displayName();
-        }
         if (localeValue == null) {
             localeValue = Locale.ENGLISH.getLanguage();
         }

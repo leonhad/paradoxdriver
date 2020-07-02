@@ -61,7 +61,7 @@ public class ParadoxData {
     }
 
     protected static void checkDBEncryption(final ByteBuffer buffer, final ParadoxDataFile dataFile, int blockSize,
-                                     long blockNumber) {
+                                            long blockNumber) {
         if (dataFile.isEncrypted()) {
             byte[] b = buffer.array();
             EncryptedData.decryptDBBlock(b, dataFile.getEncryptedData(), blockSize, blockNumber);

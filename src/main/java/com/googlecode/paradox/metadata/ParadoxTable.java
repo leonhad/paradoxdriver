@@ -22,8 +22,7 @@ import java.sql.SQLException;
 /**
  * Stores a table data file.
  *
- * @author Leonardo Costa
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public final class ParadoxTable extends ParadoxDataFile {
@@ -39,7 +38,7 @@ public final class ParadoxTable extends ParadoxDataFile {
         super(file, name, connection);
     }
 
-    public FileInputStream openBlobs() throws SQLException, FileNotFoundException {
+    public FileInputStream openBlobs() throws SQLException {
         final File[] fileList = file.getParentFile().listFiles(new TableFilter(connection,
                 name, "mb"));
         if ((fileList == null) || (fileList.length == 0)) {
@@ -51,7 +50,12 @@ public final class ParadoxTable extends ParadoxDataFile {
                     SQLStates.LOAD_DATA.getValue());
         }
         File blobFile = fileList[0];
-        return new FileInputStream(blobFile);
+        try {
+            return new FileInputStream(blobFile);
+        } catch (final FileNotFoundException e) {
+            throw new SQLException(String.format("Blob file not found for table '%s'", name),
+                    SQLStates.LOAD_DATA.getValue(), e);
+        }
     }
 
     /**

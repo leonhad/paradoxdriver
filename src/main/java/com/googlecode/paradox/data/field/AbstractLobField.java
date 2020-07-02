@@ -45,6 +45,8 @@ public abstract class AbstractLobField implements FieldParser {
      * Sub block value.
      */
     private static final int SUB_BLOCK = 3;
+    public static final int GRAPH_HEADER_SIZE = 17;
+    public static final int BLOB_HEADER_SIZE = 9;
 
     protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value);
 
@@ -63,19 +65,17 @@ public abstract class AbstractLobField implements FieldParser {
         int leader = field.getRealSize();
         value.position(leader);
 
-        long beginIndex = buffer.getInt();
-
-        final int size = buffer.getInt();
-        buffer.getShort();
-
         // All fields are 9, only graphics is 17.
-        int headerSize = 9;
+        int headerSize = BLOB_HEADER_SIZE;
 
         // Graphic field?
         if (field.getType() == ParadoxFieldType.GRAPHIC.getType()) {
-            headerSize = 17;
+            headerSize = GRAPH_HEADER_SIZE;
         }
 
+        long beginIndex = buffer.getInt();
+        final int size = buffer.getInt();
+        buffer.getShort();
         buffer.order(ByteOrder.BIG_ENDIAN);
         if (size <= 0) {
             return null;
@@ -96,22 +96,27 @@ public abstract class AbstractLobField implements FieldParser {
             head.getShort();
 
             final int index = (int) beginIndex & 0xFF;
-            switch (type) {
-                case 0x0:
-                    throw new SQLException("Trying to read a head lob block.");
-                case 0x1:
-                    throw new SQLException("Trying to read a free lob block.");
-                case FREE_BLOCK:
-                    throw new SQLException("Invalid MB header.");
-                case SINGLE_BLOCK:
-                    return parseSingleBlock(table, index, size, headerSize, channel);
-                case SUB_BLOCK:
-                    return parseSubBlock(table, index, offset, size, headerSize, channel);
-                default:
-                    throw new SQLException("Invalid BLOB header type " + type);
-            }
+            return processBlobByBlockType(table, headerSize, size, channel, offset, type, index);
         } catch (final IOException ex) {
             throw new SQLException(ex);
+        }
+    }
+
+    private Object processBlobByBlockType(ParadoxTable table, int headerSize, int size, FileChannel channel,
+                                          long offset, byte type, int index) throws SQLException, IOException {
+        switch (type) {
+            case 0x0:
+                throw new SQLException("Trying to read a head lob block.");
+            case 0x1:
+                throw new SQLException("Trying to read a free lob block.");
+            case FREE_BLOCK:
+                throw new SQLException("Invalid MB header.");
+            case SINGLE_BLOCK:
+                return parseSingleBlock(table, index, size, headerSize, channel);
+            case SUB_BLOCK:
+                return parseSubBlock(table, index, offset, size, headerSize, channel);
+            default:
+                throw new SQLException("Invalid BLOB header type " + type);
         }
     }
 

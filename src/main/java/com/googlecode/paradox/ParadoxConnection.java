@@ -17,6 +17,7 @@ import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -109,7 +110,7 @@ public final class ParadoxConnection implements Connection {
         if (charsetName != null && !charsetName.trim().isEmpty()) {
             this.charset = Charset.forName(charsetName);
         } else {
-            this.charset = Charset.defaultCharset();
+            this.charset = null;
         }
 
         final String localeName = info.getProperty(Driver.LOCALE_KEY);
