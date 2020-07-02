@@ -121,7 +121,7 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
+            Assert.assertTrue("Invalid absolute value.", rs.absolute(1));
         }
     }
 
@@ -129,7 +129,7 @@ public class ParadoxResultSetTest {
      * Test for {@link ParadoxResultSet#afterLast()} method.
      */
     @Test
-    public void testAfterLast() {
+    public void testAfterLast() throws SQLException {
         final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType());
         final List<Column> columns = Collections.singletonList(new Column(field));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
@@ -155,6 +155,27 @@ public class ParadoxResultSetTest {
             Assert.assertNotEquals("Rows with same value.", firstValue, rs.getString("ACode"));
             Assert.assertTrue("Not in first row.", rs.first());
             Assert.assertEquals("Rows with different values.", firstValue, rs.getString("ACode"));
+        }
+    }
+
+    /**
+     * Test for fetch direction.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testFetchDirection() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            final String firstValue = rs.getString("ACode");
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+
+            rs.setFetchDirection(ResultSet.FETCH_REVERSE);
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+
+            final String newValue = rs.getString("ACode");
+            Assert.assertEquals("Invalid column value", firstValue, newValue);
         }
     }
 
