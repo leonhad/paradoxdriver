@@ -36,7 +36,7 @@ public class ANDNode extends AbstractJoinNode {
 
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
-        for (final SQLNode node : childhood) {
+        for (final SQLNode node : children) {
             final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
             if (!conditionalNode.evaluate(row, comparator)) {
                 return false;

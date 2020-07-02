@@ -10,14 +10,11 @@
  */
 package com.googlecode.paradox.planner;
 
-import com.googlecode.paradox.ParadoxConnection;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.IntPredicate;
@@ -27,23 +24,18 @@ import java.util.logging.Logger;
 /**
  * Compare Paradox values.
  *
- * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ValuesComparator implements Comparator<Object>, Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(ValuesComparator.class.getName());
 
-    private final transient ParadoxConnection connection;
-
     /**
      * Creates a new instance.
-     *
-     * @param connection the Paradox connection.
      */
-    public ValuesComparator(ParadoxConnection connection) {
-        this.connection = connection;
+    public ValuesComparator() {
+        super();
     }
 
     public boolean compare(final Object o1, final Object o2, IntPredicate condition) {
@@ -198,8 +190,8 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         if (o1 instanceof String || o2 instanceof String) {
             final String n1 = String.valueOf(o1);
             final String n2 = String.valueOf(o2);
-            final Collator collator = Collator.getInstance(connection.getLocale());
-            return collator.compare(n1, n2);
+            // FIXME: find a better string comparator. The Java collator is extremely slow.
+            return n1.compareTo(n2);
         }
 
         // Try to compare with String values.

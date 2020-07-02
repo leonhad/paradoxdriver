@@ -40,6 +40,10 @@ public final class PlanTableNode {
      */
     private ParadoxTable table;
 
+    private AbstractConditionalNode conditionalJoin;
+
+    private JoinType joinType = JoinType.CROSS;
+
     /**
      * Creates a new instance.
      */
@@ -73,10 +77,6 @@ public final class PlanTableNode {
     public void setAlias(final String alias) {
         this.alias = alias;
     }
-
-    private AbstractConditionalNode conditionalJoin;
-
-    private JoinType joinType;
 
     /**
      * Sets the plan table.
@@ -113,7 +113,7 @@ public final class PlanTableNode {
             joinType = join.getJoinType();
         } else {
             conditionalJoin = null;
-            joinType = null;
+            joinType = JoinType.CROSS;
         }
     }
 

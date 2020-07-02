@@ -15,8 +15,9 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.planner.ValuesComparator;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.SQLStates;
@@ -47,7 +48,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private List<Object[]> values;
+    private final Collection<Object[]> values = new ArrayList<>(100);
 
     /**
      * The conditions to filter values
@@ -147,12 +148,33 @@ public final class SelectPlan implements Plan {
      */
     @Override
     public void execute(final ParadoxConnection connection) throws SQLException {
+        /**
+         this.values = new TreeSet<>((a, b) -> {
+         for (int loop = 0; loop < a.length; loop++) {
+         Object v1 = a[loop];
+         Object v2 = b[loop];
+
+         if (v1 == null) {
+         return 1;
+         } else if (v2 == null) {
+         return -1;
+         }
+         int r = v1.toString().compareTo(v2.toString());
+         if (r != 0) {
+         return r;
+         }
+         }
+         return 1;
+         });
+         */
+
         if (this.columns.isEmpty() || this.tables.isEmpty()) {
             return;
         }
 
+        final ValuesComparator comparator = new ValuesComparator();
         final List<Column> columnsLoaded = new ArrayList<>();
-        final List<List<Object[]>> rawData = new ArrayList<>();
+        final List<Object[]> rawData = new ArrayList<>(100);
         for (final PlanTableNode table : this.tables) {
             // From columns in SELECT clause.
             final Set<Column> columnsToLoad =
@@ -168,18 +190,42 @@ public final class SelectPlan implements Plan {
             }
 
             // If there is a column to load.
-            if (!columnsToLoad.isEmpty()) {
-                columnsLoaded.addAll(columnsToLoad);
+            if (columnsToLoad.isEmpty()) {
+                continue;
+            }
 
-                final List<Object[]> tableData = TableData.loadData(table.getTable(),
-                        columnsToLoad.stream().map(Column::getField).toArray(ParadoxField[]::new));
+            columnsLoaded.addAll(columnsToLoad);
 
-                rawData.add(tableData);
+            // TODO: Filter constants.
+            final List<Object[]> tableData = TableData.loadData(table.getTable(), columnsToLoad.stream()
+                    .map(Column::getField).toArray(ParadoxField[]::new));
+
+            // First table
+            if (rawData.isEmpty()) {
+                rawData.addAll(tableData);
+            } else {
+                List<Object[]> localValues;
+                if (table.getConditionalJoin() != null) {
+                    table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
+                }
+                switch (table.getJoinType()) {
+                    case RIGHT:
+                        localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
+                        break;
+                    case LEFT:
+                        localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
+                        break;
+                    default:
+                        localValues = processCrossJoin(comparator, columnsLoaded, rawData, table, tableData);
+                }
+
+                rawData.clear();
+                rawData.addAll(localValues);
             }
         }
 
         // Stop here if there is no value to process.
-        if (rawData.isEmpty() || rawData.stream().allMatch(List::isEmpty)) {
+        if (rawData.isEmpty()) {
             return;
         }
 
@@ -187,11 +233,89 @@ public final class SelectPlan implements Plan {
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
-        final Object[] row = new Object[columnsLoaded.size()];
-        final ValuesComparator comparator = new ValuesComparator(connection);
 
-        this.values = new ArrayList<>(rawData.get(0).size());
-        filter(rawData, 0, row, 0, mapColumns, comparator);
+        filter(rawData, mapColumns, comparator);
+
+    }
+
+    private List<Object[]> processCrossJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                            List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        for (final Object[] cols : rawData) {
+            System.arraycopy(cols, 0, column, 0, cols.length);
+
+            for (final Object[] newCols : tableData) {
+                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator)) {
+                    continue;
+                }
+
+                localValues.add(column.clone());
+            }
+        }
+        return localValues;
+    }
+
+    private List<Object[]> processLeftJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                           List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        for (final Object[] cols : rawData) {
+            System.arraycopy(cols, 0, column, 0, cols.length);
+
+            boolean changed = false;
+            for (final Object[] newCols : tableData) {
+                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator)) {
+                    continue;
+                }
+
+                changed = true;
+                localValues.add(column.clone());
+            }
+
+            if (!changed) {
+                Arrays.fill(column, cols.length, column.length, null);
+                localValues.add(column.clone());
+            }
+        }
+        return localValues;
+    }
+
+    private List<Object[]> processRightJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                            List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        for (final Object[] newCols : tableData) {
+            System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
+
+            boolean changed = false;
+            for (final Object[] cols : rawData) {
+                System.arraycopy(cols, 0, column, 0, cols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator)) {
+                    continue;
+                }
+
+                changed = true;
+                localValues.add(column.clone());
+            }
+
+            if (!changed) {
+                Arrays.fill(column, 0, column.length - newCols.length, null);
+                localValues.add(column.clone());
+            }
+        }
+        return localValues;
     }
 
     private void setIndexes(List<Column> columns) throws SQLException {
@@ -223,40 +347,20 @@ public final class SelectPlan implements Plan {
         return mapColumns;
     }
 
-    private void filter(final List<List<Object[]>> tables, final int tableIndex, final Object[] row,
-                        final int rowIndex, final int[] mapColumns, final ValuesComparator comparator) {
+    private void filter(final List<Object[]> rowValues, final int[] mapColumns, final ValuesComparator comparator) {
 
-        List<Object[]> rowValues = tables.get(tableIndex);
-        mainLoop:
         for (final Object[] tableRow : rowValues) {
-            // Fill row.
-            System.arraycopy(tableRow, 0, row, rowIndex, tableRow.length);
-
-            // Last table?
-            if (tableIndex + 1 == tables.size()) {
-                // Filter FROM joins.
-                for (final PlanTableNode table : this.tables) {
-                    if (table.getConditionalJoin() != null && !table.getConditionalJoin().evaluate(row, comparator)) {
-                        // FIXME move to table load. Here is not possible to do LEFT or RIGHT join.
-                        continue mainLoop;
-                    }
-                }
-
-                // Filter WHERE joins.
-                if (condition != null && !condition.evaluate(row, comparator)) {
-                    continue;
-                }
-
-                final Object[] finalRow = new Object[mapColumns.length];
-                for (int i = 0; i < mapColumns.length; i++) {
-                    int index = mapColumns[i];
-                    finalRow[i] = row[index];
-                }
-                this.values.add(finalRow);
-            } else {
-                // There is more tables.
-                filter(tables, tableIndex + 1, row, rowIndex + tableRow.length, mapColumns, comparator);
+            // Filter WHERE joins.
+            if (condition != null && !condition.evaluate(tableRow, comparator)) {
+                continue;
             }
+
+            final Object[] finalRow = new Object[mapColumns.length];
+            for (int i = 0; i < mapColumns.length; i++) {
+                int index = mapColumns[i];
+                finalRow[i] = tableRow[index];
+            }
+            this.values.add(finalRow);
         }
     }
 
@@ -283,7 +387,7 @@ public final class SelectPlan implements Plan {
      *
      * @return array of array of values / Can be null (empty result set);
      */
-    public List<Object[]> getValues() {
+    public Collection<Object[]> getValues() {
         return this.values;
     }
 }

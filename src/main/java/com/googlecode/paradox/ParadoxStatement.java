@@ -125,10 +125,12 @@ final class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
-    public void close() throws SQLException {
+    public void close() {
         if ((this.rs != null) && !this.rs.isClosed()) {
             this.rs.close();
+            this.rs = null;
         }
+
         this.closed = true;
     }
 

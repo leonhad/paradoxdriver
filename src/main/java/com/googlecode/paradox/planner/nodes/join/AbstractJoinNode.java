@@ -40,14 +40,14 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
     public AbstractJoinNode(final ParadoxConnection connection, final String fieldName, final SQLNode child) {
         super(connection, fieldName);
         if (child != null) {
-            this.childhood.add(child);
+            this.children.add(child);
         }
     }
 
     @Override
     public final void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables)
             throws SQLException {
-        for (final SQLNode node : childhood) {
+        for (final SQLNode node : children) {
             ((AbstractConditionalNode) node).setFieldIndexes(columns, tables);
         }
     }
@@ -55,7 +55,7 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
     @Override
     public final Set<FieldNode> getClauseFields() {
         final Set<FieldNode> nodes = super.getClauseFields();
-        for (final SQLNode node : childhood) {
+        for (final SQLNode node : children) {
             nodes.addAll(node.getClauseFields());
         }
         return nodes;
@@ -65,7 +65,7 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
-        for (final SQLNode node : childhood) {
+        for (final SQLNode node : children) {
             if (first) {
                 first = false;
             } else {

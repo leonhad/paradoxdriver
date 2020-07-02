@@ -61,8 +61,8 @@ public class ORNodeTest {
     public void testChildhood() {
         final SQLNode node = new StatementNode(conn, null);
         final ORNode and = new ORNode(conn, node);
-        Assert.assertEquals("Invalid node size.", 1, and.getChildhood().size());
-        Assert.assertEquals("Invalid node value.", node, and.getChildhood().iterator().next());
+        Assert.assertEquals("Invalid node size.", 1, and.getChildren().size());
+        Assert.assertEquals("Invalid node value.", node, and.getChildren().iterator().next());
     }
 
     /**

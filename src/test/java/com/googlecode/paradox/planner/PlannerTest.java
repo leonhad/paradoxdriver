@@ -23,6 +23,8 @@ import org.junit.*;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Unit test for {@link Planner}.
@@ -189,9 +191,11 @@ public class PlannerTest {
         final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
         plan.execute(conn);
         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
-        Assert.assertEquals("Test the result value.", "212", plan.getValues().get(0)[0]);
-        Assert.assertEquals("Test the result value.", "315", plan.getValues().get(1)[0]);
-        Assert.assertEquals("Test the result value.", "917", plan.getValues().get(2)[0]);
+
+        List<Object[]> values = new ArrayList<>(plan.getValues());
+        Assert.assertEquals("Test the result value.", "212", values.get(0)[0]);
+        Assert.assertEquals("Test the result value.", "315", values.get(1)[0]);
+        Assert.assertEquals("Test the result value.", "917", values.get(2)[0]);
     }
 
     /**

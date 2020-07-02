@@ -348,17 +348,17 @@ public class SQLParserTest {
         Assert.assertTrue("Invalid node type.", select.getCondition() instanceof ANDNode);
 
         ANDNode node = ((ANDNode) select.getCondition());
-        Assert.assertEquals("Invalid node size.", 2, node.getChildhood().size());
-        Assert.assertTrue("Invalid node type.", node.getChildhood().get(0) instanceof EqualsNode);
-        Assert.assertTrue("Invalid node type.", node.getChildhood().get(1) instanceof NotEqualsNode);
+        Assert.assertEquals("Invalid node size.", 2, node.getChildren().size());
+        Assert.assertTrue("Invalid node type.", node.getChildren().get(0) instanceof EqualsNode);
+        Assert.assertTrue("Invalid node type.", node.getChildren().get(1) instanceof NotEqualsNode);
         Assert.assertEquals("Invalid node name.", "a",
-                ((EqualsNode) node.getChildhood().get(0)).getField().getName());
+                ((EqualsNode) node.getChildren().get(0)).getField().getName());
         Assert.assertEquals("Invalid node name.", "b",
-                ((EqualsNode) node.getChildhood().get(0)).getLast().getName());
+                ((EqualsNode) node.getChildren().get(0)).getLast().getName());
         Assert.assertEquals("Invalid node name.", "c",
-                ((NotEqualsNode) node.getChildhood().get(1)).getField().getName());
+                ((NotEqualsNode) node.getChildren().get(1)).getField().getName());
         Assert.assertEquals("Invalid node name.", "t",
-                ((NotEqualsNode) node.getChildhood().get(1)).getLast().getName());
+                ((NotEqualsNode) node.getChildren().get(1)).getLast().getName());
     }
 
     /**

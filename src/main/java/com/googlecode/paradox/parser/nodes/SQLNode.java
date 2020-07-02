@@ -21,8 +21,7 @@ import java.util.Set;
 /**
  * Stores a SQL node.
  *
- * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public class SQLNode {
@@ -30,7 +29,7 @@ public class SQLNode {
     /**
      * Node childhood.
      */
-    protected final List<SQLNode> childhood = new ArrayList<>();
+    protected final List<SQLNode> children = new ArrayList<>();
 
     /**
      * The node alias.
@@ -87,7 +86,7 @@ public class SQLNode {
      * @param node the child to add.
      */
     public final void addChild(final SQLNode node) {
-        this.childhood.add(node);
+        this.children.add(node);
     }
 
     /**
@@ -95,8 +94,8 @@ public class SQLNode {
      *
      * @return the childhood.
      */
-    public final List<SQLNode> getChildhood() {
-        return this.childhood;
+    public final List<SQLNode> getChildren() {
+        return this.children;
     }
 
     /**

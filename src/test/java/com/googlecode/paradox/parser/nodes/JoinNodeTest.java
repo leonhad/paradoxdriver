@@ -12,7 +12,10 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -70,12 +73,11 @@ public class JoinNodeTest {
     }
 
     /**
-     * Test for join name.
+     * Test for join.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    @Ignore
     public void testJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
                 "select c.CountyID, ac.AreaCode " +
@@ -86,6 +88,56 @@ public class JoinNodeTest {
             while (rs.next()) {
                 Assert.assertEquals("Invalid county id value.", 205, rs.getInt("CountyID"));
             }
+        }
+    }
+
+    /**
+     * Test for left join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLeftJoin() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select d.\"DATE\", d.\"TIME\" from \"date\".DATE7 d " +
+                        "left join \"date\".DATE5 d5 on d5.\"DATE\" = d.\"DATE\"")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-01-01", rs.getDate("DATE").toString());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-02-01", rs.getDate("DATE").toString());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-01-02", rs.getDate("DATE").toString());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertNull("Invalid date value.", rs.getDate("DATE"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-01-01", rs.getDate("DATE").toString());
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for right join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testRightJoin() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select d5.\"DATE\", d5.\"TIME\" from \"date\".DATE5 d5 " +
+                        " right join \"date\".DATE7 d on d.\"DATE\" = d5.\"DATE\"")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-01-01", rs.getDate("DATE").toString());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-02-01", rs.getDate("DATE").toString());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-01-02", rs.getDate("DATE").toString());
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertNull("Invalid date value.", rs.getDate("DATE"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", "2018-01-01", rs.getDate("DATE").toString());
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }
 }

@@ -68,6 +68,6 @@ public class SQLNodeTest {
     @Test
     public void testConditions() {
         final SQLNode node = new JoinNode(conn, null, null, null, JoinType.CROSS);
-        Assert.assertEquals("Conditional is not the same.", 0, node.getChildhood().size());
+        Assert.assertEquals("Conditional is not the same.", 0, node.getChildren().size());
     }
 }
