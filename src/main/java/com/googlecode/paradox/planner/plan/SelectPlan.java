@@ -183,21 +183,11 @@ public final class SelectPlan implements Plan {
             if (rawData.isEmpty()) {
                 rawData.addAll(tableData);
             } else {
-                List<Object[]> localValues;
                 if (table.getConditionalJoin() != null) {
                     table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
                 }
-                switch (table.getJoinType()) {
-                    case RIGHT:
-                        localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
-                        break;
-                    case LEFT:
-                        localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
-                        break;
-                    default:
-                        localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
-                        break;
-                }
+                final List<Object[]> localValues = processJoinByType(comparator, columnsLoaded, rawData, table,
+                        tableData);
 
                 rawData.clear();
                 rawData.addAll(localValues);
@@ -218,8 +208,26 @@ public final class SelectPlan implements Plan {
 
     }
 
-    private List<Object[]> processInnerJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                            List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+    private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
+                                             List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+        List<Object[]> localValues;
+        switch (table.getJoinType()) {
+            case RIGHT:
+                localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            case LEFT:
+                localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            default:
+                localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+        }
+        return localValues;
+    }
+
+    private static List<Object[]> processInnerJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                                   List<Object[]> rawData, PlanTableNode table,
+                                                   List<Object[]> tableData) {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -240,8 +248,9 @@ public final class SelectPlan implements Plan {
         return localValues;
     }
 
-    private List<Object[]> processLeftJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                           List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+    private static List<Object[]> processLeftJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                                  List<Object[]> rawData, PlanTableNode table,
+                                                  List<Object[]> tableData) {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -269,8 +278,9 @@ public final class SelectPlan implements Plan {
         return localValues;
     }
 
-    private List<Object[]> processRightJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                            List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+    private static List<Object[]> processRightJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                                   List<Object[]> rawData, PlanTableNode table,
+                                                   List<Object[]> tableData) {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 

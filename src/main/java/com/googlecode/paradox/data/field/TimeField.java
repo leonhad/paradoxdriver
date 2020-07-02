@@ -23,8 +23,7 @@ import java.util.GregorianCalendar;
 /**
  * Parses time fields.
  *
- * @author Leonardo Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public final class TimeField implements FieldParser {
@@ -47,8 +46,7 @@ public final class TimeField implements FieldParser {
         if (timeInMillis != 0) {
             final Calendar calendar = new GregorianCalendar(1, Calendar.JANUARY, 0);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
-            final Time time = new Time(calendar.getTimeInMillis());
-            return time;
+            return new Time(calendar.getTimeInMillis());
         }
 
         return null;

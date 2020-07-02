@@ -265,21 +265,9 @@ public class Scanner {
         this.value.delete(0, this.value.length());
 
         // Ignore separators
-        char c = this.nextChar();
-        while (isSeparator(c)) {
-            c = this.nextChar();
-        }
-
+        char c = nextNonSeparatorChar();
         if ((c == '"') || (c == '\'')) {
-            // identifiers with special chars
-            final boolean characters = Scanner.isCharacters(c);
-            this.parseString(c);
-
-            if (characters) {
-                return new Token(TokenType.CHARACTER, this.value.toString());
-            } else {
-                return new Token(TokenType.IDENTIFIER, this.value.toString());
-            }
+            return parseIdentifier(c);
         } else if (Character.isDigit(c)) {
             parseNumber(c);
             return new Token(TokenType.NUMERIC, this.value.toString());
@@ -305,6 +293,27 @@ public class Scanner {
         parseIdentifier();
 
         return getToken(this.value.toString());
+    }
+
+    private Token parseIdentifier(char c) {
+        // identifiers with special chars
+        final boolean characters = Scanner.isCharacters(c);
+        this.parseString(c);
+
+        if (characters) {
+            return new Token(TokenType.CHARACTER, this.value.toString());
+        } else {
+            return new Token(TokenType.IDENTIFIER, this.value.toString());
+        }
+    }
+
+    private char nextNonSeparatorChar() {
+        char c = this.nextChar();
+        while (isSeparator(c)) {
+            c = this.nextChar();
+        }
+
+        return c;
     }
 
     /**
