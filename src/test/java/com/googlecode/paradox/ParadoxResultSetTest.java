@@ -23,8 +23,7 @@ import java.util.List;
 /**
  * Unit test for {@link ParadoxResultSet} class.
  *
- * @author Leonardo Costa
- * @version 1.4
+ * @version 1.5
  * @since 1.3
  */
 public class ParadoxResultSetTest {
@@ -74,7 +73,7 @@ public class ParadoxResultSetTest {
      * Test for {@link ParadoxResultSet#absolute(int)} method with empty values.
      */
     @Test
-    public void testAbsoluteEmpty() {
+    public void testAbsoluteEmpty() throws SQLException {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
@@ -88,7 +87,7 @@ public class ParadoxResultSetTest {
      * number.
      */
     @Test
-    public void testAbsoluteInvalidRow() {
+    public void testAbsoluteInvalidRow() throws SQLException {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
@@ -102,12 +101,12 @@ public class ParadoxResultSetTest {
      * number.
      */
     @Test
-    public void testAbsoluteLowRowValue() {
+    public void testAbsoluteLowRowValue() throws SQLException {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
+            Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
         }
     }
 
@@ -116,7 +115,7 @@ public class ParadoxResultSetTest {
      * value.
      */
     @Test
-    public void testAbsoluteNegativeRowValue() {
+    public void testAbsoluteNegativeRowValue() throws SQLException {
         final List<Column> columns = Collections.singletonList(
                 new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType())));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
@@ -163,7 +162,7 @@ public class ParadoxResultSetTest {
      * Test for first result.
      */
     @Test
-    public void testNoFirstResult() {
+    public void testNoFirstResult() throws SQLException {
         final ParadoxConnection paradoxConnection = (ParadoxConnection) this.conn;
         try (ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, new ParadoxStatement(paradoxConnection),
                 Collections.emptyList(), Collections.emptyList())) {

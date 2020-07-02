@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SELECT plan for execution.
  *
- * @author Leonardo Alves da Costa
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -47,7 +46,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private final Collection<Object[]> values = new ArrayList<>(100);
+    private final List<Object[]> values = new ArrayList<>(100);
 
     /**
      * The conditions to filter values
@@ -377,7 +376,7 @@ public final class SelectPlan implements Plan {
      *
      * @return array of array of values / Can be null (empty result set);
      */
-    public Collection<Object[]> getValues() {
+    public List<Object[]> getValues() {
         return this.values;
     }
 }

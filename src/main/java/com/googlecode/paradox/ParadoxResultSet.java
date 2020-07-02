@@ -25,15 +25,15 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
 import java.sql.*;
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JDBC ResultSet implementation.
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ParadoxResultSet implements ResultSet {
@@ -69,15 +69,23 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Current row;
      */
-    private Object[] row;
+    private Object[] currentRow;
     /**
-     * Row position.
+     * Current index.
      */
-    private final Iterator<Object[]> valuesIterator;
+    private int index = -1;
+    /**
+     * Rows values.
+     */
+    private final List<Object[]> rows;
     /**
      * This {@link ResultSet} {@link Statement}.
      */
     private final ParadoxStatement statement;
+    /**
+     * ResultSet fetch direction.
+     */
+    private int fetchDirection = ResultSet.FETCH_FORWARD;
 
     /**
      * Creates a new {@link ResultSet}.
@@ -88,11 +96,11 @@ public final class ParadoxResultSet implements ResultSet {
      * @param columns   the columns name.
      */
     public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
-                            final Collection<Object[]> values, final List<Column> columns) {
+                            final List<Object[]> values, final List<Column> columns) {
         this.statement = statement;
         this.columns = columns;
         this.conn = conn;
-        this.valuesIterator = values.iterator();
+        this.rows = values;
 
         // Fill column indexes
         for (int loop = 0; loop < columns.size(); loop++) {
@@ -106,8 +114,21 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean absolute(final int row) {
-        throw new UnsupportedOperationException();
+    public boolean absolute(final int row) throws SQLException {
+        boolean ret = false;
+        if (row > 0) {
+            if (row <= rows.size()) {
+                index = row - 1;
+                ret = true;
+            }
+        } else {
+            if (rows.size() - row >= 0) {
+                index = rows.size() - row;
+                ret = true;
+            }
+        }
+
+        return ret;
     }
 
     /**
@@ -115,7 +136,9 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void afterLast() {
-        throw new UnsupportedOperationException();
+        if (!rows.isEmpty()) {
+            index = rows.size();
+        }
     }
 
     /**
@@ -123,7 +146,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void beforeFirst() {
-        throw new UnsupportedOperationException();
+        index = -1;
     }
 
     /**
@@ -168,6 +191,7 @@ public final class ParadoxResultSet implements ResultSet {
                 return column.getIndex() + 1;
             }
         }
+
         throw new SQLException("Invalid column: " + columnLabel, SQLStates.INVALID_COLUMN.getValue());
     }
 
@@ -175,8 +199,14 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean first() {
-        throw new UnsupportedOperationException();
+    public boolean first() throws SQLException {
+        if (rows.isEmpty()) {
+            return false;
+        }
+
+        index = -1;
+        next();
+        return true;
     }
 
     /**
@@ -208,6 +238,7 @@ public final class ParadoxResultSet implements ResultSet {
                 throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
             }
         }
+
         return null;
     }
 
@@ -236,8 +267,6 @@ public final class ParadoxResultSet implements ResultSet {
     @Deprecated
     @Override
     public BigDecimal getBigDecimal(final int columnIndex, final int scale) throws SQLException {
-        this.verifyRow();
-
         final BigDecimal value = this.getBigDecimal(columnIndex);
         return value.setScale(scale, RoundingMode.HALF_DOWN);
     }
@@ -315,12 +344,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean getBoolean(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue != null) {
             return (Boolean) this.lastValue;
         }
@@ -340,12 +367,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public byte getByte(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue == null) {
             return (byte) 0;
         }
@@ -444,6 +469,7 @@ public final class ParadoxResultSet implements ResultSet {
         if (this.statement != null) {
             return this.statement.getCursorName();
         }
+
         return "NO_NAME";
     }
 
@@ -452,12 +478,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Date getDate(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         return (Date) this.lastValue;
     }
 
@@ -490,12 +514,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public double getDouble(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue == null) {
             return 0D;
         }
@@ -515,7 +537,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getFetchDirection() {
-        return ResultSet.FETCH_FORWARD;
+        return fetchDirection;
     }
 
     /**
@@ -531,12 +553,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public float getFloat(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue == null) {
             return 0F;
         }
@@ -564,12 +584,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getInt(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue == null) {
             return 0;
         }
@@ -589,12 +607,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public long getLong(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue == null) {
             return 0L;
         }
@@ -621,16 +637,16 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Reader getNCharacterStream(final int columnIndex) {
-        return null;
+    public Reader getNCharacterStream(final int columnIndex) throws SQLException {
+        return getCharacterStream(columnIndex);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public Reader getNCharacterStream(final String columnLabel) {
-        return null;
+    public Reader getNCharacterStream(final String columnLabel) throws SQLException {
+        return getCharacterStream(columnLabel);
     }
 
     /**
@@ -653,16 +669,16 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public String getNString(final int columnIndex) {
-        return null;
+    public String getNString(final int columnIndex) throws SQLException {
+        return getString(columnIndex);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public String getNString(final String columnLabel) {
-        return null;
+    public String getNString(final String columnLabel) throws SQLException {
+        return getString(columnLabel);
     }
 
     /**
@@ -670,12 +686,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Object getObject(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         return this.lastValue;
     }
 
@@ -742,7 +756,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getRow() {
-        throw new UnsupportedOperationException();
+        return index + 1;
     }
 
     /**
@@ -766,12 +780,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public short getShort(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue == null) {
             return (short) 0;
         }
@@ -815,12 +827,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public String getString(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         if (this.lastValue != null) {
             return this.lastValue.toString();
         }
@@ -841,12 +851,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Time getTime(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         return (Time) this.lastValue;
     }
 
@@ -879,12 +887,10 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(final int columnIndex) throws SQLException {
-        this.verifyRow();
-
-        if (columnIndex > row.length) {
+        if (columnIndex > currentRow.length) {
             throw new SQLException(ParadoxResultSet.ERROR_INVALID_COLUMN, SQLStates.INVALID_COLUMN.getValue());
         }
-        this.lastValue = row[columnIndex - 1];
+        this.lastValue = currentRow[columnIndex - 1];
         return (Timestamp) this.lastValue;
     }
 
@@ -917,15 +923,15 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getType() {
-        return ResultSet.TYPE_FORWARD_ONLY;
+        return ResultSet.TYPE_SCROLL_INSENSITIVE;
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void setFetchDirection(final int direction) throws SQLException {
-        throw new SQLException("No fetch direction supported yet.");
+    public void setFetchDirection(final int direction) {
+        this.fetchDirection = direction;
     }
 
     /**
@@ -977,7 +983,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean isAfterLast() {
-        throw new UnsupportedOperationException();
+        return index >= rows.size();
     }
 
     /**
@@ -985,7 +991,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean isBeforeFirst() {
-        throw new UnsupportedOperationException();
+        return index < 0;
     }
 
     /**
@@ -1001,7 +1007,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean isFirst() {
-        throw new UnsupportedOperationException();
+        return index == 0;
     }
 
     /**
@@ -1009,7 +1015,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean isLast() {
-        return !valuesIterator.hasNext();
+        return index == rows.size() - 1;
     }
 
     /**
@@ -1025,7 +1031,12 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean last() {
-        throw new UnsupportedOperationException();
+        if (rows.isEmpty()) {
+            return false;
+        }
+
+        index = rows.size() - 1;
+        return true;
     }
 
     /**
@@ -1033,7 +1044,6 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void moveToCurrentRow() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -1041,16 +1051,16 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void moveToInsertRow() {
-        throw new UnsupportedOperationException();
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public boolean next() {
-        if (valuesIterator.hasNext()) {
-            this.row = valuesIterator.next();
+    public boolean next() throws SQLException {
+        if (hasNext()) {
+            index++;
+            this.currentRow = rows.get(index);
             return true;
         }
 
@@ -1062,7 +1072,12 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean previous() {
-        throw new UnsupportedOperationException();
+        if (index != -1) {
+            index--;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1082,6 +1097,18 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean relative(final int rows) {
+        if (rows > 0) {
+            if (index + rows < this.rows.size()) {
+                index += rows;
+                return true;
+            }
+        } else {
+            if (index + rows >= 0) {
+                index += rows;
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -1805,25 +1832,15 @@ public final class ParadoxResultSet implements ResultSet {
         if (this.closed) {
             throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
         }
+
         return this.lastValue == null;
     }
 
-    private boolean hasNext() {
-        return valuesIterator.hasNext();
-    }
-
-    /**
-     * Verify it there is more rows.
-     *
-     * @throws SQLException in case of errors.
-     */
-    private void verifyRow() throws SQLException {
-        // FIXME review this too.
-        /*
-        if (!this.hasNext()) {
-            throw new SQLDataException("Result do not have more rows.", SQLStates.INVALID_ROW.getValue());
-        } else if (this.closed) {
+    private boolean hasNext() throws SQLException {
+        if (this.closed) {
             throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
-        }*/
+        }
+
+        return index + 1 < rows.size();
     }
 }
