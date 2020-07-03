@@ -30,7 +30,6 @@ import java.util.*;
 /**
  * Utility class for loading table files.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.0
  */

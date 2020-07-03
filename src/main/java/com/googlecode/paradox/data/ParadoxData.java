@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 /**
  * Handles the paradox files (structure).
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.4.0
  */
@@ -33,7 +32,7 @@ public class ParadoxData {
     /**
      * Minimum paradox file version.
      */
-    protected static final int MINIMIUM_VERSION = 4;
+    protected static final int MINIMUM_VERSION = 4;
 
     private static final Map<Integer, Charset> CHARSET_TABLE = new HashMap<>();
 
@@ -75,7 +74,7 @@ public class ParadoxData {
      * @param dataFile the paradox index.
      */
     protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile) {
-        if (dataFile.getVersionId() > ParadoxData.MINIMIUM_VERSION) {
+        if (dataFile.getVersionId() > ParadoxData.MINIMUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
             int cp = buffer.getShort();

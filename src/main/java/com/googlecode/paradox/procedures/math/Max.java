@@ -16,7 +16,6 @@ import com.googlecode.paradox.procedures.AbstractCallableProcedure;
 /**
  * The MAX function.
  *
- * @author Leonardo Costa
  * @version 1.1
  * @since 1.1
  */

@@ -17,7 +17,6 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Store the less than or equals node.
  *
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.6.0
  */

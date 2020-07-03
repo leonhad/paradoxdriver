@@ -16,7 +16,6 @@ import com.googlecode.paradox.utils.Utils;
 /**
  * Stores a table node.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.0
  */

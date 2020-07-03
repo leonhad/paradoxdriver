@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 /**
  * Utility class to parse SQL expressions.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.1
  */

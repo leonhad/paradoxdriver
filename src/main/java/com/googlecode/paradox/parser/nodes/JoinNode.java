@@ -15,7 +15,6 @@ import com.googlecode.paradox.ParadoxConnection;
 /**
  * Stores a join node.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.0
  */

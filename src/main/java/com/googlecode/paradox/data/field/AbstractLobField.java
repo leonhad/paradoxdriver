@@ -26,7 +26,6 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @author Leonardo Alves da Costa
  * @version 1.1
  * @since 1.5.0
  */

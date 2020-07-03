@@ -16,7 +16,6 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 /**
  * Stores the character node.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.1
  */

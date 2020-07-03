@@ -11,17 +11,13 @@
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.utils.SQLStates;
+
 import java.io.InputStream;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 
 /**
  * Stores the SQL type names.
  *
- * @author Leonardo Alves da Costa
  * @version 1.2
  * @since 1.3
  */

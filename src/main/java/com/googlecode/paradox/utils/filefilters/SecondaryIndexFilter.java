@@ -19,7 +19,6 @@ import java.io.FileFilter;
 /**
  * Paradox secondary key file filter (Index Key).
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.0
  */

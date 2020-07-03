@@ -32,7 +32,6 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @author Leonardo Costa
  * @version 1.6
  * @since 1.0
  */

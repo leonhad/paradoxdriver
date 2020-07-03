@@ -19,7 +19,6 @@ import java.util.List;
 /**
  * Stores a select node.
  *
- * @author Leonardo Alves da Costa
  * @version 1.1
  * @since 1.0
  */

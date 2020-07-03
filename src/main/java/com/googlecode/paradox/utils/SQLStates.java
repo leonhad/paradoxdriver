@@ -15,27 +15,26 @@ import java.sql.ResultSet;
 /**
  * Store the SQL States.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public enum SQLStates {
-    
+
     /**
      * This driver can't change catalog.
      */
     CHANGE_CATALOG_NOT_SUPPORTED("1003"),
-    
+
     /**
      * There is more than one column name in same reference.
      */
-    COLUMN_AMBIQUOUS("1015"),
-    
+    COLUMN_AMBIGUOUS("1015"),
+
     /**
      * Used when some directory is not found
      */
     DIR_NOT_FOUND("1001"),
-    
+
     /**
      * The referenced column in invalid.
      */
@@ -80,22 +79,22 @@ public enum SQLStates {
      * Table format is invalid.
      */
     INVALID_TABLE("1014"),
-    
+
     /**
      * Error in data load.
      */
     LOAD_DATA("1100"),
-    
+
     /**
      * {@link ResultSet} not open for use.
      */
-    RESULTSET_CLOSED("1009"),
-    
+    RESULT_SET_CLOSED("1009"),
+
     /**
      * Type not valid or unsupported.
      */
     TYPE_NOT_FOUND("1004");
-    
+
     /**
      * The constant code.
      */

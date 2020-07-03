@@ -20,7 +20,6 @@ import java.util.ArrayList;
 /**
  * SQL Scanner (read tokens from SQL String).
  *
- * @author Leonardo Alves da Costa
  * @version 1.3
  * @since 1.0
  */

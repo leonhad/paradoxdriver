@@ -73,7 +73,7 @@ public class IndexDataTest {
      */
     @Test
     public void testListIndexes() throws Exception {
-        Assert.assertNotEquals("Empty indexes.", 0,
-                IndexData.listIndexes(this.conn.getCurrentSchema(), "Client.db", this.conn).size());
+        Assert.assertTrue("Empty indexes",
+                IndexData.listIndexes(this.conn.getCurrentSchema(), "Client.db", this.conn).isEmpty());
     }
 }

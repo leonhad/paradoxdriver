@@ -19,8 +19,6 @@ import java.util.Objects;
 /**
  * CLOB for paradox file (MB).
  *
- * @author Leonardo Alves da Costa
- * @author Andre Mikhaylov
  * @version 1.4
  * @since 1.2
  */

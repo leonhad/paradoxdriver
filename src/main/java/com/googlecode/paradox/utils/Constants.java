@@ -13,7 +13,6 @@ package com.googlecode.paradox.utils;
 /**
  * Stores the driver constants.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.0
  */

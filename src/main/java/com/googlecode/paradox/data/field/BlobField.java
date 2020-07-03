@@ -18,7 +18,6 @@ import java.nio.ByteBuffer;
 /**
  * Parses blob fields.
  *
- * @author Leonardo Alves da Costa
  * @version 1.2
  * @since 1.3
  */

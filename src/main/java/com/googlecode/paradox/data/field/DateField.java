@@ -22,7 +22,6 @@ import java.sql.Date;
 /**
  * Parses date fields.
  *
- * @author Leonardo Costa
  * @version 1.3
  * @since 1.3
  */

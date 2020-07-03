@@ -19,7 +19,6 @@ import java.sql.SQLException;
 /**
  * Parses a database field.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */

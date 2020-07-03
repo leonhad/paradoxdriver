@@ -12,7 +12,10 @@ package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.parser.nodes.*;
+import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.parser.nodes.StatementNode;
+import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
@@ -28,7 +31,6 @@ import java.util.stream.Collectors;
 /**
  * Creates a SQL execution plan.
  *
- * @author Leonardo Alves da Costa
  * @version 1.2
  * @since 1.1
  */
@@ -89,7 +91,7 @@ public class Planner {
             if (tables.isEmpty()) {
                 throw new SQLException("Table " + field.getTableName() + " not found.");
             } else if (tables.size() > 1) {
-                throw new SQLException("Table " + field.getTableName() + " is ambigous.");
+                throw new SQLException("Table " + field.getTableName() + " is ambiguous.");
             }
 
             plan.addColumnFromTable(tables.get(0));

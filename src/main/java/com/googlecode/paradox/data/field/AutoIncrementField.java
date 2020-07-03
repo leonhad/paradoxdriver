@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 /**
  * Parses auto increment fields.
  *
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.3
  */

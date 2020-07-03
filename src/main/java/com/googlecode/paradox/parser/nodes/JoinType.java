@@ -40,5 +40,5 @@ public enum JoinType {
     /**
      * The cross join.
      */
-    CROSS;
+    CROSS
 }

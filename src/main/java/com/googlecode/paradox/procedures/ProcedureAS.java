@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 /**
  * Stores the procedures in this driver.
  *
- * @author Leonardo Costa
  * @version 1.3
  * @since 1.0
  */

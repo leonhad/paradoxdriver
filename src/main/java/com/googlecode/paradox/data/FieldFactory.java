@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * Handles field parsers.
  *
- * @author Leonardo Alves da Costa
  * @version 1.1
  * @since 1.3
  */

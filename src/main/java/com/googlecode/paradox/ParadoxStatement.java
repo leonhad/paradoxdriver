@@ -26,8 +26,7 @@ import java.util.List;
 /**
  * JDBC statement implementation.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 final class ParadoxStatement implements Statement {
@@ -66,9 +65,9 @@ final class ParadoxStatement implements Statement {
     private int maxRows;
 
     /**
-     * If this statement is poolable.
+     * If this statement is pool capable.
      */
-    private boolean poolable;
+    private boolean canPool;
 
     /**
      * The query timeout.
@@ -267,11 +266,7 @@ final class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
-    public void setFetchDirection(final int direction) throws SQLException {
-        if (direction != ResultSet.FETCH_FORWARD) {
-            throw new SQLException("O result set somente pode ser ResultSet.FETCH_FORWARD",
-                    SQLStates.INVALID_PARAMETER.getValue());
-        }
+    public void setFetchDirection(final int direction) {
         this.fetchDirection = direction;
     }
 
@@ -435,15 +430,15 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public boolean isPoolable() {
-        return this.poolable;
+        return this.canPool;
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void setPoolable(final boolean poolable) {
-        this.poolable = poolable;
+    public void setPoolable(final boolean canPool) {
+        this.canPool = canPool;
     }
 
     /**
@@ -474,6 +469,7 @@ final class ParadoxStatement implements Statement {
         final SelectPlan plan = (SelectPlan) Planner.create(conn, node);
         plan.execute(this.conn);
         this.rs = new ParadoxResultSet(this.conn, this, plan.getValues(), plan.getColumns());
+        this.rs.setFetchDirection(fetchDirection);
     }
 
     /**

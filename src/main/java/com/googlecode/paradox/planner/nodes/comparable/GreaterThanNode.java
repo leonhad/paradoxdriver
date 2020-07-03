@@ -17,7 +17,6 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Stores the greater than node.
  *
- * @author Leonardo Costa
  * @version 1.5
  * @since 1.1
  */

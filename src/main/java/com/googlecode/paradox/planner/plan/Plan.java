@@ -17,7 +17,6 @@ import java.sql.SQLException;
 /**
  * Used to creates and execute SQL plans.
  *
- * @author Leonardo Costa
  * @version 1.1
  * @since 1.1
  */

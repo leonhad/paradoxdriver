@@ -19,7 +19,6 @@ import java.io.FileFilter;
 /**
  * Paradox primary key file filter.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.0
  */

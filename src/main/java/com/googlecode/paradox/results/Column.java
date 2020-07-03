@@ -21,7 +21,6 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @author Leonardo Costa
  * @version 1.2
  * @see ParadoxResultSet
  * @since 1.0

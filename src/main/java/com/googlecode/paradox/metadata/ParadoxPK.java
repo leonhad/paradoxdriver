@@ -15,7 +15,6 @@ import com.googlecode.paradox.ParadoxConnection;
 /**
  * Stores a primary key definition..
  *
- * @author Leonardo Alves da Costa
  * @version 1.1
  * @since 1.0
  */

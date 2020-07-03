@@ -17,8 +17,6 @@ import com.googlecode.paradox.parser.nodes.SQLNode;
 /**
  * Stores the asterisk node.
  *
- * @author Leonardo Alves da Costa
- * @author Andre Mikhaylov
  * @version 1.1
  * @since 1.2
  */

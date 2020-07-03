@@ -17,7 +17,6 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Stores the between node.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.1
  */

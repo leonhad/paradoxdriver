@@ -11,13 +11,9 @@
 package com.googlecode.paradox.data;
 
 /**
- * Encrypted data based on pxlib.
- * <p>
- * More information in http://pxlib.sourceforge.net.
+ * Encrypted data based on http://pxlib.sourceforge.net.
  *
- * @author pxlib
- * @author Leonardo Costa (Java version).
- * @version 1.0
+ * @version 1.1
  * @since 1.5.0
  */
 public final class EncryptedData {
@@ -149,22 +145,22 @@ public final class EncryptedData {
         System.arraycopy(tmp, 0, src, offset, tmp.length);
     }
 
-    public static void decryptDBBlock(byte[] src, long encryption, int blocksize, long blockno) {
+    public static void decryptDBBlock(byte[] src, long encryption, int blockSize, long blockNo) {
         byte a = (byte) (encryption & 0xFF);
         byte b = (byte) ((encryption >> SECOND_BYTE) & 0xFF);
-        blocksize >>= BLOCK_DIVISION;
+        blockSize >>= BLOCK_DIVISION;
 
-        for (int chunk = 0; chunk < blocksize; ++chunk) {
-            decryptChunk(src, (chunk << BLOCK_DIVISION), a, b, chunk, (int) blockno);
+        for (int chunk = 0; chunk < blockSize; ++chunk) {
+            decryptChunk(src, (chunk << BLOCK_DIVISION), a, b, chunk, (int) blockNo);
         }
     }
 
-    public static void decryptMBBlock(byte[] src, long encryption, int blocksize) {
+    public static void decryptMBBlock(byte[] src, long encryption, int blockSize) {
         byte a = (byte) (encryption & 0xFF);
         byte b = (byte) ((encryption >> SECOND_BYTE) & 0xFF);
-        blocksize >>= BLOCK_DIVISION;
+        blockSize >>= BLOCK_DIVISION;
 
-        for (int chunk = 0; chunk < blocksize; ++chunk) {
+        for (int chunk = 0; chunk < blockSize; ++chunk) {
             decryptChunk(src, (chunk << BLOCK_DIVISION), a, b, (byte) (a + 1), (byte) (b + 1));
         }
     }

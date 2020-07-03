@@ -20,7 +20,6 @@ import java.util.Objects;
 /**
  * Stores a field from a table.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.0
  */

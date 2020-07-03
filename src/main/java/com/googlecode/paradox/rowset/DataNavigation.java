@@ -213,7 +213,7 @@ public class DataNavigation implements AutoCloseable {
 
     private void verifyStatus() throws SQLException {
         if (this.closed) {
-            throw new SQLException("Closed result set.", SQLStates.RESULTSET_CLOSED.getValue());
+            throw new SQLException("Closed result set.", SQLStates.RESULT_SET_CLOSED.getValue());
         }
     }
 

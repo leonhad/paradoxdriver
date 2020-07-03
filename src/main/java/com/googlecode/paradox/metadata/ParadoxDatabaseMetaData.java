@@ -33,7 +33,6 @@ import java.util.List;
 /**
  * Creates an database metadata.
  *
- * @author Leonardo Alves da Costa
  * @version 1.5
  * @since 1.0
  */

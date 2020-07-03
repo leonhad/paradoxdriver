@@ -21,8 +21,6 @@ import java.sql.Timestamp;
 /**
  * Parses timestamp fields.
  *
- * @author Michael Berry
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.2
  */

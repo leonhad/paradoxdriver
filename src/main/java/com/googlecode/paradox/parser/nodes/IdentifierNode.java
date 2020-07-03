@@ -15,7 +15,6 @@ import com.googlecode.paradox.ParadoxConnection;
 /**
  * Stores a identifier node.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.0
  */

@@ -20,7 +20,6 @@ import java.util.List;
 /**
  * Abstract class used to create any callable procedure.
  *
- * @author Leonardo Alves da Costa
  * @version 1.1
  * @since 1.1
  */

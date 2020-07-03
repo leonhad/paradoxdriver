@@ -31,7 +31,6 @@ import java.util.List;
 /**
  * Reads index data files.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.0
  */

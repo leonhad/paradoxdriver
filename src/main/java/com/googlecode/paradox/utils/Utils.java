@@ -16,7 +16,6 @@ import java.sql.Wrapper;
 /**
  * Driver utilities.
  *
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.2
  */

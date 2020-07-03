@@ -25,8 +25,7 @@ import java.util.List;
 /**
  * Paradox {@link ResultSetMetaData}.
  *
- * @author Leonardo Alves da Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ParadoxResultSetMetaData implements ResultSetMetaData {
@@ -253,8 +252,8 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public <T> T unwrap(final Class<T> iface) throws SQLException {
-        return Utils.unwrap(this, iface);
+    public <T> T unwrap(final Class<T> face) throws SQLException {
+        return Utils.unwrap(this, face);
     }
 
     /**

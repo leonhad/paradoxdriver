@@ -18,7 +18,6 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Store the OR node.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.1
  */

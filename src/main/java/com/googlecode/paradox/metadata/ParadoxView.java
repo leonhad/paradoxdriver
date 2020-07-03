@@ -17,8 +17,7 @@ import java.io.File;
 /**
  * Stores the paradox view data.
  *
- * @author Leonardo Costa
- * @version 1.`1
+ * @version 1.2
  * @since 1.0
  */
 public final class ParadoxView extends ParadoxDataFile {

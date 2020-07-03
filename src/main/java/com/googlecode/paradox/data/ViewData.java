@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 /**
  * Read view files (structure).
  *
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.0
  */

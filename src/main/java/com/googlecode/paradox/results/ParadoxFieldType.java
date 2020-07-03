@@ -15,7 +15,6 @@ import java.sql.Types;
 /**
  * Stores the Paradox field types and SQL Types.
  *
- * @author Leonardo Costa
  * @version 1.1
  * @since 1.3
  */

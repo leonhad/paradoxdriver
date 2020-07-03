@@ -18,7 +18,6 @@ import java.util.Objects;
 /**
  * Stores the field values.
  *
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.0
  */

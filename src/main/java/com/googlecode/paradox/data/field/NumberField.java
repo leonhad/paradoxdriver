@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 /**
  * Parses the numeric fields.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.3
  */

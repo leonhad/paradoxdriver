@@ -19,7 +19,6 @@ import java.nio.charset.Charset;
 /**
  * Defines the paradox default file structure.
  *
- * @author Leonardo Costa
  * @version 1.4
  * @since 1.0
  */

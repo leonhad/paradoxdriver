@@ -17,7 +17,6 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Stores the equals node.
  *
- * @author Leonardo Costa
  * @version 1.6
  * @since 1.1
  */

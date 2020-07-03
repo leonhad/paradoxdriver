@@ -20,7 +20,6 @@ import java.io.FileFilter;
 /**
  * If the file is a directory.
  *
- * @author Leonardo Costa
  * @version 1.0
  * @since 1.4
  */
