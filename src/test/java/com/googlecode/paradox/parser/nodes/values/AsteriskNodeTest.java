@@ -24,7 +24,6 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link AsteriskNode}.
  *
- * @author Leonardo Costa
  * @version 1.0
  * @since 1.5.0
  */

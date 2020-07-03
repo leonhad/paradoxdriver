@@ -19,7 +19,6 @@ import java.sql.Date;
 /**
  * Unit test for {@link DateField} class.
  *
- * @author Leonardo Costa
  * @version 1.3
  * @since 1.3
  */

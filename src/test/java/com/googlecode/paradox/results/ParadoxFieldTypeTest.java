@@ -18,7 +18,6 @@ import java.sql.Types;
 /**
  * Unit test for {@link ParadoxFieldType} class.
  *
- * @author Leonardo  Costa
  * @version 1.1
  * @since 1.3
  */

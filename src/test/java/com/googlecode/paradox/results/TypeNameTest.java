@@ -19,7 +19,6 @@ import java.sql.Types;
 /**
  * Unit test for {@link TypeName} class.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */

@@ -24,7 +24,6 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link EqualsNode} class.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */

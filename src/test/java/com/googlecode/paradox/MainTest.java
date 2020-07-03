@@ -20,7 +20,6 @@ import java.sql.*;
 /**
  * Test the main features of the driver.
  *
- * @author Leonardo Costa
  * @version 1.1
  * @since 1.0
  */

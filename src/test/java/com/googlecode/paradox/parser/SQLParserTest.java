@@ -35,7 +35,6 @@ import java.util.List;
 /**
  * Unit test for {@link SQLParser}.
  *
- * @author Leonardo Alves da Costa
  * @version 1.3
  * @since 1.0
  */

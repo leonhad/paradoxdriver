@@ -25,7 +25,6 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link TableNode} class.
  *
- * @author Leonardo Costa
  * @version 1.1
  * @since 1.3
  */

@@ -16,7 +16,6 @@ import org.junit.Test;
 /**
  * Unit test for {@link Token} class.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */

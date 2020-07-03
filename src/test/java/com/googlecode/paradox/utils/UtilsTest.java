@@ -12,6 +12,10 @@ package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.IndexData;
+import com.googlecode.paradox.data.PrimaryKeyData;
+import com.googlecode.paradox.data.TableData;
+import com.googlecode.paradox.data.ViewData;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -21,8 +25,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Utils}.
  *
- * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.2
  */
 public class UtilsTest {
@@ -134,5 +137,21 @@ public class UtilsTest {
         Assert.assertEquals("Invalid file name.", "FILE", Utils.removeSuffix("FILE", "DB"));
         Assert.assertEquals("Invalid file name.", "FILE.TXT", Utils.removeSuffix("FILE.TXT", "DB"));
         Assert.assertNull("Invalid file name.", Utils.removeSuffix(null, null));
+    }
+
+    /**
+     * Test for utilities classes.
+     */
+    @Test
+    public void testClassesIntegrity() {
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Utils.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(DateUtils.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(TableData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(ViewData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Expressions.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(IndexData.class));
+        Assert.assertTrue("Utility class in wrong format.",
+                TestUtil.assertUtilityClassWellDefined(PrimaryKeyData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Constants.class));
     }
 }

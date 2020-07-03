@@ -16,7 +16,6 @@ import org.junit.Test;
 /**
  * Unit test for {@link TokenType} class.
  *
- * @author Leonardo Costa
  * @version 1.1
  * @since 1.3
  */

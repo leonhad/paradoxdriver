@@ -24,8 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Column} class.
  *
- * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class ColumnTest {
@@ -55,11 +54,9 @@ public class ColumnTest {
 
     /**
      * Test for auto increment.
-     *
-     * @throws SQLException in case of failures.
      */
     @Test
-    public void testAutoincrement() throws SQLException {
+    public void testAutoincrement() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.AUTO_INCREMENT.getType()));
         Assert.assertTrue("Invalid field type.", column.isAutoIncrement());
 
@@ -69,11 +66,9 @@ public class ColumnTest {
 
     /**
      * Test for currency.
-     *
-     * @throws SQLException in case of failures.
      */
     @Test
-    public void testCurrency() throws SQLException {
+    public void testCurrency() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.CURRENCY.getType()));
         Assert.assertTrue("Invalid field type.", column.isCurrency());
 
@@ -85,7 +80,7 @@ public class ColumnTest {
      * Test field.
      */
     @Test
-    public void testField() throws SQLException {
+    public void testField() {
         final ParadoxField field = new ParadoxField(conn, ParadoxFieldType.INTEGER.getType());
         final Column column = new Column(field);
         Assert.assertEquals("Invalid field.", field, column.getField());
@@ -95,7 +90,7 @@ public class ColumnTest {
      * Test for index.
      */
     @Test
-    public void testIndex() throws SQLException {
+    public void testIndex() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
         column.setIndex(1);
         Assert.assertEquals("Invalid field type.", 1, column.getIndex());
@@ -105,7 +100,7 @@ public class ColumnTest {
      * Test instance with field.
      */
     @Test
-    public void testInstanceWithFields() throws SQLException {
+    public void testInstanceWithFields() {
         final ParadoxField field = new ParadoxField(conn, ParadoxFieldType.INTEGER.getType());
         field.setName("field");
         final Column column = new Column(field);
@@ -135,11 +130,9 @@ public class ColumnTest {
 
     /**
      * Test for nullable.
-     *
-     * @throws SQLException in case of failues.
      */
     @Test
-    public void testNullable() throws SQLException {
+    public void testNullable() {
         final Column column = new Column("NAME", ParadoxFieldType.INTEGER.getSQLType());
         Assert.assertTrue("Invalid field nullable.", column.isNullable());
 
@@ -151,7 +144,7 @@ public class ColumnTest {
      * Test for read only.
      */
     @Test
-    public void testReadOnly() throws SQLException {
+    public void testReadOnly() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
         Assert.assertTrue("Invalid field readonly.", column.isReadOnly());
     }
@@ -160,7 +153,7 @@ public class ColumnTest {
      * Test for scale.
      */
     @Test
-    public void testScale() throws SQLException {
+    public void testScale() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
         column.setPrecision(1);
         Assert.assertEquals("Invalid field scale.", 1, column.getScale());
@@ -170,7 +163,7 @@ public class ColumnTest {
      * Test for searchable.
      */
     @Test
-    public void testSearchable() throws SQLException {
+    public void testSearchable() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
         Assert.assertTrue("Invalid field searchable.", column.isSearchable());
 
@@ -197,7 +190,7 @@ public class ColumnTest {
      * Test for type.
      */
     @Test
-    public void testType() throws SQLException {
+    public void testType() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
         Assert.assertEquals("Invalid field type.", ParadoxFieldType.VARCHAR.getSQLType(), column.getType());
     }
@@ -217,7 +210,7 @@ public class ColumnTest {
      * Test for writable.
      */
     @Test
-    public void testWritable() throws SQLException {
+    public void testWritable() {
         final Column column = new Column(new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType()));
         Assert.assertFalse("Invalid field writable.", column.isWritable());
     }

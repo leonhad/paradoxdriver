@@ -19,7 +19,7 @@ import java.sql.DriverManager;
 /**
  * Unit test for {@link IndexData}.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public class IndexDataTest {
@@ -74,6 +74,6 @@ public class IndexDataTest {
     @Test
     public void testListIndexes() throws Exception {
         Assert.assertNotEquals("Empty indexes.", 0,
-                IndexData.listIndexes(this.conn.getCurrentSchema(), "Client.db", this.conn));
+                IndexData.listIndexes(this.conn.getCurrentSchema(), "Client.db", this.conn).size());
     }
 }

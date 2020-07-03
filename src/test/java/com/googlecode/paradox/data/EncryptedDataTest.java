@@ -8,17 +8,21 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.*;
 
+/**
+ * Unit test for encrypted data.
+ *
+ * @version 1.1
+ * @since 1.5.0
+ */
 public class EncryptedDataTest {
 
     /**
@@ -37,10 +41,10 @@ public class EncryptedDataTest {
     }
 
     @Test
-    public void testExcrypted() throws SQLException {
+    public void testEncrypted() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "encrypt");
              final Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM encrypted")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM encrypt.encrypted")) {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid id value", 1, rs.getInt("Id"));
@@ -63,7 +67,7 @@ public class EncryptedDataTest {
     }
 
     @Test
-    public void testExcrypted35() throws SQLException {
+    public void testEncrypted35() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "encrypt");
              final Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM encrypt.encrypted35")) {

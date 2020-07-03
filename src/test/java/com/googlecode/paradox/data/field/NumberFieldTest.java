@@ -22,7 +22,6 @@ import java.sql.Statement;
 /**
  * Unit test for {@link NumberField} class.
  *
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.3
  */

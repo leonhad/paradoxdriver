@@ -23,7 +23,6 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link SQLNode} class.
  *
- * @author Leonardo Costa
  * @version 1.1
  * @since 1.3
  */

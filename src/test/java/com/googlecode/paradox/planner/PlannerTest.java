@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Unit test for {@link Planner}.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public class PlannerTest {
@@ -251,5 +251,4 @@ public class PlannerTest {
         Assert.assertEquals("Field expected", "State", plan.getColumns().get(1).getField().getName());
         Assert.assertEquals("Field expected", "Cities", plan.getColumns().get(2).getField().getName());
     }
-
 }

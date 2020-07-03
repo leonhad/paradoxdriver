@@ -18,7 +18,6 @@ import java.nio.ByteBuffer;
 /**
  * Unit test for {@link BooleanField} class.
  *
- * @author Leonardo Costa
  * @version 1.2
  * @since 1.3
  */

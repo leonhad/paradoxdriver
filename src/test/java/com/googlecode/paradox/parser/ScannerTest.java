@@ -23,7 +23,6 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Scanner}.
  *
- * @author Leonardo Costa
  * @version 1.3
  * @since 1.0
  */

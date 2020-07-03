@@ -26,7 +26,6 @@ import java.sql.Statement;
 /**
  * Unit test for {@link GreaterThanOrEqualsNode} class.
  *
- * @author Leonardo Costa
  * @version 1.0
  * @since 1.6.0
  */

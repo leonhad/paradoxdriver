@@ -24,8 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link ParadoxField} class.
  *
- * @author Leonardo Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class ParadoxFieldTest {
@@ -93,17 +92,6 @@ public class ParadoxFieldTest {
     }
 
     /**
-     * Test for {@link ParadoxField#equals(Object)} method with a different
-     * class.
-     */
-    @Test
-    public void testEqualsDifferentClass() {
-        final ParadoxField first = new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType());
-        first.setName("Field");
-        Assert.assertNotEquals("Invalid equals result.", "String", first);
-    }
-
-    /**
      * Test for {@link ParadoxField#equals(Object)} method with null value.
      */
     @Test
@@ -150,7 +138,7 @@ public class ParadoxFieldTest {
     @Test
     public void testNotAutoIncrement() {
         final ParadoxField field = new ParadoxField(conn, (byte) 1);
-        Assert.assertFalse("Invalido autoincrement type.", field.isAutoIncrement());
+        Assert.assertFalse("Invalid autoincrement type.", field.isAutoIncrement());
     }
 
     /**

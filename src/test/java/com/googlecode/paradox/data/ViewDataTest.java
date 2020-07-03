@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Unit test for {@link ViewData}.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public class ViewDataTest {
@@ -91,11 +91,11 @@ public class ViewDataTest {
     @Test
     public void testParseExpression() {
         final ParadoxField field = new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType());
-        ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS CUSTOTOTAL");
+        ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS TOTAL_COST");
         Assert.assertTrue("Field is not checked.", field.isChecked());
         Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());
         Assert.assertEquals("Invalid field name.", "CALC _PC*_QTD", field.getExpression());
-        Assert.assertEquals("Invalid field name.", "CUSTOTOTAL", field.getAlias());
+        Assert.assertEquals("Invalid field name.", "TOTAL_COST", field.getAlias());
 
         Assert.assertTrue("Invalid checked status.", field.isChecked());
     }

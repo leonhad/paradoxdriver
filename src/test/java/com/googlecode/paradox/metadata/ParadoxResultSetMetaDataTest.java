@@ -28,7 +28,6 @@ import java.util.Collections;
 /**
  * Unit test for {@link ParadoxResultSetMetaData} class.
  *
- * @author Leonardo Alves da Costa
  * @version 1.0
  * @since 1.3
  */
