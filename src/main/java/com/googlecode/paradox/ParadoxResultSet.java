@@ -187,7 +187,7 @@ public final class ParadoxResultSet implements ResultSet {
     public InputStream getAsciiStream(final int columnIndex) throws SQLException {
         final String val = ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.UTF_8));
+            new ByteArrayInputStream(val.getBytes(StandardCharsets.UTF_8));
         }
 
         return null;
@@ -249,7 +249,7 @@ public final class ParadoxResultSet implements ResultSet {
     public InputStream getBinaryStream(final int columnIndex) throws SQLException {
         final byte[] val = ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            return new ByteArrayInputStream((byte[]) val);
+            return new ByteArrayInputStream(val);
         }
 
         return null;
@@ -270,7 +270,7 @@ public final class ParadoxResultSet implements ResultSet {
     public Blob getBlob(final int columnIndex) throws SQLException {
         final byte[] val = ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            return new ParadoxBlob((byte[]) val);
+            return new ParadoxBlob(val);
         }
 
         return null;
@@ -583,8 +583,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
-        // FIXME review this method.
-        return (T) getObject(columnIndex);
+        return ValuesConverter.convert(getObject(columnIndex), type);
     }
 
     /**
@@ -592,8 +591,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Object getObject(final int columnIndex, final Map<String, Class<?>> map) throws SQLException {
-        // FIXME review this method.
-        return this.getObject(columnIndex);
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -610,7 +608,11 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
-        return (T) getObject(columnLabel, type);
+        try {
+            return getObject(this.findColumn(columnLabel), type);
+        } catch (final Exception e) {
+            throw new SQLException("Error in value conversion to " + type, e);
+        }
     }
 
     /**
@@ -905,6 +907,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void moveToCurrentRow() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -912,6 +915,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void moveToInsertRow() {
+        throw new UnsupportedOperationException();
     }
 
     /**

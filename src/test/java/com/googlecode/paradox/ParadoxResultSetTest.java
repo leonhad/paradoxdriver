@@ -308,4 +308,34 @@ public class ParadoxResultSetTest {
             Assert.assertFalse("No First row", rs.next());
         }
     }
+
+    /**
+     * Test for convert value.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testConvert() throws SQLException {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery(
+                     "select \"date\", \"time\" from \"date\".DATE7 where \"date\" is null")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertNotNull("Invalid instance", rs.getObject("time", Timestamp.class));
+            Assert.assertFalse("No First row", rs.next());
+        }
+    }
+
+    /**
+     * Test for error in conversion value.
+     *
+     * @throws SQLException in case of success.
+     */
+    @Test(expected = SQLException.class)
+    public void testErrorInConversion() throws SQLException {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT a.AC FROM db.AREACODES a")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertNotNull("Invalid instance", rs.getObject("ac", Timestamp.class));
+        }
+    }
 }

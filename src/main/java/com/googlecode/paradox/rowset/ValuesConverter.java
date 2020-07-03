@@ -15,6 +15,9 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Custom values conversion utility class.
@@ -24,8 +27,31 @@ import java.sql.Timestamp;
  */
 public final class ValuesConverter {
 
+    private static final Map<Class<?>, Function<Object, Object>> CLASS_MAPPING = new HashMap<>();
+
     private ValuesConverter() {
         // Utility class.
+    }
+
+    static {
+        CLASS_MAPPING.put(BigDecimal.class, ValuesConverter::getBigDecimal);
+        CLASS_MAPPING.put(Boolean.class, ValuesConverter::getBoolean);
+        CLASS_MAPPING.put(Byte.class, ValuesConverter::getByte);
+        CLASS_MAPPING.put(byte[].class, ValuesConverter::getByteArray);
+        CLASS_MAPPING.put(Date.class, ValuesConverter::getDate);
+        CLASS_MAPPING.put(Double.class, ValuesConverter::getDouble);
+        CLASS_MAPPING.put(Float.class, ValuesConverter::getFloat);
+        CLASS_MAPPING.put(Integer.class, ValuesConverter::getInteger);
+        CLASS_MAPPING.put(Long.class, ValuesConverter::getLong);
+        CLASS_MAPPING.put(Short.class, ValuesConverter::getShort);
+        CLASS_MAPPING.put(String.class, ValuesConverter::getString);
+        CLASS_MAPPING.put(Time.class, ValuesConverter::getTime);
+        CLASS_MAPPING.put(Timestamp.class, ValuesConverter::getTimestamp);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T convert(final Object value, Class<T> type) {
+        return (T) CLASS_MAPPING.get(type).apply(value);
     }
 
     public static Boolean getBoolean(final Object value) {
@@ -140,8 +166,8 @@ public final class ValuesConverter {
         Time ret = null;
         if (value instanceof Time) {
             ret = (Time) value;
-        } else if (value instanceof Date) {
-            ret = new Time(((Date) value).getTime());
+        } else if (value instanceof java.util.Date) {
+            ret = new Time(((java.util.Date) value).getTime());
         } else if (value != null) {
             ret = Time.valueOf(value.toString());
         }
@@ -153,8 +179,8 @@ public final class ValuesConverter {
         Timestamp ret = null;
         if (value instanceof Timestamp) {
             ret = (Timestamp) value;
-        } else if (value instanceof Date) {
-            ret = new Timestamp(((Date) value).getTime());
+        } else if (value instanceof java.util.Date) {
+            ret = new Timestamp(((java.util.Date) value).getTime());
         } else if (value != null) {
             ret = Timestamp.valueOf(value.toString());
         }
