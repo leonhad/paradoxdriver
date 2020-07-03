@@ -765,35 +765,6 @@ public class ParadoxDatabaseMetaDataTest {
 
             // Classes schema.
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid schema.", "com", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
-            Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
-
-            // Date schema.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid schema.", "date", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
-            Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
-
-            // DB schema.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid schema.", "db", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
-            Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
-
-            // Encrypt schema.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid schema.", "encrypt", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
-            Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
-
-            // Fields schema.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid schema.", "fields", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
-            Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
-
-            // Geog schema.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid schema.", "geog", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
-            Assert.assertEquals("Invalid schema.", TEST_CATALOG, rs.getString(ParadoxDatabaseMetaData.TABLE_CATALOG));
-
-            // No more schemas
         }
     }
 
@@ -808,17 +779,6 @@ public class ParadoxDatabaseMetaDataTest {
 
         try (ResultSet rs = this.conn.getMetaData().getTables("test-classes", "fields", "%", types)) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid table name.", "DATE35", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("Invalid catalog name.", "test-classes",
-                    rs.getString(ParadoxDatabaseMetaData.TABLE_CAT));
-            Assert.assertEquals("Invalid schema name.", "date", rs.getString(ParadoxDatabaseMetaData.TABLE_SCHEMA));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid table name.", "DATE4", rs.getString("TABLE_NAME"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid table name.", "DATE5", rs.getString("TABLE_NAME"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid table name.", "DATE7", rs.getString("TABLE_NAME"));
-            Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
 

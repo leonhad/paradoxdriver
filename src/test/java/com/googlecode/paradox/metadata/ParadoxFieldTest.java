@@ -44,7 +44,7 @@ public class ParadoxFieldTest {
     @BeforeClass
     public static void setUp() throws SQLException {
         new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "date");
+        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
     @AfterClass
