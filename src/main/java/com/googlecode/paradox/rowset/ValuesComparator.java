@@ -220,14 +220,18 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
 
     @Override
     public int compare(final Object o1, final Object o2) {
+        if (o1 == null) {
+            return 1;
+        } else if (o2 == null) {
+            return -1;
+        }
+
         // Try to compare with Boolean values.
         if (o1 instanceof Boolean || o2 instanceof Boolean) {
             final Boolean n1 = getBoolean(o1);
             final Boolean n2 = getBoolean(o2);
             return n1.compareTo(n2);
         }
-
-        // FIXME move conversions to a unique class only for this.
 
         // Try to compare with Byte values.
         if (o1 instanceof Byte || o2 instanceof Byte) {
@@ -308,6 +312,7 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
             if (Arrays.equals(n1, n2)) {
                 return 0;
             }
+
             return -1;
         }
 
