@@ -591,7 +591,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Object getObject(final int columnIndex, final Map<String, Class<?>> map) throws SQLException {
-        throw new UnsupportedOperationException();
+        return getObject(columnIndex);
     }
 
     /**
