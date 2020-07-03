@@ -1,5 +1,7 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-07-03 Added ResultSet fetch direction support. Added a better type conversion.
+2020-07-02 Added left, right and cross join support.
 2020-06-30 Removed field parse when field is not to be load.
 2020-06-28 Added table join support.
 2020-06-26 Review all database and table metadata and fixed various memory and performances issues.
