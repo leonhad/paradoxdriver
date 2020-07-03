@@ -445,7 +445,13 @@ public final class SQLParser {
 
             // Inner, right or cross join.
             JoinType joinType = JoinType.INNER;
-            if (this.token.getType() == TokenType.LEFT) {
+            if (this.token.getType() == TokenType.FULL) {
+                joinType = JoinType.FULL;
+                this.expect(TokenType.FULL);
+                if (this.token.getType() == TokenType.OUTER) {
+                    this.expect(TokenType.OUTER);
+                }
+            } else if (this.token.getType() == TokenType.LEFT) {
                 joinType = JoinType.LEFT;
                 this.expect(TokenType.LEFT);
                 if (this.token.getType() == TokenType.OUTER) {

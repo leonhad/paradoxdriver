@@ -12,19 +12,17 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.parser.nodes.SelectNode;
-import com.googlecode.paradox.parser.nodes.StatementNode;
+import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.value.NullNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.comparable.IsNotNullNode;
 import com.googlecode.paradox.planner.nodes.comparable.IsNullNode;
 import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.nodes.value.NullNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -222,6 +220,32 @@ public class SQLParserTest {
 
         Assert.assertEquals("Invalid node size.", 3, select.getTables().size());
         Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+    }
+
+    /**
+     * Test for full join token.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testFullJoin() throws Exception {
+        final SQLParser parser = new SQLParser(conn,
+                "SELECT * FROM client c full join test t on test_id = id ");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+
+        Assert.assertEquals("Invalid node size.", 2, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        Assert.assertEquals("Invalid node name.", "test", select.getTables().get(1).getName());
+        Assert.assertTrue("Invalid node type", select.getTables().get(1) instanceof JoinNode);
+        Assert.assertEquals("Invalid node name.", JoinType.FULL, ((JoinNode) select.getTables().get(1)).getJoinType());
     }
 
     /**

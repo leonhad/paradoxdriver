@@ -48,9 +48,9 @@ public class MainTest {
      */
     @Test
     public void testDateTime() throws SQLException {
-        try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "date");
+        try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "fields");
              final Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT \"DATE\", \"TIME\" FROM \"date\".DATE7")) {
+             ResultSet rs = stmt.executeQuery("SELECT \"DATE\", \"TIME\" FROM fields.DATE7")) {
 
             Assert.assertTrue("Invalid row state.", rs.next());
             Assert.assertEquals("Invalid time.", "10:00:00", rs.getTime("TIME").toString());

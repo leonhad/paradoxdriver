@@ -170,7 +170,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testColumns() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getColumns("test-classes", "date", "DATE4", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getColumns("test-classes", "fields", "DATE4", "%")) {
             Assert.assertTrue("Invalid result set state.", rs.next());
 
             Assert.assertEquals("Invalid column name.", "DATE", rs.getString("COLUMN_NAME"));
@@ -806,7 +806,7 @@ public class ParadoxDatabaseMetaDataTest {
     public void testTables() throws SQLException {
         final String[] types = {"TABLE", "VIEW"};
 
-        try (ResultSet rs = this.conn.getMetaData().getTables("test-classes", "date", "%", types)) {
+        try (ResultSet rs = this.conn.getMetaData().getTables("test-classes", "fields", "%", types)) {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid table name.", "DATE35", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Invalid catalog name.", "test-classes",

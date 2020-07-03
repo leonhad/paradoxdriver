@@ -58,7 +58,7 @@ public class TableFilterTest {
      */
     @Test
     public void testAccept() {
-        final File file = new File(this.getClass().getResource("/date/DATE4.db").getFile());
+        final File file = new File(this.getClass().getResource("/fields/DATE4.db").getFile());
         final TableFilter filter = new TableFilter(conn);
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }

@@ -99,8 +99,8 @@ public class JoinNodeTest {
     @Test
     public void testLeftJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "select d.\"DATE\", d.\"TIME\" from \"date\".DATE7 d " +
-                        "left join \"date\".DATE5 d5 on d5.\"DATE\" = d.\"DATE\"")) {
+                "select d.\"DATE\", d.\"TIME\" from fields.DATE7 d " +
+                        "left join fields.DATE5 d5 on d5.\"DATE\" = d.\"DATE\"")) {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid date value.", "2018-01-01", rs.getDate("DATE").toString());
@@ -156,8 +156,8 @@ public class JoinNodeTest {
     @Test
     public void testRightJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "select d5.\"DATE\", d5.\"TIME\" from \"date\".DATE5 d5 " +
-                        " right join \"date\".DATE7 d on d.\"DATE\" = d5.\"DATE\"")) {
+                "select d5.\"DATE\", d5.\"TIME\" from fields.DATE5 d5 " +
+                        " right join fields.DATE7 d on d.\"DATE\" = d5.\"DATE\"")) {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid date value.", "2018-01-01", rs.getDate("DATE").toString());

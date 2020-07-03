@@ -169,7 +169,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testIsLastResult() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
             Assert.assertFalse("Invalid last status", rs.isLast());
             Assert.assertTrue("Invalid ResultSet state", rs.next());
             Assert.assertTrue("Invalid ResultSet state", rs.next());
@@ -191,7 +191,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testIsFirstResult() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
             Assert.assertFalse("Invalid first status", rs.isFirst());
             Assert.assertTrue("Invalid first status", rs.isBeforeFirst());
             Assert.assertTrue("Invalid ResultSet state", rs.next());
@@ -217,7 +217,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testRelative() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
 
             rs.relative(10);
             Assert.assertTrue("Invalid last status", rs.isLast());
@@ -238,7 +238,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testGetRow() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
 
             Assert.assertEquals("Invalid row value", 0, rs.getRow());
             for (int loop = 0; loop <= 3; loop++, rs.next()) {
@@ -343,7 +343,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testCrossSchema() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT a.* FROM \"date\".DATE35 a")) {
+             ResultSet rs = stmt.executeQuery("SELECT a.* FROM fields.DATE35 a")) {
             Assert.assertTrue("No First row", rs.next());
         }
     }
@@ -372,7 +372,7 @@ public class ParadoxResultSetTest {
     public void testIsNull() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                     "select \"date\", \"time\" from \"date\".DATE7 where \"date\" is null")) {
+                     "select \"date\", \"time\" from fields.DATE7 where \"date\" is null")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Invalid time.", "10:00:00", rs.getString("time"));
             Assert.assertFalse("No First row", rs.next());
@@ -387,7 +387,7 @@ public class ParadoxResultSetTest {
     @Test
     public void testIsNotNull() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select \"date\" from \"date\".DATE7 where \"date\" is not null")) {
+             ResultSet rs = stmt.executeQuery("select \"date\" from fields.DATE7 where \"date\" is not null")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Invalid time.", "2018-01-01", rs.getString("date"));
             Assert.assertTrue("No First row", rs.next());
@@ -409,7 +409,7 @@ public class ParadoxResultSetTest {
     public void testConvert() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery(
-                     "select \"date\", \"time\" from \"date\".DATE7 where \"date\" is null")) {
+                     "select \"date\", \"time\" from fields.DATE7 where \"date\" is null")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertNotNull("Invalid instance", rs.getObject("time", Timestamp.class));
             Assert.assertFalse("No First row", rs.next());
@@ -426,7 +426,7 @@ public class ParadoxResultSetTest {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT a.AC FROM db.AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertNotNull("Invalid instance", rs.getObject("ac", Timestamp.class));
+            rs.getObject("ac", Timestamp.class);
         }
     }
 }
