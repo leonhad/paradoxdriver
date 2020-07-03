@@ -790,7 +790,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getType() {
-        return ResultSet.TYPE_SCROLL_INSENSITIVE;
+        return ResultSet.TYPE_FORWARD_ONLY;
     }
 
     /**

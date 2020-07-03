@@ -87,8 +87,8 @@ public class DataNavigation implements AutoCloseable {
                 updateCurrentRow();
             }
         } else {
-            if (values.size() - row >= 0) {
-                index = values.size() - row;
+            if (values.size() + row >= 0) {
+                index = values.size() + row;
                 ret = true;
                 updateCurrentRow();
             }

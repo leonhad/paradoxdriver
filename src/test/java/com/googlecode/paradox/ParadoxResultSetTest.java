@@ -78,7 +78,7 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertTrue("Invalid absolute value.", rs.absolute(0));
+            Assert.assertTrue("Invalid absolute value.", rs.absolute(1));
         }
     }
 
@@ -106,7 +106,7 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
+            Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
         }
     }
 
@@ -122,6 +122,7 @@ public class ParadoxResultSetTest {
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertTrue("Invalid absolute value.", rs.absolute(1));
+            Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
         }
     }
 
@@ -155,6 +156,27 @@ public class ParadoxResultSetTest {
             Assert.assertNotEquals("Rows with same value.", firstValue, rs.getString("ACode"));
             Assert.assertTrue("Not in first row.", rs.first());
             Assert.assertEquals("Rows with different values.", firstValue, rs.getString("ACode"));
+        }
+    }
+
+    /**
+     * Test for is last result.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testIsLastResult() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
+            Assert.assertFalse(rs.isLast());
+            while(rs.next()) {
+
+            }
+            Assert.assertFalse(rs.isLast());
+            Assert.assertTrue(rs.isAfterLast());
+            Assert.assertFalse("No first row", rs.next());
+            rs.absolute(-1);
+            Assert.assertTrue(rs.isLast());
         }
     }
 
