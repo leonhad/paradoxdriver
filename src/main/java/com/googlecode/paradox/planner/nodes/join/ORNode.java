@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.nodes.join;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.ValuesComparator;
+import com.googlecode.paradox.rowset.ValuesComparator;
 
 /**
  * Store the OR node.

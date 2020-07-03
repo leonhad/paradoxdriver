@@ -12,7 +12,7 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.ValuesComparator;
+import com.googlecode.paradox.rowset.ValuesComparator;
 
 /**
  * Is null node.

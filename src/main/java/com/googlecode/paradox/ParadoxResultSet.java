@@ -15,6 +15,7 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.DataNavigation;
 import com.googlecode.paradox.rowset.ParadoxBlob;
 import com.googlecode.paradox.rowset.ParadoxClob;
+import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
@@ -184,13 +185,9 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public InputStream getAsciiStream(final int columnIndex) throws SQLException {
-        final Object val = this.getObject(columnIndex);
+        final String val = ValuesComparator.getString(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            if (val instanceof String) {
-                new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.UTF_8));
-            } else {
-                throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
-            }
+            new ByteArrayInputStream(((String) val).getBytes(StandardCharsets.UTF_8));
         }
 
         return null;
@@ -209,7 +206,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
-        return BigDecimal.valueOf(getDouble(columnIndex));
+        return ValuesComparator.getBigDecimal(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -250,14 +247,11 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public InputStream getBinaryStream(final int columnIndex) throws SQLException {
-        final Object val = this.getObject(columnIndex);
+        final byte[] val = ValuesComparator.getByteArray(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            if (val instanceof byte[]) {
-                return new ByteArrayInputStream((byte[]) val);
-            } else {
-                throw new SQLException("Filed is not a blob type", SQLStates.INVALID_FIELD_VALUE.getValue());
-            }
+            return new ByteArrayInputStream((byte[]) val);
         }
+
         return null;
     }
 
@@ -274,14 +268,11 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Blob getBlob(final int columnIndex) throws SQLException {
-        final Object val = this.getObject(columnIndex);
+        final byte[] val = ValuesComparator.getByteArray(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            if (val instanceof byte[]) {
-                return new ParadoxBlob((byte[]) val);
-            } else {
-                throw new SQLException("Filed is not a clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
-            }
+            return new ParadoxBlob((byte[]) val);
         }
+
         return null;
     }
 
@@ -298,7 +289,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean getBoolean(final int columnIndex) throws SQLException {
-        return (Boolean) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getBoolean(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -314,7 +305,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public byte getByte(final int columnIndex) throws SQLException {
-        return (byte) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getByte(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -330,7 +321,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public byte[] getBytes(final int columnIndex) throws SQLException {
-        return (byte[]) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getByteArray(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -346,9 +337,9 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Reader getCharacterStream(final int columnIndex) throws SQLException {
-        final Object val = this.getObject(columnIndex);
+        final String val = ValuesComparator.getString(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            return new StringReader(val.toString());
+            return new StringReader(val);
         }
         return null;
     }
@@ -366,14 +357,11 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Clob getClob(final int columnIndex) throws SQLException {
-        final Object val = this.getObject(columnIndex);
+        final String val = ValuesComparator.getString(dataNavigation.getColumnValue(columnIndex));
         if (val != null) {
-            if (val instanceof String) {
-                return new ParadoxClob((String) val);
-            } else {
-                throw new SQLException("Filed isn't clob type", SQLStates.INVALID_FIELD_VALUE.getValue());
-            }
+            return new ParadoxClob(val);
         }
+
         return null;
     }
 
@@ -410,7 +398,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Date getDate(final int columnIndex) throws SQLException {
-        return (Date) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getDate(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -442,7 +430,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public double getDouble(final int columnIndex) throws SQLException {
-        return (Double) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getDouble(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -474,7 +462,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public float getFloat(final int columnIndex) throws SQLException {
-        return (float) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getFloat(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -498,7 +486,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getInt(final int columnIndex) throws SQLException {
-        return (int) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getInteger(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -514,7 +502,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public long getLong(final int columnIndex) throws SQLException {
-        return (long) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getLong(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -595,6 +583,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
+        // FIXME review this method.
         return (T) getObject(columnIndex);
     }
 
@@ -603,6 +592,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Object getObject(final int columnIndex, final Map<String, Class<?>> map) throws SQLException {
+        // FIXME review this method.
         return this.getObject(columnIndex);
     }
 
@@ -620,7 +610,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
-        return (T) getObject(columnLabel);
+        return (T) getObject(columnLabel, type);
     }
 
     /**
@@ -628,7 +618,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Object getObject(final String columnLabel, final Map<String, Class<?>> map) throws SQLException {
-        return this.getObject(columnLabel);
+        return this.getObject(columnLabel, map);
     }
 
     /**
@@ -636,6 +626,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Ref getRef(final int columnIndex) {
+        // FIXME review this method.
         return null;
     }
 
@@ -643,8 +634,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Ref getRef(final String columnLabel) {
-        return null;
+    public Ref getRef(final String columnLabel) throws SQLException {
+        return getRef(this.findColumn(columnLabel));
     }
 
     /**
@@ -660,6 +651,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public RowId getRowId(final int columnIndex) {
+        // FIXME review this method.
         return null;
     }
 
@@ -667,8 +659,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public RowId getRowId(final String columnLabel) {
-        return null;
+    public RowId getRowId(final String columnLabel) throws SQLException {
+        return getRowId(this.findColumn(columnLabel));
     }
 
     /**
@@ -676,7 +668,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public short getShort(final int columnIndex) throws SQLException {
-        return (short) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getShort(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -716,7 +708,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public String getString(final int columnIndex) throws SQLException {
-        return (String) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getString(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -732,7 +724,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Time getTime(final int columnIndex) throws SQLException {
-        return (Time) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getTime(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -764,7 +756,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(final int columnIndex) throws SQLException {
-        return (Timestamp) dataNavigation.getColumnValue(columnIndex);
+        return ValuesComparator.getTimestamp(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
@@ -824,6 +816,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public URL getURL(final int columnIndex) {
+        // FIXME review this method.
         return null;
     }
 
@@ -831,8 +824,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public URL getURL(final String columnLabel) {
-        return null;
+    public URL getURL(final String columnLabel) throws SQLException {
+        return getURL(this.findColumn(columnLabel));
     }
 
     /**
