@@ -12,7 +12,6 @@ package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.IdentifierNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
@@ -29,8 +28,7 @@ import java.util.List;
 /**
  * Unit test for {@link Planner}.
  *
- * @author Leonardo Costa
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public class PlannerTest {
@@ -74,7 +72,7 @@ public class PlannerTest {
      */
     @Before
     public void connect() throws Exception {
-        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**

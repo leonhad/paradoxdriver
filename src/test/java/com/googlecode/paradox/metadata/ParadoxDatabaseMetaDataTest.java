@@ -821,4 +821,107 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertFalse("no more results.", rs.next());
         }
     }
+
+    /**
+     * Test for primary key metadata.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testPrimaryKey() throws SQLException {
+        final DatabaseMetaData meta = this.conn.getMetaData();
+
+        try (ResultSet rs = meta.getPrimaryKeys("test-classes", "db", "CUSTOMER.db")) {
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid value.", "CUSTOMER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Invalid value.", "CustNo", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Invalid value.", "0", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "CUSTOMER.PX", rs.getString("PK_NAME"));
+            Assert.assertFalse("Invalid ResultSet State.", rs.next());
+        }
+    }
+
+    /**
+     * Test for view columns metadata.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testViewColumns() throws SQLException {
+        final DatabaseMetaData meta = this.conn.getMetaData();
+
+        try (ResultSet rs = meta.getColumns("test-classes", "db", "AREAS.QBE", "%")) {
+            // Test for AC field.
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for column name.", "AC", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
+            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
+            Assert.assertEquals("Testing for column size.", 5, rs.getInt("COLUMN_SIZE"));
+            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
+            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
+            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
+
+            // Test for State field.
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for column name.", "State", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
+            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
+            Assert.assertEquals("Testing for column size.", 3, rs.getInt("COLUMN_SIZE"));
+            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
+            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
+            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
+
+            // Test for Cities field.
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Testing for table catalog.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Testing for column name.", "Cities", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
+            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
+            Assert.assertEquals("Testing for column size.", 157, rs.getInt("COLUMN_SIZE"));
+            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
+            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
+            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
+
+            // No more results.
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for primary key metadata with two keys.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testPrimaryKeyTwoKeys() throws SQLException {
+        final DatabaseMetaData meta = this.conn.getMetaData();
+
+        try (ResultSet rs = meta.getPrimaryKeys("test-classes", "db", "SERVER.db")) {
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Invalid value.", "REQTYPE", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Invalid value.", "0", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "SERVER.PX", rs.getString("PK_NAME"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", "test-classes", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
+            Assert.assertEquals("Invalid value.", "URI", rs.getString("COLUMN_NAME"));
+            Assert.assertEquals("Invalid value.", "1", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "SERVER.PX", rs.getString("PK_NAME"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
 }

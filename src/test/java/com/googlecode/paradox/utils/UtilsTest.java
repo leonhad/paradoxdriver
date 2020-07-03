@@ -12,7 +12,6 @@ package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -27,6 +26,7 @@ import java.sql.SQLException;
  * @since 1.2
  */
 public class UtilsTest {
+
     /**
      * Connection string used in tests.
      */
@@ -66,7 +66,7 @@ public class UtilsTest {
      */
     @Before
     public void connect() throws Exception {
-        this.conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**
@@ -112,6 +112,17 @@ public class UtilsTest {
     @Test(expected = SQLException.class)
     public void testUnwrapImpossible() throws Exception {
         Utils.unwrap(this.conn, Integer.class);
+    }
+
+    /**
+     * Test for a valid connection.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testValidConnection() throws SQLException {
+        Assert.assertTrue("Wrapper invalid.", this.conn.isWrapperFor(ParadoxConnection.class));
+        Assert.assertNotNull("Can't unwrap.", this.conn.unwrap(ParadoxConnection.class));
     }
 
     /**

@@ -429,4 +429,64 @@ public class ParadoxResultSetTest {
             rs.getObject("ac", Timestamp.class);
         }
     }
+
+    /**
+     * Test for {@link ResultSet} with multiple values.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testResultSetMultipleValues() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT \"ID\", NAME, MONEYS FROM db.GENERAL")) {
+            Assert.assertTrue("First record:", rs.next());
+            Assert.assertEquals("1 row: ", "1 - Mari 100.0",
+                    rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
+            Assert.assertTrue("Second record:", rs.next());
+            Assert.assertEquals("2 row: ", "2 - Katty 150.0",
+                    rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
+            Assert.assertTrue("Third record:", rs.next());
+            Assert.assertEquals("2 row: ", "333333333 - Elizabet 75.0",
+                    rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
+        }
+    }
+
+    /**
+     * Test {@link ResultSet} with one column.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testResultSetOneColumn() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT EMail FROM CUSTOMER")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("1 row:", "luke@fun.com", rs.getString("email"));
+            Assert.assertTrue("No second row", rs.next());
+            Assert.assertEquals("2 row:", "fmallory@freeport.org", rs.getString("email"));
+            Assert.assertTrue("No third row", rs.next());
+            Assert.assertEquals("3 row:", "lpetzold@earthenwear.com", rs.getString("email"));
+        }
+    }
+
+    /**
+     * Test {@link ResultSet} with two columns.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testResultSetTwoColumn() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT EMail,CustNo FROM CUSTOMER")) {
+            Assert.assertTrue("No First row", rs.next());
+            Assert.assertEquals("1 row:", "luke@fun.com", rs.getString(1));
+            Assert.assertEquals("1 row:", 1, rs.getInt(2));
+            Assert.assertTrue("No second row", rs.next());
+            Assert.assertEquals("2 row:", "fmallory@freeport.org", rs.getString("email"));
+            Assert.assertEquals("2 row:", 2, rs.getInt("custNo"));
+            Assert.assertTrue("No third row", rs.next());
+            Assert.assertEquals("3 row:", "lpetzold@earthenwear.com", rs.getString("Email"));
+            Assert.assertEquals("2 row:", 3, rs.getInt("CUSTNO"));
+        }
+    }
 }

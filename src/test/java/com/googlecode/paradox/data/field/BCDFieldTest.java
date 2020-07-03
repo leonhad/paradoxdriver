@@ -12,7 +12,6 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -20,7 +19,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Unit test for BCD field.
+ *
+ * @version 1.1
+ * @since 1.5.0
+ */
 public class BCDFieldTest {
+
+    /**
+     * Connection string used in tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.
@@ -54,7 +64,7 @@ public class BCDFieldTest {
      */
     @Before
     public void connect() throws SQLException {
-        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "fields");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
     /**

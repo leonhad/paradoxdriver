@@ -8,7 +8,6 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.integration;
 
 import com.googlecode.paradox.Driver;
@@ -26,8 +25,7 @@ import java.sql.SQLException;
 /**
  * Integration test for SQL planning.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class PlannerTest {
@@ -69,7 +67,7 @@ public class PlannerTest {
      */
     @Before
     public void connect() throws Exception {
-        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**

@@ -12,7 +12,6 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.TestUtil;
@@ -25,11 +24,15 @@ import java.util.List;
 /**
  * Unit test for {@link TableData}.
  *
- * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public class TableDataTest {
+
+    /**
+     * Connection string used in tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.
@@ -67,7 +70,7 @@ public class TableDataTest {
      */
     @Before
     public void connect() throws SQLException {
-        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**

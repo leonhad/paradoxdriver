@@ -11,7 +11,6 @@
 package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
 import org.junit.*;
 
 import java.io.BufferedReader;
@@ -28,6 +27,11 @@ import java.util.Properties;
  * @since 1.3
  */
 public class ParadoxClobTest {
+    /**
+     * Connection string used in tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+
     /**
      * The database connection.
      */
@@ -62,7 +66,7 @@ public class ParadoxClobTest {
      */
     @Before
     public void connect() throws SQLException {
-        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**
@@ -235,7 +239,7 @@ public class ParadoxClobTest {
         Properties properties = new Properties();
         properties.put("charset", "cp1251");
 
-        try (final Connection conn = DriverManager.getConnection(MainTest.CONNECTION_STRING + "db", properties);
+        try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "db", properties);
              final Statement stmt = conn.createStatement();
              final ResultSet rs = stmt.executeQuery("SELECT Note FROM NOTE1251 WHERE Id=2")) {
 

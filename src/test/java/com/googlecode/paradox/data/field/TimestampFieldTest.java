@@ -12,21 +12,27 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.integration.MainTest;
 import org.junit.*;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 /**
  * Unit test for {@link TimestampField} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class TimestampFieldTest {
+
+    /**
+     * Connection string used in tests.
+     */
+    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.
@@ -60,7 +66,7 @@ public class TimestampFieldTest {
      */
     @Before
     public void connect() throws SQLException {
-        this.conn = (ParadoxConnection) DriverManager.getConnection(MainTest.CONNECTION_STRING + "fields");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
     /**
