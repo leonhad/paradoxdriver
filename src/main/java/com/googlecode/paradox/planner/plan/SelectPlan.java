@@ -15,10 +15,10 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.utils.SQLStates;
 
 import java.sql.SQLException;
@@ -208,7 +208,8 @@ public final class SelectPlan implements Plan {
     }
 
     private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
-                                             List<Object[]> rawData, PlanTableNode table, List<Object[]> tableData) {
+                                                    List<Object[]> rawData, PlanTableNode table,
+                                                    List<Object[]> tableData) {
         List<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
@@ -216,6 +217,9 @@ public final class SelectPlan implements Plan {
                 break;
             case LEFT:
                 localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            case FULL:
+                localValues = processFullJoin(comparator, columnsLoaded, rawData, table, tableData);
                 break;
             default:
                 localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
@@ -301,6 +305,49 @@ public final class SelectPlan implements Plan {
 
             if (!changed) {
                 Arrays.fill(column, 0, column.length - newCols.length, null);
+                localValues.add(column.clone());
+            }
+        }
+        return localValues;
+    }
+
+    private static List<Object[]> processFullJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                                  List<Object[]> rawData, PlanTableNode table,
+                                                  List<Object[]> tableData) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        Set<Integer> inLeft = new HashSet<>();
+        for (final Object[] cols : rawData) {
+            System.arraycopy(cols, 0, column, 0, cols.length);
+
+            boolean changed = false;
+            for (int i = 0; i < tableData.size(); i++) {
+                final Object[] newCols = tableData.get(i);
+                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator)) {
+                    continue;
+                }
+
+                inLeft.add(i);
+                changed = true;
+                localValues.add(column.clone());
+            }
+
+            if (!changed) {
+                Arrays.fill(column, cols.length, column.length, null);
+                localValues.add(column.clone());
+            }
+        }
+
+        // Itens not used in left join.
+        Arrays.fill(column, 0, column.length, null);
+        for (int i = 0; i < tableData.size(); i++) {
+            if (!inLeft.contains(i)) {
+                final Object[] newCols = tableData.get(i);
+                System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
                 localValues.add(column.clone());
             }
         }

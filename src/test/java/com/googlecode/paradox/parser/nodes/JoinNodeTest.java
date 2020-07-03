@@ -203,4 +203,31 @@ public class JoinNodeTest {
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }
+
+    /**
+     * Test for full join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFullJoin() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select a.id a, b.id b from joins.joina a full join joins.joinb b on b.Id = a.ID")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", 1, rs.getInt("a"));
+            Assert.assertNull("Invalid value.", rs.getObject("b"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", 2, rs.getInt("a"));
+            Assert.assertEquals("Invalid value.", 2, rs.getInt("b"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid value.", 3, rs.getInt("a"));
+            Assert.assertEquals("Invalid value.", 3, rs.getInt("b"));
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertNull("Invalid value.", rs.getObject("a"));
+            Assert.assertEquals("Invalid value.", 4, rs.getInt("b"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
 }
