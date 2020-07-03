@@ -790,7 +790,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getType() {
-        return ResultSet.TYPE_FORWARD_ONLY;
+        return ResultSet.TYPE_SCROLL_INSENSITIVE;
     }
 
     /**
@@ -907,7 +907,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void moveToCurrentRow() {
-        throw new UnsupportedOperationException();
+        // Do nothing.
     }
 
     /**
@@ -915,7 +915,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void moveToInsertRow() {
-        throw new UnsupportedOperationException();
+        // Do nothing.
     }
 
     /**

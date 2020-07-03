@@ -79,21 +79,26 @@ public class DataNavigation implements AutoCloseable {
     public boolean absolute(final int row) throws SQLException {
         verifyStatus();
 
-        boolean ret = false;
-        if (row > 0) {
+        boolean ret;
+        if (row >= 0) {
             if (row <= values.size()) {
                 index = row - 1;
                 ret = true;
-                updateCurrentRow();
+            } else {
+                index = values.size();
+                ret = false;
             }
         } else {
             if (values.size() + row >= 0) {
                 index = values.size() + row;
                 ret = true;
-                updateCurrentRow();
+            } else {
+                index = -1;
+                ret = false;
             }
         }
 
+        updateCurrentRow();
         return ret;
     }
 
@@ -140,6 +145,10 @@ public class DataNavigation implements AutoCloseable {
     public int getRow() throws SQLException {
         verifyStatus();
 
+        if (index == -1 || index == values.size()) {
+            return 0;
+        }
+
         return index + 1;
     }
 
@@ -173,18 +182,19 @@ public class DataNavigation implements AutoCloseable {
         if (rows > 0) {
             if (index + rows < this.values.size()) {
                 index += rows;
-                updateCurrentRow();
-                return true;
+            } else {
+                last();
             }
         } else {
             if (index + rows >= 0) {
                 index += rows;
-                updateCurrentRow();
-                return true;
+            } else {
+                first();
             }
         }
 
-        return false;
+        updateCurrentRow();
+        return true;
     }
 
     @Override
@@ -215,52 +225,38 @@ public class DataNavigation implements AutoCloseable {
         }
     }
 
-    public boolean next() throws SQLException {
-        if (hasNext()) {
-            if (fetchDirection == ResultSet.FETCH_FORWARD) {
-                moveNext();
-            } else {
-                movePrevious();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean previous() throws SQLException {
-        if (hasNext()) {
-            if (fetchDirection == ResultSet.FETCH_FORWARD) {
-                movePrevious();
-            } else {
-                moveNext();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private void moveNext() {
-        index++;
-        updateCurrentRow();
-    }
-
-    private void movePrevious() {
-        index--;
-        updateCurrentRow();
-    }
-
-    private boolean hasNext() throws SQLException {
-        verifyStatus();
-
+    public boolean next() {
         if (fetchDirection == ResultSet.FETCH_FORWARD) {
-            return index + 1 < values.size();
+            return moveNext();
         } else {
-            return index - 1 >= 0;
+            return movePrevious();
         }
+    }
+
+    public boolean previous() {
+        if (fetchDirection == ResultSet.FETCH_FORWARD) {
+            return movePrevious();
+        } else {
+            return moveNext();
+        }
+    }
+
+    private boolean moveNext() {
+        if (index < values.size()) {
+            index++;
+        }
+
+        updateCurrentRow();
+        return index != values.size();
+    }
+
+    private boolean movePrevious() {
+        if (index != -1) {
+            index--;
+        }
+
+        updateCurrentRow();
+        return index != -1;
     }
 
     public boolean isClosed() {

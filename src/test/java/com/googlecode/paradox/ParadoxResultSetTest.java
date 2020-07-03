@@ -78,7 +78,8 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertTrue("Invalid absolute value.", rs.absolute(1));
+            Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
+            Assert.assertTrue("Invalid absolute value.", rs.isAfterLast());
         }
     }
 
@@ -92,7 +93,8 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
+            Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
+            Assert.assertTrue("Invalid absolute value.", rs.isBeforeFirst());
         }
     }
 
@@ -167,16 +169,83 @@ public class ParadoxResultSetTest {
     @Test
     public void testIsLastResult() throws Exception {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
-            Assert.assertFalse(rs.isLast());
-            while(rs.next()) {
-
-            }
-            Assert.assertFalse(rs.isLast());
-            Assert.assertTrue(rs.isAfterLast());
+             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+            Assert.assertFalse("Invalid last status", rs.isLast());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+            Assert.assertFalse("Invalid last status", rs.isLast());
+            Assert.assertTrue("Invalid after last status", rs.isAfterLast());
             Assert.assertFalse("No first row", rs.next());
             rs.absolute(-1);
-            Assert.assertTrue(rs.isLast());
+            Assert.assertTrue("Invalid last status", rs.isLast());
+        }
+    }
+
+    /**
+     * Test for is first result.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testIsFirstResult() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+            Assert.assertFalse("Invalid first status", rs.isFirst());
+            Assert.assertTrue("Invalid first status", rs.isBeforeFirst());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue("Invalid first status", rs.isFirst());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertFalse("Invalid first status", rs.isFirst());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertFalse("Invalid first status", rs.isFirst());
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+            Assert.assertFalse("Invalid first status", rs.isFirst());
+            Assert.assertTrue("Invalid first status", rs.first());
+            Assert.assertTrue("Invalid first status", rs.isFirst());
+            rs.beforeFirst();
+            Assert.assertTrue("Invalid first status", rs.isBeforeFirst());
+        }
+    }
+
+    /**
+     * Test for relative.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testRelative() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+
+            rs.relative(10);
+            Assert.assertTrue("Invalid last status", rs.isLast());
+            rs.next();
+            Assert.assertTrue("Invalid after last status", rs.isAfterLast());
+            rs.previous();
+            rs.relative(-2);
+            rs.relative(-10);
+            Assert.assertTrue("Invalid first status", rs.isFirst());
+        }
+    }
+
+    /**
+     * Test for get row.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testGetRow() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM \"date\".DATE5")) {
+
+            Assert.assertEquals("Invalid row value", 0, rs.getRow());
+            for (int loop = 0; loop <= 3; loop++, rs.next()) {
+                Assert.assertEquals("Invalid row value", loop, rs.getRow());
+            }
+
+            Assert.assertEquals("Invalid row value", 0, rs.getRow());
         }
     }
 
