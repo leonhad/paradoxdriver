@@ -610,7 +610,7 @@ public final class ParadoxResultSet implements ResultSet {
     public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
         try {
             return getObject(this.findColumn(columnLabel), type);
-        } catch (final Exception e) {
+        } catch (final IllegalArgumentException e) {
             throw new SQLException("Error in value conversion to " + type, e);
         }
     }

@@ -1357,7 +1357,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsConvert() {
-        return false;
+        return true;
     }
 
     /**
@@ -1365,7 +1365,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsConvert(final int fromType, final int toType) {
-        return false;
+        return true;
     }
 
     /**
