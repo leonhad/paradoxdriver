@@ -124,19 +124,19 @@ public final class Driver implements java.sql.Driver {
 
         final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, charsetValue);
         charset.required = false;
-        charset.description = "Default table charset";
+        charset.description = "Table charset (empty value to use the charset defined in table).";
 
         final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", password);
         passwordProp.required = false;
-        passwordProp.description = "Password to use for authentication";
+        passwordProp.description = "Password to use for authentication.";
 
         final DriverPropertyInfo localeProp = new DriverPropertyInfo(LOCALE_KEY, localeValue);
         localeProp.required = false;
-        localeProp.description = "Password to use for authentication";
+        localeProp.description = "The locale to use internally by the driver.";
 
         final DriverPropertyInfo bcdRoundingProp = new DriverPropertyInfo(BCD_ROUNDING_KEY, bcdRounding);
         bcdRoundingProp.required = false;
-        bcdRoundingProp.description = "Use BCD double rounding (default for original database)";
+        bcdRoundingProp.description = "Use BCD double rounding (true to use rounding, the original used by Paradox).";
 
         return new DriverPropertyInfo[]{charset, localeProp, passwordProp, bcdRoundingProp};
     }

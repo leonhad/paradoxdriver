@@ -963,17 +963,19 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("REF_GENERATION", Types.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
-        if (types != null) {
-            for (final File currentSchema : this.conn.getSchema(catalog, schemaPattern)) {
-                for (final String type : types) {
-                    if (ParadoxDatabaseMetaData.TABLE.equalsIgnoreCase(type)) {
-                        this.formatTable(catalog, schemaPattern, tableNamePattern, values);
-                    } else if ("VIEW".equalsIgnoreCase(type)) {
-                        this.formatView(tableNamePattern, values, currentSchema);
-                    }
+        if (types == null) {
+            return new ParadoxResultSet(this.conn, null, values, columns);
+        }
+        for (final File currentSchema : this.conn.getSchema(catalog, schemaPattern)) {
+            for (final String type : types) {
+                if (ParadoxDatabaseMetaData.TABLE.equalsIgnoreCase(type)) {
+                    this.formatTable(catalog, schemaPattern, tableNamePattern, values);
+                } else if ("VIEW".equalsIgnoreCase(type)) {
+                    this.formatView(tableNamePattern, values, currentSchema);
                 }
             }
         }
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
 
