@@ -118,6 +118,10 @@ public final class Driver implements java.sql.Driver {
             localeValue = Locale.ENGLISH.getLanguage();
         }
 
+        if (bcdRounding == null) {
+            bcdRounding = "true";
+        }
+
         final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, charsetValue);
         charset.required = false;
         charset.description = "Default table charset";
