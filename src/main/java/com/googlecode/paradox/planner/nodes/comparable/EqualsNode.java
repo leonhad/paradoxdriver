@@ -37,6 +37,6 @@ public final class EqualsNode extends AbstractComparableNode {
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         final Object value1 = getValue(row, field);
         final Object value2 = getValue(row, last);
-        return comparator.compare(value1, value2, i -> i == 0);
+        return comparator.equals(value1, value2);
     }
 }
