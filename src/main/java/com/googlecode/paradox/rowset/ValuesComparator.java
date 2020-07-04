@@ -11,6 +11,8 @@
 package com.googlecode.paradox.rowset;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -30,7 +32,7 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(ValuesComparator.class.getName());
 
-    private static final double EPSILON = Double.MIN_VALUE * 2;
+    private static final double EPSILON = Double.MIN_VALUE * 8;
 
     /**
      * Creates a new instance.
@@ -98,6 +100,20 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
                 final double n1 = ValuesConverter.getDouble(o1);
                 final double n2 = ValuesConverter.getDouble(o2);
                 return Math.abs(n1 - n2) < EPSILON;
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
+        }
+
+        // Try to compare with BigDecimal values.
+        if (o1 instanceof BigDecimal || o2 instanceof BigDecimal) {
+            try {
+                BigDecimal n1 = ValuesConverter.getBigDecimal(o1);
+                BigDecimal n2 = ValuesConverter.getBigDecimal(o2);
+
+                n1 = n1.setScale(Math.max(n1.scale(), n2.scale()), RoundingMode.UNNECESSARY);
+                n2 = n2.setScale(Math.max(n1.scale(), n2.scale()), RoundingMode.UNNECESSARY);
+                return n1.equals(n2);
             } catch (final NumberFormatException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
@@ -194,6 +210,17 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
             try {
                 final Double n1 = ValuesConverter.getDouble(o1);
                 final Double n2 = ValuesConverter.getDouble(o2);
+                return n1.compareTo(n2);
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
+        }
+
+        // Try to compare with BigDecimal values.
+        if (o1 instanceof BigDecimal || o2 instanceof BigDecimal) {
+            try {
+                final BigDecimal n1 = ValuesConverter.getBigDecimal(o1);
+                final BigDecimal n2 = ValuesConverter.getBigDecimal(o2);
                 return n1.compareTo(n2);
             } catch (final NumberFormatException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);

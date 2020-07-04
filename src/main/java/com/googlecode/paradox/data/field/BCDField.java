@@ -84,6 +84,11 @@ public final class BCDField implements FieldParser {
         if (negative) {
             sb.insert(0, '-');
         }
+
+        if (field.getConnection().isBcdRounding()) {
+            return Double.valueOf(sb.toString());
+        }
+
         return new BigDecimal(sb.toString());
     }
 

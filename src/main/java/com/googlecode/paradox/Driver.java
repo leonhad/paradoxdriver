@@ -35,6 +35,8 @@ public final class Driver implements java.sql.Driver {
 
     public static final String LOCALE_KEY = "locale";
 
+    public static final String BCD_ROUNDING_KEY = "bcd_rounding";
+
     /**
      * Logger instance for this class.
      */
@@ -103,10 +105,13 @@ public final class Driver implements java.sql.Driver {
         String password = null;
         String charsetValue = null;
         String localeValue = null;
+        String bcdRounding = null;
+
         if (info != null) {
             password = info.getProperty("password");
             charsetValue = info.getProperty(CHARSET_KEY);
             localeValue = info.getProperty(LOCALE_KEY);
+            bcdRounding = info.getProperty(BCD_ROUNDING_KEY);
         }
 
         if (localeValue == null) {
@@ -125,7 +130,11 @@ public final class Driver implements java.sql.Driver {
         localeProp.required = false;
         localeProp.description = "Password to use for authentication";
 
-        return new DriverPropertyInfo[]{charset, localeProp, passwordProp};
+        final DriverPropertyInfo bcdRoundingProp = new DriverPropertyInfo(BCD_ROUNDING_KEY, bcdRounding);
+        bcdRoundingProp.required = false;
+        bcdRoundingProp.description = "Use BCD double rounding (default for original database)";
+
+        return new DriverPropertyInfo[]{charset, localeProp, passwordProp, bcdRoundingProp};
     }
 
     /**

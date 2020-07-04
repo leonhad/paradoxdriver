@@ -116,4 +116,20 @@ public class BCDFieldTest {
             Assert.assertFalse("Invalid Result Set state.", rs.next());
         }
     }
+
+    /**
+     * Test for BCD equals.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testEquals() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select c from fields.bcd " +
+                        "where c = 0.999900000000000011810001400000141541")) {
+            Assert.assertTrue("Invalid Result Set state.", rs.next());
+            Assert.assertEquals("Invalid value.", 1.0D, rs.getDouble("c"), 0.001D);
+            Assert.assertFalse("Invalid Result Set state.", rs.next());
+        }
+    }
 }

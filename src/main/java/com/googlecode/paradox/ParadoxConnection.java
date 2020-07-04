@@ -88,6 +88,10 @@ public final class ParadoxConnection implements Connection {
      * Stores the JDBC type mapping.
      */
     private Map<String, Class<?>> typeMap;
+    /**
+     * BCD field precision.
+     */
+    private boolean bcdRounding = true;
 
     /**
      * Creates a new paradox connection.
@@ -116,6 +120,11 @@ public final class ParadoxConnection implements Connection {
             this.locale = Locale.forLanguageTag(localeName);
         } else {
             this.locale = Locale.ENGLISH;
+        }
+
+        final String bcdRoundingName = info.getProperty(Driver.BCD_ROUNDING_KEY);
+        if (bcdRoundingName != null && !bcdRoundingName.trim().isEmpty()) {
+            this.bcdRounding = Boolean.parseBoolean(bcdRoundingName);
         }
 
         // Is a schema.
@@ -643,5 +652,13 @@ public final class ParadoxConnection implements Connection {
     @Override
     public <T> T unwrap(final Class<T> iFace) throws SQLException {
         return Utils.unwrap(this, iFace);
+    }
+
+    public boolean isBcdRounding() {
+        return bcdRounding;
+    }
+
+    public void setBcdRounding(boolean bcdRounding) {
+        this.bcdRounding = bcdRounding;
     }
 }
