@@ -15,8 +15,6 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
-import com.googlecode.paradox.procedures.AbstractCallableProcedure;
-import com.googlecode.paradox.procedures.ProcedureAS;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
@@ -755,8 +753,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getProcedureColumns(final String catalog, final String schemaPattern,
-                                         final String procedureNamePattern, final String columnNamePattern)
-            throws SQLException {
+                                         final String procedureNamePattern, final String columnNamePattern) {
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("PROCEDURE_CAT", Types.VARCHAR));
         columns.add(new Column("PROCEDURE_SCHEM", Types.VARCHAR));
@@ -778,39 +775,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("IS_NULLABLE", Types.VARCHAR));
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
-        final List<Object[]> values = new ArrayList<>();
-
-        for (final AbstractCallableProcedure procedure : new ProcedureAS(conn).list()) {
-            if (Expressions.accept(conn, procedure.getName(), procedureNamePattern)) {
-                for (final ParadoxField field : procedure.getCols()) {
-                    final Object[] row = new Object[]{
-                            catalog,
-                            this.conn.getCurrentSchema(),
-                            procedure.getName(),
-                            field.getName(),
-                            DatabaseMetaData.procedureColumnIn,
-                            field.getSqlType(),
-                            Column.getTypeName(field.getSqlType()),
-                            0,
-                            field.getSize(),
-                            0,
-                            0,
-                            DatabaseMetaData.procedureNullable,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            "NO",
-                            procedure.getName()
-                    };
-                    values.add(row);
-                }
-            }
-        }
-
-        return new ParadoxResultSet(this.conn, null, values, columns);
+        return new ParadoxResultSet(this.conn, null, Collections.emptyList(), columns);
     }
 
     /**
@@ -863,24 +828,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("PROCEDURE_TYPE", Types.INTEGER));
         columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
 
-        final List<Object[]> values = new ArrayList<>();
-
-        for (final AbstractCallableProcedure procedure : new ProcedureAS(conn).list()) {
-            final Object[] row = new Object[]{
-                    catalog,
-                    this.conn.getSchema(),
-                    procedure.getName(),
-                    null,
-                    null,
-                    null,
-                    procedure.getRemarks(),
-                    procedure.getReturnType(),
-                    procedure.getName()
-            };
-            values.add(row);
-        }
-
-        return new ParadoxResultSet(this.conn, null, values, columns);
+        return new ParadoxResultSet(this.conn, null, Collections.emptyList(), columns);
     }
 
     /**

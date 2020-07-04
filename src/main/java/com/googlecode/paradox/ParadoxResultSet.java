@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * JDBC ResultSet implementation.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ParadoxResultSet implements ResultSet {
@@ -627,9 +627,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Ref getRef(final int columnIndex) {
-        // FIXME review this method.
-        return null;
+    public Ref getRef(final int columnIndex) throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
     }
 
     /**
@@ -652,9 +651,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public RowId getRowId(final int columnIndex) {
-        // FIXME review this method.
-        return null;
+    public RowId getRowId(final int columnIndex) throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
     }
 
     /**
@@ -817,9 +815,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public URL getURL(final int columnIndex) {
-        // FIXME review this method.
-        return null;
+    public URL getURL(final int columnIndex) throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
     }
 
     /**
