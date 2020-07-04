@@ -15,6 +15,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 
 /**
@@ -83,7 +84,7 @@ public final class BCDField implements FieldParser {
         if (negative) {
             sb.insert(0, '-');
         }
-        return Double.parseDouble(sb.toString());
+        return new BigDecimal(sb.toString());
     }
 
     private static void removeLeadingZeroes(final StringBuilder builder) {

@@ -30,6 +30,8 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(ValuesComparator.class.getName());
 
+    private static final double EPSILON = Double.MIN_VALUE * 2;
+
     /**
      * Creates a new instance.
      */
@@ -93,9 +95,9 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         // Try to compare with Double values.
         if (o1 instanceof Double || o2 instanceof Double) {
             try {
-                final Double n1 = ValuesConverter.getDouble(o1);
-                final Double n2 = ValuesConverter.getDouble(o2);
-                return n1.equals(n2);
+                final double n1 = ValuesConverter.getDouble(o1);
+                final double n2 = ValuesConverter.getDouble(o2);
+                return Math.abs(n1 - n2) < EPSILON;
             } catch (final NumberFormatException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
