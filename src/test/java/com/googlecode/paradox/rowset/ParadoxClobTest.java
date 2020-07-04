@@ -22,10 +22,11 @@ import java.util.Properties;
 /**
  * Unit test for {@link ParadoxClob} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public class ParadoxClobTest {
+
     /**
      * Connection string used in tests.
      */
@@ -115,7 +116,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testCharacterStreamWithHighPosition() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -124,7 +125,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getCharacterStream(100, 3);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getCharacterStream(100, 3));
         }
     }
 
@@ -133,7 +134,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testCharacterStreamWithInvalidLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -142,7 +143,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getCharacterStream(1, -1);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getCharacterStream(1, -1));
         }
     }
 
@@ -151,7 +152,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testCharacterStreamWithLongLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -160,7 +161,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getCharacterStream(1, 100);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getCharacterStream(1, 100));
         }
     }
 
@@ -169,7 +170,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testCharacterStreamWithLowPosition() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -178,7 +179,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getCharacterStream(0, 3);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getCharacterStream(0, 3));
         }
     }
 
@@ -273,7 +274,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testSubStringWithHighLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -282,7 +283,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getSubString(1, 100);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getSubString(1, 100));
         }
     }
 
@@ -291,7 +292,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testSubStringWithHighPos() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -300,7 +301,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getSubString(100, 3);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getSubString(100, 3));
         }
     }
 
@@ -309,7 +310,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testSubStringWithInvalidLength() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -318,7 +319,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getSubString(1, -1);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getSubString(1, -1));
         }
     }
 
@@ -327,7 +328,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testSubStringWithLowPos() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -336,7 +337,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            clob.getSubString(0, 3);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getSubString(0, 3));
         }
     }
 
@@ -364,7 +365,7 @@ public class ParadoxClobTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testTruncateHighValue() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
@@ -374,7 +375,7 @@ public class ParadoxClobTest {
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
             final long value = clob.length();
-            clob.truncate(value + 100);
+            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.truncate(value + 100));
         }
     }
 

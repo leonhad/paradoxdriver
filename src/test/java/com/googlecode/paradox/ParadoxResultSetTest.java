@@ -417,16 +417,15 @@ public class ParadoxResultSetTest {
     }
 
     /**
-     * Test for error in conversion value.
-     *
-     * @throws SQLException in case of success.
+     * Test for error in conversion value.\
      */
-    @Test(expected = SQLException.class)
+    @Test
     public void testErrorInConversion() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT a.AC FROM db.AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
-            rs.getObject("ac", Timestamp.class);
+            Assert.assertThrows("Invalid value conversion",
+                    SQLException.class, () -> rs.getObject("ac", Timestamp.class));
         }
     }
 

@@ -92,16 +92,6 @@ public class ParadoxFieldTest {
     }
 
     /**
-     * Test for {@link ParadoxField#equals(Object)} method with null value.
-     */
-    @Test
-    public void testEqualsNull() {
-        final ParadoxField field = new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType());
-        field.setName("Field");
-        Assert.assertNotEquals("Invalid equals result.", null, field);
-    }
-
-    /**
      * Test for getters and setters.
      */
     @Test
