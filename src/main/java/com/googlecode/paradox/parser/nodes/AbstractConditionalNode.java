@@ -12,11 +12,11 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.IFieldValue;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -67,7 +67,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
         }
 
         final String tableName = tables.stream()
-                .filter(t -> t.getAlias().equals(field.getTableName()))
+                .filter(t -> t.getAlias().equalsIgnoreCase(field.getTableName()))
                 .map(PlanTableNode::getTable).map(ParadoxTable::getName)
                 .findFirst().orElse(field.getTableName());
 

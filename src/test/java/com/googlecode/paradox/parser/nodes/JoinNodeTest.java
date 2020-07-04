@@ -212,7 +212,7 @@ public class JoinNodeTest {
     @Test
     public void testFullJoin() throws SQLException {
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "select a.id a, b.id b from joins.joina a full join joins.joinb b on b.Id = a.ID")) {
+                "select a.id a, b.id b from joins.joina A full join joins.joinb b on b.Id = a.ID")) {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid value.", 1, rs.getInt("a"));
