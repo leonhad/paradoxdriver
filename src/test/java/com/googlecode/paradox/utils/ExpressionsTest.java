@@ -64,7 +64,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testExtra() {
-        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TEST.QBE~", "%.QBE"));
+        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TEST.QBE~", "%.QBE", false));
     }
 
     /**
@@ -72,7 +72,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testLikes() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TA%"));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TA%", false));
     }
 
     /**
@@ -80,7 +80,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testMix() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X??"));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X??", false));
     }
 
     /**
@@ -104,6 +104,6 @@ public class ExpressionsTest {
      */
     @Test
     public void testUnique() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB?E"));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB?E", false));
     }
 }

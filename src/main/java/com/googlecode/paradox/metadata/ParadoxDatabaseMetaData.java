@@ -836,8 +836,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) {
-        if (((catalog != null) && !Expressions.accept(conn, this.conn.getCatalog(), catalog))
-                || ((schemaPattern != null) && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern))) {
+        if (((catalog != null) && !Expressions.accept(conn, this.conn.getCatalog(), catalog, false))
+                || ((schemaPattern != null) && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern, false))) {
             return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
         }
         return this.getSchemas();
@@ -1803,7 +1803,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                                final String tableName, final ParadoxField[] fields) throws SQLException {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
-            if ((columnNamePattern != null) && !Expressions.accept(conn, field.getName(), columnNamePattern)) {
+            if ((columnNamePattern != null) && !Expressions.accept(conn, field.getName(), columnNamePattern, false)) {
                 continue;
             }
 

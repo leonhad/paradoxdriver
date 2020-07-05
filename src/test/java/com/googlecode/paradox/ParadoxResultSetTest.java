@@ -488,4 +488,22 @@ public class ParadoxResultSetTest {
             Assert.assertEquals("2 row:", 3, rs.getInt("CUSTNO"));
         }
     }
+
+    /**
+     * Test for like.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testLike() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
+                     " where ac.AreasCovered like 'Hackensack%'")) {
+
+            Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
+            while (rs.next()) {
+                Assert.assertTrue("Invalid value", rs.getString("AreasCovered").startsWith("Hackensack"));
+            }
+        }
+    }
 }

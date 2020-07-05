@@ -133,7 +133,7 @@ public class DataNavigation implements AutoCloseable {
     public boolean isAfterLast() throws SQLException {
         verifyStatus();
 
-        return index >= values.size();
+        return index >= values.size() || values.size() == 0;
     }
 
     public boolean isBeforeFirst() throws SQLException {

@@ -58,8 +58,8 @@ public final class ViewFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.QBE")
-                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName));
+        return Expressions.accept(connection, name, "%.QBE", false)
+                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName, false));
     }
 
 }

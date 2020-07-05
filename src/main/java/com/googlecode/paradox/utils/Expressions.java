@@ -12,22 +12,13 @@ package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.ParadoxConnection;
 
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Utility class to parse SQL expressions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.1
  */
 public final class Expressions {
-
-    /**
-     * The class logger.
-     */
-    private static final Logger LOGGER = Logger.getLogger(Expressions.class.getName());
 
     /**
      * Utility class.
@@ -39,107 +30,49 @@ public final class Expressions {
     /**
      * Test for an expression.
      *
-     * @param conn       the Paradox connection.
-     * @param expression the expression to test for.
-     * @param criteria   the criteria to use.
-     * @return true if the expression is valid.
-     */
-    public static boolean accept(final ParadoxConnection conn, final String expression, final String criteria) {
-        return Expressions.accept(conn, expression, criteria, false);
-    }
-
-    /**
-     * Test for an expression.
-     *
      * @param conn          the Paradox connection.
      * @param expression    the expression to test for.
      * @param criteria      the criteria to use.
      * @param caseSensitive true if this validation processes is case sensitive.
-     * @return true if the expression is valid.
+     * @return <code>true</code> if the expression is valid.
      */
     public static boolean accept(final ParadoxConnection conn, final String expression, final String criteria,
                                  final boolean caseSensitive) {
-        try {
-            Expressions.acceptExpression(conn, expression, criteria, caseSensitive);
-        } catch (final SQLException e) {
-            Expressions.LOGGER.log(Level.FINER, e.getMessage(), e);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Test for an expression.
-     *
-     * @param conn          the Paradox connection.
-     * @param expression    the expression to test for.
-     * @param criteria      the criteria to use.
-     * @param caseSensitive true if this validation processes is case sensitive.
-     * @throws SQLException in case of invalid expression.
-     */
-    private static void acceptExpression(final ParadoxConnection conn, final String expression, final String criteria
-            , final boolean caseSensitive)
-            throws SQLException {
-        final char[] criterion = Expressions.getCharArrayWithCase(conn, criteria, caseSensitive);
-        final char[] exp = Expressions.getCharArrayWithCase(conn, expression, caseSensitive);
+        final char[] criterion = getCharArrayWithCase(conn, criteria, caseSensitive);
+        final char[] exp = getCharArrayWithCase(conn, expression, caseSensitive);
         final int limit = exp.length - 1;
         int index = 0;
 
         for (int loop = 0; loop < criterion.length; loop++) {
             if (index > limit) {
-                throw new SQLException();
+                return false;
             }
             final char c = criterion[loop];
 
             if (c == '?') {
                 index++;
             } else if (c == '%') {
-                // Has others chars
+                // Has more chars.
                 if ((loop + 1) < criterion.length) {
                     final char next = criterion[loop + 1];
                     index = Expressions.fixIndex(exp, limit, index, next);
-                    Expressions.checkBounds(exp, limit, index, next);
+
+                    if ((index > limit) || (next != exp[index])) {
+                        return false;
+                    }
                 } else {
-                    return;
+                    return true;
                 }
             } else {
-                Expressions.checkIndexBoundaries(exp, index, c);
+                if (c != exp[index]) {
+                    return false;
+                }
+
                 ++index;
             }
         }
-        if (index <= limit) {
-            throw new SQLException();
-        }
-    }
 
-    /**
-     * Check for expressions limit boundaries.
-     *
-     * @param exp   the expression to check.
-     * @param limit the value limits.
-     * @param index the current index.
-     * @param next  the next char in criteria.
-     * @throws SQLException in case of invalid expression.
-     */
-    private static void checkBounds(final char[] exp, final int limit, final int index, final char next)
-            throws SQLException {
-        if ((index > limit) || (next != exp[index])) {
-            throw new SQLException();
-        }
-    }
-
-    /**
-     * Check for index boundaries.
-     *
-     * @param exp   the expression to check.
-     * @param index the current index.
-     * @param c     the current char in expression.
-     * @throws SQLException in case of invalid expression.
-     */
-    private static void checkIndexBoundaries(final char[] exp, final int index, final char c) throws SQLException {
-        if (c != exp[index]) {
-            throw new SQLException();
-        }
+        return index > limit;
     }
 
     /**
@@ -156,6 +89,7 @@ public final class Expressions {
         while ((index <= limit) && (next != exp[index])) {
             index++;
         }
+
         return index;
     }
 
@@ -172,6 +106,7 @@ public final class Expressions {
         if (caseSensitive) {
             return str.toCharArray();
         }
+
         return str.toUpperCase(conn.getLocale()).toCharArray();
     }
 }

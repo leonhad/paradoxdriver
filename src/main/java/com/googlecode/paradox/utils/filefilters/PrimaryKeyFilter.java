@@ -58,7 +58,7 @@ public final class PrimaryKeyFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.PX")
-                && ((this.pkName == null) || Expressions.accept(connection, name, this.pkName));
+        return Expressions.accept(connection, name, "%.PX", false)
+                && ((this.pkName == null) || Expressions.accept(connection, name, this.pkName, false));
     }
 }

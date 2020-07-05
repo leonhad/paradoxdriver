@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Unit test for {@link SQLParser}.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class SQLParserTest {

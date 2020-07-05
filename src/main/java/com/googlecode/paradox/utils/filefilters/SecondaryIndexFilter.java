@@ -58,8 +58,8 @@ public final class SecondaryIndexFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.X??")
-                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName));
+        return Expressions.accept(connection, name, "%.X??", false)
+                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName, false));
     }
 
 }

@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.0
  */
 public final class SQLParser {
