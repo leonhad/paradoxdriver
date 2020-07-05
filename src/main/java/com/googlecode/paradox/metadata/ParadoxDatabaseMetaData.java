@@ -373,7 +373,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getExtraNameCharacters() {
-        return "*";
+        return "";
     }
 
     /**
@@ -864,7 +864,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSQLKeywords() {
-        return "SELECT";
+        return "ILIKE";
     }
 
     /**

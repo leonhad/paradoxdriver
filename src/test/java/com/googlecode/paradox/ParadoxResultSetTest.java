@@ -477,13 +477,13 @@ public class ParadoxResultSetTest {
     public void testResultSetTwoColumn() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
                 "SELECT EMail,CustNo FROM CUSTOMER")) {
-            Assert.assertTrue("No First row", rs.next());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString(1));
             Assert.assertEquals("1 row:", 1, rs.getInt(2));
-            Assert.assertTrue("No second row", rs.next());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
             Assert.assertEquals("2 row:", "fmallory@freeport.org", rs.getString("email"));
             Assert.assertEquals("2 row:", 2, rs.getInt("custNo"));
-            Assert.assertTrue("No third row", rs.next());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
             Assert.assertEquals("3 row:", "lpetzold@earthenwear.com", rs.getString("Email"));
             Assert.assertEquals("2 row:", 3, rs.getInt("CUSTNO"));
         }
@@ -501,8 +501,51 @@ public class ParadoxResultSetTest {
                      " where ac.AreasCovered like 'Hackensack%'")) {
 
             Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue("Invalid value", rs.getString("AreasCovered").startsWith("Hackensack"));
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+        }
+
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
+                     " where ac.AreasCovered like 'hackensack%'")) {
+
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+        }
+    }
+
+    /**
+     * Test for insensitive like.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testInsensitiveLike() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
+                     " where ac.AreasCovered ilike 'hackensack%'")) {
+
+            Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue("Invalid value", rs.getString("AreasCovered").startsWith("Hackensack"));
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+        }
+    }
+
+    /**
+     * Test for like in the middle.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testLikeMiddle() throws Exception {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
+                     " where ac.AreasCovered ilike '%all%'")) {
+
+            Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
             while (rs.next()) {
-                Assert.assertTrue("Invalid value", rs.getString("AreasCovered").startsWith("Hackensack"));
+                Assert.assertTrue("Invalid value", rs.getString("AreasCovered").toUpperCase().contains("ALL"));
             }
         }
     }
