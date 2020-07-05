@@ -76,6 +76,7 @@ public class Scanner {
         if (buffer == null || buffer.trim().isEmpty()) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_SQL);
         }
+
         this.connection = connection;
         this.buffer = CharBuffer.wrap(buffer.trim());
     }
@@ -304,6 +305,12 @@ public class Scanner {
                 // It is a number.
                 parseNumber(c);
                 return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
+            } else if (nextChar == '-') {
+                // It is a comment.
+                parseComment();
+
+                // Redo this from beginning.
+                return nextToken();
             }
 
             // Only a minus sign.
@@ -316,6 +323,14 @@ public class Scanner {
         parseIdentifier();
 
         return getToken(this.value.toString());
+    }
+
+    private void parseComment() {
+        char c;
+
+        do {
+            c = nextChar();
+        } while (hasNext() && c != '\n');
     }
 
     private Token parseIdentifier(char c) {
