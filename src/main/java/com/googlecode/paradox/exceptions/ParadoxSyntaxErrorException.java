@@ -10,24 +10,24 @@
  */
 package com.googlecode.paradox.exceptions;
 
-import com.googlecode.paradox.parser.Token;
+import com.googlecode.paradox.parser.ScannerPosition;
 
 import java.sql.SQLSyntaxErrorException;
 
-public class ParadoxSystaxErrorException extends SQLSyntaxErrorException {
+public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
     private static final String BASE_CODE = "42";
 
-    public ParadoxSystaxErrorException(final Error error) {
+    public ParadoxSyntaxErrorException(final Error error) {
         super(error.description, BASE_CODE + error.code);
     }
 
-    public ParadoxSystaxErrorException(final Error error, final Token token) {
-        super(message(error.description, token), BASE_CODE + error.code);
+    public ParadoxSyntaxErrorException(final Error error, final ScannerPosition position) {
+        super(message(error.description, position), BASE_CODE + error.code);
     }
 
-    private static String message(final String message, final Token token) {
-        return String.format("%s in %s in %s.", message, token.getValue(), token.getLocation());
+    private static String message(final String message, final ScannerPosition position) {
+        return String.format("%s at line %s, column %s.", message, position.getLine(), position.getColumn());
     }
 
     public enum Error {

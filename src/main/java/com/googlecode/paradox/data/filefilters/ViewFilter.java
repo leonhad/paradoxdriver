@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.utils.filefilters;
+package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
@@ -17,17 +17,17 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * Paradox secondary key file filter (Index Key).
+ * Paradox view filter.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
-public final class SecondaryIndexFilter implements FileFilter {
+public final class ViewFilter implements FileFilter {
 
     /**
-     * The index name.
+     * The view name.
      */
-    private final String indexName;
+    private final String viewName;
 
     private final ParadoxConnection connection;
 
@@ -35,20 +35,11 @@ public final class SecondaryIndexFilter implements FileFilter {
      * Create a new instance.
      *
      * @param connection the Paradox connection.
-     * @param indexName  the index name.
+     * @param viewName   the view name.
      */
-    public SecondaryIndexFilter(final ParadoxConnection connection, final String indexName) {
+    public ViewFilter(final ParadoxConnection connection, final String viewName) {
         this.connection = connection;
-        this.indexName = indexName;
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param connection the Paradox connection.
-     */
-    public SecondaryIndexFilter(final ParadoxConnection connection) {
-        this(connection, null);
+        this.viewName = viewName;
     }
 
     /**
@@ -58,8 +49,8 @@ public final class SecondaryIndexFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.X??", false)
-                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName, false));
+        return Expressions.accept(connection, name, "%.QBE", false)
+                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName, false));
     }
 
 }

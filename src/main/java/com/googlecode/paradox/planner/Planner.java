@@ -11,7 +11,7 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.exceptions.ParadoxSystaxErrorException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
@@ -134,7 +134,7 @@ public class Planner {
         parseColumns(statement, plan);
 
         if (plan.getColumns().isEmpty()) {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.EMPTY_COLUMN_LIST);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_COLUMN_LIST);
         }
 
         return plan;

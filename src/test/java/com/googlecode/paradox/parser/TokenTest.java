@@ -26,7 +26,7 @@ public class TokenTest {
      */
     @Test
     public void testInstance() {
-        final Token token = new Token(TokenType.AND, "value");
+        final Token token = new Token(TokenType.AND, "value", new ScannerPosition());
         Assert.assertEquals("Invalid token type.", TokenType.AND, token.getType());
         Assert.assertEquals("Invalid token value.", "value", token.getValue());
     }
@@ -36,7 +36,7 @@ public class TokenTest {
      */
     @Test
     public void testToString() {
-        final Token token = new Token(TokenType.AND, "value");
+        final Token token = new Token(TokenType.AND, "value", new ScannerPosition());
         Assert.assertEquals("Invalid token value.", "AND = value", token.toString());
     }
 }

@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.filefilters.ViewFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -18,7 +19,6 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
-import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -76,8 +76,7 @@ public final class ViewData {
      * @throws SQLException in case of reading errors.
      */
     public static List<ParadoxView> listViews(final File currentSchema, final String viewName,
-                                              final ParadoxConnection connection) throws
-            SQLException {
+                                              final ParadoxConnection connection) throws SQLException {
         final List<ParadoxView> views = new ArrayList<>();
         final File[] fileList = currentSchema.listFiles(new ViewFilter(connection, viewName));
         if (fileList != null) {

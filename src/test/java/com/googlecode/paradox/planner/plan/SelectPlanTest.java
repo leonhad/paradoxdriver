@@ -13,8 +13,8 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import org.junit.*;
 
@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class SelectPlanTest {
@@ -87,7 +87,7 @@ public class SelectPlanTest {
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn(new FieldNode(conn, "test", "ac", null));
+        plan.addColumn(new FieldNode(conn, "test", "ac", null, null));
         Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
 
@@ -99,7 +99,7 @@ public class SelectPlanTest {
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan(null);
-        plan.addColumn(new FieldNode(conn, null, "invalid", null));
+        plan.addColumn(new FieldNode(conn, null, "invalid", null, null));
     }
 
     /**
@@ -117,6 +117,6 @@ public class SelectPlanTest {
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn(new FieldNode(conn, "test2", "ac", null));
+        plan.addColumn(new FieldNode(conn, "test2", "ac", null, null));
     }
 }

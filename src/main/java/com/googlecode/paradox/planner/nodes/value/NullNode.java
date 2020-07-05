@@ -11,18 +11,19 @@
 package com.googlecode.paradox.planner.nodes.value;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.IFieldValue;
 
 /**
  * Stores a null value.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class NullNode extends FieldNode implements IFieldValue {
 
-    public NullNode(final ParadoxConnection connection) {
-        super(connection, null, null, null);
+    public NullNode(final ParadoxConnection connection, final ScannerPosition position) {
+        super(connection, null, null, null, position);
     }
 }

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -128,9 +128,10 @@ public final class SelectPlan implements Plan {
         }
 
         if (fields.isEmpty()) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN);
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.toString(), node.getPosition());
         } else if (fields.size() > 1) {
-            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED);
+            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.toString(),
+                    node.getPosition());
         }
 
         fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {

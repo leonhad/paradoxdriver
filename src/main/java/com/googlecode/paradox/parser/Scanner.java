@@ -11,7 +11,7 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.exceptions.ParadoxSystaxErrorException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 
 import java.nio.CharBuffer;
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 /**
  * SQL Scanner (read tokens from SQL String).
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class Scanner {
@@ -56,14 +56,14 @@ public class Scanner {
     private final ParadoxConnection connection;
 
     /**
-     * The SQL current column.
+     * The SQL current parser position.
      */
-    private int column = 1;
+    private final ScannerPosition position = new ScannerPosition();
 
     /**
-     * The SQL current line.
+     * Start position.
      */
-    private int line = 1;
+    private ScannerPosition startPosition;
 
     /**
      * Creates a new instance.
@@ -74,7 +74,7 @@ public class Scanner {
      */
     Scanner(final ParadoxConnection connection, final String buffer) throws SQLException {
         if (buffer == null || buffer.trim().isEmpty()) {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.EMPTY_SQL);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_SQL);
         }
         this.connection = connection;
         this.buffer = CharBuffer.wrap(buffer.trim());
@@ -88,7 +88,7 @@ public class Scanner {
      */
     private static void checkDotCount(final int dotCount) throws SQLException {
         if (dotCount > 1) {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.NUMBER_FORMAT);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.NUMBER_FORMAT);
         }
     }
 
@@ -153,10 +153,10 @@ public class Scanner {
 
         final TokenType token = TokenType.get(value.toUpperCase(connection.getLocale()));
         if (token != null) {
-            return new Token(token, value);
+            return new Token(token, value, startPosition);
         }
 
-        return new Token(TokenType.IDENTIFIER, value);
+        return new Token(TokenType.IDENTIFIER, value, startPosition);
     }
 
     /**
@@ -166,8 +166,7 @@ public class Scanner {
      */
     private char nextChar() {
         final char c = this.buffer.get();
-        column++;
-
+        position.add(c);
         return c;
     }
 
@@ -255,7 +254,7 @@ public class Scanner {
      * Push back the read char.
      */
     private void pushBack() {
-        column--;
+        position.back();
         buffer.position(this.buffer.position() - 1);
     }
 
@@ -283,7 +282,7 @@ public class Scanner {
         }
 
         if (!this.hasNext()) {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
         }
 
         this.value.delete(0, this.value.length());
@@ -294,7 +293,7 @@ public class Scanner {
             return parseIdentifier(c);
         } else if (Character.isDigit(c)) {
             parseNumber(c);
-            return new Token(TokenType.NUMERIC, this.value.toString());
+            return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
         } else if (c == '-') {
             // Can be a minus sign only or a negative number.
             char nextChar = this.nextChar();
@@ -304,7 +303,7 @@ public class Scanner {
             if (Character.isDigit(nextChar)) {
                 // It is a number.
                 parseNumber(c);
-                return new Token(TokenType.NUMERIC, this.value.toString());
+                return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
             }
 
             // Only a minus sign.
@@ -325,9 +324,9 @@ public class Scanner {
         this.parseString(c);
 
         if (characters) {
-            return new Token(TokenType.CHARACTER, this.value.toString());
+            return new Token(TokenType.CHARACTER, this.value.toString(), startPosition);
         } else {
-            return new Token(TokenType.IDENTIFIER, this.value.toString());
+            return new Token(TokenType.IDENTIFIER, this.value.toString(), startPosition);
         }
     }
 
@@ -335,11 +334,9 @@ public class Scanner {
         char c;
         do {
             c = this.nextChar();
-            if (c == '\n') {
-                column = 1;
-                line++;
-            }
         } while (isSeparator(c));
+
+        startPosition = position.lastPosition();
 
         return c;
     }
@@ -351,23 +348,5 @@ public class Scanner {
      */
     public void pushBack(final Token token) {
         this.tokens.add(token);
-    }
-
-    /**
-     * Gets the current column.
-     *
-     * @return the current column.
-     */
-    public int getColumn() {
-        return column;
-    }
-
-    /**
-     * Gets the current line.
-     *
-     * @return the current line.
-     */
-    public int getLine() {
-        return line;
     }
 }

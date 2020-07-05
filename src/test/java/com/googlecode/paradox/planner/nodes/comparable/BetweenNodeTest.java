@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link BetweenNode} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class BetweenNodeTest {
@@ -57,7 +57,7 @@ public class BetweenNodeTest {
      */
     @Test
     public void testField() {
-        final FieldNode field = new FieldNode(conn, "table", "field", "alias");
+        final FieldNode field = new FieldNode(conn, "table", "field", "alias", null);
         final BetweenNode node = new BetweenNode(conn, field, null, null);
         Assert.assertEquals("Invalid field value.", field, node.getField());
     }
@@ -67,9 +67,9 @@ public class BetweenNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode field = new FieldNode(conn, "table", "field", "field");
-        final FieldNode first = new FieldNode(conn, "table", "first", "first");
-        final FieldNode last = new FieldNode(conn, "table", "last", "last");
+        final FieldNode field = new FieldNode(conn, "table", "field", "field", null);
+        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
+        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
         final BetweenNode node = new BetweenNode(conn, field, first, last);
         Assert.assertEquals("Invalid node values.", "table.field BETWEEN table.first AND table.last", node.toString());
     }

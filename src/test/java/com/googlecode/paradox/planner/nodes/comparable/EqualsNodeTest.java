@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link EqualsNode} class.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class EqualsNodeTest {
@@ -56,8 +56,8 @@ public class EqualsNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode(conn, "table", "first", "first");
-        final FieldNode last = new FieldNode(conn, "table", "last", "last");
+        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
+        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
         final EqualsNode node = new EqualsNode(conn, first, last);
         Assert.assertEquals("Invalid node value.", "table.first = table.last", node.toString());
     }

@@ -8,8 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.googlecode.paradox.utils.filefilters;
+package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
@@ -18,43 +17,49 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * If the file is a directory.
+ * Paradox secondary key file filter (Index Key).
  *
  * @version 1.0
- * @since 1.4
+ * @since 1.0
  */
-public class DirectoryFilter implements FileFilter {
+public final class SecondaryIndexFilter implements FileFilter {
 
-    private final String pattern;
+    /**
+     * The index name.
+     */
+    private final String indexName;
 
     private final ParadoxConnection connection;
 
     /**
-     * Creates a new instance.
+     * Create a new instance.
      *
      * @param connection the Paradox connection.
-     * @param pattern    the directory pattern.
+     * @param indexName  the index name.
      */
-    public DirectoryFilter(final ParadoxConnection connection, final String pattern) {
+    public SecondaryIndexFilter(final ParadoxConnection connection, final String indexName) {
         this.connection = connection;
-        this.pattern = pattern;
+        this.indexName = indexName;
     }
 
     /**
-     * Creates a new instance.
+     * Create a new instance.
      *
      * @param connection the Paradox connection.
      */
-    public DirectoryFilter(final ParadoxConnection connection) {
+    public SecondaryIndexFilter(final ParadoxConnection connection) {
         this(connection, null);
     }
 
+    /**
+     * {@inheritDoc}.
+     */
     @Override
-    public boolean accept(final File file) {
-        boolean expression = true;
-        if (pattern != null) {
-            expression = Expressions.accept(connection, file.getName(), pattern, false);
-        }
-        return expression && file != null && file.isDirectory();
+    public boolean accept(final File pathname) {
+        final String name = pathname.getName();
+
+        return Expressions.accept(connection, name, "%.X??", false)
+                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName, false));
     }
+
 }

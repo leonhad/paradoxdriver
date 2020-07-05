@@ -11,18 +11,19 @@
 package com.googlecode.paradox.planner.nodes.value;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.IFieldValue;
 
 /**
  * Stores a String value.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class StringNode extends FieldNode implements IFieldValue {
 
-    public StringNode(final ParadoxConnection connection, final String name) {
-        super(connection, null, name, null);
+    public StringNode(final ParadoxConnection connection, final String name, final ScannerPosition position) {
+        super(connection, null, name, null, position);
     }
 }

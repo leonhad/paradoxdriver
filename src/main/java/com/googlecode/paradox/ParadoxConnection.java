@@ -10,11 +10,11 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.utils.Utils;
-import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
 import java.io.File;
 import java.nio.charset.Charset;

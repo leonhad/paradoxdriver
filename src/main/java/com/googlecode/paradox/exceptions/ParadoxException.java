@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.exceptions;
 
+import com.googlecode.paradox.parser.ScannerPosition;
+
 import java.sql.SQLDataException;
 
 public class ParadoxException extends SQLDataException {
@@ -20,8 +22,20 @@ public class ParadoxException extends SQLDataException {
         super(error.description, BASE_CODE + error.code);
     }
 
+    public ParadoxException(final Error error, final String parameter, final ScannerPosition position) {
+        super(message(String.format(error.description, parameter), position), BASE_CODE + error.code);
+    }
+
+    private static String message(final String message, final ScannerPosition position) {
+        if (position != null) {
+            return String.format("%s at line %s, column %s.", message, position.getLine(), position.getColumn());
+        }
+
+        return String.format("%s.", message);
+    }
+
     public enum Error {
-        INVALID_COLUMN("001", "Invalid column"),
+        INVALID_COLUMN("001", "Invalid column name: %s"),
 
         USE_NEXT_FIRST("002", "Call ResultSet.next() first"),
 
@@ -31,7 +45,7 @@ public class ParadoxException extends SQLDataException {
 
         TYPE_NOT_FOUND("005", "Type not found"),
 
-        COLUMN_AMBIGUOUS_DEFINED("006", "Column ambiguous defined");
+        COLUMN_AMBIGUOUS_DEFINED("006", "Column %s ambiguous defined");
 
         private final String code;
 

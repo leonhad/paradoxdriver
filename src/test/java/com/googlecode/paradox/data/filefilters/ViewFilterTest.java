@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.utils.filefilters;
+package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
@@ -22,12 +22,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link SecondaryIndexFilter}.
+ * Unit test for {@link ViewFilter}.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
-public class SecondaryIndexFilterTest {
+public class ViewFilterTest {
 
     /**
      * The connection string used in this tests.
@@ -57,8 +57,8 @@ public class SecondaryIndexFilterTest {
      */
     @Test
     public void testAccept() {
-        final File file = new File("test.xn2");
-        final SecondaryIndexFilter filter = new SecondaryIndexFilter(conn);
+        final File file = new File("test.qbe");
+        final ViewFilter filter = new ViewFilter(conn, null);
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
 

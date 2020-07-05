@@ -15,11 +15,11 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
+import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
-import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
 import java.io.File;
 import java.sql.*;

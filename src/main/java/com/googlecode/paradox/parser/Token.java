@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * Stores a token.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class Token {
@@ -29,14 +29,9 @@ public final class Token {
     private final String value;
 
     /**
-     * The SQL current column.
+     * The SQL current position.
      */
-    private int column;
-
-    /**
-     * The SQL current line.
-     */
-    private int line;
+    private final ScannerPosition position;
 
     /**
      * Creates a new instance.
@@ -44,11 +39,12 @@ public final class Token {
      * @param type  the token type.
      * @param value the token value.
      */
-    Token(final TokenType type, final String value) {
+    Token(final TokenType type, final String value, final ScannerPosition position) {
         this.type = type;
         this.value = value;
+        this.position = position;
     }
-    
+
     /**
      * Gets the token type.
      *
@@ -57,7 +53,7 @@ public final class Token {
     public TokenType getType() {
         return this.type;
     }
-    
+
     /**
      * Gets the token value.
      *
@@ -66,7 +62,7 @@ public final class Token {
     public String getValue() {
         return this.value;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
@@ -74,7 +70,7 @@ public final class Token {
     public String toString() {
         return this.type + " = " + this.value;
     }
-    
+
     /**
      * Gets if this token is a conditional break.
      *
@@ -83,7 +79,7 @@ public final class Token {
     boolean isConditionBreak() {
         return TokenType.isConditionalBreak(this.type);
     }
-    
+
     /**
      * Gets if this token is an operator.
      *
@@ -93,7 +89,12 @@ public final class Token {
         return TokenType.isOperator(this.type);
     }
 
-    public String getLocation() {
-        return String.format("line %d, column %d", line, column);
+    /**
+     * Gets the current scanner position.
+     *
+     * @return the current scanner position.
+     */
+    public ScannerPosition getPosition() {
+        return position;
     }
 }

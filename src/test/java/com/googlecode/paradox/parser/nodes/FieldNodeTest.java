@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link FieldNode}
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class FieldNodeTest {
@@ -57,7 +57,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode node = new FieldNode(conn, "table", "field", "alias");
+        final FieldNode node = new FieldNode(conn, "table", "field", "alias", null);
         Assert.assertEquals("Invalid node value.", "table.field AS alias", node.toString());
     }
 
@@ -66,7 +66,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithNullAlias() {
-        final FieldNode node = new FieldNode(conn, "table", "field", null);
+        final FieldNode node = new FieldNode(conn, "table", "field", null, null);
         Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 
@@ -75,7 +75,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithNullTable() {
-        final FieldNode node = new FieldNode(conn, null, "field", null);
+        final FieldNode node = new FieldNode(conn, null, "field", null, null);
         Assert.assertEquals("Invalid node value.", "field", node.toString());
     }
 
@@ -84,7 +84,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithoutAlias() {
-        final FieldNode node = new FieldNode(conn, "table", "field", "field");
+        final FieldNode node = new FieldNode(conn, "table", "field", "field", null);
         Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 }

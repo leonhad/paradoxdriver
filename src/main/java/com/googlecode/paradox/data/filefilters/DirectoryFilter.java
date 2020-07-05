@@ -8,7 +8,8 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.utils.filefilters;
+
+package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
@@ -17,48 +18,43 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * Paradox primary key file filter.
+ * If the file is a directory.
  *
  * @version 1.0
- * @since 1.0
+ * @since 1.4
  */
-public final class PrimaryKeyFilter implements FileFilter {
+public class DirectoryFilter implements FileFilter {
 
-    /**
-     * The primary key name.
-     */
-    private final String pkName;
+    private final String pattern;
 
     private final ParadoxConnection connection;
 
     /**
-     * Create a new instance.
+     * Creates a new instance.
+     *
+     * @param connection the Paradox connection.
+     * @param pattern    the directory pattern.
+     */
+    public DirectoryFilter(final ParadoxConnection connection, final String pattern) {
+        this.connection = connection;
+        this.pattern = pattern;
+    }
+
+    /**
+     * Creates a new instance.
      *
      * @param connection the Paradox connection.
      */
-    public PrimaryKeyFilter(final ParadoxConnection connection) {
+    public DirectoryFilter(final ParadoxConnection connection) {
         this(connection, null);
     }
 
-    /**
-     * Create a new instance.
-     *
-     * @param connection the Paradox connection.
-     * @param pkName     the primary key name.
-     */
-    public PrimaryKeyFilter(final ParadoxConnection connection, final String pkName) {
-        this.connection = connection;
-        this.pkName = pkName;
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
     @Override
-    public boolean accept(final File pathname) {
-        final String name = pathname.getName();
-
-        return Expressions.accept(connection, name, "%.PX", false)
-                && ((this.pkName == null) || Expressions.accept(connection, name, this.pkName, false));
+    public boolean accept(final File file) {
+        boolean expression = true;
+        if (pattern != null) {
+            expression = Expressions.accept(connection, file.getName(), pattern, false);
+        }
+        return expression && file != null && file.isDirectory();
     }
 }

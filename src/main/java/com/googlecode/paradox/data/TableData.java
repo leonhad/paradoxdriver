@@ -11,12 +11,12 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -12,7 +12,7 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.exceptions.ParadoxSystaxErrorException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
@@ -42,11 +42,6 @@ public final class SQLParser {
     private final Scanner scanner;
 
     /**
-     * The SQL to parse.
-     */
-    private final String sql;
-
-    /**
      * The current token.
      */
     private Token token;
@@ -65,7 +60,6 @@ public final class SQLParser {
      */
     public SQLParser(final ParadoxConnection connection, final String sql) throws SQLException {
         this.connection = connection;
-        this.sql = sql;
         this.scanner = new Scanner(connection, sql);
     }
 
@@ -77,7 +71,7 @@ public final class SQLParser {
      */
     public List<StatementNode> parse() throws SQLException {
         if (!this.scanner.hasNext()) {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
         }
 
         this.token = this.scanner.nextToken();
@@ -100,26 +94,8 @@ public final class SQLParser {
      */
     private void expect(final TokenType token) throws SQLException {
         if (this.token.getType() != token) {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
-        }
-
-        if (this.scanner.hasNext()) {
-            this.token = this.scanner.nextToken();
-        } else {
-            this.token = null;
-        }
-    }
-
-    /**
-     * Test for a token.
-     *
-     * @param rparen  the token to test.
-     * @param message message in case of invalid token.
-     * @throws SQLException in case of parse errors.
-     */
-    private void expect(final TokenType rparen, final String message) throws SQLException {
-        if (this.token.getType() != rparen) {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                    this.token.getPosition());
         }
 
         if (this.scanner.hasNext()) {
@@ -150,7 +126,7 @@ public final class SQLParser {
     private BetweenNode parseBetween(final FieldNode field) throws SQLException {
         this.expect(TokenType.BETWEEN);
         final FieldNode left = this.parseField();
-        this.expect(TokenType.AND, "AND expected.");
+        this.expect(TokenType.AND);
         final FieldNode right = this.parseField();
         return new BetweenNode(connection, field, left, right);
     }
@@ -203,7 +179,7 @@ public final class SQLParser {
                 } else {
                     ret.addChild(retValue);
                 }
-                this.expect(TokenType.R_PAREN, "Right parenthesis expected");
+                this.expect(TokenType.R_PAREN);
             } else if (token.getType() == TokenType.WHERE || token.getType() == TokenType.ORDER) {
                 return ret;
             } else {
@@ -240,19 +216,20 @@ public final class SQLParser {
     private FieldNode parseField() throws SQLException {
         String tableName = null;
         String fieldName = this.token.getValue();
+        final ScannerPosition position = this.token.getPosition();
 
         FieldNode ret;
         if (this.token.getType() == TokenType.CHARACTER) {
             // Found a String value.
             this.expect(TokenType.CHARACTER);
-            ret = new StringNode(connection, fieldName);
+            ret = new StringNode(connection, fieldName, position);
         } else if (this.token.getType() == TokenType.NUMERIC) {
             // Found a numeric value.
             this.expect(TokenType.NUMERIC);
-            ret = new StringNode(connection, fieldName);
+            ret = new StringNode(connection, fieldName, position);
         } else if (this.token.getType() == TokenType.NULL) {
             this.expect(TokenType.NULL);
-            ret = new NullNode(connection);
+            ret = new NullNode(connection, position);
         } else {
             // Found a table field.
             this.expect(TokenType.IDENTIFIER);
@@ -264,7 +241,7 @@ public final class SQLParser {
                 fieldName = this.token.getValue();
                 this.expect(TokenType.IDENTIFIER);
             }
-            ret = new FieldNode(connection, tableName, fieldName, fieldName);
+            ret = new FieldNode(connection, tableName, fieldName, fieldName, position);
         }
 
         return ret;
@@ -306,7 +283,8 @@ public final class SQLParser {
                 node = this.parseILike(firstField);
                 break;
             default:
-                throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                        this.token.getPosition());
         }
         return node;
     }
@@ -321,13 +299,14 @@ public final class SQLParser {
         boolean firstField = true;
         while (this.scanner.hasNext()) {
             if (this.token.getType() == TokenType.DISTINCT) {
-                throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                        this.token.getPosition());
             }
 
             if (this.token.getType() != TokenType.FROM) {
                 // Field Name
                 if (!firstField) {
-                    this.expect(TokenType.COMMA, "Missing comma.");
+                    this.expect(TokenType.COMMA);
                 }
                 final String fieldName = this.token.getValue();
 
@@ -387,7 +366,7 @@ public final class SQLParser {
                 break;
             }
             if (!firstField) {
-                this.expect(TokenType.COMMA, "Missing comma.");
+                this.expect(TokenType.COMMA);
             }
             if (this.token.getType() == TokenType.IDENTIFIER) {
                 this.parseJoinTable(select);
@@ -413,11 +392,12 @@ public final class SQLParser {
         String fieldAlias = fieldName;
         String newTableName = null;
         String newFieldName = fieldName;
+        final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.IDENTIFIER);
 
         if ((this.token.getType() == TokenType.IDENTIFIER) || (this.token.getType() == TokenType.AS)
                 || (this.token.getType() == TokenType.PERIOD)) {
-            // If it has a Table Name
+            // If it has a Table Name.
             if (this.token.getType() == TokenType.PERIOD) {
                 this.expect(TokenType.PERIOD);
                 newTableName = fieldName;
@@ -436,7 +416,7 @@ public final class SQLParser {
             fieldAlias = getFieldAlias(fieldAlias);
         }
 
-        select.addField(new FieldNode(connection, newTableName, newFieldName, fieldAlias));
+        select.addField(new FieldNode(connection, newTableName, newFieldName, fieldAlias, position));
     }
 
     /**
@@ -601,7 +581,7 @@ public final class SQLParser {
     }
 
     /**
-     * Parses ilike conditional.
+     * Parses insensitive like conditional.
      *
      * @param firstField the left more token field.
      * @return the null than node.
@@ -656,7 +636,8 @@ public final class SQLParser {
                 this.expect(TokenType.OR);
                 return new ORNode(connection, child);
             default:
-                throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                        this.token.getPosition());
         }
     }
 
@@ -682,7 +663,8 @@ public final class SQLParser {
         if (this.token.getType() == TokenType.FROM) {
             this.parseFrom(select);
         } else {
-            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                    this.token.getPosition());
         }
 
         return select;

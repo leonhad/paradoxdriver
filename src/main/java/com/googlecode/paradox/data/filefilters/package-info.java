@@ -14,4 +14,4 @@
  *
  * @since 1.0
  */
-package com.googlecode.paradox.utils.filefilters;
+package com.googlecode.paradox.data.filefilters;

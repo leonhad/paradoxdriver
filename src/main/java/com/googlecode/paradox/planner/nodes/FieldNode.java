@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
 import java.util.Objects;
@@ -18,7 +19,7 @@ import java.util.Objects;
 /**
  * Stores the field values.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public class FieldNode extends SQLNode {
@@ -34,6 +35,11 @@ public class FieldNode extends SQLNode {
     private int index = -1;
 
     /**
+     * SQL position.
+     */
+    private final ScannerPosition position;
+
+    /**
      * Stores field values (from select statements).
      *
      * @param connection the Paradox connection.
@@ -42,9 +48,10 @@ public class FieldNode extends SQLNode {
      * @param alias      the field name alias.
      */
     public FieldNode(final ParadoxConnection connection, final String tableName, final String fieldName,
-                     final String alias) {
+                     final String alias, final ScannerPosition position) {
         super(connection, fieldName, alias);
         this.tableName = tableName;
+        this.position = position;
     }
 
     /**
@@ -87,6 +94,15 @@ public class FieldNode extends SQLNode {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    /**
+     * Gets the scanner position.
+     *
+     * @return the scanner position.
+     */
+    public ScannerPosition getPosition() {
+        return position;
     }
 
     @Override

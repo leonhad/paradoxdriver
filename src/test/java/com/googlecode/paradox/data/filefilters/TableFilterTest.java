@@ -8,8 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-package com.googlecode.paradox.utils.filefilters;
+package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
@@ -23,12 +22,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link PrimaryKeyFilter}.
+ * Unit test for {@link TableFilter}.
  *
  * @version 1.1
  * @since 1.0
  */
-public class PrimaryKeyFilterTest {
+public class TableFilterTest {
 
     /**
      * The connection string used in this tests.
@@ -58,8 +57,9 @@ public class PrimaryKeyFilterTest {
      */
     @Test
     public void testAccept() {
-        final File file = new File("test.px");
-        final PrimaryKeyFilter filter = new PrimaryKeyFilter(conn);
+        final File file = new File(this.getClass().getResource("/fields/DATE4.db").getFile());
+        final TableFilter filter = new TableFilter(conn);
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
+
 }

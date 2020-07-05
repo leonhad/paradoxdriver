@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test {@link GreaterThanNode} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class GreaterThanNodeTest {
@@ -56,8 +56,8 @@ public class GreaterThanNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode(conn, "table", "first", "first");
-        final FieldNode last = new FieldNode(conn, "table", "last", "last");
+        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
+        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
         final GreaterThanNode node = new GreaterThanNode(conn, first, last);
         Assert.assertEquals("Invalid node value.", "table.first > table.last", node.toString());
     }

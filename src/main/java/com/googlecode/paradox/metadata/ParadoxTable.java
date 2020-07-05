@@ -11,8 +11,8 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 import java.io.File;
 import java.io.FileInputStream;

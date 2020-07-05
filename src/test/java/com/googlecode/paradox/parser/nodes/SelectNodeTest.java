@@ -27,7 +27,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link SelectNode}.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class SelectNodeTest {
@@ -81,7 +81,7 @@ public class SelectNodeTest {
     @Test
     public void testFields() {
         final SelectNode node = new SelectNode(conn);
-        final FieldNode field = new FieldNode(conn, "table", "field", null);
+        final FieldNode field = new FieldNode(conn, "table", "field", null, null);
         Assert.assertEquals("Invalid node size.", 0, node.getFields().size());
         node.addField(field);
         Assert.assertEquals("Invalid node size.", 1, node.getFields().size());
@@ -129,8 +129,8 @@ public class SelectNodeTest {
     @Test
     public void testToString() {
         final SelectNode node = new SelectNode(conn);
-        node.addField(new FieldNode(conn, "t", "field", "f"));
-        node.addField(new FieldNode(conn, "b", "field2", "f2"));
+        node.addField(new FieldNode(conn, "t", "field", "f", null));
+        node.addField(new FieldNode(conn, "b", "field2", "f2", null));
         node.addTable(new TableNode(conn, null, "table1", "t"));
         node.addTable(new TableNode(conn, null, "table2", "b"));
         node.addGroupBy(new IdentifierNode(conn, "f1"));
@@ -140,11 +140,11 @@ public class SelectNodeTest {
 
         ANDNode andNode = new ANDNode(conn, null);
         andNode.addChild(new EqualsNode(conn,
-                new FieldNode(conn, "t", "field", null),
-                new FieldNode(conn, "t", "field2", null)));
+                new FieldNode(conn, "t", "field", null, null),
+                new FieldNode(conn, "t", "field2", null, null)));
         andNode.addChild(new NotEqualsNode(conn,
-                new FieldNode(conn, "t", "field", null),
-                new FieldNode(conn, "t", "field2", null)));
+                new FieldNode(conn, "t", "field", null, null),
+                new FieldNode(conn, "t", "field2", null, null)));
         node.setCondition(andNode);
 
         Assert.assertEquals("Invalid node value.",
@@ -159,8 +159,8 @@ public class SelectNodeTest {
     @Test
     public void testToStringEmptyWhere() {
         final SelectNode node = new SelectNode(conn);
-        node.addField(new FieldNode(conn, "t", "field", "f"));
-        node.addField(new FieldNode(conn, "b", "field2", "f2"));
+        node.addField(new FieldNode(conn, "t", "field", "f", null));
+        node.addField(new FieldNode(conn, "b", "field2", "f2", null));
         node.setCondition(null);
         Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
@@ -171,8 +171,8 @@ public class SelectNodeTest {
     @Test
     public void testToStringFields() {
         final SelectNode node = new SelectNode(conn);
-        node.addField(new FieldNode(conn, "t", "field", "f"));
-        node.addField(new FieldNode(conn, "b", "field2", "f2"));
+        node.addField(new FieldNode(conn, "t", "field", "f", null));
+        node.addField(new FieldNode(conn, "b", "field2", "f2", null));
         Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 }

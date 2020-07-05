@@ -49,7 +49,7 @@ public class DataNavigation implements AutoCloseable {
         verifyRow();
 
         if (columnIndex > currentRow.length) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN);
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, Integer.toString(columnIndex), null);
         }
 
         this.lastValue = currentRow[columnIndex - 1];

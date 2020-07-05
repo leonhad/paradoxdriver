@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.utils.filefilters;
+package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Expressions;
@@ -17,17 +17,17 @@ import java.io.File;
 import java.io.FileFilter;
 
 /**
- * Paradox view filter.
+ * Paradox primary key file filter.
  *
  * @version 1.0
  * @since 1.0
  */
-public final class ViewFilter implements FileFilter {
+public final class PrimaryKeyFilter implements FileFilter {
 
     /**
-     * The view name.
+     * The primary key name.
      */
-    private final String viewName;
+    private final String pkName;
 
     private final ParadoxConnection connection;
 
@@ -35,20 +35,20 @@ public final class ViewFilter implements FileFilter {
      * Create a new instance.
      *
      * @param connection the Paradox connection.
-     * @param viewName   the view name.
      */
-    public ViewFilter(final ParadoxConnection connection, final String viewName) {
-        this.connection = connection;
-        this.viewName = viewName;
+    public PrimaryKeyFilter(final ParadoxConnection connection) {
+        this(connection, null);
     }
 
     /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
+     * @param pkName     the primary key name.
      */
-    ViewFilter(final ParadoxConnection connection) {
-        this(connection, null);
+    public PrimaryKeyFilter(final ParadoxConnection connection, final String pkName) {
+        this.connection = connection;
+        this.pkName = pkName;
     }
 
     /**
@@ -58,8 +58,7 @@ public final class ViewFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.QBE", false)
-                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName, false));
+        return Expressions.accept(connection, name, "%.PX", false)
+                && ((this.pkName == null) || Expressions.accept(connection, name, this.pkName, false));
     }
-
 }
