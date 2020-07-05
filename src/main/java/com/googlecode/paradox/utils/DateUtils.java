@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.utils;
 
+import com.googlecode.paradox.exceptions.ParadoxDataException;
+
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -59,19 +61,16 @@ public final class DateUtils {
     /**
      * Convert the Gregorian date to Paradox format.
      *
-     * @param inputYear
-     *            the year to convert.
-     * @param inputMonth
-     *            the month to convert.
-     * @param inputDay
-     *            the day to convert.
+     * @param inputYear  the year to convert.
+     * @param inputMonth the month to convert.
+     * @param inputDay   the day to convert.
      * @return the Paradox date.
      */
     public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
         try {
             DateUtils.checkForDateBoundaries(inputYear, inputMonth, inputDay);
             DateUtils.checkYearBounds(inputYear, inputMonth, inputDay);
-        } catch (final IllegalArgumentException e) {
+        } catch (final ParadoxDataException e) {
             DateUtils.LOGGER.log(Level.FINER, e.getMessage(), e);
             return 0;
         }
@@ -95,8 +94,7 @@ public final class DateUtils {
     /**
      * Convert the Paradox date to Gregorian format.
      *
-     * @param sdn
-     *            the Paradox date to convert.
+     * @param sdn the Paradox date to convert.
      * @return the Java {@link Date}.
      */
     public static Date sdnToGregorian(final long sdn) {
@@ -140,47 +138,43 @@ public final class DateUtils {
     /**
      * Check for valid date boundaries.
      *
-     * @param inputYear
-     *            the year to validate.
-     * @param inputMonth
-     *            the month to validate.
-     * @param inputDay
-     *            the day to validate.
+     * @param inputYear  the year to validate.
+     * @param inputMonth the month to validate.
+     * @param inputDay   the day to validate.
+     * @throws ParadoxDataException in case of invalid date.z
      */
-    private static void checkForDateBoundaries(final long inputYear, final long inputMonth, final long inputDay) {
+    private static void checkForDateBoundaries(final long inputYear, final long inputMonth, final long inputDay)
+            throws ParadoxDataException {
         // Check for invalid year.
         if ((inputYear == 0) || (inputYear < -4_714)) {
-            throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
         }
         // Check for invalid month.
         if ((inputMonth <= 0) || (inputMonth > 12)) {
-            throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
         }
         // Check for invalid day.
         if ((inputDay <= 0) || (inputDay > 31)) {
-            throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
         }
     }
 
     /**
      * Check for dates before SDN 1 (November 25, 4714 B.C.).
      *
-     * @param inputYear
-     *            the year to check.
-     * @param inputMonth
-     *            the month to check.
-     * @param inputDay
-     *            the day to check.
-     * @throws IllegalArgumentException
-     *             in case of invalid date.
+     * @param inputYear  the year to check.
+     * @param inputMonth the month to check.
+     * @param inputDay   the day to check.
+     * @throws ParadoxDataException in case of invalid date.
      */
-    private static void checkYearBounds(final long inputYear, final long inputMonth, final long inputDay) {
+    private static void checkYearBounds(final long inputYear, final long inputMonth, final long inputDay)
+            throws ParadoxDataException {
         if (inputYear == -4_714) {
             if (inputMonth < 11) {
-                throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
             }
             if ((inputMonth == 11) && (inputDay < 25)) {
-                throw new IllegalArgumentException(Constants.ERROR_INVALID_DATE);
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
             }
         }
     }
@@ -188,8 +182,7 @@ public final class DateUtils {
     /**
      * Check for the year bounds.
      *
-     * @param inputYear
-     *            the year to test of.
+     * @param inputYear the year to test of.
      * @return the corrected year.
      */
     private static long fixYearBounds(final long inputYear) {

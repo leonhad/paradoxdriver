@@ -10,13 +10,13 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.DataNavigation;
 import com.googlecode.paradox.rowset.ParadoxBlob;
 import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.ByteArrayInputStream;
@@ -153,7 +153,7 @@ public final class ParadoxResultSet implements ResultSet {
             }
         }
 
-        throw new SQLException("Invalid column: " + columnLabel, SQLStates.INVALID_COLUMN.getValue());
+        throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN);
     }
 
     /**

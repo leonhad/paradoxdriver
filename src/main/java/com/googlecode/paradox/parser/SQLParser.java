@@ -11,6 +11,8 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
+import com.googlecode.paradox.exceptions.ParadoxSystaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
@@ -21,11 +23,8 @@ import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.nodes.value.NullNode;
 import com.googlecode.paradox.planner.nodes.value.StringNode;
-import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.SQLStates;
 
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +51,9 @@ public final class SQLParser {
      */
     private Token token;
 
+    /**
+     * The Paradox connection.
+     */
     private final ParadoxConnection connection;
 
     /**
@@ -75,19 +77,18 @@ public final class SQLParser {
      */
     public List<StatementNode> parse() throws SQLException {
         if (!this.scanner.hasNext()) {
-            throw new SQLException(this.sql, SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
         }
+
         this.token = this.scanner.nextToken();
 
         final ArrayList<StatementNode> statementList = new ArrayList<>();
-        switch (this.token.getType()) {
-            case SELECT:
-                statementList.add(this.parseSelect());
-                break;
-            default:
-                throw new SQLFeatureNotSupportedException(Constants.ERROR_UNSUPPORTED_OPERATION,
-                        SQLStates.INVALID_SQL.getValue());
+        if (this.token.getType() == TokenType.SELECT) {
+            statementList.add(this.parseSelect());
+        } else {
+            throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
+
         return statementList;
     }
 
@@ -99,8 +100,7 @@ public final class SQLParser {
      */
     private void expect(final TokenType token) throws SQLException {
         if (this.token.getType() != token) {
-            throw new SQLException(String.format("Unexpected error in SQL syntax (%s)", this.token.getValue()),
-                    SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
         }
 
         if (this.scanner.hasNext()) {
@@ -119,8 +119,9 @@ public final class SQLParser {
      */
     private void expect(final TokenType rparen, final String message) throws SQLException {
         if (this.token.getType() != rparen) {
-            throw new SQLException(message, SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
         }
+
         if (this.scanner.hasNext()) {
             this.token = this.scanner.nextToken();
         } else {
@@ -305,7 +306,7 @@ public final class SQLParser {
                 node = this.parseILike(firstField);
                 break;
             default:
-                throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL.getValue());
+                throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
         }
         return node;
     }
@@ -320,7 +321,7 @@ public final class SQLParser {
         boolean firstField = true;
         while (this.scanner.hasNext()) {
             if (this.token.getType() == TokenType.DISTINCT) {
-                throw new SQLException("Invalid statement.");
+                throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
             }
 
             if (this.token.getType() != TokenType.FROM) {
@@ -655,7 +656,7 @@ public final class SQLParser {
                 this.expect(TokenType.OR);
                 return new ORNode(connection, child);
             default:
-                throw new SQLException("Invalid operator location.", SQLStates.INVALID_SQL.getValue());
+                throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
         }
     }
 
@@ -681,8 +682,9 @@ public final class SQLParser {
         if (this.token.getType() == TokenType.FROM) {
             this.parseFrom(select);
         } else {
-            throw new SQLException("FROM expected.", SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_TOKEN, this.token);
         }
+
         return select;
     }
 }

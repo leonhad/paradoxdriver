@@ -452,4 +452,15 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid node table name.", "c", node.getLast().getTableName());
         Assert.assertEquals("Invalid node name.", "b", node.getLast().getName());
     }
+
+    /**
+     * Test for SQL exceptions.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testException() throws Exception {
+        final SQLParser parser = new SQLParser(conn, "select a. FROM AREACODES a");
+        Assert.assertThrows("FROM expected (1:9)", SQLException.class, parser::parse);
+    }
 }

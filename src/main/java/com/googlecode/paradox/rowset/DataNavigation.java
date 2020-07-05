@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.rowset;
 
-import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.exceptions.ParadoxException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +49,7 @@ public class DataNavigation implements AutoCloseable {
         verifyRow();
 
         if (columnIndex > currentRow.length) {
-            throw new SQLException("Invalid column index: " + columnIndex, SQLStates.INVALID_COLUMN.getValue());
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN);
         }
 
         this.lastValue = currentRow[columnIndex - 1];
@@ -205,15 +205,15 @@ public class DataNavigation implements AutoCloseable {
 
     private void verifyRow() throws SQLException {
         if (index == -1) {
-            throw new SQLException("Call ResultSet.next() first.", SQLStates.INVALID_ROW.getValue());
+            throw new ParadoxException(ParadoxException.Error.USE_NEXT_FIRST);
         } else if (index == values.size()) {
-            throw new SQLException("There is no more rows to read.", SQLStates.INVALID_ROW.getValue());
+            throw new ParadoxException(ParadoxException.Error.NO_MORE_ROWS);
         }
     }
 
     private void verifyStatus() throws SQLException {
         if (this.closed) {
-            throw new SQLException("Closed result set.", SQLStates.RESULT_SET_CLOSED.getValue());
+            throw new ParadoxException(ParadoxException.Error.RESULT_SET_CLOSED);
         }
     }
 

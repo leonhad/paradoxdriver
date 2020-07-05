@@ -11,12 +11,12 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.ViewFilter;
 
@@ -197,7 +197,7 @@ public final class ViewData {
                 view.setFields(ViewData.parseFields(reader, line, currentSchema, connection));
             }
         } catch (final IOException e) {
-            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA);
         }
 
         return view;

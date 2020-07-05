@@ -11,10 +11,10 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
@@ -140,7 +140,7 @@ public final class TableData extends ParadoxData {
 
             return ret;
         } catch (final IOException e) {
-            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA);
         }
     }
 
@@ -233,7 +233,7 @@ public final class TableData extends ParadoxData {
             TableData.parseTableFieldsName(table, buffer, fields);
             TableData.parseTableFieldsOrder(table, buffer);
         } catch (final IOException e) {
-            throw new SQLException(e.getMessage(), SQLStates.INVALID_IO.getValue(), e);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA);
         }
         return table;
     }

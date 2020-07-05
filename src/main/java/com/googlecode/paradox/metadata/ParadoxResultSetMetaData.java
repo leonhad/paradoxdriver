@@ -11,9 +11,9 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.TypeName;
-import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
 import java.sql.ResultSet;
@@ -265,8 +265,9 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      */
     private Column getColumn(final int column) throws SQLException {
         if ((column < 1) || (column > this.columns.size())) {
-            throw new SQLException("Invalid column: " + column, SQLStates.INVALID_COLUMN.getValue());
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN);
         }
+
         return this.columns.get(column - 1);
     }
 }

@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSystaxErrorException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
@@ -21,7 +22,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
-import com.googlecode.paradox.utils.SQLStates;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -134,7 +134,7 @@ public class Planner {
         parseColumns(statement, plan);
 
         if (plan.getColumns().isEmpty()) {
-            throw new SQLException("Empty column list.", SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.EMPTY_COLUMN_LIST);
         }
 
         return plan;

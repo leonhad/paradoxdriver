@@ -12,6 +12,7 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
@@ -19,7 +20,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesComparator;
-import com.googlecode.paradox.utils.SQLStates;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -128,11 +128,9 @@ public final class SelectPlan implements Plan {
         }
 
         if (fields.isEmpty()) {
-            throw new SQLException(String.format("Invalid column name: '%s'", node.toString()),
-                    SQLStates.INVALID_COLUMN.getValue());
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN);
         } else if (fields.size() > 1) {
-            throw new SQLException(String.format("Column '%s' ambiguous defined.", node.toString()),
-                    SQLStates.INVALID_COLUMN.getValue());
+            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED);
         }
 
         fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {

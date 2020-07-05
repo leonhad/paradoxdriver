@@ -10,8 +10,9 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.exceptions.ParadoxConnectionException;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
-import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 import com.googlecode.paradox.utils.filefilters.DirectoryFilter;
 
@@ -105,7 +106,7 @@ public final class ParadoxConnection implements Connection {
         this.url = url;
 
         if (!dir.exists() && !dir.isDirectory()) {
-            throw new SQLException("Directory not found.", SQLStates.DIR_NOT_FOUND.getValue());
+            throw new ParadoxConnectionException(ParadoxConnectionException.Error.DIRECTORY_NOT_FOUND);
         }
 
         final String charsetName = info.getProperty(Driver.CHARSET_KEY);
@@ -272,7 +273,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setCatalog(final String catalog) throws SQLException {
-        throw new SQLException("Change catalog not supported.", SQLStates.CHANGE_CATALOG_NOT_SUPPORTED.getValue());
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CATALOG_CHANGE);
     }
 
     /**
@@ -345,10 +346,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setHoldability(final int holdability) throws SQLException {
-        if ((holdability != ResultSet.HOLD_CURSORS_OVER_COMMIT) && (holdability != ResultSet.CLOSE_CURSORS_AT_COMMIT)) {
-            throw new SQLException("Invalid parameter.", SQLStates.INVALID_PARAMETER.getValue());
-        }
+    public void setHoldability(final int holdability) {
         this.holdability = holdability;
     }
 
@@ -656,9 +654,5 @@ public final class ParadoxConnection implements Connection {
 
     public boolean isBcdRounding() {
         return bcdRounding;
-    }
-
-    public void setBcdRounding(boolean bcdRounding) {
-        this.bcdRounding = bcdRounding;
     }
 }

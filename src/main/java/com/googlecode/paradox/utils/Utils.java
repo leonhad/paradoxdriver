@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.utils;
 
+import com.googlecode.paradox.exceptions.ParadoxException;
+
 import java.sql.SQLException;
 import java.sql.Wrapper;
 
@@ -60,7 +62,7 @@ public final class Utils {
         if (wrapper.isWrapperFor(iFace)) {
             return (T) wrapper;
         }
-        throw new SQLException("Type not found.", SQLStates.TYPE_NOT_FOUND.getValue());
+        throw new ParadoxException(ParadoxException.Error.TYPE_NOT_FOUND);
     }
 
     /**

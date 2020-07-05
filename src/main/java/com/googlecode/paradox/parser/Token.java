@@ -17,24 +17,32 @@ package com.googlecode.paradox.parser;
  * @since 1.0
  */
 public final class Token {
-    
+
     /**
      * The token type.
      */
     private final TokenType type;
-    
+
     /**
      * The token value.
      */
     private final String value;
-    
+
+    /**
+     * The SQL current column.
+     */
+    private int column;
+
+    /**
+     * The SQL current line.
+     */
+    private int line;
+
     /**
      * Creates a new instance.
      *
-     * @param type
-     *            the token type.
-     * @param value
-     *            the token value.
+     * @param type  the token type.
+     * @param value the token value.
      */
     Token(final TokenType type, final String value) {
         this.type = type;
@@ -84,5 +92,8 @@ public final class Token {
     boolean isOperator() {
         return TokenType.isOperator(this.type);
     }
-    
+
+    public String getLocation() {
+        return String.format("line %d, column %d", line, column);
+    }
 }

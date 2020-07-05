@@ -102,13 +102,11 @@ public final class Driver implements java.sql.Driver {
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
-        String password = null;
         String charsetValue = null;
         String localeValue = null;
         String bcdRounding = null;
 
         if (info != null) {
-            password = info.getProperty("password");
             charsetValue = info.getProperty(CHARSET_KEY);
             localeValue = info.getProperty(LOCALE_KEY);
             bcdRounding = info.getProperty(BCD_ROUNDING_KEY);
@@ -126,10 +124,6 @@ public final class Driver implements java.sql.Driver {
         charset.required = false;
         charset.description = "Table charset (empty value to use the charset defined in table).";
 
-        final DriverPropertyInfo passwordProp = new DriverPropertyInfo("password", password);
-        passwordProp.required = false;
-        passwordProp.description = "Password to use for authentication.";
-
         final DriverPropertyInfo localeProp = new DriverPropertyInfo(LOCALE_KEY, localeValue);
         localeProp.required = false;
         localeProp.description = "The locale to use internally by the driver.";
@@ -138,7 +132,7 @@ public final class Driver implements java.sql.Driver {
         bcdRoundingProp.required = false;
         bcdRoundingProp.description = "Use BCD double rounding (true to use rounding, the original used by Paradox).";
 
-        return new DriverPropertyInfo[]{charset, localeProp, passwordProp, bcdRoundingProp};
+        return new DriverPropertyInfo[]{charset, localeProp, bcdRoundingProp};
     }
 
     /**

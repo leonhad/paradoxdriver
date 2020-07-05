@@ -13,7 +13,7 @@ package com.googlecode.paradox.utils;
 /**
  * Stores the driver constants.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class Constants {
@@ -26,14 +26,6 @@ public final class Constants {
      * Driver String Version.
      */
     public static final String DRIVER_VERSION = Constants.MAJOR_VERSION + "." + Constants.MINOR_VERSION;
-    /**
-     * Invalid input date.
-     */
-    public static final String ERROR_INVALID_DATE = "Invalid input date.";
-    /**
-     * Unsupported operation.
-     */
-    public static final String ERROR_UNSUPPORTED_OPERATION = "Unsupported operation.";
     /**
      * Major version of the Driver.
      */

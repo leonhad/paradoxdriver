@@ -392,7 +392,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testExtraNameChars() throws SQLException {
-        Assert.assertEquals("Testing for extra name chars.", "*", this.conn.getMetaData().getExtraNameCharacters());
+        Assert.assertEquals("Testing for extra name chars.", "", this.conn.getMetaData().getExtraNameCharacters());
     }
 
     /**

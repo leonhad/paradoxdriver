@@ -11,7 +11,7 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.utils.filefilters.TableFilter;
 
 import java.io.File;
@@ -42,19 +42,16 @@ public final class ParadoxTable extends ParadoxDataFile {
         final File[] fileList = file.getParentFile().listFiles(new TableFilter(connection,
                 name, "mb"));
         if ((fileList == null) || (fileList.length == 0)) {
-            throw new SQLException(String.format("Blob file not found for table '%s'", name),
-                    SQLStates.LOAD_DATA.getValue());
+            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_FILE_NOT_FOUND);
         }
         if (fileList.length > 1) {
-            throw new SQLException(String.format("Many blob files for table '%s'", name),
-                    SQLStates.LOAD_DATA.getValue());
+            throw new ParadoxDataException(ParadoxDataException.Error.TOO_MANY_BLOB_FILES);
         }
         File blobFile = fileList[0];
         try {
             return new FileInputStream(blobFile);
         } catch (final FileNotFoundException e) {
-            throw new SQLException(String.format("Blob file not found for table '%s'", name),
-                    SQLStates.LOAD_DATA.getValue(), e);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_OPENING_BLOB_FILE);
         }
     }
 

@@ -11,9 +11,9 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.data.field.*;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.utils.SQLStates;
 
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
@@ -69,6 +69,6 @@ public final class FieldFactory {
             }
         }
 
-        throw new SQLException("Field type " + field.getType() + " unsupported.", SQLStates.TYPE_NOT_FOUND.getValue());
+        throw new ParadoxDataException(ParadoxDataException.Error.FIELD_TYPE_NOT_SUPPORTED);
     }
 }

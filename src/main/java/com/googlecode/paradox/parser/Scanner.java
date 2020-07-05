@@ -11,7 +11,7 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.utils.SQLStates;
+import com.googlecode.paradox.exceptions.ParadoxSystaxErrorException;
 
 import java.nio.CharBuffer;
 import java.sql.SQLException;
@@ -50,7 +50,20 @@ public class Scanner {
      */
     private final StringBuilder value = new StringBuilder(299);
 
+    /**
+     * The Paradox connection.
+     */
     private final ParadoxConnection connection;
+
+    /**
+     * The SQL current column.
+     */
+    private int column = 1;
+
+    /**
+     * The SQL current line.
+     */
+    private int line = 1;
 
     /**
      * Creates a new instance.
@@ -60,8 +73,8 @@ public class Scanner {
      * @throws SQLException in case of parse errors.
      */
     Scanner(final ParadoxConnection connection, final String buffer) throws SQLException {
-        if (buffer == null) {
-            throw new SQLException("NULL SQL Query.", SQLStates.INVALID_SQL.getValue());
+        if (buffer == null || buffer.trim().isEmpty()) {
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.EMPTY_SQL);
         }
         this.connection = connection;
         this.buffer = CharBuffer.wrap(buffer.trim());
@@ -75,25 +88,8 @@ public class Scanner {
      */
     private static void checkDotCount(final int dotCount) throws SQLException {
         if (dotCount > 1) {
-            throw new SQLException("Invalid numeric format", SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.NUMBER_FORMAT);
         }
-    }
-
-    /**
-     * Creates a token by value.
-     *
-     * @param value to convert.
-     * @return a new {@link Token}.
-     */
-    private Token getToken(final String value) {
-        if (value.isEmpty()) {
-            return null;
-        }
-        final TokenType token = TokenType.get(value.toUpperCase(connection.getLocale()));
-        if (token != null) {
-            return new Token(token, value);
-        }
-        return new Token(TokenType.IDENTIFIER, value);
     }
 
     /**
@@ -108,6 +104,7 @@ public class Scanner {
             // characters
             characters = true;
         }
+
         return characters;
     }
 
@@ -123,6 +120,7 @@ public class Scanner {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -138,7 +136,27 @@ public class Scanner {
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * Creates a token by value.
+     *
+     * @param value to convert.
+     * @return a new {@link Token}.
+     */
+    private Token getToken(final String value) {
+        if (value.isEmpty()) {
+            return null;
+        }
+
+        final TokenType token = TokenType.get(value.toUpperCase(connection.getLocale()));
+        if (token != null) {
+            return new Token(token, value);
+        }
+
+        return new Token(TokenType.IDENTIFIER, value);
     }
 
     /**
@@ -147,7 +165,10 @@ public class Scanner {
      * @return the next char.
      */
     private char nextChar() {
-        return this.buffer.get();
+        final char c = this.buffer.get();
+        column++;
+
+        return c;
     }
 
     /**
@@ -215,6 +236,7 @@ public class Scanner {
                 } else {
                     return;
                 }
+
                 if (c == type) {
                     this.value.append(c);
                     // prevent breaking
@@ -233,6 +255,7 @@ public class Scanner {
      * Push back the read char.
      */
     private void pushBack() {
+        column--;
         buffer.position(this.buffer.position() - 1);
     }
 
@@ -258,9 +281,11 @@ public class Scanner {
             this.tokens.remove(size - 1);
             return token;
         }
+
         if (!this.hasNext()) {
-            throw new SQLException("Unexpected end of SELECT statement.", SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
         }
+
         this.value.delete(0, this.value.length());
 
         // Ignore separators
@@ -307,10 +332,14 @@ public class Scanner {
     }
 
     private char nextNonSeparatorChar() {
-        char c = this.nextChar();
-        while (isSeparator(c)) {
+        char c;
+        do {
             c = this.nextChar();
-        }
+            if (c == '\n') {
+                column = 1;
+                line++;
+            }
+        } while (isSeparator(c));
 
         return c;
     }
@@ -320,7 +349,25 @@ public class Scanner {
      *
      * @param token the token to push back.
      */
-    void pushBack(final Token token) {
+    public void pushBack(final Token token) {
         this.tokens.add(token);
+    }
+
+    /**
+     * Gets the current column.
+     *
+     * @return the current column.
+     */
+    public int getColumn() {
+        return column;
+    }
+
+    /**
+     * Gets the current line.
+     *
+     * @return the current line.
+     */
+    public int getLine() {
+        return line;
     }
 }

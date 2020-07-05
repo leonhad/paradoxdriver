@@ -10,13 +10,14 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.SQLStates;
 import com.googlecode.paradox.utils.Utils;
 
 import java.sql.*;
@@ -204,11 +205,11 @@ final class ParadoxStatement implements Statement {
         final SQLParser parser = new SQLParser(conn, sql);
         final List<StatementNode> statementList = parser.parse();
         if (statementList.size() > 1) {
-            throw new SQLFeatureNotSupportedException("Unsupported operation.", SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
         final StatementNode node = statementList.get(0);
         if (!(node instanceof SelectNode)) {
-            throw new SQLFeatureNotSupportedException("Not a SELECT statement.", SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
         this.executeSelect((SelectNode) node);
         return this.rs;
@@ -308,8 +309,9 @@ final class ParadoxStatement implements Statement {
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
         if (max > Constants.MAX_STRING_SIZE) {
-            throw new SQLException("Value bigger than 255.", SQLStates.INVALID_PARAMETER.getValue());
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_FIELD_SIZE);
         }
+
         this.maxFieldSize = max;
     }
 

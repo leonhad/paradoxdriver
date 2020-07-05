@@ -12,12 +12,12 @@ package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
+import com.googlecode.paradox.exceptions.ParadoxSystaxErrorException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.TableNode;
-import com.googlecode.paradox.utils.SQLStates;
 
 import java.sql.SQLException;
 
@@ -101,7 +101,7 @@ public final class PlanTableNode {
         }
 
         if (this.table == null) {
-            throw new SQLException("Table name " + table.getName() + " not found.", SQLStates.INVALID_SQL.getValue());
+            throw new ParadoxSystaxErrorException(ParadoxSystaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
         }
 
         this.alias = table.getAlias();
