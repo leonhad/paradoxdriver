@@ -24,7 +24,7 @@ public class TokenTypeTest {
     /**
      * Used to test the conditional breaks.
      */
-    private static final TokenType[] CONDITIONAL_BREAKS = {TokenType.ORDER, TokenType.RPAREN,
+    private static final TokenType[] CONDITIONAL_BREAKS = {TokenType.ORDER, TokenType.R_PAREN,
             TokenType.LEFT, TokenType.RIGHT, TokenType.OUTER, TokenType.INNER, TokenType.JOIN};
 
     /**

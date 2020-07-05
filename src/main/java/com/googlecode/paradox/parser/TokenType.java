@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.0
  */
 public enum TokenType {
@@ -118,9 +118,19 @@ public enum TokenType {
     LESS("<"),
 
     /**
+     * Like token.
+     */
+    LIKE,
+
+    /**
+     * I like token.
+     */
+    ILIKE,
+
+    /**
      * Left parenthesis token.
      */
-    LPAREN("("),
+    L_PAREN("("),
 
     /**
      * Minus token.
@@ -185,7 +195,7 @@ public enum TokenType {
     /**
      * Right parenthesis token.
      */
-    RPAREN(")"),
+    R_PAREN(")"),
 
     /**
      * Select token.
@@ -220,7 +230,7 @@ public enum TokenType {
     /**
      * Stores the conditional break values.
      */
-    private static final TokenType[] CONDITIONAL_BREAKS = {ORDER, RPAREN, LEFT, RIGHT, OUTER, INNER, JOIN};
+    private static final TokenType[] CONDITIONAL_BREAKS = {ORDER, R_PAREN, LEFT, RIGHT, OUTER, INNER, JOIN};
 
     /**
      * Stores the operator values.

@@ -17,10 +17,7 @@ import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.values.CharacterNode;
 import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
-import com.googlecode.paradox.planner.nodes.comparable.IsNotNullNode;
-import com.googlecode.paradox.planner.nodes.comparable.IsNullNode;
-import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
+import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.value.NullNode;
 import org.junit.AfterClass;
@@ -88,6 +85,46 @@ public class SQLParserTest {
         final IsNullNode node = (IsNullNode) select.getCondition();
         Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
         Assert.assertNull("Invalid field value.", node.getLast());
+    }
+
+    /**
+     * Test like expressions.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLike() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select ac.AreasCovered from geog.tblAC ac " +
+                " where ac.AreasCovered like 'Hackensack%'");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof LikeNode);
+        final LikeNode node = (LikeNode) select.getCondition();
+        Assert.assertEquals("Invalid field name.", "AreasCovered", node.getField().getName());
+        Assert.assertEquals("Invalid field value.", "Hackensack%", node.getLast().getName());
+    }
+
+    /**
+     * Test ilike expressions.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testILike() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select ac.AreasCovered from geog.tblAC ac " +
+                " where ac.AreasCovered ilike 'Hackensack%'");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof ILikeNode);
+        final ILikeNode node = (ILikeNode) select.getCondition();
+        Assert.assertEquals("Invalid field name.", "AreasCovered", node.getField().getName());
+        Assert.assertEquals("Invalid field value.", "Hackensack%", node.getLast().getName());
     }
 
     /**

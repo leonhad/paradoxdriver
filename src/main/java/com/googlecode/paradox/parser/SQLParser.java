@@ -194,15 +194,15 @@ public final class SQLParser {
         while (this.scanner.hasNext() && !this.token.isConditionBreak()) {
             if (this.token.isOperator()) {
                 ret = this.parseOperators(ret);
-            } else if (this.token.getType() == TokenType.LPAREN) {
-                this.expect(TokenType.LPAREN);
+            } else if (this.token.getType() == TokenType.L_PAREN) {
+                this.expect(TokenType.L_PAREN);
                 AbstractConditionalNode retValue = parseCondition();
                 if (ret == null) {
                     ret = retValue;
                 } else {
                     ret.addChild(retValue);
                 }
-                this.expect(TokenType.RPAREN, "Right parenthesis expected");
+                this.expect(TokenType.R_PAREN, "Right parenthesis expected");
             } else if (token.getType() == TokenType.WHERE || token.getType() == TokenType.ORDER) {
                 return ret;
             } else {
@@ -297,6 +297,12 @@ public final class SQLParser {
                 break;
             case IS:
                 node = this.parseNull(firstField);
+                break;
+            case LIKE:
+                node = this.parseLike(firstField);
+                break;
+            case ILIKE:
+                node = this.parseILike(firstField);
                 break;
             default:
                 throw new SQLException("Invalid operator.", SQLStates.INVALID_SQL.getValue());
@@ -578,6 +584,32 @@ public final class SQLParser {
 
         this.expect(TokenType.NULL);
         return ret;
+    }
+
+    /**
+     * Parses like conditional.
+     *
+     * @param firstField the left more token field.
+     * @return the null than node.
+     * @throws SQLException in case of parse errors.
+     */
+    private LikeNode parseLike(final FieldNode firstField) throws SQLException {
+        this.expect(TokenType.LIKE);
+
+        return new LikeNode(connection, firstField, parseField());
+    }
+
+    /**
+     * Parses ilike conditional.
+     *
+     * @param firstField the left more token field.
+     * @return the null than node.
+     * @throws SQLException in case of parse errors.
+     */
+    private ILikeNode parseILike(final FieldNode firstField) throws SQLException {
+        this.expect(TokenType.ILIKE);
+
+        return new ILikeNode(connection, firstField, parseField());
     }
 
     /**

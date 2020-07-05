@@ -204,7 +204,7 @@ public class ScannerTest {
         }
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
         Assert.assertNotNull("Invalid token value.", token);
-        Assert.assertEquals("Invalid token type.", TokenType.RPAREN, token.getType());
+        Assert.assertEquals("Invalid token type.", TokenType.R_PAREN, token.getType());
         Assert.assertEquals("Invalid token value.", ")", token.getValue());
         scanner.pushBack(token);
 
@@ -212,7 +212,7 @@ public class ScannerTest {
         token = scanner.nextToken();
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
         Assert.assertNotNull("Invalid token value.", token);
-        Assert.assertEquals("Invalid token type.", TokenType.RPAREN, token.getType());
+        Assert.assertEquals("Invalid token type.", TokenType.R_PAREN, token.getType());
         Assert.assertEquals("Invalid token value.", ")", token.getValue());
     }
 }
