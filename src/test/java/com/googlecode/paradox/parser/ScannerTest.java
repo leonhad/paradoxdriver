@@ -121,6 +121,19 @@ public class ScannerTest {
     }
 
     /**
+     * Test for multiline comments.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testMultilineComments() throws Exception {
+        final Scanner scanner = new Scanner(conn, " /* Commented\n\nline */\nNULL");
+        final Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type.", TokenType.NULL, token.getType());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+    }
+
+    /**
      * Test for two dots in number.
      *
      * @throws Exception if test succeed.

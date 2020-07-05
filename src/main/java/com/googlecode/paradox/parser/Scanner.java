@@ -292,6 +292,19 @@ public class Scanner {
         char c = nextNonSeparatorChar();
         if ((c == '"') || (c == '\'')) {
             return parseIdentifier(c);
+        } else if (c == '/') {
+            // Test for multiline comment.
+            char nextChar = this.nextChar();
+
+            if (nextChar == '*') {
+                parseMultilineComment();
+
+                // Redo this from beginning.
+                return nextToken();
+            }
+
+            // Restore the original scanner state and treat is as a normal identifier.
+            pushBack();
         } else if (Character.isDigit(c)) {
             parseNumber(c);
             return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
@@ -331,6 +344,16 @@ public class Scanner {
         do {
             c = nextChar();
         } while (hasNext() && c != '\n');
+    }
+
+    private void parseMultilineComment() {
+        char last;
+        char c = '\0';
+
+        do {
+            last = c;
+            c = nextChar();
+        } while (hasNext() && (last != '*' || c != '/'));
     }
 
     private Token parseIdentifier(char c) {
