@@ -542,7 +542,7 @@ public class ParadoxResultSetTest {
     public void testExecute() throws Exception {
         try (Statement stmt = this.conn.createStatement()) {
             boolean result = stmt.execute("select \"DECIMAL\" from db.DECIMAL where \"DECIMAL\" = 1");
-            Assert.assertTrue("Invalid result", result);
+            Assert.assertTrue("Invalid result set state", result);
 
             try (final ResultSet rs = stmt.getResultSet()) {
                 Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
@@ -551,6 +551,7 @@ public class ParadoxResultSetTest {
                 }
             }
 
+            Assert.assertFalse("Invalid result set state", stmt.getMoreResults());
             Assert.assertNull("More result sets", stmt.getResultSet());
         }
     }

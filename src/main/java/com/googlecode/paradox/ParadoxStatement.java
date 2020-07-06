@@ -325,7 +325,7 @@ class ParadoxStatement implements Statement {
             resultSet.setFetchDirection(direction);
         }
 
-        this.fetchDirection = fetchDirection;
+        this.fetchDirection = direction;
     }
 
     /**
@@ -345,10 +345,10 @@ class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
-    public void setFetchSize(int rows) throws SQLException {
+    public void setFetchSize(int fetchSize) throws SQLException {
         final ResultSet resultSet = getResultSet();
         if (resultSet != null) {
-            resultSet.setFetchSize(rows);
+            resultSet.setFetchSize(fetchSize);
         }
 
         this.fetchSize = fetchSize;
