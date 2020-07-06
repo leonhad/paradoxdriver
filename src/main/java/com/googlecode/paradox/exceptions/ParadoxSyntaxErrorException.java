@@ -39,7 +39,9 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
         UNEXPECTED_TOKEN("004", "Unexpected token"),
 
-        EMPTY_COLUMN_LIST("005", "Empty column list");
+        EMPTY_COLUMN_LIST("005", "Empty column list"),
+
+        INVALID_SELECT_STATEMENT("006", "Invalid SELECT statement");
 
         private final String code;
 

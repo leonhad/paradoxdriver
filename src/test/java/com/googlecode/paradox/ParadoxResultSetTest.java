@@ -555,4 +555,28 @@ public class ParadoxResultSetTest {
             Assert.assertNull("More result sets", stmt.getResultSet());
         }
     }
+
+    /**
+     * Test for execute method in prepared statement.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testExecutePreparedStatement() throws Exception {
+        try (final PreparedStatement stmt =
+                     this.conn.prepareStatement("select \"DECIMAL\" from db.DECIMAL where \"DECIMAL\" = 1")) {
+            boolean result = stmt.execute();
+            Assert.assertTrue("Invalid result set state", result);
+
+            try (final ResultSet rs = stmt.getResultSet()) {
+                Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
+                while (rs.next()) {
+                    Assert.assertEquals("Invalid value", 1.0D, rs.getDouble("DECIMAL"), 0.00001D);
+                }
+            }
+
+            Assert.assertFalse("Invalid result set state", stmt.getMoreResults());
+            Assert.assertNull("More result sets", stmt.getResultSet());
+        }
+    }
 }

@@ -52,7 +52,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * The connection used in this {@link ResultSet}.
      */
-    private final ParadoxConnection conn;
+    private ParadoxConnection connection;
     /**
      * The amount of rows fetched.
      */
@@ -67,16 +67,16 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Creates a new {@link ResultSet}.
      *
-     * @param conn      the database connection.
-     * @param statement the {@link Statement} for this {@link ResultSet}.
-     * @param values    row and column values.
-     * @param columns   the columns name.
+     * @param connection the database connection.
+     * @param statement  the {@link Statement} for this {@link ResultSet}.
+     * @param values     row and column values.
+     * @param columns    the columns name.
      */
-    public ParadoxResultSet(final ParadoxConnection conn, final Statement statement,
+    public ParadoxResultSet(final ParadoxConnection connection, final Statement statement,
                             final List<Object[]> values, final List<Column> columns) {
         this.statement = statement;
         this.columns = columns;
-        this.conn = conn;
+        this.connection = connection;
         this.dataNavigation = new DataNavigation(values);
 
         // Fill column indexes
@@ -132,6 +132,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public void close() {
+        this.connection = null;
         this.dataNavigation.close();
     }
 
@@ -475,7 +476,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getHoldability() {
-        return this.conn.getHoldability();
+        return this.connection.getHoldability();
     }
 
     /**
@@ -515,7 +516,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public ResultSetMetaData getMetaData() {
-        return new ParadoxResultSetMetaData(this.conn, this.columns);
+        return new ParadoxResultSetMetaData(this.connection, this.columns);
     }
 
     /**

@@ -12,6 +12,7 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
@@ -35,7 +36,7 @@ class ParadoxStatement implements Statement {
     /**
      * The Paradox connection.
      */
-    protected final ParadoxConnection connection;
+    protected ParadoxConnection connection;
     /**
      * Statement list.
      */
@@ -147,6 +148,7 @@ class ParadoxStatement implements Statement {
         for (int loop = 0; loop < ret.size(); loop++) {
             values[loop] = ret.get(loop);
         }
+
         return values;
     }
 
@@ -156,17 +158,15 @@ class ParadoxStatement implements Statement {
     @Override
     public void addBatch(final String sql) throws SQLException {
         final SQLParser parser = new SQLParser(connection, sql);
-        final List<StatementNode> batchStatements = parser.parse();
-
-        this.statements.addAll(batchStatements);
+        this.statements.addAll(parser.parse());
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void cancel() throws ParadoxNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public void cancel() {
+        // Nothing to do here.
     }
 
     /**
@@ -195,14 +195,15 @@ class ParadoxStatement implements Statement {
         }
 
         this.closed = true;
+        this.connection = null;
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void closeOnCompletion() throws ParadoxNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public void closeOnCompletion() {
+        this.closeOnCompletion = true;
     }
 
     /**
@@ -215,8 +216,7 @@ class ParadoxStatement implements Statement {
 
         executeStatements();
 
-        resultSetIndex = 0;
-        return true;
+        return getMoreResults();
     }
 
     /**
@@ -257,12 +257,16 @@ class ParadoxStatement implements Statement {
     @Override
     public ResultSet executeQuery(final String sql) throws SQLException {
         final SQLParser parser = new SQLParser(connection, sql);
+
         statements.addAll(parser.parse());
 
         executeStatements();
 
-        resultSetIndex = 0;
-        return getResultSet();
+        if (getMoreResults()) {
+            return getResultSet();
+        }
+
+        throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_SELECT_STATEMENT);
     }
 
     /**
@@ -529,7 +533,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public boolean isCloseOnCompletion() {
-        return true;
+        return closeOnCompletion;
     }
 
     /**
