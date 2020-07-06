@@ -406,10 +406,9 @@ class ParadoxStatement implements Statement {
     public boolean getMoreResults() {
         if (resultSetIndex < resultSets.size()) {
             resultSetIndex++;
-            return true;
         }
 
-        return false;
+        return resultSetIndex < resultSets.size();
     }
 
     /**
@@ -431,7 +430,7 @@ class ParadoxStatement implements Statement {
                 }
                 break;
 
-            case Statement.KEEP_CURRENT_RESULT:
+            default:
                 // Do nothing.
                 break;
         }
