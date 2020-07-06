@@ -534,20 +534,24 @@ public class ParadoxResultSetTest {
     }
 
     /**
-     * Test for like in the middle.
+     * Test for execute method.
      *
      * @throws Exception in case of failures.
      */
     @Test
-    public void testLikeMiddle() throws Exception {
-        try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
-                     " where ac.AreasCovered ilike '%all%'")) {
+    public void testExecute() throws Exception {
+        try (Statement stmt = this.conn.createStatement()) {
+            boolean result = stmt.execute("select \"DECIMAL\" from db.DECIMAL where \"DECIMAL\" = 1");
+            Assert.assertTrue("Invalid result", result);
 
-            Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
-            while (rs.next()) {
-                Assert.assertTrue("Invalid value", rs.getString("AreasCovered").toUpperCase().contains("ALL"));
+            try (final ResultSet rs = stmt.getResultSet()) {
+                Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
+                while (rs.next()) {
+                    Assert.assertEquals("Invalid value", 1.0D, rs.getDouble("DECIMAL"), 0.00001D);
+                }
             }
+
+            Assert.assertNull("More result sets", stmt.getResultSet());
         }
     }
 }
