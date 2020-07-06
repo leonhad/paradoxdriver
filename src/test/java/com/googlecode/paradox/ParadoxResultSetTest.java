@@ -76,7 +76,7 @@ public class ParadoxResultSetTest {
     public void testAbsoluteEmpty() throws SQLException {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
-        final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
+        final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
             Assert.assertTrue("Invalid absolute value.", rs.isAfterLast());
@@ -91,7 +91,7 @@ public class ParadoxResultSetTest {
     public void testAbsoluteInvalidRow() throws SQLException {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
-        final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
+        final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
             Assert.assertTrue("Invalid absolute value.", rs.isBeforeFirst());
@@ -106,7 +106,7 @@ public class ParadoxResultSetTest {
     public void testAbsoluteLowRowValue() throws SQLException {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
-        final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
+        final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
         }
@@ -121,7 +121,7 @@ public class ParadoxResultSetTest {
         final List<Column> columns = Collections.singletonList(
                 new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType())));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
-        final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
+        final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertTrue("Invalid absolute value.", rs.absolute(1));
             Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
@@ -136,7 +136,7 @@ public class ParadoxResultSetTest {
         final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType());
         final List<Column> columns = Collections.singletonList(new Column(field));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
-        final ParadoxStatement stmt = new ParadoxStatement((ParadoxConnection) this.conn);
+        final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             rs.afterLast();
             Assert.assertTrue("Testing for invalid position.", rs.isAfterLast());
@@ -276,8 +276,9 @@ public class ParadoxResultSetTest {
     @Test
     public void testNoFirstResult() throws SQLException {
         final ParadoxConnection paradoxConnection = (ParadoxConnection) this.conn;
-        try (ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, new ParadoxStatement(paradoxConnection),
-                Collections.emptyList(), Collections.emptyList())) {
+        try (ParadoxStatement statement = (ParadoxStatement) conn.createStatement();
+             ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, statement,
+                     Collections.emptyList(), Collections.emptyList())) {
 
             Assert.assertFalse("There is one first row", rs.next());
             Assert.assertFalse("There is one first row", rs.first());

@@ -46,6 +46,7 @@ public class FieldNode extends SQLNode {
      * @param tableName  the table name.
      * @param fieldName  the field name.
      * @param alias      the field name alias.
+     * @param position   the current Scanner position.
      */
     public FieldNode(final ParadoxConnection connection, final String tableName, final String fieldName,
                      final String alias, final ScannerPosition position) {
