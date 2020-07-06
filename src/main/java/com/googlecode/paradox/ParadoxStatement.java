@@ -320,6 +320,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public int getMaxRows() {
+        // FIXME max rows.
         return this.maxRows;
     }
 

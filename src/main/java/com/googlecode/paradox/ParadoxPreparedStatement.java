@@ -62,7 +62,7 @@ final class ParadoxPreparedStatement implements PreparedStatement {
     /**
      * Execution list.
      */
-    private final List<Object[]> executionList = new ArrayList<>();
+    private final List<Object[]> executions = new ArrayList<>();
     /**
      * If this statement is capable of pooling;
      */
@@ -116,10 +116,18 @@ final class ParadoxPreparedStatement implements PreparedStatement {
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        if (statements.size() != 1 || !executionList.isEmpty()) {
+        if (statements.size() != 1 || !executions.isEmpty()) {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.USE_BATCH_OPERATION);
         }
 
+        executions.add(parameterList);
+        executeStatements();
+
+        resultSetIndex = 0;
+        return getResultSet();
+    }
+
+    private int[] executeStatements() throws SQLException {
         // Close all existing result sets.
         for (final ResultSet rs : resultSets) {
             rs.close();
@@ -127,26 +135,33 @@ final class ParadoxPreparedStatement implements PreparedStatement {
 
         resultSets.clear();
 
-        // FIXME use parameterList.
-
+        ArrayList<Integer> ret = new ArrayList<>();
+        // One for statement.
         for (final StatementNode statement : statements) {
-
             final Plan plan = Planner.create(connection, statement);
-            plan.execute(this.connection);
 
-            if (plan instanceof SelectPlan) {
-                final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
-                        ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
-                resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
-                // FIXME type and concurrency type.
+            // One for parameters.
+            for (final Object[] params : executions) {
+                // FIXME use parameterList.
+                plan.execute(this.connection);
 
-                resultSets.add(resultSet);
-                resultSetIndex = 0;
-                return resultSet;
+                if (plan instanceof SelectPlan) {
+                    final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
+                            ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
+                    resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
+                    // FIXME type and concurrency type.
+
+                    ret.add(Statement.SUCCESS_NO_INFO);
+                    resultSets.add(resultSet);
+                }
             }
         }
 
-        return null;
+        int[] values = new int[ret.size()];
+        for (int loop = 0; loop < ret.size(); loop++) {
+            values[loop] = ret.get(loop);
+        }
+        return values;
     }
 
     @Override
@@ -286,7 +301,7 @@ final class ParadoxPreparedStatement implements PreparedStatement {
 
     @Override
     public void addBatch() {
-        executionList.add(parameterList);
+        executions.add(parameterList);
     }
 
     @Override
@@ -319,6 +334,11 @@ final class ParadoxPreparedStatement implements PreparedStatement {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
+        final ResultSet current = getResultSet();
+        if (current != null) {
+            return current.getMetaData();
+        }
+
         return null;
     }
 
@@ -465,7 +485,11 @@ final class ParadoxPreparedStatement implements PreparedStatement {
     }
 
     @Override
-    public void close() {
+    public void close() throws SQLException {
+        for (final ResultSet rs : resultSets) {
+            rs.close();
+        }
+
         this.closed = true;
     }
 
@@ -481,6 +505,7 @@ final class ParadoxPreparedStatement implements PreparedStatement {
 
     @Override
     public int getMaxRows() throws SQLException {
+        // FIXME max rows.
         return 0;
     }
 
@@ -637,12 +662,15 @@ final class ParadoxPreparedStatement implements PreparedStatement {
 
     @Override
     public void clearBatch() {
-        this.executionList.clear();
+        this.executions.clear();
+        while (this.statements.size() > 1) {
+            this.statements.remove(1);
+        }
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
-        return new int[0];
+        return executeStatements();
     }
 
     @Override
