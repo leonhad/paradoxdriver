@@ -48,11 +48,11 @@ class ParadoxStatement implements Statement {
     /**
      * Result set concurrency.
      */
-    private final int resultSetConcurrency;
+    protected final int resultSetConcurrency;
     /**
      * Result set type.
      */
-    private final int resultSetType;
+    protected final int resultSetType;
     /**
      * Result set holdability.
      */
@@ -68,11 +68,11 @@ class ParadoxStatement implements Statement {
     /**
      * Close on completion.
      */
-    private boolean closeOnCompletion;
+    protected boolean closeOnCompletion;
     /**
      * If this statement is closed.
      */
-    private boolean closed;
+    protected boolean closed;
 
     /**
      * The fetch direction.
@@ -92,7 +92,7 @@ class ParadoxStatement implements Statement {
     /**
      * The max rows.
      */
-    private int maxRows;
+    protected int maxRows;
 
     /**
      * If this statement is pool capable.
@@ -102,7 +102,7 @@ class ParadoxStatement implements Statement {
     /**
      * The query timeout.
      */
-    private int queryTimeout = 20;
+    private int queryTimeout;
 
     /**
      * Creates a statement.
@@ -131,14 +131,14 @@ class ParadoxStatement implements Statement {
         for (final StatementNode statement : statements) {
             final Plan plan = Planner.create(connection, statement);
 
-            plan.execute(this.connection);
+            plan.execute(this.connection, maxRows);
 
             if (plan instanceof SelectPlan) {
                 final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
                         ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
                 resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
-                // FIXME type and concurrency type.
-
+                resultSet.setType(resultSetType);
+                resultSet.setConcurrency(resultSetConcurrency);
                 ret.add(Statement.SUCCESS_NO_INFO);
                 resultSets.add(resultSet);
             }
@@ -391,7 +391,6 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public int getMaxRows() {
-        // FIXME max rows.
         return this.maxRows;
     }
 

@@ -144,7 +144,7 @@ public final class SelectPlan implements Plan {
      * {@inheritDoc}.
      */
     @Override
-    public void execute(final ParadoxConnection connection) throws SQLException {
+    public void execute(final ParadoxConnection connection, final int maxRows) throws SQLException {
         if (this.columns.isEmpty() || this.tables.isEmpty()) {
             return;
         }
@@ -202,8 +202,7 @@ public final class SelectPlan implements Plan {
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
-        filter(rawData, mapColumns, comparator);
-
+        filter(rawData, mapColumns, comparator, maxRows);
     }
 
     private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
@@ -382,7 +381,8 @@ public final class SelectPlan implements Plan {
         return mapColumns;
     }
 
-    private void filter(final List<Object[]> rowValues, final int[] mapColumns, final ValuesComparator comparator) {
+    private void filter(final List<Object[]> rowValues, final int[] mapColumns, final ValuesComparator comparator,
+                        final int maxRows) {
 
         for (final Object[] tableRow : rowValues) {
             // Filter WHERE joins.
@@ -395,7 +395,13 @@ public final class SelectPlan implements Plan {
                 int index = mapColumns[i];
                 finalRow[i] = tableRow[index];
             }
+
             this.values.add(finalRow);
+
+            if (maxRows != 0 && values.size() == maxRows) {
+                // Stop loading on max rows limit.
+                return;
+            }
         }
     }
 

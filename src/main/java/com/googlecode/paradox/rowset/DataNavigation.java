@@ -262,4 +262,9 @@ public class DataNavigation implements AutoCloseable {
     public boolean isClosed() {
         return closed;
     }
+
+    @Override
+    public String toString() {
+        return "rows: " + values.size() + " current row: " + index;
+    }
 }

@@ -26,7 +26,8 @@ public interface Plan {
      * Execute this plan.
      *
      * @param connection the Paradox connection.
+     * @param maxRows    the limit of rows that can be loaded. Zero means no limit.
      * @throws SQLException in case of failures.
      */
-    void execute(final ParadoxConnection connection) throws SQLException;
+    void execute(final ParadoxConnection connection, final int maxRows) throws SQLException;
 }

@@ -84,14 +84,14 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
             // One for parameters.
             for (final Object[] params : executions) {
                 // FIXME use parameterList.
-                plan.execute(this.connection);
+                plan.execute(this.connection, maxRows);
 
                 if (plan instanceof SelectPlan) {
                     final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
                             ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
                     resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
-                    // FIXME type and concurrency type.
-
+                    resultSet.setType(resultSetType);
+                    resultSet.setConcurrency(resultSetConcurrency);
                     ret.add(Statement.SUCCESS_NO_INFO);
                     resultSets.add(resultSet);
                 }

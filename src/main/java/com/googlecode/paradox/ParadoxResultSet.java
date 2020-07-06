@@ -61,8 +61,18 @@ public final class ParadoxResultSet implements ResultSet {
      * This {@link ResultSet} {@link Statement}.
      */
     private final Statement statement;
-
+    /**
+     * Facade to navigate in data values.
+     */
     private final DataNavigation dataNavigation;
+    /**
+     * Result set type.
+     */
+    private int type = ResultSet.TYPE_SCROLL_INSENSITIVE;
+    /**
+     * Concurrency type.
+     */
+    private int concurrency = ResultSet.CONCUR_READ_ONLY;
 
     /**
      * Creates a new {@link ResultSet}.
@@ -380,7 +390,16 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getConcurrency() {
-        return ResultSet.CONCUR_READ_ONLY;
+        return concurrency;
+    }
+
+    /**
+     * Sets this concurrency type.
+     *
+     * @param concurrency the concurrency type.
+     */
+    public void setConcurrency(int concurrency) {
+        this.concurrency = concurrency;
     }
 
     /**
@@ -786,7 +805,16 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getType() {
-        return ResultSet.TYPE_SCROLL_INSENSITIVE;
+        return type;
+    }
+
+    /**
+     * Sets this type.
+     *
+     * @param type the ResultSet type.
+     */
+    public void setType(int type) {
+        this.type = type;
     }
 
     /**
@@ -1690,5 +1718,10 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public boolean wasNull() throws SQLException {
         return dataNavigation.getLastValue() == null;
+    }
+
+    @Override
+    public String toString() {
+        return "Columns: " + columns.size() + " " + dataNavigation;
     }
 }
