@@ -45,7 +45,9 @@ public class ParadoxException extends SQLDataException {
 
         TYPE_NOT_FOUND("005", "Type not found"),
 
-        COLUMN_AMBIGUOUS_DEFINED("006", "Column %s ambiguous defined");
+        COLUMN_AMBIGUOUS_DEFINED("006", "Column %s ambiguous defined"),
+
+        INVALID_COLUMN_INDEX("007", "Invalid column index: %s");
 
         private final String code;
 

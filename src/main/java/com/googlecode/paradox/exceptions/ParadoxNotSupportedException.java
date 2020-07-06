@@ -23,7 +23,11 @@ public class ParadoxNotSupportedException extends SQLFeatureNotSupportedExceptio
     public enum Error {
         OPERATION_NOT_SUPPORTED("001", "Operation not supported."),
 
-        CATALOG_CHANGE("002", "Change catalog is not supported");
+        CATALOG_CHANGE("002", "Change catalog is not supported"),
+
+        USE_BATCH_OPERATION("003", "Use batch for more than one statement"),
+
+        INCONSISTENT_PARAMETER_LIST("004", "Inconsistent parameter list size");
 
         private final String code;
 

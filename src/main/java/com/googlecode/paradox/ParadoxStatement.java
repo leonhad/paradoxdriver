@@ -94,15 +94,15 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public void addBatch(final String sql) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void cancel() {
-        throw new UnsupportedOperationException();
+    public void cancel() throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -110,7 +110,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public void clearBatch() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -138,8 +138,8 @@ final class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
-    public void closeOnCompletion() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void closeOnCompletion() throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -191,7 +191,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public int[] executeBatch() throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -220,7 +220,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public int executeUpdate(final String sql) throws SQLException {
-        throw new SQLFeatureNotSupportedException();
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -456,7 +456,7 @@ final class ParadoxStatement implements Statement {
      */
     @Override
     public void setEscapeProcessing(final boolean enable) {
-        throw new UnsupportedOperationException();
+        // Nothing to do here.
     }
 
     /**

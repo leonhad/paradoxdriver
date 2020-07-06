@@ -11,6 +11,7 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.DataNavigation;
@@ -59,7 +60,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * This {@link ResultSet} {@link Statement}.
      */
-    private final ParadoxStatement statement;
+    private final Statement statement;
 
     private final DataNavigation dataNavigation;
 
@@ -71,7 +72,7 @@ public final class ParadoxResultSet implements ResultSet {
      * @param values    row and column values.
      * @param columns   the columns name.
      */
-    public ParadoxResultSet(final ParadoxConnection conn, final ParadoxStatement statement,
+    public ParadoxResultSet(final ParadoxConnection conn, final Statement statement,
                             final List<Object[]> values, final List<Column> columns) {
         this.statement = statement;
         this.columns = columns;
@@ -114,8 +115,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void cancelRowUpdates() {
-        throw new UnsupportedOperationException();
+    public void cancelRowUpdates() throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -138,8 +139,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void deleteRow() {
-        throw new UnsupportedOperationException();
+    public void deleteRow() throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -386,10 +387,6 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public String getCursorName() {
-        if (this.statement != null) {
-            return this.statement.getCursorName();
-        }
-
         return "NO_NAME";
     }
 
@@ -628,7 +625,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Ref getRef(final int columnIndex) throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -652,7 +649,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public RowId getRowId(final int columnIndex) throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -816,7 +813,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public URL getURL(final int columnIndex) throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException();
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -839,8 +836,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void insertRow() {
-        throw new UnsupportedOperationException();
+    public void insertRow() throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -1003,664 +1000,687 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateArray(final int columnIndex, final Array x) {
-        throw new UnsupportedOperationException();
+    public void updateArray(final int columnIndex, final Array x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateArray(final String columnLabel, final Array x) {
-        throw new UnsupportedOperationException();
+    public void updateArray(final String columnLabel, final Array x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x) {
-        throw new UnsupportedOperationException();
+    public void updateAsciiStream(final int columnIndex, final InputStream x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) {
-        throw new UnsupportedOperationException();
+    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateAsciiStream(final int columnIndex, final InputStream x, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x) {
-        throw new UnsupportedOperationException();
+    public void updateAsciiStream(final String columnLabel, final InputStream x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x, final int length) {
-        throw new UnsupportedOperationException();
+    public void updateAsciiStream(final String columnLabel, final InputStream x, final int length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBigDecimal(final int columnIndex, final BigDecimal x) {
-        throw new UnsupportedOperationException();
+    public void updateBigDecimal(final int columnIndex, final BigDecimal x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBigDecimal(final String columnLabel, final BigDecimal x) {
-        throw new UnsupportedOperationException();
+    public void updateBigDecimal(final String columnLabel, final BigDecimal x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x) {
-        throw new UnsupportedOperationException();
+    public void updateBinaryStream(final int columnIndex, final InputStream x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x, final int length) {
-        throw new UnsupportedOperationException();
+    public void updateBinaryStream(final int columnIndex, final InputStream x, final int length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateBinaryStream(final int columnIndex, final InputStream x, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x) {
-        throw new UnsupportedOperationException();
+    public void updateBinaryStream(final String columnLabel, final InputStream x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length) {
-        throw new UnsupportedOperationException();
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final int length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final int columnIndex, final Blob x) {
-        throw new UnsupportedOperationException();
+    public void updateBlob(final int columnIndex, final Blob x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream) {
-        throw new UnsupportedOperationException();
+    public void updateBlob(final int columnIndex, final InputStream inputStream) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final String columnLabel, final Blob x) {
-        throw new UnsupportedOperationException();
+    public void updateBlob(final String columnLabel, final Blob x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream) {
-        throw new UnsupportedOperationException();
+    public void updateBlob(final String columnLabel, final InputStream inputStream)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBoolean(final int columnIndex, final boolean x) {
-        throw new UnsupportedOperationException();
+    public void updateBoolean(final int columnIndex, final boolean x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBoolean(final String columnLabel, final boolean x) {
-        throw new UnsupportedOperationException();
+    public void updateBoolean(final String columnLabel, final boolean x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateByte(final int columnIndex, final byte x) {
-        throw new UnsupportedOperationException();
+    public void updateByte(final int columnIndex, final byte x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateByte(final String columnLabel, final byte x) {
-        throw new UnsupportedOperationException();
+    public void updateByte(final String columnLabel, final byte x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBytes(final int columnIndex, final byte[] x) {
-        throw new UnsupportedOperationException();
+    public void updateBytes(final int columnIndex, final byte[] x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateBytes(final String columnLabel, final byte[] x) {
-        throw new UnsupportedOperationException();
+    public void updateBytes(final String columnLabel, final byte[] x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x) {
-        throw new UnsupportedOperationException();
+    public void updateCharacterStream(final int columnIndex, final Reader x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x, final int length) {
-        throw new UnsupportedOperationException();
+    public void updateCharacterStream(final int columnIndex, final Reader x, final int length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateCharacterStream(final int columnIndex, final Reader x, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader) {
-        throw new UnsupportedOperationException();
+    public void updateCharacterStream(final String columnLabel, final Reader reader)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length) {
-        throw new UnsupportedOperationException();
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final int length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final int columnIndex, final Clob x) {
-        throw new UnsupportedOperationException();
+    public void updateClob(final int columnIndex, final Clob x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final int columnIndex, final Reader reader) {
-        throw new UnsupportedOperationException();
+    public void updateClob(final int columnIndex, final Reader reader) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final int columnIndex, final Reader reader, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateClob(final int columnIndex, final Reader reader, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final String columnLabel, final Clob x) {
-        throw new UnsupportedOperationException();
+    public void updateClob(final String columnLabel, final Clob x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final String columnLabel, final Reader reader) {
-        throw new UnsupportedOperationException();
+    public void updateClob(final String columnLabel, final Reader reader) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateClob(final String columnLabel, final Reader reader, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateClob(final String columnLabel, final Reader reader, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateDate(final int columnIndex, final Date x) {
-        throw new UnsupportedOperationException();
+    public void updateDate(final int columnIndex, final Date x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateDate(final String columnLabel, final Date x) {
-        throw new UnsupportedOperationException();
+    public void updateDate(final String columnLabel, final Date x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateDouble(final int columnIndex, final double x) {
-        throw new UnsupportedOperationException();
+    public void updateDouble(final int columnIndex, final double x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateDouble(final String columnLabel, final double x) {
-        throw new UnsupportedOperationException();
+    public void updateDouble(final String columnLabel, final double x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateFloat(final int columnIndex, final float x) {
-        throw new UnsupportedOperationException();
+    public void updateFloat(final int columnIndex, final float x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateFloat(final String columnLabel, final float x) {
-        throw new UnsupportedOperationException();
+    public void updateFloat(final String columnLabel, final float x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateInt(final int columnIndex, final int x) {
-        throw new UnsupportedOperationException();
+    public void updateInt(final int columnIndex, final int x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateInt(final String columnLabel, final int x) {
-        throw new UnsupportedOperationException();
+    public void updateInt(final String columnLabel, final int x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateLong(final int columnIndex, final long x) {
-        throw new UnsupportedOperationException();
+    public void updateLong(final int columnIndex, final long x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateLong(final String columnLabel, final long x) {
-        throw new UnsupportedOperationException();
+    public void updateLong(final String columnLabel, final long x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final int columnIndex, final Reader x) {
-        throw new UnsupportedOperationException();
+    public void updateNCharacterStream(final int columnIndex, final Reader x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final int columnIndex, final Reader x, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateNCharacterStream(final int columnIndex, final Reader x, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader) {
-        throw new UnsupportedOperationException();
+    public void updateNCharacterStream(final String columnLabel, final Reader reader)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final int columnIndex, final NClob nClob) {
-        throw new UnsupportedOperationException();
+    public void updateNClob(final int columnIndex, final NClob nClob) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final int columnIndex, final Reader reader) {
-        throw new UnsupportedOperationException();
+    public void updateNClob(final int columnIndex, final Reader reader) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final int columnIndex, final Reader reader, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateNClob(final int columnIndex, final Reader reader, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final String columnLabel, final NClob nClob) {
-        throw new UnsupportedOperationException();
+    public void updateNClob(final String columnLabel, final NClob nClob) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final String columnLabel, final Reader reader) {
-        throw new UnsupportedOperationException();
+    public void updateNClob(final String columnLabel, final Reader reader) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNClob(final String columnLabel, final Reader reader, final long length) {
-        throw new UnsupportedOperationException();
+    public void updateNClob(final String columnLabel, final Reader reader, final long length)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNString(final int columnIndex, final String nString) {
-        throw new UnsupportedOperationException();
+    public void updateNString(final int columnIndex, final String nString) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNString(final String columnLabel, final String nString) {
-        throw new UnsupportedOperationException();
+    public void updateNString(final String columnLabel, final String nString) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNull(final int columnIndex) {
-        throw new UnsupportedOperationException();
+    public void updateNull(final int columnIndex) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateNull(final String columnLabel) {
-        throw new UnsupportedOperationException();
+    public void updateNull(final String columnLabel) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final int columnIndex, final Object x) {
-        throw new UnsupportedOperationException();
+    public void updateObject(final int columnIndex, final Object x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final int columnIndex, final Object x, final int scaleOrLength) {
-        throw new UnsupportedOperationException();
+    public void updateObject(final int columnIndex, final Object x, final int scaleOrLength)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final String columnLabel, final Object x) {
-        throw new UnsupportedOperationException();
+    public void updateObject(final String columnLabel, final Object x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateObject(final String columnLabel, final Object x, final int scaleOrLength) {
-        throw new UnsupportedOperationException();
+    public void updateObject(final String columnLabel, final Object x, final int scaleOrLength)
+            throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateRef(final int columnIndex, final Ref x) {
-        throw new UnsupportedOperationException();
+    public void updateRef(final int columnIndex, final Ref x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateRef(final String columnLabel, final Ref x) {
-        throw new UnsupportedOperationException();
+    public void updateRef(final String columnLabel, final Ref x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateRow() {
-        throw new UnsupportedOperationException();
+    public void updateRow() throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateRowId(final int columnIndex, final RowId x) {
-        throw new UnsupportedOperationException();
+    public void updateRowId(final int columnIndex, final RowId x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateRowId(final String columnLabel, final RowId x) {
-        throw new UnsupportedOperationException();
+    public void updateRowId(final String columnLabel, final RowId x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateShort(final int columnIndex, final short x) {
-        throw new UnsupportedOperationException();
+    public void updateShort(final int columnIndex, final short x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateShort(final String columnLabel, final short x) {
-        throw new UnsupportedOperationException();
+    public void updateShort(final String columnLabel, final short x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateSQLXML(final int columnIndex, final SQLXML xmlObject) {
-        throw new UnsupportedOperationException();
+    public void updateSQLXML(final int columnIndex, final SQLXML xmlObject) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateSQLXML(final String columnLabel, final SQLXML xmlObject) {
-        throw new UnsupportedOperationException();
+    public void updateSQLXML(final String columnLabel, final SQLXML xmlObject) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateString(final int columnIndex, final String x) {
-        throw new UnsupportedOperationException();
+    public void updateString(final int columnIndex, final String x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateString(final String columnLabel, final String x) {
-        throw new UnsupportedOperationException();
+    public void updateString(final String columnLabel, final String x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateTime(final int columnIndex, final Time x) {
-        throw new UnsupportedOperationException();
+    public void updateTime(final int columnIndex, final Time x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateTime(final String columnLabel, final Time x) {
-        throw new UnsupportedOperationException();
+    public void updateTime(final String columnLabel, final Time x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateTimestamp(final int columnIndex, final Timestamp x) {
-        throw new UnsupportedOperationException();
+    public void updateTimestamp(final int columnIndex, final Timestamp x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void updateTimestamp(final String columnLabel, final Timestamp x) {
-        throw new UnsupportedOperationException();
+    public void updateTimestamp(final String columnLabel, final Timestamp x) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**

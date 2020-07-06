@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -24,7 +25,6 @@ import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,7 +113,7 @@ public class Planner {
         if (statement instanceof SelectNode) {
             return createSelect(connection, (SelectNode) statement);
         } else {
-            throw new SQLFeatureNotSupportedException();
+            throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
     }
 

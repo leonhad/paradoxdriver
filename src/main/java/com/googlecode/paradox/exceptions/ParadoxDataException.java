@@ -33,7 +33,9 @@ public class ParadoxDataException extends SQLDataException {
 
         ERROR_LOADING_DATA("006", "Error loading data from disk"),
 
-        INVALID_DATE("007", "Invalid date");
+        INVALID_DATE("007", "Invalid date"),
+
+        NO_RESULT_SET_AVAILABLE("008", "ResultSet not available");
 
         private final String code;
 

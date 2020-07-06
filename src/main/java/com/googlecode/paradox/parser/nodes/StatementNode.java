@@ -20,6 +20,8 @@ import com.googlecode.paradox.ParadoxConnection;
  */
 public class StatementNode extends SQLNode {
 
+    private int parameterCount;
+
     /**
      * Create a new instance.
      *
@@ -28,5 +30,14 @@ public class StatementNode extends SQLNode {
      */
     public StatementNode(final ParadoxConnection connection, final String name) {
         super(connection, name);
+    }
+
+    /**
+     * Gets the parameter count.
+     *
+     * @return the parameter count.
+     */
+    public int getParameterCount() {
+        return parameterCount;
     }
 }
