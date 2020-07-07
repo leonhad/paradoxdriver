@@ -69,7 +69,9 @@ public class ParadoxDataException extends SQLDataException {
 
         BLOB_INVALID_DECLARED_SIZE("014", "Invalid lob declared size"),
 
-        BLOB_SINGLE_BLOCK_INVALID_INDEX("015", "Offset points to a single blob block but index field is not 0xFF.");
+        BLOB_SINGLE_BLOCK_INVALID_INDEX("015", "Offset points to a single blob block but index field is not 0xFF."),
+
+        INVALID_CONVERSION("016", "Invalid value conversion: %s");
 
         private final String code;
 

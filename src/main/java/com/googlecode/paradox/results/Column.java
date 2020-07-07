@@ -13,6 +13,7 @@ package com.googlecode.paradox.results;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.planner.nodes.value.ValueNode;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -55,6 +56,11 @@ public final class Column {
     private final int type;
 
     /**
+     * Fixed value.
+     */
+    private String value;
+
+    /**
      * Create a new instance.
      *
      * @param field the paradox field.
@@ -63,6 +69,11 @@ public final class Column {
         this(field.getName(), field.getSqlType());
         this.field = field;
         this.precision = field.getPrecision();
+    }
+
+    public Column(final ValueNode node) {
+        this(node.getAlias(), node.getSqlType());
+        this.value = node.getName();
     }
 
     /**
@@ -83,7 +94,8 @@ public final class Column {
      * @return <code>true</code> if this column is from this table.
      */
     public boolean isThis(final ParadoxDataFile table) {
-        return this.field.getTable().getName().equalsIgnoreCase(table.getName())
+        return this.field != null
+                && this.field.getTable().getName().equalsIgnoreCase(table.getName())
                 && this.field.getTable().getSchemaName().equalsIgnoreCase(table.getSchemaName());
     }
 
@@ -159,6 +171,15 @@ public final class Column {
      */
     public int getType() {
         return this.type;
+    }
+
+    /**
+     * Gets the column value.
+     *
+     * @return the column value.
+     */
+    public String getValue() {
+        return value;
     }
 
     /**

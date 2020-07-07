@@ -14,12 +14,10 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
-import com.googlecode.paradox.parser.nodes.values.CharacterNode;
-import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
-import com.googlecode.paradox.planner.nodes.value.NullNode;
+import com.googlecode.paradox.planner.nodes.value.ValueNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -162,7 +160,7 @@ public class SQLParserTest {
         Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof EqualsNode);
         final EqualsNode node = (EqualsNode) select.getCondition();
         Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
-        Assert.assertTrue("Invalid field value.", node.getLast() instanceof NullNode);
+        Assert.assertTrue("Invalid field value.", node.getLast() instanceof ValueNode);
     }
 
     /**
@@ -216,7 +214,7 @@ public class SQLParserTest {
      */
     @Test
     public void testColumnValue() throws Exception {
-        final SQLParser parser = new SQLParser(conn, "SELECT 'test', 123 as number FROM client");
+        final SQLParser parser = new SQLParser(conn, "SELECT 'test', 123 as number, null FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -224,12 +222,18 @@ public class SQLParserTest {
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
-        Assert.assertTrue("Invalid node type.", select.getFields().get(0) instanceof CharacterNode);
+        Assert.assertEquals("Invalid node size.", 3, select.getFields().size());
+
+        Assert.assertTrue("Invalid node type.", select.getFields().get(0) instanceof ValueNode);
         Assert.assertEquals("Invalid node name.", "test", select.getFields().get(0).getName());
-        Assert.assertTrue("Invalid node type.", select.getFields().get(1) instanceof NumericNode);
+
+        Assert.assertTrue("Invalid node type.", select.getFields().get(1) instanceof ValueNode);
         Assert.assertEquals("Invalid node name.", "123", select.getFields().get(1).getName());
         Assert.assertEquals("Invalid node alias.", "number", select.getFields().get(1).getAlias());
+
+        Assert.assertTrue("Invalid node type.", select.getFields().get(2) instanceof ValueNode);
+        Assert.assertNull("Invalid node name.", select.getFields().get(2).getName());
+        Assert.assertEquals("Invalid node alias.", "null", select.getFields().get(2).getAlias());
 
         Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
         Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
@@ -461,6 +465,6 @@ public class SQLParserTest {
     @Test
     public void testException() throws Exception {
         final SQLParser parser = new SQLParser(conn, "select a. FROM AREACODES a");
-        Assert.assertThrows("FROM expected (1:9)", SQLException.class, parser::parse);
+        Assert.assertThrows("Invalid result", SQLException.class, parser::parse);
     }
 }

@@ -15,16 +15,14 @@ import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
-import com.googlecode.paradox.parser.nodes.values.CharacterNode;
-import com.googlecode.paradox.parser.nodes.values.NumericNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
-import com.googlecode.paradox.planner.nodes.value.NullNode;
-import com.googlecode.paradox.planner.nodes.value.StringNode;
+import com.googlecode.paradox.planner.nodes.value.ValueNode;
 
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,7 +140,7 @@ public final class SQLParser {
         this.expect(TokenType.CHARACTER);
 
         final String fieldAlias = getFieldAlias(fieldName);
-        select.addField(new CharacterNode(connection, fieldName, fieldAlias));
+        select.addField(new ValueNode(connection, fieldName, fieldAlias, this.token.getPosition(), Types.VARCHAR));
     }
 
     private String getFieldAlias(String fieldName) throws SQLException {
@@ -157,6 +155,7 @@ public final class SQLParser {
             fieldAlias = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
         }
+
         return fieldAlias;
     }
 
@@ -222,14 +221,14 @@ public final class SQLParser {
         if (this.token.getType() == TokenType.CHARACTER) {
             // Found a String value.
             this.expect(TokenType.CHARACTER);
-            ret = new StringNode(connection, fieldName, position);
+            ret = new ValueNode(connection, fieldName, null, position, Types.VARCHAR);
         } else if (this.token.getType() == TokenType.NUMERIC) {
             // Found a numeric value.
             this.expect(TokenType.NUMERIC);
-            ret = new StringNode(connection, fieldName, position);
+            ret = new ValueNode(connection, fieldName, null, position, Types.NUMERIC);
         } else if (this.token.getType() == TokenType.NULL) {
             this.expect(TokenType.NULL);
-            ret = new NullNode(connection, position);
+            ret = new ValueNode(connection, null, null, position, Types.NULL);
         } else {
             // Found a table field.
             this.expect(TokenType.IDENTIFIER);
@@ -314,6 +313,8 @@ public final class SQLParser {
                     this.parseCharacter(select, fieldName);
                 } else if (this.token.getType() == TokenType.NUMERIC) {
                     this.parseNumeric(select, fieldName);
+                } else if (this.token.getType() == TokenType.NULL) {
+                    this.parseNull(select);
                 } else if (this.token.getType() == TokenType.ASTERISK) {
                     this.parseAsterisk(select);
                 } else {
@@ -617,7 +618,14 @@ public final class SQLParser {
         this.expect(TokenType.NUMERIC);
 
         final String fieldAlias = getFieldAlias(fieldName);
-        select.addField(new NumericNode(connection, fieldName, fieldAlias));
+        select.addField(new ValueNode(connection, fieldName, fieldAlias, this.token.getPosition(), Types.NUMERIC));
+    }
+
+    private void parseNull(final SelectNode select) throws SQLException {
+        this.expect(TokenType.NULL);
+
+        final String fieldAlias = getFieldAlias("null");
+        select.addField(new ValueNode(connection, null, fieldAlias, this.token.getPosition(), Types.NULL));
     }
 
     /**

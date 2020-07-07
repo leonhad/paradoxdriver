@@ -18,10 +18,15 @@ import java.sql.*;
 /**
  * Stores the SQL type names.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public enum TypeName {
+
+    /**
+     * Generic null values.
+     */
+    NULL(Types.NULL, "NULL", null),
 
     /**
      * The binary type.

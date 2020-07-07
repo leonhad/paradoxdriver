@@ -59,17 +59,15 @@ public class ParadoxException extends SQLDataException {
 
         INVALID_POSITION_SPECIFIED("010", "Invalid position specified"),
 
-        EMPTY_COLUMN_NAME("010", "Empty column name"),
+        INVALID_CATALOG_NAME("011", "Invalid catalog name"),
 
-        INVALID_CATALOG_NAME("010", "Invalid catalog name"),
+        SCHEMA_NOT_FOUND("012", "Schema not found"),
 
-        SCHEMA_NOT_FOUND("011", "Schema not found"),
+        INVALID_TRANSACTION_LEVEL("013", "Invalid transaction level"),
 
-        INVALID_TRANSACTION_LEVEL("012", "Invalid transaction level"),
+        INVALID_TABLE("014", "Invalid table name: %s"),
 
-        INVALID_TABLE("013", "Invalid table name: %s"),
-
-        TABLE_AMBIGUOUS_DEFINED("014", "Table %s ambiguous defined");
+        TABLE_AMBIGUOUS_DEFINED("015", "Table %s ambiguous defined");
 
         private final String code;
 

@@ -71,14 +71,9 @@ public class Planner {
      */
     private static void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
         for (final SQLNode field : statement.getFields()) {
-            final String name = field.getName();
             if (field instanceof AsteriskNode) {
                 parseAsterisk(plan, (AsteriskNode) field);
             } else {
-                if ((name == null) || name.trim().isEmpty()) {
-                    throw new ParadoxException(ParadoxException.Error.EMPTY_COLUMN_NAME);
-                }
-
                 plan.addColumn((FieldNode) field);
             }
         }

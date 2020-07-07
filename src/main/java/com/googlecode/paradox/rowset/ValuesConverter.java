@@ -10,9 +10,12 @@
  */
 package com.googlecode.paradox.rowset;
 
+import com.googlecode.paradox.exceptions.ParadoxDataException;
+
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -50,8 +53,12 @@ public final class ValuesConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T convert(final Object value, Class<T> type) {
-        return (T) CLASS_MAPPING.get(type).apply(value);
+    public static <T> T convert(final Object value, Class<T> type) throws SQLException {
+        try {
+            return (T) CLASS_MAPPING.get(type).apply(value);
+        } catch (final IllegalArgumentException e) {
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, String.valueOf(value), e);
+        }
     }
 
     public static Boolean getBoolean(final Object value) {

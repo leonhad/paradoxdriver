@@ -18,6 +18,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.planner.nodes.value.ValueNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
@@ -114,16 +115,18 @@ public final class SelectPlan implements Plan {
      * @throws SQLException search column exception.
      */
     public void addColumn(final FieldNode node) throws SQLException {
-        List<ParadoxField> fields = Collections.emptyList();
+        if (node instanceof ValueNode) {
+            this.columns.add(new Column((ValueNode) node));
+            return;
+        }
+
+        List<ParadoxField> fields = new ArrayList<>();
 
         for (final PlanTableNode table : this.tables) {
             if (node.getTableName() == null || table.isThis(node.getTableName())) {
-                fields = Arrays.stream(table.getTable().getFields())
+                fields.addAll(Arrays.stream(table.getTable().getFields())
                         .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                        .collect(Collectors.toList());
-                if (!fields.isEmpty()) {
-                    break;
-                }
+                        .collect(Collectors.toList()));
             }
         }
 
@@ -368,6 +371,7 @@ public final class SelectPlan implements Plan {
 
     private int[] mapColumnIndexes(final List<Column> loadedColumns) {
         final int[] mapColumns = new int[this.columns.size()];
+        Arrays.fill(mapColumns, -1);
         for (int i = 0; i < this.columns.size(); i++) {
             final Column column = this.columns.get(i);
             for (int loop = 0; loop < loadedColumns.size(); loop++) {
@@ -393,7 +397,13 @@ public final class SelectPlan implements Plan {
             final Object[] finalRow = new Object[mapColumns.length];
             for (int i = 0; i < mapColumns.length; i++) {
                 int index = mapColumns[i];
-                finalRow[i] = tableRow[index];
+                if (index != -1) {
+                    // A field mapped value.
+                    finalRow[i] = tableRow[index];
+                } else {
+                    // A fixed value.
+                    finalRow[i] = this.columns.get(i).getValue();
+                }
             }
 
             this.values.add(finalRow);

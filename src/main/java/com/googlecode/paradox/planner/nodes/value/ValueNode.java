@@ -16,14 +16,23 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.IFieldValue;
 
 /**
- * Stores a null value.
+ * Stores a node value.
  *
  * @version 1.2
  * @since 1.6.0
  */
-public class NullNode extends FieldNode implements IFieldValue {
+public class ValueNode extends FieldNode implements IFieldValue {
 
-    public NullNode(final ParadoxConnection connection, final ScannerPosition position) {
-        super(connection, null, null, null, position);
+    private final int sqlType;
+
+    public ValueNode(final ParadoxConnection connection, final String name, final String alias,
+                     final ScannerPosition position, final int sqlType) {
+        super(connection, null, name, alias, position);
+
+        this.sqlType = sqlType;
+    }
+
+    public int getSqlType() {
+        return sqlType;
     }
 }

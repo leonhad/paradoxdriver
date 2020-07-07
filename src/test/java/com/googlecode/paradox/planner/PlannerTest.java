@@ -13,15 +13,12 @@ package com.googlecode.paradox.planner;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.SQLParser;
-import com.googlecode.paradox.parser.nodes.IdentifierNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import org.junit.*;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,18 +118,6 @@ public class PlannerTest {
     }
 
     /**
-     * Test for empty column name.
-     *
-     * @throws SQLException if there is no errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testEmptyColumnName() throws SQLException {
-        final SelectNode selectNode = new SelectNode(conn);
-        selectNode.addField(new IdentifierNode(conn, ""));
-        Planner.create(conn, selectNode);
-    }
-
-    /**
      * Test for a invalid node.
      *
      * @throws SQLException if there is no errors.
@@ -152,18 +137,6 @@ public class PlannerTest {
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser(conn, "select * from invalid");
         Planner.create(conn, parser.parse().get(0));
-    }
-
-    /**
-     * Test for null column name.
-     *
-     * @throws SQLException if there is no errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testNullColumnName() throws SQLException {
-        final SelectNode selectNode = new SelectNode(conn);
-        selectNode.addField(new IdentifierNode(conn, null));
-        Planner.create(conn, selectNode);
     }
 
     /**
@@ -250,5 +223,44 @@ public class PlannerTest {
         Assert.assertEquals("Field expected", "AC", plan.getColumns().get(0).getField().getName());
         Assert.assertEquals("Field expected", "State", plan.getColumns().get(1).getField().getName());
         Assert.assertEquals("Field expected", "Cities", plan.getColumns().get(2).getField().getName());
+    }
+
+    /**
+     * Test for SELECT with values in field list.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testValuesInFields() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select 1 as \"1\", 'value' as b, null from areacodes");
+        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
+        plan.execute(conn, 1);
+        Assert.assertEquals("Invalid result set", 3, plan.getColumns().size());
+        Assert.assertEquals("Field expected", "1", plan.getColumns().get(0).getValue());
+        Assert.assertEquals("Field expected", "b", plan.getColumns().get(1).getName());
+        Assert.assertEquals("Field expected", "value", plan.getColumns().get(1).getValue());
+        Assert.assertNull("Field expected", plan.getColumns().get(2).getValue());
+    }
+
+    /**
+     * Test for SELECT with values in ResultSet.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testValuesInResultSet() throws SQLException {
+        try (Statement stmt = this.conn.createStatement()) {
+            stmt.setMaxRows(1);
+            try (ResultSet rs = stmt.executeQuery("select 1 as \"1\", 'value' as b, null from areacodes")) {
+
+                Assert.assertTrue("Invalid result set", rs.next());
+
+                Assert.assertEquals("Invalid ResultSet value", 1, rs.getInt("1"));
+                Assert.assertEquals("Invalid ResultSet value", "value", rs.getString("b"));
+                Assert.assertNull("Invalid ResultSet value", rs.getString("null"));
+
+                Assert.assertFalse("Invalid result set", rs.next());
+            }
+        }
     }
 }
