@@ -22,7 +22,7 @@ import java.util.function.Function;
 /**
  * Custom values conversion utility class.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public final class ValuesConverter {

@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.rowset;
 
+import com.googlecode.paradox.exceptions.ParadoxException;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,7 +22,7 @@ import java.util.Arrays;
 /**
  * BLOB for paradox file (MB).
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.5.0
  */
 public final class ParadoxBlob implements Blob {
@@ -101,7 +103,7 @@ public final class ParadoxBlob implements Blob {
     @Override
     public void truncate(final long length) throws SQLException {
         if (length > this.value.length) {
-            throw new SQLException("Length more than what can be truncated");
+            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         }
         if (length == 0) {
             this.value = new byte[0];

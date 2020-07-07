@@ -22,6 +22,10 @@ public class ParadoxException extends SQLDataException {
         super(error.description, BASE_CODE + error.code);
     }
 
+    public ParadoxException(final Error error, final String parameter) {
+        super(String.format(error.description, parameter), BASE_CODE + error.code);
+    }
+
     public ParadoxException(final Error error, final String parameter, final ScannerPosition position) {
         super(message(String.format(error.description, parameter), position), BASE_CODE + error.code);
     }
@@ -47,7 +51,25 @@ public class ParadoxException extends SQLDataException {
 
         COLUMN_AMBIGUOUS_DEFINED("006", "Column %s ambiguous defined"),
 
-        INVALID_COLUMN_INDEX("007", "Invalid column index: %s");
+        INVALID_COLUMN_INDEX("007", "Invalid column index: %s"),
+
+        INVALID_FETCH_DIRECTION("008", "Unsupported fetch direction %s"),
+
+        INVALID_LENGTH_SPECIFIED("009", "Invalid length specified"),
+
+        INVALID_POSITION_SPECIFIED("010", "Invalid position specified"),
+
+        EMPTY_COLUMN_NAME("010", "Empty column name"),
+
+        INVALID_CATALOG_NAME("010", "Invalid catalog name"),
+
+        SCHEMA_NOT_FOUND("011", "Schema not found"),
+
+        INVALID_TRANSACTION_LEVEL("012", "Invalid transaction level"),
+
+        INVALID_TABLE("013", "Invalid table name: %s"),
+
+        TABLE_AMBIGUOUS_DEFINED("014", "Table %s ambiguous defined");
 
         private final String code;
 

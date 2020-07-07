@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Data navigation facility.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class DataNavigation implements AutoCloseable {
@@ -65,7 +65,8 @@ public class DataNavigation implements AutoCloseable {
         verifyStatus();
 
         if (fetchDirection != ResultSet.FETCH_FORWARD && fetchDirection != ResultSet.FETCH_REVERSE) {
-            throw new SQLException("Unsupported fetch direction: " + fetchDirection);
+            throw new ParadoxException(ParadoxException.Error.INVALID_FETCH_DIRECTION,
+                    Integer.toString(fetchDirection));
         }
 
         this.fetchDirection = fetchDirection;

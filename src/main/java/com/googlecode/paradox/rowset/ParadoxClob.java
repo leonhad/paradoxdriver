@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.rowset;
 
+import com.googlecode.paradox.exceptions.ParadoxException;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Clob;
@@ -19,7 +21,7 @@ import java.util.Objects;
 /**
  * CLOB for paradox file (MB).
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.2
  */
 public final class ParadoxClob implements Clob {
@@ -72,11 +74,11 @@ public final class ParadoxClob implements Clob {
     @Override
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
         if ((pos < 1) || (pos > this.value.length())) {
-            throw new SQLException("Invalid position in Clob object set");
+            throw new ParadoxException(ParadoxException.Error.INVALID_POSITION_SPECIFIED);
         } else if (((pos - 1) + length) > this.value.length()) {
-            throw new SQLException("Invalid position and substring length");
+            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         } else if (length <= 0) {
-            throw new SQLException("Invalid length specified");
+            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         }
 
         return new StringReader(this.value.substring((int) pos - 1, (int) length));
@@ -88,11 +90,11 @@ public final class ParadoxClob implements Clob {
     @Override
     public String getSubString(final long pos, final int length) throws SQLException {
         if ((pos < 1) || (pos > this.value.length())) {
-            throw new SQLException("Invalid position '" + pos + "' in Clob object set");
+            throw new ParadoxException(ParadoxException.Error.INVALID_POSITION_SPECIFIED);
         } else if (((pos - 1) + length) > this.value.length()) {
-            throw new SQLException("Invalid position and substring length");
+            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         } else if (length <= 0) {
-            throw new SQLException("Invalid length specified");
+            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         }
 
         return this.value.substring((int) pos - 1, length);
@@ -160,7 +162,7 @@ public final class ParadoxClob implements Clob {
     @Override
     public void truncate(final long length) throws SQLException {
         if (length > this.value.length()) {
-            throw new SQLException("Length more than what can be truncated");
+            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         }
         if (length == 0) {
             this.value = "";

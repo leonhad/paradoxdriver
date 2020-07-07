@@ -598,7 +598,6 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
         return ValuesConverter.convert(getObject(columnIndex), type);
     }
@@ -623,13 +622,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getObject(final String columnLabel, final Class<T> type) throws SQLException {
-        try {
-            return getObject(this.findColumn(columnLabel), type);
-        } catch (final IllegalArgumentException e) {
-            throw new SQLException("Error in value conversion to " + type, e);
-        }
+        return getObject(this.findColumn(columnLabel), type);
     }
 
     /**
@@ -637,7 +631,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Object getObject(final String columnLabel, final Map<String, Class<?>> map) throws SQLException {
-        return this.getObject(columnLabel, map);
+        return this.getObject(this.findColumn(columnLabel), map);
     }
 
     /**
@@ -945,7 +939,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean next() throws SQLException {
+    public boolean next() {
         return dataNavigation.next();
     }
 
@@ -953,7 +947,7 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public boolean previous() throws SQLException {
+    public boolean previous() {
         return dataNavigation.previous();
     }
 

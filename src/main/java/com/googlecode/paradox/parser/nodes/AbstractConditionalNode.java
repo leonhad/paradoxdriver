@@ -11,6 +11,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.IFieldValue;
@@ -26,7 +27,7 @@ import java.util.Set;
 /**
  * Stores a abstract comparable node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
@@ -82,14 +83,14 @@ public abstract class AbstractConditionalNode extends SQLNode {
 
             if (column.getField().getName().equalsIgnoreCase(field.getName())) {
                 if (index != -1) {
-                    throw new SQLException("Column " + field + " ambiguous defined.");
+                    throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, field.toString());
                 }
                 index = i;
             }
         }
 
         if (index == -1) {
-            throw new SQLException("Column " + field + " not found.");
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, field.toString());
         }
 
         field.setIndex(index);

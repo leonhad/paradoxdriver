@@ -12,6 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.filefilters.PrimaryKeyFilter;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxPK;
 import com.googlecode.paradox.utils.Constants;
@@ -27,7 +28,7 @@ import java.sql.SQLException;
 /**
  * Reads primary key data fields.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class PrimaryKeyData extends ParadoxData {
@@ -57,7 +58,7 @@ public final class PrimaryKeyData extends ParadoxData {
             try {
                 return PrimaryKeyData.loadPKHeader(fileList[0], connection);
             } catch (final IOException ex) {
-                throw new SQLException("Error loading Paradox tables.", ex);
+                throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, ex);
             }
         }
         return null;

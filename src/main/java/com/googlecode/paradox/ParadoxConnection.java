@@ -12,6 +12,7 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.utils.Utils;
@@ -288,7 +289,7 @@ public final class ParadoxConnection implements Connection {
         final File parent = this.catalog.getParentFile();
         final File currentCatalog = new File(parent, catalogName);
         if (!currentCatalog.isDirectory()) {
-            throw new SQLException("Invalid catalog name.");
+            throw new ParadoxException(ParadoxException.Error.INVALID_CATALOG_NAME);
         }
         return currentCatalog;
     }
@@ -382,7 +383,7 @@ public final class ParadoxConnection implements Connection {
     public void setSchema(final String schema) throws SQLException {
         final File file = new File(this.catalog, schema);
         if (!file.isDirectory()) {
-            throw new SQLException("Schema not found.");
+            throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
         }
         this.schema = file;
     }
@@ -401,7 +402,7 @@ public final class ParadoxConnection implements Connection {
     @Override
     public void setTransactionIsolation(final int level) throws SQLException {
         if (Connection.TRANSACTION_NONE != level) {
-            throw new SQLException("Invalid level.");
+            throw new ParadoxException(ParadoxException.Error.INVALID_TRANSACTION_LEVEL);
         }
         this.transactionIsolation = level;
     }
@@ -492,7 +493,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public CallableStatement prepareCall(final String sql) throws SQLException {
-        throw new SQLException("No Callable Statement");
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**

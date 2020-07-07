@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.metadata.ParadoxTable;
@@ -74,8 +75,8 @@ public class Planner {
             if (field instanceof AsteriskNode) {
                 parseAsterisk(plan, (AsteriskNode) field);
             } else {
-                if ((name == null) || name.isEmpty()) {
-                    throw new SQLException("Column name is empty.");
+                if ((name == null) || name.trim().isEmpty()) {
+                    throw new ParadoxException(ParadoxException.Error.EMPTY_COLUMN_NAME);
                 }
 
                 plan.addColumn((FieldNode) field);
@@ -89,9 +90,9 @@ public class Planner {
                     .filter(t -> t.isThis(field.getTableName()))
                     .map(PlanTableNode::getTable).collect(Collectors.toList());
             if (tables.isEmpty()) {
-                throw new SQLException("Table " + field.getTableName() + " not found.");
+                throw new ParadoxException(ParadoxException.Error.INVALID_TABLE, field.getTableName());
             } else if (tables.size() > 1) {
-                throw new SQLException("Table " + field.getTableName() + " is ambiguous.");
+                throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getTableName());
             }
 
             plan.addColumnFromTable(tables.get(0));

@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 /**
  * Read view files (structure).
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ViewData {
@@ -149,7 +149,8 @@ public final class ViewData {
         if (!tables.isEmpty()) {
             return tables.get(0);
         }
-        throw new SQLException("Table " + tableName + " not found");
+
+        throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND);
     }
 
     /**
@@ -374,7 +375,7 @@ public final class ViewData {
             String name;
             if (i.length <= 1) {
                 if (lastTable == null) {
-                    throw new SQLException("Invalid table.");
+                    throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND);
                 }
                 continue;
             } else {

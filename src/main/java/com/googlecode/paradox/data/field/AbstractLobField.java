@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxFieldType;
@@ -26,11 +27,14 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
 
+    /**
+     * Lob offset size.
+     */
     public static final int HEAD_SIZE = 3;
     /**
      * Free block value.
@@ -44,8 +48,14 @@ public abstract class AbstractLobField implements FieldParser {
      * Sub block value.
      */
     private static final int SUB_BLOCK = 3;
-    public static final int GRAPH_HEADER_SIZE = 17;
+    /**
+     * General log header size.
+     */
     public static final int BLOB_HEADER_SIZE = 9;
+    /**
+     * The graph specific header size.
+     */
+    private static final int GRAPH_HEADER_SIZE = 17;
 
     protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value);
 
@@ -97,7 +107,7 @@ public abstract class AbstractLobField implements FieldParser {
             final int index = (int) beginIndex & 0xFF;
             return processBlobByBlockType(table, headerSize, size, channel, offset, type, index);
         } catch (final IOException ex) {
-            throw new SQLException(ex);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, ex);
         }
     }
 
@@ -105,17 +115,17 @@ public abstract class AbstractLobField implements FieldParser {
                                           long offset, byte type, int index) throws SQLException, IOException {
         switch (type) {
             case 0x0:
-                throw new SQLException("Trying to read a head lob block.");
+                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_READ_HEAD_BLOCK);
             case 0x1:
-                throw new SQLException("Trying to read a free lob block.");
+                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_READ_FREE_BLOCK);
             case FREE_BLOCK:
-                throw new SQLException("Invalid MB header.");
+                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_HEADER);
             case SINGLE_BLOCK:
                 return parseSingleBlock(table, index, size, headerSize, channel);
             case SUB_BLOCK:
                 return parseSubBlock(table, index, offset, size, headerSize, channel);
             default:
-                throw new SQLException("Invalid BLOB header type " + type);
+                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_HEADER_TYPE);
         }
     }
 
@@ -139,8 +149,7 @@ public abstract class AbstractLobField implements FieldParser {
         final int modulo = head.get() & 0xFF;
 
         if (size != (dataLength - 1) * 0x10 + modulo) {
-            throw new SQLException(String.format("Blob does not have expected size (%d != %d).", size,
-                    (dataLength - 1) * 0x10 + modulo));
+            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_DECLARED_SIZE);
         }
 
         final ByteBuffer blocks = ByteBuffer.allocate(size);
@@ -154,7 +163,7 @@ public abstract class AbstractLobField implements FieldParser {
     private Object parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, FileChannel channel)
             throws SQLException, IOException {
         if (index != 0xFF) {
-            throw new SQLException("Offset points to a single blob block but index field is not 0xFF.");
+            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_SINGLE_BLOCK_INVALID_INDEX);
         }
         // Read the remaining 6 bytes from the header.
         final ByteBuffer head = ByteBuffer.allocate(headerSize - HEAD_SIZE);
@@ -164,8 +173,7 @@ public abstract class AbstractLobField implements FieldParser {
 
         int internalSize = head.getInt();
         if (size != internalSize) {
-            throw new SQLException(String.format("Blob does not have expected size (%d != %d).", size,
-                    internalSize));
+            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_DECLARED_SIZE);
         }
 
         final ByteBuffer blocks = ByteBuffer.allocate(size);

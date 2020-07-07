@@ -12,6 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.filefilters.SecondaryIndexFilter;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * Reads index data files.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public final class IndexData extends ParadoxData {
@@ -62,8 +63,8 @@ public final class IndexData extends ParadoxData {
                 try {
                     final ParadoxIndex index = IndexData.loadIndexHeader(file, connection);
                     indexes.add(index);
-                } catch (final IOException ex) {
-                    throw new SQLException("Error loading Paradox index.", ex);
+                } catch (final IOException e) {
+                    throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
                 }
             }
         }
@@ -190,6 +191,7 @@ public final class IndexData extends ParadoxData {
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             fieldsOrder[loop] = buffer.getShort();
         }
+
         index.setFieldsOrder(fieldsOrder);
     }
 
