@@ -196,7 +196,7 @@ public final class ViewData {
                 view.setFields(ViewData.parseFields(reader, line, currentSchema, connection));
             }
         } catch (final IOException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
         }
 
         return view;

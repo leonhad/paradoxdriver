@@ -218,14 +218,12 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
     @Deprecated
     @Override
     public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
     public void setBinaryStream(int parameterIndex, InputStream x, int length) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
@@ -280,8 +278,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     public void setArray(int parameterIndex, Array x) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
@@ -296,26 +293,22 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     public void setDate(int parameterIndex, Date x, Calendar cal) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
     public void setTime(int parameterIndex, Time x, Calendar cal) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
     public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
     public void setNull(int parameterIndex, int sqlType, String typeName) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = null;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
@@ -391,8 +384,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
-        checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
+        setBinaryStream(parameterIndex, x);
     }
 
     @Override

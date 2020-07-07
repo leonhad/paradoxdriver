@@ -140,7 +140,7 @@ public final class TableData extends ParadoxData {
 
             return ret;
         } catch (final IOException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
         }
     }
 
@@ -233,7 +233,7 @@ public final class TableData extends ParadoxData {
             TableData.parseTableFieldsName(table, buffer, fields);
             TableData.parseTableFieldsOrder(table, buffer);
         } catch (final IOException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
         }
         return table;
     }

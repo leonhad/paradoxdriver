@@ -1053,7 +1053,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) throws ParadoxNotSupportedException {
+    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length)
+            throws ParadoxNotSupportedException {
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
@@ -1155,7 +1156,8 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) throws ParadoxNotSupportedException {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length)
+            throws ParadoxNotSupportedException {
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 

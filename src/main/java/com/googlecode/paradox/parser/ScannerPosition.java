@@ -31,7 +31,7 @@ public class ScannerPosition {
     /**
      * Last column value.
      */
-    private int lastColumn = 0;
+    private int lastColumn;
 
     /**
      * Creates a new instance.

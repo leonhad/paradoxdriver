@@ -836,8 +836,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) {
-        if (((catalog != null) && !Expressions.accept(conn, this.conn.getCatalog(), catalog, false))
-                || ((schemaPattern != null) && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern, false))) {
+        if (((catalog != null)
+                && !Expressions.accept(conn, this.conn.getCatalog(), catalog, false))
+                || ((schemaPattern != null)
+                && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern, false))) {
             return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
         }
         return this.getSchemas();

@@ -20,6 +20,10 @@ public class ParadoxDataException extends SQLDataException {
         super(error.description, BASE_CODE + error.code);
     }
 
+    public ParadoxDataException(final Error error, final Exception original) {
+        super(error.description, BASE_CODE + error.code, original);
+    }
+
     public enum Error {
         BLOB_FILE_NOT_FOUND("001", "Blob file not found for table"),
 

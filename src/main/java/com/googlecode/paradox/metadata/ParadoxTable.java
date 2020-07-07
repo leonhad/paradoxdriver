@@ -51,7 +51,7 @@ public final class ParadoxTable extends ParadoxDataFile {
         try {
             return new FileInputStream(blobFile);
         } catch (final FileNotFoundException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_OPENING_BLOB_FILE);
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_OPENING_BLOB_FILE, e);
         }
     }
 
