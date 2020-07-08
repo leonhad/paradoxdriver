@@ -3,8 +3,6 @@
 * Soon
 
 ** Rewrite the SQL parser to be accurate.
-** List of SQL error codes.
-** Line and column names in SQL errors.
 ** Better SQL Warnings.
 ** Wiki documentation.
 

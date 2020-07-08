@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-07-07 Fixed SQL State code and SQL Exception types. Added a possibility to use fixed values in SELECT clause.
 2020-07-05 Added comment support.
 2020-07-03 Added ResultSet fetch direction support. Added a better type conversion.
 2020-07-02 Added left, right and cross join support.
