@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -47,7 +47,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private final List<Object[]> values = new ArrayList<>(100);
+    private final List<Object[]> values = new ArrayList<>(50);
 
     /**
      * The conditions to filter values
@@ -55,12 +55,19 @@ public final class SelectPlan implements Plan {
     private final AbstractConditionalNode condition;
 
     /**
+     * If this result needs to be dinstict.
+     */
+    private final boolean distinct;
+
+    /**
      * Creates a SELECT plan with conditions.
      *
-     * @param condition the conditions to filter results
+     * @param condition the conditions to filter results.
+     * @param distinct  if this SELECT uses DISTINCT.
      */
-    public SelectPlan(final AbstractConditionalNode condition) {
+    public SelectPlan(final AbstractConditionalNode condition, final boolean distinct) {
         this.condition = condition;
+        this.distinct = distinct;
     }
 
     private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
@@ -406,13 +413,33 @@ public final class SelectPlan implements Plan {
                 }
             }
 
-            this.values.add(finalRow);
+            if (!distinct || !isRowRepeated(finalRow)) {
+                this.values.add(finalRow);
+            }
 
             if (maxRows != 0 && values.size() == maxRows) {
                 // Stop loading on max rows limit.
                 return;
             }
         }
+    }
+
+    /**
+     * Validate if this row is already in values list.
+     *
+     * @param row the row to check.
+     * @return <code>true</code> if row is already in values list.
+     */
+    private boolean isRowRepeated(final Object[] row) {
+        boolean ret = false;
+        for (final Object[] currentRow : this.values) {
+            if (Arrays.deepEquals(currentRow, row)) {
+                ret = true;
+                break;
+            }
+        }
+
+        return ret;
     }
 
     /**

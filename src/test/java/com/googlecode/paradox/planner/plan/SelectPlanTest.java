@@ -19,12 +19,14 @@ import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import org.junit.*;
 
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class SelectPlanTest {
@@ -79,7 +81,7 @@ public class SelectPlanTest {
      */
     @Test
     public void testColumnWithTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null);
+        final SelectPlan plan = new SelectPlan(null, false);
 
         TableNode table = new TableNode(conn, null, AREACODES, "test");
 
@@ -98,7 +100,7 @@ public class SelectPlanTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null);
+        final SelectPlan plan = new SelectPlan(null, false);
         plan.addColumn(new FieldNode(conn, null, "invalid", null, null));
     }
 
@@ -109,7 +111,7 @@ public class SelectPlanTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null);
+        final SelectPlan plan = new SelectPlan(null, false);
 
         TableNode table = new TableNode(conn, null, AREACODES, "test");
 
@@ -118,5 +120,22 @@ public class SelectPlanTest {
         plan.addTable(tableNode);
 
         plan.addColumn(new FieldNode(conn, "test2", "ac", null, null));
+    }
+
+    /**
+     * Test DISTINCT.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testDistinct() throws Exception {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select distinct REQTYPE from server");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "G", rs.getString("REQTYPE"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "P", rs.getString("REQTYPE"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
     }
 }

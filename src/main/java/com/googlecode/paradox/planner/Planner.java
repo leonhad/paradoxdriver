@@ -119,7 +119,7 @@ public class Planner {
      */
     private static Plan createSelect(final ParadoxConnection connection, final SelectNode statement)
             throws SQLException {
-        final SelectPlan plan = new SelectPlan(statement.getCondition());
+        final SelectPlan plan = new SelectPlan(statement.getCondition(), statement.isDistinct());
 
         // Load the table metadata.
         parseTableMetaData(connection, statement, plan);

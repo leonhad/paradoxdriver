@@ -244,7 +244,7 @@ public final class SelectNode extends StatementNode {
      *
      * @param identifier the group by identifier to add.
      */
-    void addGroupBy(final IdentifierNode identifier) {
+    public void addGroupBy(final IdentifierNode identifier) {
         this.groups.add(identifier);
     }
 
@@ -253,7 +253,7 @@ public final class SelectNode extends StatementNode {
      *
      * @param identifier the order by identifier to add.
      */
-    void addOrderBy(final IdentifierNode identifier) {
+    public void addOrderBy(final IdentifierNode identifier) {
         this.order.add(identifier);
     }
 
@@ -262,7 +262,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return the group list.
      */
-    List<IdentifierNode> getGroups() {
+    public List<IdentifierNode> getGroups() {
         return Collections.unmodifiableList(this.groups);
     }
 
@@ -271,7 +271,7 @@ public final class SelectNode extends StatementNode {
      *
      * @return true if this select has a distinct token.
      */
-    boolean isDistinct() {
+    public boolean isDistinct() {
         return this.distinct;
     }
 }
