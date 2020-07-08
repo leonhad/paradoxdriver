@@ -27,7 +27,7 @@ public class FieldNode extends SQLNode {
     /**
      * This field table name.
      */
-    private final String tableName;
+    protected final String tableName;
 
     /**
      * Field index used in filter values.

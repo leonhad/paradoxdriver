@@ -8,12 +8,12 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.nodes.value;
+package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
-import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.IFieldValue;
+
+import java.util.Objects;
 
 /**
  * Stores a node value.
@@ -21,7 +21,7 @@ import com.googlecode.paradox.planner.nodes.IFieldValue;
  * @version 1.2
  * @since 1.6.0
  */
-public class ValueNode extends FieldNode implements IFieldValue {
+public class ValueNode extends FieldNode {
 
     private final int sqlType;
 
@@ -34,5 +34,25 @@ public class ValueNode extends FieldNode implements IFieldValue {
 
     public int getSqlType() {
         return sqlType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ValueNode fieldNode = (ValueNode) o;
+        return Objects.equals(tableName, fieldNode.tableName) &&
+                Objects.equals(alias, fieldNode.getAlias()) &&
+                Objects.equals(name, fieldNode.getName()) &&
+                Objects.equals(sqlType, fieldNode.sqlType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tableName, alias, name, sqlType);
     }
 }

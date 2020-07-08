@@ -13,7 +13,7 @@ package com.googlecode.paradox.results;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.planner.nodes.value.ValueNode;
+import com.googlecode.paradox.planner.nodes.ValueNode;
 
 import java.sql.SQLException;
 import java.sql.Types;

@@ -14,12 +14,11 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
-import com.googlecode.paradox.parser.nodes.values.AsteriskNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
-import com.googlecode.paradox.planner.nodes.value.ValueNode;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -302,29 +301,35 @@ public final class SQLParser {
                         this.token.getPosition());
             }
 
-            if (this.token.getType() != TokenType.FROM) {
-                // Field Name
-                if (!firstField) {
-                    this.expect(TokenType.COMMA);
-                }
-                final String fieldName = this.token.getValue();
-
-                if (this.token.getType() == TokenType.CHARACTER) {
-                    this.parseCharacter(select, fieldName);
-                } else if (this.token.getType() == TokenType.NUMERIC) {
-                    this.parseNumeric(select, fieldName);
-                } else if (this.token.getType() == TokenType.NULL) {
-                    this.parseNull(select);
-                } else if (this.token.getType() == TokenType.ASTERISK) {
-                    this.parseAsterisk(select);
-                } else {
-                    this.parseIdentifier(select, fieldName);
-                }
-
-                firstField = false;
-            } else {
+            if (this.token.getType() == TokenType.FROM) {
                 break;
             }
+
+            // Field Name
+            if (!firstField) {
+                this.expect(TokenType.COMMA);
+            }
+            final String fieldName = this.token.getValue();
+
+            switch (this.token.getType()) {
+                case CHARACTER:
+                    this.parseCharacter(select, fieldName);
+                    break;
+                case NUMERIC:
+                    this.parseNumeric(select, fieldName);
+                    break;
+                case NULL:
+                    this.parseNull(select);
+                    break;
+                case ASTERISK:
+                    this.parseAsterisk(select);
+                    break;
+                default:
+                    this.parseIdentifier(select, fieldName);
+                    break;
+            }
+
+            firstField = false;
         }
     }
 
@@ -341,9 +346,7 @@ public final class SQLParser {
         if (token != null
                 && ((this.token.getType() == TokenType.IDENTIFIER) || (this.token.getType() == TokenType.AS))) {
             // Field alias (with AS identifier)
-            if (this.token.getType() == TokenType.AS) {
-                this.expect(TokenType.AS);
-            }
+            testForTokenType(TokenType.AS);
 
             // Field alias (without AS identifier)
             tableAlias = this.token.getValue();
@@ -432,29 +435,31 @@ public final class SQLParser {
 
             // Inner, right or cross join.
             JoinType joinType = JoinType.INNER;
-            if (this.token.getType() == TokenType.FULL) {
-                joinType = JoinType.FULL;
-                this.expect(TokenType.FULL);
-                if (this.token.getType() == TokenType.OUTER) {
-                    this.expect(TokenType.OUTER);
-                }
-            } else if (this.token.getType() == TokenType.LEFT) {
-                joinType = JoinType.LEFT;
-                this.expect(TokenType.LEFT);
-                if (this.token.getType() == TokenType.OUTER) {
-                    this.expect(TokenType.OUTER);
-                }
-            } else if (this.token.getType() == TokenType.RIGHT) {
-                joinType = JoinType.RIGHT;
-                this.expect(TokenType.RIGHT);
-                if (this.token.getType() == TokenType.OUTER) {
-                    this.expect(TokenType.OUTER);
-                }
-            } else if (this.token.getType() == TokenType.CROSS) {
-                joinType = JoinType.CROSS;
-                this.expect(TokenType.CROSS);
-            } else if (this.token.getType() == TokenType.INNER) {
-                this.expect(TokenType.INNER);
+            switch (this.token.getType()) {
+                case FULL:
+                    joinType = JoinType.FULL;
+                    this.expect(TokenType.FULL);
+                    testForTokenType(TokenType.OUTER);
+                    break;
+                case LEFT:
+                    joinType = JoinType.LEFT;
+                    this.expect(TokenType.LEFT);
+                    testForTokenType(TokenType.OUTER);
+                    break;
+                case RIGHT:
+                    joinType = JoinType.RIGHT;
+                    this.expect(TokenType.RIGHT);
+                    testForTokenType(TokenType.OUTER);
+                    break;
+                case CROSS:
+                    joinType = JoinType.CROSS;
+                    this.expect(TokenType.CROSS);
+                    break;
+                case INNER:
+                    this.expect(TokenType.INNER);
+                    break;
+                default:
+                    // Nothing to do here.
             }
 
             this.expect(TokenType.JOIN);
@@ -480,6 +485,12 @@ public final class SQLParser {
                 joinTable.setCondition(this.parseCondition());
             }
             select.addTable(joinTable);
+        }
+    }
+
+    private void testForTokenType(TokenType outer) throws SQLException {
+        if (this.token.getType() == outer) {
+            this.expect(outer);
         }
     }
 

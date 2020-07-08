@@ -14,8 +14,8 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.IFieldValue;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
@@ -63,7 +63,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
             throws SQLException {
 
         // Do not set indexes in value nodes.
-        if (field == null || field instanceof IFieldValue) {
+        if (field == null || field instanceof ValueNode) {
             return;
         }
 

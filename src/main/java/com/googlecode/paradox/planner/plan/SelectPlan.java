@@ -18,7 +18,7 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
-import com.googlecode.paradox.planner.nodes.value.ValueNode;
+import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesComparator;
 

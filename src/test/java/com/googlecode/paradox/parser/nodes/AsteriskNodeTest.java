@@ -9,7 +9,7 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.parser.nodes.values;
+package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
