@@ -102,11 +102,16 @@ public class Planner {
      */
     public static Plan create(final ParadoxConnection connection, final StatementNode statement)
             throws SQLException {
+        Plan ret;
         if (statement instanceof SelectNode) {
-            return createSelect(connection, (SelectNode) statement);
+            ret = createSelect(connection, (SelectNode) statement);
         } else {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
+
+        // Optimize the plan.
+        ret.compile();
+        return ret;
     }
 
     /**
@@ -119,7 +124,7 @@ public class Planner {
      */
     private static Plan createSelect(final ParadoxConnection connection, final SelectNode statement)
             throws SQLException {
-        final SelectPlan plan = new SelectPlan(statement.getCondition(), statement.isDistinct());
+        final SelectPlan plan = new SelectPlan(connection, statement.getCondition(), statement.isDistinct());
 
         // Load the table metadata.
         parseTableMetaData(connection, statement, plan);

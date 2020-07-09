@@ -15,10 +15,15 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
+import com.googlecode.paradox.parser.nodes.JoinType;
+import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
@@ -50,24 +55,137 @@ public final class SelectPlan implements Plan {
     private final List<Object[]> values = new ArrayList<>(50);
 
     /**
-     * The conditions to filter values
+     * The Paradox connection.
      */
-    private final AbstractConditionalNode condition;
+    private final ParadoxConnection connection;
 
     /**
      * If this result needs to be dinstict.
      */
     private final boolean distinct;
+    /**
+     * The conditions to filter values
+     */
+    private AbstractConditionalNode condition;
 
     /**
      * Creates a SELECT plan with conditions.
      *
-     * @param condition the conditions to filter results.
-     * @param distinct  if this SELECT uses DISTINCT.
+     * @param connection the Paradox connection.
+     * @param condition  the conditions to filter results.
+     * @param distinct   if this SELECT uses DISTINCT.
      */
-    public SelectPlan(final AbstractConditionalNode condition, final boolean distinct) {
+    public SelectPlan(final ParadoxConnection connection, final AbstractConditionalNode condition,
+                      final boolean distinct) {
+        this.connection = connection;
         this.condition = condition;
         this.distinct = distinct;
+    }
+
+    /**
+     * Optimize the joins clause.
+     */
+    @Override
+    public void compile() {
+        if (optimizeConditions(condition)) {
+            condition = null;
+        }
+    }
+
+    /**
+     * Process the node and change it to it's table (if it is possible).
+     *
+     * @param node the node to process.
+     * @return <code>true</code> if the node is processed and needed to be removed.
+     */
+    private boolean optimizeConditions(final SQLNode node) {
+        if (node instanceof ANDNode) {
+            ANDNode andNode = (ANDNode) node;
+            andNode.getChildren().removeIf(this::optimizeConditions);
+            return node.getClauseFields().isEmpty();
+        } else if (node != null && !(node instanceof ORNode)) {
+            // Don't process OR nodes.
+
+            final List<ParadoxField> conditionalFields = new ArrayList<>();
+
+            final Set<FieldNode> fields = node.getClauseFields();
+            fields.forEach((FieldNode fn) -> {
+                for (final PlanTableNode table : this.tables) {
+                    if (table.isThis(fn.getTableName())) {
+                        conditionalFields.addAll(Arrays.stream(table.getTable().getFields())
+                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName()))
+                                .collect(Collectors.toSet()));
+                    }
+                }
+            });
+
+            if (conditionalFields.size() == 1) {
+                // FIELD = VALUE
+
+                final ParadoxTable paradoxTable = conditionalFields.get(0).getTable();
+                final PlanTableNode planTableNode = getPlanTable(paradoxTable);
+
+                if (planTableNode != null &&
+                        (planTableNode.getJoinType() == JoinType.CROSS
+                                || planTableNode.getJoinType() == JoinType.INNER)) {
+                    // Do not change OUTER joins.
+                    addAndClause(planTableNode, node);
+                    return true;
+                }
+            } else if (conditionalFields.size() == 2) {
+                // FIELD = FIELD
+                final ParadoxTable paradoxTable1 = conditionalFields.get(0).getTable();
+                final ParadoxTable paradoxTable2 = conditionalFields.get(1).getTable();
+
+                final int index1 = getTableIndex(paradoxTable1);
+                final int index2 = getTableIndex(paradoxTable2);
+
+                // Both tables exists?
+                if (index1 != -1 && index2 != -1) {
+                    // Use the last table to
+                    int lastIndex = Math.max(index1, index2);
+
+                    addAndClause(this.tables.get(lastIndex), node);
+                    return true;
+                }
+            }
+        }
+
+        // Unprocessed.
+        return false;
+    }
+
+    private int getTableIndex(final ParadoxTable table) {
+        int index = -1;
+        for (int i = 0; i < this.tables.size(); i++) {
+            if (this.tables.get(i).getTable().equals(table)) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    private PlanTableNode getPlanTable(final ParadoxTable table) {
+        return tables.stream()
+                .filter(t -> table.equals(t.getTable()))
+                .findFirst().orElse(null);
+    }
+
+    private void addAndClause(final PlanTableNode table, SQLNode clause) {
+        if (table.getConditionalJoin() instanceof ANDNode) {
+            // Exists and it is an AND node.
+            table.getConditionalJoin().addChild(clause);
+        } else if (table.getConditionalJoin() != null) {
+            // Exists, but any other type.
+            final ANDNode andNode = new ANDNode(connection, table.getConditionalJoin());
+            andNode.addChild(clause);
+            table.setConditionalJoin(andNode);
+        } else {
+            // There is no conditionals in this table.
+            table.setConditionalJoin((AbstractConditionalNode) clause);
+        }
     }
 
     private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
@@ -231,14 +349,19 @@ public final class SelectPlan implements Plan {
 
             final List<Object[]> tableData = TableData.loadData(table.getTable(), columnsToLoad.stream()
                     .map(Column::getField).toArray(ParadoxField[]::new));
+            if (table.getConditionalJoin() != null) {
+                table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
+            }
 
             // First table
             if (rawData.isEmpty()) {
+                if (table.getConditionalJoin() != null) {
+                    // Filter WHERE joins.
+                    tableData.removeIf(tableRow -> !table.getConditionalJoin().evaluate(tableRow, comparator));
+                }
+
                 rawData.addAll(tableData);
             } else {
-                if (table.getConditionalJoin() != null) {
-                    table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
-                }
                 final List<Object[]> localValues = processJoinByType(comparator, columnsLoaded, rawData, table,
                         tableData);
 
@@ -476,5 +599,9 @@ public final class SelectPlan implements Plan {
      */
     public List<Object[]> getValues() {
         return this.values;
+    }
+
+    public AbstractConditionalNode getCondition() {
+        return condition;
     }
 }

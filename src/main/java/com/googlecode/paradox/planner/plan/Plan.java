@@ -30,4 +30,9 @@ public interface Plan {
      * @throws SQLException in case of failures.
      */
     void execute(final ParadoxConnection connection, final int maxRows) throws SQLException;
+
+    /**
+     * Optimize the statement.
+     */
+    void compile();
 }

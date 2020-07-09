@@ -147,6 +147,10 @@ public final class PlanTableNode {
         return conditionalJoin;
     }
 
+    public void setConditionalJoin(AbstractConditionalNode conditionalJoin) {
+        this.conditionalJoin = conditionalJoin;
+    }
+
     /**
      * Gets the join type.
      *

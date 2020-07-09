@@ -73,14 +73,14 @@ public final class SQLParser {
 
         this.token = this.scanner.nextToken();
 
-        final ArrayList<StatementNode> statementList = new ArrayList<>();
+        final List<StatementNode> statementNodes = new ArrayList<>();
         if (this.token.getType() == TokenType.SELECT) {
-            statementList.add(this.parseSelect());
+            statementNodes.add(this.parseSelect());
         } else {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
 
-        return statementList;
+        return statementNodes;
     }
 
     /**

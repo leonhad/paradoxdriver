@@ -13,15 +13,21 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.SQLParser;
+import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
+import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import org.junit.*;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Unit test for {@link SelectPlan} class.
@@ -81,7 +87,7 @@ public class SelectPlanTest {
      */
     @Test
     public void testColumnWithTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null, false);
+        final SelectPlan plan = new SelectPlan(conn, null, false);
 
         TableNode table = new TableNode(conn, null, AREACODES, "test");
 
@@ -100,7 +106,7 @@ public class SelectPlanTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null, false);
+        final SelectPlan plan = new SelectPlan(conn, null, false);
         plan.addColumn(new FieldNode(conn, null, "invalid", null, null));
     }
 
@@ -111,7 +117,7 @@ public class SelectPlanTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null, false);
+        final SelectPlan plan = new SelectPlan(conn, null, false);
 
         TableNode table = new TableNode(conn, null, AREACODES, "test");
 
@@ -137,5 +143,33 @@ public class SelectPlanTest {
             Assert.assertEquals("Invalid value", "P", rs.getString("REQTYPE"));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
+    }
+
+    /**
+     * Test for SELECT plan performance optimizations.
+     *
+     * @throws SQLException if has errors.
+     */
+    @Test
+    public void testSelectJoinOptimization() throws SQLException {
+        final SQLParser parser = new SQLParser(conn,
+                "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                        "where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
+        final List<StatementNode> list = parser.parse();
+        Assert.assertEquals("Invalid list size", 1, list.size());
+
+        final Plan plan = Planner.create(conn, list.get(0));
+        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
+
+        final SelectPlan selectPlan = (SelectPlan) plan;
+
+        // Remove the conditionals.
+        Assert.assertNull("Invalid join clause", selectPlan.getCondition());
+
+        Assert.assertEquals("Invalid table count", 3, selectPlan.getTables().size());
+        Assert.assertTrue("Invalid table condition",
+                selectPlan.getTables().get(1).getConditionalJoin() instanceof EqualsNode);
+        Assert.assertTrue("Invalid table condition",
+                selectPlan.getTables().get(2).getConditionalJoin() instanceof ANDNode);
     }
 }
