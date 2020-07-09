@@ -18,7 +18,6 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
-import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 
 import java.sql.SQLException;

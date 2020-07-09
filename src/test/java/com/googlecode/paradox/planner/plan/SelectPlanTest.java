@@ -16,11 +16,13 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.planner.Plan;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.nodes.join.ORNode;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -171,5 +173,60 @@ public class SelectPlanTest {
                 selectPlan.getTables().get(1).getConditionalJoin() instanceof EqualsNode);
         Assert.assertTrue("Invalid table condition",
                 selectPlan.getTables().get(2).getConditionalJoin() instanceof ANDNode);
+    }
+
+    /**
+     * Test for SELECT plan performance optimizations with OR.
+     *
+     * @throws SQLException if has errors.
+     */
+    @Test
+    public void testSelectJoinOptimizationOr() throws SQLException {
+        final SQLParser parser = new SQLParser(conn,
+                "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                        "where c.StateID = st.State and st.State = ac.State or c.CountyID = 201");
+        final List<StatementNode> list = parser.parse();
+        Assert.assertEquals("Invalid list size", 1, list.size());
+
+        final Plan plan = Planner.create(conn, list.get(0));
+        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
+
+        final SelectPlan selectPlan = (SelectPlan) plan;
+
+        // Remove the conditionals.
+        Assert.assertNotNull("Invalid join clause", selectPlan.getCondition());
+
+        Assert.assertEquals("Invalid table count", 3, selectPlan.getTables().size());
+        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(0).getConditionalJoin());
+        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(1).getConditionalJoin());
+        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(2).getConditionalJoin());
+    }
+
+    /**
+     * Test for SELECT plan performance optimizations with parenthesis.
+     *
+     * @throws SQLException if has errors.
+     */
+    @Test
+    public void testSelectJoinOptimizationParenthesis() throws SQLException {
+        final SQLParser parser = new SQLParser(conn,
+                "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                        "where c.StateID = st.State and (st.State = ac.State or c.CountyID = 201)");
+        final List<StatementNode> list = parser.parse();
+        Assert.assertEquals("Invalid list size", 1, list.size());
+
+        final Plan plan = Planner.create(conn, list.get(0));
+        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
+
+        final SelectPlan selectPlan = (SelectPlan) plan;
+
+        // Remove the conditionals.
+        Assert.assertTrue("Invalid join clause", selectPlan.getCondition() instanceof ORNode);
+
+        Assert.assertEquals("Invalid table count", 3, selectPlan.getTables().size());
+        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(0).getConditionalJoin());
+        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(1).getConditionalJoin());
+        Assert.assertTrue("Invalid table condition",
+                selectPlan.getTables().get(2).getConditionalJoin() instanceof EqualsNode);
     }
 }

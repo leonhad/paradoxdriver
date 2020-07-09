@@ -15,8 +15,8 @@ import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
+import com.googlecode.paradox.planner.Plan;
 import com.googlecode.paradox.planner.Planner;
-import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.Utils;
 
