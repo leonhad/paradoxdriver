@@ -77,6 +77,7 @@ public class ParadoxStatementTest {
                 while (rs.next()) {
                     total++;
                 }
+
                 Assert.assertEquals("Invalid number of registers", totalRows, total);
             }
         }

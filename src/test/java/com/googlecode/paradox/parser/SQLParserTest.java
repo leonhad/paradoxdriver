@@ -466,4 +466,61 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser(conn, "select a. FROM AREACODES a");
         Assert.assertThrows("Invalid result", SQLException.class, parser::parse);
     }
+
+    /**
+     * Test for SELECT without FROM (two arguments).
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testSelectWithoutFromTwoArguments() throws Exception {
+        final SQLParser parser = new SQLParser(conn, "select 1, 'b'");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", "1", select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid node name.", "b", select.getFields().get(1).getName());
+    }
+
+    /**
+     * Test for SELECT without FROM.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testSelectWithoutFrom() throws Exception {
+        final SQLParser parser = new SQLParser(conn, "select 1");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", "1", select.getFields().get(0).getName());
+    }
+
+    /**
+     * Test for only SELECT token.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testSelectToken() throws Exception {
+        final SQLParser parser = new SQLParser(conn, "select");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 0, select.getFields().size());
+    }
 }
