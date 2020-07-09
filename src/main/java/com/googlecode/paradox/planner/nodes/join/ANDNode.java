@@ -33,6 +33,15 @@ public class ANDNode extends AbstractJoinNode {
         super(connection, "AND", child);
     }
 
+    /**
+     * Create a new instance.
+     *
+     * @param connection the Paradox connection.
+     */
+    public ANDNode(final ParadoxConnection connection) {
+        super(connection, "AND", null);
+    }
+
     @Override
     public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
         for (final SQLNode node : children) {

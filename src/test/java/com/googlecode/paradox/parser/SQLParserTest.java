@@ -17,6 +17,7 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.nodes.join.ORNode;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -522,5 +523,53 @@ public class SQLParserTest {
         final SelectNode select = (SelectNode) tree;
 
         Assert.assertEquals("Invalid node size.", 0, select.getFields().size());
+    }
+
+    /**
+     * Test for JOIN optimization in AND node.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testJoinOptimizationAND() throws Exception {
+        final SQLParser parser = new SQLParser(conn,
+                "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                        " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
+
+        final ANDNode and = (ANDNode) select.getCondition();
+        Assert.assertEquals("Invalid node size.", 3, and.getChildren().size());
+    }
+
+    /**
+     * Test for JOIN optimization OR node.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testJoinOptimizationOR() throws Exception {
+        final SQLParser parser = new SQLParser(conn,
+                "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                        " where c.StateID = st.State or st.State = ac.State or c.CountyID = 201");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ORNode);
+
+        final ORNode and = (ORNode) select.getCondition();
+        Assert.assertEquals("Invalid node size.", 3, and.getChildren().size());
     }
 }

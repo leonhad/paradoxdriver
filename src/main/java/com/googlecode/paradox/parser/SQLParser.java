@@ -657,10 +657,21 @@ public final class SQLParser {
         switch (this.token.getType()) {
             case AND:
                 this.expect(TokenType.AND);
+
+                if (child instanceof ANDNode) {
+                    return child;
+                }
+
                 return new ANDNode(connection, child);
+
             case OR:
                 this.expect(TokenType.OR);
+                if (child instanceof ORNode) {
+                    return child;
+                }
+
                 return new ORNode(connection, child);
+
             default:
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                         this.token.getPosition());

@@ -138,19 +138,4 @@ public class SelectPlanTest {
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
-
-    /**
-     * Test for SELECT without FROM.
-     *
-     * @throws Exception in case of failures.
-     */
-    @Test
-    public void testSelectWithoutFrom() throws Exception {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select 1");
-             final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 1, rs.getInt("1"));
-            Assert.assertFalse("Invalid result set state", rs.next());
-        }
-    }
 }
