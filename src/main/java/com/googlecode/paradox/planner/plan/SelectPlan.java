@@ -150,12 +150,57 @@ public final class SelectPlan implements Plan {
         });
     }
 
+    private static List<Object[]> processInnerJoin(ValuesComparator comparator, List<Column> columnsLoaded,
+                                                   List<Object[]> rawData, PlanTableNode table,
+                                                   List<Object[]> tableData) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        for (final Object[] cols : rawData) {
+            System.arraycopy(cols, 0, column, 0, cols.length);
+
+            for (final Object[] newCols : tableData) {
+                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator)) {
+                    continue;
+                }
+
+                localValues.add(column.clone());
+            }
+        }
+
+        return localValues;
+    }
+
+    private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
+                                                    List<Object[]> rawData, PlanTableNode table,
+                                                    List<Object[]> tableData) {
+        List<Object[]> localValues;
+        switch (table.getJoinType()) {
+            case RIGHT:
+                localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            case LEFT:
+                localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            case FULL:
+                localValues = processFullJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            default:
+                localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+        }
+        return localValues;
+    }
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public void execute(final ParadoxConnection connection, final int maxRows) throws SQLException {
-        if (this.columns.isEmpty() || this.tables.isEmpty()) {
+        if (this.columns.isEmpty()) {
             return;
         }
 
@@ -203,7 +248,15 @@ public final class SelectPlan implements Plan {
         }
 
         // Stop here if there is no value to process.
-        if (rawData.isEmpty()) {
+        if (tables.isEmpty()) {
+            final Object[] row = new Object[this.columns.size()];
+            for (int i = 0; i < row.length; i++) {
+                // A list of fixed value.
+                row[i] = this.columns.get(i).getValue();
+            }
+
+            rawData.add(row);
+        } else if (rawData.isEmpty()) {
             return;
         }
 
@@ -213,50 +266,6 @@ public final class SelectPlan implements Plan {
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
         filter(rawData, mapColumns, comparator, maxRows);
-    }
-
-    private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                    List<Object[]> rawData, PlanTableNode table,
-                                                    List<Object[]> tableData) {
-        List<Object[]> localValues;
-        switch (table.getJoinType()) {
-            case RIGHT:
-                localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
-            case LEFT:
-                localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
-            case FULL:
-                localValues = processFullJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
-            default:
-                localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
-        }
-        return localValues;
-    }
-
-    private static List<Object[]> processInnerJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                   List<Object[]> rawData, PlanTableNode table,
-                                                   List<Object[]> tableData) {
-        final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
-
-        for (final Object[] cols : rawData) {
-            System.arraycopy(cols, 0, column, 0, cols.length);
-
-            for (final Object[] newCols : tableData) {
-                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
-
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, comparator)) {
-                    continue;
-                }
-
-                localValues.add(column.clone());
-            }
-        }
-        return localValues;
     }
 
     private static List<Object[]> processLeftJoin(ValuesComparator comparator, List<Column> columnsLoaded,
@@ -419,7 +428,7 @@ public final class SelectPlan implements Plan {
 
             if (maxRows != 0 && values.size() == maxRows) {
                 // Stop loading on max rows limit.
-                return;
+                break;
             }
         }
     }

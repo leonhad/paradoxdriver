@@ -298,12 +298,13 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseFields(final SelectNode select) throws SQLException {
+        if (this.token == null) {
+            // No tokens to process here.
+            return;
+        }
+
         boolean firstField = true;
         do {
-            if (this.token == null) {
-                // there is no more tokens.
-                break;
-            }
 
             if (this.token.getType() == TokenType.DISTINCT) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
