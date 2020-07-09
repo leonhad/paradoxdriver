@@ -24,6 +24,7 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesComparator;
@@ -83,6 +84,53 @@ public final class SelectPlan implements Plan {
         this.distinct = distinct;
     }
 
+    private static AbstractConditionalNode reduce(final AbstractConditionalNode node) {
+        AbstractConditionalNode ret = node;
+
+        // It is an AND and OR node?
+        if (node instanceof AbstractJoinNode) {
+            final List<SQLNode> children = node.getChildren();
+
+            // Reduce all children.
+            for (int loop = 0; loop < children.size(); loop++) {
+                children.set(loop, reduce((AbstractConditionalNode) children.get(loop)));
+            }
+
+            // Reduce only AND and OR nodes.
+            while (ret instanceof AbstractJoinNode && ret.getChildren().size() <= 1) {
+                if (ret.getChildren().isEmpty()) {
+                    ret = null;
+                } else {
+                    ret = (AbstractConditionalNode) ret.getChildren().get(0);
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
+                                                    List<Object[]> rawData, PlanTableNode table,
+                                                    List<Object[]> tableData) {
+        List<Object[]> localValues;
+        switch (table.getJoinType()) {
+            case RIGHT:
+                localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            case LEFT:
+                localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            case FULL:
+                localValues = processFullJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+            default:
+                // CROSS and INNER joins.
+                localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
+                break;
+        }
+        return localValues;
+    }
+
     /**
      * Optimize the joins clause.
      */
@@ -91,69 +139,8 @@ public final class SelectPlan implements Plan {
         if (optimizeConditions(condition)) {
             condition = null;
         }
-    }
 
-    /**
-     * Process the node and change it to it's table (if it is possible).
-     *
-     * @param node the node to process.
-     * @return <code>true</code> if the node is processed and needed to be removed.
-     */
-    private boolean optimizeConditions(final SQLNode node) {
-        if (node instanceof ANDNode) {
-            ANDNode andNode = (ANDNode) node;
-            andNode.getChildren().removeIf(this::optimizeConditions);
-            return node.getClauseFields().isEmpty();
-        } else if (node != null && !(node instanceof ORNode)) {
-            // Don't process OR nodes.
-
-            final List<ParadoxField> conditionalFields = new ArrayList<>();
-
-            final Set<FieldNode> fields = node.getClauseFields();
-            fields.forEach((FieldNode fn) -> {
-                for (final PlanTableNode table : this.tables) {
-                    if (table.isThis(fn.getTableName())) {
-                        conditionalFields.addAll(Arrays.stream(table.getTable().getFields())
-                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName()))
-                                .collect(Collectors.toSet()));
-                    }
-                }
-            });
-
-            if (conditionalFields.size() == 1) {
-                // FIELD = VALUE
-
-                final ParadoxTable paradoxTable = conditionalFields.get(0).getTable();
-                final PlanTableNode planTableNode = getPlanTable(paradoxTable);
-
-                if (planTableNode != null &&
-                        (planTableNode.getJoinType() == JoinType.CROSS
-                                || planTableNode.getJoinType() == JoinType.INNER)) {
-                    // Do not change OUTER joins.
-                    addAndClause(planTableNode, node);
-                    return true;
-                }
-            } else if (conditionalFields.size() == 2) {
-                // FIELD = FIELD
-                final ParadoxTable paradoxTable1 = conditionalFields.get(0).getTable();
-                final ParadoxTable paradoxTable2 = conditionalFields.get(1).getTable();
-
-                final int index1 = getTableIndex(paradoxTable1);
-                final int index2 = getTableIndex(paradoxTable2);
-
-                // Both tables exists?
-                if (index1 != -1 && index2 != -1) {
-                    // Use the last table to
-                    int lastIndex = Math.max(index1, index2);
-
-                    addAndClause(this.tables.get(lastIndex), node);
-                    return true;
-                }
-            }
-        }
-
-        // Unprocessed.
-        return false;
+        condition = reduce(condition);
     }
 
     private int getTableIndex(final ParadoxTable table) {
@@ -293,25 +280,67 @@ public final class SelectPlan implements Plan {
         return localValues;
     }
 
-    private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                    List<Object[]> rawData, PlanTableNode table,
-                                                    List<Object[]> tableData) {
-        List<Object[]> localValues;
-        switch (table.getJoinType()) {
-            case RIGHT:
-                localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
-            case LEFT:
-                localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
-            case FULL:
-                localValues = processFullJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
-            default:
-                localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
-                break;
+    /**
+     * Process the node and change it to it's table (if it is possible).
+     *
+     * @param node the node to process.
+     * @return <code>true</code> if the node is processed and needed to be removed.
+     */
+    private boolean optimizeConditions(final SQLNode node) {
+        if (node instanceof ANDNode) {
+            ANDNode andNode = (ANDNode) node;
+            andNode.getChildren().removeIf(this::optimizeConditions);
+            return node.getClauseFields().isEmpty();
+        } else if (node != null && !(node instanceof ORNode)) {
+            // Don't process OR nodes.
+
+            final List<ParadoxField> conditionalFields = new ArrayList<>();
+
+            final Set<FieldNode> fields = node.getClauseFields();
+            fields.forEach((FieldNode fn) -> {
+                for (final PlanTableNode table : this.tables) {
+                    if (table.isThis(fn.getTableName())) {
+                        conditionalFields.addAll(Arrays.stream(table.getTable().getFields())
+                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName()))
+                                .collect(Collectors.toSet()));
+                    }
+                }
+            });
+
+            if (conditionalFields.size() == 1) {
+                // FIELD = VALUE
+
+                final ParadoxTable paradoxTable = conditionalFields.get(0).getTable();
+                final PlanTableNode planTableNode = getPlanTable(paradoxTable);
+
+                if (planTableNode != null &&
+                        (planTableNode.getJoinType() == JoinType.CROSS
+                                || planTableNode.getJoinType() == JoinType.INNER)) {
+                    // Do not change OUTER joins.
+                    addAndClause(planTableNode, node);
+                    return true;
+                }
+            } else if (conditionalFields.size() > 1) {
+                // FIELD = FIELD
+                final ParadoxTable paradoxTable1 = conditionalFields.get(0).getTable();
+                final ParadoxTable paradoxTable2 = conditionalFields.get(1).getTable();
+
+                final int index1 = getTableIndex(paradoxTable1);
+                final int index2 = getTableIndex(paradoxTable2);
+
+                // Both tables exists?
+                if (index1 != -1 && index2 != -1) {
+                    // Use the last table to
+                    int lastIndex = Math.max(index1, index2);
+
+                    addAndClause(this.tables.get(lastIndex), node);
+                    return true;
+                }
+            }
         }
-        return localValues;
+
+        // Unprocessed.
+        return false;
     }
 
     /**
