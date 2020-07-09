@@ -202,6 +202,7 @@ public class DataNavigation implements AutoCloseable {
     public void close() {
         this.closed = true;
         this.values = null;
+        this.currentRow = null;
     }
 
     private void verifyRow() throws SQLException {

@@ -470,4 +470,12 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
             throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, Integer.toString(index), null);
         }
     }
+
+    @Override
+    public void close() throws SQLException {
+        super.close();
+
+        executions.clear();
+        Arrays.fill(currentParameterValues, null);
+    }
 }

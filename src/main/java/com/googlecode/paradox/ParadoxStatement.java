@@ -194,6 +194,9 @@ class ParadoxStatement implements Statement {
             rs.close();
         }
 
+        this.resultSets.clear();
+        this.statements.clear();
+
         this.closed = true;
         this.connection = null;
     }
