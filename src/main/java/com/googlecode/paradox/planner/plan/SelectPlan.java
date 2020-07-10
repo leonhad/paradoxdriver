@@ -140,7 +140,13 @@ public final class SelectPlan implements Plan {
             condition = null;
         }
 
+        // Reduce default conditions.
         condition = reduce(condition);
+
+        // Reduce table conditions.
+        for (final PlanTableNode table : this.tables) {
+            table.setConditionalJoin(reduce(table.getConditionalJoin()));
+        }
     }
 
     private int getTableIndex(final ParadoxTable table) {
