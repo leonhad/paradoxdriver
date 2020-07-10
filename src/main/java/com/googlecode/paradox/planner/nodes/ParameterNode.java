@@ -60,4 +60,13 @@ public class ParameterNode extends FieldNode {
     public int hashCode() {
         return Objects.hash(super.hashCode(), parameterIndex);
     }
+
+    /**
+     * Get the parameter index.
+     *
+     * @return the parameter index.
+     */
+    public int getParameterIndex() {
+        return parameterIndex;
+    }
 }

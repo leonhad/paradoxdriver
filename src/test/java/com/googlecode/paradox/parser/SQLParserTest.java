@@ -584,7 +584,8 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser(conn,
                 "select * from geog.tblAC ac where ac.State = ? and ? = ac.AreaCode");
         final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = list.get(0);
+        Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -601,10 +602,12 @@ public class SQLParserTest {
 
         Assert.assertEquals("Invalid node value.", "ac.State", equals.getField().toString());
         Assert.assertTrue("Invalid node type.", equals.getLast() instanceof ParameterNode);
+        Assert.assertEquals("Invalid parameter index.", 0, ((ParameterNode) equals.getLast()).getParameterIndex());
 
         Assert.assertTrue("Invalid conditional type", and.getChildren().get(1) instanceof EqualsNode);
         equals = (EqualsNode) and.getChildren().get(1);
         Assert.assertTrue("Invalid node type.", equals.getField() instanceof ParameterNode);
+        Assert.assertEquals("Invalid parameter index.", 1, ((ParameterNode) equals.getField()).getParameterIndex());
         Assert.assertEquals("Invalid node value.", "ac.AreaCode", equals.getLast().toString());
     }
 }
