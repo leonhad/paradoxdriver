@@ -188,6 +188,11 @@ public enum TokenType {
     PLUS("+"),
 
     /**
+     * Question mark token.
+     */
+    QUESTION_MARK("?"),
+
+    /**
      * Right token.
      */
     RIGHT,

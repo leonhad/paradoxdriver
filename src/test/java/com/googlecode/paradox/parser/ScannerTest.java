@@ -217,6 +217,19 @@ public class ScannerTest {
     }
 
     /**
+     * Test for question mark token.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testQuestionMark() throws SQLException {
+        final Scanner scanner = new Scanner(conn, "?");
+        Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type.", TokenType.QUESTION_MARK, token.getType());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+    }
+
+    /**
      * Test of pushBack method, of class Scanner.
      *
      * @throws Exception in case of failures.
