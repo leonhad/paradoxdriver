@@ -15,6 +15,7 @@ import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
@@ -42,6 +43,11 @@ public final class SQLParser {
      * The current token.
      */
     private Token token;
+
+    /**
+     * Parameter count.
+     */
+    private int parameterCount;
 
     /**
      * The Paradox connection.
@@ -79,6 +85,8 @@ public final class SQLParser {
         } else {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
+
+        statementNodes.forEach(s -> s.setParameterCount(parameterCount));
 
         return statementNodes;
     }
@@ -232,6 +240,10 @@ public final class SQLParser {
         } else if (this.token.getType() == TokenType.NULL) {
             this.expect(TokenType.NULL);
             ret = new ValueNode(connection, null, null, position, Types.NULL);
+        } else if (this.token.getType() == TokenType.QUESTION_MARK) {
+            this.expect(TokenType.QUESTION_MARK);
+            ret = new ParameterNode(connection, parameterCount, position);
+            parameterCount++;
         } else {
             // Found a table field.
             this.expect(TokenType.IDENTIFIER);

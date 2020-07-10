@@ -8,6 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
@@ -16,24 +17,29 @@ import com.googlecode.paradox.parser.ScannerPosition;
 import java.util.Objects;
 
 /**
- * Stores a node value.
+ * Stores a parameter for the statements.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
-public class ValueNode extends FieldNode {
+public class ParameterNode extends FieldNode {
 
-    private final int sqlType;
+    /**
+     * The parameter index.
+     */
+    private final int parameterIndex;
 
-    public ValueNode(final ParadoxConnection connection, final String name, final String alias,
-                     final ScannerPosition position, final int sqlType) {
-        super(connection, null, name, alias, position);
-
-        this.sqlType = sqlType;
-    }
-
-    public int getSqlType() {
-        return sqlType;
+    /**
+     * Stores field values (from select statements).
+     *
+     * @param connection     the Paradox connection.
+     * @param parameterIndex the parameter index.
+     * @param position       the current Scanner position.
+     */
+    public ParameterNode(final ParadoxConnection connection, final int parameterIndex,
+                         final ScannerPosition position) {
+        super(connection, null, null, null, position);
+        this.parameterIndex = parameterIndex;
     }
 
     @Override
@@ -41,15 +47,17 @@ public class ValueNode extends FieldNode {
         if (this == o) {
             return true;
         }
+
         if (o == null || getClass() != o.getClass() || !super.equals(o)) {
             return false;
         }
-        ValueNode fieldNode = (ValueNode) o;
-        return Objects.equals(sqlType, fieldNode.sqlType);
+
+        ParameterNode that = (ParameterNode) o;
+        return parameterIndex == that.parameterIndex;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tableName, alias, name, sqlType);
+        return Objects.hash(super.hashCode(), parameterIndex);
     }
 }

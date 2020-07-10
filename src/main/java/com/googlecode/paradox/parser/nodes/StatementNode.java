@@ -15,7 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 /**
  * Stores a statement node.
  *
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public class StatementNode extends SQLNode {
@@ -39,5 +39,14 @@ public class StatementNode extends SQLNode {
      */
     public int getParameterCount() {
         return parameterCount;
+    }
+
+    /**
+     * Sets the parameter count.
+     *
+     * @param parameterCount the parameter count.
+     */
+    public void setParameterCount(int parameterCount) {
+        this.parameterCount = parameterCount;
     }
 }

@@ -14,6 +14,7 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
@@ -571,5 +572,39 @@ public class SQLParserTest {
 
         final ORNode and = (ORNode) select.getCondition();
         Assert.assertEquals("Invalid node size.", 3, and.getChildren().size());
+    }
+
+    /**
+     * Test for parameters.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testParameters() throws Exception {
+        final SQLParser parser = new SQLParser(conn,
+                "select * from geog.tblAC ac where ac.State = ? and ? = ac.AreaCode");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
+
+        final ANDNode and = (ANDNode) select.getCondition();
+        Assert.assertEquals("Invalid node size.", 2, and.getChildren().size());
+
+        Assert.assertTrue("Invalid conditional type", and.getChildren().get(0) instanceof EqualsNode);
+        EqualsNode equals = (EqualsNode) and.getChildren().get(0);
+
+        Assert.assertEquals("Invalid node value.", "ac.State", equals.getField().toString());
+        Assert.assertTrue("Invalid node type.", equals.getLast() instanceof ParameterNode);
+
+        Assert.assertTrue("Invalid conditional type", and.getChildren().get(1) instanceof EqualsNode);
+        equals = (EqualsNode) and.getChildren().get(1);
+        Assert.assertTrue("Invalid node type.", equals.getField() instanceof ParameterNode);
+        Assert.assertEquals("Invalid node value.", "ac.AreaCode", equals.getLast().toString());
     }
 }
