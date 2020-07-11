@@ -68,9 +68,31 @@ public class ParadoxPreparedStatementTest {
      */
     @Test
     public void testAbsoluteEmpty() throws SQLException {
-        try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM db.DECIMAL");
-             ResultSet rs = preparedStatement.executeQuery()) {
+        try (final PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM db.DECIMAL");
+             final ResultSet rs = preparedStatement.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for prepared statement with parameters.
+     */
+    @Test
+    public void testWithParameters() throws SQLException {
+        try (final PreparedStatement preparedStatement = conn.prepareStatement("select * from geog.tblAC ac " +
+                " where ac.State = ? and ? = ac.AreaCode")) {
+            preparedStatement.setString(1, "NJ");
+            preparedStatement.setInt(2, 201);
+
+            try (final ResultSet rs = preparedStatement.executeQuery()) {
+                Assert.assertTrue("Invalid result set state", rs.next());
+
+                Assert.assertEquals("Invalid value", "201", rs.getString("AreaCode"));
+                Assert.assertEquals("Invalid value", "NJ", rs.getString("State"));
+                Assert.assertNull("Invalid value", rs.getObject("Effective"));
+
+                Assert.assertFalse("Invalid result set state", rs.next());
+            }
         }
     }
 }

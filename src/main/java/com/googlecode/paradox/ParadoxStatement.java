@@ -131,7 +131,7 @@ class ParadoxStatement implements Statement {
         for (final StatementNode statement : statements) {
             final Plan plan = Planner.create(connection, statement);
 
-            plan.execute(this.connection, maxRows);
+            plan.execute(this.connection, maxRows, null);
 
             if (plan instanceof SelectPlan) {
                 final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,

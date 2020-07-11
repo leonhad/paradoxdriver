@@ -224,41 +224,52 @@ public final class SQLParser {
      * @throws SQLException in case of errors.
      */
     private FieldNode parseField() throws SQLException {
-        String tableName = null;
         String fieldName = this.token.getValue();
         final ScannerPosition position = this.token.getPosition();
 
         FieldNode ret;
-        if (this.token.getType() == TokenType.CHARACTER) {
-            // Found a String value.
-            this.expect(TokenType.CHARACTER);
-            ret = new ValueNode(connection, fieldName, null, position, Types.VARCHAR);
-        } else if (this.token.getType() == TokenType.NUMERIC) {
-            // Found a numeric value.
-            this.expect(TokenType.NUMERIC);
-            ret = new ValueNode(connection, fieldName, null, position, Types.NUMERIC);
-        } else if (this.token.getType() == TokenType.NULL) {
-            this.expect(TokenType.NULL);
-            ret = new ValueNode(connection, null, null, position, Types.NULL);
-        } else if (this.token.getType() == TokenType.QUESTION_MARK) {
-            this.expect(TokenType.QUESTION_MARK);
-            ret = new ParameterNode(connection, parameterCount, position);
-            parameterCount++;
-        } else {
-            // Found a table field.
-            this.expect(TokenType.IDENTIFIER);
-
-            // If it has a Table Name
-            if (this.scanner.hasNext() && (this.token.getType() == TokenType.PERIOD)) {
-                this.expect(TokenType.PERIOD);
-                tableName = fieldName;
-                fieldName = this.token.getValue();
-                this.expect(TokenType.IDENTIFIER);
-            }
-            ret = new FieldNode(connection, tableName, fieldName, fieldName, position);
+        switch (this.token.getType()) {
+            case CHARACTER:
+                // Found a String value.
+                this.expect(TokenType.CHARACTER);
+                ret = new ValueNode(connection, fieldName, null, position, Types.VARCHAR);
+                break;
+            case NUMERIC:
+                // Found a numeric value.
+                this.expect(TokenType.NUMERIC);
+                ret = new ValueNode(connection, fieldName, null, position, Types.NUMERIC);
+                break;
+            case NULL:
+                this.expect(TokenType.NULL);
+                ret = new ValueNode(connection, null, null, position, Types.NULL);
+                break;
+            case QUESTION_MARK:
+                this.expect(TokenType.QUESTION_MARK);
+                ret = new ParameterNode(connection, parameterCount, position);
+                parameterCount++;
+                break;
+            default:
+                // Found a field.
+                ret = getFieldNode(fieldName, position);
+                break;
         }
 
         return ret;
+    }
+
+    private FieldNode getFieldNode(final String fieldName, final ScannerPosition position) throws SQLException {
+        String tableName = null;
+        String name = fieldName;
+        this.expect(TokenType.IDENTIFIER);
+
+        // If it has a Table Name
+        if (this.scanner.hasNext() && (this.token.getType() == TokenType.PERIOD)) {
+            this.expect(TokenType.PERIOD);
+            tableName = name;
+            name = this.token.getValue();
+            this.expect(TokenType.IDENTIFIER);
+        }
+        return new FieldNode(connection, tableName, name, name, position);
     }
 
     /**
@@ -666,28 +677,33 @@ public final class SQLParser {
      * @throws SQLException in case or errors.
      */
     private AbstractConditionalNode parseOperators(final AbstractConditionalNode child) throws SQLException {
+        AbstractConditionalNode ret;
         switch (this.token.getType()) {
             case AND:
                 this.expect(TokenType.AND);
-
                 if (child instanceof ANDNode) {
-                    return child;
+                    ret = child;
+                } else {
+                    ret = new ANDNode(connection, child);
                 }
 
-                return new ANDNode(connection, child);
+                break;
 
             case OR:
                 this.expect(TokenType.OR);
                 if (child instanceof ORNode) {
-                    return child;
+                    ret = child;
+                } else {
+                    ret = new ORNode(connection, child);
                 }
 
-                return new ORNode(connection, child);
-
+                break;
             default:
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                         this.token.getPosition());
         }
+
+        return ret;
     }
 
     /**

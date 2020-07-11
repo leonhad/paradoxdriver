@@ -581,8 +581,8 @@ public class SQLParserTest {
      */
     @Test
     public void testParameters() throws Exception {
-        final SQLParser parser = new SQLParser(conn,
-                "select * from geog.tblAC ac where ac.State = ? and ? = ac.AreaCode");
+        final SQLParser parser = new SQLParser(conn, "select * from geog.tblAC ac" +
+                " where ac.State = ? and ? = ac.AreaCode");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
         Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());

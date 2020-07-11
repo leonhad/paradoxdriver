@@ -353,7 +353,8 @@ public final class SelectPlan implements Plan {
      * {@inheritDoc}.
      */
     @Override
-    public void execute(final ParadoxConnection connection, final int maxRows) throws SQLException {
+    public void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters)
+            throws SQLException {
         if (this.columns.isEmpty()) {
             return;
         }

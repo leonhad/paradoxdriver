@@ -84,7 +84,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
             // One for parameters.
             for (final Object[] params : executions) {
                 // FIXME use parameterList.
-                plan.execute(this.connection, maxRows);
+                plan.execute(this.connection, maxRows, params);
 
                 if (plan instanceof SelectPlan) {
                     final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,

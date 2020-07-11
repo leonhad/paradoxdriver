@@ -17,7 +17,7 @@ import java.sql.SQLException;
 /**
  * Used to creates and execute SQL plans.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.1
  */
 public interface Plan {
@@ -27,9 +27,11 @@ public interface Plan {
      *
      * @param connection the Paradox connection.
      * @param maxRows    the limit of rows that can be loaded. Zero means no limit.
+     * @param parameters the statement parameters.
      * @throws SQLException in case of failures.
      */
-    void execute(final ParadoxConnection connection, final int maxRows) throws SQLException;
+    void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters)
+            throws SQLException;
 
     /**
      * Optimize the statement.
