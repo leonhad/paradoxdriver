@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Expressions}.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.1
  */
 public class ExpressionsTest {

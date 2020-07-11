@@ -40,53 +40,41 @@ public final class Expressions {
                                  final boolean caseSensitive) {
         final char[] criterion = getCharArrayWithCase(conn, criteria, caseSensitive);
         final char[] exp = getCharArrayWithCase(conn, expression, caseSensitive);
-        final int limit = exp.length - 1;
+        final int expressionLimit = exp.length;
         int index = 0;
+        int loop;
 
-        for (int loop = 0; loop < criterion.length; loop++) {
-            if (index > limit) {
-                return false;
-            }
+        for (loop = 0; loop < criterion.length && index < expressionLimit; loop++) {
             final char c = criterion[loop];
 
             if (c == '_') {
+                // Accept any char, but only one.
                 index++;
             } else if (c == '%') {
-                // Has more chars.
-                if ((loop + 1) < criterion.length) {
-                    final char next = criterion[loop + 1];
-                    index = Expressions.fixIndex(exp, limit, index, next);
-
-                    if ((index > limit) || (next != exp[index])) {
-                        return false;
-                    }
+                // Has more chars?
+                if (loop + 1 >= criterion.length) {
+                    // If not, the % gets any more chars in list.
+                    // Sets the expression index to the end.
+                    index = expressionLimit + 1;
                 } else {
-                    return true;
+                    final char next = criterion[loop + 1];
+                    index = nextIndex(exp, index, next);
                 }
             } else {
                 if (c != exp[index]) {
-                    return false;
+                    break;
                 }
 
                 ++index;
             }
         }
 
-        return index > limit;
+        return index >= expressionLimit && loop == criterion.length;
     }
 
-    /**
-     * Fix index based on % position.
-     *
-     * @param exp    the expression to test.
-     * @param limit  the expression max size.
-     * @param offset the offset to start of.
-     * @param next   the next char on criteria.
-     * @return new index.
-     */
-    private static int fixIndex(final char[] exp, final int limit, final int offset, final char next) {
-        int index = offset;
-        while ((index <= limit) && (next != exp[index])) {
+    private static int nextIndex(final char[] expression, final int currentIndex, final char next) {
+        int index = currentIndex;
+        while (index < expression.length && next != expression[index]) {
             index++;
         }
 
