@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Scanner}.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class ScannerTest {
@@ -72,7 +72,7 @@ public class ScannerTest {
      */
     @Test
     public void testGroup() throws Exception {
-        final Scanner scanner = new Scanner(conn, " \"test 1\" \"Table.db \"\" \" ");
+        final Scanner scanner = new Scanner(conn, " \"test 1\" \"Table.db \\\" \" ");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token value.", "test 1", token.getValue());
         token = scanner.nextToken();
@@ -87,11 +87,20 @@ public class ScannerTest {
     @Test
     public void testHasNext() throws Exception {
         final Scanner scanner = new Scanner(conn, "(SELECT * FROM Test) ");
-        for (int loop = 0; loop < 6; loop++) {
-            Assert.assertTrue("Invalid scanner state.", scanner.hasNext());
-            scanner.nextToken();
-        }
-        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+
+        Assert.assertTrue("Invalid scanner state", scanner.hasNext());
+        Assert.assertEquals("Invalid token type", TokenType.L_PAREN, scanner.nextToken().getType());
+        Assert.assertTrue("Invalid scanner state", scanner.hasNext());
+        Assert.assertEquals("Invalid token type", TokenType.SELECT, scanner.nextToken().getType());
+        Assert.assertTrue("Invalid scanner state", scanner.hasNext());
+        Assert.assertEquals("Invalid token type", TokenType.ASTERISK, scanner.nextToken().getType());
+        Assert.assertTrue("Invalid scanner state", scanner.hasNext());
+        Assert.assertEquals("Invalid token type", TokenType.FROM, scanner.nextToken().getType());
+        Assert.assertTrue("Invalid scanner state", scanner.hasNext());
+        Assert.assertEquals("Invalid token type", TokenType.IDENTIFIER, scanner.nextToken().getType());
+        Assert.assertTrue("Invalid scanner state", scanner.hasNext());
+        Assert.assertEquals("Invalid token type", TokenType.R_PAREN, scanner.nextToken().getType());
+        Assert.assertFalse("Invalid scanner state", scanner.hasNext());
     }
 
     /**
@@ -253,5 +262,19 @@ public class ScannerTest {
         Assert.assertNotNull("Invalid token value.", token);
         Assert.assertEquals("Invalid token type.", TokenType.R_PAREN, token.getType());
         Assert.assertEquals("Invalid token value.", ")", token.getValue());
+    }
+
+    /**
+     * Test for character escapes.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCharacterEscapes() throws SQLException {
+        final Scanner scanner = new Scanner(conn, "'\\n\\b\\r\\\\\\t\\'\\\"'");
+        Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type", TokenType.CHARACTER, token.getType());
+        Assert.assertEquals("Invalid token value", "\n\b\r\\\t'\"", token.getValue());
+        Assert.assertFalse("Invalid scanner state", scanner.hasNext());
     }
 }

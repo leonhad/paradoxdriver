@@ -103,7 +103,7 @@ public final class Expressions {
     private static boolean isEscapedChar(final int currentIndex, final char[] criterion) {
         boolean ret = false;
 
-        if (criterion[currentIndex] == '\\' && currentIndex + 1 < criterion.length) {
+        if (currentIndex + 1 < criterion.length) {
             final char next = criterion[currentIndex + 1];
 
             switch (next) {

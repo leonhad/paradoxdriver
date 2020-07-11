@@ -1,15 +1,20 @@
 Paradox Driver NEWS - User visible changes.
 
-2020-08-11 Added support for parameters in PreparedStatement. Now is possible to cancel a statement.
+2020-08-11 Added support for parameters in PreparedStatement. Now is possible
+    to cancel a statement. Fixed characters escapes.
 2020-08-09 Added a planner compiler for performance improvement.
-2020-07-08 Added DISTINCT support in SQL statements. Added support do SELECT without FROM.
-2020-07-07 Fixed SQL State code and SQL Exception types. Added a possibility to use fixed values in SELECT clause.
+2020-07-08 Added DISTINCT support in SQL statements. Added support do SELECT
+    without FROM.
+2020-07-07 Fixed SQL State code and SQL Exception types. Added a possibility to
+    use fixed values in SELECT clause.
 2020-07-05 Added comment support.
-2020-07-03 Added ResultSet fetch direction support. Added a better type conversion.
+2020-07-03 Added ResultSet fetch direction support. Added a better type
+    conversion.
 2020-07-02 Added left, right and cross join support.
 2020-06-30 Removed field parse when field is not to be load.
 2020-06-28 Added table join support.
-2020-06-26 Review all database and table metadata and fixed various memory and performances issues.
+2020-06-26 Review all database and table metadata and fixed various memory and
+    performances issues.
 2020-06-25 Rewrite the code for all BLOB and CLOB types.
 2020-06-21 Added schema support in SQL and queries.
 2020-06-20 Added BCD file type support.

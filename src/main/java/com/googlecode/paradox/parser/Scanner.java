@@ -15,12 +15,14 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 
 import java.nio.CharBuffer;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 
 /**
  * SQL Scanner (read tokens from SQL String).
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public class Scanner {
@@ -28,7 +30,7 @@ public class Scanner {
     /**
      * Separators char.
      */
-    private static final char[] SEPARATORS = {' ', '\t', '\n', '\0', '\r'};
+    private static final char[] SEPARATORS = {' ', '\b', '\t', '\n', '\0', '\r'};
 
     /**
      * Special chars.
@@ -39,6 +41,11 @@ public class Scanner {
      * Character buffer used to parse the SQL.
      */
     private final CharBuffer buffer;
+
+    /**
+     * Preloaded chars.
+     */
+    private final Queue<Character> preloaded = new ArrayDeque<>();
 
     /**
      * Read tokens.
@@ -166,8 +173,37 @@ public class Scanner {
      * @return the next char.
      */
     private char nextChar() {
-        final char c = this.buffer.get();
+        if (!preloaded.isEmpty()) {
+            return preloaded.poll();
+        }
+
+        char c = this.buffer.get();
         position.add(c);
+
+        // Handles escape characters.
+        if (c == '\\') {
+            final char next = this.buffer.get();
+            switch (next) {
+                case 'n':
+                    c = '\n';
+                    break;
+                case 'b':
+                    c = '\b';
+                    break;
+                case 'r':
+                    c = '\r';
+                    break;
+                case 't':
+                    c = '\t';
+                    break;
+                case '\\':
+                    // Keep the \ char.
+                    break;
+                default:
+                    buffer.position(buffer.position() - 1);
+                    // FIXME add a SQL Warning here about the error in escape char.
+            }
+        }
         return c;
     }
 
@@ -180,7 +216,7 @@ public class Scanner {
             if (isSeparator(c)) {
                 return;
             } else if (isSpecial(c)) {
-                pushBack();
+                pushBack(c);
                 return;
             }
 
@@ -213,50 +249,46 @@ public class Scanner {
         } while ((!Scanner.isSeparator(c) && !Scanner.isSpecial(c)) || c == '.');
 
         if (Scanner.isSpecial(c)) {
-            this.pushBack();
+            this.pushBack(c);
         }
     }
 
     /**
-     * Parses a {@link String} value.
+     * Parses a character stream value.
      *
-     * @param type the string type (special char used).
+     * @param type the string type (special char used to start the string).
      */
     private void parseString(final char type) {
-        char c;
-        do {
-            if (this.hasNext()) {
-                c = this.nextChar();
-            } else {
-                return;
-            }
-            if (c == type) {
-                if (this.hasNext()) {
-                    c = this.nextChar();
-                } else {
-                    return;
+        char c = '\0';
+
+        while (this.hasNext() && c != type) {
+            c = this.nextChar();
+
+            // It's a scape char?
+            if (c == '\\') {
+                final char nextChar = this.nextChar();
+                if (nextChar == '\'' || nextChar == '\"') {
+                    this.value.append(nextChar);
+                    continue;
                 }
 
-                if (c == type) {
-                    this.value.append(c);
-                    // prevent breaking
-                    c = ' ';
-                } else {
-                    this.pushBack();
-                    return;
-                }
-            } else {
+                pushBack(nextChar);
+            }
+
+            if (c != type) {
                 this.value.append(c);
             }
-        } while (c != type);
+        }
     }
 
     /**
      * Push back the read char.
+     *
+     * @param character the character to push back.
      */
-    private void pushBack() {
+    private void pushBack(char character) {
+        preloaded.add(character);
         position.back();
-        buffer.position(this.buffer.position() - 1);
     }
 
     /**
@@ -265,7 +297,7 @@ public class Scanner {
      * @return true if the buffer still have tokens.
      */
     boolean hasNext() {
-        return !this.tokens.isEmpty() || this.buffer.hasRemaining();
+        return !this.preloaded.isEmpty() || !this.tokens.isEmpty() || this.buffer.hasRemaining();
     }
 
     /**
@@ -304,7 +336,7 @@ public class Scanner {
             }
 
             // Restore the original scanner state and treat is as a normal identifier.
-            pushBack();
+            pushBack(nextChar);
         } else if (Character.isDigit(c)) {
             parseNumber(c);
             return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
@@ -312,7 +344,7 @@ public class Scanner {
             // Can be a minus sign only or a negative number.
             char nextChar = this.nextChar();
             // Restore the original scanner state.
-            pushBack();
+            pushBack(nextChar);
 
             if (Character.isDigit(nextChar)) {
                 // It is a number.
@@ -332,7 +364,7 @@ public class Scanner {
             return getToken(Character.toString(c));
         }
 
-        pushBack();
+        pushBack(c);
         parseIdentifier();
 
         return getToken(this.value.toString());
