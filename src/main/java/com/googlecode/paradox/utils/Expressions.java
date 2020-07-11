@@ -40,27 +40,23 @@ public final class Expressions {
                                  final boolean caseSensitive) {
         final char[] criterion = getCharArrayWithCase(conn, criteria, caseSensitive);
         final char[] exp = getCharArrayWithCase(conn, expression, caseSensitive);
-        final int expressionLimit = exp.length;
         int index = 0;
-        int loop;
+        int criterionIndex;
 
-        for (loop = 0; loop < criterion.length && index < expressionLimit; loop++) {
-            final char c = criterion[loop];
+        for (criterionIndex = 0; criterionIndex < criterion.length && index < exp.length; criterionIndex++) {
+            char c = criterion[criterionIndex];
 
             if (c == '_') {
                 // Accept any char, but only one.
                 index++;
             } else if (c == '%') {
-                // Has more chars?
-                if (loop + 1 >= criterion.length) {
-                    // If not, the % gets any more chars in list.
-                    // Sets the expression index to the end.
-                    index = expressionLimit + 1;
-                } else {
-                    final char next = criterion[loop + 1];
-                    index = nextIndex(exp, index, next);
-                }
+                index = getIndex(criterion, exp, index, criterionIndex);
             } else {
+                // Is it an escaped char?
+                if (isEscapedChar(criterionIndex, criterion)) {
+                    criterionIndex++;
+                    c = criterion[criterionIndex];
+                }
                 if (c != exp[index]) {
                     break;
                 }
@@ -69,9 +65,70 @@ public final class Expressions {
             }
         }
 
-        return index >= expressionLimit && loop == criterion.length;
+        return index >= exp.length && criterionIndex == criterion.length;
     }
 
+    /**
+     * Gets the next % valid index.
+     *
+     * @param criterion       the criterion with current %.
+     * @param expression      the expression to test.
+     * @param expressionIndex the current expression index.
+     * @param criterionIndex  the criterion index.
+     * @return the next valid index based on % criterion.
+     */
+    private static int getIndex(final char[] criterion, final char[] expression, final int expressionIndex,
+                                final int criterionIndex) {
+        int index = expressionIndex;
+        // Has more chars?
+        if (criterionIndex + 1 >= criterion.length) {
+            // If not, the % gets any more chars in list.
+            // Sets the expression index to the end.
+            index = expression.length + 1;
+        } else {
+            final char next = criterion[criterionIndex + 1];
+            index = nextIndex(expression, index, next);
+        }
+        return index;
+    }
+
+    /**
+     * Test for LIKE escape characters.
+     *
+     * @param currentIndex the current criterion index.
+     * @param criterion    the criterion to look at.
+     * @return <code>true</code> if the current char is an escaped character.
+     */
+    private static boolean isEscapedChar(final int currentIndex, final char[] criterion) {
+        boolean ret = false;
+
+        if (criterion[currentIndex] == '\\' && currentIndex + 1 < criterion.length) {
+            final char next = criterion[currentIndex + 1];
+
+            switch (next) {
+                case '%':
+                case '\\':
+                case '_':
+                    ret = true;
+                    break;
+
+                default:
+                    ret = false;
+                    break;
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Gets a next valid index based on % criteria char.
+     *
+     * @param expression   the expression to test.
+     * @param currentIndex the current index on expression testing.
+     * @param next         the next criteria char.
+     * @return the index on expression when characters match.
+     */
     private static int nextIndex(final char[] expression, final int currentIndex, final char next) {
         int index = currentIndex;
         while (index < expression.length && next != expression[index]) {
