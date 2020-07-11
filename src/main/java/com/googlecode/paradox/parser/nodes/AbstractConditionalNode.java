@@ -100,7 +100,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
     protected Object getValue(final Object[] row, final FieldNode field, final Object[] parameters) {
         Object ret;
         if (field instanceof ParameterNode) {
-            ret = parameters[((ParameterNode) field).getParameterIndex()];
+            ret = ((ParameterNode) field).getValue(parameters);
         } else if (field.getIndex() == -1) {
             // Not a table field.
             ret = field.getName();

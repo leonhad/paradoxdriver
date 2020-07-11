@@ -69,4 +69,14 @@ public class ParameterNode extends FieldNode {
     public int getParameterIndex() {
         return parameterIndex;
     }
+
+    /**
+     * Gets the parameter value.
+     *
+     * @param values the value list.
+     * @return the parameter value.
+     */
+    public Object getValue(final Object[] values) {
+        return values[parameterIndex];
+    }
 }

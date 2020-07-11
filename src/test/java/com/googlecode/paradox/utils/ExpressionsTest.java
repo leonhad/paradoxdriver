@@ -114,4 +114,13 @@ public class ExpressionsTest {
     public void testEscapedChar() {
         Assert.assertTrue("Invalid value.", Expressions.accept(conn, "%a%", "\\%a\\%", true));
     }
+
+    /**
+     * Test for unescaped %.
+     */
+    @Test
+    public void testUnescapedChar() {
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn,
+                "k, Jersey City, Newark, Morristown", "k%", true));
+    }
 }
