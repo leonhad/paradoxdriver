@@ -100,7 +100,7 @@ class ParadoxStatement implements Statement {
     /**
      * If this statement is pool capable.
      */
-    private boolean canPool;
+    private boolean poolable;
 
     /**
      * The query timeout.
@@ -551,7 +551,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public boolean isPoolable() {
-        return this.canPool;
+        return this.poolable;
     }
 
     /**
@@ -559,7 +559,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public void setPoolable(final boolean canPool) {
-        this.canPool = canPool;
+        this.poolable = canPool;
     }
 
     /**

@@ -480,6 +480,7 @@ public final class SelectPlan implements Plan {
         if (this.columns.isEmpty()) {
             return;
         }
+        cancelled = false;
 
         final ValuesComparator comparator = new ValuesComparator();
         final List<Column> columnsLoaded = new ArrayList<>();
