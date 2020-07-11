@@ -106,4 +106,12 @@ public class ExpressionsTest {
     public void testUnique() {
         Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB_E", false));
     }
+
+    /**
+     * Test for escaped %.
+     */
+    @Test
+    public void testEscapedChar() {
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "%a%", "\\%a\\%", true));
+    }
 }
