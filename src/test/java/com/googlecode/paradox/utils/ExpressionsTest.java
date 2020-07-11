@@ -80,7 +80,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testMix() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X??", false));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X__", false));
     }
 
     /**
@@ -104,6 +104,6 @@ public class ExpressionsTest {
      */
     @Test
     public void testUnique() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB?E", false));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB_E", false));
     }
 }

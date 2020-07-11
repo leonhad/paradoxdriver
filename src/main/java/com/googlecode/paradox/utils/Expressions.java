@@ -15,7 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 /**
  * Utility class to parse SQL expressions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.1
  */
 public final class Expressions {
@@ -49,7 +49,7 @@ public final class Expressions {
             }
             final char c = criterion[loop];
 
-            if (c == '?') {
+            if (c == '_') {
                 index++;
             } else if (c == '%') {
                 // Has more chars.
