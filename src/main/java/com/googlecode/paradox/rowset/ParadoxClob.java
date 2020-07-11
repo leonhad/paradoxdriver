@@ -73,15 +73,21 @@ public final class ParadoxClob implements Clob {
      */
     @Override
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
-        if ((pos < 1) || (pos > this.value.length())) {
+        if (pos < 1) {
             throw new ParadoxException(ParadoxException.Error.INVALID_POSITION_SPECIFIED);
-        } else if (((pos - 1) + length) > this.value.length()) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
-        } else if (length <= 0) {
+        } else if (length < 0) {
             throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         }
 
-        return new StringReader(this.value.substring((int) pos - 1, (int) length));
+        final int endPos = (int) (pos - 1 + length);
+
+        if (pos > this.value.length()) {
+            return new StringReader("");
+        } else if (endPos > this.value.length()) {
+            return new StringReader(this.value.substring((int) pos - 1));
+        }
+
+        return new StringReader(this.value.substring((int) pos - 1, endPos));
     }
 
     /**
@@ -89,15 +95,21 @@ public final class ParadoxClob implements Clob {
      */
     @Override
     public String getSubString(final long pos, final int length) throws SQLException {
-        if ((pos < 1) || (pos > this.value.length())) {
+        if (pos < 1) {
             throw new ParadoxException(ParadoxException.Error.INVALID_POSITION_SPECIFIED);
-        } else if (((pos - 1) + length) > this.value.length()) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
-        } else if (length <= 0) {
+        } else if (length < 0) {
             throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         }
 
-        return this.value.substring((int) pos - 1, length);
+        final int endPos = (int) (pos - 1 + length);
+
+        if (pos > this.value.length()) {
+            return "";
+        } else if (endPos > this.value.length()) {
+            return this.value.substring((int) pos - 1);
+        }
+
+        return this.value.substring((int) pos - 1, endPos);
     }
 
     /**

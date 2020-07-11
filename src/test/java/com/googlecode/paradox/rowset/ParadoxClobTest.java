@@ -16,6 +16,7 @@ import org.junit.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.*;
 import java.util.Properties;
 
@@ -117,15 +118,18 @@ public class ParadoxClobTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharacterStreamWithHighPosition() throws SQLException {
+    public void testCharacterStreamWithHighPosition() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
 
             final Clob clob = rs.getClob("comments");
+            Assert.assertEquals("Invalid clob size", 32, clob.length());
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getCharacterStream(100, 3));
+            try (final Reader reader = clob.getCharacterStream(100, 3)) {
+                Assert.assertEquals("Invalid clob size", -1, reader.read());
+            }
         }
     }
 
@@ -153,7 +157,7 @@ public class ParadoxClobTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharacterStreamWithLongLength() throws SQLException {
+    public void testCharacterStreamWithLongLength() throws SQLException, IOException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT Comments FROM CUSTOMER")) {
             Assert.assertTrue("First record not exists", rs.next());
@@ -161,7 +165,9 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getCharacterStream(1, 100));
+            try (final Reader reader = clob.getCharacterStream(1, 100)) {
+                Assert.assertNotNull("Invalid value", reader);
+            }
         }
     }
 
@@ -283,7 +289,8 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getSubString(1, 100));
+            Assert.assertEquals("Invalid value", "Small comment (less 100 symbols)",
+                    clob.getSubString(1, 100));
         }
     }
 
@@ -301,7 +308,7 @@ public class ParadoxClobTest {
             final Clob clob = rs.getClob("comments");
             Assert.assertNotNull("First comment is null", rs.getClob("comments"));
 
-            Assert.assertThrows("Invalid clob", SQLException.class, () -> clob.getSubString(100, 3));
+            Assert.assertTrue("Invalid clob string", clob.getSubString(100, 3).isEmpty());
         }
     }
 
@@ -395,6 +402,36 @@ public class ParadoxClobTest {
 
             clob.truncate(0);
             Assert.assertEquals("Testing for truncate.", 0, clob.length());
+        }
+    }
+
+    /**
+     * Test for clob reading.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testClobReading() throws SQLException, IOException {
+        try (final PreparedStatement stmt =
+                     conn.prepareStatement("SELECT Comments FROM CUSTOMER WHERE CustNo = ?")) {
+            stmt.setInt(1, 4);
+
+            try (final ResultSet rs = stmt.executeQuery()) {
+                Assert.assertTrue("First record not exists", rs.next());
+
+                final Clob clob = rs.getClob("comments");
+                final int size = 56864;
+                Assert.assertEquals("Invalid clob size", size, clob.length());
+
+                // String methods
+                Assert.assertEquals("Invalid clob string size", size, rs.getString("Comments").length());
+                Assert.assertEquals("Invalid clob string size", size, clob.getSubString(1, size).length());
+
+                try (final Reader reader = clob.getCharacterStream(1, size)) {
+                    char[] buffer = new char[size];
+                    Assert.assertEquals("Invalid clob size", size, reader.read(buffer));
+                }
+            }
         }
     }
 }
