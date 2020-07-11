@@ -17,7 +17,7 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Stores the between node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
@@ -54,10 +54,10 @@ public final class BetweenNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
-        final Object value1 = getValue(row, field);
-        final Object value2 = getValue(row, first);
-        final Object value3 = getValue(row, last);
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+        final Object value1 = getValue(row, field, parameters);
+        final Object value2 = getValue(row, first, parameters);
+        final Object value3 = getValue(row, last, parameters);
 
         return comparator.compare(value1, value2, i -> i >= 0) &&
                 comparator.compare(value1, value3, i -> i <= 0);

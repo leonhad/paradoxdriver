@@ -17,7 +17,7 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Is not null node.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class IsNotNullNode extends AbstractComparableNode {
@@ -33,8 +33,8 @@ public class IsNotNullNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
-        final Object value1 = getValue(row, field);
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+        final Object value1 = getValue(row, field, parameters);
         return value1 != null;
     }
 }

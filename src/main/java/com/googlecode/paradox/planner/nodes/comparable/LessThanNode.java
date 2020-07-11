@@ -17,7 +17,7 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Store the less than node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public final class LessThanNode extends AbstractComparableNode {
@@ -34,9 +34,9 @@ public final class LessThanNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
-        final Object value1 = getValue(row, field);
-        final Object value2 = getValue(row, last);
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+        final Object value1 = getValue(row, field, parameters);
+        final Object value2 = getValue(row, last, parameters);
         return comparator.compare(value1, value2, i -> i == -1);
     }
 }

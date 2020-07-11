@@ -18,7 +18,7 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Stores the AND node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public class ANDNode extends AbstractJoinNode {
@@ -34,10 +34,10 @@ public class ANDNode extends AbstractJoinNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
         for (final SQLNode node : children) {
             final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
-            if (!conditionalNode.evaluate(row, comparator)) {
+            if (!conditionalNode.evaluate(row, comparator, parameters)) {
                 return false;
             }
         }

@@ -54,7 +54,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
         this(connection, name, null);
     }
 
-    public abstract boolean evaluate(final Object[] row, final ValuesComparator comparator);
+    public abstract boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters);
 
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
         getIndex(field, columns, tables);
@@ -97,13 +97,18 @@ public abstract class AbstractConditionalNode extends SQLNode {
         field.setIndex(index);
     }
 
-    protected Object getValue(final Object[] row, final FieldNode field) {
-        if (field.getIndex() == -1) {
+    protected Object getValue(final Object[] row, final FieldNode field, final Object[] parameters) {
+        Object ret;
+        if (field instanceof ParameterNode) {
+            ret = parameters[((ParameterNode) field).getParameterIndex()];
+        } else if (field.getIndex() == -1) {
             // Not a table field.
-            return field.getName();
+            ret = field.getName();
+        } else {
+            ret = row[field.getIndex()];
         }
 
-        return row[field.getIndex()];
+        return ret;
     }
 
     @Override

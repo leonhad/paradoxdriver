@@ -35,9 +35,9 @@ public class ILikeNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
-        final Object value1 = getValue(row, field);
-        final Object value2 = getValue(row, last);
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+        final Object value1 = getValue(row, field, parameters);
+        final Object value2 = getValue(row, last, parameters);
 
         if (value1 == null || value2 == null) {
             return false;

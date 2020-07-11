@@ -18,7 +18,7 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Store the OR node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public class ORNode extends AbstractJoinNode {
@@ -34,10 +34,10 @@ public class ORNode extends AbstractJoinNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator) {
+    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
         for (final SQLNode node : children) {
             final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
-            if (conditionalNode.evaluate(row, comparator)) {
+            if (conditionalNode.evaluate(row, comparator, parameters)) {
                 return true;
             }
         }

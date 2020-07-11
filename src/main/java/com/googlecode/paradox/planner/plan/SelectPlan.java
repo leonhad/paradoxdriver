@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -109,23 +109,23 @@ public final class SelectPlan implements Plan {
         return ret;
     }
 
-    private static List<Object[]> processJoinByType(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                    List<Object[]> rawData, PlanTableNode table,
-                                                    List<Object[]> tableData) {
+    private static List<Object[]> processJoinByType(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                                    final List<Object[]> rawData, final PlanTableNode table,
+                                                    final List<Object[]> tableData, final Object[] parameters) {
         List<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
-                localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData);
+                localValues = processRightJoin(comparator, columnsLoaded, rawData, table, tableData, parameters);
                 break;
             case LEFT:
-                localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData);
+                localValues = processLeftJoin(comparator, columnsLoaded, rawData, table, tableData, parameters);
                 break;
             case FULL:
-                localValues = processFullJoin(comparator, columnsLoaded, rawData, table, tableData);
+                localValues = processFullJoin(comparator, columnsLoaded, rawData, table, tableData, parameters);
                 break;
             default:
                 // CROSS and INNER joins.
-                localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData);
+                localValues = processInnerJoin(comparator, columnsLoaded, rawData, table, tableData, parameters);
                 break;
         }
         return localValues;
@@ -262,9 +262,9 @@ public final class SelectPlan implements Plan {
         });
     }
 
-    private static List<Object[]> processInnerJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                   List<Object[]> rawData, PlanTableNode table,
-                                                   List<Object[]> tableData) {
+    private static List<Object[]> processInnerJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                                   final List<Object[]> rawData, final PlanTableNode table,
+                                                   final List<Object[]> tableData, final Object[] parameters) {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -275,7 +275,7 @@ public final class SelectPlan implements Plan {
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, comparator)) {
+                        .evaluate(column, comparator, parameters)) {
                     continue;
                 }
 
@@ -349,6 +349,109 @@ public final class SelectPlan implements Plan {
         return false;
     }
 
+    private static List<Object[]> processLeftJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                                  final List<Object[]> rawData, final PlanTableNode table,
+                                                  final List<Object[]> tableData, final Object[] parameters) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        for (final Object[] cols : rawData) {
+            System.arraycopy(cols, 0, column, 0, cols.length);
+
+            boolean changed = false;
+            for (final Object[] newCols : tableData) {
+                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator, parameters)) {
+                    continue;
+                }
+
+                changed = true;
+                localValues.add(column.clone());
+            }
+
+            if (!changed) {
+                Arrays.fill(column, cols.length, column.length, null);
+                localValues.add(column.clone());
+            }
+        }
+        return localValues;
+    }
+
+    private static List<Object[]> processRightJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                                   final List<Object[]> rawData, final PlanTableNode table,
+                                                   final List<Object[]> tableData, final Object[] parameters) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        for (final Object[] newCols : tableData) {
+            System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
+
+            boolean changed = false;
+            for (final Object[] cols : rawData) {
+                System.arraycopy(cols, 0, column, 0, cols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator, parameters)) {
+                    continue;
+                }
+
+                changed = true;
+                localValues.add(column.clone());
+            }
+
+            if (!changed) {
+                Arrays.fill(column, 0, column.length - newCols.length, null);
+                localValues.add(column.clone());
+            }
+        }
+        return localValues;
+    }
+
+    private static List<Object[]> processFullJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                                  final List<Object[]> rawData, final PlanTableNode table,
+                                                  final List<Object[]> tableData, final Object[] parameters) {
+        final Object[] column = new Object[columnsLoaded.size()];
+        final List<Object[]> localValues = new ArrayList<>(100);
+
+        Set<Integer> inLeft = new HashSet<>();
+        for (final Object[] cols : rawData) {
+            System.arraycopy(cols, 0, column, 0, cols.length);
+
+            boolean changed = false;
+            for (int i = 0; i < tableData.size(); i++) {
+                final Object[] newCols = tableData.get(i);
+                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
+
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(column, comparator, parameters)) {
+                    continue;
+                }
+
+                inLeft.add(i);
+                changed = true;
+                localValues.add(column.clone());
+            }
+
+            if (!changed) {
+                Arrays.fill(column, cols.length, column.length, null);
+                localValues.add(column.clone());
+            }
+        }
+
+        // Itens not used in left join.
+        Arrays.fill(column, 0, column.length, null);
+        for (int i = 0; i < tableData.size(); i++) {
+            if (!inLeft.contains(i)) {
+                final Object[] newCols = tableData.get(i);
+                System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
+                localValues.add(column.clone());
+            }
+        }
+        return localValues;
+    }
+
     /**
      * {@inheritDoc}.
      */
@@ -394,13 +497,14 @@ public final class SelectPlan implements Plan {
             if (rawData.isEmpty()) {
                 if (table.getConditionalJoin() != null) {
                     // Filter WHERE joins.
-                    tableData.removeIf(tableRow -> !table.getConditionalJoin().evaluate(tableRow, comparator));
+                    tableData.removeIf(tableRow -> !table.getConditionalJoin()
+                            .evaluate(tableRow, comparator, parameters));
                 }
 
                 rawData.addAll(tableData);
             } else {
                 final List<Object[]> localValues = processJoinByType(comparator, columnsLoaded, rawData, table,
-                        tableData);
+                        tableData, parameters);
 
                 rawData.clear();
                 rawData.addAll(localValues);
@@ -425,110 +529,7 @@ public final class SelectPlan implements Plan {
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
-        filter(rawData, mapColumns, comparator, maxRows);
-    }
-
-    private static List<Object[]> processLeftJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                  List<Object[]> rawData, PlanTableNode table,
-                                                  List<Object[]> tableData) {
-        final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
-
-        for (final Object[] cols : rawData) {
-            System.arraycopy(cols, 0, column, 0, cols.length);
-
-            boolean changed = false;
-            for (final Object[] newCols : tableData) {
-                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
-
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, comparator)) {
-                    continue;
-                }
-
-                changed = true;
-                localValues.add(column.clone());
-            }
-
-            if (!changed) {
-                Arrays.fill(column, cols.length, column.length, null);
-                localValues.add(column.clone());
-            }
-        }
-        return localValues;
-    }
-
-    private static List<Object[]> processRightJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                   List<Object[]> rawData, PlanTableNode table,
-                                                   List<Object[]> tableData) {
-        final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
-
-        for (final Object[] newCols : tableData) {
-            System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
-
-            boolean changed = false;
-            for (final Object[] cols : rawData) {
-                System.arraycopy(cols, 0, column, 0, cols.length);
-
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, comparator)) {
-                    continue;
-                }
-
-                changed = true;
-                localValues.add(column.clone());
-            }
-
-            if (!changed) {
-                Arrays.fill(column, 0, column.length - newCols.length, null);
-                localValues.add(column.clone());
-            }
-        }
-        return localValues;
-    }
-
-    private static List<Object[]> processFullJoin(ValuesComparator comparator, List<Column> columnsLoaded,
-                                                  List<Object[]> rawData, PlanTableNode table,
-                                                  List<Object[]> tableData) {
-        final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
-
-        Set<Integer> inLeft = new HashSet<>();
-        for (final Object[] cols : rawData) {
-            System.arraycopy(cols, 0, column, 0, cols.length);
-
-            boolean changed = false;
-            for (int i = 0; i < tableData.size(); i++) {
-                final Object[] newCols = tableData.get(i);
-                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
-
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, comparator)) {
-                    continue;
-                }
-
-                inLeft.add(i);
-                changed = true;
-                localValues.add(column.clone());
-            }
-
-            if (!changed) {
-                Arrays.fill(column, cols.length, column.length, null);
-                localValues.add(column.clone());
-            }
-        }
-
-        // Itens not used in left join.
-        Arrays.fill(column, 0, column.length, null);
-        for (int i = 0; i < tableData.size(); i++) {
-            if (!inLeft.contains(i)) {
-                final Object[] newCols = tableData.get(i);
-                System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
-                localValues.add(column.clone());
-            }
-        }
-        return localValues;
+        filter(rawData, mapColumns, comparator, maxRows, parameters);
     }
 
     private void setIndexes(List<Column> columns) throws SQLException {
@@ -562,11 +563,11 @@ public final class SelectPlan implements Plan {
     }
 
     private void filter(final List<Object[]> rowValues, final int[] mapColumns, final ValuesComparator comparator,
-                        final int maxRows) {
+                        final int maxRows, final Object[] parameters) {
 
         for (final Object[] tableRow : rowValues) {
             // Filter WHERE joins.
-            if (condition != null && !condition.evaluate(tableRow, comparator)) {
+            if (condition != null && !condition.evaluate(tableRow, comparator, parameters)) {
                 continue;
             }
 
