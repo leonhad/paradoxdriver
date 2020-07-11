@@ -15,7 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 /**
  * Utility class to parse SQL expressions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public final class Expressions {
@@ -57,6 +57,7 @@ public final class Expressions {
                     criterionIndex++;
                     c = criterion[criterionIndex];
                 }
+
                 if (c != exp[index]) {
                     break;
                 }
