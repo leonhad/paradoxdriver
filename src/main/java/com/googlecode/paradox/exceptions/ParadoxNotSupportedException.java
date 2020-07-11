@@ -27,7 +27,9 @@ public class ParadoxNotSupportedException extends SQLFeatureNotSupportedExceptio
 
         USE_BATCH_OPERATION("003", "Use batch for more than one statement"),
 
-        INCONSISTENT_PARAMETER_LIST("004", "Inconsistent parameter list size");
+        INCONSISTENT_PARAMETER_LIST("004", "Inconsistent parameter list size"),
+
+        CANCEL_NOT_SUPPORTED("005", "Cancel operation in this type of statement is not supported.");
 
         private final String code;
 

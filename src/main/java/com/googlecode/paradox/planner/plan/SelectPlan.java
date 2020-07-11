@@ -62,13 +62,17 @@ public final class SelectPlan implements Plan {
     private final ParadoxConnection connection;
 
     /**
-     * If this result needs to be dinstict.
+     * If this result needs to be distinct.
      */
     private final boolean distinct;
     /**
      * The conditions to filter values
      */
     private AbstractConditionalNode condition;
+    /**
+     * If this statement was cancelled.
+     */
+    private boolean cancelled;
 
     /**
      * Creates a SELECT plan with conditions.
@@ -109,9 +113,10 @@ public final class SelectPlan implements Plan {
         return ret;
     }
 
-    private static List<Object[]> processJoinByType(final ValuesComparator comparator, final List<Column> columnsLoaded,
-                                                    final List<Object[]> rawData, final PlanTableNode table,
-                                                    final List<Object[]> tableData, final Object[] parameters) {
+    private List<Object[]> processJoinByType(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                             final List<Object[]> rawData, final PlanTableNode table,
+                                             final List<Object[]> tableData, final Object[] parameters)
+            throws SQLException {
         List<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
@@ -262,9 +267,10 @@ public final class SelectPlan implements Plan {
         });
     }
 
-    private static List<Object[]> processInnerJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
-                                                   final List<Object[]> rawData, final PlanTableNode table,
-                                                   final List<Object[]> tableData, final Object[] parameters) {
+    private List<Object[]> processInnerJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                            final List<Object[]> rawData, final PlanTableNode table,
+                                            final List<Object[]> tableData, final Object[] parameters)
+            throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -272,6 +278,7 @@ public final class SelectPlan implements Plan {
             System.arraycopy(cols, 0, column, 0, cols.length);
 
             for (final Object[] newCols : tableData) {
+                checkCancell();
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
@@ -349,9 +356,10 @@ public final class SelectPlan implements Plan {
         return false;
     }
 
-    private static List<Object[]> processLeftJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
-                                                  final List<Object[]> rawData, final PlanTableNode table,
-                                                  final List<Object[]> tableData, final Object[] parameters) {
+    private List<Object[]> processLeftJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                           final List<Object[]> rawData, final PlanTableNode table,
+                                           final List<Object[]> tableData, final Object[] parameters)
+            throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -360,6 +368,8 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (final Object[] newCols : tableData) {
+                checkCancell();
+
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
@@ -379,9 +389,10 @@ public final class SelectPlan implements Plan {
         return localValues;
     }
 
-    private static List<Object[]> processRightJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
-                                                   final List<Object[]> rawData, final PlanTableNode table,
-                                                   final List<Object[]> tableData, final Object[] parameters) {
+    private List<Object[]> processRightJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                            final List<Object[]> rawData, final PlanTableNode table,
+                                            final List<Object[]> tableData, final Object[] parameters)
+            throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -390,6 +401,8 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (final Object[] cols : rawData) {
+                checkCancell();
+
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
@@ -406,12 +419,14 @@ public final class SelectPlan implements Plan {
                 localValues.add(column.clone());
             }
         }
+
         return localValues;
     }
 
-    private static List<Object[]> processFullJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
-                                                  final List<Object[]> rawData, final PlanTableNode table,
-                                                  final List<Object[]> tableData, final Object[] parameters) {
+    private List<Object[]> processFullJoin(final ValuesComparator comparator, final List<Column> columnsLoaded,
+                                           final List<Object[]> rawData, final PlanTableNode table,
+                                           final List<Object[]> tableData, final Object[] parameters)
+            throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -421,6 +436,8 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (int i = 0; i < tableData.size(); i++) {
+                checkCancell();
+
                 final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
@@ -443,6 +460,8 @@ public final class SelectPlan implements Plan {
         // Itens not used in left join.
         Arrays.fill(column, 0, column.length, null);
         for (int i = 0; i < tableData.size(); i++) {
+            checkCancell();
+
             if (!inLeft.contains(i)) {
                 final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
@@ -466,6 +485,8 @@ public final class SelectPlan implements Plan {
         final List<Column> columnsLoaded = new ArrayList<>();
         final List<Object[]> rawData = new ArrayList<>(100);
         for (final PlanTableNode table : this.tables) {
+            checkCancell();
+
             // From columns in SELECT clause.
             final Set<Column> columnsToLoad =
                     this.columns.stream().filter(c -> c.isThis(table.getTable()))
@@ -563,9 +584,11 @@ public final class SelectPlan implements Plan {
     }
 
     private void filter(final List<Object[]> rowValues, final int[] mapColumns, final ValuesComparator comparator,
-                        final int maxRows, final Object[] parameters) {
+                        final int maxRows, final Object[] parameters) throws SQLException {
 
         for (final Object[] tableRow : rowValues) {
+            checkCancell();
+
             // Filter WHERE joins.
             if (condition != null && !condition.evaluate(tableRow, comparator, parameters)) {
                 continue;
@@ -639,7 +662,45 @@ public final class SelectPlan implements Plan {
         return this.values;
     }
 
+    /**
+     * Gets the statements WHERE conditions.
+     *
+     * @return the statements WHERE conditions.
+     */
     public AbstractConditionalNode getCondition() {
         return condition;
+    }
+
+    @Override
+    public void cancel() {
+        cancelled = true;
+    }
+
+    private void checkCancell() throws SQLException {
+        if (cancelled) {
+            cancelled = false;
+            throw new ParadoxException(ParadoxException.Error.OPERATION_CANCELLED);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SelectPlan that = (SelectPlan) o;
+        return distinct == that.distinct &&
+                Objects.equals(columns, that.columns) &&
+                Objects.equals(tables, that.tables) &&
+                Objects.equals(connection, that.connection) &&
+                Objects.equals(condition, that.condition);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(columns, tables, connection, distinct, condition);
     }
 }

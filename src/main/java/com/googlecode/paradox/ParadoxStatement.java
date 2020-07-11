@@ -24,13 +24,16 @@ import com.googlecode.paradox.utils.Utils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * JDBC statement implementation.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
+@SuppressWarnings("java:S1448")
 class ParadoxStatement implements Statement {
 
     /**
@@ -103,6 +106,10 @@ class ParadoxStatement implements Statement {
      * The query timeout.
      */
     private int queryTimeout;
+    /**
+     * This statement active executions list.
+     */
+    private final Queue<Plan> activeExecutions = new ConcurrentLinkedQueue<>();
 
     /**
      * Creates a statement.
@@ -119,37 +126,36 @@ class ParadoxStatement implements Statement {
     }
 
     protected int[] executeStatements() throws SQLException {
-        // Close all existing result sets.
-        for (final ResultSet rs : resultSets) {
-            rs.close();
-        }
-
-        resultSets.clear();
-
-        ArrayList<Integer> ret = new ArrayList<>();
+        final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
         for (final StatementNode statement : statements) {
             final Plan plan = Planner.create(connection, statement);
-
-            plan.execute(this.connection, maxRows, null);
-
-            if (plan instanceof SelectPlan) {
-                final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
-                        ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
-                resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
-                resultSet.setType(resultSetType);
-                resultSet.setConcurrency(resultSetConcurrency);
-                ret.add(Statement.SUCCESS_NO_INFO);
-                resultSets.add(resultSet);
+            activeExecutions.add(plan);
+            try {
+                plan.execute(this.connection, maxRows, null);
+            } finally {
+                activeExecutions.remove(plan);
             }
+
+            ret.addAll(executeSelectStatement(plan));
         }
 
-        int[] values = new int[ret.size()];
-        for (int loop = 0; loop < ret.size(); loop++) {
-            values[loop] = ret.get(loop);
+        return ret.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    protected List<Integer> executeSelectStatement(final Plan plan) throws SQLException {
+        ArrayList<Integer> ret = new ArrayList<>();
+        if (plan instanceof SelectPlan) {
+            final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
+                    ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
+            resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
+            resultSet.setType(resultSetType);
+            resultSet.setConcurrency(resultSetConcurrency);
+            ret.add(Statement.SUCCESS_NO_INFO);
+            resultSets.add(resultSet);
         }
 
-        return values;
+        return ret;
     }
 
     /**
@@ -165,8 +171,10 @@ class ParadoxStatement implements Statement {
      * {@inheritDoc}.
      */
     @Override
-    public void cancel() {
-        // Nothing to do here.
+    public void cancel() throws SQLFeatureNotSupportedException {
+        for (final Plan node : activeExecutions) {
+            node.cancel();
+        }
     }
 
     /**

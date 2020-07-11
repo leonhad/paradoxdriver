@@ -11,13 +11,15 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
 /**
  * Used to creates and execute SQL plans.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public interface Plan {
@@ -37,4 +39,13 @@ public interface Plan {
      * Optimize the statement.
      */
     void compile();
+
+    /**
+     * Cancel the statement execution.
+     *
+     * @throws SQLFeatureNotSupportedException when the statement not support the cancel operation.
+     */
+    default void cancel() throws SQLFeatureNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CANCEL_NOT_SUPPORTED);
+    }
 }

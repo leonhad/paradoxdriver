@@ -17,7 +17,6 @@ import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Plan;
 import com.googlecode.paradox.planner.Planner;
-import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.InputStream;
@@ -33,9 +32,10 @@ import java.util.List;
 /**
  * PreparedStatement implementation class.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
+@SuppressWarnings({"java:S1448", "java:S1200"})
 class ParadoxPreparedStatement extends ParadoxStatement implements PreparedStatement {
 
     /**
@@ -69,14 +69,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     protected int[] executeStatements() throws SQLException {
-        // Close all existing result sets.
-        for (final ResultSet rs : resultSets) {
-            rs.close();
-        }
-
-        resultSets.clear();
-
-        ArrayList<Integer> ret = new ArrayList<>();
+        final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
         for (final StatementNode statement : statements) {
             final Plan plan = Planner.create(connection, statement);
@@ -85,23 +78,11 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
             for (final Object[] params : executions) {
                 plan.execute(this.connection, maxRows, params);
 
-                if (plan instanceof SelectPlan) {
-                    final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
-                            ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
-                    resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
-                    resultSet.setType(resultSetType);
-                    resultSet.setConcurrency(resultSetConcurrency);
-                    ret.add(Statement.SUCCESS_NO_INFO);
-                    resultSets.add(resultSet);
-                }
+                ret.addAll(executeSelectStatement(plan));
             }
         }
 
-        int[] values = new int[ret.size()];
-        for (int loop = 0; loop < ret.size(); loop++) {
-            values[loop] = ret.get(loop);
-        }
-        return values;
+        return ret.stream().mapToInt(Integer::intValue).toArray();
     }
 
     @Override
@@ -216,6 +197,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
      */
     @Deprecated
     @Override
+    @SuppressWarnings("java:S1133")
     public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
@@ -244,7 +226,6 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     public boolean execute() throws SQLException {
-        // FIXME more generic.
         return executeQuery() != null;
     }
 

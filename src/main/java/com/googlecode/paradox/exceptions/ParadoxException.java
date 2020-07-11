@@ -67,7 +67,9 @@ public class ParadoxException extends SQLDataException {
 
         INVALID_TABLE("014", "Invalid table name: %s"),
 
-        TABLE_AMBIGUOUS_DEFINED("015", "Table %s ambiguous defined");
+        TABLE_AMBIGUOUS_DEFINED("015", "Table %s ambiguous defined"),
+
+        OPERATION_CANCELLED("016", "Operation cancelled by the user");
 
         private final String code;
 

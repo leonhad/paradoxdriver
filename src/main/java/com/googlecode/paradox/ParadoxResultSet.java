@@ -143,7 +143,6 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public void close() {
         this.dataNavigation.close();
-
         this.connection = null;
     }
 
