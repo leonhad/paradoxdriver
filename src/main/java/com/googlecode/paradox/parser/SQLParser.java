@@ -328,12 +328,6 @@ public final class SQLParser {
 
         boolean firstField = true;
         do {
-
-            if (this.token.getType() == TokenType.DISTINCT) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
-                        this.token.getPosition());
-            }
-
             if (this.token.getType() == TokenType.FROM) {
                 break;
             }
@@ -707,29 +701,21 @@ public final class SQLParser {
      */
     private AbstractConditionalNode parseOperators(final AbstractConditionalNode child) throws SQLException {
         AbstractConditionalNode ret;
-        switch (this.token.getType()) {
-            case AND:
-                this.expect(TokenType.AND);
-                if (child instanceof ANDNode) {
-                    ret = child;
-                } else {
-                    ret = new ANDNode(connection, child);
-                }
-
-                break;
-
-            case OR:
-                this.expect(TokenType.OR);
-                if (child instanceof ORNode) {
-                    ret = child;
-                } else {
-                    ret = new ORNode(connection, child);
-                }
-
-                break;
-            default:
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
-                        this.token.getPosition());
+        if (this.token.getType() == TokenType.AND) {
+            this.expect(TokenType.AND);
+            if (child instanceof ANDNode) {
+                ret = child;
+            } else {
+                ret = new ANDNode(connection, child);
+            }
+        } else {
+            // TokenType OR.
+            this.expect(TokenType.OR);
+            if (child instanceof ORNode) {
+                ret = child;
+            } else {
+                ret = new ORNode(connection, child);
+            }
         }
 
         return ret;

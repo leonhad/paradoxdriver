@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link SQLNode} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class SQLNodeTest {
@@ -41,6 +41,7 @@ public class SQLNodeTest {
      * @throws SQLException in case of failures.
      */
     @BeforeClass
+    @SuppressWarnings("java:S2115")
     public static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);

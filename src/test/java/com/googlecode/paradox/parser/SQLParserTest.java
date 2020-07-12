@@ -12,6 +12,7 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
@@ -31,9 +32,10 @@ import java.util.List;
 /**
  * Unit test for {@link SQLParser}.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
+@SuppressWarnings({"java:S109", "java:S1192"})
 public class SQLParserTest {
 
     /**
@@ -52,6 +54,7 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @BeforeClass
+    @SuppressWarnings("java:S2115")
     public static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
@@ -211,10 +214,10 @@ public class SQLParserTest {
     /**
      * Test for column values.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testColumnValue() throws Exception {
+    public void testColumnValue() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "SELECT 'test', 123 as number, null FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -243,10 +246,10 @@ public class SQLParserTest {
     /**
      * Test for join token.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testJoin() throws Exception {
+    public void testJoin() throws SQLException {
         final SQLParser parser = new SQLParser(conn,
                 "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
         final List<StatementNode> list = parser.parse();
@@ -266,10 +269,10 @@ public class SQLParserTest {
     /**
      * Test for full join token.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testFullJoin() throws Exception {
+    public void testFullJoin() throws SQLException {
         final SQLParser parser = new SQLParser(conn,
                 "SELECT * FROM client c full join test t on test_id = id ");
         final List<StatementNode> list = parser.parse();
@@ -292,10 +295,10 @@ public class SQLParserTest {
     /**
      * Test for SELECT token.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelect() throws Exception {
+    public void testSelect() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "SELECT * FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -314,10 +317,10 @@ public class SQLParserTest {
     /**
      * Test for tables.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testTable() throws Exception {
+    public void testTable() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "SELECT * FROM \"client.db\"");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -336,10 +339,10 @@ public class SQLParserTest {
     /**
      * Test a SELECT with two tables.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testTwoTable() throws Exception {
+    public void testTwoTable() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select a.CODE as cod, state.NAME name FROM client, state");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -364,10 +367,10 @@ public class SQLParserTest {
     /**
      * Test tables with alias.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testTwoTableWithAlias() throws Exception {
+    public void testTwoTableWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select *, name FROM client as cli, state STATE");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -390,10 +393,10 @@ public class SQLParserTest {
     /**
      * Test for where token.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testWhere() throws Exception {
+    public void testWhere() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "SELECT * FROM client as test WHERE a = b and c <> t");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -429,10 +432,10 @@ public class SQLParserTest {
     /**
      * Test a where with alias.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testWhereWithAlias() throws Exception {
+    public void testWhereWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "SELECT * FROM client as test WHERE test.a = c.b");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -461,10 +464,10 @@ public class SQLParserTest {
     /**
      * Test for SQL exceptions.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testException() throws Exception {
+    public void testException() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select a. FROM AREACODES a");
         Assert.assertThrows("Invalid result", SQLException.class, parser::parse);
     }
@@ -472,10 +475,10 @@ public class SQLParserTest {
     /**
      * Test for SELECT without FROM (two arguments).
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelectWithoutFromTwoArguments() throws Exception {
+    public void testSelectWithoutFromTwoArguments() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select 1, 'b'");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -492,10 +495,10 @@ public class SQLParserTest {
     /**
      * Test for SELECT without FROM.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelectWithoutFrom() throws Exception {
+    public void testSelectWithoutFrom() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select 1");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -511,10 +514,10 @@ public class SQLParserTest {
     /**
      * Test for only SELECT token.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelectToken() throws Exception {
+    public void testSelectToken() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -529,10 +532,10 @@ public class SQLParserTest {
     /**
      * Test for JOIN optimization in AND node.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testJoinOptimizationAND() throws Exception {
+    public void testJoinOptimizationAND() throws SQLException {
         final SQLParser parser = new SQLParser(conn,
                 "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
@@ -553,10 +556,10 @@ public class SQLParserTest {
     /**
      * Test for JOIN optimization OR node.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testJoinOptimizationOR() throws Exception {
+    public void testJoinOptimizationOR() throws SQLException {
         final SQLParser parser = new SQLParser(conn,
                 "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         " where c.StateID = st.State or st.State = ac.State or c.CountyID = 201");
@@ -577,12 +580,60 @@ public class SQLParserTest {
     /**
      * Test for parameters.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testParameters() throws Exception {
+    public void testParameters() throws SQLException {
         final SQLParser parser = new SQLParser(conn, "select * from geog.tblAC ac" +
                 " where ac.State = ? and ? = ac.AreaCode");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+        Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
+
+        final ANDNode and = (ANDNode) select.getCondition();
+        Assert.assertEquals("Invalid node size.", 2, and.getChildren().size());
+
+        Assert.assertTrue("Invalid conditional type", and.getChildren().get(0) instanceof EqualsNode);
+        EqualsNode equals = (EqualsNode) and.getChildren().get(0);
+
+        Assert.assertEquals("Invalid node value.", "ac.State", equals.getField().toString());
+        Assert.assertTrue("Invalid node type.", equals.getLast() instanceof ParameterNode);
+        Assert.assertEquals("Invalid parameter index.", 0, ((ParameterNode) equals.getLast()).getParameterIndex());
+
+        Assert.assertTrue("Invalid conditional type", and.getChildren().get(1) instanceof EqualsNode);
+        equals = (EqualsNode) and.getChildren().get(1);
+        Assert.assertTrue("Invalid node type.", equals.getField() instanceof ParameterNode);
+        Assert.assertEquals("Invalid parameter index.", 1, ((ParameterNode) equals.getField()).getParameterIndex());
+        Assert.assertEquals("Invalid node value.", "ac.AreaCode", equals.getLast().toString());
+    }
+
+    /**
+     * Test for invalid join node.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testInvalidJoinNode() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select * from a where ab = 1 aaa ba = 2");
+        Assert.assertThrows("Invalid join node", ParadoxSyntaxErrorException.class, parser::parse);
+    }
+
+    /**
+     * Test for parenthesis.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testParenthesis() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select * from geog.tblAC ac" +
+                " where (ac.State = ? and ? = ac.AreaCode)");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
         Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());
