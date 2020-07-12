@@ -18,12 +18,15 @@ import com.googlecode.paradox.utils.Expressions;
 /**
  * Like node.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class LikeNode extends AbstractComparableNode {
 
-    private final char escape = '\\';
+    /**
+     * This like escape char.
+     */
+    protected char escape = '\\';
 
     /**
      * Create a new instance.
@@ -33,7 +36,7 @@ public class LikeNode extends AbstractComparableNode {
      * @param last       the last node.
      */
     public LikeNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, "=", field, last);
+        super(connection, "like", field, last);
     }
 
     @Override
@@ -46,5 +49,23 @@ public class LikeNode extends AbstractComparableNode {
         }
 
         return Expressions.accept(connection, (String) value1, (String) value2, true, escape);
+    }
+
+    /**
+     * Gets the escape char.
+     *
+     * @return the escape char.
+     */
+    public char getEscape() {
+        return escape;
+    }
+
+    /**
+     * Sets the escape char.
+     *
+     * @param escape the escape char.
+     */
+    public void setEscape(char escape) {
+        this.escape = escape;
     }
 }

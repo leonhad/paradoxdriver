@@ -41,7 +41,9 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
         EMPTY_COLUMN_LIST("005", "Empty column list"),
 
-        INVALID_SELECT_STATEMENT("006", "Invalid SELECT statement");
+        INVALID_SELECT_STATEMENT("006", "Invalid SELECT statement"),
+
+        INVALID_CHAR("007", "Invalid value, expected a single char value");
 
         private final String code;
 

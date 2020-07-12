@@ -13,16 +13,15 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.rowset.ValuesComparator;
-import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Insensitive like node.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
-public class ILikeNode extends AbstractComparableNode {
+public class ILikeNode extends LikeNode {
 
     /**
      * Create a new instance.
@@ -32,7 +31,8 @@ public class ILikeNode extends AbstractComparableNode {
      * @param last       the last node.
      */
     public ILikeNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, "=", field, last);
+        super(connection, field, last);
+        this.name = "ilike";
     }
 
     @Override
@@ -44,6 +44,6 @@ public class ILikeNode extends AbstractComparableNode {
             return false;
         }
 
-        return Expressions.accept(connection, (String) value1, (String) value2, false, Constants.ESCAPE_CHAR);
+        return Expressions.accept(connection, (String) value1, (String) value2, false, escape);
     }
 }

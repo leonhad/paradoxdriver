@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Stores a SQL node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class SQLNode {
@@ -39,7 +39,7 @@ public class SQLNode {
     /**
      * The node name.
      */
-    protected final String name;
+    protected String name;
 
     protected final ParadoxConnection connection;
 

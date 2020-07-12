@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.0
  */
 public enum TokenType {
@@ -66,6 +66,11 @@ public enum TokenType {
      * Equals token.
      */
     EQUALS("="),
+
+    /**
+     * Escape token.
+     */
+    ESCAPE,
 
     /**
      * From token.

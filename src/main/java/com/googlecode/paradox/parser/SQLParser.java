@@ -617,7 +617,9 @@ public final class SQLParser {
     private LikeNode parseLike(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.LIKE);
 
-        return new LikeNode(connection, firstField, parseField());
+        final LikeNode like = new LikeNode(connection, firstField, parseField());
+        parseEscapeToken(like);
+        return like;
     }
 
     /**
@@ -630,7 +632,34 @@ public final class SQLParser {
     private ILikeNode parseILike(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.ILIKE);
 
-        return new ILikeNode(connection, firstField, parseField());
+        final ILikeNode iLikeNode = new ILikeNode(connection, firstField, parseField());
+        parseEscapeToken(iLikeNode);
+        return iLikeNode;
+    }
+
+    /**
+     * Check and parses the ESCAPE node in like.
+     *
+     * @param likeNode the like node.
+     * @throws SQLException in case of syntax errors.
+     */
+    private void parseEscapeToken(final LikeNode likeNode) throws SQLException {
+        // Has an escape value?
+        if (this.token != null && this.token.getType() == TokenType.ESCAPE) {
+            this.expect(TokenType.ESCAPE);
+            FieldNode field = parseField();
+            if (field instanceof ValueNode) {
+                ValueNode value = (ValueNode) field;
+
+                if (value.getSqlType() != Types.VARCHAR || value.getName().length() != 1) {
+                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_CHAR);
+                }
+
+                likeNode.setEscape(value.getName().charAt(0));
+            } else {
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_CHAR);
+            }
+        }
     }
 
     /**

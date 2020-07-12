@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Scanner}.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public class ScannerTest {
@@ -304,5 +304,18 @@ public class ScannerTest {
         Assert.assertEquals("Invalid token type", TokenType.IDENTIFIER, token.getType());
         Assert.assertEquals("Invalid token value", "a\"b", token.getValue());
         Assert.assertFalse("Invalid scanner state", scanner.hasNext());
+    }
+
+    /**
+     * Test for escape token.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testEscape() throws SQLException {
+        final Scanner scanner = new Scanner(conn, "ESCAPE");
+        Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type.", TokenType.ESCAPE, token.getType());
+        Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
     }
 }
