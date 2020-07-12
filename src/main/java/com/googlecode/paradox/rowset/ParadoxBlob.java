@@ -112,7 +112,7 @@ public final class ParadoxBlob implements Blob {
             throw new ParadoxException(ParadoxException.Error.INVALID_LENGTH_SPECIFIED);
         }
         if (length == 0) {
-            this.value = new byte[0];
+            this.value = EMPTY_BLOB;
         } else {
             this.value = Arrays.copyOf(this.value, (int) length);
         }
