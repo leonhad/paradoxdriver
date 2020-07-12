@@ -72,6 +72,10 @@ public final class SelectPlan implements Plan {
      * If this statement was cancelled.
      */
     private boolean cancelled;
+    /**
+     * Order by fields.
+     */
+    private final List<Column> orderByFields = new ArrayList<>();
 
     /**
      * Creates a SELECT plan with conditions.
@@ -243,7 +247,23 @@ public final class SelectPlan implements Plan {
             return;
         }
 
-        List<ParadoxField> fields = new ArrayList<>();
+        final List<ParadoxField> fields = getParadoxFields(node);
+        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
+            c.setName(node.getAlias());
+            this.columns.add(c);
+        });
+    }
+
+    public void addOrderColumn(final FieldNode node) throws SQLException {
+        final List<ParadoxField> fields = getParadoxFields(node);
+        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
+            c.setName(node.getAlias());
+            this.orderByFields.add(c);
+        });
+    }
+
+    private List<ParadoxField> getParadoxFields(FieldNode node) throws ParadoxException {
+        final List<ParadoxField> fields = new ArrayList<>();
 
         for (final PlanTableNode table : this.tables) {
             if (node.getTableName() == null || table.isThis(node.getTableName())) {
@@ -260,10 +280,11 @@ public final class SelectPlan implements Plan {
                     node.getPosition());
         }
 
-        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
-            c.setName(node.getAlias());
-            this.columns.add(c);
-        });
+        return fields;
+    }
+
+    public void addOrderColumn(final Column column) {
+        this.orderByFields.add(column);
     }
 
     private List<Object[]> processInnerJoin(final List<Column> columnsLoaded, final List<Object[]> rawData,
@@ -277,7 +298,7 @@ public final class SelectPlan implements Plan {
             System.arraycopy(cols, 0, column, 0, cols.length);
 
             for (final Object[] newCols : tableData) {
-                checkCancell();
+                checkCancel();
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
@@ -367,7 +388,7 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (final Object[] newCols : tableData) {
-                checkCancell();
+                checkCancel();
 
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
@@ -400,7 +421,7 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (final Object[] cols : rawData) {
-                checkCancell();
+                checkCancel();
 
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
@@ -435,7 +456,7 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (int i = 0; i < tableData.size(); i++) {
-                checkCancell();
+                checkCancel();
 
                 final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
@@ -459,7 +480,7 @@ public final class SelectPlan implements Plan {
         // Itens not used in left join.
         Arrays.fill(column, 0, column.length, null);
         for (int i = 0; i < tableData.size(); i++) {
-            checkCancell();
+            checkCancel();
 
             if (!inLeft.contains(i)) {
                 final Object[] newCols = tableData.get(i);
@@ -484,7 +505,7 @@ public final class SelectPlan implements Plan {
         final List<Column> columnsLoaded = new ArrayList<>();
         final List<Object[]> rawData = new ArrayList<>(100);
         for (final PlanTableNode table : this.tables) {
-            checkCancell();
+            checkCancel();
 
             // From columns in SELECT clause.
             final Set<Column> columnsToLoad =
@@ -586,7 +607,7 @@ public final class SelectPlan implements Plan {
                         final Object[] parameters) throws SQLException {
 
         for (final Object[] tableRow : rowValues) {
-            checkCancell();
+            checkCancel();
 
             // Filter WHERE joins.
             if (condition != null && !condition.evaluate(tableRow, parameters)) {
@@ -670,12 +691,29 @@ public final class SelectPlan implements Plan {
         return condition;
     }
 
+    /**
+     * Gets the order by fields.
+     *
+     * @return the order by fields.
+     */
+    public List<Column> getOrderByFields() {
+        return orderByFields;
+    }
+
+    /**
+     * Cancel this statement execution.
+     */
     @Override
     public void cancel() {
         cancelled = true;
     }
 
-    private void checkCancell() throws SQLException {
+    /**
+     * Check if this execution was cancelled.
+     *
+     * @throws SQLException if this execution was cancelled.
+     */
+    private void checkCancel() throws SQLException {
         if (cancelled) {
             cancelled = false;
             throw new ParadoxException(ParadoxException.Error.OPERATION_CANCELLED);

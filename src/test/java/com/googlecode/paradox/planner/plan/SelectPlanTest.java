@@ -23,6 +23,7 @@ import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
+import com.googlecode.paradox.results.Column;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -235,5 +236,28 @@ public class SelectPlanTest {
         Assert.assertNull("Invalid table condition", selectPlan.getTables().get(1).getConditionalJoin());
         Assert.assertTrue("Invalid table condition",
                 selectPlan.getTables().get(2).getConditionalJoin() instanceof EqualsNode);
+    }
+
+    /**
+     * Test for order by.
+     *
+     * @throws SQLException if has errors.
+     */
+    @Test
+    public void testOrderBy() throws SQLException {
+        final SQLParser parser = new SQLParser(conn,
+                "select \"DATE\", \"TIME\" from fields.date7 order by \"DATE\", \"TIME\"");
+        final List<StatementNode> list = parser.parse();
+        Assert.assertEquals("Invalid list size", 1, list.size());
+
+        final Plan plan = Planner.create(conn, list.get(0));
+        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
+
+        final SelectPlan selectPlan = (SelectPlan) plan;
+        final List<Column> columns = selectPlan.getOrderByFields();
+
+        Assert.assertEquals("Invalid column list size", 2, columns.size());
+        Assert.assertEquals("Invalid column list size", "DATE", columns.get(0).getName());
+        Assert.assertEquals("Invalid column list size", "TIME", columns.get(1).getName());
     }
 }

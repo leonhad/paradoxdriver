@@ -18,6 +18,7 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SQL execution plan.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public class Planner {
@@ -48,8 +49,7 @@ public class Planner {
      * @throws SQLException in case of parse errors.
      */
     private static void parseTableMetaData(final ParadoxConnection connection, final SelectNode statement,
-                                           final SelectPlan plan)
-            throws SQLException {
+                                           final SelectPlan plan) throws SQLException {
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
             node.setTable(connection, table);
@@ -74,6 +74,35 @@ public class Planner {
         }
     }
 
+    /**
+     * Parses the order by fields.
+     *
+     * @param statement the SELECT statement.
+     * @param plan      the SELECT execution plan.
+     * @throws SQLException in case of parse errors.
+     */
+    private static void parseOrderBy(final SelectNode statement, final SelectPlan plan) throws SQLException {
+        for (final FieldNode field : statement.getOrder()) {
+            if (field instanceof ValueNode) {
+                int index = Integer.parseInt(field.getName());
+                if (index > plan.getColumns().size()) {
+                    throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, Integer.toString(index));
+                }
+
+                plan.addOrderColumn(plan.getColumns().get(index));
+            } else {
+                plan.addOrderColumn(field);
+            }
+        }
+    }
+
+    /**
+     * Parses the asterisk fields in SELECT.
+     *
+     * @param plan  the SELECT execution plan.
+     * @param field the asterisk field.
+     * @throws SQLException in case of parse errors.
+     */
     private static void parseAsterisk(final SelectPlan plan, final AsteriskNode field) throws SQLException {
         if (field.getTableName() != null) {
             List<ParadoxTable> tables = plan.getTables().stream()
@@ -128,6 +157,7 @@ public class Planner {
         // Load the table metadata.
         parseTableMetaData(connection, statement, plan);
         parseColumns(statement, plan);
+        parseOrderBy(statement, plan);
 
         if (plan.getColumns().isEmpty()) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_COLUMN_LIST);

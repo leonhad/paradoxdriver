@@ -1540,7 +1540,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsOrderByUnrelated() {
-        return false;
+        return true;
     }
 
     /**
