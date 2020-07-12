@@ -15,6 +15,8 @@ import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
+import com.googlecode.paradox.rowset.ParadoxBlob;
+import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
@@ -174,8 +176,8 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Array createArrayOf(final String typeName, final Object[] elements) {
-        return null;
+    public Array createArrayOf(final String typeName, final Object[] elements) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -183,7 +185,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Blob createBlob() {
-        return null;
+        return new ParadoxBlob(new byte[0]);
     }
 
     /**
@@ -191,15 +193,15 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Clob createClob() {
-        return null;
+        return new ParadoxClob("");
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public NClob createNClob() {
-        return null;
+    public NClob createNClob() throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
@@ -242,8 +244,8 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public Struct createStruct(final String typeName, final Object[] attributes) {
-        return null;
+    public Struct createStruct(final String typeName, final Object[] attributes) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
