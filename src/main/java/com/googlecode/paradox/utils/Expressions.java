@@ -34,10 +34,11 @@ public final class Expressions {
      * @param expression    the expression to test for.
      * @param criteria      the criteria to use.
      * @param caseSensitive true if this validation processes is case sensitive.
+     * @param escape        the escape char.
      * @return <code>true</code> if the expression is valid.
      */
     public static boolean accept(final ParadoxConnection conn, final String expression, final String criteria,
-                                 final boolean caseSensitive) {
+                                 final boolean caseSensitive, final char escape) {
         final char[] criterion = getCharArrayWithCase(conn, criteria, caseSensitive);
         final char[] exp = getCharArrayWithCase(conn, expression, caseSensitive);
         int index = 0;
@@ -53,7 +54,7 @@ public final class Expressions {
                 index = getIndex(criterion, exp, index, criterionIndex);
             } else {
                 // Is it an escaped char?
-                if (isEscapedChar(criterionIndex, criterion)) {
+                if (isEscapedChar(criterionIndex, criterion, escape)) {
                     criterionIndex++;
                     c = criterion[criterionIndex];
                 }
@@ -98,12 +99,13 @@ public final class Expressions {
      *
      * @param currentIndex the current criterion index.
      * @param criterion    the criterion to look at.
+     * @param escape       the escape char.
      * @return <code>true</code> if the current char is an escaped character.
      */
-    private static boolean isEscapedChar(final int currentIndex, final char[] criterion) {
+    private static boolean isEscapedChar(final int currentIndex, final char[] criterion, final char escape) {
         boolean ret = false;
 
-        if (criterion[currentIndex] == '\\' && currentIndex + 1 < criterion.length) {
+        if (criterion[currentIndex] == escape && currentIndex + 1 < criterion.length) {
             final char next = criterion[currentIndex + 1];
 
             switch (next) {

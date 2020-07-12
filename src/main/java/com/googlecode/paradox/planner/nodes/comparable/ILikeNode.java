@@ -13,12 +13,13 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.rowset.ValuesComparator;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Insensitive like node.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class ILikeNode extends AbstractComparableNode {
@@ -43,6 +44,6 @@ public class ILikeNode extends AbstractComparableNode {
             return false;
         }
 
-        return Expressions.accept(connection, (String) value1, (String) value2, false);
+        return Expressions.accept(connection, (String) value1, (String) value2, false, Constants.ESCAPE_CHAR);
     }
 }

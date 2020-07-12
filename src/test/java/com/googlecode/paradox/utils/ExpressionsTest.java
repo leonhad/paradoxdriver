@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Expressions}.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.1
  */
 public class ExpressionsTest {
@@ -56,7 +56,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testEquals() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "table", false));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "table", false, Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -64,7 +64,8 @@ public class ExpressionsTest {
      */
     @Test
     public void testExtra() {
-        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TEST.QBE~", "%.QBE", false));
+        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TEST.QBE~", "%.QBE", false,
+                Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -72,7 +73,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testLikes() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TA%", false));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TA%", false, Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -80,7 +81,8 @@ public class ExpressionsTest {
      */
     @Test
     public void testMix() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X__", false));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X__", false,
+                Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -88,7 +90,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testNotEquals() {
-        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TABLE", "table", true));
+        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TABLE", "table", true, Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -104,7 +106,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testUnique() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB_E", false));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB_E", false, Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -112,7 +114,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testEscapedChar() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "%a%", "\\%a\\%", true));
+        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "%a%", "\\%a\\%", true, Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -121,6 +123,6 @@ public class ExpressionsTest {
     @Test
     public void testUnescapedChar() {
         Assert.assertTrue("Invalid value.", Expressions.accept(conn,
-                "k, Jersey City, Newark, Morristown", "k%", true));
+                "k, Jersey City, Newark", "k%", true, Constants.ESCAPE_CHAR));
     }
 }

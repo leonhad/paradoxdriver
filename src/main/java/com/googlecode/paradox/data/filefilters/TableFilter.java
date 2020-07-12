@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import java.io.FileFilter;
 /**
  * Paradox Table filters.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class TableFilter implements FileFilter {
@@ -77,9 +78,11 @@ public final class TableFilter implements FileFilter {
 
         if (this.tableName != null) {
             return Expressions.accept(connection, name,
-                    this.tableName + "." + this.extension, false) && pathname.isFile();
+                    this.tableName + "." + this.extension, false, Constants.ESCAPE_CHAR) && pathname.isFile();
         }
-        return Expressions.accept(connection, name, "%." + this.extension, false) && pathname.isFile();
+
+        return Expressions.accept(connection, name, "%." + this.extension, false, Constants.ESCAPE_CHAR)
+                && pathname.isFile();
     }
 
 }

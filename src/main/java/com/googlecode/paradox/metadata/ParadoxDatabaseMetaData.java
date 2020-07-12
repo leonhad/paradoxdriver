@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Creates an database metadata.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
@@ -837,9 +837,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) {
         if (((catalog != null)
-                && !Expressions.accept(conn, this.conn.getCatalog(), catalog, false))
+                && !Expressions.accept(conn, this.conn.getCatalog(), catalog, false, Constants.ESCAPE_CHAR))
                 || ((schemaPattern != null)
-                && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern, false))) {
+                && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern, false, Constants.ESCAPE_CHAR))) {
             return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
         }
         return this.getSchemas();
@@ -858,7 +858,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSearchStringEscape() {
-        return "\\";
+        return Character.toString(Constants.ESCAPE_CHAR);
     }
 
     /**
@@ -1805,7 +1805,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                                final String tableName, final ParadoxField[] fields) throws SQLException {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
-            if ((columnNamePattern != null) && !Expressions.accept(conn, field.getName(), columnNamePattern, false)) {
+            if ((columnNamePattern != null) && !Expressions.accept(conn, field.getName(), columnNamePattern, false,
+                    Constants.ESCAPE_CHAR)) {
                 continue;
             }
 

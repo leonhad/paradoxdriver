@@ -23,6 +23,8 @@ import com.googlecode.paradox.utils.Expressions;
  */
 public class LikeNode extends AbstractComparableNode {
 
+    private final char escape = '\\';
+
     /**
      * Create a new instance.
      *
@@ -43,6 +45,6 @@ public class LikeNode extends AbstractComparableNode {
             return false;
         }
 
-        return Expressions.accept(connection, (String) value1, (String) value2, true);
+        return Expressions.accept(connection, (String) value1, (String) value2, true, escape);
     }
 }

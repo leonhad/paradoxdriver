@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import java.io.FileFilter;
 /**
  * Paradox view filter.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class ViewFilter implements FileFilter {
@@ -49,8 +50,9 @@ public final class ViewFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.QBE", false)
-                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName, false));
+        return Expressions.accept(connection, name, "%.QBE", false, Constants.ESCAPE_CHAR)
+                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName, false,
+                Constants.ESCAPE_CHAR));
     }
 
 }

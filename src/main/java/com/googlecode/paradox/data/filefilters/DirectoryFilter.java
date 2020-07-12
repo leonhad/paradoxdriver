@@ -12,6 +12,7 @@
 package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
@@ -20,7 +21,7 @@ import java.io.FileFilter;
 /**
  * If the file is a directory.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.4
  */
 public class DirectoryFilter implements FileFilter {
@@ -53,7 +54,7 @@ public class DirectoryFilter implements FileFilter {
     public boolean accept(final File file) {
         boolean expression = true;
         if (pattern != null) {
-            expression = Expressions.accept(connection, file.getName(), pattern, false);
+            expression = Expressions.accept(connection, file.getName(), pattern, false, Constants.ESCAPE_CHAR);
         }
         return expression && file != null && file.isDirectory();
     }

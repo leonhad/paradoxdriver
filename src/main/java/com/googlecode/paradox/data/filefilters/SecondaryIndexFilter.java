@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data.filefilters;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import java.io.FileFilter;
 /**
  * Paradox secondary key file filter (Index Key).
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class SecondaryIndexFilter implements FileFilter {
@@ -58,8 +59,9 @@ public final class SecondaryIndexFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.X__", false)
-                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName, false));
+        return Expressions.accept(connection, name, "%.X__", false, Constants.ESCAPE_CHAR)
+                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName, false,
+                Constants.ESCAPE_CHAR));
     }
 
 }

@@ -13,7 +13,7 @@ package com.googlecode.paradox.utils;
 /**
  * Stores the driver constants.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class Constants {
@@ -52,6 +52,11 @@ public final class Constants {
      * Paradox version 4 ID.
      */
     public static final int PARADOX_VERSION_4 = 4;
+
+    /**
+     * Default escape char.
+     */
+    public static final char ESCAPE_CHAR = '\\';
 
     /**
      * Utility class.
