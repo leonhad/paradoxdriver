@@ -19,6 +19,7 @@ import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 
 import java.sql.SQLException;
@@ -89,7 +90,7 @@ public class Planner {
                     throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, Integer.toString(index));
                 }
 
-                plan.addOrderColumn(plan.getColumns().get(index));
+                plan.addOrderColumn(plan.getColumns().get(index - 1));
             } else {
                 plan.addOrderColumn(field);
             }

@@ -16,7 +16,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
-import com.googlecode.paradox.planner.Plan;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
@@ -259,5 +258,23 @@ public class SelectPlanTest {
         Assert.assertEquals("Invalid column list size", 2, columns.size());
         Assert.assertEquals("Invalid column list size", "DATE", columns.get(0).getName());
         Assert.assertEquals("Invalid column list size", "TIME", columns.get(1).getName());
+    }
+
+    /**
+     * Test order by in execution.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOrderByExecution() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select \"DATE\" from fields.date7 order by \"DATE\", \"TIME\"");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "G", rs.getString("REQTYPE"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "P", rs.getString("REQTYPE"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
     }
 }

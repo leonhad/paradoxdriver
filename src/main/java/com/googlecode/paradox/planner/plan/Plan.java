@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner;
+package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
@@ -19,7 +19,7 @@ import java.sql.SQLFeatureNotSupportedException;
 /**
  * Used to creates and execute SQL plans.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public interface Plan {

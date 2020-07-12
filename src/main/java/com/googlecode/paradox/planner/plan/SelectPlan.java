@@ -19,7 +19,7 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.Plan;
+import com.googlecode.paradox.planner.OrderByComparator;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
@@ -512,6 +512,10 @@ public final class SelectPlan implements Plan {
                     this.columns.stream().filter(c -> c.isThis(table.getTable()))
                             .collect(Collectors.toSet());
 
+            // From columns in ORDER BY clause.
+            columnsToLoad.addAll(this.orderByFields.stream().filter(c -> c.isThis(table.getTable()))
+                    .collect(Collectors.toSet()));
+
             // Fields from WHERE clause.
             getConditionalFields(table, columnsToLoad, this.condition);
 
@@ -570,10 +574,43 @@ public final class SelectPlan implements Plan {
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
+        processOrderBy(rawData, columnsLoaded);
         filter(rawData, mapColumns, maxRows, parameters);
     }
 
-    private void setIndexes(List<Column> columns) throws SQLException {
+    private void processOrderBy(final List<Object[]> rawData, final List<Column> loadedColumns) {
+        if (orderByFields.isEmpty()) {
+            // Nothing to do here, there are no order by fields.
+            return;
+        }
+
+        final int[] mapColumns = new int[this.orderByFields.size()];
+        Arrays.fill(mapColumns, -1);
+        for (int i = 0; i < this.orderByFields.size(); i++) {
+            final Column column = this.orderByFields.get(i);
+            for (int loop = 0; loop < loadedColumns.size(); loop++) {
+                if (loadedColumns.get(loop).getField().equals(column.getField())) {
+                    mapColumns[i] = loop;
+                    break;
+                }
+            }
+        }
+
+        // Build the comparator list.
+        Comparator<Object[]> comparator = null;
+        for (final int index : mapColumns) {
+            final OrderByComparator orderByComparator = new OrderByComparator(index);
+            if (comparator == null) {
+                comparator = orderByComparator;
+            } else {
+                comparator = comparator.thenComparing(orderByComparator);
+            }
+        }
+
+        rawData.sort(comparator);
+    }
+
+    private void setIndexes(final List<Column> columns) throws SQLException {
         // Set conditional indexes.
         if (this.condition != null) {
             this.condition.setFieldIndexes(columns, tables);
