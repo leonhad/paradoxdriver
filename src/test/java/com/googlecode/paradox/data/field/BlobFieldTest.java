@@ -12,6 +12,7 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -106,6 +107,12 @@ public class BlobFieldTest {
 
             blob.truncate(forcedSize);
             Assert.assertEquals("Invalid stream size", forcedSize, blob.length());
+
+            blob.truncate(0);
+            Assert.assertEquals("Invalid stream size", 0, blob.length());
+
+            Assert.assertThrows("Invalid truncate blob", ParadoxException.class,
+                    () -> blob.truncate(1));
 
             blob.free();
             Assert.assertEquals("Invalid value", 0, blob.length());
