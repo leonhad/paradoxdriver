@@ -23,14 +23,20 @@ import java.util.List;
 /**
  * Unit test for {@link ParadoxResultSet} class.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.3
  */
+@SuppressWarnings({"java:S109", "java:S1192"})
 public class ParadoxResultSetTest {
     /**
      * The connection string used in this tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    public static final String INVALID_FIRST_STATUS = "Invalid first status";
+    public static final String INVALID_RESULT_SET_STATE = "Invalid ResultSet state";
+    public static final String INVALID_LAST_STATUS = "Invalid last status";
+    public static final String INVALID_ABSOLUTE_VALUE = "Invalid absolute value.";
+    public static final String NO_FIRST_ROW = "No first row";
 
     /**
      * The database connection.
@@ -38,22 +44,27 @@ public class ParadoxResultSetTest {
     private Connection conn;
 
     /**
+     * Creates a new instance.
+     */
+    public ParadoxResultSetTest() {
+        super();
+    }
+
+    /**
      * Register the database driver.
-     *
-     * @throws Exception in case of failures.
      */
     @BeforeClass
-    public static void setUp() throws Exception {
-        Class.forName(Driver.class.getName());
+    public static void setUp() {
+        new Driver();
     }
 
     /**
      * Close the test connection.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @After
-    public void closeConnection() throws Exception {
+    public void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -62,10 +73,11 @@ public class ParadoxResultSetTest {
     /**
      * Connect to the test database.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Before
-    public void connect() throws Exception {
+    @SuppressWarnings("java:S2115")
+    public void connect() throws SQLException {
         this.conn = DriverManager.getConnection(ParadoxResultSetTest.CONNECTION_STRING + "db");
     }
 
@@ -78,14 +90,16 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertFalse("Invalid absolute value.", rs.absolute(1));
-            Assert.assertTrue("Invalid absolute value.", rs.isAfterLast());
+            Assert.assertFalse(INVALID_ABSOLUTE_VALUE, rs.absolute(1));
+            Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.isAfterLast());
         }
     }
 
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with high row
      * number.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testAbsoluteInvalidRow() throws SQLException {
@@ -93,14 +107,16 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
-            Assert.assertTrue("Invalid absolute value.", rs.isBeforeFirst());
+            Assert.assertFalse(INVALID_ABSOLUTE_VALUE, rs.absolute(-1));
+            Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.isBeforeFirst());
         }
     }
 
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with low row
      * number.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testAbsoluteLowRowValue() throws SQLException {
@@ -108,13 +124,15 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertFalse("Invalid absolute value.", rs.absolute(-1));
+            Assert.assertFalse(INVALID_ABSOLUTE_VALUE, rs.absolute(-1));
         }
     }
 
     /**
      * Test for {@link ParadoxResultSet#absolute(int)} method with negative row
      * value.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testAbsoluteNegativeRowValue() throws SQLException {
@@ -123,13 +141,15 @@ public class ParadoxResultSetTest {
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
-            Assert.assertTrue("Invalid absolute value.", rs.absolute(1));
-            Assert.assertTrue("Invalid absolute value.", rs.absolute(-1));
+            Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.absolute(1));
+            Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.absolute(-1));
         }
     }
 
     /**
      * Test for {@link ParadoxResultSet#afterLast()} method.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testAfterLast() throws SQLException {
@@ -146,97 +166,99 @@ public class ParadoxResultSetTest {
     /**
      * Test for first result.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testFirstResult() throws Exception {
+    public void testFirstResult() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
-            Assert.assertTrue("No first row", rs.next());
+            Assert.assertTrue(NO_FIRST_ROW, rs.next());
             final String firstValue = rs.getString("ACode");
-            Assert.assertTrue("No first row", rs.next());
+            Assert.assertTrue(NO_FIRST_ROW, rs.next());
             Assert.assertNotEquals("Rows with same value.", firstValue, rs.getString("ACode"));
-            Assert.assertTrue("Not in first row.", rs.first());
-            Assert.assertEquals("Rows with different values.", firstValue, rs.getString("ACode"));
+            Assert.assertTrue("Not in first row", rs.first());
+            Assert.assertEquals("Rows with different values", firstValue, rs.getString("ACode"));
         }
     }
 
     /**
      * Test for is last result.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testIsLastResult() throws Exception {
+    @SuppressWarnings("java:S2232")
+    public void testIsLastResult() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
-            Assert.assertFalse("Invalid last status", rs.isLast());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertFalse("Invalid ResultSet state", rs.next());
-            Assert.assertFalse("Invalid last status", rs.isLast());
+            Assert.assertFalse(INVALID_LAST_STATUS, rs.isLast());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertFalse(INVALID_LAST_STATUS, rs.isLast());
             Assert.assertTrue("Invalid after last status", rs.isAfterLast());
-            Assert.assertFalse("No first row", rs.next());
+            Assert.assertFalse(NO_FIRST_ROW, rs.next());
             rs.absolute(-1);
-            Assert.assertTrue("Invalid last status", rs.isLast());
+            Assert.assertTrue(INVALID_LAST_STATUS, rs.isLast());
         }
     }
 
     /**
      * Test for is first result.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testIsFirstResult() throws Exception {
+    public void testIsFirstResult() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
-            Assert.assertFalse("Invalid first status", rs.isFirst());
-            Assert.assertTrue("Invalid first status", rs.isBeforeFirst());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertTrue("Invalid first status", rs.isFirst());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertFalse("Invalid first status", rs.isFirst());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertFalse("Invalid first status", rs.isFirst());
-            Assert.assertFalse("Invalid ResultSet state", rs.next());
-            Assert.assertFalse("Invalid first status", rs.isFirst());
-            Assert.assertTrue("Invalid first status", rs.first());
-            Assert.assertTrue("Invalid first status", rs.isFirst());
+            Assert.assertFalse(INVALID_FIRST_STATUS, rs.isFirst());
+            Assert.assertTrue(INVALID_FIRST_STATUS, rs.isBeforeFirst());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertTrue(INVALID_FIRST_STATUS, rs.isFirst());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertFalse(INVALID_FIRST_STATUS, rs.isFirst());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertFalse(INVALID_FIRST_STATUS, rs.isFirst());
+            Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.next());
+            Assert.assertFalse(INVALID_FIRST_STATUS, rs.isFirst());
+            Assert.assertTrue(INVALID_FIRST_STATUS, rs.first());
+            Assert.assertTrue(INVALID_FIRST_STATUS, rs.isFirst());
             rs.beforeFirst();
-            Assert.assertTrue("Invalid first status", rs.isBeforeFirst());
+            Assert.assertTrue(INVALID_FIRST_STATUS, rs.isBeforeFirst());
         }
     }
 
     /**
      * Test for relative.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testRelative() throws Exception {
+    @SuppressWarnings("java:S2232")
+    public void testRelative() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
 
             rs.relative(10);
-            Assert.assertTrue("Invalid last status", rs.isLast());
+            Assert.assertTrue(INVALID_LAST_STATUS, rs.isLast());
             rs.next();
             Assert.assertTrue("Invalid after last status", rs.isAfterLast());
             rs.previous();
             rs.relative(-2);
             rs.relative(-10);
-            Assert.assertTrue("Invalid first status", rs.isFirst());
+            Assert.assertTrue(INVALID_FIRST_STATUS, rs.isFirst());
         }
     }
 
     /**
      * Test for get row.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testGetRow() throws Exception {
+    public void testGetRow() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM fields.DATE5")) {
 
@@ -252,18 +274,18 @@ public class ParadoxResultSetTest {
     /**
      * Test for fetch direction.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testFetchDirection() throws Exception {
+    public void testFetchDirection() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT AC as \"ACode\", State, Cities FROM AREACODES")) {
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
             final String firstValue = rs.getString("ACode");
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
 
             rs.setFetchDirection(ResultSet.FETCH_REVERSE);
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
 
             final String newValue = rs.getString("ACode");
             Assert.assertEquals("Invalid column value", firstValue, newValue);
@@ -272,6 +294,8 @@ public class ParadoxResultSetTest {
 
     /**
      * Test for first result.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testNoFirstResult() throws SQLException {
@@ -288,10 +312,10 @@ public class ParadoxResultSetTest {
     /**
      * Test for {@link ResultSet} execution.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testResultSet() throws Exception {
+    public void testResultSet() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT AC as ACode, State, Cities FROM AREACODES")) {
             Assert.assertTrue("No First row", rs.next());
@@ -305,10 +329,10 @@ public class ParadoxResultSetTest {
     /**
      * Test for asterisk with alias.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testAsteriskWithAlias() throws Exception {
+    public void testAsteriskWithAlias() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT a.* FROM AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
@@ -322,10 +346,10 @@ public class ParadoxResultSetTest {
     /**
      * Test table with schema name.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testTableWithSchemaName() throws Exception {
+    public void testTableWithSchemaName() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT a.* FROM db.AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
@@ -375,7 +399,7 @@ public class ParadoxResultSetTest {
              ResultSet rs = stmt.executeQuery(
                      "select \"date\", \"time\" from fields.DATE7 where \"date\" is null")) {
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertEquals("Invalid time.", "10:00:00", rs.getString("time"));
+            Assert.assertEquals("Invalid time value", "10:00:00", rs.getString("time"));
             Assert.assertFalse("No First row", rs.next());
         }
     }
@@ -418,7 +442,9 @@ public class ParadoxResultSetTest {
     }
 
     /**
-     * Test for error in conversion value.\
+     * Test for error in conversion value.
+     *
+     * @throws SQLException in case of failures.
      */
     @Test
     public void testErrorInConversion() throws SQLException {
@@ -478,13 +504,13 @@ public class ParadoxResultSetTest {
     public void testResultSetTwoColumn() throws SQLException {
         try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
                 "SELECT EMail,CustNo FROM CUSTOMER")) {
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString(1));
             Assert.assertEquals("1 row:", 1, rs.getInt(2));
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
             Assert.assertEquals("2 row:", "fmallory@freeport.org", rs.getString("email"));
             Assert.assertEquals("2 row:", 2, rs.getInt("custNo"));
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
             Assert.assertEquals("3 row:", "lpetzold@earthenwear.com", rs.getString("Email"));
             Assert.assertEquals("2 row:", 3, rs.getInt("CUSTNO"));
         }
@@ -493,59 +519,59 @@ public class ParadoxResultSetTest {
     /**
      * Test for like.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testLike() throws Exception {
+    public void testLike() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
                      " where ac.AreasCovered like 'Hackensack%'")) {
 
-            Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.isAfterLast());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
             Assert.assertTrue("Invalid value", rs.getString("AreasCovered").startsWith("Hackensack"));
-            Assert.assertFalse("Invalid ResultSet state", rs.next());
+            Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.next());
         }
 
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
                      " where ac.AreasCovered like 'hackensack%'")) {
 
-            Assert.assertFalse("Invalid ResultSet state", rs.next());
+            Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.next());
         }
     }
 
     /**
      * Test for insensitive like.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testInsensitiveLike() throws Exception {
+    public void testInsensitiveLike() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
                      " where ac.AreasCovered ilike 'hackensack%'")) {
 
-            Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.isAfterLast());
+            Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
             Assert.assertTrue("Invalid value", rs.getString("AreasCovered").startsWith("Hackensack"));
-            Assert.assertFalse("Invalid ResultSet state", rs.next());
+            Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.next());
         }
     }
 
     /**
      * Test for execute method.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testExecute() throws Exception {
+    public void testExecute() throws SQLException {
         try (Statement stmt = this.conn.createStatement()) {
             boolean result = stmt.execute("select \"DECIMAL\" from db.DECIMAL where \"DECIMAL\" = 1");
             Assert.assertTrue("Invalid result set state", result);
 
             try (final ResultSet rs = stmt.getResultSet()) {
-                Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
+                Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.isAfterLast());
                 while (rs.next()) {
                     Assert.assertEquals("Invalid value", 1.0D, rs.getDouble("DECIMAL"), 0.00001D);
                 }
@@ -559,17 +585,17 @@ public class ParadoxResultSetTest {
     /**
      * Test for execute method in prepared statement.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testExecutePreparedStatement() throws Exception {
+    public void testExecutePreparedStatement() throws SQLException {
         try (final PreparedStatement stmt =
                      this.conn.prepareStatement("select \"DECIMAL\" from db.DECIMAL where \"DECIMAL\" = 1")) {
             boolean result = stmt.execute();
             Assert.assertTrue("Invalid result set state", result);
 
             try (final ResultSet rs = stmt.getResultSet()) {
-                Assert.assertFalse("Invalid ResultSet state", rs.isAfterLast());
+                Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.isAfterLast());
                 while (rs.next()) {
                     Assert.assertEquals("Invalid value", 1.0D, rs.getDouble("DECIMAL"), 0.00001D);
                 }

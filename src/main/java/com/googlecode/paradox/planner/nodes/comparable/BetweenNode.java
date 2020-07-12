@@ -41,10 +41,6 @@ public final class BetweenNode extends AbstractComparableNode {
         this.first = first;
     }
 
-    public FieldNode getFirst() {
-        return first;
-    }
-
     /**
      * {@inheritDoc}.
      */

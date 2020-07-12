@@ -19,7 +19,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Unit test for {@link BetweenNode} class.
@@ -27,6 +29,7 @@ import java.sql.SQLException;
  * @version 1.2
  * @since 1.3
  */
+@SuppressWarnings({"java:S109", "java:S1192"})
 public class BetweenNodeTest {
 
     /**
@@ -42,6 +45,7 @@ public class BetweenNodeTest {
      * @throws SQLException in case of failures.
      */
     @BeforeClass
+    @SuppressWarnings("java:S2115")
     public static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
@@ -58,8 +62,11 @@ public class BetweenNodeTest {
     @Test
     public void testField() {
         final FieldNode field = new FieldNode(conn, "table", "field", "alias", null);
-        final BetweenNode node = new BetweenNode(conn, field, null, null);
-        Assert.assertEquals("Invalid field value.", field, node.getField());
+        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
+        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
+        final BetweenNode node = new BetweenNode(conn, field, first, last);
+        Assert.assertEquals("Invalid field value",
+                "table.field AS alias BETWEEN table.first AND table.last", node.toString());
     }
 
     /**
@@ -71,6 +78,23 @@ public class BetweenNodeTest {
         final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
         final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
         final BetweenNode node = new BetweenNode(conn, field, first, last);
-        Assert.assertEquals("Invalid node values.", "table.field BETWEEN table.first AND table.last", node.toString());
+        Assert.assertEquals("Invalid node values", "table.field BETWEEN table.first AND table.last", node.toString());
+    }
+
+    /**
+     * Test for between condition.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testInsensitiveLike() throws SQLException {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select \"date\" from fields.date7 " +
+                     "where \"date\" between '2018-01-02' and '2018-01-02'")) {
+
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-01-02", rs.getString("date"));
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+        }
     }
 }
