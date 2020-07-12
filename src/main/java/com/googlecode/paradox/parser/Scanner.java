@@ -264,19 +264,18 @@ public class Scanner {
         while (this.hasNext() && c != type) {
             c = this.nextChar();
 
-            // It's a scape char?
-            if (c == '\\') {
-                final char nextChar = this.nextChar();
-                if (nextChar == '\'' || nextChar == '\"') {
-                    this.value.append(nextChar);
-                    continue;
-                }
-
-                pushBack(nextChar);
-            }
-
             if (c != type) {
                 this.value.append(c);
+            } else if (hasNext()) {
+                final char nextChar = this.nextChar();
+                // Escaped string
+                if (nextChar == type) {
+                    this.value.append(c);
+                    // Prevent breaking.
+                    c = '\0';
+                } else {
+                    pushBack(nextChar);
+                }
             }
         }
     }
@@ -301,6 +300,17 @@ public class Scanner {
     }
 
     /**
+     * Test for empty statement.
+     *
+     * @throws ParadoxSyntaxErrorException in case of empty statement.
+     */
+    private void assertNotEmptyStatement() throws ParadoxSyntaxErrorException {
+        if (!this.hasNext()) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
+        }
+    }
+
+    /**
      * Gets the next {@link Token} in buffer.
      *
      * @return the next {@link Token}.
@@ -314,16 +324,15 @@ public class Scanner {
             return token;
         }
 
-        if (!this.hasNext()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
-        }
+        assertNotEmptyStatement();
 
         this.value.delete(0, this.value.length());
 
         // Ignore separators
         char c = nextNonSeparatorChar();
+        Token ret = null;
         if ((c == '"') || (c == '\'')) {
-            return parseIdentifier(c);
+            ret = parseIdentifier(c);
         } else if (c == '/') {
             // Test for multiline comment.
             char nextChar = this.nextChar();
@@ -332,42 +341,58 @@ public class Scanner {
                 parseMultilineComment();
 
                 // Redo this from beginning.
-                return nextToken();
+                ret = nextToken();
+            } else {
+                // Restore the original scanner state and treat is as a normal identifier.
+                pushBack(nextChar);
             }
-
-            // Restore the original scanner state and treat is as a normal identifier.
-            pushBack(nextChar);
         } else if (Character.isDigit(c)) {
             parseNumber(c);
-            return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
+            ret = new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
         } else if (c == '-') {
-            // Can be a minus sign only or a negative number.
-            char nextChar = this.nextChar();
-            // Restore the original scanner state.
-            pushBack(nextChar);
-
-            if (Character.isDigit(nextChar)) {
-                // It is a number.
-                parseNumber(c);
-                return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
-            } else if (nextChar == '-') {
-                // It is a comment.
-                parseComment();
-
-                // Redo this from beginning.
-                return nextToken();
-            }
-
-            // Only a minus sign.
-            return getToken(Character.toString(c));
+            ret = parseMinusSign(c);
         } else if (isSpecial(c)) {
-            return getToken(Character.toString(c));
+            ret = getToken(Character.toString(c));
         }
 
-        pushBack(c);
-        parseIdentifier();
+        // The token is already handled?
+        if (ret == null) {
+            pushBack(c);
+            parseIdentifier();
 
-        return getToken(this.value.toString());
+            ret = getToken(this.value.toString());
+        }
+
+        return ret;
+    }
+
+    /**
+     * Handle the minus sign.
+     *
+     * @param c the current char.
+     * @return the token.
+     * @throws SQLException in case of failures.
+     */
+    private Token parseMinusSign(char c) throws SQLException {
+        // Can be a minus sign only or a negative number.
+        char nextChar = this.nextChar();
+        // Restore the original scanner state.
+        pushBack(nextChar);
+
+        if (Character.isDigit(nextChar)) {
+            // It is a number.
+            parseNumber(c);
+            return new Token(TokenType.NUMERIC, this.value.toString(), startPosition);
+        } else if (nextChar == '-') {
+            // It is a comment.
+            parseComment();
+
+            // Redo this from beginning.
+            return nextToken();
+        }
+
+        // Only a minus sign.
+        return getToken(Character.toString(c));
     }
 
     private void parseComment() {

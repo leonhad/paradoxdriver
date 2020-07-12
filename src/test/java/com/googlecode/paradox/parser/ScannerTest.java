@@ -72,7 +72,7 @@ public class ScannerTest {
      */
     @Test
     public void testGroup() throws Exception {
-        final Scanner scanner = new Scanner(conn, " \"test 1\" \"Table.db \\\" \" ");
+        final Scanner scanner = new Scanner(conn, " \"test 1\" \"Table.db \"\" \" ");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token value.", "test 1", token.getValue());
         token = scanner.nextToken();
@@ -271,10 +271,38 @@ public class ScannerTest {
      */
     @Test
     public void testCharacterEscapes() throws SQLException {
-        final Scanner scanner = new Scanner(conn, "'\\n\\b\\r\\\\\\t\\'\\\"'");
+        final Scanner scanner = new Scanner(conn, "'\\n\\b\\r\\\\\\t\\'");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type", TokenType.CHARACTER, token.getType());
-        Assert.assertEquals("Invalid token value", "\n\b\r\\\t'\"", token.getValue());
+        Assert.assertEquals("Invalid token value", "\n\b\r\\\t\\", token.getValue());
+        Assert.assertFalse("Invalid scanner state", scanner.hasNext());
+    }
+
+    /**
+     * Test for quoted string.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testQuoted() throws SQLException {
+        final Scanner scanner = new Scanner(conn, "'a''b'");
+        Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type", TokenType.CHARACTER, token.getType());
+        Assert.assertEquals("Invalid token value", "a'b", token.getValue());
+        Assert.assertFalse("Invalid scanner state", scanner.hasNext());
+    }
+
+    /**
+     * Test for double quoted string.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testDoubleQuoted() throws SQLException {
+        final Scanner scanner = new Scanner(conn, "\"a\"\"b");
+        Token token = scanner.nextToken();
+        Assert.assertEquals("Invalid token type", TokenType.IDENTIFIER, token.getType());
+        Assert.assertEquals("Invalid token value", "a\"b", token.getValue());
         Assert.assertFalse("Invalid scanner state", scanner.hasNext());
     }
 }
