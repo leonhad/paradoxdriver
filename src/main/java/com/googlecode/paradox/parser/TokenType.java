@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.0
  */
 public enum TokenType {
@@ -26,6 +26,11 @@ public enum TokenType {
      * AS token.
      */
     AS,
+
+    /**
+     * ASC token.
+     */
+    ASC,
 
     /**
      * All fields token.
@@ -51,6 +56,11 @@ public enum TokenType {
      * Comma token.
      */
     COMMA(","),
+
+    /**
+     * Desc token.
+     */
+    DESC,
 
     /**
      * Delete token.

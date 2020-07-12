@@ -12,6 +12,7 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.sorting.OrderType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +46,10 @@ public final class SelectNode extends StatementNode {
      * Order by values.
      */
     private final List<FieldNode> order = new ArrayList<>();
+    /**
+     * Order type.
+     */
+    private final List<OrderType> orderTypes = new ArrayList<>();
     /**
      * The tables in from token.
      */
@@ -253,9 +258,11 @@ public final class SelectNode extends StatementNode {
      * Adds the order by identifier.
      *
      * @param identifier the order by identifier to add.
+     * @param type       the order type to use.
      */
-    public void addOrderBy(final FieldNode identifier) {
+    public void addOrderBy(final FieldNode identifier, final OrderType type) {
         this.order.add(identifier);
+        this.orderTypes.add(type);
     }
 
     /**
@@ -274,5 +281,14 @@ public final class SelectNode extends StatementNode {
      */
     public boolean isDistinct() {
         return this.distinct;
+    }
+
+    /**
+     * Gets the order types.
+     *
+     * @return the order types.
+     */
+    public List<OrderType> getOrderTypes() {
+        return orderTypes;
     }
 }

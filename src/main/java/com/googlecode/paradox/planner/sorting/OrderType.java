@@ -8,22 +8,22 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.googlecode.paradox.planner.sorting;
 
-package com.googlecode.paradox.planner;
+/**
+ * The order by type used in ordering.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
+public enum OrderType {
+    /**
+     * Ascending order.
+     */
+    ASC,
 
-import com.googlecode.paradox.rowset.ValuesComparator;
-
-import java.util.Comparator;
-
-public class OrderByComparator implements Comparator<Object[]> {
-    private final int index;
-
-    public OrderByComparator(int index) {
-        this.index = index;
-    }
-
-    @Override
-    public int compare(Object[] o1, Object[] o2) {
-        return ValuesComparator.compare(o1[index], o2[index]);
-    }
+    /**
+     * Descending order.
+     */
+    DESC
 }

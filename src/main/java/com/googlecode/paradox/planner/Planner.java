@@ -21,6 +21,7 @@ import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
+import com.googlecode.paradox.planner.sorting.OrderType;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -83,16 +84,18 @@ public class Planner {
      * @throws SQLException in case of parse errors.
      */
     private static void parseOrderBy(final SelectNode statement, final SelectPlan plan) throws SQLException {
-        for (final FieldNode field : statement.getOrder()) {
+        for (int i = 0; i < statement.getOrder().size(); i++) {
+            final FieldNode field = statement.getOrder().get(i);
+            final OrderType type = statement.getOrderTypes().get(i);
             if (field instanceof ValueNode) {
                 int index = Integer.parseInt(field.getName());
                 if (index > plan.getColumns().size()) {
                     throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, Integer.toString(index));
                 }
 
-                plan.addOrderColumn(plan.getColumns().get(index - 1));
+                plan.addOrderColumn(plan.getColumns().get(index - 1), type);
             } else {
-                plan.addOrderColumn(field);
+                plan.addOrderColumn(field, type);
             }
         }
     }

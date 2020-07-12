@@ -17,6 +17,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
+import com.googlecode.paradox.planner.sorting.OrderType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -111,7 +112,7 @@ public class SelectNodeTest {
         final SelectNode node = new SelectNode(conn);
         final ValueNode value = new ValueNode(conn, "1", null, null, Types.NUMERIC);
         Assert.assertEquals("Invalid node size.", 0, node.getOrder().size());
-        node.addOrderBy(value);
+        node.addOrderBy(value, OrderType.ASC);
         Assert.assertEquals("Invalid node size.", 1, node.getOrder().size());
     }
 
@@ -139,8 +140,8 @@ public class SelectNodeTest {
         node.addTable(new TableNode(conn, null, "table2", "b"));
         node.addGroupBy(new IdentifierNode(conn, "f1"));
         node.addGroupBy(new IdentifierNode(conn, "f2"));
-        node.addOrderBy(new ValueNode(conn, "f", null, null, Types.VARCHAR));
-        node.addOrderBy(new ValueNode(conn, "f2", null, null, Types.VARCHAR));
+        node.addOrderBy(new ValueNode(conn, "f", null, null, Types.VARCHAR), OrderType.ASC);
+        node.addOrderBy(new ValueNode(conn, "f2", null, null, Types.VARCHAR), OrderType.ASC);
 
         ANDNode andNode = new ANDNode(conn, null);
         andNode.addChild(new EqualsNode(conn,

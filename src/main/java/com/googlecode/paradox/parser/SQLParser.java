@@ -20,6 +20,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
+import com.googlecode.paradox.planner.sorting.OrderType;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -753,24 +754,40 @@ public final class SQLParser {
             }
             final String fieldName = this.token.getValue();
 
+            FieldNode fieldNode;
             switch (this.token.getType()) {
                 case NUMERIC:
-                    select.addOrderBy(this.parseNumeric(fieldName));
+                    fieldNode = this.parseNumeric(fieldName);
                     break;
                 case IDENTIFIER:
-                    SQLNode node = this.parseIdentifier(fieldName);
-                    if (node instanceof FieldNode) {
-                        select.addOrderBy((FieldNode) node);
-                    } else {
-                        throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN);
-                    }
+                    fieldNode = parseIdentifierFieldForOrder(fieldName);
                     break;
                 default:
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN);
             }
 
+            OrderType type = OrderType.ASC;
+            if (this.isToken(TokenType.ASC)) {
+                this.expect(TokenType.ASC);
+                // Default order, nothing to change on it.
+            } else if (this.isToken(TokenType.DESC)) {
+                this.expect(TokenType.DESC);
+                type = OrderType.DESC;
+            }
+
+            select.addOrderBy(fieldNode, type);
+
             firstField = false;
         } while (this.scanner.hasNext());
+    }
+
+    private FieldNode parseIdentifierFieldForOrder(final String fieldName) throws SQLException {
+        SQLNode node = this.parseIdentifier(fieldName);
+        if (node instanceof FieldNode) {
+            return (FieldNode) node;
+        }
+
+        throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN);
     }
 
     /**

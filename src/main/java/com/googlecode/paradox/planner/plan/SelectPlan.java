@@ -19,13 +19,14 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.OrderByComparator;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
+import com.googlecode.paradox.planner.sorting.OrderByComparator;
+import com.googlecode.paradox.planner.sorting.OrderType;
 import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
@@ -76,6 +77,10 @@ public final class SelectPlan implements Plan {
      * Order by fields.
      */
     private final List<Column> orderByFields = new ArrayList<>();
+    /**
+     * Order type.
+     */
+    private final List<OrderType> orderTypes = new ArrayList<>();
 
     /**
      * Creates a SELECT plan with conditions.
@@ -254,14 +259,6 @@ public final class SelectPlan implements Plan {
         });
     }
 
-    public void addOrderColumn(final FieldNode node) throws SQLException {
-        final List<ParadoxField> fields = getParadoxFields(node);
-        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
-            c.setName(node.getAlias());
-            this.orderByFields.add(c);
-        });
-    }
-
     private List<ParadoxField> getParadoxFields(FieldNode node) throws ParadoxException {
         final List<ParadoxField> fields = new ArrayList<>();
 
@@ -283,8 +280,18 @@ public final class SelectPlan implements Plan {
         return fields;
     }
 
-    public void addOrderColumn(final Column column) {
+    public void addOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
+        final List<ParadoxField> fields = getParadoxFields(node);
+        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
+            c.setName(node.getAlias());
+            this.orderByFields.add(c);
+            this.orderTypes.add(type);
+        });
+    }
+
+    public void addOrderColumn(final Column column, final OrderType type) {
         this.orderByFields.add(column);
+        this.orderTypes.add(type);
     }
 
     private List<Object[]> processInnerJoin(final List<Column> columnsLoaded, final List<Object[]> rawData,
@@ -598,8 +605,9 @@ public final class SelectPlan implements Plan {
 
         // Build the comparator list.
         Comparator<Object[]> comparator = null;
-        for (final int index : mapColumns) {
-            final OrderByComparator orderByComparator = new OrderByComparator(index);
+        for (int i = 0; i < mapColumns.length; i++) {
+            final int index = mapColumns[i];
+            final OrderByComparator orderByComparator = new OrderByComparator(index, orderTypes.get(i));
             if (comparator == null) {
                 comparator = orderByComparator;
             } else {

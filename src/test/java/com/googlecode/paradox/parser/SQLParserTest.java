@@ -20,6 +20,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
+import com.googlecode.paradox.planner.sorting.OrderType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -683,5 +684,34 @@ public class SQLParserTest {
         final FieldNode field = select.getOrder().get(0);
         Assert.assertNull("Invalid parameter index", field.getTableName());
         Assert.assertEquals("Invalid parameter index", "DATE", field.getName());
+    }
+
+    /**
+     * Test for order by desc.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOrderByDesc() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select * from fields.date7 order by \"DATE\" desc, \"TIME\" asc");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+
+        Assert.assertEquals("Invalid order size", 2, select.getOrder().size());
+
+        FieldNode field = select.getOrder().get(0);
+        Assert.assertNull("Invalid parameter index", field.getTableName());
+        Assert.assertEquals("Invalid parameter index", "DATE", field.getName());
+        Assert.assertEquals("Invalid order type", OrderType.DESC, select.getOrderTypes().get(0));
+
+        field = select.getOrder().get(1);
+        Assert.assertNull("Invalid parameter index", field.getTableName());
+        Assert.assertEquals("Invalid parameter index", "TIME", field.getName());
+        Assert.assertEquals("Invalid order type", OrderType.ASC, select.getOrderTypes().get(1));
     }
 }
