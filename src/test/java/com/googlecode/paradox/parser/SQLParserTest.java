@@ -714,4 +714,15 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid parameter index", "TIME", field.getName());
         Assert.assertEquals("Invalid order type", OrderType.ASC, select.getOrderTypes().get(1));
     }
+
+    /**
+     * Test for extra token.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testExtraToken() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select * from fields.DATE4 a a");
+        Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
+    }
 }
