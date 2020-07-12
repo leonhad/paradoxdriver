@@ -268,12 +268,23 @@ public class SelectPlanTest {
     @Test
     public void testOrderByExecution() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select \"DATE\" from fields.date7 order by \"DATE\", \"TIME\"");
+                "select \"DATE\", \"TIME\" from fields.date7 order by \"DATE\", \"TIME\"");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "G", rs.getString("REQTYPE"));
+            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString("DATE"));
+            Assert.assertEquals("Invalid value", "10:00:00", rs.getString("TIME"));
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "P", rs.getString("REQTYPE"));
+            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString("DATE"));
+            Assert.assertNull("Invalid value", rs.getTime("TIME"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-01-02", rs.getString("DATE"));
+            Assert.assertEquals("Invalid value", "09:25:25", rs.getString("TIME"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-02-01", rs.getString("DATE"));
+            Assert.assertEquals("Invalid value", "10:30:00", rs.getString("TIME"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNull("Invalid value", rs.getString("DATE"));
+            Assert.assertEquals("Invalid value", "10:00:00", rs.getString("TIME"));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
