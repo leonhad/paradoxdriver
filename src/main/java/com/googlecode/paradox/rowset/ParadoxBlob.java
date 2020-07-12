@@ -11,6 +11,7 @@
 package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,10 +23,15 @@ import java.util.Arrays;
 /**
  * BLOB for paradox file (MB).
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.5.0
  */
 public final class ParadoxBlob implements Blob {
+
+    /**
+     * Empty value used in free method.
+     */
+    private static final byte[] EMPTY_BLOB = new byte[0];
 
     /**
      * The clob data.
@@ -46,7 +52,7 @@ public final class ParadoxBlob implements Blob {
      */
     @Override
     public void free() {
-        // Unused.
+        this.value = EMPTY_BLOB;
     }
 
     @Override
@@ -73,28 +79,28 @@ public final class ParadoxBlob implements Blob {
     }
 
     @Override
-    public long position(byte[] pattern, long start) {
-        return 0;
+    public long position(byte[] pattern, long start) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
-    public long position(Blob pattern, long start) {
-        return 0;
+    public long position(Blob pattern, long start) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
-    public int setBytes(long pos, byte[] bytes) {
-        return 0;
+    public int setBytes(long pos, byte[] bytes) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
-    public int setBytes(long pos, byte[] bytes, int offset, int len) {
-        return 0;
+    public int setBytes(long pos, byte[] bytes, int offset, int len) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
-    public OutputStream setBinaryStream(long pos) {
-        return null;
+    public OutputStream setBinaryStream(long pos) throws ParadoxNotSupportedException {
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     /**
