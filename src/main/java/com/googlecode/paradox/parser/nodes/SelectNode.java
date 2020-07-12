@@ -11,6 +11,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,19 +36,19 @@ public final class SelectNode extends StatementNode {
     /**
      * The field list (SELECT).
      */
-    private final ArrayList<SQLNode> fields = new ArrayList<>();
+    private final List<SQLNode> fields = new ArrayList<>();
     /**
      * Group by values.
      */
-    private final ArrayList<IdentifierNode> groups = new ArrayList<>();
+    private final List<IdentifierNode> groups = new ArrayList<>();
     /**
      * Order by values.
      */
-    private final ArrayList<IdentifierNode> order = new ArrayList<>();
+    private final List<FieldNode> order = new ArrayList<>();
     /**
      * The tables in from token.
      */
-    private final ArrayList<TableNode> tables = new ArrayList<>();
+    private final List<TableNode> tables = new ArrayList<>();
 
     /**
      * Create a new instance.
@@ -99,8 +100,8 @@ public final class SelectNode extends StatementNode {
      *
      * @return the order by list.
      */
-    public List<IdentifierNode> getOrder() {
-        return Collections.unmodifiableList(this.order);
+    public List<FieldNode> getOrder() {
+        return this.order;
     }
 
     /**
@@ -216,7 +217,7 @@ public final class SelectNode extends StatementNode {
         if (!this.order.isEmpty()) {
             builder.append(" ORDER BY ");
             first = true;
-            for (final IdentifierNode identifier : this.order) {
+            for (final FieldNode identifier : this.order) {
                 if (first) {
                     first = false;
                 } else {
@@ -253,7 +254,7 @@ public final class SelectNode extends StatementNode {
      *
      * @param identifier the order by identifier to add.
      */
-    public void addOrderBy(final IdentifierNode identifier) {
+    public void addOrderBy(final FieldNode identifier) {
         this.order.add(identifier);
     }
 

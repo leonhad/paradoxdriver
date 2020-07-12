@@ -661,4 +661,27 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid parameter index.", 1, ((ParameterNode) equals.getField()).getParameterIndex());
         Assert.assertEquals("Invalid node value.", "ac.AreaCode", equals.getLast().toString());
     }
+
+    /**
+     * Test for order by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOrderBy() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select * from fields.date7 order by \"DATE\"");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+
+        Assert.assertEquals("Invalid order size", 1, select.getOrder().size());
+
+        final FieldNode field = select.getOrder().get(0);
+        Assert.assertNull("Invalid parameter index", field.getTableName());
+        Assert.assertEquals("Invalid parameter index", "DATE", field.getName());
+    }
 }

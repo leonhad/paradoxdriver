@@ -34,16 +34,17 @@ import java.util.List;
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
+@SuppressWarnings({"java:S109", "java:S1192"})
 public class SelectPlanTest {
 
     /**
      * The connection string used in this tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-    private static final String AREACODES = "areacodes";
+    private static final String AREA_CODES = "areacodes";
 
     /**
      * The database connection.
@@ -51,13 +52,18 @@ public class SelectPlanTest {
     private ParadoxConnection conn;
 
     /**
+     * Creates a new instance.
+     */
+    public SelectPlanTest() {
+        super();
+    }
+
+    /**
      * Register the database driver.
-     *
-     * @throws ClassNotFoundException in case of failures.
      */
     @BeforeClass
-    public static void initClass() throws ClassNotFoundException {
-        Class.forName(Driver.class.getName());
+    public static void initClass() {
+        new Driver();
     }
 
     /**
@@ -78,6 +84,7 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Before
+    @SuppressWarnings("java:S2115")
     public void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(SelectPlanTest.CONNECTION_STRING + "db");
     }
@@ -91,7 +98,7 @@ public class SelectPlanTest {
     public void testColumnWithTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan(conn, null, false);
 
-        TableNode table = new TableNode(conn, null, AREACODES, "test");
+        TableNode table = new TableNode(conn, null, AREA_CODES, "test");
 
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setTable(conn, table);
@@ -121,7 +128,7 @@ public class SelectPlanTest {
     public void testInvalidTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan(conn, null, false);
 
-        TableNode table = new TableNode(conn, null, AREACODES, "test");
+        TableNode table = new TableNode(conn, null, AREA_CODES, "test");
 
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setTable(conn, table);
@@ -133,10 +140,10 @@ public class SelectPlanTest {
     /**
      * Test DISTINCT.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testDistinct() throws Exception {
+    public void testDistinct() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select distinct REQTYPE from server");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());

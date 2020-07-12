@@ -13,6 +13,7 @@ package com.googlecode.paradox.parser.nodes;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
@@ -23,13 +24,15 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Unit test for {@link SelectNode}.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
+@SuppressWarnings({"java:S109", "java:S1192"})
 public class SelectNodeTest {
 
     /**
@@ -45,6 +48,7 @@ public class SelectNodeTest {
      * @throws SQLException in case of failures.
      */
     @BeforeClass
+    @SuppressWarnings("java:S2115")
     public static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
@@ -105,9 +109,9 @@ public class SelectNodeTest {
     @Test
     public void testOrderBy() {
         final SelectNode node = new SelectNode(conn);
-        final IdentifierNode identifier = new IdentifierNode(conn, "Node");
+        final ValueNode value = new ValueNode(conn, "1", null, null, Types.NUMERIC);
         Assert.assertEquals("Invalid node size.", 0, node.getOrder().size());
-        node.addOrderBy(identifier);
+        node.addOrderBy(value);
         Assert.assertEquals("Invalid node size.", 1, node.getOrder().size());
     }
 
@@ -135,8 +139,8 @@ public class SelectNodeTest {
         node.addTable(new TableNode(conn, null, "table2", "b"));
         node.addGroupBy(new IdentifierNode(conn, "f1"));
         node.addGroupBy(new IdentifierNode(conn, "f2"));
-        node.addOrderBy(new IdentifierNode(conn, "f"));
-        node.addOrderBy(new IdentifierNode(conn, "f2"));
+        node.addOrderBy(new ValueNode(conn, "f", null, null, Types.VARCHAR));
+        node.addOrderBy(new ValueNode(conn, "f2", null, null, Types.VARCHAR));
 
         ANDNode andNode = new ANDNode(conn, null);
         andNode.addChild(new EqualsNode(conn,

@@ -16,7 +16,7 @@ import com.googlecode.paradox.parser.TokenType;
 /**
  * Stores the asterisk node.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.2
  */
 public final class AsteriskNode extends SQLNode {
@@ -25,15 +25,6 @@ public final class AsteriskNode extends SQLNode {
      * This field table name.
      */
     private final String tableName;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param connection the Paradox connection.
-     */
-    public AsteriskNode(final ParadoxConnection connection) {
-        this(connection, null);
-    }
 
     /**
      * Creates a new instance.

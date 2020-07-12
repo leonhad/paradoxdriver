@@ -8,7 +8,6 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
@@ -24,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link AsteriskNode}.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.5.0
  */
 public class AsteriskNodeTest {
@@ -41,6 +40,7 @@ public class AsteriskNodeTest {
      * @throws SQLException in case of failures.
      */
     @BeforeClass
+    @SuppressWarnings("java:S2115")
     public static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
@@ -56,7 +56,7 @@ public class AsteriskNodeTest {
      */
     @Test
     public void testInstance() {
-        final AsteriskNode node = new AsteriskNode(conn);
+        final AsteriskNode node = new AsteriskNode(conn, null);
         Assert.assertEquals("Test for node name", "ASTERISK", node.getName());
     }
 
@@ -65,7 +65,7 @@ public class AsteriskNodeTest {
      */
     @Test
     public void testToString() {
-        AsteriskNode node = new AsteriskNode(conn);
+        AsteriskNode node = new AsteriskNode(conn, null);
         Assert.assertEquals("Invalid value", "*", node.toString());
 
         node = new AsteriskNode(conn, "t");

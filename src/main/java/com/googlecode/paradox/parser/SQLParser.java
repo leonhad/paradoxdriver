@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.0
  */
 public final class SQLParser {
@@ -80,7 +80,7 @@ public final class SQLParser {
         this.token = this.scanner.nextToken();
 
         final List<StatementNode> statementNodes = new ArrayList<>();
-        if (this.token.getType() == TokenType.SELECT) {
+        if (isToken(TokenType.SELECT)) {
             statementNodes.add(this.parseSelect());
         } else {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
@@ -113,12 +113,13 @@ public final class SQLParser {
     /**
      * Parse the asterisk token.
      *
-     * @param select the select node.
+     * @param tableName the table name.
+     * @return the asterisk node.
      * @throws SQLException in case of parse errors.
      */
-    private void parseAsterisk(final SelectNode select) throws SQLException {
-        select.addField(new AsteriskNode(connection));
+    private AsteriskNode parseAsterisk(final String tableName) throws SQLException {
         this.expect(TokenType.ASTERISK);
+        return new AsteriskNode(connection, tableName);
     }
 
     /**
@@ -139,28 +140,28 @@ public final class SQLParser {
     /**
      * Parse the character token.
      *
-     * @param select    the select node.
      * @param fieldName the field name.
+     * @return the node value.
      * @throws SQLException in case of parse errors.
      */
-    private void parseCharacter(final SelectNode select, final String fieldName) throws SQLException {
+    private ValueNode parseCharacter(final String fieldName) throws SQLException {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.CHARACTER);
 
         final String fieldAlias = getFieldAlias(fieldName);
-        select.addField(new ValueNode(connection, fieldName, fieldAlias, position, Types.VARCHAR));
+        return new ValueNode(connection, fieldName, fieldAlias, position, Types.VARCHAR);
     }
 
     private String getFieldAlias(String fieldName) throws SQLException {
         String fieldAlias = fieldName;
 
         if (this.token != null) {
-            if (this.token.getType() == TokenType.AS) {
+            if (isToken(TokenType.AS)) {
                 // Field alias (with AS identifier)
                 this.expect(TokenType.AS);
                 fieldAlias = this.token.getValue();
                 this.expect(TokenType.IDENTIFIER);
-            } else if (this.token.getType() == TokenType.IDENTIFIER) {
+            } else if (isToken(TokenType.IDENTIFIER)) {
                 // Field alias (without AS identifier)
                 fieldAlias = this.token.getValue();
                 this.expect(TokenType.IDENTIFIER);
@@ -181,7 +182,7 @@ public final class SQLParser {
         while (this.scanner.hasNext() && !this.token.isConditionBreak()) {
             if (this.token.isOperator()) {
                 ret = this.parseOperators(ret);
-            } else if (this.token.getType() == TokenType.L_PAREN) {
+            } else if (isToken(TokenType.L_PAREN)) {
                 this.expect(TokenType.L_PAREN);
                 AbstractConditionalNode retValue = parseCondition();
                 if (ret == null) {
@@ -190,7 +191,7 @@ public final class SQLParser {
                     ret.addChild(retValue);
                 }
                 this.expect(TokenType.R_PAREN);
-            } else if (token.getType() == TokenType.WHERE || token.getType() == TokenType.ORDER) {
+            } else if (isConditionalEnd()) {
                 return ret;
             } else {
                 if (ret == null) {
@@ -202,6 +203,15 @@ public final class SQLParser {
         }
 
         return ret;
+    }
+
+    /**
+     * Is the token indicates the end of conditionals.
+     *
+     * @return <code>true</code> is the end of conditionals.
+     */
+    private boolean isConditionalEnd() {
+        return isToken(TokenType.WHERE) || isToken(TokenType.ORDER);
     }
 
     /**
@@ -263,7 +273,7 @@ public final class SQLParser {
         this.expect(TokenType.IDENTIFIER);
 
         // If it has a Table Name
-        if (this.scanner.hasNext() && (this.token.getType() == TokenType.PERIOD)) {
+        if (isToken(TokenType.PERIOD)) {
             this.expect(TokenType.PERIOD);
             tableName = name;
             name = this.token.getValue();
@@ -311,6 +321,7 @@ public final class SQLParser {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                         this.token.getPosition());
         }
+
         return node;
     }
 
@@ -328,7 +339,7 @@ public final class SQLParser {
 
         boolean firstField = true;
         do {
-            if (this.token.getType() == TokenType.FROM) {
+            if (isToken(TokenType.FROM)) {
                 break;
             }
 
@@ -340,19 +351,19 @@ public final class SQLParser {
 
             switch (this.token.getType()) {
                 case CHARACTER:
-                    this.parseCharacter(select, fieldName);
+                    select.addField(this.parseCharacter(fieldName));
                     break;
                 case NUMERIC:
-                    this.parseNumeric(select, fieldName);
+                    select.addField(this.parseNumeric(fieldName));
                     break;
                 case NULL:
-                    this.parseNull(select);
+                    select.addField(this.parseNull());
                     break;
                 case ASTERISK:
-                    this.parseAsterisk(select);
+                    select.addField(this.parseAsterisk(null));
                     break;
                 default:
-                    this.parseIdentifier(select, fieldName);
+                    select.addField(this.parseIdentifier(fieldName));
                     break;
             }
 
@@ -370,10 +381,9 @@ public final class SQLParser {
     private String parseFields(final String oldAlias) throws SQLException {
         String tableAlias = oldAlias;
 
-        if (token != null
-                && ((this.token.getType() == TokenType.IDENTIFIER) || (this.token.getType() == TokenType.AS))) {
+        if (isToken(TokenType.IDENTIFIER) || isToken(TokenType.AS)) {
             // Field alias (with AS identifier)
-            testForTokenType(TokenType.AS);
+            testAndRemoveTokenType(TokenType.AS);
 
             // Field alias (without AS identifier)
             tableAlias = this.token.getValue();
@@ -393,13 +403,13 @@ public final class SQLParser {
         this.expect(TokenType.FROM);
         boolean firstField = true;
         do {
-            if (this.token.getType() == TokenType.WHERE) {
+            if (isToken(TokenType.WHERE) || isToken(TokenType.ORDER)) {
                 break;
             }
             if (!firstField) {
                 this.expect(TokenType.COMMA);
             }
-            if (this.token.getType() == TokenType.IDENTIFIER) {
+            if (isToken(TokenType.IDENTIFIER)) {
                 this.parseJoinTable(select);
                 firstField = false;
             }
@@ -409,31 +419,28 @@ public final class SQLParser {
     /**
      * Parse the identifier token associated with a field.
      *
-     * @param select    the select node.
      * @param fieldName the field name.
+     * @return the field node.
      * @throws SQLException in case of parse errors.
      */
-    private void parseIdentifier(final SelectNode select, final String fieldName)
-            throws SQLException {
+    private SQLNode parseIdentifier(final String fieldName) throws SQLException {
         String fieldAlias = fieldName;
         String newTableName = null;
         String newFieldName = fieldName;
-        final ScannerPosition position = this.token.getPosition();
+
+        @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.IDENTIFIER);
 
-        if ((this.token.getType() == TokenType.IDENTIFIER) || (this.token.getType() == TokenType.AS)
-                || (this.token.getType() == TokenType.PERIOD)) {
+        if (isToken(TokenType.IDENTIFIER) || isToken(TokenType.AS) || isToken(TokenType.PERIOD)) {
             // If it has a Table Name.
-            if (this.token.getType() == TokenType.PERIOD) {
+            if (isToken(TokenType.PERIOD)) {
                 this.expect(TokenType.PERIOD);
                 newTableName = fieldName;
                 newFieldName = this.token.getValue();
                 fieldAlias = newFieldName;
 
-                if (this.token.getType() == TokenType.ASTERISK) {
-                    this.expect(TokenType.ASTERISK);
-                    select.addField(new AsteriskNode(connection, newTableName));
-                    return;
+                if (isToken(TokenType.ASTERISK)) {
+                    return parseAsterisk(newTableName);
                 }
 
                 this.expect(TokenType.IDENTIFIER);
@@ -442,7 +449,7 @@ public final class SQLParser {
             fieldAlias = getFieldAlias(fieldAlias);
         }
 
-        select.addField(new FieldNode(connection, newTableName, newFieldName, fieldAlias, position));
+        return new FieldNode(connection, newTableName, newFieldName, fieldAlias, position);
     }
 
     /**
@@ -452,8 +459,8 @@ public final class SQLParser {
      * @throws SQLException in case of errors.
      */
     private void parseJoin(final SelectNode select) throws SQLException {
-        while (this.scanner.hasNext() && (this.token.getType() != TokenType.COMMA)
-                && (this.token.getType() != TokenType.WHERE)) {
+        while (this.scanner.hasNext() && (!isToken(TokenType.COMMA) && !isToken(TokenType.WHERE)
+                && !isToken(TokenType.ORDER))) {
 
             // Inner, right or cross join.
             JoinType joinType = JoinType.INNER;
@@ -461,17 +468,17 @@ public final class SQLParser {
                 case FULL:
                     joinType = JoinType.FULL;
                     this.expect(TokenType.FULL);
-                    testForTokenType(TokenType.OUTER);
+                    testAndRemoveTokenType(TokenType.OUTER);
                     break;
                 case LEFT:
                     joinType = JoinType.LEFT;
                     this.expect(TokenType.LEFT);
-                    testForTokenType(TokenType.OUTER);
+                    testAndRemoveTokenType(TokenType.OUTER);
                     break;
                 case RIGHT:
                     joinType = JoinType.RIGHT;
                     this.expect(TokenType.RIGHT);
-                    testForTokenType(TokenType.OUTER);
+                    testAndRemoveTokenType(TokenType.OUTER);
                     break;
                 case CROSS:
                     joinType = JoinType.CROSS;
@@ -491,7 +498,7 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
 
             // Have schema name.
-            if (this.scanner.hasNext() && this.token.getType() == TokenType.PERIOD) {
+            if (isToken(TokenType.PERIOD)) {
                 expect(TokenType.PERIOD);
                 schemaName = tableName;
                 tableName = this.token.getValue();
@@ -506,13 +513,20 @@ public final class SQLParser {
                 this.expect(TokenType.ON);
                 joinTable.setCondition(this.parseCondition());
             }
+
             select.addTable(joinTable);
         }
     }
 
-    private void testForTokenType(TokenType outer) throws SQLException {
-        if (this.token.getType() == outer) {
-            this.expect(outer);
+    /**
+     * Test for a desired token and remove it if is the right token.
+     *
+     * @param token the token to test.
+     * @throws SQLException in case of failures.
+     */
+    private void testAndRemoveTokenType(final TokenType token) throws SQLException {
+        if (isToken(token)) {
+            this.expect(token);
         }
     }
 
@@ -528,7 +542,7 @@ public final class SQLParser {
         this.expect(TokenType.IDENTIFIER);
 
         // Have schema name.
-        if (this.token != null && this.token.getType() == TokenType.PERIOD) {
+        if (isToken(TokenType.PERIOD)) {
             expect(TokenType.PERIOD);
             schemaName = tableName;
             tableName = this.token.getValue();
@@ -554,7 +568,7 @@ public final class SQLParser {
     private AbstractComparableNode parseLess(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.LESS);
 
-        if (token.getType() == TokenType.EQUALS) {
+        if (isToken(TokenType.EQUALS)) {
             this.expect(TokenType.EQUALS);
             return new LessThanOrEqualsNode(connection, firstField, this.parseField());
         }
@@ -572,7 +586,7 @@ public final class SQLParser {
     private AbstractComparableNode parseMore(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.MORE);
 
-        if (token.getType() == TokenType.EQUALS) {
+        if (isToken(TokenType.EQUALS)) {
             this.expect(TokenType.EQUALS);
             return new GreaterThanOrEqualsNode(connection, firstField, this.parseField());
         }
@@ -590,7 +604,7 @@ public final class SQLParser {
     private AbstractComparableNode parseNull(final FieldNode firstField) throws SQLException {
         this.expect(TokenType.IS);
         AbstractComparableNode ret;
-        if (token.getType() == TokenType.NOT) {
+        if (isToken(TokenType.NOT)) {
             this.expect(TokenType.NOT);
             ret = new IsNotNullNode(connection, firstField);
         } else {
@@ -639,7 +653,7 @@ public final class SQLParser {
      */
     private void parseEscapeToken(final LikeNode likeNode) throws SQLException {
         // Has an escape value?
-        if (this.token != null && this.token.getType() == TokenType.ESCAPE) {
+        if (isToken(TokenType.ESCAPE)) {
             this.expect(TokenType.ESCAPE);
             FieldNode field = parseField();
             if (field instanceof ValueNode) {
@@ -672,24 +686,24 @@ public final class SQLParser {
     /**
      * Parse the numeric token.
      *
-     * @param select    the select node.
      * @param fieldName the field name.
+     * @return the field value.
      * @throws SQLException in case of parse errors.
      */
-    private void parseNumeric(final SelectNode select, final String fieldName) throws SQLException {
+    private ValueNode parseNumeric(final String fieldName) throws SQLException {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NUMERIC);
 
         final String fieldAlias = getFieldAlias(fieldName);
-        select.addField(new ValueNode(connection, fieldName, fieldAlias, position, Types.NUMERIC));
+        return new ValueNode(connection, fieldName, fieldAlias, position, Types.NUMERIC);
     }
 
-    private void parseNull(final SelectNode select) throws SQLException {
+    private ValueNode parseNull() throws SQLException {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NULL);
 
         final String fieldAlias = getFieldAlias("null");
-        select.addField(new ValueNode(connection, null, fieldAlias, position, Types.NULL));
+        return new ValueNode(connection, null, fieldAlias, position, Types.NULL);
     }
 
     /**
@@ -701,7 +715,7 @@ public final class SQLParser {
      */
     private AbstractConditionalNode parseOperators(final AbstractConditionalNode child) throws SQLException {
         AbstractConditionalNode ret;
-        if (this.token.getType() == TokenType.AND) {
+        if (isToken(TokenType.AND)) {
             this.expect(TokenType.AND);
             if (child instanceof ANDNode) {
                 ret = child;
@@ -722,6 +736,44 @@ public final class SQLParser {
     }
 
     /**
+     * Parses ORDER BY node.
+     *
+     * @param select the select statement node.
+     * @throws SQLException in case of failures.
+     */
+    private void parseOrderBy(final SelectNode select) throws SQLException {
+        this.expect(TokenType.ORDER);
+        this.expect(TokenType.BY);
+
+        boolean firstField = true;
+        do {
+            // Field Name
+            if (!firstField) {
+                this.expect(TokenType.COMMA);
+            }
+            final String fieldName = this.token.getValue();
+
+            switch (this.token.getType()) {
+                case NUMERIC:
+                    select.addOrderBy(this.parseNumeric(fieldName));
+                    break;
+                case IDENTIFIER:
+                    SQLNode node = this.parseIdentifier(fieldName);
+                    if (node instanceof FieldNode) {
+                        select.addOrderBy((FieldNode) node);
+                    } else {
+                        throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN);
+                    }
+                    break;
+                default:
+                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN);
+            }
+
+            firstField = false;
+        } while (this.scanner.hasNext());
+    }
+
+    /**
      * Parse a Select Statement.
      *
      * @return a select statement node.
@@ -732,7 +784,7 @@ public final class SQLParser {
         this.expect(TokenType.SELECT);
 
         // Allowed only in the beginning of Select Statement
-        if (this.token != null && this.token.getType() == TokenType.DISTINCT) {
+        if (isToken(TokenType.DISTINCT)) {
             select.setDistinct(true);
             this.expect(TokenType.DISTINCT);
         }
@@ -740,7 +792,7 @@ public final class SQLParser {
         // Field loop
         this.parseFields(select);
 
-        if (this.token != null && this.token.getType() == TokenType.FROM) {
+        if (isToken(TokenType.FROM)) {
             this.parseFrom(select);
 
             // Only SELECT with FROM can have WHERE clause.
@@ -748,8 +800,27 @@ public final class SQLParser {
                 this.expect(TokenType.WHERE);
                 select.setCondition(this.parseCondition());
             }
+
+            if (isToken(TokenType.ORDER)) {
+                this.parseOrderBy(select);
+            }
+        }
+
+        if (this.scanner.hasNext() || this.token != null) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                    this.token.getPosition());
         }
 
         return select;
+    }
+
+    /**
+     * Check if the current token is the desired type.
+     *
+     * @param type the token to check.
+     * @return <code>true</code> if the current token is the desired type.
+     */
+    private boolean isToken(final TokenType type) {
+        return this.token != null && this.token.getType() == type;
     }
 }
