@@ -12,12 +12,11 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.rowset.ValuesComparator;
 
 /**
  * Is null node.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class IsNullNode extends AbstractComparableNode {
@@ -33,7 +32,7 @@ public class IsNullNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+    public boolean evaluate(final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         return value1 == null;
     }

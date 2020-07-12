@@ -12,7 +12,6 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.utils.Expressions;
 
 /**
@@ -36,7 +35,7 @@ public class ILikeNode extends LikeNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+    public boolean evaluate(final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
 

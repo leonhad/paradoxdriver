@@ -17,7 +17,7 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Stores the equals node.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.1
  */
 public final class EqualsNode extends AbstractComparableNode {
@@ -34,9 +34,9 @@ public final class EqualsNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+    public boolean evaluate(final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
-        return comparator.equals(value1, value2);
+        return ValuesComparator.equals(value1, value2);
     }
 }

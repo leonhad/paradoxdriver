@@ -34,9 +34,9 @@ public final class LessThanNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+    public boolean evaluate(final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
-        return comparator.compare(value1, value2, i -> i == -1);
+        return ValuesComparator.compare(value1, value2, i -> i == -1);
     }
 }

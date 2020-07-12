@@ -17,7 +17,7 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 /**
  * Stores the greater than or equals node.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public final class GreaterThanOrEqualsNode extends AbstractComparableNode {
@@ -34,9 +34,9 @@ public final class GreaterThanOrEqualsNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+    public boolean evaluate(final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
-        return comparator.compare(value1, value2, i -> i >= 0);
+        return ValuesComparator.compare(value1, value2, i -> i >= 0);
     }
 }

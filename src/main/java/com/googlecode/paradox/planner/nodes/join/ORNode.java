@@ -13,12 +13,11 @@ package com.googlecode.paradox.planner.nodes.join;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.rowset.ValuesComparator;
 
 /**
  * Store the OR node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public class ORNode extends AbstractJoinNode {
@@ -34,10 +33,10 @@ public class ORNode extends AbstractJoinNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+    public boolean evaluate(final Object[] row, final Object[] parameters) {
         for (final SQLNode node : children) {
             final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
-            if (conditionalNode.evaluate(row, comparator, parameters)) {
+            if (conditionalNode.evaluate(row, parameters)) {
                 return true;
             }
         }

@@ -10,14 +10,12 @@
  */
 package com.googlecode.paradox.rowset;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.function.IntPredicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,10 +23,10 @@ import java.util.logging.Logger;
 /**
  * Compare Paradox values.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
-public class ValuesComparator implements Comparator<Object>, Serializable {
+public final class ValuesComparator {
 
     private static final Logger LOGGER = Logger.getLogger(ValuesComparator.class.getName());
 
@@ -37,11 +35,11 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
     /**
      * Creates a new instance.
      */
-    public ValuesComparator() {
+    private ValuesComparator() {
         super();
     }
 
-    public boolean compare(final Object o1, final Object o2, final IntPredicate condition) {
+    public static boolean compare(final Object o1, final Object o2, final IntPredicate condition) {
         if (o1 == null || o2 == null) {
             return false;
         }
@@ -49,7 +47,7 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         return condition.test(compare(o1, o2));
     }
 
-    public boolean equals(final Object o1, final Object o2) {
+    public static boolean equals(final Object o1, final Object o2) {
         if (o1 == null || o2 == null) {
             return false;
         }
@@ -157,8 +155,7 @@ public class ValuesComparator implements Comparator<Object>, Serializable {
         return false;
     }
 
-    @Override
-    public int compare(final Object o1, final Object o2) {
+    public static int compare(final Object o1, final Object o2) {
         if (o1 == null) {
             return 1;
         } else if (o2 == null) {

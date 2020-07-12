@@ -12,13 +12,12 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Like node.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class LikeNode extends AbstractComparableNode {
@@ -40,7 +39,7 @@ public class LikeNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final ValuesComparator comparator, final Object[] parameters) {
+    public boolean evaluate(final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
 
