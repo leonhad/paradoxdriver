@@ -20,7 +20,7 @@ import java.util.Arrays;
 /**
  * BLOB for paradox file (MB).
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.5.0
  */
 public final class ParadoxBlob implements Blob {
