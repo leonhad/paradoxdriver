@@ -178,4 +178,36 @@ public class BlobFieldTest {
             Assert.assertFalse("Invalid ResultSet state", rs.next());
         }
     }
+
+    /**
+     * Test for blob searching.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testBlobSearching() throws SQLException {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select Graphic from fields.graphic where Id = 2")) {
+            int size = 9626;
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+
+            final Blob blob = rs.getBlob("Graphic");
+            Assert.assertEquals("Invalid blob value", 9626, blob.length());
+
+            byte[] pattern = new byte[]{37, 0, 0, 0};
+            Assert.assertEquals("Invalid blob value", 4, blob.position(pattern, 1));
+            Assert.assertEquals("Invalid blob value", 4, blob.position(pattern, 4));
+
+            final Blob created = conn.createBlob();
+            created.setBytes(1, pattern);
+            Assert.assertEquals("Invalid blob value", 4, blob.position(pattern, 1));
+
+            Assert.assertEquals("Invalid blob value", 1, blob.position(blob, 1));
+            Assert.assertEquals("Invalid blob value", -1, blob.position(blob, 2));
+
+            Assert.assertThrows("Invalid position", SQLException.class, () -> blob.position(blob, 0));
+
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+        }
+    }
 }

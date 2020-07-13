@@ -70,10 +70,10 @@ public final class ParadoxBlob implements Blob {
 
     private static int areEquals(byte[] array1, int offset, byte[] array2) {
         int ret = -1;
-        if (array1.length + offset <= array2.length) {
+        if (array2.length + offset <= array1.length) {
             int loop;
-            for (loop = offset; loop < array2.length; loop++) {
-                if (array1[loop] != array2[loop]) {
+            for (loop = 0; loop < array2.length; loop++) {
+                if (array1[loop + offset] != array2[loop]) {
                     break;
                 }
             }
@@ -98,11 +98,15 @@ public final class ParadoxBlob implements Blob {
     }
 
     @Override
-    public long position(final byte[] pattern, final long start) {
-        for (int loop = (int) start; loop < this.value.length - pattern.length; loop++) {
+    public long position(final byte[] pattern, final long start) throws ParadoxException {
+        if (start <= 0) {
+            throw new ParadoxException(ParadoxException.Error.INVALID_POSITION_SPECIFIED);
+        }
+
+        for (int loop = (int) start - 1; loop <= this.value.length - pattern.length; loop++) {
             int pos = areEquals(this.value, loop, pattern);
             if (pos != -1) {
-                return pos;
+                return pos + 1L;
             }
         }
 
@@ -110,18 +114,27 @@ public final class ParadoxBlob implements Blob {
     }
 
     @Override
-    public long position(Blob pattern, long start) throws ParadoxNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public long position(final Blob pattern, final long start) throws SQLException {
+        return position(pattern.getBytes(1, (int) pattern.length()), start);
     }
 
     @Override
-    public int setBytes(long pos, byte[] bytes) throws ParadoxNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public int setBytes(long pos, byte[] bytes) throws ParadoxException {
+        if (pos <= 0) {
+            throw new ParadoxException(ParadoxException.Error.INVALID_POSITION_SPECIFIED);
+        }
+
+        if (this.value.length < pos - 1 + bytes.length) {
+            this.value = Arrays.copyOf(this.value, (int) pos - 1 + bytes.length);
+        }
+
+        System.arraycopy(bytes, 0, this.value, (int) pos - 1, bytes.length);
+        return bytes.length;
     }
 
     @Override
-    public int setBytes(long pos, byte[] bytes, int offset, int len) throws ParadoxNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public int setBytes(long pos, byte[] bytes, int offset, int len) throws SQLException {
+        return setBytes(pos, Arrays.copyOfRange(bytes, offset, len));
     }
 
     @Override
