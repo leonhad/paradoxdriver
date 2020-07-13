@@ -201,7 +201,6 @@ public class Scanner {
                     break;
                 default:
                     buffer.position(buffer.position() - 1);
-                    // FIXME add a SQL Warning here about the error in escape char.
             }
         }
         return c;
