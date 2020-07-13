@@ -119,23 +119,35 @@ public final class ValuesComparator {
 
         // Try to compare with Time values.
         if (o1 instanceof Time || o2 instanceof Time) {
-            final Time n1 = ValuesConverter.getTime(o1);
-            final Time n2 = ValuesConverter.getTime(o2);
-            return n1.equals(n2);
+            try {
+                final Time n1 = ValuesConverter.getTime(o1);
+                final Time n2 = ValuesConverter.getTime(o2);
+                return n1.equals(n2);
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         // Try to compare with Timestamp values.
         if (o1 instanceof Timestamp || o2 instanceof Timestamp) {
-            final Timestamp n1 = ValuesConverter.getTimestamp(o1);
-            final Timestamp n2 = ValuesConverter.getTimestamp(o2);
-            return n1.equals(n2);
+            try {
+                final Timestamp n1 = ValuesConverter.getTimestamp(o1);
+                final Timestamp n2 = ValuesConverter.getTimestamp(o2);
+                return n1.equals(n2);
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         // Try to compare with Date values.
         if (o1 instanceof Date || o2 instanceof Date) {
-            final Date n1 = ValuesConverter.getDate(o1);
-            final Date n2 = ValuesConverter.getDate(o2);
-            return n1.equals(n2);
+            try {
+                final Date n1 = ValuesConverter.getDate(o1);
+                final Date n2 = ValuesConverter.getDate(o2);
+                return n1.equals(n2);
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         // Try to compare with String values.
@@ -226,23 +238,35 @@ public final class ValuesComparator {
 
         // Try to compare with Time values.
         if (o1 instanceof Time || o2 instanceof Time) {
-            final Time n1 = ValuesConverter.getTime(o1);
-            final Time n2 = ValuesConverter.getTime(o2);
-            return n1.compareTo(n2);
+            try {
+                final Time n1 = ValuesConverter.getTime(o1);
+                final Time n2 = ValuesConverter.getTime(o2);
+                return n1.compareTo(n2);
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         // Try to compare with Timestamp values.
         if (o1 instanceof Timestamp || o2 instanceof Timestamp) {
-            final Timestamp n1 = ValuesConverter.getTimestamp(o1);
-            final Timestamp n2 = ValuesConverter.getTimestamp(o2);
-            return n1.compareTo(n2);
+            try {
+                final Timestamp n1 = ValuesConverter.getTimestamp(o1);
+                final Timestamp n2 = ValuesConverter.getTimestamp(o2);
+                return n1.compareTo(n2);
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         // Try to compare with Date values.
         if (o1 instanceof Date || o2 instanceof Date) {
-            final Date n1 = ValuesConverter.getDate(o1);
-            final Date n2 = ValuesConverter.getDate(o2);
-            return n1.compareTo(n2);
+            try {
+                final Date n1 = ValuesConverter.getDate(o1);
+                final Date n2 = ValuesConverter.getDate(o2);
+                return n1.compareTo(n2);
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         // Try to compare with String values.

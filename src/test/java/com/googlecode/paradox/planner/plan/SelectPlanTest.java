@@ -288,4 +288,18 @@ public class SelectPlanTest {
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
+
+    /**
+     * Test error in date conversion.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testErrorDateConversion() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select a.* from fields.DATE4 a where a.DATE = 1 order by \"DATE\"");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
 }

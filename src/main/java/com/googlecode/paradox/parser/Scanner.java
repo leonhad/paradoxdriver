@@ -287,7 +287,6 @@ public class Scanner {
      */
     private void pushBack(char character) {
         preloaded.add(character);
-        position.back();
     }
 
     /**

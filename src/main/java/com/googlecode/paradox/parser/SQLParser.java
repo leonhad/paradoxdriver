@@ -11,7 +11,6 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -84,7 +83,8 @@ public final class SQLParser {
         if (isToken(TokenType.SELECT)) {
             statementNodes.add(this.parseSelect());
         } else {
-            throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                    token.getPosition());
         }
 
         statementNodes.forEach(s -> s.setParameterCount(parameterCount));
@@ -752,12 +752,12 @@ public final class SQLParser {
             if (!firstField) {
                 this.expect(TokenType.COMMA);
             }
-            final String fieldName = this.token.getValue();
 
+            final String fieldName = this.token.getValue();
             FieldNode fieldNode;
+            final ScannerPosition position = token.getPosition();
             switch (this.token.getType()) {
                 case NUMERIC:
-                    final ScannerPosition position = token.getPosition();
                     this.expect(TokenType.NUMERIC);
                     fieldNode = new ValueNode(connection, fieldName, fieldName, position, Types.NUMERIC);
                     break;
@@ -765,7 +765,7 @@ public final class SQLParser {
                     fieldNode = parseIdentifierFieldForOrder(fieldName);
                     break;
                 default:
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN);
+                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN, position);
             }
 
             OrderType type = OrderType.ASC;

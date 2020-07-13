@@ -50,15 +50,6 @@ public class ScannerPosition {
         }
     }
 
-    public void back() {
-        if (column == 1) {
-            column = lastColumn;
-            line--;
-        } else {
-            column--;
-        }
-    }
-
     /**
      * Gets the current column.
      *
