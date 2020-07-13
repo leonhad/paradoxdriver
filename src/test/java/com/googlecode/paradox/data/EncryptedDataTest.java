@@ -20,7 +20,7 @@ import java.sql.*;
 /**
  * Unit test for encrypted data.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.5.0
  */
 public class EncryptedDataTest {
@@ -81,6 +81,24 @@ public class EncryptedDataTest {
             Assert.assertEquals("Invalid id value", "Test2", rs.getString("B"));
 
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for encrypted blob.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testEncryptedBlob() throws SQLException {
+        try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "encrypt");
+             final Statement stmt = conn.createStatement();
+             final ResultSet rs = stmt.executeQuery("select TEXT from encrypt.encryptedmemo")) {
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertNotNull("Invalid blob value", rs.getBlob("TEXT"));
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertNotNull("Invalid blob value", rs.getBlob("TEXT"));
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
         }
     }
 }

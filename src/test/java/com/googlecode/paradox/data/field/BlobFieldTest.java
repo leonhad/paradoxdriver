@@ -193,7 +193,7 @@ public class BlobFieldTest {
             Assert.assertTrue("Invalid ResultSet state", rs.next());
 
             final Blob blob = rs.getBlob("Graphic");
-            Assert.assertEquals("Invalid blob value", 9626, blob.length());
+            Assert.assertEquals("Invalid blob value", size, blob.length());
 
             byte[] pattern = new byte[]{37, 0, 0, 0};
             Assert.assertEquals("Invalid blob value", 4, blob.position(pattern, 1));
