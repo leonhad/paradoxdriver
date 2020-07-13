@@ -725,4 +725,15 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser(conn, "select * from fields.DATE4 a a");
         Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
     }
+
+    /**
+     * Test for extra token in order by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testExtraTokenInOrderBy() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select * from fields.DATE4 a order by 1 a");
+        Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
+    }
 }

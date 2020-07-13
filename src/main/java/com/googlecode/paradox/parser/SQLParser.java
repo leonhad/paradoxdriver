@@ -757,7 +757,9 @@ public final class SQLParser {
             FieldNode fieldNode;
             switch (this.token.getType()) {
                 case NUMERIC:
-                    fieldNode = this.parseNumeric(fieldName);
+                    final ScannerPosition position = token.getPosition();
+                    this.expect(TokenType.NUMERIC);
+                    fieldNode = new ValueNode(connection, fieldName, fieldName, position, Types.NUMERIC);
                     break;
                 case IDENTIFIER:
                     fieldNode = parseIdentifierFieldForOrder(fieldName);
@@ -782,12 +784,22 @@ public final class SQLParser {
     }
 
     private FieldNode parseIdentifierFieldForOrder(final String fieldName) throws SQLException {
-        SQLNode node = this.parseIdentifier(fieldName);
-        if (node instanceof FieldNode) {
-            return (FieldNode) node;
+        String newTableName = null;
+        String newFieldName = fieldName;
+
+        @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
+        this.expect(TokenType.IDENTIFIER);
+
+        if (isToken(TokenType.PERIOD)) {
+            // If it has a Table Name.
+            this.expect(TokenType.PERIOD);
+            newTableName = fieldName;
+            newFieldName = this.token.getValue();
+
+            this.expect(TokenType.IDENTIFIER);
         }
 
-        throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN);
+        return new FieldNode(connection, newTableName, newFieldName, newFieldName, position);
     }
 
     /**
