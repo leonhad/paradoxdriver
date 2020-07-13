@@ -64,15 +64,73 @@ public class BlobFieldTest {
     }
 
     /**
-     * Test for is null expressions.
+     * Test for blob loading.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testIsNull() throws SQLException {
+    public void testBlobLoading() throws SQLException {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("select Graphic from fields.graphic where Id = 2")) {
             int size = 9626;
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+
+            final Blob blob = rs.getBlob("Graphic");
+            Assert.assertNotNull("Invalid blob value", blob);
+
+            final Blob newBlob = conn.createBlob();
+            final boolean equals = blob.equals(newBlob);
+            Assert.assertFalse("Invalid blob equals", equals);
+            Assert.assertNotEquals("Invalid hash code", 0, blob.hashCode());
+
+            Assert.assertEquals("Invalid value", size, blob.length());
+            Assert.assertEquals("Invalid value", size, blob.getBytes(1, size).length);
+
+            try (InputStream is = blob.getBinaryStream()) {
+                byte[] buffer = new byte[size];
+                Assert.assertEquals("Invalid stream size", size, is.read(buffer));
+                Assert.assertEquals("Invalid stream state", 0, is.available());
+                Assert.assertArrayEquals("Invalid binary stream", buffer, blob.getBytes(1, size));
+            } catch (final IOException e) {
+                throw new SQLException(e);
+            }
+
+            int forcedSize = 10;
+            try (InputStream is = blob.getBinaryStream(1, forcedSize)) {
+                byte[] buffer = new byte[forcedSize];
+                Assert.assertEquals("Invalid stream size", forcedSize, is.read(buffer));
+                Assert.assertEquals("Invalid stream state", 0, is.available());
+                Assert.assertArrayEquals("Invalid binary stream", buffer, blob.getBytes(1, forcedSize));
+            } catch (final IOException e) {
+                throw new SQLException(e);
+            }
+
+            blob.truncate(forcedSize);
+            Assert.assertEquals("Invalid stream size", forcedSize, blob.length());
+
+            blob.truncate(0);
+            Assert.assertEquals("Invalid stream size", 0, blob.length());
+
+            Assert.assertThrows("Invalid truncate blob", ParadoxException.class,
+                    () -> blob.truncate(1));
+
+            blob.free();
+            Assert.assertEquals("Invalid value", 0, blob.length());
+
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+        }
+    }
+
+    /**
+     * Test for big blob.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testBigBlob() throws SQLException {
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("select Graphic from fields.graphic where Id = 3")) {
+            int size = 2074686;
             Assert.assertTrue("Invalid ResultSet state", rs.next());
 
             final Blob blob = rs.getBlob("Graphic");

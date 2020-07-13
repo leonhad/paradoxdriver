@@ -68,9 +68,22 @@ public final class ParadoxBlob implements Blob {
         return this.value.length;
     }
 
-    @Override
-    public byte[] getBytes(long pos, int length) {
-        return Arrays.copyOfRange(this.value, (int) pos - 1, length);
+    private static int areEquals(byte[] array1, int offset, byte[] array2) {
+        int ret = -1;
+        if (array1.length + offset <= array2.length) {
+            int loop;
+            for (loop = offset; loop < array2.length; loop++) {
+                if (array1[loop] != array2[loop]) {
+                    break;
+                }
+            }
+
+            if (loop == array2.length) {
+                ret = offset;
+            }
+        }
+
+        return ret;
     }
 
     @Override
@@ -79,8 +92,21 @@ public final class ParadoxBlob implements Blob {
     }
 
     @Override
-    public long position(byte[] pattern, long start) throws ParadoxNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public byte[] getBytes(long pos, int length) {
+        final int endPos = (int) (pos - 1 + length);
+        return Arrays.copyOfRange(this.value, (int) pos - 1, endPos);
+    }
+
+    @Override
+    public long position(final byte[] pattern, final long start) {
+        for (int loop = (int) start; loop < this.value.length - pattern.length; loop++) {
+            int pos = areEquals(this.value, loop, pattern);
+            if (pos != -1) {
+                return pos;
+            }
+        }
+
+        return -1;
     }
 
     @Override
