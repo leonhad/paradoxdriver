@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.*;
 
 /**
@@ -209,5 +210,22 @@ public class BlobFieldTest {
 
             Assert.assertFalse("Invalid ResultSet state", rs.next());
         }
+    }
+
+    /**
+     * Test for blob output stream.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testBlobOutputStream() throws SQLException, IOException {
+        final Blob blob = conn.createBlob();
+
+        byte[] pattern = new byte[]{1, 2, 3, 4};
+        try (OutputStream out = blob.setBinaryStream(1)) {
+            out.write(pattern);
+        }
+
+        Assert.assertArrayEquals("Invalid values written", pattern, blob.getBytes(1, (int) blob.length()));
     }
 }

@@ -11,11 +11,8 @@
 package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.exceptions.ParadoxException;
-import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -138,8 +135,22 @@ public final class ParadoxBlob implements Blob {
     }
 
     @Override
-    public OutputStream setBinaryStream(long pos) throws ParadoxNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public OutputStream setBinaryStream(long pos) {
+        return new BlobStream(this);
+    }
+
+    private static class BlobStream extends ByteArrayOutputStream {
+        private final ParadoxBlob parent;
+
+        public BlobStream(ParadoxBlob parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void close() throws IOException {
+            parent.value = toByteArray();
+            super.close();
+        }
     }
 
     /**
