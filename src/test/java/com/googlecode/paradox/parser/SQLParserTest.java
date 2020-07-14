@@ -736,4 +736,28 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser(conn, "select * from fields.DATE4 a order by 1 a");
         Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
     }
+
+    /**
+     * Test for IN expression.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testIn() throws SQLException {
+        final SQLParser parser = new SQLParser(conn, "select id from fields.long where id in (1, 2)");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+        Assert.assertTrue("Invalid node type", select.getCondition() instanceof InNode);
+
+        final InNode node = (InNode) select.getCondition();
+        Assert.assertEquals("Invalid field size", 2, node.getValues().size());
+        Assert.assertEquals("Invalid field size", "1", node.getValues().get(0).getName());
+        Assert.assertEquals("Invalid field size", "2", node.getValues().get(1).getName());
+    }
+
 }

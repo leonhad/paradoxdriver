@@ -50,6 +50,15 @@ public final class InNode extends AbstractComparableNode {
         values.add(value);
     }
 
+    /**
+     * Gets the value list in this node.
+     *
+     * @return the value list in this node.
+     */
+    public List<ValueNode> getValues() {
+        return values;
+    }
+
     @Override
     public boolean evaluate(final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
