@@ -161,7 +161,7 @@ public final class EncryptedData {
         blockSize >>= BLOCK_DIVISION;
 
         for (int chunk = 0; chunk < blockSize; ++chunk) {
-            decryptChunk(src, (chunk << BLOCK_DIVISION), a, b, (byte) (a + 1), (byte) (b + 1));
+            decryptChunk(src, (chunk << BLOCK_DIVISION), a, b, a + 1, b + 1);
         }
     }
 }

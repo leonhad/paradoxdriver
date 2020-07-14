@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.data.EncryptedData;
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -59,6 +60,43 @@ public abstract class AbstractLobField implements FieldParser {
 
     protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value);
 
+    private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table)
+            throws IOException {
+        // Calculate the block size.
+        final long pos = channel.position();
+        final long offset = pos & 0xFFFFFF00;
+        int blockSize = (int) (size + pos - offset);
+        if ((blockSize & 0xFF) > 0) {
+            blockSize = ((blockSize >> 0x08) + 1) << 0x08;
+        }
+
+        // Read the block data
+        ByteBuffer buffer = ByteBuffer.allocate(blockSize);
+        channel.position(offset);
+        channel.read(buffer);
+        channel.position(pos + size);
+
+        // Handle encryption.
+        if (table.isEncrypted()) {
+            byte[] b = buffer.array();
+            EncryptedData.decryptMBBlock(b, table.getEncryptedData(), blockSize);
+        }
+
+        buffer.flip();
+
+        // recalculate offset.
+        int bufferOffset = (int) (pos - offset);
+        if (bufferOffset > 0) {
+            byte[] newBuffer = new byte[size];
+            System.arraycopy(buffer.array(), bufferOffset, newBuffer, 0, newBuffer.length);
+            buffer = ByteBuffer.wrap(newBuffer);
+        } else {
+            buffer.limit(size);
+        }
+
+        return buffer;
+    }
+
     /**
      * {@inheritDoc}.
      */
@@ -97,10 +135,9 @@ public abstract class AbstractLobField implements FieldParser {
             final long offset = beginIndex & 0xFFFFFF00;
             channel.position(offset);
 
-            ByteBuffer head = ByteBuffer.allocate(HEAD_SIZE);
+            ByteBuffer head = readBlock(channel, HEAD_SIZE, table);
             head.order(ByteOrder.LITTLE_ENDIAN);
-            channel.read(head);
-            head.flip();
+
             byte type = head.get();
             head.getShort();
 
@@ -111,8 +148,9 @@ public abstract class AbstractLobField implements FieldParser {
         }
     }
 
-    private Object processBlobByBlockType(ParadoxTable table, int headerSize, int size, FileChannel channel,
-                                          long offset, byte type, int index) throws SQLException, IOException {
+    private Object processBlobByBlockType(final ParadoxTable table, final int headerSize, final int size,
+                                          final FileChannel channel, final long offset, final byte type,
+                                          final int index) throws SQLException, IOException {
         switch (type) {
             case 0x0:
                 throw new ParadoxDataException(ParadoxDataException.Error.BLOB_READ_HEAD_BLOCK);
@@ -134,10 +172,8 @@ public abstract class AbstractLobField implements FieldParser {
         channel.position(channel.position() + headerSize);
 
         channel.position(offset + 12 + index * 5);
-        final ByteBuffer head = ByteBuffer.allocate(5);
-        channel.read(head);
+        final ByteBuffer head = readBlock(channel, 5, table);
         head.order(ByteOrder.LITTLE_ENDIAN);
-        head.flip();
 
         // Data offset divided by 16.
         final int blockOffset = head.get() & 0xFF;
@@ -152,34 +188,27 @@ public abstract class AbstractLobField implements FieldParser {
             throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_DECLARED_SIZE);
         }
 
-        final ByteBuffer blocks = ByteBuffer.allocate(size);
         channel.position(offset + blockOffset * 0x10);
-        channel.read(blocks);
-        blocks.flip();
+        final ByteBuffer blocks = readBlock(channel, size, table);
 
         return getValue(table, blocks);
     }
 
-    private Object parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, FileChannel channel)
+    private Object parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, final FileChannel channel)
             throws SQLException, IOException {
         if (index != 0xFF) {
             throw new ParadoxDataException(ParadoxDataException.Error.BLOB_SINGLE_BLOCK_INVALID_INDEX);
         }
         // Read the remaining 6 bytes from the header.
-        final ByteBuffer head = ByteBuffer.allocate(headerSize - HEAD_SIZE);
+        final ByteBuffer head = readBlock(channel, headerSize - HEAD_SIZE, table);
         head.order(ByteOrder.LITTLE_ENDIAN);
-        channel.read(head);
-        head.flip();
 
         int internalSize = head.getInt();
         if (size != internalSize) {
             throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_DECLARED_SIZE);
         }
 
-        final ByteBuffer blocks = ByteBuffer.allocate(size);
-        channel.read(blocks);
-        blocks.flip();
-
+        final ByteBuffer blocks = readBlock(channel, size, table);
         return getValue(table, blocks);
     }
 }
