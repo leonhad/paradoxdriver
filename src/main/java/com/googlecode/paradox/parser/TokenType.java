@@ -93,6 +93,11 @@ public enum TokenType {
     IDENTIFIER,
 
     /**
+     * In node.
+     */
+    IN,
+
+    /**
      * Inner token.
      */
     INNER,
