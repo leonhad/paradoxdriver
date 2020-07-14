@@ -28,7 +28,7 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.2
+ * @version 1.4
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
