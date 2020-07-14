@@ -63,4 +63,22 @@ public final class InNode extends AbstractComparableNode {
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append(field.toString());
+        builder.append(" IN (");
+
+        for (int i = 0; i < values.size(); i++) {
+            if (i != 0) {
+                builder.append(", ");
+            }
+
+            builder.append(values.get(i).toString());
+        }
+
+        builder.append(")");
+        return builder.toString();
+    }
 }

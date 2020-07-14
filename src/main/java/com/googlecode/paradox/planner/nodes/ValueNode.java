@@ -13,6 +13,7 @@ package com.googlecode.paradox.planner.nodes;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 
+import java.sql.Types;
 import java.util.Objects;
 
 /**
@@ -51,5 +52,14 @@ public class ValueNode extends FieldNode {
     @Override
     public int hashCode() {
         return Objects.hash(tableName, alias, name, sqlType);
+    }
+
+    @Override
+    public String toString() {
+        if (sqlType == Types.VARCHAR) {
+            return String.format("'%s'", this.name);
+        }
+
+        return this.name;
     }
 }
