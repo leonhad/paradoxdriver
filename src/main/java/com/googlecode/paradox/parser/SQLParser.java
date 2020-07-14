@@ -309,6 +309,9 @@ public final class SQLParser {
             case MORE:
                 node = this.parseMore(firstField);
                 break;
+            case IN:
+                node = this.parseIn(firstField);
+                break;
             case IS:
                 node = this.parseNull(firstField);
                 break;
@@ -593,6 +596,43 @@ public final class SQLParser {
         }
 
         return new GreaterThanNode(connection, firstField, this.parseField());
+    }
+
+    private InNode parseIn(final FieldNode firstField) throws SQLException {
+        this.expect(TokenType.IN);
+        this.expect(TokenType.L_PAREN);
+
+        final InNode in = new InNode(connection, firstField);
+
+        boolean first = true;
+        do {
+            if (!first) {
+                this.expect(TokenType.COMMA);
+            } else {
+                first = false;
+            }
+
+            if (isToken(TokenType.NUMERIC)) {
+                in.addField(new ValueNode(connection,
+                        token.getValue(), token.getValue(), token.getPosition(), Types.NUMERIC));
+                this.expect(TokenType.NUMERIC);
+            } else if (isToken(TokenType.CHARACTER)) {
+                in.addField(new ValueNode(connection,
+                        token.getValue(), token.getValue(), token.getPosition(), Types.VARCHAR));
+                this.expect(TokenType.CHARACTER);
+            } else {
+                ScannerPosition position = null;
+                if (this.token != null) {
+                    position = this.token.getPosition();
+                }
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN, position);
+            }
+
+        } while (!isToken(TokenType.R_PAREN));
+
+        this.expect(TokenType.R_PAREN);
+
+        return in;
     }
 
     /**

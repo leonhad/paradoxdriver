@@ -744,7 +744,7 @@ public class SQLParserTest {
      */
     @Test
     public void testIn() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select id from fields.long where id in (1, 2)");
+        final SQLParser parser = new SQLParser(conn, "select id from fields.long where id in (1, '2')");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
 
