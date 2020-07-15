@@ -263,4 +263,22 @@ public class PlannerTest {
             }
         }
     }
+
+    /**
+     * Test for IN with values in ResultSet.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testIn() throws SQLException {
+        try (Statement stmt = this.conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery("select id from fields.long where id in (1, '2') order by 1")) {
+                Assert.assertTrue("Invalid result set", rs.next());
+                Assert.assertEquals("Invalid ResultSet value", 1, rs.getInt("id"));
+                Assert.assertTrue("Invalid result set", rs.next());
+                Assert.assertEquals("Invalid ResultSet value", 2, rs.getInt("id"));
+                Assert.assertFalse("Invalid result set", rs.next());
+            }
+        }
+    }
 }
