@@ -11,11 +11,12 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 
 /**
  * Stores a identifier node.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class IdentifierNode extends SQLNode {
@@ -25,9 +26,10 @@ public final class IdentifierNode extends SQLNode {
      *
      * @param connection the Paradox connection.
      * @param name       the identifier name.
+     * @param position   the current Scanner position.
      */
-    public IdentifierNode(final ParadoxConnection connection, final String name) {
-        super(connection, name);
+    public IdentifierNode(final ParadoxConnection connection, final String name, final ScannerPosition position) {
+        super(connection, name, position);
     }
 
     /**

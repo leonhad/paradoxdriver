@@ -25,7 +25,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link TableNode} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class TableNodeTest {
@@ -58,7 +58,7 @@ public class TableNodeTest {
      */
     @Test
     public void testInstance() {
-        final TableNode node = new TableNode(conn, null, "table.db", "alias");
+        final TableNode node = new TableNode(conn, null, "table.db", "alias", null);
         Assert.assertEquals("Invalid table name.", "table", node.getName());
         Assert.assertEquals("Invalid table alias.", "alias", node.getAlias());
     }
@@ -68,11 +68,11 @@ public class TableNodeTest {
      */
     @Test
     public void testToString() {
-        final JoinNode join = new JoinNode(conn, null, "table.db", "alias", JoinType.INNER);
+        final JoinNode join = new JoinNode(conn, null, "table.db", "alias", JoinType.INNER, null);
         final FieldNode fieldA = new FieldNode(conn, null, "a", null, null);
         final FieldNode fieldB = new FieldNode(conn, null, "b", null, null);
 
-        join.setCondition(new EqualsNode(conn, fieldA, fieldB));
+        join.setCondition(new EqualsNode(conn, fieldA, fieldB, null));
 
         Assert.assertEquals("Invalid JoinNode for toString().", "INNER JOIN table AS alias ON a = b ",
                 join.toString());

@@ -25,7 +25,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link ANDNode} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class ANDNodeTest {
@@ -58,8 +58,8 @@ public class ANDNodeTest {
      */
     @Test
     public void testChildhood() {
-        final SQLNode node = new StatementNode(conn, null);
-        final ANDNode and = new ANDNode(conn, node);
+        final SQLNode node = new StatementNode(conn, null, null);
+        final ANDNode and = new ANDNode(conn, node, null);
         Assert.assertEquals("Invalid node size.", 1, and.getChildren().size());
         Assert.assertEquals("Invalid node value.", node, and.getChildren().iterator().next());
     }
@@ -69,7 +69,7 @@ public class ANDNodeTest {
      */
     @Test
     public void testName() {
-        final ANDNode node = new ANDNode(conn, null);
+        final ANDNode node = new ANDNode(conn, null, null);
         Assert.assertEquals("Invalid node name.", "AND", node.getName());
     }
 }

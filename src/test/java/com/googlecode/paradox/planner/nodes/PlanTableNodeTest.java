@@ -25,7 +25,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link PlanTableNode} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class PlanTableNodeTest {
@@ -60,7 +60,7 @@ public class PlanTableNodeTest {
      */
     @Test
     public void testInstance() throws SQLException {
-        TableNode table = new TableNode(conn, null, "areacodes", "alias");
+        TableNode table = new TableNode(conn, null, "areacodes", "alias", null);
 
         PlanTableNode node = new PlanTableNode();
         node.setTable(conn, table);

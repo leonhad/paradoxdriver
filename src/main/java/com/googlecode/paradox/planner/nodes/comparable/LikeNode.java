@@ -11,13 +11,14 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.utils.Expressions;
 
 /**
  * Like node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class LikeNode extends AbstractComparableNode {
@@ -33,9 +34,11 @@ public class LikeNode extends AbstractComparableNode {
      * @param connection the Paradox connection.
      * @param field      the first node.
      * @param last       the last node.
+     * @param position   the current Scanner position.
      */
-    public LikeNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, "like", field, last);
+    public LikeNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last,
+                    final ScannerPosition position) {
+        super(connection, "like", field, last, position);
     }
 
     @Override

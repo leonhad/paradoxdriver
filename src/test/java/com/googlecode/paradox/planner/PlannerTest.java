@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Unit test for {@link Planner}.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.1
  */
 public class PlannerTest {
@@ -124,7 +124,7 @@ public class PlannerTest {
      */
     @Test(expected = SQLFeatureNotSupportedException.class)
     public void testInvalid() throws SQLException {
-        final StatementNode node = new StatementNode(conn, "node");
+        final StatementNode node = new StatementNode(conn, "node", null);
         Planner.create(conn, node);
     }
 
@@ -146,7 +146,7 @@ public class PlannerTest {
      */
     @Test(expected = SQLException.class)
     public void testSelectWithoutColumns() throws SQLException {
-        final SelectNode node = new SelectNode(conn);
+        final SelectNode node = new SelectNode(conn, null);
         Planner.create(conn, node);
     }
 

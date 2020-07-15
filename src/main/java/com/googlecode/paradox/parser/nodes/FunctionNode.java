@@ -12,45 +12,49 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
-import com.googlecode.paradox.parser.TokenType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Stores the asterisk node.
+ * Stores a function node.
  *
- * @version 1.3
- * @since 1.2
+ * @version 1.0
+ * @since 1.6.0
  */
-public final class AsteriskNode extends SQLNode {
+public class FunctionNode extends SQLNode {
 
     /**
-     * This field table name.
+     * The list of parameters of this function.
      */
-    private final String tableName;
+    private final List<SQLNode> parameters = new ArrayList<>();
 
     /**
      * Creates a new instance.
      *
      * @param connection the Paradox connection.
-     * @param tableName  the table name.
+     * @param name       the function name.
      * @param position   the current Scanner position.
      */
-    public AsteriskNode(final ParadoxConnection connection, final String tableName, final ScannerPosition position) {
-        super(connection, TokenType.ASTERISK.name(), position);
-        this.tableName = tableName;
+    public FunctionNode(final ParadoxConnection connection, final String name, final ScannerPosition position) {
+        super(connection, name, position);
     }
 
-    public String getTableName() {
-        return tableName;
+    /**
+     * Return The list of parameters of this function.
+     *
+     * @return The list of parameters of this function.
+     */
+    public List<SQLNode> getParameters() {
+        return parameters;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        if (this.tableName != null) {
-            builder.append(this.tableName);
-            builder.append('.');
-        }
-        builder.append("*");
-        return builder.toString();
+    /**
+     * Add a new parameter to this function.
+     *
+     * @param parameter the parameter to add.
+     */
+    public void addParameter(final SQLNode parameter) {
+        this.parameters.add(parameter);
     }
 }

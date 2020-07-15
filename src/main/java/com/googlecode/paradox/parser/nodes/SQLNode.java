@@ -11,6 +11,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.Set;
 /**
  * Stores a SQL node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public class SQLNode {
@@ -41,18 +42,27 @@ public class SQLNode {
      */
     protected String name;
 
+    /**
+     * The Paradox connection.
+     */
     protected final ParadoxConnection connection;
+    /**
+     * SQL position.
+     */
+    private final ScannerPosition position;
 
     /**
      * Create a new instance.
      *
      * @param connection the Paradox connection.
      * @param name       the node name.
+     * @param position   the current Scanner position.
      */
-    protected SQLNode(final ParadoxConnection connection, final String name) {
+    protected SQLNode(final ParadoxConnection connection, final String name, final ScannerPosition position) {
         this.connection = connection;
         this.name = name;
         this.alias = name;
+        this.position = position;
     }
 
     /**
@@ -60,10 +70,12 @@ public class SQLNode {
      *
      * @param connection the Paradox connection.
      * @param name       the node name.
-     * @param alias      the node alias.
+     * @param alias      the node alias
+     * @param position   the current Scanner position..
      */
-    protected SQLNode(final ParadoxConnection connection, final String name, final String alias) {
-        this(connection, name);
+    protected SQLNode(final ParadoxConnection connection, final String name, final String alias,
+                      final ScannerPosition position) {
+        this(connection, name, position);
         this.alias = alias;
     }
 
@@ -114,5 +126,14 @@ public class SQLNode {
      */
     public final void setAlias(final String alias) {
         this.alias = alias;
+    }
+
+    /**
+     * Gets the scanner position.
+     *
+     * @return the scanner position.
+     */
+    public ScannerPosition getPosition() {
+        return position;
     }
 }

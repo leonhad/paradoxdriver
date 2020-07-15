@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link AsteriskNode}.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.5.0
  */
 public class AsteriskNodeTest {
@@ -56,7 +56,7 @@ public class AsteriskNodeTest {
      */
     @Test
     public void testInstance() {
-        final AsteriskNode node = new AsteriskNode(conn, null);
+        final AsteriskNode node = new AsteriskNode(conn, null, null);
         Assert.assertEquals("Test for node name", "ASTERISK", node.getName());
     }
 
@@ -65,10 +65,10 @@ public class AsteriskNodeTest {
      */
     @Test
     public void testToString() {
-        AsteriskNode node = new AsteriskNode(conn, null);
+        AsteriskNode node = new AsteriskNode(conn, null, null);
         Assert.assertEquals("Invalid value", "*", node.toString());
 
-        node = new AsteriskNode(conn, "t");
+        node = new AsteriskNode(conn, "t", null);
         Assert.assertEquals("Invalid value", "t.*", node.toString());
     }
 }

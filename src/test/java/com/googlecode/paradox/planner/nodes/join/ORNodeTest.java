@@ -25,7 +25,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link ORNode} class.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class ORNodeTest {
@@ -58,8 +58,8 @@ public class ORNodeTest {
      */
     @Test
     public void testChildhood() {
-        final SQLNode node = new StatementNode(conn, null);
-        final ORNode and = new ORNode(conn, node);
+        final SQLNode node = new StatementNode(conn, null, null);
+        final ORNode and = new ORNode(conn, node, null);
         Assert.assertEquals("Invalid node size.", 1, and.getChildren().size());
         Assert.assertEquals("Invalid node value.", node, and.getChildren().iterator().next());
     }
@@ -69,7 +69,7 @@ public class ORNodeTest {
      */
     @Test
     public void testName() {
-        final ORNode node = new ORNode(conn, null);
+        final ORNode node = new ORNode(conn, null, null);
         Assert.assertEquals("Invalid node name.", "OR", node.getName());
     }
 }

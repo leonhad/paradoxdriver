@@ -11,13 +11,14 @@
 package com.googlecode.paradox.planner.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
  * Store the OR node.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.1
  */
 public class ORNode extends AbstractJoinNode {
@@ -27,9 +28,10 @@ public class ORNode extends AbstractJoinNode {
      *
      * @param connection the Paradox connection.
      * @param child      the child node.
+     * @param position   the current Scanner position.
      */
-    public ORNode(final ParadoxConnection connection, final SQLNode child) {
-        super(connection, "OR", child);
+    public ORNode(final ParadoxConnection connection, final SQLNode child, final ScannerPosition position) {
+        super(connection, "OR", child, position);
     }
 
     @Override

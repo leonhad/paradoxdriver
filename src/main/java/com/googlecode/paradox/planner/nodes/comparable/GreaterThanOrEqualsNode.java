@@ -11,13 +11,14 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 /**
  * Stores the greater than or equals node.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public final class GreaterThanOrEqualsNode extends AbstractComparableNode {
@@ -28,9 +29,11 @@ public final class GreaterThanOrEqualsNode extends AbstractComparableNode {
      * @param connection the Paradox connection.
      * @param field      the first node.
      * @param last       the last node.
+     * @param position   the current Scanner position.
      */
-    public GreaterThanOrEqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last) {
-        super(connection, ">=", field, last);
+    public GreaterThanOrEqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last,
+                                   final ScannerPosition position) {
+        super(connection, ">=", field, last, position);
     }
 
     @Override

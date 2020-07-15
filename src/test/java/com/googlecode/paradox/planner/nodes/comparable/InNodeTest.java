@@ -26,7 +26,7 @@ import java.sql.Types;
 /**
  * Unit test for {@link InNode} class.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class InNodeTest {
@@ -59,7 +59,7 @@ public class InNodeTest {
     @Test
     public void testToString() {
         final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
-        final InNode node = new InNode(conn, first);
+        final InNode node = new InNode(conn, first, null);
         node.addField(new ValueNode(conn, "test", null, null, Types.VARCHAR));
         node.addField(new ValueNode(conn, "1", null, null, Types.NUMERIC));
         Assert.assertEquals("Invalid node value.", "table.first IN ('test', 1)", node.toString());

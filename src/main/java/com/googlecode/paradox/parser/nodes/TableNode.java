@@ -11,12 +11,13 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.utils.Utils;
 
 /**
  * Stores a table node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public class TableNode extends SQLNode {
@@ -33,10 +34,11 @@ public class TableNode extends SQLNode {
      * @param schemaName the schema name.
      * @param name       the table name.
      * @param alias      the table alias.
+     * @param position   the current Scanner position.
      */
     public TableNode(final ParadoxConnection connection, final String schemaName, final String name,
-                     final String alias) {
-        super(connection, Utils.removeSuffix(name, "DB"), alias);
+                     final String alias, ScannerPosition position) {
+        super(connection, Utils.removeSuffix(name, "DB"), alias, position);
 
         this.schemaName = schemaName;
     }

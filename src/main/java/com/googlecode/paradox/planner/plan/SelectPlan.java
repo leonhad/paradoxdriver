@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -186,7 +186,7 @@ public final class SelectPlan implements Plan {
             table.getConditionalJoin().addChild(clause);
         } else if (table.getConditionalJoin() != null) {
             // Exists, but any other type.
-            final ANDNode andNode = new ANDNode(connection, table.getConditionalJoin());
+            final ANDNode andNode = new ANDNode(connection, table.getConditionalJoin(), null);
             andNode.addChild(clause);
             table.setConditionalJoin(andNode);
         } else {
@@ -259,7 +259,7 @@ public final class SelectPlan implements Plan {
         });
     }
 
-    private List<ParadoxField> getParadoxFields(FieldNode node) throws ParadoxException {
+    private List<ParadoxField> getParadoxFields(final FieldNode node) throws ParadoxException {
         final List<ParadoxField> fields = new ArrayList<>();
 
         for (final PlanTableNode table : this.tables) {

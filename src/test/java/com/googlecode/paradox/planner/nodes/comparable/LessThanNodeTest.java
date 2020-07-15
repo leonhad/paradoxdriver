@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link LessThanNode} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class LessThanNodeTest {
@@ -58,7 +58,7 @@ public class LessThanNodeTest {
     public void testToString() {
         final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
         final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
-        final LessThanNode node = new LessThanNode(conn, first, last);
+        final LessThanNode node = new LessThanNode(conn, first, last, null);
         Assert.assertEquals("Invalid node value.", "table.first < table.last", node.toString());
     }
 }

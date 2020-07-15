@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -24,7 +25,7 @@ import java.util.Set;
 /**
  * Join node common code.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public abstract class AbstractJoinNode extends AbstractConditionalNode {
@@ -36,8 +37,9 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
      * @param fieldName  the field name.
      * @param child      the child node.
      */
-    public AbstractJoinNode(final ParadoxConnection connection, final String fieldName, final SQLNode child) {
-        super(connection, fieldName);
+    public AbstractJoinNode(final ParadoxConnection connection, final String fieldName, final SQLNode child,
+                            final ScannerPosition position) {
+        super(connection, fieldName, position);
         if (child != null) {
             this.children.add(child);
         }

@@ -11,13 +11,14 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 /**
  * Stores the between node.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
@@ -34,10 +35,11 @@ public final class BetweenNode extends AbstractComparableNode {
      * @param field      the middle node.
      * @param first      the first node.
      * @param last       the last node.
+     * @param position   the current Scanner position.
      */
     public BetweenNode(final ParadoxConnection connection, final FieldNode field, final FieldNode first,
-                       final FieldNode last) {
-        super(connection, "BETWEEN", field, last);
+                       final FieldNode last, final ScannerPosition position) {
+        super(connection, "BETWEEN", field, last, position);
         this.first = first;
     }
 

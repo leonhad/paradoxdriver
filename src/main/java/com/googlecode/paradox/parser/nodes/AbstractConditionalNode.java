@@ -13,6 +13,7 @@ package com.googlecode.paradox.parser.nodes;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
@@ -27,7 +28,7 @@ import java.util.Set;
 /**
  * Stores a abstract comparable node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
@@ -43,14 +44,16 @@ public abstract class AbstractConditionalNode extends SQLNode {
      * @param connection the Paradox connection.
      * @param name       the condition name.
      * @param field      the field node to compare.
+     * @param position   the current Scanner position.
      */
-    public AbstractConditionalNode(final ParadoxConnection connection, final String name, final FieldNode field) {
-        super(connection, name);
+    public AbstractConditionalNode(final ParadoxConnection connection, final String name, final FieldNode field,
+                                   final ScannerPosition position) {
+        super(connection, name, position);
         this.field = field;
     }
 
-    public AbstractConditionalNode(final ParadoxConnection connection, final String name) {
-        this(connection, name, null);
+    public AbstractConditionalNode(final ParadoxConnection connection, final String name, ScannerPosition position) {
+        this(connection, name, null, position);
     }
 
     public abstract boolean evaluate(final Object[] row, final Object[] parameters);

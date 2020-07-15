@@ -11,12 +11,13 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 
 /**
  * Is not null node.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class IsNotNullNode extends AbstractComparableNode {
@@ -26,9 +27,10 @@ public class IsNotNullNode extends AbstractComparableNode {
      *
      * @param connection the Paradox connection.
      * @param field      the first node.
+     * @param position   the current Scanner position.
      */
-    public IsNotNullNode(final ParadoxConnection connection, final FieldNode field) {
-        super(connection, "IS NOT", field, null);
+    public IsNotNullNode(final ParadoxConnection connection, final FieldNode field, final ScannerPosition position) {
+        super(connection, "IS NOT", field, null, position);
     }
 
     @Override

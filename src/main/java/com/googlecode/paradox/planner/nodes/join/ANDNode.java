@@ -11,13 +11,14 @@
 package com.googlecode.paradox.planner.nodes.join;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
 /**
  * Stores the AND node.
  *
- * @version 1.8
+ * @version 1.2
  * @since 1.1
  */
 public class ANDNode extends AbstractJoinNode {
@@ -27,9 +28,10 @@ public class ANDNode extends AbstractJoinNode {
      *
      * @param connection the Paradox connection.
      * @param child      the child node.
+     * @param position   the current Scanner position.
      */
-    public ANDNode(final ParadoxConnection connection, final SQLNode child) {
-        super(connection, "AND", child);
+    public ANDNode(final ParadoxConnection connection, final SQLNode child, final ScannerPosition position) {
+        super(connection, "AND", child, position);
     }
 
     @Override

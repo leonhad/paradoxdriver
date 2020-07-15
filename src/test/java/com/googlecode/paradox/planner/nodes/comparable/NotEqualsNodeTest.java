@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link NotEqualsNode} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class NotEqualsNodeTest {
@@ -58,7 +58,7 @@ public class NotEqualsNodeTest {
     public void testToString() {
         final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
         final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
-        final NotEqualsNode node = new NotEqualsNode(conn, first, last);
+        final NotEqualsNode node = new NotEqualsNode(conn, first, last, null);
         Assert.assertEquals("Invalid node value.", "table.first <> table.last", node.toString());
     }
 }

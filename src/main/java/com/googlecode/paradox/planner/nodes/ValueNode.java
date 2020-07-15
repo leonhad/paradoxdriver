@@ -19,11 +19,14 @@ import java.util.Objects;
 /**
  * Stores a node value.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class ValueNode extends FieldNode {
 
+    /**
+     * The SQL type.
+     */
     private final int sqlType;
 
     public ValueNode(final ParadoxConnection connection, final String name, final String alias,
@@ -33,6 +36,11 @@ public class ValueNode extends FieldNode {
         this.sqlType = sqlType;
     }
 
+    /**
+     * Gets the SQL value.
+     *
+     * @return the SQL value.
+     */
     public int getSqlType() {
         return sqlType;
     }

@@ -11,11 +11,12 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 
 /**
  * Stores a join node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public final class JoinNode extends TableNode {
@@ -38,10 +39,11 @@ public final class JoinNode extends TableNode {
      * @param name       the table name.
      * @param alias      the table alias.
      * @param joinType   the table join type.
+     * @param position   the current Scanner position.
      */
     public JoinNode(final ParadoxConnection connection, final String schemaName, final String name,
-                    final String alias, final JoinType joinType) {
-        super(connection, schemaName, name, alias);
+                    final String alias, final JoinType joinType, final ScannerPosition position) {
+        super(connection, schemaName, name, alias, position);
         this.joinType = joinType;
     }
 

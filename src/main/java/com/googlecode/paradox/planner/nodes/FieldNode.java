@@ -35,11 +35,6 @@ public class FieldNode extends SQLNode {
     private int index = -1;
 
     /**
-     * SQL position.
-     */
-    private final ScannerPosition position;
-
-    /**
      * Stores field values (from select statements).
      *
      * @param connection the Paradox connection.
@@ -50,9 +45,8 @@ public class FieldNode extends SQLNode {
      */
     public FieldNode(final ParadoxConnection connection, final String tableName, final String fieldName,
                      final String alias, final ScannerPosition position) {
-        super(connection, fieldName, alias);
+        super(connection, fieldName, alias, position);
         this.tableName = tableName;
-        this.position = position;
     }
 
     /**
@@ -95,15 +89,6 @@ public class FieldNode extends SQLNode {
 
     public void setIndex(int index) {
         this.index = index;
-    }
-
-    /**
-     * Gets the scanner position.
-     *
-     * @return the scanner position.
-     */
-    public ScannerPosition getPosition() {
-        return position;
     }
 
     @Override

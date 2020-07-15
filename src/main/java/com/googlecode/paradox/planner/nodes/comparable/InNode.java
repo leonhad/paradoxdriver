@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.rowset.ValuesComparator;
@@ -21,7 +22,7 @@ import java.util.List;
 /**
  * Stores the IN node.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public final class InNode extends AbstractComparableNode {
@@ -36,9 +37,10 @@ public final class InNode extends AbstractComparableNode {
      *
      * @param connection the Paradox connection.
      * @param field      the first node.
+     * @param position   the current Scanner position.
      */
-    public InNode(final ParadoxConnection connection, final FieldNode field) {
-        super(connection, "in", field, null);
+    public InNode(final ParadoxConnection connection, final FieldNode field, final ScannerPosition position) {
+        super(connection, "in", field, null, position);
     }
 
     /**

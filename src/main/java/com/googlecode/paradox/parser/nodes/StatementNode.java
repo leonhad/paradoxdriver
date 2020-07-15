@@ -11,11 +11,12 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.parser.ScannerPosition;
 
 /**
  * Stores a statement node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class StatementNode extends SQLNode {
@@ -30,9 +31,10 @@ public class StatementNode extends SQLNode {
      *
      * @param connection the Paradox connection.
      * @param name       the statement name.
+     * @param position   the current Scanner position.
      */
-    public StatementNode(final ParadoxConnection connection, final String name) {
-        super(connection, name);
+    public StatementNode(final ParadoxConnection connection, final String name, final ScannerPosition position) {
+        super(connection, name, position);
     }
 
     /**

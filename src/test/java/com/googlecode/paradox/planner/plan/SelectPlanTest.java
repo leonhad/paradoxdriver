@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -98,7 +98,7 @@ public class SelectPlanTest {
     public void testColumnWithTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan(conn, null, false);
 
-        TableNode table = new TableNode(conn, null, AREA_CODES, "test");
+        TableNode table = new TableNode(conn, null, AREA_CODES, "test", null);
 
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setTable(conn, table);
@@ -128,7 +128,7 @@ public class SelectPlanTest {
     public void testInvalidTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan(conn, null, false);
 
-        TableNode table = new TableNode(conn, null, AREA_CODES, "test");
+        TableNode table = new TableNode(conn, null, AREA_CODES, "test", null);
 
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setTable(conn, table);
