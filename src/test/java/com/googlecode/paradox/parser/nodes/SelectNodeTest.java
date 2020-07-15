@@ -140,8 +140,8 @@ public class SelectNodeTest {
         node.addTable(new TableNode(conn, null, "table2", "b"));
         node.addGroupBy(new IdentifierNode(conn, "f1"));
         node.addGroupBy(new IdentifierNode(conn, "f2"));
-        node.addOrderBy(new ValueNode(conn, "f", null, null, Types.VARCHAR), OrderType.ASC);
-        node.addOrderBy(new ValueNode(conn, "f2", null, null, Types.VARCHAR), OrderType.ASC);
+        node.addOrderBy(new ValueNode(conn, "f", null, null, Types.INTEGER), OrderType.ASC);
+        node.addOrderBy(new ValueNode(conn, "f2", null, null, Types.INTEGER), OrderType.ASC);
 
         ANDNode andNode = new ANDNode(conn, null);
         andNode.addChild(new EqualsNode(conn,
