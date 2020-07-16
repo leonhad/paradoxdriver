@@ -143,8 +143,7 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.CHARACTER);
 
-        final String fieldAlias = getFieldAlias(fieldName);
-        return new ValueNode(fieldName, fieldAlias, position, Types.VARCHAR);
+        return new ValueNode(fieldName, fieldName, position, Types.VARCHAR);
     }
 
     private String getFieldAlias(String fieldName) throws SQLException {
@@ -349,23 +348,27 @@ public final class SQLParser {
             // Field Name
             final String fieldName = this.token.getValue();
 
+            SQLNode node;
             switch (this.token.getType()) {
                 case CHARACTER:
-                    select.addField(this.parseCharacter(fieldName));
+                    node = this.parseCharacter(fieldName);
                     break;
                 case NUMERIC:
-                    select.addField(this.parseNumeric(fieldName));
+                    node = this.parseNumeric(fieldName);
                     break;
                 case NULL:
-                    select.addField(this.parseNull());
+                    node = this.parseNull();
                     break;
                 case ASTERISK:
-                    select.addField(this.parseAsterisk(null));
+                    node = this.parseAsterisk(null);
                     break;
                 default:
-                    select.addField(this.parseIdentifier(fieldName));
+                    node = this.parseIdentifier(fieldName);
                     break;
             }
+
+            node.setAlias(getFieldAlias(node.getAlias()));
+            select.addField(node);
 
             firstField = false;
         } while (this.scanner.hasNext());
@@ -424,7 +427,6 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private SQLNode parseIdentifier(final String fieldName) throws SQLException {
-        String fieldAlias = fieldName;
         String newTableName = null;
         String newFieldName = fieldName;
 
@@ -434,25 +436,19 @@ public final class SQLParser {
         if (isToken(TokenType.L_PAREN)) {
             // function
             return parseFunction(fieldName);
-        } else if (isToken(TokenType.IDENTIFIER) || isToken(TokenType.AS) || isToken(TokenType.PERIOD)) {
-            // If it has a Table Name.
-            if (isToken(TokenType.PERIOD)) {
-                this.expect(TokenType.PERIOD);
-                newTableName = fieldName;
-                newFieldName = this.token.getValue();
-                fieldAlias = newFieldName;
+        } else if (isToken(TokenType.PERIOD)) {
+            this.expect(TokenType.PERIOD);
+            newTableName = fieldName;
+            newFieldName = this.token.getValue();
 
-                if (isToken(TokenType.ASTERISK)) {
-                    return parseAsterisk(newTableName);
-                }
-
-                this.expect(TokenType.IDENTIFIER);
+            if (isToken(TokenType.ASTERISK)) {
+                return parseAsterisk(newTableName);
             }
 
-            fieldAlias = getFieldAlias(fieldAlias);
+            this.expect(TokenType.IDENTIFIER);
         }
 
-        return new FieldNode(newTableName, newFieldName, fieldAlias, position);
+        return new FieldNode(newTableName, newFieldName, newFieldName, position);
     }
 
     private FunctionNode parseFunction(final String functionName) throws SQLException {
@@ -796,16 +792,14 @@ public final class SQLParser {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NUMERIC);
 
-        final String fieldAlias = getFieldAlias(fieldName);
-        return new ValueNode(fieldName, fieldAlias, position, Types.NUMERIC);
+        return new ValueNode(fieldName, fieldName, position, Types.NUMERIC);
     }
 
     private ValueNode parseNull() throws SQLException {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NULL);
 
-        final String fieldAlias = getFieldAlias("null");
-        return new ValueNode(null, fieldAlias, position, Types.NULL);
+        return new ValueNode(null, "null", position, Types.NULL);
     }
 
     /**
