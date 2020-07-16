@@ -403,6 +403,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseFrom(final SelectNode select) throws SQLException {
+        ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.FROM);
         boolean firstField = true;
         do {
@@ -417,6 +418,16 @@ public final class SQLParser {
                 firstField = false;
             }
         } while (this.scanner.hasNext());
+
+        if (select.getTables().isEmpty()) {
+            if (this.token != null) {
+                position = token.getPosition();
+            } else {
+                position.addOffset(TokenType.FROM.name().length());
+            }
+
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_TABLE_LIST, position);
+        }
     }
 
     /**

@@ -256,6 +256,17 @@ public class PlannerTest {
     }
 
     /**
+     * Test for no table after from.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testNoTableAfterFrom() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from");
+        Assert.assertThrows("Invalid table loaded", SQLException.class, parser::parse);
+    }
+
+    /**
      * Test for SELECT with values in ResultSet.
      *
      * @throws SQLException in case of errors.

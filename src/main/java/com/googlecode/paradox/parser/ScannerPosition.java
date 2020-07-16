@@ -67,6 +67,15 @@ public class ScannerPosition {
     }
 
     /**
+     * Change this position based on offset value.
+     *
+     * @param offset the offset to add.
+     */
+    public void addOffset(final int offset) {
+        this.column += offset;
+    }
+
+    /**
      * Gets the last position (column - 1).
      *
      * @return the last position (column - 1).

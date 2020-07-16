@@ -27,7 +27,11 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
     }
 
     private static String message(final String message, final ScannerPosition position) {
-        return String.format("%s at line %s, column %s.", message, position.getLine(), position.getColumn());
+        if (position != null) {
+            return String.format("%s at line %s, column %s.", message, position.getLine(), position.getColumn());
+        }
+
+        return message;
     }
 
     public enum Error {
@@ -43,7 +47,9 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
         INVALID_SELECT_STATEMENT("006", "Invalid SELECT statement"),
 
-        INVALID_CHAR("007", "Invalid value, expected a single char value");
+        INVALID_CHAR("007", "Invalid value, expected a single char value"),
+
+        EMPTY_TABLE_LIST("008", "Empty table list");
 
         private final String code;
 
