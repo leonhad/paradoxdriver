@@ -65,7 +65,7 @@ public class ParadoxException extends SQLDataException {
 
         INVALID_TRANSACTION_LEVEL("013", "Invalid transaction level"),
 
-        INVALID_TABLE("014", "Invalid table name: %s"),
+        INVALID_TABLE("014", "Table %s not found"),
 
         TABLE_AMBIGUOUS_DEFINED("015", "Table %s ambiguous defined"),
 

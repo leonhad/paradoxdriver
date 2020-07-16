@@ -113,9 +113,11 @@ public class Planner {
                     .filter(t -> t.isThis(field.getTableName()))
                     .map(PlanTableNode::getTable).collect(Collectors.toList());
             if (tables.isEmpty()) {
-                throw new ParadoxException(ParadoxException.Error.INVALID_TABLE, field.getTableName());
+                throw new ParadoxException(ParadoxException.Error.INVALID_TABLE, field.getTableName(),
+                        field.getPosition());
             } else if (tables.size() > 1) {
-                throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getTableName());
+                throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getTableName(),
+                        field.getPosition());
             }
 
             plan.addColumnFromTable(tables.get(0));

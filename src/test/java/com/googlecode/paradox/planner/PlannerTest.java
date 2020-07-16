@@ -243,6 +243,19 @@ public class PlannerTest {
     }
 
     /**
+     * Test for table not found.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testTableNotFound() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from notfound");
+        final StatementNode statementNode = parser.parse().get(0);
+        Assert.assertThrows("Invalid table loaded", SQLException.class,
+                () -> Planner.create(conn, statementNode));
+    }
+
+    /**
      * Test for SELECT with values in ResultSet.
      *
      * @throws SQLException in case of errors.
