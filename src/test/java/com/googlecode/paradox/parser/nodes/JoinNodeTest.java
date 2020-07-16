@@ -58,7 +58,7 @@ public class JoinNodeTest {
      */
     @Test
     public void testInstance() {
-        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.INNER, null);
+        final JoinNode node = new JoinNode(null, null, null, JoinType.INNER, null);
         Assert.assertNull("Invalid node name.", node.getName());
     }
 
@@ -67,7 +67,7 @@ public class JoinNodeTest {
      */
     @Test
     public void testJoinType() {
-        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.LEFT, null);
+        final JoinNode node = new JoinNode(null, null, null, JoinType.LEFT, null);
         Assert.assertEquals("Invalid node type.", JoinType.LEFT, node.getJoinType());
     }
 

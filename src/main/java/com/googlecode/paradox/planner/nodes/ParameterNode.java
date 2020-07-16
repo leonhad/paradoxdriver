@@ -11,7 +11,6 @@
 
 package com.googlecode.paradox.planner.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 
 import java.util.Objects;
@@ -32,13 +31,11 @@ public class ParameterNode extends FieldNode {
     /**
      * Stores field values (from select statements).
      *
-     * @param connection     the Paradox connection.
      * @param parameterIndex the parameter index.
      * @param position       the current Scanner position.
      */
-    public ParameterNode(final ParadoxConnection connection, final int parameterIndex,
-                         final ScannerPosition position) {
-        super(connection, null, null, null, position);
+    public ParameterNode(final int parameterIndex, final ScannerPosition position) {
+        super(null, null, null, position);
         this.parameterIndex = parameterIndex;
     }
 

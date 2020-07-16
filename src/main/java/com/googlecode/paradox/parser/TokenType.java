@@ -291,7 +291,7 @@ public enum TokenType {
      */
     public static TokenType get(final String value) {
         for (final TokenType token : TokenType.values()) {
-            if (value.equals(token.value)) {
+            if (value.equalsIgnoreCase(token.value)) {
                 return token;
             }
         }

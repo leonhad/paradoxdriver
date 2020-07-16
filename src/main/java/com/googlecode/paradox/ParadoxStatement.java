@@ -163,7 +163,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public void addBatch(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(connection, sql);
+        final SQLParser parser = new SQLParser(sql);
         this.statements.addAll(parser.parse());
     }
 
@@ -222,7 +222,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public boolean execute(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(connection, sql);
+        final SQLParser parser = new SQLParser(sql);
         statements.addAll(parser.parse());
 
         executeStatements();
@@ -267,7 +267,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public ResultSet executeQuery(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(connection, sql);
+        final SQLParser parser = new SQLParser(sql);
 
         statements.addAll(parser.parse());
 

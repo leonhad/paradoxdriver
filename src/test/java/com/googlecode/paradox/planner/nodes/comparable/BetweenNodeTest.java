@@ -61,10 +61,10 @@ public class BetweenNodeTest {
      */
     @Test
     public void testField() {
-        final FieldNode field = new FieldNode(conn, "table", "field", "alias", null);
-        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
-        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
-        final BetweenNode node = new BetweenNode(conn, field, first, last, null);
+        final FieldNode field = new FieldNode("table", "field", "alias", null);
+        final FieldNode first = new FieldNode("table", "first", "first", null);
+        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final BetweenNode node = new BetweenNode(field, first, last, null);
         Assert.assertEquals("Invalid field value",
                 "table.field AS alias BETWEEN table.first AND table.last", node.toString());
     }
@@ -74,10 +74,10 @@ public class BetweenNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode field = new FieldNode(conn, "table", "field", "field", null);
-        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
-        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
-        final BetweenNode node = new BetweenNode(conn, field, first, last, null);
+        final FieldNode field = new FieldNode("table", "field", "field", null);
+        final FieldNode first = new FieldNode("table", "first", "first", null);
+        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final BetweenNode node = new BetweenNode(field, first, last, null);
         Assert.assertEquals("Invalid node values", "table.field BETWEEN table.first AND table.last", node.toString());
     }
 

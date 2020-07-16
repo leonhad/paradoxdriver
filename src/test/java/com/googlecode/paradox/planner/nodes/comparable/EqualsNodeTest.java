@@ -10,16 +10,9 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link EqualsNode} class.
@@ -28,37 +21,15 @@ import java.sql.SQLException;
  * @since 1.3
  */
 public class EqualsNodeTest {
-    /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
 
     /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
-        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
-        final EqualsNode node = new EqualsNode(conn, first, last, null);
+        final FieldNode first = new FieldNode("table", "first", "first", null);
+        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final EqualsNode node = new EqualsNode(first, last, null);
         Assert.assertEquals("Invalid node value.", "table.first = table.last", node.toString());
     }
 }

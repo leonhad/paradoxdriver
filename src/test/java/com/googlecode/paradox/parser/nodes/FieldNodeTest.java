@@ -10,16 +10,9 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link FieldNode}
@@ -30,34 +23,11 @@ import java.sql.SQLException;
 public class FieldNodeTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for {@link FieldNode#toString()} method.
      */
     @Test
     public void testToString() {
-        final FieldNode node = new FieldNode(conn, "table", "field", "alias", null);
+        final FieldNode node = new FieldNode("table", "field", "alias", null);
         Assert.assertEquals("Invalid node value.", "table.field AS alias", node.toString());
     }
 
@@ -66,7 +36,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithNullAlias() {
-        final FieldNode node = new FieldNode(conn, "table", "field", null, null);
+        final FieldNode node = new FieldNode("table", "field", null, null);
         Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 
@@ -75,7 +45,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithNullTable() {
-        final FieldNode node = new FieldNode(conn, null, "field", null, null);
+        final FieldNode node = new FieldNode(null, "field", null, null);
         Assert.assertEquals("Invalid node value.", "field", node.toString());
     }
 
@@ -84,7 +54,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithoutAlias() {
-        final FieldNode node = new FieldNode(conn, "table", "field", "field", null);
+        final FieldNode node = new FieldNode("table", "field", "field", null);
         Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 }

@@ -31,18 +31,16 @@ public class LikeNode extends AbstractComparableNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param field      the first node.
-     * @param last       the last node.
-     * @param position   the current Scanner position.
+     * @param field    the first node.
+     * @param last     the last node.
+     * @param position the current Scanner position.
      */
-    public LikeNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last,
-                    final ScannerPosition position) {
-        super(connection, "like", field, last, position);
+    public LikeNode(final FieldNode field, final FieldNode last, final ScannerPosition position) {
+        super("like", field, last, position);
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final Object[] parameters) {
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
 
@@ -50,7 +48,7 @@ public class LikeNode extends AbstractComparableNode {
             return false;
         }
 
-        return Expressions.accept(connection, (String) value1, (String) value2, true, escape);
+        return Expressions.accept(connection.getLocale(), (String) value1, (String) value2, true, escape);
     }
 
     /**

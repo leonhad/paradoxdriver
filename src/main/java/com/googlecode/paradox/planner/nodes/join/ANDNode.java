@@ -26,19 +26,18 @@ public class ANDNode extends AbstractJoinNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param child      the child node.
-     * @param position   the current Scanner position.
+     * @param child    the child node.
+     * @param position the current Scanner position.
      */
-    public ANDNode(final ParadoxConnection connection, final SQLNode child, final ScannerPosition position) {
-        super(connection, "AND", child, position);
+    public ANDNode(final SQLNode child, final ScannerPosition position) {
+        super("AND", child, position);
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final Object[] parameters) {
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
         for (final SQLNode node : children) {
             final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
-            if (!conditionalNode.evaluate(row, parameters)) {
+            if (!conditionalNode.evaluate(connection, row, parameters)) {
                 return false;
             }
         }

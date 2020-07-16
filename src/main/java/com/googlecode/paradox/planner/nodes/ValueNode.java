@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 
 import java.sql.Types;
@@ -29,9 +28,8 @@ public class ValueNode extends FieldNode {
      */
     private final int sqlType;
 
-    public ValueNode(final ParadoxConnection connection, final String name, final String alias,
-                     final ScannerPosition position, final int sqlType) {
-        super(connection, null, name, alias, position);
+    public ValueNode(final String name, final String alias, final ScannerPosition position, final int sqlType) {
+        super(null, name, alias, position);
 
         this.sqlType = sqlType;
     }

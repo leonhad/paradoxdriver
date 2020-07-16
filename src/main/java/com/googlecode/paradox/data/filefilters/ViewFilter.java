@@ -10,12 +10,12 @@
  */
 package com.googlecode.paradox.data.filefilters;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Locale;
 
 /**
  * Paradox view filter.
@@ -30,16 +30,16 @@ public final class ViewFilter implements FileFilter {
      */
     private final String viewName;
 
-    private final ParadoxConnection connection;
+    private final Locale locale;
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param viewName   the view name.
+     * @param locale   the locale to use.
+     * @param viewName the view name.
      */
-    public ViewFilter(final ParadoxConnection connection, final String viewName) {
-        this.connection = connection;
+    public ViewFilter(final Locale locale, final String viewName) {
+        this.locale = locale;
         this.viewName = viewName;
     }
 
@@ -50,8 +50,8 @@ public final class ViewFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.QBE", false, Constants.ESCAPE_CHAR)
-                && ((this.viewName == null) || Expressions.accept(connection, name, this.viewName, false,
+        return Expressions.accept(locale, name, "%.QBE", false, Constants.ESCAPE_CHAR)
+                && ((this.viewName == null) || Expressions.accept(locale, name, this.viewName, false,
                 Constants.ESCAPE_CHAR));
     }
 

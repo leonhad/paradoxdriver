@@ -10,15 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link SQLNode} class.
@@ -29,35 +22,11 @@ import java.sql.SQLException;
 public class SQLNodeTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    @SuppressWarnings("java:S2115")
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for alias.
      */
     @Test
     public void testAlias() {
-        final JoinNode node = new JoinNode(conn, null, null, null, JoinType.INNER, null);
+        final JoinNode node = new JoinNode(null, null, null, JoinType.INNER, null);
         node.setAlias("alias");
         Assert.assertEquals("Invalid node alias.", "alias", node.getAlias());
     }
@@ -67,7 +36,7 @@ public class SQLNodeTest {
      */
     @Test
     public void testConditions() {
-        final SQLNode node = new JoinNode(conn, null, null, null, JoinType.INNER, null);
+        final SQLNode node = new JoinNode(null, null, null, JoinType.INNER, null);
         Assert.assertEquals("Conditional is not the same.", 0, node.getChildren().size());
     }
 }

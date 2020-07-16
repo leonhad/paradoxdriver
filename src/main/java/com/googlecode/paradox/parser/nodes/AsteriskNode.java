@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.TokenType;
 
@@ -30,12 +29,11 @@ public final class AsteriskNode extends SQLNode {
     /**
      * Creates a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param tableName  the table name.
-     * @param position   the current Scanner position.
+     * @param tableName the table name.
+     * @param position  the current Scanner position.
      */
-    public AsteriskNode(final ParadoxConnection connection, final String tableName, final ScannerPosition position) {
-        super(connection, TokenType.ASTERISK.name(), position);
+    public AsteriskNode(final String tableName, final ScannerPosition position) {
+        super(TokenType.ASTERISK.name(), position);
         this.tableName = tableName;
     }
 

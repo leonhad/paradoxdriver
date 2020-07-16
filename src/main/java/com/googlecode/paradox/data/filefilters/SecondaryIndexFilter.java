@@ -10,12 +10,12 @@
  */
 package com.googlecode.paradox.data.filefilters;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Locale;
 
 /**
  * Paradox secondary key file filter (Index Key).
@@ -30,26 +30,26 @@ public final class SecondaryIndexFilter implements FileFilter {
      */
     private final String indexName;
 
-    private final ParadoxConnection connection;
+    private final Locale locale;
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param indexName  the index name.
+     * @param locale    the locale to use.
+     * @param indexName the index name.
      */
-    public SecondaryIndexFilter(final ParadoxConnection connection, final String indexName) {
-        this.connection = connection;
+    public SecondaryIndexFilter(final Locale locale, final String indexName) {
+        this.locale = locale;
         this.indexName = indexName;
     }
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
+     * @param locale the locale to use.
      */
-    public SecondaryIndexFilter(final ParadoxConnection connection) {
-        this(connection, null);
+    public SecondaryIndexFilter(final Locale locale) {
+        this(locale, null);
     }
 
     /**
@@ -59,8 +59,8 @@ public final class SecondaryIndexFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.X__", false, Constants.ESCAPE_CHAR)
-                && ((this.indexName == null) || Expressions.accept(connection, name, this.indexName, false,
+        return Expressions.accept(locale, name, "%.X__", false, Constants.ESCAPE_CHAR)
+                && ((this.indexName == null) || Expressions.accept(locale, name, this.indexName, false,
                 Constants.ESCAPE_CHAR));
     }
 

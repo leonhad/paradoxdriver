@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.parser;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -50,20 +49,13 @@ public final class SQLParser {
     private int parameterCount;
 
     /**
-     * The Paradox connection.
-     */
-    private final ParadoxConnection connection;
-
-    /**
      * Creates a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param sql        the SQL to parse.
+     * @param sql the SQL to parse.
      * @throws SQLException in case of parse errors.
      */
-    public SQLParser(final ParadoxConnection connection, final String sql) throws SQLException {
-        this.connection = connection;
-        this.scanner = new Scanner(connection, sql);
+    public SQLParser(final String sql) throws SQLException {
+        this.scanner = new Scanner(sql);
     }
 
     /**
@@ -121,7 +113,7 @@ public final class SQLParser {
     private AsteriskNode parseAsterisk(final String tableName) throws SQLException {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.ASTERISK);
-        return new AsteriskNode(connection, tableName, position);
+        return new AsteriskNode(tableName, position);
     }
 
     /**
@@ -137,7 +129,7 @@ public final class SQLParser {
         final FieldNode left = this.parseField();
         this.expect(TokenType.AND);
         final FieldNode right = this.parseField();
-        return new BetweenNode(connection, field, left, right, position);
+        return new BetweenNode(field, left, right, position);
     }
 
     /**
@@ -152,7 +144,7 @@ public final class SQLParser {
         this.expect(TokenType.CHARACTER);
 
         final String fieldAlias = getFieldAlias(fieldName);
-        return new ValueNode(connection, fieldName, fieldAlias, position, Types.VARCHAR);
+        return new ValueNode(fieldName, fieldAlias, position, Types.VARCHAR);
     }
 
     private String getFieldAlias(String fieldName) throws SQLException {
@@ -228,7 +220,7 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.EQUALS);
         final FieldNode value = this.parseField();
-        return new EqualsNode(connection, field, value, position);
+        return new EqualsNode(field, value, position);
     }
 
     /**
@@ -246,20 +238,20 @@ public final class SQLParser {
             case CHARACTER:
                 // Found a String value.
                 this.expect(TokenType.CHARACTER);
-                ret = new ValueNode(connection, fieldName, null, position, Types.VARCHAR);
+                ret = new ValueNode(fieldName, null, position, Types.VARCHAR);
                 break;
             case NUMERIC:
                 // Found a numeric value.
                 this.expect(TokenType.NUMERIC);
-                ret = new ValueNode(connection, fieldName, null, position, Types.NUMERIC);
+                ret = new ValueNode(fieldName, null, position, Types.NUMERIC);
                 break;
             case NULL:
                 this.expect(TokenType.NULL);
-                ret = new ValueNode(connection, null, null, position, Types.NULL);
+                ret = new ValueNode(null, null, position, Types.NULL);
                 break;
             case QUESTION_MARK:
                 this.expect(TokenType.QUESTION_MARK);
-                ret = new ParameterNode(connection, parameterCount, position);
+                ret = new ParameterNode(parameterCount, position);
                 parameterCount++;
                 break;
             default:
@@ -283,7 +275,7 @@ public final class SQLParser {
             name = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
         }
-        return new FieldNode(connection, tableName, name, name, position);
+        return new FieldNode(tableName, name, name, position);
     }
 
     /**
@@ -460,11 +452,11 @@ public final class SQLParser {
             fieldAlias = getFieldAlias(fieldAlias);
         }
 
-        return new FieldNode(connection, newTableName, newFieldName, fieldAlias, position);
+        return new FieldNode(newTableName, newFieldName, fieldAlias, position);
     }
 
     private FunctionNode parseFunction(final String functionName) throws SQLException {
-        final FunctionNode functionNode = new FunctionNode(connection, functionName, token.getPosition());
+        final FunctionNode functionNode = new FunctionNode(functionName, token.getPosition());
         this.expect(TokenType.L_PAREN);
 
         boolean first = true;
@@ -516,7 +508,7 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
         }
 
-        return new FieldNode(connection, newTableName, newFieldName, newFieldName, position);
+        return new FieldNode(newTableName, newFieldName, newFieldName, position);
     }
 
     /**
@@ -574,7 +566,7 @@ public final class SQLParser {
 
             final String tableAlias = this.parseFields(tableName);
 
-            final JoinNode joinTable = new JoinNode(connection, schemaName, tableName, tableAlias, joinType, null);
+            final JoinNode joinTable = new JoinNode(schemaName, tableName, tableAlias, joinType, null);
             if (joinType != JoinType.CROSS) {
                 // Cross join don't have join clause.
                 this.expect(TokenType.ON);
@@ -619,7 +611,7 @@ public final class SQLParser {
 
         final String tableAlias = this.parseFields(tableName);
 
-        final TableNode table = new TableNode(connection, schemaName, tableName, tableAlias, position);
+        final TableNode table = new TableNode(schemaName, tableName, tableAlias, position);
         select.addTable(table);
 
         // Parse possible table joins.
@@ -639,10 +631,10 @@ public final class SQLParser {
 
         if (isToken(TokenType.EQUALS)) {
             this.expect(TokenType.EQUALS);
-            return new LessThanOrEqualsNode(connection, firstField, this.parseField(), position);
+            return new LessThanOrEqualsNode(firstField, this.parseField(), position);
         }
 
-        return new LessThanNode(connection, firstField, parseField(), position);
+        return new LessThanNode(firstField, parseField(), position);
     }
 
     /**
@@ -658,10 +650,10 @@ public final class SQLParser {
 
         if (isToken(TokenType.EQUALS)) {
             this.expect(TokenType.EQUALS);
-            return new GreaterThanOrEqualsNode(connection, firstField, this.parseField(), position);
+            return new GreaterThanOrEqualsNode(firstField, this.parseField(), position);
         }
 
-        return new GreaterThanNode(connection, firstField, this.parseField(), position);
+        return new GreaterThanNode(firstField, this.parseField(), position);
     }
 
     private InNode parseIn(final FieldNode firstField) throws SQLException {
@@ -669,7 +661,7 @@ public final class SQLParser {
         this.expect(TokenType.IN);
         this.expect(TokenType.L_PAREN);
 
-        final InNode in = new InNode(connection, firstField, position);
+        final InNode in = new InNode(firstField, position);
 
         boolean first = true;
         do {
@@ -680,12 +672,10 @@ public final class SQLParser {
             }
 
             if (isToken(TokenType.NUMERIC)) {
-                in.addField(new ValueNode(connection,
-                        token.getValue(), token.getValue(), token.getPosition(), Types.NUMERIC));
+                in.addField(new ValueNode(token.getValue(), token.getValue(), token.getPosition(), Types.NUMERIC));
                 this.expect(TokenType.NUMERIC);
             } else if (isToken(TokenType.CHARACTER)) {
-                in.addField(new ValueNode(connection,
-                        token.getValue(), token.getValue(), token.getPosition(), Types.VARCHAR));
+                in.addField(new ValueNode(token.getValue(), token.getValue(), token.getPosition(), Types.VARCHAR));
                 this.expect(TokenType.CHARACTER);
             } else {
                 position = null;
@@ -715,9 +705,9 @@ public final class SQLParser {
         AbstractComparableNode ret;
         if (isToken(TokenType.NOT)) {
             this.expect(TokenType.NOT);
-            ret = new IsNotNullNode(connection, firstField, position);
+            ret = new IsNotNullNode(firstField, position);
         } else {
-            ret = new IsNullNode(connection, firstField, position);
+            ret = new IsNullNode(firstField, position);
         }
 
         this.expect(TokenType.NULL);
@@ -735,7 +725,7 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.LIKE);
 
-        final LikeNode like = new LikeNode(connection, firstField, parseField(), position);
+        final LikeNode like = new LikeNode(firstField, parseField(), position);
         parseEscapeToken(like);
         return like;
     }
@@ -751,7 +741,7 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.ILIKE);
 
-        final ILikeNode iLikeNode = new ILikeNode(connection, firstField, parseField(), position);
+        final ILikeNode iLikeNode = new ILikeNode(firstField, parseField(), position);
         parseEscapeToken(iLikeNode);
         return iLikeNode;
     }
@@ -792,7 +782,7 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.NOT_EQUALS);
         final FieldNode value = this.parseField();
-        return new NotEqualsNode(connection, firstField, value, position);
+        return new NotEqualsNode(firstField, value, position);
     }
 
     /**
@@ -807,7 +797,7 @@ public final class SQLParser {
         this.expect(TokenType.NUMERIC);
 
         final String fieldAlias = getFieldAlias(fieldName);
-        return new ValueNode(connection, fieldName, fieldAlias, position, Types.NUMERIC);
+        return new ValueNode(fieldName, fieldAlias, position, Types.NUMERIC);
     }
 
     private ValueNode parseNull() throws SQLException {
@@ -815,7 +805,7 @@ public final class SQLParser {
         this.expect(TokenType.NULL);
 
         final String fieldAlias = getFieldAlias("null");
-        return new ValueNode(connection, null, fieldAlias, position, Types.NULL);
+        return new ValueNode(null, fieldAlias, position, Types.NULL);
     }
 
     /**
@@ -833,7 +823,7 @@ public final class SQLParser {
             if (child instanceof ANDNode) {
                 ret = child;
             } else {
-                ret = new ANDNode(connection, child, position);
+                ret = new ANDNode(child, position);
             }
         } else {
             // TokenType OR.
@@ -841,7 +831,7 @@ public final class SQLParser {
             if (child instanceof ORNode) {
                 ret = child;
             } else {
-                ret = new ORNode(connection, child, position);
+                ret = new ORNode(child, position);
             }
         }
 
@@ -871,7 +861,7 @@ public final class SQLParser {
             switch (this.token.getType()) {
                 case NUMERIC:
                     this.expect(TokenType.NUMERIC);
-                    fieldNode = new ValueNode(connection, fieldName, fieldName, position, Types.NUMERIC);
+                    fieldNode = new ValueNode(fieldName, fieldName, position, Types.NUMERIC);
                     break;
                 case IDENTIFIER:
                     fieldNode = parseIdentifierFieldOnly(fieldName);
@@ -911,7 +901,7 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
         }
 
-        return new FieldNode(connection, newTableName, newFieldName, newFieldName, position);
+        return new FieldNode(newTableName, newFieldName, newFieldName, position);
     }
 
     /**
@@ -922,7 +912,7 @@ public final class SQLParser {
      */
     private SelectNode parseSelect() throws SQLException {
         final ScannerPosition position = this.token.getPosition();
-        final SelectNode select = new SelectNode(connection, position);
+        final SelectNode select = new SelectNode(position);
         this.expect(TokenType.SELECT);
 
         // Allowed only in the beginning of Select Statement

@@ -186,7 +186,7 @@ public final class SelectPlan implements Plan {
             table.getConditionalJoin().addChild(clause);
         } else if (table.getConditionalJoin() != null) {
             // Exists, but any other type.
-            final ANDNode andNode = new ANDNode(connection, table.getConditionalJoin(), null);
+            final ANDNode andNode = new ANDNode(table.getConditionalJoin(), null);
             andNode.addChild(clause);
             table.setConditionalJoin(andNode);
         } else {
@@ -309,7 +309,7 @@ public final class SelectPlan implements Plan {
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, parameters)) {
+                        .evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -400,7 +400,7 @@ public final class SelectPlan implements Plan {
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, parameters)) {
+                        .evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -433,7 +433,7 @@ public final class SelectPlan implements Plan {
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, parameters)) {
+                        .evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -469,7 +469,7 @@ public final class SelectPlan implements Plan {
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(column, parameters)) {
+                        .evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -550,7 +550,7 @@ public final class SelectPlan implements Plan {
                 if (table.getConditionalJoin() != null) {
                     // Filter WHERE joins.
                     tableData.removeIf(tableRow -> !table.getConditionalJoin()
-                            .evaluate(tableRow, parameters));
+                            .evaluate(connection, tableRow, parameters));
                 }
 
                 rawData.addAll(tableData);
@@ -655,7 +655,7 @@ public final class SelectPlan implements Plan {
             checkCancel();
 
             // Filter WHERE joins.
-            if (condition != null && !condition.evaluate(tableRow, parameters)) {
+            if (condition != null && !condition.evaluate(connection, tableRow, parameters)) {
                 continue;
             }
 

@@ -10,17 +10,10 @@
  */
 package com.googlecode.paradox.planner.nodes.join;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link ORNode} class.
@@ -31,35 +24,12 @@ import java.sql.SQLException;
 public class ORNodeTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for childhood.
      */
     @Test
     public void testChildhood() {
-        final SQLNode node = new StatementNode(conn, null, null);
-        final ORNode and = new ORNode(conn, node, null);
+        final SQLNode node = new StatementNode(null, null);
+        final ORNode and = new ORNode(node, null);
         Assert.assertEquals("Invalid node size.", 1, and.getChildren().size());
         Assert.assertEquals("Invalid node value.", node, and.getChildren().iterator().next());
     }
@@ -69,7 +39,7 @@ public class ORNodeTest {
      */
     @Test
     public void testName() {
-        final ORNode node = new ORNode(conn, null, null);
+        final ORNode node = new ORNode(null, null);
         Assert.assertEquals("Invalid node name.", "OR", node.getName());
     }
 }

@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -37,15 +36,14 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
     /**
      * Creates a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param name       the node name.
-     * @param field      the field node.
-     * @param last       the last field node.
-     * @param position   the current Scanner position.
+     * @param name     the node name.
+     * @param field    the field node.
+     * @param last     the last field node.
+     * @param position the current Scanner position.
      */
-    public AbstractComparableNode(final ParadoxConnection connection, final String name, final FieldNode field,
-                                  final FieldNode last, final ScannerPosition position) {
-        super(connection, name, field, position);
+    public AbstractComparableNode(final String name, final FieldNode field, final FieldNode last,
+                                  final ScannerPosition position) {
+        super(name, field, position);
         this.last = last;
     }
 

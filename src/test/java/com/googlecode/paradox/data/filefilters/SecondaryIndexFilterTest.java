@@ -10,16 +10,11 @@
  */
 package com.googlecode.paradox.data.filefilters;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * Unit test for {@link SecondaryIndexFilter}.
@@ -30,35 +25,12 @@ import java.sql.SQLException;
 public class SecondaryIndexFilterTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for acceptance.
      */
     @Test
     public void testAccept() {
         final File file = new File("test.xn2");
-        final SecondaryIndexFilter filter = new SecondaryIndexFilter(conn);
+        final SecondaryIndexFilter filter = new SecondaryIndexFilter(Locale.ENGLISH);
         Assert.assertTrue("Invalid file filter.", filter.accept(file));
     }
 

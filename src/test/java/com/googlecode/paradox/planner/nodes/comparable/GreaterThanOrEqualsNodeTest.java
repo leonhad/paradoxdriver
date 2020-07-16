@@ -58,9 +58,9 @@ public class GreaterThanOrEqualsNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode(conn, "table", "first", "first", null);
-        final FieldNode last = new FieldNode(conn, "table", "last", "last", null);
-        final GreaterThanOrEqualsNode node = new GreaterThanOrEqualsNode(conn, first, last, null);
+        final FieldNode first = new FieldNode("table", "first", "first", null);
+        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final GreaterThanOrEqualsNode node = new GreaterThanOrEqualsNode(first, last, null);
         Assert.assertEquals("Invalid node value.", "table.first >= table.last", node.toString());
     }
 

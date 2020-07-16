@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.utils.Utils;
 
@@ -30,15 +29,14 @@ public class TableNode extends SQLNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
      * @param schemaName the schema name.
      * @param name       the table name.
      * @param alias      the table alias.
      * @param position   the current Scanner position.
      */
-    public TableNode(final ParadoxConnection connection, final String schemaName, final String name,
+    public TableNode(final String schemaName, final String name,
                      final String alias, ScannerPosition position) {
-        super(connection, Utils.removeSuffix(name, "DB"), alias, position);
+        super(Utils.removeSuffix(name, "DB"), alias, position);
 
         this.schemaName = schemaName;
     }

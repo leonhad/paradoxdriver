@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox.parser;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -21,12 +19,9 @@ import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -40,45 +35,13 @@ import java.util.List;
 public class SQLParserTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-
-    /**
-     * The database connection.
-     */
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    @SuppressWarnings("java:S2115")
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
-    }
-
-    /**
-     * Close the database connection.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for is null expressions.
      *
      * @throws SQLException in case of failures.
      */
     @Test
     public void testIsNull() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT A FROM db.B WHERE A is NULL");
+        final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A is NULL");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -97,7 +60,7 @@ public class SQLParserTest {
      */
     @Test
     public void testLike() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select ac.AreasCovered from geog.tblAC ac " +
+        final SQLParser parser = new SQLParser("select ac.AreasCovered from geog.tblAC ac " +
                 " where ac.AreasCovered like 'Hackensack%'");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -117,7 +80,7 @@ public class SQLParserTest {
      */
     @Test
     public void testILike() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select ac.AreasCovered from geog.tblAC ac " +
+        final SQLParser parser = new SQLParser("select ac.AreasCovered from geog.tblAC ac " +
                 " where ac.AreasCovered ilike 'Hackensack%'");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -137,7 +100,7 @@ public class SQLParserTest {
      */
     @Test
     public void testIsNotNull() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT A FROM db.B WHERE A is not NULL");
+        final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A is not NULL");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -156,7 +119,7 @@ public class SQLParserTest {
      */
     @Test
     public void testNullAsValue() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT A FROM db.B WHERE A = NULL");
+        final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A = NULL");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -175,7 +138,7 @@ public class SQLParserTest {
      */
     @Test
     public void testSelectWithAlias() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT t.* FROM table t");
+        final SQLParser parser = new SQLParser("SELECT t.* FROM table t");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -197,7 +160,7 @@ public class SQLParserTest {
      */
     @Test
     public void testSchemaName() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT t.* FROM db.table t");
+        final SQLParser parser = new SQLParser("SELECT t.* FROM db.table t");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -219,7 +182,7 @@ public class SQLParserTest {
      */
     @Test
     public void testColumnValue() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT 'test', 123 as number, null FROM client");
+        final SQLParser parser = new SQLParser("SELECT 'test', 123 as number, null FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -251,7 +214,7 @@ public class SQLParserTest {
      */
     @Test
     public void testJoin() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
+        final SQLParser parser = new SQLParser(
                 "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -274,8 +237,7 @@ public class SQLParserTest {
      */
     @Test
     public void testFullJoin() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
-                "SELECT * FROM client c full join test t on test_id = id ");
+        final SQLParser parser = new SQLParser("SELECT * FROM client c full join test t on test_id = id ");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -300,7 +262,7 @@ public class SQLParserTest {
      */
     @Test
     public void testSelect() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT * FROM client");
+        final SQLParser parser = new SQLParser("SELECT * FROM client");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -322,7 +284,7 @@ public class SQLParserTest {
      */
     @Test
     public void testTable() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT * FROM \"client.db\"");
+        final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -344,7 +306,7 @@ public class SQLParserTest {
      */
     @Test
     public void testTwoTable() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select a.CODE as cod, state.NAME name FROM client, state");
+        final SQLParser parser = new SQLParser("select a.CODE as cod, state.NAME name FROM client, state");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -372,7 +334,7 @@ public class SQLParserTest {
      */
     @Test
     public void testTwoTableWithAlias() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select *, name FROM client as cli, state STATE");
+        final SQLParser parser = new SQLParser("select *, name FROM client as cli, state STATE");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -398,7 +360,7 @@ public class SQLParserTest {
      */
     @Test
     public void testWhere() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT * FROM client as test WHERE a = b and c <> t");
+        final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b and c <> t");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -437,7 +399,7 @@ public class SQLParserTest {
      */
     @Test
     public void testWhereWithAlias() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT * FROM client as test WHERE test.a = c.b");
+        final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE test.a = c.b");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -469,7 +431,7 @@ public class SQLParserTest {
      */
     @Test
     public void testException() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select a. FROM AREACODES a");
+        final SQLParser parser = new SQLParser("select a. FROM AREACODES a");
         Assert.assertThrows("Invalid result", SQLException.class, parser::parse);
     }
 
@@ -480,7 +442,7 @@ public class SQLParserTest {
      */
     @Test
     public void testSelectWithoutFromTwoArguments() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select 1, 'b'");
+        final SQLParser parser = new SQLParser("select 1, 'b'");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -500,7 +462,7 @@ public class SQLParserTest {
      */
     @Test
     public void testSelectWithoutFrom() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select 1");
+        final SQLParser parser = new SQLParser("select 1");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -519,7 +481,7 @@ public class SQLParserTest {
      */
     @Test
     public void testSelectToken() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select");
+        final SQLParser parser = new SQLParser("select");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 
@@ -537,7 +499,7 @@ public class SQLParserTest {
      */
     @Test
     public void testJoinOptimizationAND() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
+        final SQLParser parser = new SQLParser(
                 "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
         final List<StatementNode> list = parser.parse();
@@ -561,7 +523,7 @@ public class SQLParserTest {
      */
     @Test
     public void testJoinOptimizationOR() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
+        final SQLParser parser = new SQLParser(
                 "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         " where c.StateID = st.State or st.State = ac.State or c.CountyID = 201");
         final List<StatementNode> list = parser.parse();
@@ -585,7 +547,7 @@ public class SQLParserTest {
      */
     @Test
     public void testParameters() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from geog.tblAC ac" +
+        final SQLParser parser = new SQLParser("select * from geog.tblAC ac" +
                 " where ac.State = ? and ? = ac.AreaCode");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
@@ -622,7 +584,7 @@ public class SQLParserTest {
      */
     @Test
     public void testInvalidJoinNode() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from a where ab = 1 aaa ba = 2");
+        final SQLParser parser = new SQLParser("select * from a where ab = 1 aaa ba = 2");
         Assert.assertThrows("Invalid join node", ParadoxSyntaxErrorException.class, parser::parse);
     }
 
@@ -633,7 +595,7 @@ public class SQLParserTest {
      */
     @Test
     public void testParenthesis() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from geog.tblAC ac" +
+        final SQLParser parser = new SQLParser("select * from geog.tblAC ac" +
                 " where (ac.State = ? and ? = ac.AreaCode)");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
@@ -670,7 +632,7 @@ public class SQLParserTest {
      */
     @Test
     public void testOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from fields.date7 order by \"DATE\"");
+        final SQLParser parser = new SQLParser("select * from fields.date7 order by \"DATE\"");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
 
@@ -693,7 +655,7 @@ public class SQLParserTest {
      */
     @Test
     public void testOrderByDesc() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from fields.date7 order by \"DATE\" desc, \"TIME\" asc");
+        final SQLParser parser = new SQLParser("select * from fields.date7 order by \"DATE\" desc, \"TIME\" asc");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
 
@@ -722,7 +684,7 @@ public class SQLParserTest {
      */
     @Test
     public void testExtraToken() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from fields.DATE4 a a");
+        final SQLParser parser = new SQLParser("select * from fields.DATE4 a a");
         Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
     }
 
@@ -733,7 +695,7 @@ public class SQLParserTest {
      */
     @Test
     public void testExtraTokenInOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select * from fields.DATE4 a order by 1 a");
+        final SQLParser parser = new SQLParser("select * from fields.DATE4 a order by 1 a");
         Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
     }
 
@@ -744,7 +706,7 @@ public class SQLParserTest {
      */
     @Test
     public void testIn() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select id from fields.long where id in (1, '2')");
+        final SQLParser parser = new SQLParser("select id from fields.long where id in (1, '2')");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
 
@@ -767,7 +729,7 @@ public class SQLParserTest {
      */
     @Test
     public void testFunctionInFields() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select upper('2')");
+        final SQLParser parser = new SQLParser("select upper('2')");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
 
@@ -790,7 +752,7 @@ public class SQLParserTest {
      */
     @Test
     public void testRecursiveFunction() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select upper(lower('2'))");
+        final SQLParser parser = new SQLParser("select upper(lower('2'))");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
 
@@ -819,7 +781,7 @@ public class SQLParserTest {
      */
     @Test
     public void testFunctionThreeFields() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "select lower(1, null, a.b) from a");
+        final SQLParser parser = new SQLParser("select lower(1, null, a.b) from a");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);
 

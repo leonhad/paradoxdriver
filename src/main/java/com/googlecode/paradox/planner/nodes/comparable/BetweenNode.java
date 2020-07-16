@@ -31,15 +31,14 @@ public final class BetweenNode extends AbstractComparableNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param field      the middle node.
-     * @param first      the first node.
-     * @param last       the last node.
-     * @param position   the current Scanner position.
+     * @param field    the middle node.
+     * @param first    the first node.
+     * @param last     the last node.
+     * @param position the current Scanner position.
      */
-    public BetweenNode(final ParadoxConnection connection, final FieldNode field, final FieldNode first,
+    public BetweenNode(final FieldNode field, final FieldNode first,
                        final FieldNode last, final ScannerPosition position) {
-        super(connection, "BETWEEN", field, last, position);
+        super("BETWEEN", field, last, position);
         this.first = first;
     }
 
@@ -52,7 +51,7 @@ public final class BetweenNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final Object[] parameters) {
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, first, parameters);
         final Object value3 = getValue(row, last, parameters);

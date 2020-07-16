@@ -78,7 +78,7 @@ public final class ViewData {
     public static List<ParadoxView> listViews(final File currentSchema, final String viewName,
                                               final ParadoxConnection connection) throws SQLException {
         final List<ParadoxView> views = new ArrayList<>();
-        final File[] fileList = currentSchema.listFiles(new ViewFilter(connection, viewName));
+        final File[] fileList = currentSchema.listFiles(new ViewFilter(connection.getLocale(), viewName));
         if (fileList != null) {
             for (final File file : fileList) {
                 final ParadoxView view = ViewData.loadView(file, currentSchema, connection);

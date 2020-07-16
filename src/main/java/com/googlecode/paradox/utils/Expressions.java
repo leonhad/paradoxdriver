@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.utils;
 
-import com.googlecode.paradox.ParadoxConnection;
+import java.util.Locale;
 
 /**
  * Utility class to parse SQL expressions.
@@ -30,17 +30,17 @@ public final class Expressions {
     /**
      * Test for an expression.
      *
-     * @param conn          the Paradox connection.
+     * @param locale        the locale to use.
      * @param expression    the expression to test for.
      * @param criteria      the criteria to use.
      * @param caseSensitive true if this validation processes is case sensitive.
      * @param escape        the escape char.
      * @return <code>true</code> if the expression is valid.
      */
-    public static boolean accept(final ParadoxConnection conn, final String expression, final String criteria,
+    public static boolean accept(final Locale locale, final String expression, final String criteria,
                                  final boolean caseSensitive, final char escape) {
-        final char[] criterion = getCharArrayWithCase(conn, criteria, caseSensitive);
-        final char[] exp = getCharArrayWithCase(conn, expression, caseSensitive);
+        final char[] criterion = getCharArrayWithCase(locale, criteria, caseSensitive);
+        final char[] exp = getCharArrayWithCase(locale, expression, caseSensitive);
         int index = 0;
         int criterionIndex;
 
@@ -144,17 +144,17 @@ public final class Expressions {
     /**
      * Gets a char array with case option.
      *
-     * @param conn          the Paradox connection.
+     * @param locale        the locale to use.
      * @param str           the string to convert.
      * @param caseSensitive if use case sensitive option.
      * @return the char array.
      */
-    private static char[] getCharArrayWithCase(final ParadoxConnection conn, final String str,
+    private static char[] getCharArrayWithCase(final Locale locale, final String str,
                                                final boolean caseSensitive) {
         if (caseSensitive) {
             return str.toCharArray();
         }
 
-        return str.toUpperCase(conn.getLocale()).toCharArray();
+        return str.toUpperCase(locale).toCharArray();
     }
 }

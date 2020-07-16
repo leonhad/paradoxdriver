@@ -10,19 +10,14 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -35,36 +30,13 @@ import java.util.List;
 public class LikeNodeTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for not as a value.
      *
      * @throws SQLException in case of failures.
      */
     @Test
     public void testNullAsValue() throws SQLException {
-        final SQLParser parser = new SQLParser(conn, "SELECT A FROM db.B WHERE A LIKE 't&%' escape '&'");
+        final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A LIKE 't&%' escape '&'");
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
 

@@ -10,15 +10,8 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link AsteriskNode}.
@@ -27,36 +20,13 @@ import java.sql.SQLException;
  * @since 1.5.0
  */
 public class AsteriskNodeTest {
-    /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    @SuppressWarnings("java:S2115")
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
 
     /**
      * Test for instance.
      */
     @Test
     public void testInstance() {
-        final AsteriskNode node = new AsteriskNode(conn, null, null);
+        final AsteriskNode node = new AsteriskNode(null, null);
         Assert.assertEquals("Test for node name", "ASTERISK", node.getName());
     }
 
@@ -65,10 +35,10 @@ public class AsteriskNodeTest {
      */
     @Test
     public void testToString() {
-        AsteriskNode node = new AsteriskNode(conn, null, null);
+        AsteriskNode node = new AsteriskNode(null, null);
         Assert.assertEquals("Invalid value", "*", node.toString());
 
-        node = new AsteriskNode(conn, "t", null);
+        node = new AsteriskNode("t", null);
         Assert.assertEquals("Invalid value", "t.*", node.toString());
     }
 }

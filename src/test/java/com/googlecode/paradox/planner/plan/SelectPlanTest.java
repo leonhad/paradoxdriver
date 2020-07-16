@@ -98,13 +98,13 @@ public class SelectPlanTest {
     public void testColumnWithTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan(conn, null, false);
 
-        TableNode table = new TableNode(conn, null, AREA_CODES, "test", null);
+        TableNode table = new TableNode(null, AREA_CODES, "test", null);
 
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn(new FieldNode(conn, "test", "ac", null, null));
+        plan.addColumn(new FieldNode("test", "ac", null, null));
         Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
 
@@ -116,7 +116,7 @@ public class SelectPlanTest {
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan(conn, null, false);
-        plan.addColumn(new FieldNode(conn, null, "invalid", null, null));
+        plan.addColumn(new FieldNode(null, "invalid", null, null));
     }
 
     /**
@@ -128,13 +128,13 @@ public class SelectPlanTest {
     public void testInvalidTableAlias() throws SQLException {
         final SelectPlan plan = new SelectPlan(conn, null, false);
 
-        TableNode table = new TableNode(conn, null, AREA_CODES, "test", null);
+        TableNode table = new TableNode(null, AREA_CODES, "test", null);
 
         PlanTableNode tableNode = new PlanTableNode();
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn(new FieldNode(conn, "test2", "ac", null, null));
+        plan.addColumn(new FieldNode("test2", "ac", null, null));
     }
 
     /**
@@ -161,9 +161,8 @@ public class SelectPlanTest {
      */
     @Test
     public void testSelectJoinOptimization() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
-                "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
-                        "where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
+        final SQLParser parser = new SQLParser("select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c" +
+                " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
         final List<StatementNode> list = parser.parse();
         Assert.assertEquals("Invalid list size", 1, list.size());
 
@@ -189,7 +188,7 @@ public class SelectPlanTest {
      */
     @Test
     public void testSelectJoinOptimizationOr() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
+        final SQLParser parser = new SQLParser(
                 "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         "where c.StateID = st.State and st.State = ac.State or c.CountyID = 201");
         final List<StatementNode> list = parser.parse();
@@ -216,7 +215,7 @@ public class SelectPlanTest {
      */
     @Test
     public void testSelectJoinOptimizationParenthesis() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
+        final SQLParser parser = new SQLParser(
                 "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         "where c.StateID = st.State and (st.State = ac.State or c.CountyID = 201)");
         final List<StatementNode> list = parser.parse();
@@ -244,7 +243,7 @@ public class SelectPlanTest {
      */
     @Test
     public void testOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser(conn,
+        final SQLParser parser = new SQLParser(
                 "select \"DATE\", \"TIME\" from fields.date7 order by \"DATE\", \"TIME\"");
         final List<StatementNode> list = parser.parse();
         Assert.assertEquals("Invalid list size", 1, list.size());

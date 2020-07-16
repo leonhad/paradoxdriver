@@ -837,9 +837,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) {
         if (((catalog != null)
-                && !Expressions.accept(conn, this.conn.getCatalog(), catalog, false, Constants.ESCAPE_CHAR))
+                && !Expressions.accept(conn.getLocale(), this.conn.getCatalog(), catalog, false, Constants.ESCAPE_CHAR))
                 || ((schemaPattern != null)
-                && !Expressions.accept(conn, this.conn.getSchema(), schemaPattern, false, Constants.ESCAPE_CHAR))) {
+                && !Expressions.accept(conn.getLocale(), this.conn.getSchema(), schemaPattern, false,
+                Constants.ESCAPE_CHAR))) {
             return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
         }
         return this.getSchemas();
@@ -930,7 +931,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<Object[]> values = new ArrayList<>();
 
         final File catalog = conn.getCurrentCatalog();
-        final File[] schemas = catalog.listFiles(new DirectoryFilter(conn));
+        final File[] schemas = catalog.listFiles(new DirectoryFilter(conn.getLocale()));
 
         if (schemas != null) {
             Arrays.sort(schemas);
@@ -1805,8 +1806,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                                final String tableName, final ParadoxField[] fields) throws SQLException {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
-            if ((columnNamePattern != null) && !Expressions.accept(conn, field.getName(), columnNamePattern, false,
-                    Constants.ESCAPE_CHAR)) {
+            if ((columnNamePattern != null) && !Expressions.accept(conn.getLocale(), field.getName(),
+                    columnNamePattern, false, Constants.ESCAPE_CHAR)) {
                 continue;
             }
 

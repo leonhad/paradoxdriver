@@ -10,12 +10,12 @@
  */
 package com.googlecode.paradox.data.filefilters;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Locale;
 
 /**
  * Paradox Table filters.
@@ -35,36 +35,36 @@ public final class TableFilter implements FileFilter {
      */
     private final String tableName;
 
-    private final ParadoxConnection connection;
+    private final Locale locale;
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
+     * @param locale the locale to use.
      */
-    public TableFilter(final ParadoxConnection connection) {
-        this(connection, null, "db");
+    public TableFilter(final Locale locale) {
+        this(locale, null, "db");
     }
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param tableName  the table name.
+     * @param locale    the locale to use.
+     * @param tableName the table name.
      */
-    public TableFilter(final ParadoxConnection connection, final String tableName) {
-        this(connection, tableName, "db");
+    public TableFilter(final Locale locale, final String tableName) {
+        this(locale, tableName, "db");
     }
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param tableName  the table name.
-     * @param extension  the table extension.
+     * @param locale    the locale to use.
+     * @param tableName the table name.
+     * @param extension the table extension.
      */
-    public TableFilter(final ParadoxConnection connection, final String tableName, final String extension) {
-        this.connection = connection;
+    public TableFilter(final Locale locale, final String tableName, final String extension) {
+        this.locale = locale;
         this.tableName = tableName;
         this.extension = extension;
     }
@@ -77,11 +77,11 @@ public final class TableFilter implements FileFilter {
         final String name = pathname.getName();
 
         if (this.tableName != null) {
-            return Expressions.accept(connection, name,
+            return Expressions.accept(locale, name,
                     this.tableName + "." + this.extension, false, Constants.ESCAPE_CHAR) && pathname.isFile();
         }
 
-        return Expressions.accept(connection, name, "%." + this.extension, false, Constants.ESCAPE_CHAR)
+        return Expressions.accept(locale, name, "%." + this.extension, false, Constants.ESCAPE_CHAR)
                 && pathname.isFile();
     }
 

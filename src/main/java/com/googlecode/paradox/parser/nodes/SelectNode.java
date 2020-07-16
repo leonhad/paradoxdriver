@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
@@ -59,11 +58,10 @@ public final class SelectNode extends StatementNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param position   the current Scanner position.
+     * @param position the current Scanner position.
      */
-    public SelectNode(final ParadoxConnection connection, final ScannerPosition position) {
-        super(connection, "SELECT", position);
+    public SelectNode(final ScannerPosition position) {
+        super("SELECT", position);
     }
 
     /**

@@ -26,19 +26,18 @@ public class ORNode extends AbstractJoinNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param child      the child node.
-     * @param position   the current Scanner position.
+     * @param child    the child node.
+     * @param position the current Scanner position.
      */
-    public ORNode(final ParadoxConnection connection, final SQLNode child, final ScannerPosition position) {
-        super(connection, "OR", child, position);
+    public ORNode(final SQLNode child, final ScannerPosition position) {
+        super("OR", child, position);
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final Object[] parameters) {
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
         for (final SQLNode node : children) {
             final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
-            if (conditionalNode.evaluate(row, parameters)) {
+            if (conditionalNode.evaluate(connection, row, parameters)) {
                 return true;
             }
         }

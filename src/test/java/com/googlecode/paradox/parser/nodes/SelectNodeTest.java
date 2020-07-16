@@ -10,21 +10,15 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Types;
 
 /**
@@ -37,35 +31,11 @@ import java.sql.Types;
 public class SelectNodeTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    @SuppressWarnings("java:S2115")
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for condition.
      */
     @Test
     public void testCondition() {
-        final SelectNode node = new SelectNode(conn, null);
+        final SelectNode node = new SelectNode(null);
         Assert.assertNull("List not empty.", node.getCondition());
     }
 
@@ -74,7 +44,7 @@ public class SelectNodeTest {
      */
     @Test
     public void testDistinctFlag() {
-        final SelectNode node = new SelectNode(conn, null);
+        final SelectNode node = new SelectNode(null);
         Assert.assertFalse("Invalid node value.", node.isDistinct());
         node.setDistinct(true);
         Assert.assertTrue("Invalid node value.", node.isDistinct());
@@ -85,8 +55,8 @@ public class SelectNodeTest {
      */
     @Test
     public void testFields() {
-        final SelectNode node = new SelectNode(conn, null);
-        final FieldNode field = new FieldNode(conn, "table", "field", null, null);
+        final SelectNode node = new SelectNode(null);
+        final FieldNode field = new FieldNode("table", "field", null, null);
         Assert.assertEquals("Invalid node size.", 0, node.getFields().size());
         node.addField(field);
         Assert.assertEquals("Invalid node size.", 1, node.getFields().size());
@@ -97,8 +67,8 @@ public class SelectNodeTest {
      */
     @Test
     public void testGroupBy() {
-        final SelectNode node = new SelectNode(conn, null);
-        final IdentifierNode identifier = new IdentifierNode(conn, "Node", null);
+        final SelectNode node = new SelectNode(null);
+        final IdentifierNode identifier = new IdentifierNode("Node", null);
         Assert.assertEquals("Invalid node size.", 0, node.getGroups().size());
         node.addGroupBy(identifier);
         Assert.assertEquals("Invalid node size.", 1, node.getGroups().size());
@@ -109,8 +79,8 @@ public class SelectNodeTest {
      */
     @Test
     public void testOrderBy() {
-        final SelectNode node = new SelectNode(conn, null);
-        final ValueNode value = new ValueNode(conn, "1", null, null, Types.NUMERIC);
+        final SelectNode node = new SelectNode(null);
+        final ValueNode value = new ValueNode("1", null, null, Types.NUMERIC);
         Assert.assertEquals("Invalid node size.", 0, node.getOrder().size());
         node.addOrderBy(value, OrderType.ASC);
         Assert.assertEquals("Invalid node size.", 1, node.getOrder().size());
@@ -121,8 +91,8 @@ public class SelectNodeTest {
      */
     @Test
     public void testTables() {
-        final SelectNode node = new SelectNode(conn, null);
-        final TableNode table = new TableNode(conn, null, "table", null, null);
+        final SelectNode node = new SelectNode(null);
+        final TableNode table = new TableNode(null, "table", null, null);
         Assert.assertEquals("Invalid node size.", 0, node.getTables().size());
         node.addTable(table);
         Assert.assertEquals("Invalid node size.", 1, node.getTables().size());
@@ -133,23 +103,23 @@ public class SelectNodeTest {
      */
     @Test
     public void testToString() {
-        final SelectNode node = new SelectNode(conn, null);
-        node.addField(new FieldNode(conn, "t", "field", "f", null));
-        node.addField(new FieldNode(conn, "b", "field2", "f2", null));
-        node.addTable(new TableNode(conn, null, "table1", "t", null));
-        node.addTable(new TableNode(conn, null, "table2", "b", null));
-        node.addGroupBy(new IdentifierNode(conn, "f1", null));
-        node.addGroupBy(new IdentifierNode(conn, "f2", null));
-        node.addOrderBy(new ValueNode(conn, "f", null, null, Types.INTEGER), OrderType.ASC);
-        node.addOrderBy(new ValueNode(conn, "f2", null, null, Types.INTEGER), OrderType.ASC);
+        final SelectNode node = new SelectNode(null);
+        node.addField(new FieldNode("t", "field", "f", null));
+        node.addField(new FieldNode("b", "field2", "f2", null));
+        node.addTable(new TableNode(null, "table1", "t", null));
+        node.addTable(new TableNode(null, "table2", "b", null));
+        node.addGroupBy(new IdentifierNode("f1", null));
+        node.addGroupBy(new IdentifierNode("f2", null));
+        node.addOrderBy(new ValueNode("f", null, null, Types.INTEGER), OrderType.ASC);
+        node.addOrderBy(new ValueNode("f2", null, null, Types.INTEGER), OrderType.ASC);
 
-        ANDNode andNode = new ANDNode(conn, null, null);
-        andNode.addChild(new EqualsNode(conn,
-                new FieldNode(conn, "t", "field", null, null),
-                new FieldNode(conn, "t", "field2", null, null), null));
-        andNode.addChild(new NotEqualsNode(conn,
-                new FieldNode(conn, "t", "field", null, null),
-                new FieldNode(conn, "t", "field2", null, null), null));
+        ANDNode andNode = new ANDNode(null, null);
+        andNode.addChild(new EqualsNode(
+                new FieldNode("t", "field", null, null),
+                new FieldNode("t", "field2", null, null), null));
+        andNode.addChild(new NotEqualsNode(
+                new FieldNode("t", "field", null, null),
+                new FieldNode("t", "field2", null, null), null));
         node.setCondition(andNode);
 
         Assert.assertEquals("Invalid node value.",
@@ -163,9 +133,9 @@ public class SelectNodeTest {
      */
     @Test
     public void testToStringEmptyWhere() {
-        final SelectNode node = new SelectNode(conn, null);
-        node.addField(new FieldNode(conn, "t", "field", "f", null));
-        node.addField(new FieldNode(conn, "b", "field2", "f2", null));
+        final SelectNode node = new SelectNode(null);
+        node.addField(new FieldNode("t", "field", "f", null));
+        node.addField(new FieldNode("b", "field2", "f2", null));
         node.setCondition(null);
         Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
@@ -175,9 +145,9 @@ public class SelectNodeTest {
      */
     @Test
     public void testToStringFields() {
-        final SelectNode node = new SelectNode(conn, null);
-        node.addField(new FieldNode(conn, "t", "field", "f", null));
-        node.addField(new FieldNode(conn, "b", "field2", "f2", null));
+        final SelectNode node = new SelectNode(null);
+        node.addField(new FieldNode("t", "field", "f", null));
+        node.addField(new FieldNode("b", "field2", "f2", null));
         Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 }

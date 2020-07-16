@@ -35,12 +35,11 @@ public final class InNode extends AbstractComparableNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param field      the first node.
-     * @param position   the current Scanner position.
+     * @param field    the first node.
+     * @param position the current Scanner position.
      */
-    public InNode(final ParadoxConnection connection, final FieldNode field, final ScannerPosition position) {
-        super(connection, "in", field, null, position);
+    public InNode(final FieldNode field, final ScannerPosition position) {
+        super("in", field, null, position);
     }
 
     /**
@@ -62,7 +61,7 @@ public final class InNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final Object[] parameters) {
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
 
         for (final ValueNode value : values) {

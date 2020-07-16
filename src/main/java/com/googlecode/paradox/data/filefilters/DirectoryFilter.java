@@ -11,12 +11,12 @@
 
 package com.googlecode.paradox.data.filefilters;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Locale;
 
 /**
  * If the file is a directory.
@@ -28,33 +28,33 @@ public class DirectoryFilter implements FileFilter {
 
     private final String pattern;
 
-    private final ParadoxConnection connection;
+    private final Locale locale;
 
     /**
      * Creates a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param pattern    the directory pattern.
+     * @param locale  the locale to use.
+     * @param pattern the directory pattern.
      */
-    public DirectoryFilter(final ParadoxConnection connection, final String pattern) {
-        this.connection = connection;
+    public DirectoryFilter(final Locale locale, final String pattern) {
+        this.locale = locale;
         this.pattern = pattern;
     }
 
     /**
      * Creates a new instance.
      *
-     * @param connection the Paradox connection.
+     * @param locale the locale to use.
      */
-    public DirectoryFilter(final ParadoxConnection connection) {
-        this(connection, null);
+    public DirectoryFilter(final Locale locale) {
+        this(locale, null);
     }
 
     @Override
     public boolean accept(final File file) {
         boolean expression = true;
         if (pattern != null) {
-            expression = Expressions.accept(connection, file.getName(), pattern, false, Constants.ESCAPE_CHAR);
+            expression = Expressions.accept(locale, file.getName(), pattern, false, Constants.ESCAPE_CHAR);
         }
         return expression && file != null && file.isDirectory();
     }

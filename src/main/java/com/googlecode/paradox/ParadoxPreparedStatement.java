@@ -51,7 +51,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
                              final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
         super(connection, resultSetType, resultSetConcurrency, resultSetHoldability);
 
-        final SQLParser parser = new SQLParser(connection, sql);
+        final SQLParser parser = new SQLParser(sql);
         statements.addAll(parser.parse());
 
         if (statements.isEmpty()) {
@@ -405,7 +405,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     public void addBatch(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(connection, sql);
+        final SQLParser parser = new SQLParser(sql);
         final List<StatementNode> batchStatements = parser.parse();
 
         for (final StatementNode statement : batchStatements) {

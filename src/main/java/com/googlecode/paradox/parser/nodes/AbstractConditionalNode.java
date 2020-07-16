@@ -41,22 +41,20 @@ public abstract class AbstractConditionalNode extends SQLNode {
     /**
      * Creates a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param name       the condition name.
-     * @param field      the field node to compare.
-     * @param position   the current Scanner position.
+     * @param name     the condition name.
+     * @param field    the field node to compare.
+     * @param position the current Scanner position.
      */
-    public AbstractConditionalNode(final ParadoxConnection connection, final String name, final FieldNode field,
-                                   final ScannerPosition position) {
-        super(connection, name, position);
+    public AbstractConditionalNode(final String name, final FieldNode field, final ScannerPosition position) {
+        super(name, position);
         this.field = field;
     }
 
-    public AbstractConditionalNode(final ParadoxConnection connection, final String name, ScannerPosition position) {
-        this(connection, name, null, position);
+    public AbstractConditionalNode(final String name, ScannerPosition position) {
+        this(name, null, position);
     }
 
-    public abstract boolean evaluate(final Object[] row, final Object[] parameters);
+    public abstract boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters);
 
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
         getIndex(field, columns, tables);

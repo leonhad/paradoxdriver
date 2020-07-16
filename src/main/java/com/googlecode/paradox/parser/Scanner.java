@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.parser;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 
 import java.nio.CharBuffer;
@@ -58,11 +57,6 @@ public class Scanner {
     private final StringBuilder value = new StringBuilder(299);
 
     /**
-     * The Paradox connection.
-     */
-    private final ParadoxConnection connection;
-
-    /**
      * The SQL current parser position.
      */
     private final ScannerPosition position = new ScannerPosition();
@@ -75,16 +69,14 @@ public class Scanner {
     /**
      * Creates a new instance.
      *
-     * @param connection the paradox connection.
-     * @param buffer     the buffer to read of.
+     * @param buffer the buffer to read of.
      * @throws SQLException in case of parse errors.
      */
-    Scanner(final ParadoxConnection connection, final String buffer) throws SQLException {
+    Scanner(final String buffer) throws SQLException {
         if (buffer == null || buffer.trim().isEmpty()) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_SQL);
         }
 
-        this.connection = connection;
         this.buffer = CharBuffer.wrap(buffer.trim());
     }
 
@@ -159,7 +151,7 @@ public class Scanner {
             return null;
         }
 
-        final TokenType token = TokenType.get(value.toUpperCase(connection.getLocale()));
+        final TokenType token = TokenType.get(value);
         if (token != null) {
             return new Token(token, value, startPosition);
         }

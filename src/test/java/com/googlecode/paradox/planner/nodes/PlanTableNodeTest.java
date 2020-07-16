@@ -60,7 +60,7 @@ public class PlanTableNodeTest {
      */
     @Test
     public void testInstance() throws SQLException {
-        TableNode table = new TableNode(conn, null, "areacodes", "alias", null);
+        TableNode table = new TableNode(null, "areacodes", "alias", null);
 
         PlanTableNode node = new PlanTableNode();
         node.setTable(conn, table);

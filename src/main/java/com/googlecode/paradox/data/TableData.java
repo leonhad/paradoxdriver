@@ -55,7 +55,7 @@ public final class TableData extends ParadoxData {
         final ArrayList<ParadoxTable> tables = new ArrayList<>();
         final File currentSchema = new File(connection.getCurrentSchema().getParent(), schema);
 
-        final File[] fileList = currentSchema.listFiles(new TableFilter(connection));
+        final File[] fileList = currentSchema.listFiles(new TableFilter(connection.getLocale()));
         if (fileList != null) {
             for (final File file : fileList) {
                 final ParadoxTable table = TableData.loadTableHeader(file, connection);
@@ -77,7 +77,9 @@ public final class TableData extends ParadoxData {
     public static List<ParadoxTable> listTables(final File schema, final String pattern,
                                                 final ParadoxConnection connection) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
-        final File[] fileList = schema.listFiles(new TableFilter(connection, Utils.removeSuffix(pattern, "DB")));
+        final File[] fileList = schema.listFiles
+                (new TableFilter(connection.getLocale(), Utils.removeSuffix(pattern, "DB")));
+
         if (fileList != null) {
             Arrays.sort(fileList);
             for (final File file : fileList) {

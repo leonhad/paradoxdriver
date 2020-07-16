@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 
@@ -43,10 +42,6 @@ public class SQLNode {
     protected String name;
 
     /**
-     * The Paradox connection.
-     */
-    protected final ParadoxConnection connection;
-    /**
      * SQL position.
      */
     private final ScannerPosition position;
@@ -54,12 +49,10 @@ public class SQLNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param name       the node name.
-     * @param position   the current Scanner position.
+     * @param name     the node name.
+     * @param position the current Scanner position.
      */
-    protected SQLNode(final ParadoxConnection connection, final String name, final ScannerPosition position) {
-        this.connection = connection;
+    protected SQLNode(final String name, final ScannerPosition position) {
         this.name = name;
         this.alias = name;
         this.position = position;
@@ -68,14 +61,13 @@ public class SQLNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param name       the node name.
-     * @param alias      the node alias
-     * @param position   the current Scanner position..
+     * @param name     the node name.
+     * @param alias    the node alias
+     * @param position the current Scanner position..
      */
-    protected SQLNode(final ParadoxConnection connection, final String name, final String alias,
+    protected SQLNode(final String name, final String alias,
                       final ScannerPosition position) {
-        this(connection, name, position);
+        this(name, position);
         this.alias = alias;
     }
 

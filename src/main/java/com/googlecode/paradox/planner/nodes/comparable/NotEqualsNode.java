@@ -26,18 +26,16 @@ public final class NotEqualsNode extends AbstractComparableNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param field      the first node.
-     * @param last       the last node.
-     * @param position   the current Scanner position.
+     * @param field    the first node.
+     * @param last     the last node.
+     * @param position the current Scanner position.
      */
-    public NotEqualsNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last,
-                         final ScannerPosition position) {
-        super(connection, "<>", field, last, position);
+    public NotEqualsNode(final FieldNode field, final FieldNode last, final ScannerPosition position) {
+        super("<>", field, last, position);
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final Object[] parameters) {
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
         return !ValuesComparator.equals(value1, value2);

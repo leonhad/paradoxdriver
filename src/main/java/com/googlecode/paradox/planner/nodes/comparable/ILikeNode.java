@@ -26,19 +26,18 @@ public class ILikeNode extends LikeNode {
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param field      the first node.
-     * @param last       the last node.
-     * @param position   the current Scanner position.
+     * @param field    the first node.
+     * @param last     the last node.
+     * @param position the current Scanner position.
      */
-    public ILikeNode(final ParadoxConnection connection, final FieldNode field, final FieldNode last,
+    public ILikeNode(final FieldNode field, final FieldNode last,
                      final ScannerPosition position) {
-        super(connection, field, last, position);
+        super(field, last, position);
         this.name = "ilike";
     }
 
     @Override
-    public boolean evaluate(final Object[] row, final Object[] parameters) {
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
         final Object value1 = getValue(row, field, parameters);
         final Object value2 = getValue(row, last, parameters);
 
@@ -46,6 +45,6 @@ public class ILikeNode extends LikeNode {
             return false;
         }
 
-        return Expressions.accept(connection, (String) value1, (String) value2, false, escape);
+        return Expressions.accept(connection.getLocale(), (String) value1, (String) value2, false, escape);
     }
 }

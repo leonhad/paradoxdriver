@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
@@ -37,15 +36,14 @@ public class FieldNode extends SQLNode {
     /**
      * Stores field values (from select statements).
      *
-     * @param connection the Paradox connection.
-     * @param tableName  the table name.
-     * @param fieldName  the field name.
-     * @param alias      the field name alias.
-     * @param position   the current Scanner position.
+     * @param tableName the table name.
+     * @param fieldName the field name.
+     * @param alias     the field name alias.
+     * @param position  the current Scanner position.
      */
-    public FieldNode(final ParadoxConnection connection, final String tableName, final String fieldName,
-                     final String alias, final ScannerPosition position) {
-        super(connection, fieldName, alias, position);
+    public FieldNode(final String tableName, final String fieldName, final String alias,
+                     final ScannerPosition position) {
+        super(fieldName, alias, position);
         this.tableName = tableName;
     }
 

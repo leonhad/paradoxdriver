@@ -10,17 +10,10 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link TableNode} class.
@@ -31,34 +24,11 @@ import java.sql.SQLException;
 public class TableNodeTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for instance.
      */
     @Test
     public void testInstance() {
-        final TableNode node = new TableNode(conn, null, "table.db", "alias", null);
+        final TableNode node = new TableNode(null, "table.db", "alias", null);
         Assert.assertEquals("Invalid table name.", "table", node.getName());
         Assert.assertEquals("Invalid table alias.", "alias", node.getAlias());
     }
@@ -68,11 +38,11 @@ public class TableNodeTest {
      */
     @Test
     public void testToString() {
-        final JoinNode join = new JoinNode(conn, null, "table.db", "alias", JoinType.INNER, null);
-        final FieldNode fieldA = new FieldNode(conn, null, "a", null, null);
-        final FieldNode fieldB = new FieldNode(conn, null, "b", null, null);
+        final JoinNode join = new JoinNode(null, "table.db", "alias", JoinType.INNER, null);
+        final FieldNode fieldA = new FieldNode(null, "a", null, null);
+        final FieldNode fieldB = new FieldNode(null, "b", null, null);
 
-        join.setCondition(new EqualsNode(conn, fieldA, fieldB, null));
+        join.setCondition(new EqualsNode(fieldA, fieldB, null));
 
         Assert.assertEquals("Invalid JoinNode for toString().", "INNER JOIN table AS alias ON a = b ",
                 join.toString());

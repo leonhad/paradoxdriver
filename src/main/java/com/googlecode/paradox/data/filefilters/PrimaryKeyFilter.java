@@ -10,12 +10,12 @@
  */
 package com.googlecode.paradox.data.filefilters;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Locale;
 
 /**
  * Paradox primary key file filter.
@@ -30,25 +30,25 @@ public final class PrimaryKeyFilter implements FileFilter {
      */
     private final String pkName;
 
-    private final ParadoxConnection connection;
+    private final Locale locale;
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
+     * @param locale the locale to use.
      */
-    public PrimaryKeyFilter(final ParadoxConnection connection) {
-        this(connection, null);
+    public PrimaryKeyFilter(final Locale locale) {
+        this(locale, null);
     }
 
     /**
      * Create a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param pkName     the primary key name.
+     * @param locale the locale to use.
+     * @param pkName the primary key name.
      */
-    public PrimaryKeyFilter(final ParadoxConnection connection, final String pkName) {
-        this.connection = connection;
+    public PrimaryKeyFilter(final Locale locale, final String pkName) {
+        this.locale = locale;
         this.pkName = pkName;
     }
 
@@ -59,8 +59,8 @@ public final class PrimaryKeyFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(connection, name, "%.PX", false, Constants.ESCAPE_CHAR)
-                && ((this.pkName == null) || Expressions.accept(connection, name, this.pkName, false,
+        return Expressions.accept(locale, name, "%.PX", false, Constants.ESCAPE_CHAR)
+                && ((this.pkName == null) || Expressions.accept(locale, name, this.pkName, false,
                 Constants.ESCAPE_CHAR));
     }
 }

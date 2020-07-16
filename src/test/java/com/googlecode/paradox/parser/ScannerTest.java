@@ -10,14 +10,9 @@
  */
 package com.googlecode.paradox.parser;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
@@ -29,36 +24,13 @@ import java.sql.SQLException;
 public class ScannerTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for character values.
      *
      * @throws Exception in case of failures.
      */
     @Test
     public void testCharacterValues() throws Exception {
-        final Scanner scanner = new Scanner(conn, " 'test 1' ");
+        final Scanner scanner = new Scanner(" 'test 1' ");
         final Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.CHARACTER, token.getType());
         Assert.assertEquals("Invalid token value.", "test 1", token.getValue());
@@ -72,7 +44,7 @@ public class ScannerTest {
      */
     @Test
     public void testGroup() throws Exception {
-        final Scanner scanner = new Scanner(conn, " \"test 1\" \"Table.db \"\" \" ");
+        final Scanner scanner = new Scanner(" \"test 1\" \"Table.db \"\" \" ");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token value.", "test 1", token.getValue());
         token = scanner.nextToken();
@@ -86,7 +58,7 @@ public class ScannerTest {
      */
     @Test
     public void testHasNext() throws Exception {
-        final Scanner scanner = new Scanner(conn, "(SELECT * FROM Test) ");
+        final Scanner scanner = new Scanner("(SELECT * FROM Test) ");
 
         Assert.assertTrue("Invalid scanner state", scanner.hasNext());
         Assert.assertEquals("Invalid token type", TokenType.L_PAREN, scanner.nextToken().getType());
@@ -110,7 +82,7 @@ public class ScannerTest {
      */
     @Test
     public void testNull() throws Exception {
-        final Scanner scanner = new Scanner(conn, " NULL");
+        final Scanner scanner = new Scanner(" NULL");
         final Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.NULL, token.getType());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
@@ -123,7 +95,7 @@ public class ScannerTest {
      */
     @Test
     public void testComments() throws Exception {
-        final Scanner scanner = new Scanner(conn, " -- Commented line\nNULL");
+        final Scanner scanner = new Scanner(" -- Commented line\nNULL");
         final Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.NULL, token.getType());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
@@ -136,7 +108,7 @@ public class ScannerTest {
      */
     @Test
     public void testMultilineComments() throws Exception {
-        final Scanner scanner = new Scanner(conn, " /* Commented\n\nline */\nNULL");
+        final Scanner scanner = new Scanner(" /* Commented\n\nline */\nNULL");
         final Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.NULL, token.getType());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
@@ -149,7 +121,7 @@ public class ScannerTest {
      */
     @Test(expected = SQLException.class)
     public void testNumericTwoDots() throws Exception {
-        final Scanner scanner = new Scanner(conn, "123.8.7");
+        final Scanner scanner = new Scanner("123.8.7");
         scanner.nextToken();
     }
 
@@ -160,7 +132,7 @@ public class ScannerTest {
      */
     @Test
     public void testNumericValues() throws Exception {
-        final Scanner scanner = new Scanner(conn, " 123 123.8 ");
+        final Scanner scanner = new Scanner(" 123 123.8 ");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.NUMERIC, token.getType());
         Assert.assertEquals("Invalid token value.", "123", token.getValue());
@@ -178,7 +150,7 @@ public class ScannerTest {
      */
     @Test
     public void testNegativeNumbers() throws Exception {
-        final Scanner scanner = new Scanner(conn, "-123.2");
+        final Scanner scanner = new Scanner("-123.2");
         final Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.NUMERIC, token.getType());
         Assert.assertEquals("Invalid token value.", "-123.2", token.getValue());
@@ -192,7 +164,7 @@ public class ScannerTest {
      */
     @Test
     public void testNumericValidation() throws Exception {
-        final Scanner scanner = new Scanner(conn, "12a");
+        final Scanner scanner = new Scanner("12a");
         Assert.assertEquals("Invalid value.", "12a", scanner.nextToken().getValue());
     }
 
@@ -203,7 +175,7 @@ public class ScannerTest {
      */
     @Test
     public void testIsNull() throws Exception {
-        final Scanner scanner = new Scanner(conn, "is null");
+        final Scanner scanner = new Scanner("is null");
         Assert.assertEquals("Invalid token type.", TokenType.IS, scanner.nextToken().getType());
         Assert.assertEquals("Invalid token type.", TokenType.NULL, scanner.nextToken().getType());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
@@ -216,7 +188,7 @@ public class ScannerTest {
      */
     @Test
     public void testMinusSign() throws Exception {
-        final Scanner scanner = new Scanner(conn, "- 123.2");
+        final Scanner scanner = new Scanner("- 123.2");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.MINUS, token.getType());
         token = scanner.nextToken();
@@ -232,7 +204,7 @@ public class ScannerTest {
      */
     @Test
     public void testQuestionMark() throws SQLException {
-        final Scanner scanner = new Scanner(conn, "?");
+        final Scanner scanner = new Scanner("?");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.QUESTION_MARK, token.getType());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
@@ -246,7 +218,7 @@ public class ScannerTest {
     @Test
     public void testPushBack() throws Exception {
         Token token = null;
-        final Scanner scanner = new Scanner(conn, "(SELECT * from Test) ");
+        final Scanner scanner = new Scanner("(SELECT * from Test) ");
         while (scanner.hasNext()) {
             token = scanner.nextToken();
         }
@@ -271,7 +243,7 @@ public class ScannerTest {
      */
     @Test
     public void testCharacterEscapes() throws SQLException {
-        final Scanner scanner = new Scanner(conn, "'\\n\\b\\r\\\\\\t\\'");
+        final Scanner scanner = new Scanner("'\\n\\b\\r\\\\\\t\\'");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type", TokenType.CHARACTER, token.getType());
         Assert.assertEquals("Invalid token value", "\n\b\r\\\t\\", token.getValue());
@@ -285,7 +257,7 @@ public class ScannerTest {
      */
     @Test
     public void testQuoted() throws SQLException {
-        final Scanner scanner = new Scanner(conn, "'a''b'");
+        final Scanner scanner = new Scanner("'a''b'");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type", TokenType.CHARACTER, token.getType());
         Assert.assertEquals("Invalid token value", "a'b", token.getValue());
@@ -299,7 +271,7 @@ public class ScannerTest {
      */
     @Test
     public void testDoubleQuoted() throws SQLException {
-        final Scanner scanner = new Scanner(conn, "\"a\"\"b");
+        final Scanner scanner = new Scanner("\"a\"\"b");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type", TokenType.IDENTIFIER, token.getType());
         Assert.assertEquals("Invalid token value", "a\"b", token.getValue());
@@ -313,7 +285,7 @@ public class ScannerTest {
      */
     @Test
     public void testEscape() throws SQLException {
-        final Scanner scanner = new Scanner(conn, "ESCAPE");
+        final Scanner scanner = new Scanner("ESCAPE");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type.", TokenType.ESCAPE, token.getType());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());

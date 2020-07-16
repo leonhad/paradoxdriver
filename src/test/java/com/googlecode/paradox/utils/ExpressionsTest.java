@@ -10,15 +10,10 @@
  */
 package com.googlecode.paradox.utils;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.Locale;
 
 /**
  * Unit test for {@link Expressions}.
@@ -29,34 +24,12 @@ import java.sql.SQLException;
 public class ExpressionsTest {
 
     /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
-
-    /**
      * Test for equals.
      */
     @Test
     public void testEquals() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "table", false, Constants.ESCAPE_CHAR));
+        Assert.assertTrue("Invalid value.", Expressions.accept(Locale.ENGLISH, "TABLE", "table", false,
+                Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -64,7 +37,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testExtra() {
-        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TEST.QBE~", "%.QBE", false,
+        Assert.assertFalse("Invalid value.", Expressions.accept(Locale.ENGLISH, "TEST.QBE~", "%.QBE", false,
                 Constants.ESCAPE_CHAR));
     }
 
@@ -73,7 +46,8 @@ public class ExpressionsTest {
      */
     @Test
     public void testLikes() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TA%", false, Constants.ESCAPE_CHAR));
+        Assert.assertTrue("Invalid value.", Expressions.accept(Locale.ENGLISH, "TABLE", "TA%", false,
+                Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -81,7 +55,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testMix() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TEST.X02", "%.X__", false,
+        Assert.assertTrue("Invalid value.", Expressions.accept(Locale.ENGLISH, "TEST.X02", "%.X__", false,
                 Constants.ESCAPE_CHAR));
     }
 
@@ -90,7 +64,8 @@ public class ExpressionsTest {
      */
     @Test
     public void testNotEquals() {
-        Assert.assertFalse("Invalid value.", Expressions.accept(conn, "TABLE", "table", true, Constants.ESCAPE_CHAR));
+        Assert.assertFalse("Invalid value.", Expressions.accept(Locale.ENGLISH, "TABLE", "table", true,
+                Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -106,7 +81,8 @@ public class ExpressionsTest {
      */
     @Test
     public void testUnique() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "TABLE", "TAB_E", false, Constants.ESCAPE_CHAR));
+        Assert.assertTrue("Invalid value.", Expressions.accept(Locale.ENGLISH, "TABLE", "TAB_E", false,
+                Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -114,7 +90,8 @@ public class ExpressionsTest {
      */
     @Test
     public void testEscapedChar() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn, "%a%", "\\%a\\%", true, Constants.ESCAPE_CHAR));
+        Assert.assertTrue("Invalid value.", Expressions.accept(Locale.ENGLISH, "%a%", "\\%a\\%", true,
+                Constants.ESCAPE_CHAR));
     }
 
     /**
@@ -122,7 +99,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testUnescapedChar() {
-        Assert.assertTrue("Invalid value.", Expressions.accept(conn,
+        Assert.assertTrue("Invalid value.", Expressions.accept(Locale.ENGLISH,
                 "k, Jersey City, Newark", "k%", true, Constants.ESCAPE_CHAR));
     }
 }
