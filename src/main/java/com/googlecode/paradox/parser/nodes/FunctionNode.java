@@ -57,4 +57,22 @@ public class FunctionNode extends SQLNode {
     public void addParameter(final SQLNode parameter) {
         this.parameters.add(parameter);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder buffer = new StringBuilder();
+        buffer.append(name);
+        buffer.append("(");
+
+        for (int i = 0; i < parameters.size(); i++) {
+            if (i != 0) {
+                buffer.append(", ");
+            }
+
+            buffer.append(parameters.get(i));
+        }
+
+        buffer.append(")");
+        return buffer.toString();
+    }
 }
