@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * Stores the scanner position.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class ScannerPosition {
@@ -29,11 +29,6 @@ public class ScannerPosition {
     private int line = 1;
 
     /**
-     * Last column value.
-     */
-    private int lastColumn;
-
-    /**
      * Creates a new instance.
      */
     public ScannerPosition() {
@@ -42,7 +37,6 @@ public class ScannerPosition {
 
     public void add(final char c) {
         if (c == '\n') {
-            lastColumn = column;
             column = 1;
             line++;
         } else {
