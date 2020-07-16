@@ -489,12 +489,34 @@ public final class SQLParser {
                     functionNode.addParameter(this.parseAsterisk(null));
                     break;
                 default:
-                    functionNode.addParameter(this.parseIdentifierFieldOnly(this.token.getValue()));
+                    functionNode.addParameter(this.parseIdentifierFieldFunction(this.token.getValue()));
                     break;
             }
         }
         this.expect(TokenType.R_PAREN);
         return functionNode;
+    }
+
+    private SQLNode parseIdentifierFieldFunction(final String fieldName) throws SQLException {
+        String newTableName = null;
+        String newFieldName = fieldName;
+
+        @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
+        this.expect(TokenType.IDENTIFIER);
+
+        if (isToken(TokenType.L_PAREN)) {
+            // function
+            return parseFunction(fieldName);
+        } else if (isToken(TokenType.PERIOD)) {
+            // If it has a Table Name.
+            this.expect(TokenType.PERIOD);
+            newTableName = fieldName;
+            newFieldName = this.token.getValue();
+
+            this.expect(TokenType.IDENTIFIER);
+        }
+
+        return new FieldNode(connection, newTableName, newFieldName, newFieldName, position);
     }
 
     /**
