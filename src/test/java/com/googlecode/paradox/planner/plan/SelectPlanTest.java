@@ -96,7 +96,7 @@ public class SelectPlanTest {
      */
     @Test
     public void testColumnWithTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(conn, null, false);
+        final SelectPlan plan = new SelectPlan(null, false);
 
         TableNode table = new TableNode(null, AREA_CODES, "test", null);
 
@@ -115,7 +115,7 @@ public class SelectPlanTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
-        final SelectPlan plan = new SelectPlan(conn, null, false);
+        final SelectPlan plan = new SelectPlan(null, false);
         plan.addColumn(new FieldNode(null, "invalid", null, null));
     }
 
@@ -126,7 +126,7 @@ public class SelectPlanTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(conn, null, false);
+        final SelectPlan plan = new SelectPlan(null, false);
 
         TableNode table = new TableNode(null, AREA_CODES, "test", null);
 
