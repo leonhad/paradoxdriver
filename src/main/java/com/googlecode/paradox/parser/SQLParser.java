@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.0
  */
 public final class SQLParser {
@@ -143,7 +143,7 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.CHARACTER);
 
-        return new ValueNode(fieldName, fieldName, position, Types.VARCHAR);
+        return new ValueNode(fieldName, position, Types.VARCHAR);
     }
 
     private String getFieldAlias(String fieldName) throws SQLException {
@@ -237,16 +237,16 @@ public final class SQLParser {
             case CHARACTER:
                 // Found a String value.
                 this.expect(TokenType.CHARACTER);
-                ret = new ValueNode(fieldName, null, position, Types.VARCHAR);
+                ret = new ValueNode(fieldName, position, Types.VARCHAR);
                 break;
             case NUMERIC:
                 // Found a numeric value.
                 this.expect(TokenType.NUMERIC);
-                ret = new ValueNode(fieldName, null, position, Types.NUMERIC);
+                ret = new ValueNode(fieldName, position, Types.NUMERIC);
                 break;
             case NULL:
                 this.expect(TokenType.NULL);
-                ret = new ValueNode(null, null, position, Types.NULL);
+                ret = new ValueNode(null, position, Types.NULL);
                 break;
             case QUESTION_MARK:
                 this.expect(TokenType.QUESTION_MARK);
@@ -274,7 +274,7 @@ public final class SQLParser {
             name = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
         }
-        return new FieldNode(tableName, name, name, position);
+        return new FieldNode(tableName, name, position);
     }
 
     /**
@@ -459,7 +459,7 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
         }
 
-        return new FieldNode(newTableName, newFieldName, newFieldName, position);
+        return new FieldNode(newTableName, newFieldName, position);
     }
 
     private FunctionNode parseFunction(final String functionName) throws SQLException {
@@ -515,7 +515,7 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
         }
 
-        return new FieldNode(newTableName, newFieldName, newFieldName, position);
+        return new FieldNode(newTableName, newFieldName, position);
     }
 
     /**
@@ -679,10 +679,10 @@ public final class SQLParser {
             }
 
             if (isToken(TokenType.NUMERIC)) {
-                in.addField(new ValueNode(token.getValue(), token.getValue(), token.getPosition(), Types.NUMERIC));
+                in.addField(new ValueNode(token.getValue(), token.getPosition(), Types.NUMERIC));
                 this.expect(TokenType.NUMERIC);
             } else if (isToken(TokenType.CHARACTER)) {
-                in.addField(new ValueNode(token.getValue(), token.getValue(), token.getPosition(), Types.VARCHAR));
+                in.addField(new ValueNode(token.getValue(), token.getPosition(), Types.VARCHAR));
                 this.expect(TokenType.CHARACTER);
             } else {
                 position = null;
@@ -803,14 +803,16 @@ public final class SQLParser {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NUMERIC);
 
-        return new ValueNode(fieldName, fieldName, position, Types.NUMERIC);
+        return new ValueNode(fieldName, position, Types.NUMERIC);
     }
 
     private ValueNode parseNull() throws SQLException {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NULL);
 
-        return new ValueNode(null, "null", position, Types.NULL);
+        final ValueNode value = new ValueNode(null, position, Types.NULL);
+        value.setAlias("null");
+        return value;
     }
 
     /**
@@ -876,7 +878,7 @@ public final class SQLParser {
             switch (this.token.getType()) {
                 case NUMERIC:
                     this.expect(TokenType.NUMERIC);
-                    fieldNode = new ValueNode(fieldName, fieldName, position, Types.NUMERIC);
+                    fieldNode = new ValueNode(fieldName, position, Types.NUMERIC);
                     break;
                 case IDENTIFIER:
                     fieldNode = parseIdentifierFieldOnly(fieldName);
@@ -916,7 +918,7 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
         }
 
-        return new FieldNode(newTableName, newFieldName, newFieldName, position);
+        return new FieldNode(newTableName, newFieldName, position);
     }
 
     /**

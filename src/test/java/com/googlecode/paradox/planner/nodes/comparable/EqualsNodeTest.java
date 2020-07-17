@@ -17,7 +17,7 @@ import org.junit.Test;
 /**
  * Unit test for {@link EqualsNode} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class EqualsNodeTest {
@@ -27,8 +27,8 @@ public class EqualsNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode("table", "first", "first", null);
-        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final FieldNode first = new FieldNode("table", "first", null);
+        final FieldNode last = new FieldNode("table", "last", null);
         final EqualsNode node = new EqualsNode(first, last, null);
         Assert.assertEquals("Invalid node value.", "table.first = table.last", node.toString());
     }

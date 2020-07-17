@@ -10,15 +10,13 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Unit test for {@link TableNode} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public class TableNodeTest {
@@ -31,20 +29,5 @@ public class TableNodeTest {
         final TableNode node = new TableNode(null, "table.db", "alias", null);
         Assert.assertEquals("Invalid table name.", "table", node.getName());
         Assert.assertEquals("Invalid table alias.", "alias", node.getAlias());
-    }
-
-    /**
-     * Test for {@link TableNode#toString()} method.
-     */
-    @Test
-    public void testToString() {
-        final JoinNode join = new JoinNode(null, "table.db", "alias", JoinType.INNER, null);
-        final FieldNode fieldA = new FieldNode(null, "a", null, null);
-        final FieldNode fieldB = new FieldNode(null, "b", null, null);
-
-        join.setCondition(new EqualsNode(fieldA, fieldB, null));
-
-        Assert.assertEquals("Invalid JoinNode for toString().", "INNER JOIN table AS alias ON a = b ",
-                join.toString());
     }
 }

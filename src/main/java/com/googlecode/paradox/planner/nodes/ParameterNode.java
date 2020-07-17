@@ -35,7 +35,7 @@ public class ParameterNode extends FieldNode {
      * @param position       the current Scanner position.
      */
     public ParameterNode(final int parameterIndex, final ScannerPosition position) {
-        super(null, null, null, position);
+        super(null, null, position);
         this.parameterIndex = parameterIndex;
     }
 

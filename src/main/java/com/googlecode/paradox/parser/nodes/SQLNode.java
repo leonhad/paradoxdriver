@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Stores a SQL node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public class SQLNode {
@@ -56,19 +56,6 @@ public class SQLNode {
         this.name = name;
         this.alias = name;
         this.position = position;
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param name     the node name.
-     * @param alias    the node alias
-     * @param position the current Scanner position..
-     */
-    protected SQLNode(final String name, final String alias,
-                      final ScannerPosition position) {
-        this(name, position);
-        this.alias = alias;
     }
 
     public Set<FieldNode> getClauseFields() {

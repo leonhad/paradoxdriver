@@ -104,7 +104,7 @@ public class SelectPlanTest {
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn(new FieldNode("test", "ac", null, null));
+        plan.addColumn(new FieldNode("test", "ac", null));
         Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
     }
 
@@ -116,7 +116,7 @@ public class SelectPlanTest {
     @Test(expected = SQLException.class)
     public void testInvalidColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan(null, false);
-        plan.addColumn(new FieldNode(null, "invalid", null, null));
+        plan.addColumn(new FieldNode(null, "invalid", null));
     }
 
     /**
@@ -134,7 +134,7 @@ public class SelectPlanTest {
         tableNode.setTable(conn, table);
         plan.addTable(tableNode);
 
-        plan.addColumn(new FieldNode("test2", "ac", null, null));
+        plan.addColumn(new FieldNode("test2", "ac", null));
     }
 
     /**

@@ -16,7 +16,7 @@ import com.googlecode.paradox.utils.Utils;
 /**
  * Stores a table node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public class TableNode extends SQLNode {
@@ -36,8 +36,9 @@ public class TableNode extends SQLNode {
      */
     public TableNode(final String schemaName, final String name,
                      final String alias, ScannerPosition position) {
-        super(Utils.removeSuffix(name, "DB"), alias, position);
+        super(Utils.removeSuffix(name, "DB"), position);
 
+        this.alias = alias;
         this.schemaName = schemaName;
     }
 

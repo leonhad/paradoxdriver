@@ -11,6 +11,7 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.parser.ScannerPosition;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,10 @@ import java.util.List;
 /**
  * Stores a function node.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class FunctionNode extends SQLNode {
+public class FunctionNode extends FieldNode {
 
     /**
      * The list of parameters of this function.
@@ -35,7 +36,7 @@ public class FunctionNode extends SQLNode {
      * @param position the current Scanner position.
      */
     public FunctionNode(final String name, final ScannerPosition position) {
-        super(name, position);
+        super(null, name, position);
     }
 
     /**

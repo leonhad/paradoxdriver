@@ -515,14 +515,7 @@ public class SQLParserTest {
     @Test
     public void testSelectToken() throws SQLException {
         final SQLParser parser = new SQLParser("select");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
-
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
-
-        final SelectNode select = (SelectNode) tree;
-
-        Assert.assertEquals("Invalid node size.", 0, select.getFields().size());
+        Assert.assertThrows("Invalid SQL node", ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**

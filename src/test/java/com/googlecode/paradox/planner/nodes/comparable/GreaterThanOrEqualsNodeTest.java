@@ -26,7 +26,7 @@ import java.sql.Statement;
 /**
  * Unit test for {@link GreaterThanOrEqualsNode} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class GreaterThanOrEqualsNodeTest {
@@ -58,8 +58,8 @@ public class GreaterThanOrEqualsNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode("table", "first", "first", null);
-        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final FieldNode first = new FieldNode("table", "first", null);
+        final FieldNode last = new FieldNode("table", "last", null);
         final GreaterThanOrEqualsNode node = new GreaterThanOrEqualsNode(first, last, null);
         Assert.assertEquals("Invalid node value.", "table.first >= table.last", node.toString());
     }

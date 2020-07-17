@@ -28,8 +28,8 @@ public class ValueNode extends FieldNode {
      */
     private final int sqlType;
 
-    public ValueNode(final String name, final String alias, final ScannerPosition position, final int sqlType) {
-        super(null, name, alias, position);
+    public ValueNode(final String name, final ScannerPosition position, final int sqlType) {
+        super(null, name, position);
 
         this.sqlType = sqlType;
     }

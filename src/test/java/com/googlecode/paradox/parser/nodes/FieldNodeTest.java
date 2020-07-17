@@ -17,7 +17,7 @@ import org.junit.Test;
 /**
  * Unit test for {@link FieldNode}
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class FieldNodeTest {
@@ -27,7 +27,8 @@ public class FieldNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode node = new FieldNode("table", "field", "alias", null);
+        final FieldNode node = new FieldNode("table", "field", null);
+        node.setAlias("alias");
         Assert.assertEquals("Invalid node value.", "table.field AS alias", node.toString());
     }
 
@@ -36,7 +37,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithNullAlias() {
-        final FieldNode node = new FieldNode("table", "field", null, null);
+        final FieldNode node = new FieldNode("table", "field", null);
         Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 
@@ -45,7 +46,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithNullTable() {
-        final FieldNode node = new FieldNode(null, "field", null, null);
+        final FieldNode node = new FieldNode(null, "field", null);
         Assert.assertEquals("Invalid node value.", "field", node.toString());
     }
 
@@ -54,7 +55,7 @@ public class FieldNodeTest {
      */
     @Test
     public void testToStringWithoutAlias() {
-        final FieldNode node = new FieldNode("table", "field", "field", null);
+        final FieldNode node = new FieldNode("table", "field", null);
         Assert.assertEquals("Invalid node value.", "table.field", node.toString());
     }
 }

@@ -10,11 +10,7 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
-import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
-import com.googlecode.paradox.planner.nodes.comparable.NotEqualsNode;
-import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,7 +20,7 @@ import java.sql.Types;
 /**
  * Unit test for {@link SelectNode}.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -51,18 +47,6 @@ public class SelectNodeTest {
     }
 
     /**
-     * Test for fields.
-     */
-    @Test
-    public void testFields() {
-        final SelectNode node = new SelectNode(null);
-        final FieldNode field = new FieldNode("table", "field", null, null);
-        Assert.assertEquals("Invalid node size.", 0, node.getFields().size());
-        node.addField(field);
-        Assert.assertEquals("Invalid node size.", 1, node.getFields().size());
-    }
-
-    /**
      * Test for group by.
      */
     @Test
@@ -80,7 +64,7 @@ public class SelectNodeTest {
     @Test
     public void testOrderBy() {
         final SelectNode node = new SelectNode(null);
-        final ValueNode value = new ValueNode("1", null, null, Types.NUMERIC);
+        final ValueNode value = new ValueNode("1", null, Types.NUMERIC);
         Assert.assertEquals("Invalid node size.", 0, node.getOrder().size());
         node.addOrderBy(value, OrderType.ASC);
         Assert.assertEquals("Invalid node size.", 1, node.getOrder().size());
@@ -96,58 +80,5 @@ public class SelectNodeTest {
         Assert.assertEquals("Invalid node size.", 0, node.getTables().size());
         node.addTable(table);
         Assert.assertEquals("Invalid node size.", 1, node.getTables().size());
-    }
-
-    /**
-     * Test for {@link SelectNode#toString()} method.
-     */
-    @Test
-    public void testToString() {
-        final SelectNode node = new SelectNode(null);
-        node.addField(new FieldNode("t", "field", "f", null));
-        node.addField(new FieldNode("b", "field2", "f2", null));
-        node.addTable(new TableNode(null, "table1", "t", null));
-        node.addTable(new TableNode(null, "table2", "b", null));
-        node.addGroupBy(new IdentifierNode("f1", null));
-        node.addGroupBy(new IdentifierNode("f2", null));
-        node.addOrderBy(new ValueNode("f", null, null, Types.INTEGER), OrderType.ASC);
-        node.addOrderBy(new ValueNode("f2", null, null, Types.INTEGER), OrderType.ASC);
-
-        ANDNode andNode = new ANDNode(null, null);
-        andNode.addChild(new EqualsNode(
-                new FieldNode("t", "field", null, null),
-                new FieldNode("t", "field2", null, null), null));
-        andNode.addChild(new NotEqualsNode(
-                new FieldNode("t", "field", null, null),
-                new FieldNode("t", "field2", null, null), null));
-        node.setCondition(andNode);
-
-        Assert.assertEquals("Invalid node value.",
-                "SELECT t.field AS f, b.field2 AS f2 FROM table1 AS t, table2 AS b " +
-                        "WHERE t.field = t.field2 AND t.field <> t.field2 GROUP BY f1, f2 ORDER BY f, f2",
-                node.toString());
-    }
-
-    /**
-     * Test for {@link SelectNode#toString()} method with empty where.
-     */
-    @Test
-    public void testToStringEmptyWhere() {
-        final SelectNode node = new SelectNode(null);
-        node.addField(new FieldNode("t", "field", "f", null));
-        node.addField(new FieldNode("b", "field2", "f2", null));
-        node.setCondition(null);
-        Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
-    }
-
-    /**
-     * Test for {@link SelectNode#toString()} method with fields.
-     */
-    @Test
-    public void testToStringFields() {
-        final SelectNode node = new SelectNode(null);
-        node.addField(new FieldNode("t", "field", "f", null));
-        node.addField(new FieldNode("b", "field2", "f2", null));
-        Assert.assertEquals("Invalid node value.", "SELECT t.field AS f, b.field2 AS f2", node.toString());
     }
 }

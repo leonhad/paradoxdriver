@@ -27,8 +27,8 @@ public class GreaterThanNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode first = new FieldNode("table", "first", "first", null);
-        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final FieldNode first = new FieldNode("table", "first", null);
+        final FieldNode last = new FieldNode("table", "last", null);
         final GreaterThanNode node = new GreaterThanNode(first, last, null);
         Assert.assertEquals("Invalid node value.", "table.first > table.last", node.toString());
     }

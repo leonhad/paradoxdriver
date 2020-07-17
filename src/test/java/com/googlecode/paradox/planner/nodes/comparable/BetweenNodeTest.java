@@ -26,7 +26,7 @@ import java.sql.Statement;
 /**
  * Unit test for {@link BetweenNode} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -61,9 +61,10 @@ public class BetweenNodeTest {
      */
     @Test
     public void testField() {
-        final FieldNode field = new FieldNode("table", "field", "alias", null);
-        final FieldNode first = new FieldNode("table", "first", "first", null);
-        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final FieldNode field = new FieldNode("table", "field", null);
+        field.setAlias("alias");
+        final FieldNode first = new FieldNode("table", "first", null);
+        final FieldNode last = new FieldNode("table", "last", null);
         final BetweenNode node = new BetweenNode(field, first, last, null);
         Assert.assertEquals("Invalid field value",
                 "table.field AS alias BETWEEN table.first AND table.last", node.toString());
@@ -74,9 +75,9 @@ public class BetweenNodeTest {
      */
     @Test
     public void testToString() {
-        final FieldNode field = new FieldNode("table", "field", "field", null);
-        final FieldNode first = new FieldNode("table", "first", "first", null);
-        final FieldNode last = new FieldNode("table", "last", "last", null);
+        final FieldNode field = new FieldNode("table", "field", null);
+        final FieldNode first = new FieldNode("table", "first", null);
+        final FieldNode last = new FieldNode("table", "last", null);
         final BetweenNode node = new BetweenNode(field, first, last, null);
         Assert.assertEquals("Invalid node values", "table.field BETWEEN table.first AND table.last", node.toString());
     }
