@@ -289,6 +289,17 @@ public class SQLParserTest {
     }
 
     /**
+     * Test for no fields in order by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNoOrderByFields() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT * FROM a ORDER BY");
+        Assert.assertThrows("Invalid table loaded", SQLException.class, parser::parse);
+    }
+
+    /**
      * Test for tables.
      *
      * @throws SQLException in case of failures.

@@ -850,8 +850,18 @@ public final class SQLParser {
      * @throws SQLException in case of failures.
      */
     private void parseOrderBy(final SelectNode select) throws SQLException {
+        ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.ORDER);
+
+        if (this.token != null) {
+            position = this.token.getPosition();
+        }
         this.expect(TokenType.BY);
+
+        if (this.token == null) {
+            position.addOffset(TokenType.BY.name().length());
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_COLUMN_LIST, position);
+        }
 
         boolean firstField = true;
         do {
@@ -862,7 +872,7 @@ public final class SQLParser {
 
             final String fieldName = this.token.getValue();
             FieldNode fieldNode;
-            final ScannerPosition position = token.getPosition();
+            position = token.getPosition();
             switch (this.token.getType()) {
                 case NUMERIC:
                     this.expect(TokenType.NUMERIC);
