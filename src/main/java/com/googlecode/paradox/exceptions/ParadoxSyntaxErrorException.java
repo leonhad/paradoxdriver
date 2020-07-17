@@ -28,7 +28,7 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
     private static String message(final String message, final ScannerPosition position) {
         if (position != null) {
-            return String.format("%s at line %s, column %s.", message, position.getLine(), position.getColumn());
+            return String.format("%s in line %s, column %s.", message, position.getLine(), position.getColumn());
         }
 
         return message;
