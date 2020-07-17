@@ -926,7 +926,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private SelectNode parseSelect() throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        ScannerPosition position = this.token.getPosition();
         final SelectNode select = new SelectNode(position);
         this.expect(TokenType.SELECT);
 
@@ -939,13 +939,25 @@ public final class SQLParser {
         // Field loop
         this.parseFields(select);
 
+        if (select.getFields().isEmpty()) {
+            position.addOffset(TokenType.SELECT.name().length());
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_COLUMN_LIST, position);
+        }
+
         if (isToken(TokenType.FROM)) {
             this.parseFrom(select);
 
             // Only SELECT with FROM can have WHERE clause.
-            if (this.scanner.hasNext() && (this.token.getType() == TokenType.WHERE)) {
+            if (isToken(TokenType.WHERE)) {
+                position = this.token.getPosition();
                 this.expect(TokenType.WHERE);
                 select.setCondition(this.parseCondition());
+
+                if (select.getCondition() == null) {
+                    position.addOffset(TokenType.WHERE.name().length());
+                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_CONDITIONAL_LIST,
+                            position);
+                }
             }
 
             if (isToken(TokenType.ORDER)) {

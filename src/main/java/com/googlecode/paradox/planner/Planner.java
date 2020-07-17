@@ -69,6 +69,10 @@ public class Planner {
     private static void parseColumns(final SelectNode statement, final SelectPlan plan) throws SQLException {
         for (final SQLNode field : statement.getFields()) {
             if (field instanceof AsteriskNode) {
+                if (plan.getTables().isEmpty()) {
+                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_WITHOUT_TABLE,
+                            field.getPosition());
+                }
                 parseAsterisk(plan, (AsteriskNode) field);
             } else {
                 plan.addColumn((FieldNode) field);

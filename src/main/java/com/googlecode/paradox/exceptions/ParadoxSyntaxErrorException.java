@@ -49,7 +49,11 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
         INVALID_CHAR("007", "Invalid value, expected a single char value"),
 
-        EMPTY_TABLE_LIST("008", "Empty table list");
+        EMPTY_TABLE_LIST("008", "Empty table list"),
+
+        EMPTY_CONDITIONAL_LIST("009", "Where without any conditions"),
+
+        ASTERISK_WITHOUT_TABLE("010", "Asterisk without table is not supported");
 
         private final String code;
 
