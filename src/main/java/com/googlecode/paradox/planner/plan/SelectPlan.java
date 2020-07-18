@@ -20,8 +20,10 @@ import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.FieldUtils;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.nodes.function.FunctionNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
@@ -45,6 +47,11 @@ public final class SelectPlan implements Plan {
      * The columns in this plan.
      */
     private final List<Column> columns = new ArrayList<>();
+
+    /**
+     * The function columns in this plan.
+     */
+    private final List<Column> functionColumns = new ArrayList<>();
 
     /**
      * The tables in this plan.
@@ -241,17 +248,31 @@ public final class SelectPlan implements Plan {
     public void addColumn(final FieldNode node) throws SQLException {
         if (node instanceof ValueNode) {
             this.columns.add(new Column((ValueNode) node));
-            return;
-        }
+        } else if (node instanceof FunctionNode) {
+            final FunctionNode functionNode = (FunctionNode) node;
+            this.columns.add(new Column(functionNode));
 
-        final List<ParadoxField> fields = getParadoxFields(node);
-        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
-            c.setName(node.getAlias());
-            this.columns.add(c);
-        });
+            for (final FieldNode fieldNode : functionNode.getFields()) {
+                final List<ParadoxField> fields = getParadoxFields(fieldNode);
+                fields.stream().map(Column::new).findFirst().ifPresent(c -> {
+                    c.setFunction(functionNode);
+                    this.functionColumns.add(c);
+                });
+            }
+        } else {
+            final List<ParadoxField> fields = getParadoxFields(node);
+            fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
+                c.setName(node.getAlias());
+                this.columns.add(c);
+            });
+        }
     }
 
     private List<ParadoxField> getParadoxFields(final FieldNode node) throws ParadoxException {
+        if (this.tables.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         final List<ParadoxField> fields = new ArrayList<>();
 
         for (final PlanTableNode table : this.tables) {
@@ -506,12 +527,16 @@ public final class SelectPlan implements Plan {
         for (final PlanTableNode table : this.tables) {
             checkCancel();
 
-            // From columns in SELECT clause.
+            // Columns in SELECT clause.
             final Set<Column> columnsToLoad =
                     this.columns.stream().filter(c -> c.isThis(table.getTable()))
                             .collect(Collectors.toSet());
 
-            // From columns in ORDER BY clause.
+            // Columns in SELECT clause from function.
+            columnsToLoad.addAll(this.functionColumns.stream().filter(c -> c.isThis(table.getTable()))
+                    .collect(Collectors.toSet()));
+
+            // Columns in ORDER BY clause.
             columnsToLoad.addAll(this.orderByFields.stream().filter(c -> c.isThis(table.getTable()))
                     .collect(Collectors.toSet()));
 
@@ -569,6 +594,7 @@ public final class SelectPlan implements Plan {
         }
 
         setIndexes(columnsLoaded);
+        setFunctionIndexes(columnsLoaded);
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
@@ -624,6 +650,14 @@ public final class SelectPlan implements Plan {
         }
     }
 
+    private void setFunctionIndexes(final List<Column> loadedColumns) throws SQLException {
+        for (final Column column : functionColumns) {
+            for (final FieldNode node : column.getFunction().getFields()) {
+                FieldUtils.getIndex(node, loadedColumns, this.tables);
+            }
+        }
+    }
+
     private int[] mapColumnIndexes(final List<Column> loadedColumns) {
         final int[] mapColumns = new int[this.columns.size()];
         Arrays.fill(mapColumns, -1);
@@ -658,8 +692,13 @@ public final class SelectPlan implements Plan {
                     // A field mapped value.
                     finalRow[i] = tableRow[index];
                 } else {
-                    // A fixed value.
-                    finalRow[i] = this.columns.get(i).getValue();
+                    FunctionNode functionNode = this.columns.get(i).getFunction();
+                    if (functionNode == null) {
+                        // A fixed value.
+                        finalRow[i] = this.columns.get(i).getValue();
+                    } else {
+                        finalRow[i] = functionNode.getValue(connection, tableRow, parameters);
+                    }
                 }
             }
 

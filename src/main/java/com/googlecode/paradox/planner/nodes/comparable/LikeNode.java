@@ -13,6 +13,7 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.FieldUtils;
 import com.googlecode.paradox.utils.Expressions;
 
 /**
@@ -41,8 +42,8 @@ public class LikeNode extends AbstractComparableNode {
 
     @Override
     public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
-        final Object value1 = getValue(row, field, parameters);
-        final Object value2 = getValue(row, last, parameters);
+        final Object value1 = FieldUtils.getValue(row, field, parameters);
+        final Object value2 = FieldUtils.getValue(row, last, parameters);
 
         if (value1 == null || value2 == null) {
             return false;

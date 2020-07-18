@@ -16,6 +16,7 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
+import com.googlecode.paradox.planner.nodes.function.FunctionNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
@@ -493,6 +494,8 @@ public final class SQLParser {
             }
         }
         this.expect(TokenType.R_PAREN);
+
+        functionNode.validate();
         return functionNode;
     }
 

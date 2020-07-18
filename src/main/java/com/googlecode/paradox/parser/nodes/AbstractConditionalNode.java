@@ -11,13 +11,10 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.exceptions.ParadoxException;
-import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.ParameterNode;
+import com.googlecode.paradox.planner.nodes.FieldUtils;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
-import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
@@ -57,58 +54,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
     public abstract boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters);
 
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
-        getIndex(field, columns, tables);
-    }
-
-    protected void getIndex(final FieldNode field, final List<Column> columns, final List<PlanTableNode> tables)
-            throws SQLException {
-
-        // Do not set indexes in value or parameter nodes.
-        if (field == null || field instanceof ValueNode || field instanceof ParameterNode) {
-            return;
-        }
-
-        final String tableName = tables.stream()
-                .filter(t -> t.getAlias().equalsIgnoreCase(field.getTableName()))
-                .map(PlanTableNode::getTable).map(ParadoxTable::getName)
-                .findFirst().orElse(field.getTableName());
-
-        int index = -1;
-        for (int i = 0; i < columns.size(); i++) {
-            final Column column = columns.get(i);
-
-            // Invalid table name.
-            if (tableName != null && !tableName.equalsIgnoreCase(column.getField().getTable().getName())) {
-                continue;
-            }
-
-            if (column.getField().getName().equalsIgnoreCase(field.getName())) {
-                if (index != -1) {
-                    throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, field.toString());
-                }
-                index = i;
-            }
-        }
-
-        if (index == -1) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, field.toString());
-        }
-
-        field.setIndex(index);
-    }
-
-    protected Object getValue(final Object[] row, final FieldNode field, final Object[] parameters) {
-        Object ret;
-        if (field instanceof ParameterNode) {
-            ret = ((ParameterNode) field).getValue(parameters);
-        } else if (field.getIndex() == -1) {
-            // Not a table field.
-            ret = field.getName();
-        } else {
-            ret = row[field.getIndex()];
-        }
-
-        return ret;
+        FieldUtils.getIndex(field, columns, tables);
     }
 
     @Override

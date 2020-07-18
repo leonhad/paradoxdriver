@@ -67,7 +67,7 @@ public class SQLNode {
      *
      * @return the node alias.
      */
-    public final String getAlias() {
+    public String getAlias() {
         return this.alias;
     }
 

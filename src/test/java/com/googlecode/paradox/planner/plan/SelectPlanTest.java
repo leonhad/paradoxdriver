@@ -303,6 +303,21 @@ public class SelectPlanTest {
     }
 
     /**
+     * Test for function with fields.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFunctionWithFields() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select upper(a.DATE) ret from fields.DATE4 a");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "UPPER", rs.getString("ret"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
      * Test for function.
      *
      * @throws SQLException in case of failures.
@@ -312,7 +327,22 @@ public class SelectPlanTest {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select upper('upper') as ret");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "UPPER", rs.getString("rer"));
+            Assert.assertEquals("Invalid value", "UPPER", rs.getString("ret"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for function alias.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFunctionAlias() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select upper('upper')");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "UPPER", rs.getString("upper('upper')"));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }

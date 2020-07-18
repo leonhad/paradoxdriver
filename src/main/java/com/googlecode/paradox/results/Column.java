@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.nodes.function.FunctionNode;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -58,7 +59,12 @@ public final class Column {
     /**
      * Fixed value.
      */
-    private String value;
+    private Object value;
+
+    /**
+     * The function associated to this value.
+     */
+    private FunctionNode function;
 
     /**
      * Create a new instance.
@@ -74,6 +80,11 @@ public final class Column {
     public Column(final ValueNode node) {
         this(node.getAlias(), node.getSqlType());
         this.value = node.getName();
+    }
+
+    public Column(final FunctionNode node) {
+        this(node.getAlias(), node.getSqlType());
+        this.function = node;
     }
 
     /**
@@ -178,7 +189,7 @@ public final class Column {
      *
      * @return the column value.
      */
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
@@ -270,6 +281,19 @@ public final class Column {
      */
     public void setPrecision(final int precision) {
         this.precision = precision;
+    }
+
+    /**
+     * Gets the function associated to this value.
+     *
+     * @return the function associated to this value.
+     */
+    public FunctionNode getFunction() {
+        return function;
+    }
+
+    public void setFunction(FunctionNode function) {
+        this.function = function;
     }
 
     @Override

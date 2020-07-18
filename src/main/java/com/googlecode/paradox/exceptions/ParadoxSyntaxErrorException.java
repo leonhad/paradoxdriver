@@ -26,6 +26,10 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
         super(message(error.description, position), BASE_CODE + error.code);
     }
 
+    public ParadoxSyntaxErrorException(final Error error, final String parameter, final ScannerPosition position) {
+        super(message(String.format(error.description, parameter), position), BASE_CODE + error.code);
+    }
+
     private static String message(final String message, final ScannerPosition position) {
         if (position != null) {
             return String.format("%s in line %s, column %s.", message, position.getLine(), position.getColumn());
@@ -53,7 +57,11 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
         EMPTY_CONDITIONAL_LIST("009", "Where without any conditions"),
 
-        ASTERISK_WITHOUT_TABLE("010", "Asterisk without table is not supported");
+        ASTERISK_WITHOUT_TABLE("010", "Asterisk without table is not supported"),
+
+        FUNCTION_NOT_FOUND("011", "Function %s not found"),
+
+        INVALID_PARAMETER_COUNT("012", "Invalid function parameter count");
 
         private final String code;
 

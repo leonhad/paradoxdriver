@@ -16,6 +16,7 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
+import com.googlecode.paradox.planner.nodes.function.FunctionNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
@@ -808,22 +809,7 @@ public class SQLParserTest {
     @Test
     public void testFunctionThreeFields() throws SQLException {
         final SQLParser parser = new SQLParser("select lower(1, null, a.b) from a");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
-
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
-        final SelectNode select = (SelectNode) tree;
-
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
-        Assert.assertEquals("Invalid table count", 1, select.getTables().size());
-
-        final FunctionNode node = (FunctionNode) select.getFields().get(0);
-        Assert.assertEquals("Invalid field size", "lower", node.getName());
-        Assert.assertEquals("Invalid field size", 3, node.getParameters().size());
-        Assert.assertEquals("Invalid field value", "1", node.getParameters().get(0).getName());
-        Assert.assertNull("Invalid field value", node.getParameters().get(1).getName());
-        Assert.assertEquals("Invalid field value", "a.b", node.getParameters().get(2).toString());
+        Assert.assertThrows("Invalid function", ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
