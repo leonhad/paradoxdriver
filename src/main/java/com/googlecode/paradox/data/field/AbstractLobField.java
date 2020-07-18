@@ -87,9 +87,9 @@ public abstract class AbstractLobField implements FieldParser {
         // recalculate offset.
         int bufferOffset = (int) (pos - offset);
         if (bufferOffset > 0) {
-            byte[] newBuffer = new byte[size];
-            System.arraycopy(buffer.array(), bufferOffset, newBuffer, 0, newBuffer.length);
-            buffer = ByteBuffer.wrap(newBuffer);
+            buffer.position(bufferOffset);
+            buffer = buffer.slice();
+            buffer.limit(size);
         } else {
             buffer.limit(size);
         }
