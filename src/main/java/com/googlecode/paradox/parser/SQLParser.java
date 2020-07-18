@@ -12,6 +12,7 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionNode;
+import com.googlecode.paradox.function.definition.FunctionFactory;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
@@ -29,7 +30,7 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.0
  */
 public final class SQLParser {
@@ -456,9 +457,19 @@ public final class SQLParser {
             }
 
             this.expect(TokenType.IDENTIFIER);
+        } else if (FunctionFactory.isFunctionAlias(fieldName)) {
+            // A field without table alias can be a function alias.
+            return parseFunctionAlias(fieldName, position);
         }
 
         return new FieldNode(newTableName, newFieldName, position);
+    }
+
+    private FunctionNode parseFunctionAlias(final String functionName, final ScannerPosition position)
+            throws SQLException {
+        final FunctionNode functionNode = new FunctionNode(functionName, position);
+        functionNode.validate(position);
+        return functionNode;
     }
 
     private FunctionNode parseFunction(final String functionName) throws SQLException {

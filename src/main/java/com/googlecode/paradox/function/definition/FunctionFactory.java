@@ -14,11 +14,27 @@ import com.googlecode.paradox.function.*;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+/**
+ * Function factory to register and produce new functions.
+ *
+ * @version 1.6.0
+ * @since 1.0
+ */
 public final class FunctionFactory {
 
+    /**
+     * The registered function list.
+     */
     private static final HashMap<String, Supplier<? extends IFunction>> FUNCTIONS = new HashMap<>();
+
+    /**
+     * The registered function list that can be called without parenthesis.
+     */
+    private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
 
     static {
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
@@ -31,12 +47,39 @@ public final class FunctionFactory {
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
+
+        FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    /**
+     * Utility class, not for use.
+     */
     private FunctionFactory() {
         // Not used.
     }
 
+    /**
+     * Gets a function by alias.
+     *
+     * @param alias the function alias.
+     * @return the  a function by  alias.
+     */
+    public static boolean isFunctionAlias(final String alias) {
+        if (alias != null) {
+            final Supplier<? extends IFunction> supplier = FUNCTION_ALIAS.get(alias.toUpperCase(Locale.US));
+            return supplier != null;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets a function by name.
+     *
+     * @param name the function by name.
+     * @return the function by name.
+     */
     public static IFunction getByName(final String name) {
         if (name != null) {
             final Supplier<? extends IFunction> supplier = FUNCTIONS.get(name.toUpperCase(Locale.US));

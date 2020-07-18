@@ -40,6 +40,11 @@ public class CurrentDateFunction implements IFunction {
     }
 
     @Override
+    public boolean isAllowAlias() {
+        return true;
+    }
+
+    @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
         return new Date(System.currentTimeMillis());
     }

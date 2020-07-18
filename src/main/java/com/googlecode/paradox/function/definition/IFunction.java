@@ -69,6 +69,15 @@ public interface IFunction {
      */
     Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) throws SQLException;
 
+    /**
+     * If this function can be called without parenthesis.
+     *
+     * @return <code>true</code> if this function can be called without parenthesis.
+     */
+    default boolean isAllowAlias() {
+        return false;
+    }
+
     default void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         for (final SQLNode node : parameters) {
             if (node instanceof AsteriskNode) {
