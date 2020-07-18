@@ -10,9 +10,7 @@
  */
 package com.googlecode.paradox.planner;
 
-import com.googlecode.paradox.planner.function.IFunction;
-import com.googlecode.paradox.planner.function.LowerFunction;
-import com.googlecode.paradox.planner.function.UpperFunction;
+import com.googlecode.paradox.planner.function.*;
 
 import java.sql.Types;
 import java.util.HashMap;
@@ -24,7 +22,10 @@ public final class FunctionFactory {
     private static final HashMap<String, Supplier<? extends IFunction>> FUNCTIONS = new HashMap<>();
 
     static {
+        FUNCTIONS.put(TodayFunction.NAME, TodayFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
+        FUNCTIONS.put(NowFunction.NAME, NowFunction::new);
+        FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
     }
 

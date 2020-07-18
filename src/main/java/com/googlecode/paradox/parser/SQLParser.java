@@ -493,9 +493,14 @@ public final class SQLParser {
                     break;
             }
         }
+
+        ScannerPosition position = null;
+        if (this.token != null) {
+            position = this.token.getPosition();
+        }
         this.expect(TokenType.R_PAREN);
 
-        functionNode.validate();
+        functionNode.validate(position);
         return functionNode;
     }
 

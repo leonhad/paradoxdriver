@@ -59,9 +59,9 @@ public class FunctionNode extends FieldNode {
         }
     }
 
-    public void validate() throws ParadoxSyntaxErrorException {
+    public void validate(final ScannerPosition position) throws ParadoxSyntaxErrorException {
         if (function.parameterCount() != parameters.size()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, position);
         }
     }
 
