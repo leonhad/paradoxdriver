@@ -8,13 +8,20 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.nodes;
+package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.ParameterNode;
+import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 
+import java.sql.JDBCType;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,13 +31,37 @@ import java.util.List;
  * @version 1.0
  * @since 1.6.0
  */
-public final class FieldUtils {
+public final class FieldValueUtils {
 
     /**
      * Utility class, not for use.
      */
-    private FieldUtils() {
+    private FieldValueUtils() {
         // Not used.
+    }
+
+    public static int getSqlType(final Object[] values, final int[] types) throws ParadoxSyntaxErrorException {
+        if (types.length > 0) {
+            int current = Types.NULL;
+            for (int type : types) {
+                if (current == Types.NULL) {
+                    current = type;
+                }
+
+                if (current != Types.NULL && current != type) {
+                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_DATA_TYPE,
+                            JDBCType.valueOf(current).name(), JDBCType.valueOf(type).name());
+                }
+            }
+        }
+
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                return types[i];
+            }
+        }
+
+        return Types.NULL;
     }
 
     /**

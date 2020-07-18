@@ -13,13 +13,11 @@ package com.googlecode.paradox.function;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.definition.IFunction;
-import com.googlecode.paradox.parser.nodes.AsteriskNode;
-import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.FieldValueUtils;
 
-import java.sql.JDBCType;
 import java.sql.Types;
-import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * The SQL coalesce function.
@@ -33,7 +31,7 @@ public class CoalesceFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "COALESCE";
-    private int sqlType = Types.VARCHAR;
+    protected int sqlType = Types.VARCHAR;
 
     @Override
     public int sqlType() {
@@ -53,45 +51,7 @@ public class CoalesceFunction implements IFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws ParadoxSyntaxErrorException {
-        if (types.length > 0) {
-            int current = Types.NULL;
-            for (int type : types) {
-                if (current == Types.NULL) {
-                    current = type;
-                }
-
-                if (current != Types.NULL && current != type) {
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_DATA_TYPE,
-                            JDBCType.valueOf(current).name(), JDBCType.valueOf(type).name());
-                }
-            }
-        }
-
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != null) {
-                this.sqlType = types[i];
-                return values[i];
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        for (final SQLNode node : parameters) {
-            if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
-            }
-        }
-
-        if (!parameters.isEmpty()) {
-            final SQLNode node = parameters.get(0);
-
-            if (node instanceof ValueNode) {
-                this.sqlType = ((ValueNode) node).getSqlType();
-            }
-        }
+        this.sqlType = FieldValueUtils.getSqlType(values, types);
+        return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);
     }
 }

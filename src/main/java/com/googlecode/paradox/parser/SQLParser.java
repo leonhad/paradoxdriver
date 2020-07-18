@@ -11,12 +11,12 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionNode;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
-import com.googlecode.paradox.function.FunctionNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
@@ -250,9 +250,7 @@ public final class SQLParser {
                 ret = new ValueNode(null, position, Types.NULL);
                 break;
             case QUESTION_MARK:
-                this.expect(TokenType.QUESTION_MARK);
-                ret = new ParameterNode(parameterCount, position);
-                parameterCount++;
+                ret = parseParameter();
                 break;
             default:
                 // Found a field.
@@ -488,6 +486,9 @@ public final class SQLParser {
                 case ASTERISK:
                     functionNode.addParameter(this.parseAsterisk(null));
                     break;
+                case QUESTION_MARK:
+                    functionNode.addParameter(this.parseParameter());
+                    break;
                 default:
                     functionNode.addParameter(this.parseIdentifierFieldFunction(this.token.getValue()));
                     break;
@@ -502,6 +503,14 @@ public final class SQLParser {
 
         functionNode.validate(position);
         return functionNode;
+    }
+
+    private ParameterNode parseParameter() throws SQLException {
+        final ScannerPosition position = this.token.getPosition();
+        this.expect(TokenType.QUESTION_MARK);
+        final ParameterNode node = new ParameterNode(parameterCount, position);
+        parameterCount++;
+        return node;
     }
 
     private SQLNode parseIdentifierFieldFunction(final String fieldName) throws SQLException {

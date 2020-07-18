@@ -13,17 +13,18 @@ package com.googlecode.paradox.planner.plan;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.function.FunctionNode;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.FieldUtils;
+import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
-import com.googlecode.paradox.function.FunctionNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
@@ -269,7 +270,7 @@ public final class SelectPlan implements Plan {
     }
 
     private List<ParadoxField> getParadoxFields(final FieldNode node) throws ParadoxException {
-        if (node instanceof ValueNode) {
+        if (node instanceof ValueNode || node instanceof ParameterNode) {
             // Do not process value nodes.
             return Collections.emptyList();
         }
@@ -516,11 +517,15 @@ public final class SelectPlan implements Plan {
      * {@inheritDoc}.
      */
     @Override
-    public void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters)
-            throws SQLException {
+    public void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters,
+                        final int[] parameterTypes) throws SQLException {
+
+        // Can't do anything without fields defined.
         if (this.columns.isEmpty()) {
             return;
         }
+
+        // Reset the cancelled state.
         cancelled = false;
 
         final List<Column> columnsLoaded = new ArrayList<>();
@@ -601,7 +606,7 @@ public final class SelectPlan implements Plan {
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
         processOrderBy(rawData, columnsLoaded);
-        filter(connection, rawData, mapColumns, maxRows, parameters, columnsLoaded);
+        filter(connection, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
     }
 
     private void processOrderBy(final List<Object[]> rawData, final List<Column> loadedColumns) {
@@ -654,7 +659,7 @@ public final class SelectPlan implements Plan {
     private void setFunctionIndexes(final List<Column> loadedColumns) throws SQLException {
         for (final Column column : functionColumns) {
             for (final FieldNode node : column.getFunction().getFields()) {
-                FieldUtils.setFieldIndex(node, loadedColumns, this.tables);
+                FieldValueUtils.setFieldIndex(node, loadedColumns, this.tables);
             }
         }
     }
@@ -676,8 +681,8 @@ public final class SelectPlan implements Plan {
     }
 
     private void filter(final ParadoxConnection connection, final List<Object[]> rowValues, final int[] mapColumns,
-                        final int maxRows, final Object[] parameters, final List<Column> loadedColumns)
-            throws SQLException {
+                        final int maxRows, final Object[] parameters, final int[] parameterTypes,
+                        final List<Column> columnsLoaded) throws SQLException {
 
         for (final Object[] tableRow : rowValues) {
             checkCancel();
@@ -702,7 +707,8 @@ public final class SelectPlan implements Plan {
                         // A function processed value.
                         if (!functionNode.isGrouping()) {
                             // Not process grouping function by now.
-                            finalRow[i] = functionNode.execute(connection, tableRow, parameters, loadedColumns);
+                            finalRow[i] = functionNode.execute(connection, tableRow, parameters, parameterTypes,
+                                    columnsLoaded);
                             // The function may change the result type.
                             this.columns.get(i).setType(functionNode.getSqlType());
                         }

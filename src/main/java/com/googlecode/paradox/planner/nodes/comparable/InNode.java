@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.FieldUtils;
+import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
@@ -63,7 +63,7 @@ public final class InNode extends AbstractComparableNode {
 
     @Override
     public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
-        final Object value1 = FieldUtils.getValue(row, field, parameters);
+        final Object value1 = FieldValueUtils.getValue(row, field, parameters);
 
         for (final ValueNode value : values) {
             final Object value2 = value.getName();

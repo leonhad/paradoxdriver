@@ -16,10 +16,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import org.junit.*;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * Unit test for coalesce function.
@@ -91,6 +88,43 @@ public class CoalesceFunctionTest {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", 0, rs.getInt("ret"));
             Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for coalesce with 3 parameters.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCoalesceThreeParameters() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select coalesce(1, b, 1) ret from fields.bcd");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for coalesce with parameters.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCoalesceWithParameters() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select coalesce(?, 1)")) {
+            stmt.setNull(1, Types.NUMERIC);
+            try (final ResultSet rs = stmt.executeQuery()) {
+                Assert.assertTrue("Invalid result set state", rs.next());
+                Assert.assertEquals("Invalid value", 1, rs.getInt(1));
+                Assert.assertFalse("Invalid result set state", rs.next());
+            }
         }
     }
 

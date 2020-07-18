@@ -8,34 +8,44 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.nodes.comparable;
+package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.parser.ScannerPosition;
-import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.definition.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 
+import java.sql.JDBCType;
+import java.sql.Types;
+
 /**
- * Is null node.
+ * The SQL NULLIF function.
  *
- * @version 1.3
+ * @version 1.0
  * @since 1.6.0
  */
-public class IsNullNode extends AbstractComparableNode {
+public class NullIfFunction extends CoalesceFunction {
 
     /**
-     * Create a new instance.
-     *
-     * @param field    the first node.
-     * @param position the current Scanner position.
+     * The function name.
      */
-    public IsNullNode(final FieldNode field, final ScannerPosition position) {
-        super("IS", field, null, position);
+    public static final String NAME = "NULLIF";
+
+    @Override
+    public int parameterCount() {
+        return 2;
     }
 
     @Override
-    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
-        final Object value1 = FieldValueUtils.getValue(row, field, parameters);
-        return value1 == null;
+    public boolean isVariableParameters() {
+        return false;
+    }
+
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
+            throws ParadoxSyntaxErrorException {
+        this.sqlType = FieldValueUtils.getSqlType(values, types);
+
+        return null;
     }
 }

@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.FieldUtils;
+import com.googlecode.paradox.planner.FieldValueUtils;
 
 /**
  * Is not null node.
@@ -35,7 +35,7 @@ public class IsNotNullNode extends AbstractComparableNode {
 
     @Override
     public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
-        final Object value1 = FieldUtils.getValue(row, field, parameters);
+        final Object value1 = FieldValueUtils.getValue(row, field, parameters);
         return value1 != null;
     }
 }

@@ -132,7 +132,7 @@ class ParadoxStatement implements Statement {
             final Plan plan = Planner.create(connection, statement);
             activeExecutions.add(plan);
             try {
-                plan.execute(this.connection, maxRows, null);
+                plan.execute(this.connection, maxRows, null, null);
             } finally {
                 activeExecutions.remove(plan);
             }

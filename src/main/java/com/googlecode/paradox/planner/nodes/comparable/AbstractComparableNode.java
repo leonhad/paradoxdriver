@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.FieldUtils;
+import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 
@@ -75,6 +75,6 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
     @Override
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
         super.setFieldIndexes(columns, tables);
-        FieldUtils.setFieldIndex(last, columns, tables);
+        FieldValueUtils.setFieldIndex(last, columns, tables);
     }
 }

@@ -12,12 +12,13 @@ package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.parser.ScannerPosition;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.function.definition.FunctionFactory;
 import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.parser.ScannerPosition;
+import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.FieldUtils;
+import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 
@@ -164,26 +165,30 @@ public class FunctionNode extends FieldNode {
      *
      * @param connection      the paradox connection.
      * @param row             the current row values.
-     * @param valueParameters the parameters values.
+     * @param parameterValues the parameters values.
+     * @param parameterTypes  the parameter types.
      * @param loadedColumns   the list of loaded columns.
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    public Object execute(final ParadoxConnection connection, final Object[] row, final Object[] valueParameters,
-                          final List<Column> loadedColumns) throws SQLException {
+    public Object execute(final ParadoxConnection connection, final Object[] row, final Object[] parameterValues,
+                          final int[] parameterTypes, final List<Column> loadedColumns) throws SQLException {
         final Object[] values = new Object[parameters.size()];
         final int[] types = new int[parameters.size()];
 
         for (int i = 0; i < parameters.size(); i++) {
             SQLNode param = parameters.get(i);
-            types[i] = Types.JAVA_OBJECT;
+            types[i] = Types.NULL;
 
             if (param instanceof ValueNode) {
                 values[i] = param.getName();
                 types[i] = ((ValueNode) param).getSqlType();
+            } else if (param instanceof ParameterNode) {
+                values[i] = FieldValueUtils.getValue(row, (FieldNode) param, parameterValues);
+                types[i] = parameterTypes[((ParameterNode) param).getParameterIndex()];
             } else {
-                values[i] = FieldUtils.getValue(row, (FieldNode) param, valueParameters);
-                types[i] = loadedColumns.get(i).getType();
+                values[i] = FieldValueUtils.getValue(row, (FieldNode) param, parameterValues);
+                types[i] = loadedColumns.get(((FieldNode) param).getIndex()).getType();
             }
 
         }
