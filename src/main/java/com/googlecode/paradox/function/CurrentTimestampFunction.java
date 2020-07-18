@@ -13,25 +13,25 @@ package com.googlecode.paradox.function;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.definition.IFunction;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.sql.Types;
 
 /**
- * The SQL today function.
+ * The SQL CURRENT_TIMESTAMP function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class TodayFunction implements IFunction {
+public class CurrentTimestampFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "TODAY";
+    public static final String NAME = "CURRENT_TIMESTAMP";
 
     @Override
     public int sqlType() {
-        return Types.DATE;
+        return Types.TIMESTAMP;
     }
 
     @Override
@@ -41,6 +41,6 @@ public class TodayFunction implements IFunction {
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        return new Date(System.currentTimeMillis());
+        return new Timestamp(System.currentTimeMillis());
     }
 }

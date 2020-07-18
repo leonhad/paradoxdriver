@@ -12,7 +12,6 @@ package com.googlecode.paradox.function.definition;
 
 import com.googlecode.paradox.function.*;
 
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.function.Supplier;
@@ -24,9 +23,9 @@ public final class FunctionFactory {
     static {
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
-        FUNCTIONS.put(TodayFunction.NAME, TodayFunction::new);
+        FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
-        FUNCTIONS.put(NowFunction.NAME, NowFunction::new);
+        FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
