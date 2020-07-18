@@ -13,19 +13,16 @@ package com.googlecode.paradox.planner.nodes.function;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.ScannerPosition;
-import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FunctionFactory;
 import com.googlecode.paradox.planner.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.FieldUtils;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
-import com.googlecode.paradox.results.Column;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -65,13 +62,6 @@ public class FunctionNode extends FieldNode {
     public void validate() throws ParadoxSyntaxErrorException {
         if (function.parameterCount() != parameters.size()) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT);
-        }
-    }
-
-    public final void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables)
-            throws SQLException {
-        for (final SQLNode node : children) {
-            ((AbstractConditionalNode) node).setFieldIndexes(columns, tables);
         }
     }
 
@@ -142,5 +132,24 @@ public class FunctionNode extends FieldNode {
         }
 
         return function.execute(connection, values);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+            return false;
+        }
+
+        FunctionNode that = (FunctionNode) o;
+        return Objects.equals(parameters, that.parameters) && Objects.equals(function, that.function);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), parameters, function);
     }
 }
