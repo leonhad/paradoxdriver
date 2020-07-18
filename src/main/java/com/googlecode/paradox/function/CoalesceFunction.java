@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 /**
  * The SQL coalesce function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class CoalesceFunction implements IFunction {
@@ -31,7 +31,7 @@ public class CoalesceFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "COALESCE";
-    protected int sqlType = Types.VARCHAR;
+    private int sqlType = Types.NULL;
 
     @Override
     public int sqlType() {

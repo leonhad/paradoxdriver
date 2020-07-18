@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * PreparedStatement implementation class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})

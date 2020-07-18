@@ -10,18 +10,32 @@
  */
 package com.googlecode.paradox.function;
 
+import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.planner.FieldValueUtils;
+
+import java.sql.Types;
+
 /**
  * The SQL NVL function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class NvlFunction extends CoalesceFunction {
+public class NvlFunction implements IFunction {
 
     /**
      * The function name.
      */
     public static final String NAME = "NVL";
+
+    private int sqlType = Types.NULL;
+
+    @Override
+    public int sqlType() {
+        return sqlType;
+    }
 
     @Override
     public int parameterCount() {
@@ -31,5 +45,17 @@ public class NvlFunction extends CoalesceFunction {
     @Override
     public boolean isVariableParameters() {
         return false;
+    }
+
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
+            throws ParadoxSyntaxErrorException {
+        this.sqlType = FieldValueUtils.getSqlType(values, types);
+
+        if (values[0] != null) {
+            return values[0];
+        }
+
+        return values[1];
     }
 }

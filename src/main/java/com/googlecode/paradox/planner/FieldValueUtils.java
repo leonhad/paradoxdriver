@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Field processing utilities.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public final class FieldValueUtils {
@@ -40,6 +40,14 @@ public final class FieldValueUtils {
         // Not used.
     }
 
+    /**
+     * Gets the first non NULL parameter type.
+     *
+     * @param values the row values.
+     * @param types  the value types.
+     * @return the first non NULL parameter's type.
+     * @throws ParadoxSyntaxErrorException in case of inconsistent parameter types.
+     */
     public static int getSqlType(final Object[] values, final int[] types) throws ParadoxSyntaxErrorException {
         if (types.length > 0) {
             int current = Types.NULL;
@@ -49,12 +57,14 @@ public final class FieldValueUtils {
                 }
 
                 if (current != Types.NULL && current != type) {
+                    // The field types isn't the same (NULL ignored).
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_DATA_TYPE,
                             JDBCType.valueOf(current).name(), JDBCType.valueOf(type).name());
                 }
             }
         }
 
+        // Gets the first non null value type.
         for (int i = 0; i < values.length; i++) {
             if (values[i] != null) {
                 return types[i];

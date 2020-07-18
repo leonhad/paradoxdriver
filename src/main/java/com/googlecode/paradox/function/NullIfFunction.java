@@ -15,8 +15,8 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.definition.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 
-import java.sql.JDBCType;
 import java.sql.Types;
+import java.util.Objects;
 
 /**
  * The SQL NULLIF function.
@@ -24,12 +24,18 @@ import java.sql.Types;
  * @version 1.0
  * @since 1.6.0
  */
-public class NullIfFunction extends CoalesceFunction {
+public class NullIfFunction implements IFunction {
 
     /**
      * The function name.
      */
     public static final String NAME = "NULLIF";
+    private int sqlType = Types.NULL;
+
+    @Override
+    public int sqlType() {
+        return sqlType;
+    }
 
     @Override
     public int parameterCount() {
@@ -46,6 +52,10 @@ public class NullIfFunction extends CoalesceFunction {
             throws ParadoxSyntaxErrorException {
         this.sqlType = FieldValueUtils.getSqlType(values, types);
 
-        return null;
+        if (Objects.equals(values[0], values[1])) {
+            return null;
+        }
+
+        return values[0];
     }
 }

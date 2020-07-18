@@ -27,6 +27,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(TodayFunction.NAME, TodayFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(NowFunction.NAME, NowFunction::new);
+        FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
@@ -45,14 +46,5 @@ public final class FunctionFactory {
         }
 
         return null;
-    }
-
-    public static int getFunctionType(final String name) {
-        IFunction function = getByName(name);
-        if (function != null) {
-            return function.sqlType();
-        }
-
-        return Types.OTHER;
     }
 }
