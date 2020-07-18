@@ -309,10 +309,11 @@ public class SelectPlanTest {
      */
     @Test
     public void testFunctionWithFields() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select upper(a.DATE) ret from fields.DATE4 a");
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select upper(Cities) as ret from AREACODES where AC = 202");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "UPPER", rs.getString("ret"));
+            Assert.assertEquals("Invalid value", "WASHINGTON D.C.", rs.getString("ret"));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
