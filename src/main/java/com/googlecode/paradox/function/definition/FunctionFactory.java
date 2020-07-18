@@ -24,8 +24,9 @@ public final class FunctionFactory {
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
         FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
-        FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
+        FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
         FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
+        FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
