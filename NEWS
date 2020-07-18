@@ -1,7 +1,7 @@
 Paradox Driver NEWS - User visible changes.
 
-2020-08-18 Added COALESCE function.
-2020-08-17 Added a crude support to functions. Added: LOWER, UPPER, REVERSE, NOW and TODAY.
+2020-08-18 Added standard SQL92 functions.
+2020-08-17 Added a crude support to functions.
 2020-08-14 Added IN clause.
 2020-08-13 Fixed blob methods (loading, searching and encryption).
 2020-08-12 Added support to ORDER BY clause. Fix a lot of bugs.

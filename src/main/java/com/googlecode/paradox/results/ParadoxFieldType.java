@@ -53,7 +53,7 @@ public enum ParadoxFieldType {
     /**
      * The boolean type.
      */
-    BOOLEAN(9, Types.BOOLEAN),
+    BOOLEAN(9, Types.BIT),
 
     /**
      * The CLOB type.

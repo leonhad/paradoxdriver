@@ -37,6 +37,7 @@ public final class FunctionFactory {
     private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
 
     static {
+        FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
         FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);

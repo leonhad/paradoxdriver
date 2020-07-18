@@ -8,22 +8,24 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import org.junit.*;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
- * Unit test for {@link CurrentDateFunction}.
+ * Unit test for BitLength function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class CurrentDateFunctionTest {
+public class BitLengthFunctionTest {
 
     /**
      * The connection string used in this tests.
@@ -38,7 +40,7 @@ public class CurrentDateFunctionTest {
     /**
      * Creates a new instance.
      */
-    public CurrentDateFunctionTest() {
+    public BitLengthFunctionTest() {
         super();
     }
 
@@ -74,18 +76,33 @@ public class CurrentDateFunctionTest {
     }
 
     /**
-     * Test for current date.
+     * Test for String size.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDate() throws SQLException {
+    public void testStringSize() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select current_date ");
+                "select bit_length('test') ");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", new Date(System.currentTimeMillis()).toString(),
-                    rs.getDate(1).toString());
+            Assert.assertEquals("Invalid value", "test".length() * 8, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for Integer size.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testIntSize() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select bit_length(1) ");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", Double.BYTES * 8, rs.getInt(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
