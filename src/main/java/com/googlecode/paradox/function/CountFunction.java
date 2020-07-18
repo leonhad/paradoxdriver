@@ -8,28 +8,29 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.function;
+package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.definition.IFunction;
 
 import java.sql.Types;
 
 /**
- * The SQL reverse function.
+ * The COUNT grouping function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class ReverseFunction implements IFunction {
+public class CountFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "REVERSE";
+    public static final String NAME = "COUNT";
 
     @Override
     public int sqlType() {
-        return Types.VARCHAR;
+        return Types.INTEGER;
     }
 
     @Override
@@ -38,13 +39,12 @@ public class ReverseFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        if (values[0] != null) {
-            StringBuilder builder = new StringBuilder(values[0].toString());
-            builder.reverse();
-            return builder.toString();
-        }
+    public boolean isGrouping() {
+        return true;
+    }
 
-        return null;
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
+        return 0;
     }
 }

@@ -8,41 +8,28 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.function;
-
-import com.googlecode.paradox.ParadoxConnection;
-
-import java.sql.Types;
+package com.googlecode.paradox.function;
 
 /**
- * The SQL upper function.
+ * The SQL NVL function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class UpperFunction implements IFunction {
+public class NvlFunction extends CoalesceFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "UPPER";
-
-    @Override
-    public int sqlType() {
-        return Types.VARCHAR;
-    }
+    public static final String NAME = "NVL";
 
     @Override
     public int parameterCount() {
-        return 1;
+        return 2;
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        if (values[0] != null) {
-            return values[0].toString().toUpperCase(connection.getLocale());
-        }
-
-        return null;
+    public boolean isVariableParameters() {
+        return false;
     }
 }

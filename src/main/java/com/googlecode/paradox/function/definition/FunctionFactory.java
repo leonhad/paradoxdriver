@@ -8,9 +8,9 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner;
+package com.googlecode.paradox.function.definition;
 
-import com.googlecode.paradox.planner.function.*;
+import com.googlecode.paradox.function.*;
 
 import java.sql.Types;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(TodayFunction.NAME, TodayFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(NowFunction.NAME, NowFunction::new);
+        FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
     }

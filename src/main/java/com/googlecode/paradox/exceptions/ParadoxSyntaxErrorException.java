@@ -27,11 +27,11 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
     }
 
     public ParadoxSyntaxErrorException(final Error error, final ScannerPosition position, final String... parameter) {
-        super(message(String.format(error.description, parameter), position), BASE_CODE + error.code);
+        super(message(String.format(error.description, (Object[]) parameter), position), BASE_CODE + error.code);
     }
 
     public ParadoxSyntaxErrorException(final Error error, final String... parameter) {
-        super(String.format(error.description, parameter), BASE_CODE + error.code);
+        super(String.format(error.description, (Object[]) parameter), BASE_CODE + error.code);
     }
 
     private static String message(final String message, final ScannerPosition position) {

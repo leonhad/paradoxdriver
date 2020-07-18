@@ -8,14 +8,14 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.nodes.function;
+package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.FunctionFactory;
-import com.googlecode.paradox.planner.function.IFunction;
+import com.googlecode.paradox.function.definition.FunctionFactory;
+import com.googlecode.paradox.function.definition.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.FieldUtils;
 import com.googlecode.paradox.planner.nodes.ValueNode;

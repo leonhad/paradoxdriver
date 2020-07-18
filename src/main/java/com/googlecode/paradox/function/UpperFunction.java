@@ -8,28 +8,29 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.function;
+package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.definition.IFunction;
 
 import java.sql.Types;
 
 /**
- * The COUNT grouping function.
+ * The SQL upper function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class CountFunction implements IFunction {
+public class UpperFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "COUNT";
+    public static final String NAME = "UPPER";
 
     @Override
     public int sqlType() {
-        return Types.INTEGER;
+        return Types.VARCHAR;
     }
 
     @Override
@@ -38,12 +39,11 @@ public class CountFunction implements IFunction {
     }
 
     @Override
-    public boolean isGrouping() {
-        return true;
-    }
-
-    @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        return 0;
+        if (values[0] != null) {
+            return values[0].toString().toUpperCase(connection.getLocale());
+        }
+
+        return null;
     }
 }

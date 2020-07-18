@@ -14,7 +14,7 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.planner.nodes.ValueNode;
-import com.googlecode.paradox.planner.nodes.function.FunctionNode;
+import com.googlecode.paradox.function.FunctionNode;
 
 import java.sql.SQLException;
 import java.sql.Types;

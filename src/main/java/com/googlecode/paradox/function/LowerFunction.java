@@ -8,38 +8,42 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.planner.function;
+package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.definition.IFunction;
 
-import java.sql.Timestamp;
 import java.sql.Types;
 
 /**
- * The SQL new function.
+ * The SQL lower function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class NowFunction implements IFunction {
+public class LowerFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "NOW";
+    public static final String NAME = "LOWER";
 
     @Override
     public int sqlType() {
-        return Types.TIMESTAMP;
+        return Types.VARCHAR;
     }
 
     @Override
     public int parameterCount() {
-        return 0;
+        return 1;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        return new Timestamp(System.currentTimeMillis());
+        if (values[0] != null) {
+            return values[0].toString().toLowerCase(connection.getLocale());
+        }
+
+        return null;
     }
 }
