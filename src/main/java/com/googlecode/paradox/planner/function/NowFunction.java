@@ -15,8 +15,17 @@ import com.googlecode.paradox.ParadoxConnection;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+/**
+ * The SQL new function.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public class NowFunction implements IFunction {
 
+    /**
+     * The function name.
+     */
     public static final String NAME = "NOW";
 
     @Override
@@ -30,7 +39,7 @@ public class NowFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values) {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
         return new Timestamp(System.currentTimeMillis());
     }
 }

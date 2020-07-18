@@ -14,8 +14,17 @@ import com.googlecode.paradox.ParadoxConnection;
 
 import java.sql.Types;
 
+/**
+ * The COUNT grouping function.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public class CountFunction implements IFunction {
 
+    /**
+     * The function name.
+     */
     public static final String NAME = "COUNT";
 
     @Override
@@ -34,7 +43,7 @@ public class CountFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values) {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
         return 0;
     }
 }

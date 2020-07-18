@@ -14,8 +14,17 @@ import com.googlecode.paradox.ParadoxConnection;
 
 import java.sql.Types;
 
+/**
+ * The SQL upper function.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public class UpperFunction implements IFunction {
 
+    /**
+     * The function name.
+     */
     public static final String NAME = "UPPER";
 
     @Override
@@ -29,7 +38,7 @@ public class UpperFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, Object[] values) {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
         if (values[0] != null) {
             return values[0].toString().toUpperCase(connection.getLocale());
         }

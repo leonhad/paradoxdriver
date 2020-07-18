@@ -19,7 +19,10 @@ import com.googlecode.paradox.planner.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.FieldUtils;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.results.Column;
 
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +58,7 @@ public class FunctionNode extends FieldNode {
 
         function = FunctionFactory.getByName(name);
         if (function == null) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.FUNCTION_NOT_FOUND, name, position);
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.FUNCTION_NOT_FOUND, position, name);
         }
     }
 
@@ -66,10 +69,15 @@ public class FunctionNode extends FieldNode {
      * @throws ParadoxSyntaxErrorException in case of invalid function call.
      */
     public void validate(final ScannerPosition position) throws ParadoxSyntaxErrorException {
-        if ((function.isVariableParameters() && function.parameterCount() < parameters.size())
-                || (function.parameterCount() != parameters.size())) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, position);
+        if (function.isVariableParameters() && parameters.size() < function.parameterCount()) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT_MINIMUM,
+                    position, Integer.toString(function.parameterCount()));
+        } else if (!function.isVariableParameters() && (function.parameterCount() != parameters.size())) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT,
+                    position, Integer.toString(function.parameterCount()));
         }
+
+        this.function.validate(this.parameters);
     }
 
     /**
@@ -157,21 +165,30 @@ public class FunctionNode extends FieldNode {
      * @param connection      the paradox connection.
      * @param row             the current row values.
      * @param valueParameters the parameters values.
+     * @param loadedColumns   the list of loaded columns.
      * @return The function processed value.
+     * @throws SQLException in case of failures.
      */
-    public Object getValue(final ParadoxConnection connection, final Object[] row, final Object[] valueParameters) {
+    public Object execute(final ParadoxConnection connection, final Object[] row, final Object[] valueParameters,
+                          final List<Column> loadedColumns) throws SQLException {
         final Object[] values = new Object[parameters.size()];
+        final int[] types = new int[parameters.size()];
+
         for (int i = 0; i < parameters.size(); i++) {
             SQLNode param = parameters.get(i);
+            types[i] = Types.JAVA_OBJECT;
 
             if (param instanceof ValueNode) {
                 values[i] = param.getName();
+                types[i] = ((ValueNode) param).getSqlType();
             } else {
                 values[i] = FieldUtils.getValue(row, (FieldNode) param, valueParameters);
+                types[i] = loadedColumns.get(i).getType();
             }
+
         }
 
-        return function.execute(connection, values);
+        return function.execute(connection, values, types);
     }
 
     @Override

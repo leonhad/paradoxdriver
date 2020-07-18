@@ -11,6 +11,12 @@
 package com.googlecode.paradox.planner.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.parser.nodes.AsteriskNode;
+import com.googlecode.paradox.parser.nodes.SQLNode;
+
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * SQL function interface.
@@ -57,7 +63,18 @@ public interface IFunction {
      *
      * @param connection the Paradox connection.
      * @param values     the row values.
+     * @param types      the fields SQL type.
      * @return The function processed value.
+     * @throws SQLException in case of failures.
      */
-    Object execute(ParadoxConnection connection, Object[] values);
+    Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) throws SQLException;
+
+    default void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+        for (final SQLNode node : parameters) {
+            if (node instanceof AsteriskNode) {
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
+                        node.getPosition());
+            }
+        }
+    }
 }

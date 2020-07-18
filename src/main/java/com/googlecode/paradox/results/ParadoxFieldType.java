@@ -131,7 +131,7 @@ public enum ParadoxFieldType {
     }
 
     /**
-     * Gets the field name by its type.
+     * Gets the field name by Paradox type.
      *
      * @param type the type value.
      * @return the field type name.

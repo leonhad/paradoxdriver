@@ -601,7 +601,7 @@ public final class SelectPlan implements Plan {
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
         processOrderBy(rawData, columnsLoaded);
-        filter(connection, rawData, mapColumns, maxRows, parameters);
+        filter(connection, rawData, mapColumns, maxRows, parameters, columnsLoaded);
     }
 
     private void processOrderBy(final List<Object[]> rawData, final List<Column> loadedColumns) {
@@ -676,7 +676,8 @@ public final class SelectPlan implements Plan {
     }
 
     private void filter(final ParadoxConnection connection, final List<Object[]> rowValues, final int[] mapColumns,
-                        final int maxRows, final Object[] parameters) throws SQLException {
+                        final int maxRows, final Object[] parameters, final List<Column> loadedColumns)
+            throws SQLException {
 
         for (final Object[] tableRow : rowValues) {
             checkCancel();
@@ -701,7 +702,9 @@ public final class SelectPlan implements Plan {
                         // A function processed value.
                         if (!functionNode.isGrouping()) {
                             // Not process grouping function by now.
-                            finalRow[i] = functionNode.getValue(connection, tableRow, parameters);
+                            finalRow[i] = functionNode.execute(connection, tableRow, parameters, loadedColumns);
+                            // The function may change the result type.
+                            this.columns.get(i).setType(functionNode.getSqlType());
                         }
                     }
                 }

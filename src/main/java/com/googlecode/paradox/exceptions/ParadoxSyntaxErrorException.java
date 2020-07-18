@@ -26,8 +26,12 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
         super(message(error.description, position), BASE_CODE + error.code);
     }
 
-    public ParadoxSyntaxErrorException(final Error error, final String parameter, final ScannerPosition position) {
+    public ParadoxSyntaxErrorException(final Error error, final ScannerPosition position, final String... parameter) {
         super(message(String.format(error.description, parameter), position), BASE_CODE + error.code);
+    }
+
+    public ParadoxSyntaxErrorException(final Error error, final String... parameter) {
+        super(String.format(error.description, parameter), BASE_CODE + error.code);
     }
 
     private static String message(final String message, final ScannerPosition position) {
@@ -61,7 +65,13 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
         FUNCTION_NOT_FOUND("011", "Function %s not found"),
 
-        INVALID_PARAMETER_COUNT("012", "Invalid function parameter count");
+        INVALID_PARAMETER_COUNT("012", "Invalid function parameter count, expected %s"),
+
+        INVALID_PARAMETER_COUNT_MINIMUM("012", "Invalid function parameter count, expected at last %s"),
+
+        ASTERISK_IN_FUNCTION("013", "Astrisk not supported in function"),
+
+        INCONSISTENT_DATA_TYPE("014", "inconsistent data types: expected %s got %s");
 
         private final String code;
 

@@ -54,7 +54,7 @@ public final class Column {
      *
      * @see Types
      */
-    private final int type;
+    private int type;
 
     /**
      * Fixed value.
@@ -292,8 +292,22 @@ public final class Column {
         return function;
     }
 
+    /**
+     * Sets the column function.
+     *
+     * @param function the column function.
+     */
     public void setFunction(FunctionNode function) {
         this.function = function;
+    }
+
+    /**
+     * Sets the SQL type.
+     *
+     * @param type the SQL type.
+     */
+    public void setType(int type) {
+        this.type = type;
     }
 
     @Override
