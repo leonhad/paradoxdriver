@@ -12,11 +12,52 @@ package com.googlecode.paradox.planner.function;
 
 import com.googlecode.paradox.ParadoxConnection;
 
+/**
+ * SQL function interface.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public interface IFunction {
 
+    /**
+     * The returned value SQL type.
+     *
+     * @return the returned value SQL type.
+     */
     int sqlType();
 
+    /**
+     * The function parameters count.
+     *
+     * @return the function parameters count.
+     */
     int parameterCount();
 
+    /**
+     * Gets if this function has variable parameters.
+     *
+     * @return <code>true</code> if this function has variable parameters.
+     */
+    default boolean isVariableParameters() {
+        return false;
+    }
+
+    /**
+     * Gets if this function is a grouping function.
+     *
+     * @return <code>true</code> if this function is a grouping function.
+     */
+    default boolean isGrouping() {
+        return false;
+    }
+
+    /**
+     * Execute the function.
+     *
+     * @param connection the Paradox connection.
+     * @param values     the row values.
+     * @return The function processed value.
+     */
     Object execute(ParadoxConnection connection, Object[] values);
 }

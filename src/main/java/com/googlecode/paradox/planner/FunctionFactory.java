@@ -22,6 +22,7 @@ public final class FunctionFactory {
     private static final HashMap<String, Supplier<? extends IFunction>> FUNCTIONS = new HashMap<>();
 
     static {
+        FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
         FUNCTIONS.put(TodayFunction.NAME, TodayFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(NowFunction.NAME, NowFunction::new);

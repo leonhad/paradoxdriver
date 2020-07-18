@@ -75,6 +75,6 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
     @Override
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
         super.setFieldIndexes(columns, tables);
-        FieldUtils.getIndex(last, columns, tables);
+        FieldUtils.setFieldIndex(last, columns, tables);
     }
 }

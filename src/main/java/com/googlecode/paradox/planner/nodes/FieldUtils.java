@@ -15,16 +15,34 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
+/**
+ * Field processing utilities.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public final class FieldUtils {
 
+    /**
+     * Utility class, not for use.
+     */
     private FieldUtils() {
         // Not used.
     }
 
-    public static void getIndex(final FieldNode field, final List<Column> columns, final List<PlanTableNode> tables)
-            throws SQLException {
+    /**
+     * Sets the field indexes.
+     *
+     * @param field   the field node to set the index.
+     * @param columns the loaded columns.
+     * @param tables  the table list.
+     * @throws SQLException in case of column ambiguous defined or field not found.
+     */
+    public static void setFieldIndex(final FieldNode field, final List<Column> columns,
+                                     final Collection<PlanTableNode> tables) throws SQLException {
 
         // Do not set indexes in value or parameter nodes.
         if (field == null || field instanceof ValueNode || field instanceof ParameterNode) {
@@ -60,6 +78,14 @@ public final class FieldUtils {
         field.setIndex(index);
     }
 
+    /**
+     * Gets the row value based on field node.
+     *
+     * @param row        the row with values.
+     * @param field      the field node with column data.
+     * @param parameters the parameters list.
+     * @return the column value.
+     */
     public static Object getValue(final Object[] row, final FieldNode field, final Object[] parameters) {
         Object ret;
         if (field instanceof ParameterNode) {
@@ -73,5 +99,4 @@ public final class FieldUtils {
 
         return ret;
     }
-
 }

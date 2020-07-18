@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Stores a function node.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class FunctionNode extends FieldNode {
@@ -59,12 +59,24 @@ public class FunctionNode extends FieldNode {
         }
     }
 
+    /**
+     * Validate the function parameters and values.
+     *
+     * @param position the scanner current position.
+     * @throws ParadoxSyntaxErrorException in case of invalid function call.
+     */
     public void validate(final ScannerPosition position) throws ParadoxSyntaxErrorException {
-        if (function.parameterCount() != parameters.size()) {
+        if ((function.isVariableParameters() && function.parameterCount() < parameters.size())
+                || (function.parameterCount() != parameters.size())) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, position);
         }
     }
 
+    /**
+     * Gets the parameters field list.
+     *
+     * @return the parameters field list.
+     */
     public List<FieldNode> getFields() {
         return parameters.stream().filter(field -> field instanceof FieldNode)
                 .map(field -> (FieldNode) field).collect(Collectors.toList());
@@ -77,6 +89,15 @@ public class FunctionNode extends FieldNode {
      */
     public List<SQLNode> getParameters() {
         return parameters;
+    }
+
+    /**
+     * Gets if this function is a grouping function.
+     *
+     * @return <code>true</code> if this function is a grouping function.
+     */
+    public boolean isGrouping() {
+        return function.isGrouping();
     }
 
     /**
@@ -106,19 +127,38 @@ public class FunctionNode extends FieldNode {
         return buffer.toString();
     }
 
+    /**
+     * The returned value SQL type.
+     *
+     * @return the returned value SQL type.
+     */
     public int getSqlType() {
         return function.sqlType();
     }
 
+    /**
+     * Gets the function alias name.
+     *
+     * @return the function alias name.
+     */
     @Override
     public String getAlias() {
         if (alias == null || !alias.equals(name)) {
             return super.getAlias();
         } else {
+            // We use toString() method because the function call has parameters values too.
             return toString();
         }
     }
 
+    /**
+     * Execute  the function.
+     *
+     * @param connection      the paradox connection.
+     * @param row             the current row values.
+     * @param valueParameters the parameters values.
+     * @return The function processed value.
+     */
     public Object getValue(final ParadoxConnection connection, final Object[] row, final Object[] valueParameters) {
         final Object[] values = new Object[parameters.size()];
         for (int i = 0; i < parameters.size(); i++) {

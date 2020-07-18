@@ -54,7 +54,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
     public abstract boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters);
 
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
-        FieldUtils.getIndex(field, columns, tables);
+        FieldUtils.setFieldIndex(field, columns, tables);
     }
 
     @Override

@@ -254,7 +254,7 @@ public final class SelectPlan implements Plan {
 
             for (final FieldNode fieldNode : functionNode.getFields()) {
                 final List<ParadoxField> fields = getParadoxFields(fieldNode);
-                fields.stream().map(Column::new).findFirst().ifPresent(c -> {
+                fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
                     c.setFunction(functionNode);
                     this.functionColumns.add(c);
                 });
@@ -269,7 +269,8 @@ public final class SelectPlan implements Plan {
     }
 
     private List<ParadoxField> getParadoxFields(final FieldNode node) throws ParadoxException {
-        if (this.tables.isEmpty()) {
+        if (node instanceof ValueNode) {
+            // Do not process value nodes.
             return Collections.emptyList();
         }
 
@@ -653,7 +654,7 @@ public final class SelectPlan implements Plan {
     private void setFunctionIndexes(final List<Column> loadedColumns) throws SQLException {
         for (final Column column : functionColumns) {
             for (final FieldNode node : column.getFunction().getFields()) {
-                FieldUtils.getIndex(node, loadedColumns, this.tables);
+                FieldUtils.setFieldIndex(node, loadedColumns, this.tables);
             }
         }
     }
@@ -697,7 +698,11 @@ public final class SelectPlan implements Plan {
                         // A fixed value.
                         finalRow[i] = this.columns.get(i).getValue();
                     } else {
-                        finalRow[i] = functionNode.getValue(connection, tableRow, parameters);
+                        // A function processed value.
+                        if (!functionNode.isGrouping()) {
+                            // Not process grouping function by now.
+                            finalRow[i] = functionNode.getValue(connection, tableRow, parameters);
+                        }
                     }
                 }
             }
