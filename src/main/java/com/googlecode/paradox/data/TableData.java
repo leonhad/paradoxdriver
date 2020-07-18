@@ -105,7 +105,6 @@ public final class TableData extends ParadoxData {
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
 
-        final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
 
         try (final FileInputStream fs = new FileInputStream(table.getFile());
              final FileChannel channel = fs.getChannel()) {
@@ -115,6 +114,8 @@ public final class TableData extends ParadoxData {
 
             final List<Object[]> ret = new ArrayList<>(table.getRowCount());
             long nextBlock = table.getFirstBlock();
+
+            final ByteBuffer buffer = ByteBuffer.allocate(blockSize);
             do {
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
                 long position = headerSize + ((nextBlock - 1) * blockSize);
@@ -237,6 +238,7 @@ public final class TableData extends ParadoxData {
         } catch (final IOException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
         }
+
         return table;
     }
 
@@ -269,8 +271,9 @@ public final class TableData extends ParadoxData {
      */
     private static void parseTableFieldsName(final ParadoxTable table, final ByteBuffer buffer,
                                              final ParadoxField[] fields) {
+        final ByteBuffer name = ByteBuffer.allocate(261);
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            final ByteBuffer name = ByteBuffer.allocate(261);
+            name.clear();
 
             while (true) {
                 final byte c = buffer.get();
