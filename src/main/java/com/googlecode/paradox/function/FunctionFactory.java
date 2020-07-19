@@ -65,7 +65,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
         FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
         FUNCTIONS.put(CharFunction.NAME, CharFunction::new);
-        FUNCTIONS.put("CHR", CharFunction::new);
+        FUNCTIONS.put(ChrFunction.NAME, ChrFunction::new);
         FUNCTIONS.put(ConcatFunction.NAME, ConcatFunction::new);
         FUNCTIONS.put(ConcatWSFunction.NAME, ConcatWSFunction::new);
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
@@ -75,6 +75,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
         FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
         FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
+        FUNCTIONS.put(InitCapFunction.NAME, InitCapFunction::new);
         FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(LPadFunction.NAME, LPadFunction::new);
@@ -87,7 +88,11 @@ public final class FunctionFactory {
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(RightFunction.NAME, RightFunction::new);
         FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
+        FUNCTIONS.put("TRANSLATE", ReplaceFunction::new);
+        FUNCTIONS.put(TextFunction.NAME, TextFunction::new);
+        FUNCTIONS.put(TrimFunction.NAME, TrimFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
+        FUNCTIONS.put(VarcharFunction.NAME, VarcharFunction::new);
 
         // System functions.
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);

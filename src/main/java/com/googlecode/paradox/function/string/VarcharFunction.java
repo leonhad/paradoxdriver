@@ -17,21 +17,21 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * The SQL CHAR function.
+ * The SQL VARCHAR function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class CharFunction implements IFunction {
+public class VarcharFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "CHAR";
+    public static final String NAME = "VARCHAR";
 
     @Override
     public int sqlType() {
-        return Types.CHAR;
+        return Types.VARCHAR;
     }
 
     @Override

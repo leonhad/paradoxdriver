@@ -138,7 +138,7 @@ public class ExtractFunction implements IFunction {
         }
 
         final SQLNode value = parameters.get(0);
-        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) == -1) {
+        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
                     value.getName());
         }

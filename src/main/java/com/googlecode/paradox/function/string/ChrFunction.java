@@ -12,22 +12,23 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * The SQL CHAR function.
+ * The SQL CHR function.
  *
- * @version 1.0
+ * @version 1.2
  * @since 1.6.0
  */
-public class CharFunction implements IFunction {
+public class ChrFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "CHAR";
+    public static final String NAME = "CHR";
 
     @Override
     public int sqlType() {
@@ -42,10 +43,8 @@ public class CharFunction implements IFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
-        if (values[0] == null) {
-            return null;
-        }
 
-        return values[0].toString();
+        final int value = ValuesConverter.getPositiveInteger(values[0]);
+        return (char) value;
     }
 }

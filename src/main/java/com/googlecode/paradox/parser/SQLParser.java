@@ -11,12 +11,13 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.date.ExtractFunction;
-import com.googlecode.paradox.planner.nodes.FunctionNode;
-import com.googlecode.paradox.function.string.PositionFunction;
 import com.googlecode.paradox.function.FunctionFactory;
+import com.googlecode.paradox.function.date.ExtractFunction;
+import com.googlecode.paradox.function.string.PositionFunction;
+import com.googlecode.paradox.function.string.TrimFunction;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.FunctionNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.nodes.comparable.*;
@@ -27,6 +28,7 @@ import com.googlecode.paradox.planner.sorting.OrderType;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -489,6 +491,40 @@ public final class SQLParser {
     }
 
     /**
+     * Handles function specific separators (only for separators).
+     *
+     * @param functionName the function name to identify it.
+     * @param node         the function node.
+     * @return <code>true</code> if the separator was handled.
+     * @throws SQLException in case of failures.
+     */
+    private boolean isFunctionSpecific(final String functionName, final FunctionNode node) throws SQLException {
+        boolean ret = false;
+        if (functionName.equalsIgnoreCase(PositionFunction.NAME)) {
+            // POSITION(a in b).
+            this.expect(TokenType.IN);
+            ret = true;
+        } else if (functionName.equalsIgnoreCase(ExtractFunction.NAME)) {
+            // EXTRACT(a FROM b).
+            this.expect(TokenType.FROM);
+            ret = true;
+        } else if (functionName.equalsIgnoreCase(TrimFunction.NAME) && this.token != null) {
+            // 1. TRIM(TYPE 'CHARS' FROM... or TRIM('CHARS' FROM...
+            // 2. TRIM([TYPE] 'CHARS' FROM 'TEXT).
+
+            if (node.getParameters().size() > 1
+                    || Arrays.binarySearch(TrimFunction.TYPES, node.getParameters().get(0).getName()) < 0) {
+                this.expect(TokenType.FROM);
+            }
+
+            // Do nothing, no separator here. TRIM(TYPE...
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    /**
      * Parses a function node.
      *
      * @param functionName the function name.
@@ -502,13 +538,8 @@ public final class SQLParser {
         boolean first = true;
         while (!isToken(TokenType.R_PAREN)) {
             if (!first) {
-                if (functionName.equalsIgnoreCase(PositionFunction.NAME)) {
-                    // POSITION(a in b).
-                    this.expect(TokenType.IN);
-                } else if (functionName.equalsIgnoreCase(ExtractFunction.NAME)) {
-                    // EXTRACT(a FROM b).
-                    this.expect(TokenType.FROM);
-                } else {
+                // Is a function specific separator?
+                if (!isFunctionSpecific(functionName, functionNode)) {
                     this.expect(TokenType.COMMA);
                 }
             } else {
