@@ -83,6 +83,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(RPadFunction.NAME, RPadFunction::new);
         FUNCTIONS.put(RepeatFunction.NAME, RepeatFunction::new);
         FUNCTIONS.put("REPLICATE", RepeatFunction::new);
+        FUNCTIONS.put(ReplaceFunction.NAME, ReplaceFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(RightFunction.NAME, RightFunction::new);
         FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
