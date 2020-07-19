@@ -18,6 +18,7 @@ import com.googlecode.paradox.function.date.CurrentTimeFunction;
 import com.googlecode.paradox.function.date.CurrentTimestampFunction;
 import com.googlecode.paradox.function.date.ExtractFunction;
 import com.googlecode.paradox.function.grouping.CountFunction;
+import com.googlecode.paradox.function.numeric.IsNumericFunction;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
@@ -47,6 +48,19 @@ public final class FunctionFactory {
     private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
 
     static {
+        // Conditional functions.
+        FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
+        FUNCTIONS.put("ISNULL", NvlFunction::new);
+        FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
+        FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
+
+        // Grouping functions.
+        FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
+
+        // Numeric functions.
+        FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
+
+        // String functions.
         FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);
         FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
         FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
@@ -57,8 +71,6 @@ public final class FunctionFactory {
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LEN", CharLengthFunction::new);
-        FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
-        FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
         FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
         FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
         FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
@@ -66,8 +78,6 @@ public final class FunctionFactory {
         FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(LPadFunction.NAME, LPadFunction::new);
-        FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
-        FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
         FUNCTIONS.put(PositionFunction.NAME, PositionFunction::new);
         FUNCTIONS.put(RPadFunction.NAME, RPadFunction::new);
