@@ -51,7 +51,7 @@ public final class ExceptionUtils {
         }
 
         if (position != null) {
-            msg = String.format("%s in line %s, column %s.", message, position.getLine(), position.getColumn());
+            msg = String.format("%s in line %s, column %s.", msg, position.getLine(), position.getColumn());
         } else {
             msg += ".";
         }

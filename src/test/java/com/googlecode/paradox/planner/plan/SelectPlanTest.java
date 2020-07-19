@@ -13,6 +13,7 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.parser.nodes.TableNode;
@@ -151,6 +152,18 @@ public class SelectPlanTest {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", "P", rs.getString("REQTYPE"));
             Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for invalid column name.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testInvalidColumnName() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select current from fields.date7")) {
+            Assert.assertThrows("Invalid column name", ParadoxException.class, stmt::executeQuery);
         }
     }
 

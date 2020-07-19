@@ -33,7 +33,7 @@ public class ParadoxException extends SQLDataException {
      * @param error the error.
      */
     public ParadoxException(final Error error) {
-        super(error.description, BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description), BASE_CODE + error.code);
     }
 
     /**
@@ -42,7 +42,7 @@ public class ParadoxException extends SQLDataException {
      * @param error     the error.
      * @param parameter message parameters.
      */
-    public ParadoxException(final Error error, final String... parameter) {
+    public ParadoxException(final Error error, final Object... parameter) {
         super(ExceptionUtils.message(error.description, parameter), BASE_CODE + error.code);
     }
 

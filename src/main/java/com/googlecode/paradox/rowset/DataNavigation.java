@@ -49,7 +49,7 @@ public class DataNavigation implements AutoCloseable {
         verifyRow();
 
         if (columnIndex > currentRow.length) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, Integer.toString(columnIndex), null);
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, columnIndex);
         }
 
         this.lastValue = currentRow[columnIndex - 1];
@@ -65,8 +65,7 @@ public class DataNavigation implements AutoCloseable {
         verifyStatus();
 
         if (fetchDirection != ResultSet.FETCH_FORWARD && fetchDirection != ResultSet.FETCH_REVERSE) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_FETCH_DIRECTION,
-                    Integer.toString(fetchDirection));
+            throw new ParadoxException(ParadoxException.Error.INVALID_FETCH_DIRECTION, fetchDirection);
         }
 
         this.fetchDirection = fetchDirection;

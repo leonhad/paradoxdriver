@@ -265,7 +265,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      */
     private Column getColumn(final int column) throws SQLException {
         if ((column < 1) || (column > this.columns.size())) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, Integer.toString(column), null);
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, column);
         }
 
         return this.columns.get(column - 1);

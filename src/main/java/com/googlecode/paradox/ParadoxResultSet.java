@@ -165,7 +165,7 @@ public final class ParadoxResultSet implements ResultSet {
             }
         }
 
-        throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, columnLabel, null);
+        throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, columnLabel);
     }
 
     /**
