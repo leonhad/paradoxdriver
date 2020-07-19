@@ -224,6 +224,12 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Converts the value to time.
+     *
+     * @param value the value to convert.
+     * @return the converted time value.
+     */
     public static Time getTime(final Object value) {
         Time ret = null;
         if (value instanceof Time) {
@@ -231,12 +237,34 @@ public final class ValuesConverter {
         } else if (value instanceof java.util.Date) {
             ret = new Time(((java.util.Date) value).getTime());
         } else if (value != null) {
-            ret = Time.valueOf(value.toString());
+            try {
+                ret = Time.valueOf(value.toString());
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+
+                try {
+                    // Trying with Date instead.
+                    final Date date = Date.valueOf(value.toString());
+                    ret = new Time(date.getTime());
+                } catch (final IllegalArgumentException e1) {
+                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+
+                    // Trying with Timestamp instead.
+                    final Timestamp timestamp = Timestamp.valueOf(value.toString());
+                    ret = new Time(timestamp.getTime());
+                }
+            }
         }
 
         return ret;
     }
 
+    /**
+     * Converts the value to timestamp.
+     *
+     * @param value the value to convert.
+     * @return the converted timestamp value.
+     */
     public static Timestamp getTimestamp(final Object value) {
         Timestamp ret = null;
         if (value instanceof Timestamp) {
@@ -244,18 +272,58 @@ public final class ValuesConverter {
         } else if (value instanceof java.util.Date) {
             ret = new Timestamp(((java.util.Date) value).getTime());
         } else if (value != null) {
-            ret = Timestamp.valueOf(value.toString());
+            try {
+                ret = Timestamp.valueOf(value.toString());
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+
+                try {
+                    // Trying with Date instead.
+                    final Date date = Date.valueOf(value.toString());
+                    ret = new Timestamp(date.getTime());
+                } catch (final IllegalArgumentException e1) {
+                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+
+                    // Trying with Time instead.
+                    final Time time = Time.valueOf(value.toString());
+                    ret = new Timestamp(time.getTime());
+                }
+            }
         }
 
         return ret;
     }
 
+    /**
+     * Converts the value to date.
+     *
+     * @param value the value to convert.
+     * @return the converted date value.
+     */
     public static Date getDate(final Object value) {
         Date ret = null;
         if (value instanceof Date) {
             ret = (Date) value;
+        } else if (value instanceof java.util.Date) {
+            ret = new Date(((java.util.Date) value).getTime());
         } else if (value != null) {
-            ret = Date.valueOf(value.toString());
+            try {
+                ret = Date.valueOf(value.toString());
+            } catch (final IllegalArgumentException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+
+                try {
+                    // Trying with timestamp instead.
+                    final Timestamp timestamp = Timestamp.valueOf(value.toString());
+                    ret = new Date(timestamp.getTime());
+                } catch (final IllegalArgumentException e1) {
+                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+
+                    // Trying with time instead.
+                    final Time time = Time.valueOf(value.toString());
+                    ret = new Date(time.getTime());
+                }
+            }
         }
 
         return ret;
