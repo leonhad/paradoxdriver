@@ -44,11 +44,7 @@ public class CharFunction implements IFunction {
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
 
-        final Integer value = ValuesConverter.convert(values[0], Integer.class);
-        if (value != null && value >= 0) {
-            return (char) value.intValue();
-        }
-
-        return null;
+        final int value = ValuesConverter.getPositiveInteger(values[1]);
+        return (char) value;
     }
 }

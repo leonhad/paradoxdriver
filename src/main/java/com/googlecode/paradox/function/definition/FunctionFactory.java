@@ -51,6 +51,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
         FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
         FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
+        FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);

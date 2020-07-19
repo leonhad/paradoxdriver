@@ -11,6 +11,7 @@
 package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -120,6 +121,22 @@ public final class ValuesConverter {
         }
 
         return ret;
+    }
+
+    /**
+     * Convert to a valid positive integer.
+     *
+     * @param value the value to convert.
+     * @return a positive integer value.
+     * @throws ParadoxSyntaxErrorException if the value is not a valid integer value.
+     */
+    public static int getPositiveInteger(final Object value) throws ParadoxSyntaxErrorException {
+        final Integer size = getInteger(value);
+        if (size == null || size < 0) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, value);
+        }
+
+        return size;
     }
 
     public static Integer getInteger(final Object value) {

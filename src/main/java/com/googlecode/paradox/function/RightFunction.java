@@ -44,15 +44,12 @@ public class RightFunction implements IFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
-        final Integer size = ValuesConverter.convert(values[1], Integer.class);
-        if (size == null || size < 0) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, values[1]);
-        }
 
         if (values[0] == null) {
             return null;
         }
 
+        final int size = ValuesConverter.getPositiveInteger(values[1]);
         final StringBuilder ret = new StringBuilder(values[0].toString());
         if (ret.length() > size) {
             ret.delete(0, ret.length() - size);

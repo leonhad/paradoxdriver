@@ -18,17 +18,17 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * The SQL SPACE function.
+ * The SQL LEFT function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class SpaceFunction implements IFunction {
+public class LeftFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "SPACE";
+    public static final String NAME = "LEFT";
 
     @Override
     public int sqlType() {
@@ -37,17 +37,20 @@ public class SpaceFunction implements IFunction {
 
     @Override
     public int parameterCount() {
-        return 1;
+        return 2;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
+        if (values[0] == null) {
+            return null;
+        }
 
         final int size = ValuesConverter.getPositiveInteger(values[1]);
-        final StringBuilder ret = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            ret.append(' ');
+        final StringBuilder ret = new StringBuilder(values[0].toString());
+        if (ret.length() > size) {
+            ret.delete(size, ret.length());
         }
 
         return ret.toString();
