@@ -20,11 +20,12 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class CurrentTimeFunction implements IFunction {
@@ -65,7 +66,8 @@ public class CurrentTimeFunction implements IFunction {
             }
         }
 
-        return new Time(System.currentTimeMillis());
+        long time = System.currentTimeMillis();
+        return new Time(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time));
     }
 
     @Override

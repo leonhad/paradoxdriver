@@ -19,13 +19,14 @@ import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * PARADOX JDBC Driver type 4.
  *
- * @version 2.3
+ * @version 2.4
  * @since 1.0
  */
 @SuppressWarnings("squid:S2176")
@@ -36,6 +37,8 @@ public final class Driver implements java.sql.Driver {
     public static final String LOCALE_KEY = "locale";
 
     public static final String BCD_ROUNDING_KEY = "bcd_rounding";
+
+    public static final String TIME_ZONE_KEY = "timezone";
 
     /**
      * Logger instance for this class.
@@ -70,6 +73,7 @@ public final class Driver implements java.sql.Driver {
             final String dirName = url.substring(Constants.URL_PREFIX.length());
             return new ParadoxConnection(new File(dirName), url, info);
         }
+
         return null;
     }
 
@@ -105,11 +109,13 @@ public final class Driver implements java.sql.Driver {
         String charsetValue = null;
         String localeValue = null;
         String bcdRounding = null;
+        String timeZoneId = null;
 
         if (info != null) {
             charsetValue = info.getProperty(CHARSET_KEY);
             localeValue = info.getProperty(LOCALE_KEY);
             bcdRounding = info.getProperty(BCD_ROUNDING_KEY);
+            timeZoneId = info.getProperty(TIME_ZONE_KEY);
         }
 
         if (localeValue == null) {
@@ -118,6 +124,10 @@ public final class Driver implements java.sql.Driver {
 
         if (bcdRounding == null) {
             bcdRounding = "true";
+        }
+
+        if (timeZoneId == null) {
+            timeZoneId = TimeZone.getDefault().getID();
         }
 
         final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, charsetValue);
@@ -132,7 +142,11 @@ public final class Driver implements java.sql.Driver {
         bcdRoundingProp.required = false;
         bcdRoundingProp.description = "Use BCD double rounding (true to use rounding, the original used by Paradox).";
 
-        return new DriverPropertyInfo[]{charset, localeProp, bcdRoundingProp};
+        final DriverPropertyInfo timeZoneProp = new DriverPropertyInfo(TIME_ZONE_KEY, timeZoneId);
+        timeZoneProp.required = false;
+        timeZoneProp.description = "Time zone ID for use in date and time functions.";
+
+        return new DriverPropertyInfo[]{charset, localeProp, bcdRoundingProp, timeZoneProp};
     }
 
     /**

@@ -15,11 +15,12 @@ import com.googlecode.paradox.function.definition.IFunction;
 
 import java.sql.Date;
 import java.sql.Types;
+import java.util.TimeZone;
 
 /**
  * The SQL CURRENT_DATE function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class CurrentDateFunction implements IFunction {
@@ -46,6 +47,7 @@ public class CurrentDateFunction implements IFunction {
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        return new Date(System.currentTimeMillis());
+        long time = System.currentTimeMillis();
+        return new Date(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time));
     }
 }

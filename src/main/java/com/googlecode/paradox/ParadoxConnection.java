@@ -22,10 +22,7 @@ import com.googlecode.paradox.utils.Utils;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 /**
@@ -56,6 +53,10 @@ public final class ParadoxConnection implements Connection {
      * Connection locale.
      */
     private final Locale locale;
+    /**
+     * Time zone.
+     */
+    private final TimeZone timeZone;
     /**
      * Auto Commit flag.
      */
@@ -129,6 +130,13 @@ public final class ParadoxConnection implements Connection {
         final String bcdRoundingName = info.getProperty(Driver.BCD_ROUNDING_KEY);
         if (bcdRoundingName != null && !bcdRoundingName.trim().isEmpty()) {
             this.bcdRounding = Boolean.parseBoolean(bcdRoundingName);
+        }
+
+        final String timeZoneId = info.getProperty(Driver.TIME_ZONE_KEY);
+        if (timeZoneId != null && !timeZoneId.trim().isEmpty()) {
+            this.timeZone = TimeZone.getTimeZone(timeZoneId);
+        } else {
+            this.timeZone = TimeZone.getDefault();
         }
 
         // Is a schema.
@@ -650,6 +658,11 @@ public final class ParadoxConnection implements Connection {
         return charset;
     }
 
+    /**
+     * Gets the connection locale.
+     *
+     * @return the connection locale.
+     */
     public Locale getLocale() {
         return locale;
     }
@@ -662,7 +675,21 @@ public final class ParadoxConnection implements Connection {
         return Utils.unwrap(this, iFace);
     }
 
+    /**
+     * Gets the BCD rounding.
+     *
+     * @return <code>true</code> if the BCD rounding is enabled.
+     */
     public boolean isBcdRounding() {
         return bcdRounding;
+    }
+
+    /**
+     * Gets the connection time zone.
+     *
+     * @return the connection time zone.
+     */
+    public TimeZone getTimeZone() {
+        return timeZone;
     }
 }

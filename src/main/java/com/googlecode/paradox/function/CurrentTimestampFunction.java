@@ -13,13 +13,15 @@ package com.googlecode.paradox.function;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.definition.IFunction;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.TimeZone;
 
 /**
  * The SQL CURRENT_TIMESTAMP function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class CurrentTimestampFunction implements IFunction {
@@ -46,6 +48,7 @@ public class CurrentTimestampFunction implements IFunction {
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        return new Timestamp(System.currentTimeMillis());
+        long time = System.currentTimeMillis();
+        return new Timestamp(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time));
     }
 }
