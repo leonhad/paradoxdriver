@@ -38,6 +38,9 @@ public final class FunctionFactory {
 
     static {
         FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
+        FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
+        FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
+        FUNCTIONS.put("LENGTH", CharLengthFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
         FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
@@ -46,6 +49,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
+        FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
 

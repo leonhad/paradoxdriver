@@ -11,22 +11,39 @@
 package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.definition.IFunction;
+
+import java.sql.Types;
 
 /**
- * The SQL bit length function.
+ * The SQL char length function.
  *
- * @version 1.1
+ * @version 1.0
  * @since 1.6.0
  */
-public class BitLengthFunction extends OctectLengthFunction {
+public class CharLengthFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "BIT_LENGTH";
+    public static final String NAME = "CHAR_LENGTH";
+
+    @Override
+    public int sqlType() {
+        return Types.INTEGER;
+    }
+
+    @Override
+    public int parameterCount() {
+        return 1;
+    }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        return ((Integer) super.execute(connection, values, types)) * 0x08;
+        if (values[0] != null) {
+            return values[0].toString().length();
+        }
+
+        return null;
     }
 }
