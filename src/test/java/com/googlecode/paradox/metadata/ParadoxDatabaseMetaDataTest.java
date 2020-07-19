@@ -13,6 +13,7 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxResultSet;
+import com.googlecode.paradox.utils.Constants;
 import org.junit.*;
 
 import java.sql.*;
@@ -286,7 +287,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseProductName() throws SQLException {
-        Assert.assertEquals("Testing for database product name.", "Paradox",
+        Assert.assertEquals("Testing for database product name.", Constants.DRIVER_NAME,
                 this.conn.getMetaData().getDatabaseProductName());
     }
 
@@ -297,7 +298,8 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDatabaseProductVersion() throws SQLException {
-        Assert.assertEquals("Testing for database product version.", "Paradox 1.6",
+        Assert.assertEquals("Testing for database product version.",
+                Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION,
                 this.conn.getMetaData().getDatabaseProductVersion());
     }
 
@@ -360,7 +362,8 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testDriverName() throws SQLException {
-        Assert.assertEquals("Testing for driver name.", "Paradox", this.conn.getMetaData().getDriverName());
+        Assert.assertEquals("Testing for driver name.", Constants.DRIVER_NAME,
+                this.conn.getMetaData().getDriverName());
     }
 
     /**

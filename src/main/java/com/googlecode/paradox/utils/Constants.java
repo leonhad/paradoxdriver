@@ -21,7 +21,7 @@ public final class Constants {
     /**
      * Driver Name.
      */
-    public static final String DRIVER_NAME = "Paradox";
+    public static final String DRIVER_NAME = "Paradox Driver";
     /**
      * Driver String Version.
      */
