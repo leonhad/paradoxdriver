@@ -40,7 +40,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);
         FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
         FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
-        FUNCTIONS.put(ChrFunction.NAME, ChrFunction::new);
+        FUNCTIONS.put(CharFunction.NAME, CharFunction::new);
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LENGTH", CharLengthFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
@@ -54,6 +54,12 @@ public final class FunctionFactory {
         FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
+
+        // User functions.
+        FUNCTIONS.put("CURRENT_USER", UserFunction::new);
+        FUNCTIONS.put("SESSION_USER", UserFunction::new);
+        FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
+        FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
 
         FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

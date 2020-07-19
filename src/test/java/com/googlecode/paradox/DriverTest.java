@@ -113,6 +113,7 @@ public final class DriverTest {
         Assert.assertEquals("Invalid info name.", Driver.CHARSET_KEY, info[0].name);
         Assert.assertEquals("Invalid info name.", Driver.LOCALE_KEY, info[1].name);
         Assert.assertEquals("Invalid info name.", Driver.BCD_ROUNDING_KEY, info[2].name);
+        Assert.assertEquals("Invalid info name.", Driver.TIME_ZONE_KEY, info[3].name);
     }
 
     /**

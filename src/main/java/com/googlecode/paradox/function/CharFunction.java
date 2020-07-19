@@ -21,19 +21,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The SQL CHR function.
+ * The SQL CHAR function.
  *
  * @version 1.1
  * @since 1.6.0
  */
-public class ChrFunction implements IFunction {
+public class CharFunction implements IFunction {
 
-    private static final Logger LOGGER = Logger.getLogger(ChrFunction.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CharFunction.class.getName());
 
     /**
      * The function name.
      */
-    public static final String NAME = "CHR";
+    public static final String NAME = "CHAR";
 
     @Override
     public int sqlType() {

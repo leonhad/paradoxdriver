@@ -1237,7 +1237,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsANSI92FullSQL() {
-        return false;
+        return true;
     }
 
     /**
@@ -1245,7 +1245,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsANSI92IntermediateSQL() {
-        return false;
+        return true;
     }
 
     /**
