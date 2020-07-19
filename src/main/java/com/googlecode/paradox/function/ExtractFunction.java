@@ -19,6 +19,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Arrays;
@@ -75,13 +76,13 @@ public class ExtractFunction implements IFunction {
                 ret = getTimestamp(value).get(Calendar.MILLISECOND);
                 break;
             case "SECOND":
-                ret = getTimestamp(value).get(Calendar.SECOND);
+                ret = getTime(value).get(Calendar.SECOND);
                 break;
             case "MINUTE":
-                ret = getTimestamp(value).get(Calendar.MINUTE);
+                ret = getTime(value).get(Calendar.MINUTE);
                 break;
             case "HOUR":
-                ret = getTimestamp(value).get(Calendar.HOUR_OF_DAY);
+                ret = getTime(value).get(Calendar.HOUR_OF_DAY);
                 break;
             case "DAY":
                 ret = getDate(value).get(Calendar.DAY_OF_MONTH);
@@ -106,10 +107,17 @@ public class ExtractFunction implements IFunction {
         return ret;
     }
 
-    private static Calendar getTimestamp(final Object value) {
-        Timestamp time = ValuesConverter.getTimestamp(value);
+    private static Calendar getTime(final Object value) {
+        Time time = ValuesConverter.getTime(value);
         Calendar c = Calendar.getInstance();
         c.setTime(time);
+        return c;
+    }
+
+    private static Calendar getTimestamp(final Object value) {
+        Timestamp timestamp = ValuesConverter.getTimestamp(value);
+        Calendar c = Calendar.getInstance();
+        c.setTime(timestamp);
         return c;
     }
 
@@ -121,7 +129,8 @@ public class ExtractFunction implements IFunction {
     }
 
     @Override
-    public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+    @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
+    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         for (final SQLNode node : parameters) {
             if (node instanceof AsteriskNode) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
@@ -130,12 +139,12 @@ public class ExtractFunction implements IFunction {
         }
 
         final SQLNode value = parameters.get(0);
-        if (Arrays.binarySearch(VALID_FORMATS, value.getName()) == -1) {
+        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) == -1) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
                     value.getName());
         }
 
         // Convert to a non fields do avoid Planner problems.
-        parameters.set(0, new ValueNode(value.getName(), value.getPosition(), Types.VARCHAR));
+        parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(), Types.VARCHAR));
     }
 }

@@ -78,6 +78,12 @@ public interface IFunction {
         return false;
     }
 
+    /**
+     * Let's the function static validate the parameters.
+     *
+     * @param parameters the parameter list.
+     * @throws ParadoxSyntaxErrorException in case of syntax errors.
+     */
     default void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         for (final SQLNode node : parameters) {
             if (node instanceof AsteriskNode) {
