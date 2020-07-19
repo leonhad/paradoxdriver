@@ -21,19 +21,29 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Custom values conversion utility class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public final class ValuesConverter {
 
+    private static final Logger LOGGER = Logger.getLogger(ValuesConverter.class.getName());
+
+    /**
+     * Default class mapping.
+     */
     private static final Map<Class<?>, Function<Object, Object>> CLASS_MAPPING = new HashMap<>();
 
+    /**
+     * Utility class, not for use.
+     */
     private ValuesConverter() {
-        // Utility class.
+        // Not used..
     }
 
     static {
@@ -85,7 +95,11 @@ public final class ValuesConverter {
         } else if (value instanceof Number) {
             ret = ((Number) value).byteValue();
         } else if (value != null) {
-            ret = Byte.valueOf(value.toString());
+            try {
+                ret = Byte.valueOf(value.toString());
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         return ret;
@@ -98,7 +112,11 @@ public final class ValuesConverter {
         } else if (value instanceof Number) {
             ret = ((Number) value).shortValue();
         } else if (value != null) {
-            ret = Short.valueOf(value.toString());
+            try {
+                ret = Short.valueOf(value.toString());
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         return ret;
@@ -111,7 +129,11 @@ public final class ValuesConverter {
         } else if (value instanceof Number) {
             ret = ((Number) value).intValue();
         } else if (value != null) {
-            ret = Integer.valueOf(value.toString());
+            try {
+                ret = Integer.valueOf(value.toString());
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         return ret;
@@ -124,7 +146,11 @@ public final class ValuesConverter {
         } else if (value instanceof Number) {
             ret = ((Number) value).longValue();
         } else if (value != null) {
-            ret = Long.valueOf(value.toString());
+            try {
+                ret = Long.valueOf(value.toString());
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         return ret;
@@ -137,7 +163,11 @@ public final class ValuesConverter {
         } else if (value instanceof Number) {
             ret = BigDecimal.valueOf(((Number) value).doubleValue());
         } else if (value != null) {
-            ret = new BigDecimal(value.toString());
+            try {
+                ret = new BigDecimal(value.toString());
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         return ret;
@@ -150,7 +180,11 @@ public final class ValuesConverter {
         } else if (value instanceof Number) {
             ret = ((Number) value).floatValue();
         } else if (value != null) {
-            ret = Float.valueOf(value.toString());
+            try {
+                ret = Float.valueOf(value.toString());
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         return ret;
@@ -163,7 +197,11 @@ public final class ValuesConverter {
         } else if (value instanceof Number) {
             ret = ((Number) value).doubleValue();
         } else if (value != null) {
-            ret = Double.valueOf(value.toString());
+            try {
+                ret = Double.valueOf(value.toString());
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
         }
 
         return ret;

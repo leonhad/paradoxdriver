@@ -45,6 +45,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(ConcatWSFunction.NAME, ConcatWSFunction::new);
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LENGTH", CharLengthFunction::new);
+        FUNCTIONS.put("LEN", CharLengthFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
         FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
@@ -55,6 +56,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
+        FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
 
         // User functions.

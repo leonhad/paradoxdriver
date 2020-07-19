@@ -11,29 +11,29 @@
 package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.definition.IFunction;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.logging.Logger;
 
 /**
- * The SQL CHAR function.
+ * The SQL SPACE function.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
-public class CharFunction implements IFunction {
+public class SpaceFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "CHAR";
+    public static final String NAME = "SPACE";
 
     @Override
     public int sqlType() {
-        return Types.CHAR;
+        return Types.VARCHAR;
     }
 
     @Override
@@ -44,12 +44,16 @@ public class CharFunction implements IFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
-
-        final Integer value = ValuesConverter.convert(values[0], Integer.class);
-        if (value != null && value >= 0) {
-            return (char) value.intValue();
+        final Integer size = ValuesConverter.convert(values[0], Integer.class);
+        if (size == null || size < 0) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, values[0]);
         }
 
-        return null;
+        final StringBuilder ret = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            ret.append(' ');
+        }
+
+        return ret.toString();
     }
 }
