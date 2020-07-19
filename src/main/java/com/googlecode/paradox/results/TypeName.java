@@ -44,6 +44,11 @@ public enum TypeName {
     BOOLEAN(Types.BOOLEAN, "BOOLEAN", Boolean.class.getName()),
 
     /**
+     * The CHAR type.
+     */
+    CHAR(Types.CHAR, "CHAR", Character.class.getName()),
+
+    /**
      * The BLOB type.
      */
     CLOB(Types.CLOB, "CLOB", String.class.getName()),
@@ -118,23 +123,6 @@ public enum TypeName {
         for (final TypeName typeName : TypeName.VALUES) {
             if (typeName.getSQLType() == sqlType) {
                 return typeName.getClassName();
-            }
-        }
-
-        throw new ParadoxException(ParadoxException.Error.TYPE_NOT_FOUND);
-    }
-
-    /**
-     * Gets the field name by its SQL type.
-     *
-     * @param sqlType the SQL type value.
-     * @return the field type name.
-     * @throws SQLException in case of invalid type.
-     */
-    public static String getTypeName(final int sqlType) throws SQLException {
-        for (final TypeName typeName : TypeName.VALUES) {
-            if (typeName.getSQLType() == sqlType) {
-                return typeName.getName();
             }
         }
 

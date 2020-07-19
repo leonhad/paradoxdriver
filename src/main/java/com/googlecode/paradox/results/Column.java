@@ -11,12 +11,12 @@
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.ParadoxResultSet;
+import com.googlecode.paradox.function.FunctionNode;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.planner.nodes.ValueNode;
-import com.googlecode.paradox.function.FunctionNode;
 
-import java.sql.SQLException;
+import java.sql.JDBCType;
 import java.sql.Types;
 import java.util.Objects;
 
@@ -115,10 +115,9 @@ public final class Column {
      *
      * @param type the field type.
      * @return the type description.
-     * @throws SQLException if is an invalid type.
      */
-    public static String getTypeName(final int type) throws SQLException {
-        return TypeName.getTypeName(type);
+    public static String getTypeName(final int type) {
+        return JDBCType.valueOf(type).name();
     }
 
     /**

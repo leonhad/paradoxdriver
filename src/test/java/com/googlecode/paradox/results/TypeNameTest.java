@@ -45,26 +45,6 @@ public class TypeNameTest {
     }
 
     /**
-     * Gets the field name.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testFieldName() throws SQLException {
-        Assert.assertEquals("Invalid token type name.", "BINARY", TypeName.getTypeName(Types.BINARY));
-    }
-
-    /**
-     * Test for unsupported type name.
-     *
-     * @throws SQLException if there is no errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testNameUnsupported() throws SQLException {
-        TypeName.getTypeName(99);
-    }
-
-    /**
      * Test for SQL Type.
      */
     @Test

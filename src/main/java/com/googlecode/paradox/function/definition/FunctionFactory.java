@@ -37,8 +37,10 @@ public final class FunctionFactory {
     private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
 
     static {
+        FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);
         FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
         FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
+        FUNCTIONS.put(ChrFunction.NAME, ChrFunction::new);
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LENGTH", CharLengthFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
