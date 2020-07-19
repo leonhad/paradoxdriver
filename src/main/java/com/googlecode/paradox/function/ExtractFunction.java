@@ -36,9 +36,7 @@ import java.util.List;
 public class ExtractFunction implements IFunction {
 
     private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "WEEK",
-            "MONTH", "QUARTER", "YEAR", "SECOND_MICROSECOND", "MINUTE_MICROSECOND", "MINUTE_SECOND",
-            "HOUR_MICROSECOND", "HOUR_SECOND", "HOUR_MINUTE", "DAY_MICROSECOND", "DAY_SECOND", "DAY_MINUTE",
-            "DAY_HOUR", "YEAR_MONTH"};
+            "MONTH", "QUARTER", "YEAR"};
 
     /**
      * The function name.
@@ -87,6 +85,18 @@ public class ExtractFunction implements IFunction {
                 break;
             case "DAY":
                 ret = getDate(value).get(Calendar.DAY_OF_MONTH);
+                break;
+            case "MONTH":
+                ret = getDate(value).get(Calendar.MONTH) + 1;
+                break;
+            case "YEAR":
+                ret = getDate(value).get(Calendar.YEAR);
+                break;
+            case "WEEK":
+                ret = getDate(value).get(Calendar.WEEK_OF_YEAR);
+                break;
+            case "QUARTER":
+                ret = (getDate(value).get(Calendar.MONTH) / 3) + 1;
                 break;
             default:
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,

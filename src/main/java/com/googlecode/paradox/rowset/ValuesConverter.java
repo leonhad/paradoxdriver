@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 /**
  * Custom values conversion utility class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public final class ValuesConverter {
