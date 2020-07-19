@@ -54,9 +54,11 @@ public final class FunctionFactory {
         FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
         FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
+        FUNCTIONS.put(LPadFunction.NAME, LPadFunction::new);
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
+        FUNCTIONS.put(RPadFunction.NAME, RPadFunction::new);
         FUNCTIONS.put(RepeatFunction.NAME, RepeatFunction::new);
         FUNCTIONS.put("REPLICATE", RepeatFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
