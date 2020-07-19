@@ -422,8 +422,16 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
-    public Date getDate(final int columnIndex, final Calendar cal) throws SQLException {
-        return this.getDate(columnIndex);
+    public Date getDate(final int columnIndex, final Calendar c) throws SQLException {
+
+        Date date = this.getDate(columnIndex);
+        final int utcOffset = c.get(Calendar.ZONE_OFFSET) + c.get(Calendar.DST_OFFSET);
+
+        if (date != null) {
+            date = new Date(date.getTime() + utcOffset);
+        }
+
+        return date;
     }
 
     /**
@@ -439,7 +447,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Date getDate(final String columnLabel, final Calendar cal) throws SQLException {
-        return this.getDate(columnLabel);
+        return this.getDate(this.findColumn(columnLabel), cal);
     }
 
     /**
@@ -791,7 +799,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(final String columnLabel, final Calendar cal) throws SQLException {
-        return this.getTimestamp(columnLabel);
+        return this.getTimestamp(this.findColumn(columnLabel), cal);
     }
 
     /**
