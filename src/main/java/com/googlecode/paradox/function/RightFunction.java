@@ -11,6 +11,7 @@
 package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.definition.IFunction;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
@@ -18,37 +19,45 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * The SQL CHAR function.
+ * The SQL RIGHT function.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
-public class CharFunction implements IFunction {
+public class RightFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "CHAR";
+    public static final String NAME = "RIGHT";
 
     @Override
     public int sqlType() {
-        return Types.CHAR;
+        return Types.VARCHAR;
     }
 
     @Override
     public int parameterCount() {
-        return 1;
+        return 2;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
-
-        final Integer value = ValuesConverter.convert(values[0], Integer.class);
-        if (value != null && value >= 0) {
-            return (char) value.intValue();
+        final Integer size = ValuesConverter.convert(values[1], Integer.class);
+        if (size == null || size < 0) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, values[1]);
         }
 
-        return null;
+        if (values[0] == null) {
+            return null;
+        }
+
+        final StringBuilder ret = new StringBuilder(values[0].toString());
+        if (ret.length() > size) {
+            ret.delete(0, ret.length() - size);
+        }
+
+        return ret.toString();
     }
 }

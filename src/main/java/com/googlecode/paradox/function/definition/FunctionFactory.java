@@ -56,6 +56,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
+        FUNCTIONS.put(RightFunction.NAME, RightFunction::new);
         FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
 

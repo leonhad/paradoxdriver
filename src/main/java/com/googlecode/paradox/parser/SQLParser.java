@@ -442,7 +442,13 @@ public final class SQLParser {
         String newFieldName = fieldName;
 
         @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
-        this.expect(TokenType.IDENTIFIER);
+
+        // Just change to next token because some functions have clash names with reserved words.
+        if (this.scanner.hasNext()) {
+            this.token = this.scanner.nextToken();
+        } else {
+            this.token = null;
+        }
 
         if (isToken(TokenType.L_PAREN)) {
             // function
