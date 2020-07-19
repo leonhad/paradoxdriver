@@ -41,6 +41,8 @@ public final class FunctionFactory {
         FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
         FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
         FUNCTIONS.put(CharFunction.NAME, CharFunction::new);
+        FUNCTIONS.put(ConcatFunction.NAME, ConcatFunction::new);
+        FUNCTIONS.put(ConcatWSFunction.NAME, ConcatWSFunction::new);
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LENGTH", CharLengthFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
