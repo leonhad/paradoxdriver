@@ -11,10 +11,15 @@
 package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Types;
+import java.util.List;
 
 /**
  * The SQL CURRENT_TIME function.
@@ -40,7 +45,33 @@ public class CurrentTimeFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
+    public boolean isAllowAlias() {
+        return true;
+    }
+
+    @Override
+    public boolean isVariableParameters() {
+        return true;
+    }
+
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
+            throws SQLException {
+        if (types.length == 1) {
+            int value = ValuesConverter.convert(values[0], Integer.class);
+            if (value < 0x00 || value > 0x06) {
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                        Integer.toString(value));
+            }
+        }
+
         return new Time(System.currentTimeMillis());
+    }
+
+    @Override
+    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+        if (parameters.size() > 1) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, "1");
+        }
     }
 }

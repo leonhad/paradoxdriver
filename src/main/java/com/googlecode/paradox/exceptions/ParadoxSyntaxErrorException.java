@@ -71,7 +71,9 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
         ASTERISK_IN_FUNCTION("013", "Astrisk not supported in function"),
 
-        INCONSISTENT_DATA_TYPE("014", "Inconsistent data types: expected %s got %s");
+        INCONSISTENT_DATA_TYPE("014", "Inconsistent data types: expected %s got %s"),
+
+        INVALID_PARAMETER_VALUE("015", "Invalid parameter value: %s");
 
         private final String code;
 
