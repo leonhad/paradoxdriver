@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
@@ -117,11 +118,11 @@ public class Planner {
                     .filter(t -> t.isThis(field.getTableName()))
                     .map(PlanTableNode::getTable).collect(Collectors.toList());
             if (tables.isEmpty()) {
-                throw new ParadoxException(ParadoxException.Error.INVALID_TABLE, field.getTableName(),
-                        field.getPosition());
+                throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, field.getPosition(),
+                        field.getTableName());
             } else if (tables.size() > 1) {
-                throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getTableName(),
-                        field.getPosition());
+                throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getPosition(),
+                        field.getTableName());
             }
 
             plan.addColumnFromTable(tables.get(0));

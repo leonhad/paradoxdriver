@@ -12,7 +12,7 @@ package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinNode;
@@ -101,7 +101,7 @@ public final class PlanTableNode {
         }
 
         if (this.table == null) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_TABLE, tableName, table.getPosition());
+            throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, table.getPosition(), tableName);
         }
 
         this.alias = table.getAlias();

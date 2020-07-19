@@ -445,7 +445,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
         for (final StatementNode statement : batchStatements) {
             if (statement.getParameterCount() != currentParameterValues.length) {
-                throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.INCONSISTENT_PARAMETER_LIST);
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_PARAMETER_LIST);
             }
         }
 

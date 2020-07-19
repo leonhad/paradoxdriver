@@ -150,7 +150,7 @@ public final class ViewData {
             return tables.get(0);
         }
 
-        throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND);
+        throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, tableName);
     }
 
     /**

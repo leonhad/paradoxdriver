@@ -12,21 +12,53 @@ package com.googlecode.paradox.exceptions;
 
 import java.sql.SQLNonTransientException;
 
+/**
+ * Exception for connection problems.
+ *
+ * @version 1.1
+ * @since 1.6.0
+ */
 public class ParadoxConnectionException extends SQLNonTransientException {
 
+    /**
+     * SQL state base code.
+     */
     private static final String BASE_CODE = "08";
 
+    /**
+     * The connection error exception.
+     *
+     * @param error the error.
+     */
     public ParadoxConnectionException(final Error error) {
-        super(error.description, BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description), BASE_CODE + error.code);
     }
 
+    /**
+     * Error codes.
+     */
     public enum Error {
+        /**
+         * Directory not found in connection.
+         */
         DIRECTORY_NOT_FOUND("001", "Directory not found.");
 
+        /**
+         * SQL state code.
+         */
         private final String code;
 
+        /**
+         * Error description.
+         */
         private final String description;
 
+        /**
+         * Creates a new instance.
+         *
+         * @param code        the SQL state code.
+         * @param description the error description.
+         */
         Error(String code, String description) {
             this.code = code;
             this.description = description;

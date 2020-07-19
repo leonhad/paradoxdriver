@@ -57,7 +57,7 @@ public final class ValuesConverter {
         try {
             return (T) CLASS_MAPPING.get(type).apply(value);
         } catch (final IllegalArgumentException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, String.valueOf(value), e);
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
         }
     }
 

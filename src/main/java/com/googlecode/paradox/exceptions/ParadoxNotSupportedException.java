@@ -12,29 +12,68 @@ package com.googlecode.paradox.exceptions;
 
 import java.sql.SQLFeatureNotSupportedException;
 
+/**
+ * Exception related to unsupported features.
+ *
+ * @version 1.1
+ * @since 1.6.0
+ */
 public class ParadoxNotSupportedException extends SQLFeatureNotSupportedException {
 
+    /**
+     * Base code for SQL State.
+     */
     private static final String BASE_CODE = "0A";
 
+    /**
+     * The connection error exception.
+     *
+     * @param error the error.
+     */
     public ParadoxNotSupportedException(final Error error) {
-        super(error.description, BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description), BASE_CODE + error.code);
     }
 
+    /**
+     * Error codes.
+     */
     public enum Error {
+        /**
+         * Operation is not supported by the driver.
+         */
         OPERATION_NOT_SUPPORTED("001", "Operation not supported."),
 
+        /**
+         * Can't change catalog name.
+         */
         CATALOG_CHANGE("002", "Change catalog is not supported"),
 
+        /**
+         * Use batch operation.
+         */
         USE_BATCH_OPERATION("003", "Use batch for more than one statement"),
 
-        INCONSISTENT_PARAMETER_LIST("004", "Inconsistent parameter list size"),
-
+        /**
+         * This operation can't be cancelled.
+         */
         CANCEL_NOT_SUPPORTED("005", "Cancel operation in this type of statement is not supported.");
 
+        /**
+         * SQL state code.
+         */
         private final String code;
 
+        /**
+         * Error description.
+         */
         private final String description;
 
+        /**
+         * Creates a new instance.
+         *
+         * @param code        the SQL state code.
+         * @param description the error description.
+         */
         Error(String code, String description) {
             this.code = code;
             this.description = description;

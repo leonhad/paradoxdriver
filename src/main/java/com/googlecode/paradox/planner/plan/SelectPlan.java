@@ -286,10 +286,10 @@ public final class SelectPlan implements Plan {
         }
 
         if (fields.isEmpty()) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.toString(), node.getPosition());
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node.toString());
         } else if (fields.size() > 1) {
-            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.toString(),
-                    node.getPosition());
+            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(),
+                    node.toString());
         }
 
         return fields;
