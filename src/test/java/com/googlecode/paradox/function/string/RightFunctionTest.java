@@ -13,7 +13,6 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.string.RightFunction;
 import org.junit.*;
 
 import java.sql.DriverManager;

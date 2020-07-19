@@ -12,7 +12,6 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.date.ExtractFunction;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -160,7 +159,6 @@ public class ExtractFunctionTest {
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
-
 
     /**
      * Test for day with date.

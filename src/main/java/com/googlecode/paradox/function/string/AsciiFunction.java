@@ -25,12 +25,11 @@ import java.util.logging.Logger;
  */
 public class AsciiFunction implements IFunction {
 
-    private static final Logger LOGGER = Logger.getLogger(AsciiFunction.class.getName());
-
     /**
      * The function name.
      */
     public static final String NAME = "ASCII";
+    private static final Logger LOGGER = Logger.getLogger(AsciiFunction.class.getName());
 
     @Override
     public int sqlType() {

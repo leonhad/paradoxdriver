@@ -13,7 +13,6 @@ package com.googlecode.paradox.function.date;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.definition.IFunction;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.TimeZone;

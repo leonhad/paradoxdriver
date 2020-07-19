@@ -28,16 +28,15 @@ import java.util.List;
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
 public class ParadoxResultSetTest {
-    /**
-     * The connection string used in this tests.
-     */
-    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
     public static final String INVALID_FIRST_STATUS = "Invalid first status";
     public static final String INVALID_RESULT_SET_STATE = "Invalid ResultSet state";
     public static final String INVALID_LAST_STATUS = "Invalid last status";
     public static final String INVALID_ABSOLUTE_VALUE = "Invalid absolute value.";
     public static final String NO_FIRST_ROW = "No first row";
-
+    /**
+     * The connection string used in this tests.
+     */
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
     /**
      * The database connection.
      */

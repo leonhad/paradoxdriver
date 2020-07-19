@@ -13,7 +13,6 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.date.CurrentDateFunction;
 import org.junit.*;
 
 import java.sql.*;

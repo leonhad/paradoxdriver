@@ -36,17 +36,37 @@ import java.util.List;
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
 public class ExtractFunction implements IFunction {
 
-    private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "WEEK",
-            "MONTH", "QUARTER", "YEAR"};
-
     /**
      * The function name.
      */
     public static final String NAME = "EXTRACT";
+    private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "WEEK",
+            "MONTH", "QUARTER", "YEAR"};
 
     static {
         // Allow binary search.
         Arrays.sort(VALID_FORMATS);
+    }
+
+    private static Calendar getTime(final Object value) {
+        Time time = ValuesConverter.getTime(value);
+        Calendar c = Calendar.getInstance();
+        c.setTime(time);
+        return c;
+    }
+
+    private static Calendar getTimestamp(final Object value) {
+        Timestamp timestamp = ValuesConverter.getTimestamp(value);
+        Calendar c = Calendar.getInstance();
+        c.setTime(timestamp);
+        return c;
+    }
+
+    private static Calendar getDate(final Object value) {
+        Date time = ValuesConverter.getDate(value);
+        Calendar c = Calendar.getInstance();
+        c.setTime(time);
+        return c;
     }
 
     @Override
@@ -105,27 +125,6 @@ public class ExtractFunction implements IFunction {
         }
 
         return ret;
-    }
-
-    private static Calendar getTime(final Object value) {
-        Time time = ValuesConverter.getTime(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(time);
-        return c;
-    }
-
-    private static Calendar getTimestamp(final Object value) {
-        Timestamp timestamp = ValuesConverter.getTimestamp(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(timestamp);
-        return c;
-    }
-
-    private static Calendar getDate(final Object value) {
-        Date time = ValuesConverter.getDate(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(time);
-        return c;
     }
 
     @Override

@@ -14,7 +14,10 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import org.junit.*;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link CurrentTimeFunctionTest}.
