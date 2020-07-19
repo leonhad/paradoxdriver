@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-08-19 Added a connection parameter for timezones.
 2020-08-18 Added standard SQL92 functions.
 2020-08-17 Added a crude support to functions.
 2020-08-14 Added IN clause.

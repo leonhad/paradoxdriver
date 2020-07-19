@@ -423,15 +423,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Date getDate(final int columnIndex, final Calendar c) throws SQLException {
-
-        Date date = this.getDate(columnIndex);
-        final int utcOffset = c.get(Calendar.ZONE_OFFSET) + c.get(Calendar.DST_OFFSET);
-
-        if (date != null) {
-            date = new Date(date.getTime() + utcOffset);
-        }
-
-        return date;
+        return this.getDate(columnIndex);
     }
 
     /**
@@ -767,7 +759,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Time getTime(final String columnLabel, final Calendar cal) throws SQLException {
-        return this.getTime(columnLabel);
+        return this.getTime(this.findColumn(columnLabel), cal);
     }
 
     /**
