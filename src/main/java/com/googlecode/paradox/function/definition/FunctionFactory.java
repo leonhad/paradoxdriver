@@ -58,6 +58,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
+        FUNCTIONS.put(PositionFunction.NAME, PositionFunction::new);
         FUNCTIONS.put(RPadFunction.NAME, RPadFunction::new);
         FUNCTIONS.put(RepeatFunction.NAME, RepeatFunction::new);
         FUNCTIONS.put("REPLICATE", RepeatFunction::new);

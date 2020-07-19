@@ -12,6 +12,7 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionNode;
+import com.googlecode.paradox.function.PositionFunction;
 import com.googlecode.paradox.function.definition.FunctionFactory;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -471,13 +472,28 @@ public final class SQLParser {
         return new FieldNode(newTableName, newFieldName, position);
     }
 
-    private FunctionNode parseFunctionAlias(final String functionName, final ScannerPosition position)
+    /**
+     * Parses the function name alias.
+     *
+     * @param functionName the function name.
+     * @param position     the current scanner position.
+     * @return the function node with alias set.
+     * @throws SQLException in case of failures.
+     */
+    private static FunctionNode parseFunctionAlias(final String functionName, final ScannerPosition position)
             throws SQLException {
         final FunctionNode functionNode = new FunctionNode(functionName, position);
         functionNode.validate(position);
         return functionNode;
     }
 
+    /**
+     * Parses a function node.
+     *
+     * @param functionName the function name.
+     * @return the function node.
+     * @throws SQLException in case of failures.
+     */
     private FunctionNode parseFunction(final String functionName) throws SQLException {
         final FunctionNode functionNode = new FunctionNode(functionName, token.getPosition());
         this.expect(TokenType.L_PAREN);
@@ -485,7 +501,12 @@ public final class SQLParser {
         boolean first = true;
         while (!isToken(TokenType.R_PAREN)) {
             if (!first) {
-                this.expect(TokenType.COMMA);
+                if (functionName.equals(PositionFunction.NAME)) {
+                    // POSITION(a in b).
+                    this.expect(TokenType.IN);
+                } else {
+                    this.expect(TokenType.COMMA);
+                }
             } else {
                 first = false;
             }
