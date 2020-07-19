@@ -59,7 +59,7 @@ public class CurrentTimeFunction implements IFunction {
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
         if (types.length == 1) {
-            final int value = ValuesConverter.getPositiveInteger(values[1]);
+            final int value = ValuesConverter.getPositiveInteger(values[0]);
             if (value < 0x00 || value > 0x06) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
                         values[0]);

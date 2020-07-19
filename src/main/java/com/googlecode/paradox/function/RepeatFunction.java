@@ -18,33 +18,38 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * The SQL CHAR function.
+ * The SQL REPEAT function.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
-public class CharFunction implements IFunction {
+public class RepeatFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "CHAR";
+    public static final String NAME = "REPEAT";
 
     @Override
     public int sqlType() {
-        return Types.CHAR;
+        return Types.VARCHAR;
     }
 
     @Override
     public int parameterCount() {
-        return 1;
+        return 2;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
 
-        final int value = ValuesConverter.getPositiveInteger(values[0]);
-        return (char) value;
+        final int size = ValuesConverter.getPositiveInteger(values[1]);
+        final StringBuilder ret = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            ret.append(values[0]);
+        }
+
+        return ret.toString();
     }
 }

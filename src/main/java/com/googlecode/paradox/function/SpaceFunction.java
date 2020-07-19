@@ -44,7 +44,7 @@ public class SpaceFunction implements IFunction {
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws SQLException {
 
-        final int size = ValuesConverter.getPositiveInteger(values[1]);
+        final int size = ValuesConverter.getPositiveInteger(values[0]);
         final StringBuilder ret = new StringBuilder();
         for (int i = 0; i < size; i++) {
             ret.append(' ');

@@ -41,6 +41,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
         FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
         FUNCTIONS.put(CharFunction.NAME, CharFunction::new);
+        FUNCTIONS.put("CHR", CharFunction::new);
         FUNCTIONS.put(ConcatFunction.NAME, ConcatFunction::new);
         FUNCTIONS.put(ConcatWSFunction.NAME, ConcatWSFunction::new);
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
@@ -56,6 +57,8 @@ public final class FunctionFactory {
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
+        FUNCTIONS.put(RepeatFunction.NAME, RepeatFunction::new);
+        FUNCTIONS.put("REPLICATE", RepeatFunction::new);
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(RightFunction.NAME, RightFunction::new);
         FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
