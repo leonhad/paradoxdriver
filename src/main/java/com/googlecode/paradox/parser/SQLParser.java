@@ -11,9 +11,9 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.ExtractFunction;
-import com.googlecode.paradox.function.FunctionNode;
-import com.googlecode.paradox.function.PositionFunction;
+import com.googlecode.paradox.function.date.ExtractFunction;
+import com.googlecode.paradox.planner.nodes.FunctionNode;
+import com.googlecode.paradox.function.string.PositionFunction;
 import com.googlecode.paradox.function.definition.FunctionFactory;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -502,10 +502,10 @@ public final class SQLParser {
         boolean first = true;
         while (!isToken(TokenType.R_PAREN)) {
             if (!first) {
-                if (functionName.equals(PositionFunction.NAME)) {
+                if (functionName.equalsIgnoreCase(PositionFunction.NAME)) {
                     // POSITION(a in b).
                     this.expect(TokenType.IN);
-                } else if (functionName.equals(ExtractFunction.NAME)) {
+                } else if (functionName.equalsIgnoreCase(ExtractFunction.NAME)) {
                     // EXTRACT(a FROM b).
                     this.expect(TokenType.FROM);
                 } else {

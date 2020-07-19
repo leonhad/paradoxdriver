@@ -11,6 +11,13 @@
 package com.googlecode.paradox.function.definition;
 
 import com.googlecode.paradox.function.*;
+import com.googlecode.paradox.function.date.CurrentDateFunction;
+import com.googlecode.paradox.function.date.CurrentTimeFunction;
+import com.googlecode.paradox.function.date.CurrentTimestampFunction;
+import com.googlecode.paradox.function.date.ExtractFunction;
+import com.googlecode.paradox.function.grouping.CountFunction;
+import com.googlecode.paradox.function.string.*;
+import com.googlecode.paradox.function.system.UserFunction;
 
 import java.util.HashMap;
 import java.util.Locale;

@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.plan;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxException;
-import com.googlecode.paradox.function.FunctionNode;
+import com.googlecode.paradox.planner.nodes.FunctionNode;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
