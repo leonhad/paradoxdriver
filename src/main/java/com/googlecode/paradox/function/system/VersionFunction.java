@@ -8,27 +8,26 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.string;
+package com.googlecode.paradox.function.system;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
-import com.googlecode.paradox.rowset.ValuesConverter;
+import com.googlecode.paradox.utils.Constants;
 
-import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * The SQL RIGHT function.
+ * The SQL VERSION functions.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class RightFunction implements IFunction {
+public class VersionFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "RIGHT";
+    public static final String NAME = "VERSION";
 
     @Override
     public int sqlType() {
@@ -37,23 +36,11 @@ public class RightFunction implements IFunction {
 
     @Override
     public int parameterCount() {
-        return 2;
+        return 0;
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
-            throws SQLException {
-
-        if (values[0] == null) {
-            return null;
-        }
-
-        final int size = ValuesConverter.getPositiveInteger(values[1]);
-        final StringBuilder ret = new StringBuilder(values[0].toString());
-        if (ret.length() > size) {
-            ret.delete(0, ret.length() - size);
-        }
-
-        return ret.toString();
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
+        return String.format("%s %s", Constants.DRIVER_NAME, Constants.DRIVER_VERSION);
     }
 }

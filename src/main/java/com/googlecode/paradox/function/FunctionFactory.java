@@ -8,11 +8,11 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.definition;
+package com.googlecode.paradox.function;
 
-import com.googlecode.paradox.function.CoalesceFunction;
-import com.googlecode.paradox.function.NullIfFunction;
-import com.googlecode.paradox.function.NvlFunction;
+import com.googlecode.paradox.function.conditional.CoalesceFunction;
+import com.googlecode.paradox.function.conditional.NullIfFunction;
+import com.googlecode.paradox.function.conditional.NvlFunction;
 import com.googlecode.paradox.function.date.CurrentDateFunction;
 import com.googlecode.paradox.function.date.CurrentTimeFunction;
 import com.googlecode.paradox.function.date.CurrentTimestampFunction;
@@ -20,6 +20,7 @@ import com.googlecode.paradox.function.date.ExtractFunction;
 import com.googlecode.paradox.function.grouping.CountFunction;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
+import com.googlecode.paradox.function.system.VersionFunction;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -77,11 +78,12 @@ public final class FunctionFactory {
         FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
         FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
 
-        // User functions.
+        // System functions.
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);
         FUNCTIONS.put("SESSION_USER", UserFunction::new);
         FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
         FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
+        FUNCTIONS.put(VersionFunction.NAME, VersionFunction::new);
 
         FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

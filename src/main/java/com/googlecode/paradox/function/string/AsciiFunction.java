@@ -11,7 +11,7 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 
 import java.sql.SQLException;
 import java.sql.Types;

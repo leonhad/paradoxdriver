@@ -11,7 +11,7 @@
 package com.googlecode.paradox.function.grouping;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 
 import java.sql.Types;
 

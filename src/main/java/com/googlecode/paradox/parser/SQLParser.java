@@ -14,7 +14,7 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.date.ExtractFunction;
 import com.googlecode.paradox.planner.nodes.FunctionNode;
 import com.googlecode.paradox.function.string.PositionFunction;
-import com.googlecode.paradox.function.definition.FunctionFactory;
+import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;

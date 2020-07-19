@@ -8,28 +8,29 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function;
+package com.googlecode.paradox.function.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 
 import java.sql.Types;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
- * The SQL NVL function.
+ * The SQL coalesce function.
  *
  * @version 1.1
  * @since 1.6.0
  */
-public class NvlFunction implements IFunction {
+public class CoalesceFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "NVL";
-
+    public static final String NAME = "COALESCE";
     private int sqlType = Types.NULL;
 
     @Override
@@ -39,23 +40,18 @@ public class NvlFunction implements IFunction {
 
     @Override
     public int parameterCount() {
-        return 2;
+        return 0;
     }
 
     @Override
     public boolean isVariableParameters() {
-        return false;
+        return true;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws ParadoxSyntaxErrorException {
         this.sqlType = FieldValueUtils.getSqlType(values, types);
-
-        if (values[0] != null) {
-            return values[0];
-        }
-
-        return values[1];
+        return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);
     }
 }

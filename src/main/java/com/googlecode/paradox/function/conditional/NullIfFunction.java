@@ -8,29 +8,28 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function;
+package com.googlecode.paradox.function.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 
 import java.sql.Types;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
- * The SQL coalesce function.
+ * The SQL NULLIF function.
  *
- * @version 1.1
+ * @version 1.0
  * @since 1.6.0
  */
-public class CoalesceFunction implements IFunction {
+public class NullIfFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "COALESCE";
+    public static final String NAME = "NULLIF";
     private int sqlType = Types.NULL;
 
     @Override
@@ -40,18 +39,23 @@ public class CoalesceFunction implements IFunction {
 
     @Override
     public int parameterCount() {
-        return 0;
+        return 2;
     }
 
     @Override
     public boolean isVariableParameters() {
-        return true;
+        return false;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
             throws ParadoxSyntaxErrorException {
         this.sqlType = FieldValueUtils.getSqlType(values, types);
-        return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);
+
+        if (Objects.equals(values[0], values[1])) {
+            return null;
+        }
+
+        return values[0];
     }
 }

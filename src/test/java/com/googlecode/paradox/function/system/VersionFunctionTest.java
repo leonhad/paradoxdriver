@@ -8,42 +8,28 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.string;
 
-import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.IFunction;
+package com.googlecode.paradox.function.system;
 
-import java.sql.Types;
+import com.googlecode.paradox.utils.Constants;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * The SQL lower function.
+ * Unit test for {@link VersionFunction}.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class LowerFunction implements IFunction {
+public class VersionFunctionTest {
 
     /**
-     * The function name.
+     * Test for version function.
      */
-    public static final String NAME = "LOWER";
-
-    @Override
-    public int sqlType() {
-        return Types.VARCHAR;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 1;
-    }
-
-    @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        if (values[0] != null) {
-            return values[0].toString().toLowerCase(connection.getLocale());
-        }
-
-        return null;
+    @Test
+    public void testVersion() {
+        VersionFunction versionFunction = new VersionFunction();
+        Assert.assertEquals("Invalid version", Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION,
+                versionFunction.execute(null, null, null));
     }
 }

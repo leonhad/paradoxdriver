@@ -12,8 +12,8 @@ package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.definition.FunctionFactory;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.FunctionFactory;
+import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;

@@ -12,7 +12,7 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;

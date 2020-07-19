@@ -11,7 +11,7 @@
 package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 
 import java.sql.Date;
 import java.sql.Types;

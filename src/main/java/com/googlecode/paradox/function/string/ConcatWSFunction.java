@@ -12,7 +12,7 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 
 import java.sql.Types;
 

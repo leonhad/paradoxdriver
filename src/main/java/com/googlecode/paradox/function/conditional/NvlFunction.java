@@ -8,28 +8,28 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function;
+package com.googlecode.paradox.function.conditional;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.definition.IFunction;
+import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 
 import java.sql.Types;
-import java.util.Objects;
 
 /**
- * The SQL NULLIF function.
+ * The SQL NVL function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class NullIfFunction implements IFunction {
+public class NvlFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "NULLIF";
+    public static final String NAME = "NVL";
+
     private int sqlType = Types.NULL;
 
     @Override
@@ -52,10 +52,10 @@ public class NullIfFunction implements IFunction {
             throws ParadoxSyntaxErrorException {
         this.sqlType = FieldValueUtils.getSqlType(values, types);
 
-        if (Objects.equals(values[0], values[1])) {
-            return null;
+        if (values[0] != null) {
+            return values[0];
         }
 
-        return values[0];
+        return values[1];
     }
 }
