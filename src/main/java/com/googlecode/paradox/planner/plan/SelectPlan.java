@@ -62,7 +62,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private final List<Object[]> values = new ArrayList<>(50);
+    private List<Object[]> values = new ArrayList<>(50);
 
     /**
      * If this result needs to be distinct.
@@ -605,11 +605,16 @@ public final class SelectPlan implements Plan {
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
-        processOrderBy(rawData, columnsLoaded);
         filter(connection, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
+
+        processOrderBy(rawData);
+
+        if (!orderByFields.isEmpty() && maxRows != 0 && values.size() > maxRows) {
+            values = values.subList(0, maxRows);
+        }
     }
 
-    private void processOrderBy(final List<Object[]> rawData, final List<Column> loadedColumns) {
+    private void processOrderBy(final List<Object[]> rawData) {
         if (orderByFields.isEmpty()) {
             // Nothing to do here, there are no order by fields.
             return;
@@ -619,8 +624,9 @@ public final class SelectPlan implements Plan {
         Arrays.fill(mapColumns, -1);
         for (int i = 0; i < this.orderByFields.size(); i++) {
             final Column column = this.orderByFields.get(i);
-            for (int loop = 0; loop < loadedColumns.size(); loop++) {
-                if (loadedColumns.get(loop).getField().equals(column.getField())) {
+            mapColumns[i] = column.getIndex();
+            for (int loop = 0; loop < this.columns.size(); loop++) {
+                if (this.columns.get(loop).equals(column)) {
                     mapColumns[i] = loop;
                     break;
                 }
@@ -639,7 +645,7 @@ public final class SelectPlan implements Plan {
             }
         }
 
-        rawData.sort(comparator);
+        values.sort(comparator);
     }
 
     private void setIndexes(final List<Column> columns) throws SQLException {
@@ -720,7 +726,7 @@ public final class SelectPlan implements Plan {
                 this.values.add(finalRow);
             }
 
-            if (maxRows != 0 && values.size() == maxRows) {
+            if (orderByFields.isEmpty() && maxRows != 0 && values.size() == maxRows) {
                 // Stop loading on max rows limit.
                 break;
             }

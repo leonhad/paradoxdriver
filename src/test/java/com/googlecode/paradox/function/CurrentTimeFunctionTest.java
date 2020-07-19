@@ -17,12 +17,12 @@ import org.junit.*;
 import java.sql.*;
 
 /**
- * Unit test for {@link CurrentTimestampFunction}.
+ * Unit test for {@link CurrentTimeFunctionTest}.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class CurrentTimestampFunctionTest {
+public class CurrentTimeFunctionTest {
 
     /**
      * The connection string used in this tests.
@@ -37,7 +37,7 @@ public class CurrentTimestampFunctionTest {
     /**
      * Creates a new instance.
      */
-    public CurrentTimestampFunctionTest() {
+    public CurrentTimeFunctionTest() {
         super();
     }
 
@@ -73,20 +73,18 @@ public class CurrentTimestampFunctionTest {
     }
 
     /**
-     * Test for current timestmap.
+     * Test for current time.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTimestamp() throws SQLException {
+    public void testTimeInSQL() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select current_timestamp ");
+                "select current_time(), ac.AreaCode from geog.tblAC ac, geog.tblsttes st, " +
+                        "geog.County c where c.StateID = st.State and st.State = ac.State " +
+                        "and c.CountyID = 201 order by 1, 2 ");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-
-            Assert.assertEquals("Invalid value", new Timestamp(System.currentTimeMillis()).toString(),
-                    rs.getTimestamp(1).toString());
-            Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
 }

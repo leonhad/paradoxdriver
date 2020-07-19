@@ -106,7 +106,7 @@ public class CurrentDateFunctionTest {
 
             Assert.assertTrue("Invalid result set state", rs.next());
 
-            Assert.assertNotEquals("Invalid value", new Date(System.currentTimeMillis()).toString(),
+            Assert.assertEquals("Invalid value", new Date(System.currentTimeMillis()).toString(),
                     rs.getDate(1, gmt).toString());
             Assert.assertFalse("Invalid result set state", rs.next());
         }

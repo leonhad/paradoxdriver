@@ -8,14 +8,14 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.planner.sorting;
 
 import com.googlecode.paradox.rowset.ValuesComparator;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class OrderByComparator implements Comparator<Object[]> {
+public class OrderByComparator implements Comparator<Object[]>, Serializable {
     private final int index;
 
     private final OrderType orderType;
