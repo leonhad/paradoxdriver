@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.date.CurrentTimestampFunction;
 import com.googlecode.paradox.function.date.ExtractFunction;
 import com.googlecode.paradox.function.general.*;
 import com.googlecode.paradox.function.grouping.CountFunction;
+import com.googlecode.paradox.function.numeric.AbsFunction;
 import com.googlecode.paradox.function.numeric.IntegerFunction;
 import com.googlecode.paradox.function.numeric.IsNumericFunction;
 import com.googlecode.paradox.function.numeric.NumericFunction;
@@ -61,6 +62,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
 
         // Numeric functions.
+        FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
 
         // String functions.

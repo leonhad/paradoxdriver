@@ -503,7 +503,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getInt(final int columnIndex) throws SQLException {
-        return ValuesConverter.getInteger(dataNavigation.getColumnValue(columnIndex));
+         return ValuesConverter.getInteger(dataNavigation.getColumnValue(columnIndex));
     }
 
     /**
