@@ -14,10 +14,7 @@ import com.googlecode.paradox.function.date.CurrentDateFunction;
 import com.googlecode.paradox.function.date.CurrentTimeFunction;
 import com.googlecode.paradox.function.date.CurrentTimestampFunction;
 import com.googlecode.paradox.function.date.ExtractFunction;
-import com.googlecode.paradox.function.general.CoalesceFunction;
-import com.googlecode.paradox.function.general.ConvertFunction;
-import com.googlecode.paradox.function.general.NullIfFunction;
-import com.googlecode.paradox.function.general.NvlFunction;
+import com.googlecode.paradox.function.general.*;
 import com.googlecode.paradox.function.grouping.CountFunction;
 import com.googlecode.paradox.function.numeric.IntegerFunction;
 import com.googlecode.paradox.function.numeric.IsNumericFunction;
@@ -27,7 +24,6 @@ import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -52,6 +48,7 @@ public final class FunctionFactory {
 
     static {
         // General functions.
+        FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(ConvertFunction.NAME, ConvertFunction::new);
         FUNCTIONS.put(IntegerFunction.NAME, IntegerFunction::new);
@@ -125,9 +122,10 @@ public final class FunctionFactory {
      * @param alias the function alias.
      * @return the  a function by  alias.
      */
+    @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public static boolean isFunctionAlias(final String alias) {
         if (alias != null) {
-            final Supplier<? extends IFunction> supplier = FUNCTION_ALIAS.get(alias.toUpperCase(Locale.US));
+            final Supplier<? extends IFunction> supplier = FUNCTION_ALIAS.get(alias.toUpperCase());
             return supplier != null;
         }
 
@@ -140,9 +138,10 @@ public final class FunctionFactory {
      * @param name the function by name.
      * @return the function by name.
      */
+    @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public static IFunction getByName(final String name) {
         if (name != null) {
-            final Supplier<? extends IFunction> supplier = FUNCTIONS.get(name.toUpperCase(Locale.US));
+            final Supplier<? extends IFunction> supplier = FUNCTIONS.get(name.toUpperCase());
             if (supplier != null) {
                 return supplier.get();
             }

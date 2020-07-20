@@ -63,8 +63,7 @@ public class ConvertFunction implements IFunction {
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
-                          final FieldNode[] fields)
-            throws SQLException {
+                          final FieldNode[] fields) throws SQLException {
 
         if (convertCharset) {
             Object value = values[0];
@@ -137,7 +136,6 @@ public class ConvertFunction implements IFunction {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
                         typeNode.getName(), typeNode.getPosition());
             }
-
         }
     }
 }

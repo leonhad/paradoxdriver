@@ -13,6 +13,7 @@ package com.googlecode.paradox.parser;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.date.ExtractFunction;
+import com.googlecode.paradox.function.general.CastFunction;
 import com.googlecode.paradox.function.general.ConvertFunction;
 import com.googlecode.paradox.function.string.PositionFunction;
 import com.googlecode.paradox.function.string.SubstringFunction;
@@ -543,6 +544,9 @@ public final class SQLParser {
                 this.expect(TokenType.COMMA);
             }
 
+            ret = true;
+        } else if (functionName.equalsIgnoreCase(CastFunction.NAME)) {
+            this.expect(TokenType.AS);
             ret = true;
         }
 
