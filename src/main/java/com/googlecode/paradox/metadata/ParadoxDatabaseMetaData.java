@@ -487,6 +487,13 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                 continue;
             }
 
+            try (FileOutputStream fos = new FileOutputStream("/tmp/teste.txt", true)) {
+                String c = catalog + "-" + schemaPattern + "-" + functionNamePattern + "\n";
+                fos.write(c.getBytes(StandardCharsets.UTF_8));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             final IFunction instance = function.getValue().get();
 
             final Object[] row = {
