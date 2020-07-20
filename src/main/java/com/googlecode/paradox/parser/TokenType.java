@@ -83,6 +83,11 @@ public enum TokenType {
     ESCAPE,
 
     /**
+     * FOR token.
+     */
+    FOR,
+
+    /**
      * From token.
      */
     FROM,

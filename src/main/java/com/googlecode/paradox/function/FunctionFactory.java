@@ -10,9 +10,9 @@
  */
 package com.googlecode.paradox.function;
 
-import com.googlecode.paradox.function.conditional.CoalesceFunction;
-import com.googlecode.paradox.function.conditional.NullIfFunction;
-import com.googlecode.paradox.function.conditional.NvlFunction;
+import com.googlecode.paradox.function.general.CoalesceFunction;
+import com.googlecode.paradox.function.general.NullIfFunction;
+import com.googlecode.paradox.function.general.NvlFunction;
 import com.googlecode.paradox.function.date.CurrentDateFunction;
 import com.googlecode.paradox.function.date.CurrentTimeFunction;
 import com.googlecode.paradox.function.date.CurrentTimestampFunction;

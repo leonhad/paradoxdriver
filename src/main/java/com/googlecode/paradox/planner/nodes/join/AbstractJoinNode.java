@@ -34,6 +34,7 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
      *
      * @param fieldName the field name.
      * @param child     the child node.
+     * @param position  the current scanner position.
      */
     public AbstractJoinNode(final String fieldName, final SQLNode child, final ScannerPosition position) {
         super(fieldName, position);

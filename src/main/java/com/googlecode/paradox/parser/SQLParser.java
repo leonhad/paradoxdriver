@@ -14,6 +14,7 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.date.ExtractFunction;
 import com.googlecode.paradox.function.string.PositionFunction;
+import com.googlecode.paradox.function.string.SubstringFunction;
 import com.googlecode.paradox.function.string.TrimFunction;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -518,6 +519,18 @@ public final class SQLParser {
             }
 
             // Do nothing, no separator here. TRIM(TYPE...
+            ret = true;
+        } else if (functionName.equalsIgnoreCase(SubstringFunction.NAME)) {
+            // SUBSTRING(VALUE FROM start FOR length).
+
+            if (isToken(TokenType.COMMA)) {
+                this.expect(TokenType.COMMA);
+            } else if (node.getParameters().size() == 1) {
+                this.expect(TokenType.FROM);
+            } else {
+                this.expect(TokenType.FOR);
+            }
+
             ret = true;
         }
 
