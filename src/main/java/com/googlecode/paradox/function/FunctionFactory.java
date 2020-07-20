@@ -88,6 +88,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
         FUNCTIONS.put(RightFunction.NAME, RightFunction::new);
         FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
+        FUNCTIONS.put(SubstringFunction.NAME, SubstringFunction::new);
         FUNCTIONS.put("TRANSLATE", ReplaceFunction::new);
         FUNCTIONS.put(TextFunction.NAME, TextFunction::new);
         FUNCTIONS.put(TrimFunction.NAME, TrimFunction::new);
