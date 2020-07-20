@@ -98,7 +98,9 @@ public final class SQLParser {
      * @throws SQLException in case of unexpected tokens.
      */
     private void expect(final TokenType token) throws SQLException {
-        if (this.token.getType() != token) {
+        if (this.token == null) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
+        } else if (this.token.getType() != token) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                     this.token.getPosition());
         }

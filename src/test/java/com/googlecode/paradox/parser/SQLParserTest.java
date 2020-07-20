@@ -835,4 +835,14 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid field size", 1, upper.getParameters().size());
     }
 
+    /**
+     * Test for unterminated function.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testUnterminatedFunction() throws SQLException {
+        final SQLParser parser = new SQLParser("select upper('2'");
+        Assert.assertThrows("Invalid function definition", ParadoxSyntaxErrorException.class, parser::parse);
+    }
 }
