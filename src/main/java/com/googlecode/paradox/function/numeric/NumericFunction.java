@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
@@ -41,7 +42,8 @@ public class NumericFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields)
             throws SQLException {
         return ValuesConverter.getDouble(values[0]);
     }

@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.Timestamp;
 import java.sql.Types;
@@ -46,7 +47,8 @@ public class CurrentTimestampFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields) {
         long time = System.currentTimeMillis();
         return new Timestamp(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time));
     }

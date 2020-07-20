@@ -11,6 +11,7 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 /**
  * The SQL bit length function.
@@ -26,7 +27,8 @@ public class BitLengthFunction extends OctectLengthFunction {
     public static final String NAME = "BIT_LENGTH";
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
-        return ((Integer) super.execute(connection, values, types)) * 0x08;
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields) {
+        return ((Integer) super.execute(connection, values, types, fields)) * 0x08;
     }
 }

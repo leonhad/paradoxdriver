@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.Types;
 
@@ -40,7 +41,8 @@ public class ReplaceFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields) {
         if (values[0] == null || values[1] == null || values[2] == null) {
             return null;
         }

@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -42,7 +43,8 @@ public class AsciiFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields)
             throws SQLException {
         Object value = values[0];
         if (value != null && !value.toString().isEmpty()) {

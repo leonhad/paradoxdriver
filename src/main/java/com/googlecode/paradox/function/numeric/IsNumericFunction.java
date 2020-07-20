@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.Types;
 import java.util.logging.Level;
@@ -43,7 +44,8 @@ public class IsNumericFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields) {
         if (values[0] == null) {
             return 0;
         }

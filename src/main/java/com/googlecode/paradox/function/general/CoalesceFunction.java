@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.Types;
 import java.util.Objects;
@@ -49,8 +50,8 @@ public class CoalesceFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
-            throws ParadoxSyntaxErrorException {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         this.sqlType = FieldValueUtils.getSqlType(values, types);
         return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);
     }

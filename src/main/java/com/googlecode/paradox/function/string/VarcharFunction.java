@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -40,8 +41,8 @@ public class VarcharFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
-            throws SQLException {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields) throws SQLException {
         if (values[0] == null) {
             return null;
         }

@@ -58,7 +58,7 @@ public abstract class AbstractLobField implements FieldParser {
      */
     private static final int GRAPH_HEADER_SIZE = 17;
 
-    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value);
+    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value) throws ParadoxDataException;
 
     private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table)
             throws IOException {

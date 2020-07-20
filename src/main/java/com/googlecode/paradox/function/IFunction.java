@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -64,10 +65,12 @@ public interface IFunction {
      * @param connection the Paradox connection.
      * @param values     the row values.
      * @param types      the fields SQL type.
+     * @param fields     the original field list.
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    Object execute(final ParadoxConnection connection, final Object[] values, final int[] types) throws SQLException;
+    Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                   final FieldNode[] fields) throws SQLException;
 
     /**
      * If this function can be called without parenthesis.

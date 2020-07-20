@@ -22,6 +22,7 @@ import com.googlecode.paradox.results.Column;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,6 +39,11 @@ public class FunctionNode extends FieldNode {
      * The list of parameters of this function.
      */
     private final List<SQLNode> parameters = new ArrayList<>();
+
+    /**
+     * Field nodes.
+     */
+    private FieldNode[] fields;
 
     /**
      * This function instance.
@@ -84,8 +90,17 @@ public class FunctionNode extends FieldNode {
      * @return the parameters field list.
      */
     public List<FieldNode> getFields() {
-        return parameters.stream().filter(field -> field instanceof FieldNode)
-                .map(field -> (FieldNode) field).collect(Collectors.toList());
+        if (fields == null) {
+            fields = parameters.stream().map((SQLNode field) -> {
+                if (field instanceof FieldNode) {
+                    return (FieldNode) field;
+                }
+
+                return null;
+            }).toArray(FieldNode[]::new);
+        }
+
+        return Arrays.stream(fields).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**
@@ -190,7 +205,7 @@ public class FunctionNode extends FieldNode {
 
         }
 
-        return function.execute(connection, values, types);
+        return function.execute(connection, values, types, fields);
     }
 
     @Override

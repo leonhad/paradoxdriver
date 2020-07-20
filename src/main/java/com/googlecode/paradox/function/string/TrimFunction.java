@@ -15,6 +15,7 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 import java.sql.SQLException;
 import java.sql.Types;
@@ -66,8 +67,8 @@ public class TrimFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types)
-            throws SQLException {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+                          final FieldNode[] fields) throws SQLException {
         if (values[0] == null || (values.length > 1 && values[1] == null)) {
             return null;
         }

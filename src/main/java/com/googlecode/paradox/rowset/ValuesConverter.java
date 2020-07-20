@@ -15,10 +15,7 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -41,6 +38,11 @@ public final class ValuesConverter {
     private static final Map<Class<?>, Function<Object, Object>> CLASS_MAPPING = new HashMap<>();
 
     /**
+     * Default type mapping.
+     */
+    private static final Map<Integer, Function<Object, Object>> TYPE_MAPPING = new HashMap<>();
+
+    /**
      * Utility class, not for use.
      */
     private ValuesConverter() {
@@ -61,12 +63,36 @@ public final class ValuesConverter {
         CLASS_MAPPING.put(String.class, ValuesConverter::getString);
         CLASS_MAPPING.put(Time.class, ValuesConverter::getTime);
         CLASS_MAPPING.put(Timestamp.class, ValuesConverter::getTimestamp);
+
+        TYPE_MAPPING.put(Types.BOOLEAN, ValuesConverter::getBoolean);
+        TYPE_MAPPING.put(Types.BINARY, ValuesConverter::getByteArray);
+        TYPE_MAPPING.put(Types.BLOB, ValuesConverter::getByteArray);
+        TYPE_MAPPING.put(Types.DATE, ValuesConverter::getDate);
+        TYPE_MAPPING.put(Types.DOUBLE, ValuesConverter::getDouble);
+        TYPE_MAPPING.put(Types.NUMERIC, ValuesConverter::getDouble);
+        TYPE_MAPPING.put(Types.FLOAT, ValuesConverter::getFloat);
+        TYPE_MAPPING.put(Types.INTEGER, ValuesConverter::getInteger);
+        TYPE_MAPPING.put(Types.CLOB, ValuesConverter::getString);
+        TYPE_MAPPING.put(Types.NCLOB, ValuesConverter::getString);
+        TYPE_MAPPING.put(Types.VARCHAR, ValuesConverter::getString);
+        TYPE_MAPPING.put(Types.NVARCHAR, ValuesConverter::getString);
+        TYPE_MAPPING.put(Types.TIME, ValuesConverter::getTime);
+        TYPE_MAPPING.put(Types.TIMESTAMP, ValuesConverter::getTimestamp);
+        TYPE_MAPPING.put(Types.TIMESTAMP_WITH_TIMEZONE, ValuesConverter::getTimestamp);
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T convert(final Object value, Class<T> type) throws SQLException {
         try {
             return (T) CLASS_MAPPING.get(type).apply(value);
+        } catch (final IllegalArgumentException e) {
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
+        }
+    }
+
+    public static Object convert(final Object value, int sqlType) throws SQLException {
+        try {
+            return TYPE_MAPPING.get(sqlType).apply(value);
         } catch (final IllegalArgumentException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
         }
@@ -174,6 +200,13 @@ public final class ValuesConverter {
                 ret = Long.valueOf(value.toString());
             } catch (final NumberFormatException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
+
+                try {
+                    // Try to convert with BigDecimal.
+                    ret = new BigDecimal(value.toString()).longValue();
+                } catch (final NumberFormatException e1) {
+                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                }
             }
         }
 

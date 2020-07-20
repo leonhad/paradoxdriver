@@ -243,6 +243,11 @@ public enum TokenType {
     UPDATE,
 
     /**
+     * Using token.
+     */
+    USING,
+
+    /**
      * Where token.
      */
     WHERE,

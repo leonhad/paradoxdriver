@@ -30,6 +30,6 @@ public class VersionFunctionTest {
     public void testVersion() {
         VersionFunction versionFunction = new VersionFunction();
         Assert.assertEquals("Invalid version", Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION,
-                versionFunction.execute(null, null, null));
+                versionFunction.execute(null, null, null, null));
     }
 }

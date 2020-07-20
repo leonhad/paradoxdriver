@@ -10,15 +10,20 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.results.ParadoxFieldType;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 
 /**
  * Parses memo fields.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public final class MemoField extends AbstractLobField {
@@ -33,7 +38,9 @@ public final class MemoField extends AbstractLobField {
     }
 
     @Override
-    protected Object getValue(final ParadoxTable table, final ByteBuffer value) {
-        return table.getCharset().decode(value).toString();
+    protected Object getValue(final ParadoxTable table, final ByteBuffer value) throws ParadoxDataException {
+        final byte[] bytes = new byte[value.remaining()];
+        value.get(bytes);
+        return FieldValueUtils.convert(bytes, table.getCharset());
     }
 }

@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
+import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
@@ -32,6 +33,11 @@ public class FieldNode extends SQLNode {
      * Field index used in filter values.
      */
     private int index = -1;
+
+    /**
+     * The table associated to this field.
+     */
+    private ParadoxTable table;
 
     /**
      * Stores field values (from select statements).
@@ -85,6 +91,14 @@ public class FieldNode extends SQLNode {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public void setTable(ParadoxTable table) {
+        this.table = table;
+    }
+
+    public ParadoxTable getTable() {
+        return table;
     }
 
     @Override
