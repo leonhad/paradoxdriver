@@ -10,15 +10,18 @@
  */
 package com.googlecode.paradox.function;
 
-import com.googlecode.paradox.function.general.CoalesceFunction;
-import com.googlecode.paradox.function.general.NullIfFunction;
-import com.googlecode.paradox.function.general.NvlFunction;
 import com.googlecode.paradox.function.date.CurrentDateFunction;
 import com.googlecode.paradox.function.date.CurrentTimeFunction;
 import com.googlecode.paradox.function.date.CurrentTimestampFunction;
 import com.googlecode.paradox.function.date.ExtractFunction;
+import com.googlecode.paradox.function.general.CoalesceFunction;
+import com.googlecode.paradox.function.general.ConvertFunction;
+import com.googlecode.paradox.function.general.NullIfFunction;
+import com.googlecode.paradox.function.general.NvlFunction;
 import com.googlecode.paradox.function.grouping.CountFunction;
+import com.googlecode.paradox.function.numeric.IntegerFunction;
 import com.googlecode.paradox.function.numeric.IsNumericFunction;
+import com.googlecode.paradox.function.numeric.NumericFunction;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
@@ -48,11 +51,14 @@ public final class FunctionFactory {
     private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
 
     static {
-        // Conditional functions.
+        // General functions.
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
+        FUNCTIONS.put(ConvertFunction.NAME, ConvertFunction::new);
+        FUNCTIONS.put(IntegerFunction.NAME, IntegerFunction::new);
         FUNCTIONS.put("ISNULL", NvlFunction::new);
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
+        FUNCTIONS.put(NumericFunction.NAME, NumericFunction::new);
 
         // Grouping functions.
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);

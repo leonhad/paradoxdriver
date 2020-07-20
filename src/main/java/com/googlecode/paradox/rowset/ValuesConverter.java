@@ -150,6 +150,13 @@ public final class ValuesConverter {
                 ret = Integer.valueOf(value.toString());
             } catch (final NumberFormatException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
+
+                try {
+                    // Try to convert with BigDecimal.
+                    ret = new BigDecimal(value.toString()).intValue();
+                } catch (final NumberFormatException e1) {
+                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                }
             }
         }
 
