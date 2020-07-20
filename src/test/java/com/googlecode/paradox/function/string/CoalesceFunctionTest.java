@@ -99,12 +99,8 @@ public class CoalesceFunctionTest {
     @Test
     public void testCoalesceThreeParameters() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select coalesce(1, b, 1) ret from fields.bcd");
+                "select coalesce(1, null, 1) ret");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
             Assert.assertFalse("Invalid result set state", rs.next());

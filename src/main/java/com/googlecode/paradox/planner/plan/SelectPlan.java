@@ -13,7 +13,6 @@ package com.googlecode.paradox.planner.plan;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxException;
-import com.googlecode.paradox.planner.nodes.FunctionNode;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
@@ -21,16 +20,14 @@ import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
-import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.ParameterNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
-import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderByComparator;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -39,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.1
  */
 public final class SelectPlan implements Plan {
@@ -58,24 +55,10 @@ public final class SelectPlan implements Plan {
      * The tables in this plan.
      */
     private final List<PlanTableNode> tables = new ArrayList<>();
-
-    /**
-     * The data values.
-     */
-    private List<Object[]> values = new ArrayList<>(50);
-
     /**
      * If this result needs to be distinct.
      */
     private final boolean distinct;
-    /**
-     * The conditions to filter values
-     */
-    private AbstractConditionalNode condition;
-    /**
-     * If this statement was cancelled.
-     */
-    private boolean cancelled;
     /**
      * Order by fields.
      */
@@ -84,6 +67,18 @@ public final class SelectPlan implements Plan {
      * Order type.
      */
     private final List<OrderType> orderTypes = new ArrayList<>();
+    /**
+     * The data values.
+     */
+    private List<Object[]> values = new ArrayList<>(50);
+    /**
+     * The conditions to filter values
+     */
+    private AbstractConditionalNode condition;
+    /**
+     * If this statement was cancelled.
+     */
+    private boolean cancelled;
 
     /**
      * Creates a SELECT plan with conditions.
@@ -136,6 +131,20 @@ public final class SelectPlan implements Plan {
         }
     }
 
+    private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
+                                             final AbstractConditionalNode condition) {
+        if (condition != null) {
+            final Set<FieldNode> fields = condition.getClauseFields();
+            fields.forEach((FieldNode node) -> {
+                if (table.isThis(node.getTableName())) {
+                    Arrays.stream(table.getTable().getFields())
+                            .filter(f -> f.getName().equalsIgnoreCase(node.getName())).map(Column::new)
+                            .forEach(columnsToLoad::add);
+                }
+            });
+        }
+    }
+
     /**
      * Optimize the joins clause.
      */
@@ -167,15 +176,13 @@ public final class SelectPlan implements Plan {
     }
 
     private PlanTableNode getPlanTable(final ParadoxTable table) {
-        return tables.stream()
-                .filter(t -> table.equals(t.getTable()))
-                .findFirst().orElse(null);
+        return tables.stream().filter(t -> table.equals(t.getTable())).findFirst().orElse(null);
     }
 
     private List<Object[]> processJoinByType(final ParadoxConnection connection, final List<Column> columnsLoaded,
                                              final List<Object[]> rawData, final PlanTableNode table,
-                                             final List<Object[]> tableData, final Object[] parameters)
-            throws SQLException {
+                                             final List<Object[]> tableData,
+                                             final Object[] parameters) throws SQLException {
         List<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
@@ -193,20 +200,6 @@ public final class SelectPlan implements Plan {
                 break;
         }
         return localValues;
-    }
-
-    private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
-                                             final AbstractConditionalNode condition) {
-        if (condition != null) {
-            final Set<FieldNode> fields = condition.getClauseFields();
-            fields.forEach((FieldNode node) -> {
-                if (table.isThis(node.getTableName())) {
-                    Arrays.stream(table.getTable().getFields())
-                            .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                            .map(Column::new).forEach(columnsToLoad::add);
-                }
-            });
-        }
     }
 
     /**
@@ -281,8 +274,7 @@ public final class SelectPlan implements Plan {
             if (node.getTableName() == null || table.isThis(node.getTableName())) {
                 node.setTable(table.getTable());
                 fields.addAll(Arrays.stream(table.getTable().getFields())
-                        .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                        .collect(Collectors.toList()));
+                        .filter(f -> f.getName().equalsIgnoreCase(node.getName())).collect(Collectors.toList()));
             }
         }
 
@@ -312,8 +304,8 @@ public final class SelectPlan implements Plan {
 
     private List<Object[]> processInnerJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
                                             final List<Object[]> rawData, final PlanTableNode table,
-                                            final List<Object[]> tableData, final Object[] parameters)
-            throws SQLException {
+                                            final List<Object[]> tableData,
+                                            final Object[] parameters) throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -324,8 +316,8 @@ public final class SelectPlan implements Plan {
                 checkCancel();
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters)) {
+                if (table.getConditionalJoin() != null
+                        && !table.getConditionalJoin().evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -357,8 +349,7 @@ public final class SelectPlan implements Plan {
                 for (final PlanTableNode table : this.tables) {
                     if (table.isThis(fn.getTableName())) {
                         conditionalFields.addAll(Arrays.stream(table.getTable().getFields())
-                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName()))
-                                .collect(Collectors.toSet()));
+                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName())).collect(Collectors.toSet()));
                     }
                 }
             });
@@ -369,9 +360,8 @@ public final class SelectPlan implements Plan {
                 final ParadoxTable paradoxTable = conditionalFields.get(0).getTable();
                 final PlanTableNode planTableNode = getPlanTable(paradoxTable);
 
-                if (planTableNode != null &&
-                        (planTableNode.getJoinType() == JoinType.CROSS
-                                || planTableNode.getJoinType() == JoinType.INNER)) {
+                if (planTableNode != null && (planTableNode.getJoinType() == JoinType.CROSS
+                        || planTableNode.getJoinType() == JoinType.INNER)) {
                     // Do not change OUTER joins.
                     addAndClause(planTableNode, node);
                     return true;
@@ -401,8 +391,8 @@ public final class SelectPlan implements Plan {
 
     private List<Object[]> processLeftJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
                                            final List<Object[]> rawData, final PlanTableNode table,
-                                           final List<Object[]> tableData, final Object[] parameters)
-            throws SQLException {
+                                           final List<Object[]> tableData,
+                                           final Object[] parameters) throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -415,8 +405,8 @@ public final class SelectPlan implements Plan {
 
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters)) {
+                if (table.getConditionalJoin() != null
+                        && !table.getConditionalJoin().evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -434,8 +424,8 @@ public final class SelectPlan implements Plan {
 
     private List<Object[]> processRightJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
                                             final List<Object[]> rawData, final PlanTableNode table,
-                                            final List<Object[]> tableData, final Object[] parameters)
-            throws SQLException {
+                                            final List<Object[]> tableData,
+                                            final Object[] parameters) throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -448,8 +438,8 @@ public final class SelectPlan implements Plan {
 
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters)) {
+                if (table.getConditionalJoin() != null
+                        && !table.getConditionalJoin().evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -468,8 +458,8 @@ public final class SelectPlan implements Plan {
 
     private List<Object[]> processFullJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
                                            final List<Object[]> rawData, final PlanTableNode table,
-                                           final List<Object[]> tableData, final Object[] parameters)
-            throws SQLException {
+                                           final List<Object[]> tableData,
+                                           final Object[] parameters) throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(100);
 
@@ -484,8 +474,8 @@ public final class SelectPlan implements Plan {
                 final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters)) {
+                if (table.getConditionalJoin() != null
+                        && !table.getConditionalJoin().evaluate(connection, column, parameters)) {
                     continue;
                 }
 
@@ -519,7 +509,7 @@ public final class SelectPlan implements Plan {
      */
     @Override
     public void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters,
-                        final int[] parameterTypes) throws SQLException {
+                        final ParadoxType[] parameterTypes) throws SQLException {
 
         // Can't do anything without fields defined.
         if (this.columns.isEmpty()) {
@@ -535,17 +525,16 @@ public final class SelectPlan implements Plan {
             checkCancel();
 
             // Columns in SELECT clause.
-            final Set<Column> columnsToLoad =
-                    this.columns.stream().filter(c -> c.isThis(table.getTable()))
-                            .collect(Collectors.toSet());
+            final Set<Column> columnsToLoad = this.columns.stream().filter(c -> c.isThis(table.getTable()))
+                    .collect(Collectors.toSet());
 
             // Columns in SELECT clause from function.
-            columnsToLoad.addAll(this.functionColumns.stream().filter(c -> c.isThis(table.getTable()))
-                    .collect(Collectors.toSet()));
+            columnsToLoad.addAll(
+                    this.functionColumns.stream().filter(c -> c.isThis(table.getTable())).collect(Collectors.toSet()));
 
             // Columns in ORDER BY clause.
-            columnsToLoad.addAll(this.orderByFields.stream().filter(c -> c.isThis(table.getTable()))
-                    .collect(Collectors.toSet()));
+            columnsToLoad.addAll(
+                    this.orderByFields.stream().filter(c -> c.isThis(table.getTable())).collect(Collectors.toSet()));
 
             // Fields from WHERE clause.
             getConditionalFields(table, columnsToLoad, this.condition);
@@ -563,8 +552,8 @@ public final class SelectPlan implements Plan {
 
             columnsLoaded.addAll(columnsToLoad);
 
-            final List<Object[]> tableData = TableData.loadData(table.getTable(), columnsToLoad.stream()
-                    .map(Column::getField).toArray(ParadoxField[]::new));
+            final List<Object[]> tableData = TableData.loadData(table.getTable(),
+                    columnsToLoad.stream().map(Column::getField).toArray(ParadoxField[]::new));
             if (table.getConditionalJoin() != null) {
                 table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
             }
@@ -573,8 +562,8 @@ public final class SelectPlan implements Plan {
             if (rawData.isEmpty()) {
                 if (table.getConditionalJoin() != null) {
                     // Filter WHERE joins.
-                    tableData.removeIf(tableRow -> !table.getConditionalJoin()
-                            .evaluate(connection, tableRow, parameters));
+                    tableData.removeIf(
+                            tableRow -> !table.getConditionalJoin().evaluate(connection, tableRow, parameters));
                 }
 
                 rawData.addAll(tableData);
@@ -688,7 +677,7 @@ public final class SelectPlan implements Plan {
     }
 
     private void filter(final ParadoxConnection connection, final List<Object[]> rowValues, final int[] mapColumns,
-                        final int maxRows, final Object[] parameters, final int[] parameterTypes,
+                        final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
                         final List<Column> columnsLoaded) throws SQLException {
 
         for (final Object[] tableRow : rowValues) {
@@ -717,7 +706,7 @@ public final class SelectPlan implements Plan {
                             finalRow[i] = functionNode.execute(connection, tableRow, parameters, parameterTypes,
                                     columnsLoaded);
                             // The function may change the result type.
-                            this.columns.get(i).setType(functionNode.getSqlType());
+                            this.columns.get(i).setType(functionNode.getType());
                         }
                     }
                 }
@@ -826,10 +815,8 @@ public final class SelectPlan implements Plan {
             return false;
         }
         SelectPlan that = (SelectPlan) o;
-        return distinct == that.distinct &&
-                Objects.equals(columns, that.columns) &&
-                Objects.equals(tables, that.tables) &&
-                Objects.equals(condition, that.condition);
+        return distinct == that.distinct && Objects.equals(columns, that.columns) && Objects.equals(tables, that.tables)
+                && Objects.equals(condition, that.condition);
     }
 
     @Override

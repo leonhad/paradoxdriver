@@ -13,14 +13,14 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
 
 /**
  * Parses a VARCHAR field.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public final class VarcharField implements FieldParser {
@@ -29,8 +29,8 @@ public final class VarcharField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public boolean match(final int type) {
-        return type == ParadoxFieldType.VARCHAR.getType();
+    public boolean match(final ParadoxType type) {
+        return type == ParadoxType.VARCHAR;
     }
 
     /**

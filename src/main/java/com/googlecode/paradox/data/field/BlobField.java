@@ -11,14 +11,14 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
 
 /**
  * Parses blob fields.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public final class BlobField extends AbstractLobField {
@@ -27,10 +27,8 @@ public final class BlobField extends AbstractLobField {
      * {@inheritDoc}.
      */
     @Override
-    public boolean match(final int type) {
-        return type == ParadoxFieldType.BLOB.getType()
-                || type == ParadoxFieldType.OLE.getType()
-                || type == ParadoxFieldType.GRAPHIC.getType();
+    public boolean match(final ParadoxType type) {
+        return type == ParadoxType.BLOB || type == ParadoxType.OLE || type == ParadoxType.GRAPHIC;
     }
 
     @Override

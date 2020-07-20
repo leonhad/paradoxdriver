@@ -16,6 +16,7 @@ import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * SQL function interface.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public interface IFunction {
@@ -48,11 +49,11 @@ public interface IFunction {
     }
 
     /**
-     * The returned value SQL type.
+     * The returned value type.
      *
-     * @return the returned value SQL type.
+     * @return the returned value type.
      */
-    int sqlType();
+    ParadoxType type();
 
     /**
      * The function parameters count.
@@ -89,7 +90,7 @@ public interface IFunction {
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                    final FieldNode[] fields) throws SQLException;
 
     /**

@@ -12,6 +12,7 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.*;
 
 import java.nio.ByteBuffer;
@@ -22,7 +23,7 @@ import java.util.GregorianCalendar;
 /**
  * Unit test for {@link TimeField} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class TimeFieldTest {
@@ -73,7 +74,7 @@ public class TimeFieldTest {
     @Test
     public void testInvalidMatch() {
         final TimeField field = new TimeField();
-        Assert.assertFalse("Invalid field value.", field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -108,7 +109,7 @@ public class TimeFieldTest {
     @Test
     public void testValidMatch() {
         final TimeField field = new TimeField();
-        Assert.assertTrue("Invalid field type.", field.match(0x14));
+        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.TIME));
     }
 
     /**
@@ -118,8 +119,8 @@ public class TimeFieldTest {
      */
     @Test
     public void testReadTime() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT Id, LONG FROM fields.long")) {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT Id, LONG FROM fields.long")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
             Assert.assertEquals("Invalid value.", 1, rs.getInt("LONG"));

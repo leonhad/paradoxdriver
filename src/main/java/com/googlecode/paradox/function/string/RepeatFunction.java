@@ -13,15 +13,15 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * The SQL REPEAT function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class RepeatFunction implements IFunction {
@@ -32,8 +32,8 @@ public class RepeatFunction implements IFunction {
     public static final String NAME = "REPEAT";
 
     @Override
-    public int sqlType() {
-        return Types.VARCHAR;
+    public ParadoxType type() {
+        return ParadoxType.VARCHAR;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class RepeatFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
         final int size = ValuesConverter.getPositiveInteger(values[1]);

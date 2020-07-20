@@ -19,22 +19,21 @@ import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
-import java.sql.JDBCType;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Field processing utilities.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public final class FieldValueUtils {
@@ -75,18 +74,18 @@ public final class FieldValueUtils {
      * @return the first non NULL parameter's type.
      * @throws ParadoxSyntaxErrorException in case of inconsistent parameter types.
      */
-    public static int getSqlType(final Object[] values, final int[] types) throws ParadoxSyntaxErrorException {
+    public static ParadoxType getSqlType(final Object[] values, final ParadoxType[] types) throws ParadoxSyntaxErrorException {
         if (types.length > 0) {
-            int current = Types.NULL;
-            for (int type : types) {
-                if (current == Types.NULL) {
+            ParadoxType current = ParadoxType.NULL;
+            for (ParadoxType type : types) {
+                if (current == ParadoxType.NULL) {
                     current = type;
                 }
 
-                if (current != Types.NULL && current != type) {
+                if (current != ParadoxType.NULL && type != ParadoxType.NULL && current != type) {
                     // The field types isn't the same (NULL ignored).
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_DATA_TYPE,
-                            JDBCType.valueOf(current).name(), JDBCType.valueOf(type).name());
+                            current.name(), type.name());
                 }
             }
         }
@@ -98,7 +97,7 @@ public final class FieldValueUtils {
             }
         }
 
-        return Types.NULL;
+        return ParadoxType.NULL;
     }
 
     /**

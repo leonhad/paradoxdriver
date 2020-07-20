@@ -15,15 +15,15 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.Types;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
  * The SQL coalesce function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class CoalesceFunction implements IFunction {
@@ -32,11 +32,11 @@ public class CoalesceFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "COALESCE";
-    private int sqlType = Types.NULL;
+    private ParadoxType type = ParadoxType.NULL;
 
     @Override
-    public int sqlType() {
-        return sqlType;
+    public ParadoxType type() {
+        return type;
     }
 
     @Override
@@ -50,9 +50,9 @@ public class CoalesceFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
-        this.sqlType = FieldValueUtils.getSqlType(values, types);
+        this.type = FieldValueUtils.getSqlType(values, types);
         return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);
     }
 }

@@ -15,18 +15,18 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.sql.Time;
-import java.sql.Types;
 import java.util.List;
 import java.util.TimeZone;
 
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class CurrentTimeFunction implements IFunction {
@@ -37,8 +37,8 @@ public class CurrentTimeFunction implements IFunction {
     public static final String NAME = "CURRENT_TIME";
 
     @Override
-    public int sqlType() {
-        return Types.TIME;
+    public ParadoxType type() {
+        return ParadoxType.TIME;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CurrentTimeFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         if (types.length == 1) {
             final int value = ValuesConverter.getPositiveInteger(values[0]);

@@ -19,6 +19,7 @@ import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
@@ -47,6 +48,14 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     public static final String TABLE_SCHEMA = "TABLE_SCHEM";
     public static final String TABLE_CATALOG = "TABLE_CATALOG";
+    public static final int DEFAULT_NUMBER_RADIX = 10;
+    public static final String SPECIFIC_NAME = "SPECIFIC_NAME";
+    public static final String DATA_TYPE = "DATA_TYPE";
+    public static final String NULLABLE = "NULLABLE";
+    public static final String CHAR_OCTET_LENGTH = "CHAR_OCTET_LENGTH";
+    public static final String ORDINAL_POSITION = "ORDINAL_POSITION";
+    public static final String IS_NULLABLE = "IS_NULLABLE";
+    public static final String COLUMN_TYPE = "COLUMN_TYPE";
     /**
      * The column name field.
      */
@@ -95,14 +104,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * The type name field.
      */
     private static final String TYPE_NAME = "TYPE_NAME";
-    public static final int DEFAULT_NUMBER_RADIX = 10;
-    public static final String SPECIFIC_NAME = "SPECIFIC_NAME";
-    public static final String DATA_TYPE = "DATA_TYPE";
-    public static final String NULLABLE = "NULLABLE";
-    public static final String CHAR_OCTET_LENGTH = "CHAR_OCTET_LENGTH";
-    public static final String ORDINAL_POSITION = "ORDINAL_POSITION";
-    public static final String IS_NULLABLE = "IS_NULLABLE";
-    public static final String COLUMN_TYPE = "COLUMN_TYPE";
     /**
      * The database connection.
      */
@@ -115,6 +116,28 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     public ParadoxDatabaseMetaData(final ParadoxConnection conn) {
         this.conn = conn;
+    }
+
+    private static void getPrimaryKeyIndex(String catalog, List<Object[]> values, File currentSchema,
+                                           ParadoxTable table) {
+        for (final ParadoxField pk : table.getPrimaryKeys()) {
+            final Object[] row = new Object[]{catalog, currentSchema.getName(), table.getName(), Boolean.FALSE,
+                    catalog, table.getName() + ".PX", DatabaseMetaData.tableIndexHashed, pk.getOrderNum() - 1,
+                    pk.getName(), "A", 0, 0, null};
+
+            values.add(row);
+        }
+    }
+
+    /**
+     * Format a single row metadata.
+     *
+     * @param name the row name.
+     * @param type the row type.
+     * @return the row.
+     */
+    private static Object[] formatRow(final String name, final String type, final String catalog, final String schema) {
+        return new Object[]{catalog, schema, name, type, null, null, null, null, null, null};
     }
 
     /**
@@ -199,29 +222,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
     }
 
-    private static void getPrimaryKeyIndex(String catalog, List<Object[]> values, File currentSchema,
-                                           ParadoxTable table) {
-        for (final ParadoxField pk : table.getPrimaryKeys()) {
-            final Object[] row = new Object[]{
-                    catalog,
-                    currentSchema.getName(),
-                    table.getName(),
-                    Boolean.FALSE,
-                    catalog,
-                    table.getName() + ".PX",
-                    DatabaseMetaData.tableIndexHashed,
-                    pk.getOrderNum() - 1,
-                    pk.getName(),
-                    "A",
-                    0,
-                    0,
-                    null
-            };
-
-            values.add(row);
-        }
-    }
-
     /**
      * {@inheritDoc}.
      */
@@ -253,29 +253,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getColumnPrivileges(final String catalog, final String schema, final String table,
                                          final String columnNamePattern) {
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
-    }
-
-    /**
-     * Format a single row metadata.
-     *
-     * @param name the row name.
-     * @param type the row type.
-     * @return the row.
-     */
-    private static Object[] formatRow(final String name, final String type, final String catalog,
-                                      final String schema) {
-        return new Object[]{
-                catalog,
-                schema,
-                name,
-                type,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        };
     }
 
     /**
@@ -392,31 +369,31 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getFunctionColumns(final String catalog, final String schemaPattern,
                                         final String functionNamePattern, final String columnNamePattern) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column("FUNCTION_CAT", Types.VARCHAR));
-        columns.add(new Column("FUNCTION_SCHEM", Types.VARCHAR));
-        columns.add(new Column("FUNCTION_NAME", Types.VARCHAR));
-        columns.add(new Column(COLUMN_NAME, Types.VARCHAR));
-        columns.add(new Column(COLUMN_TYPE, Types.INTEGER));
-        columns.add(new Column(DATA_TYPE, Types.INTEGER));
-        columns.add(new Column(TYPE_NAME, Types.VARCHAR));
-        columns.add(new Column("PRECISION", Types.INTEGER));
-        columns.add(new Column("LENGTH", Types.INTEGER));
-        columns.add(new Column("SCALE", Types.INTEGER));
-        columns.add(new Column("RADIX", Types.INTEGER));
-        columns.add(new Column(NULLABLE, Types.INTEGER));
-        columns.add(new Column(REMARKS, Types.VARCHAR));
-        columns.add(new Column(CHAR_OCTET_LENGTH, Types.INTEGER));
-        columns.add(new Column(ORDINAL_POSITION, Types.INTEGER));
-        columns.add(new Column(IS_NULLABLE, Types.VARCHAR));
-        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
+        columns.add(new Column("FUNCTION_CAT", ParadoxType.VARCHAR));
+        columns.add(new Column("FUNCTION_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("FUNCTION_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column(COLUMN_TYPE, ParadoxType.INTEGER));
+        columns.add(new Column(DATA_TYPE, ParadoxType.INTEGER));
+        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("PRECISION", ParadoxType.INTEGER));
+        columns.add(new Column("LENGTH", ParadoxType.INTEGER));
+        columns.add(new Column("SCALE", ParadoxType.INTEGER));
+        columns.add(new Column("RADIX", ParadoxType.INTEGER));
+        columns.add(new Column(NULLABLE, ParadoxType.INTEGER));
+        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
+        columns.add(new Column(CHAR_OCTET_LENGTH, ParadoxType.INTEGER));
+        columns.add(new Column(ORDINAL_POSITION, ParadoxType.INTEGER));
+        columns.add(new Column(IS_NULLABLE, ParadoxType.VARCHAR));
+        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
 
         for (final Map.Entry<String, Supplier<? extends IFunction>> function : FunctionFactory.FUNCTIONS.entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog()))
-                //    || (schemaPattern != null && !schemaPattern.isEmpty())
+                    // || (schemaPattern != null && !schemaPattern.isEmpty())
                     || (functionNamePattern != null && !functionNamePattern.equalsIgnoreCase(function.getKey()))) {
-               // continue;
+                // continue;
             }
 
             final IFunction instance = function.getValue().get();
@@ -435,7 +412,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         // Data type.
                         column.getType(),
                         // Data type name.
-                        JDBCType.valueOf(column.getType()).getName(),
+                        column.getType().getName(),
                         // Precision.
                         column.getPrecision(),
                         // Length,
@@ -455,8 +432,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         // Is nullable.
                         column.isNullable() ? "YES" : "NO",
                         // Specific name.
-                        column.getName()
-                };
+                        column.getName()};
 
                 values.add(row);
             }
@@ -471,18 +447,18 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern) {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column("FUNCTION_CAT", Types.VARCHAR));
-        columns.add(new Column("FUNCTION_SCHEM", Types.VARCHAR));
-        columns.add(new Column("FUNCTION_NAME", Types.VARCHAR));
-        columns.add(new Column(REMARKS, Types.VARCHAR));
-        columns.add(new Column("FUNCTION_TYPE", Types.INTEGER));
-        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
+        columns.add(new Column("FUNCTION_CAT", ParadoxType.VARCHAR));
+        columns.add(new Column("FUNCTION_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("FUNCTION_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
+        columns.add(new Column("FUNCTION_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
 
         for (final Map.Entry<String, Supplier<? extends IFunction>> function : FunctionFactory.FUNCTIONS.entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog()))
-            //        || (schemaPattern != null && !schemaPattern.isEmpty())
+                // || (schemaPattern != null && !schemaPattern.isEmpty())
             ) {
                 continue;
             }
@@ -508,8 +484,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     // Type.
                     functionNoTable,
                     // Specific name.
-                    function.getKey()
-            };
+                    function.getKey()};
 
             values.add(row);
         }
@@ -539,11 +514,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getCatalogs() {
-        final List<Column> columns = Collections.singletonList(
-                new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
+        final List<Column> columns = Collections
+                .singletonList(new Column(ParadoxDatabaseMetaData.TABLE_CAT, ParadoxType.VARCHAR));
 
-        final List<Object[]> values = Collections.singletonList(
-                new Object[]{this.conn.getCatalog()});
+        final List<Object[]> values = Collections.singletonList(new Object[]{this.conn.getCatalog()});
 
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
@@ -555,29 +529,29 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getColumns(final String catalog, final String schemaPattern, final String tableNamePattern,
                                 final String columnNamePattern) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_NAME, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
-        columns.add(new Column(DATA_TYPE, Types.INTEGER));
-        columns.add(new Column(ParadoxDatabaseMetaData.TYPE_NAME, Types.VARCHAR));
-        columns.add(new Column("COLUMN_SIZE", Types.INTEGER));
-        columns.add(new Column("BUFFER_LENGTH", Types.INTEGER));
-        columns.add(new Column("DECIMAL_DIGITS", Types.INTEGER));
-        columns.add(new Column("NUM_PREC_RADIX", Types.INTEGER));
-        columns.add(new Column(NULLABLE, Types.INTEGER));
-        columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.INTEGER));
-        columns.add(new Column("COLUMN_DEF", Types.VARCHAR));
-        columns.add(new Column("SQL_DATA_TYPE", Types.INTEGER));
-        columns.add(new Column("SQL_DATETIME_SUB", Types.INTEGER));
-        columns.add(new Column(CHAR_OCTET_LENGTH, Types.INTEGER));
-        columns.add(new Column(ORDINAL_POSITION, Types.INTEGER));
-        columns.add(new Column(IS_NULLABLE, Types.INTEGER));
-        columns.add(new Column("SCOPE_CATLOG", Types.VARCHAR));
-        columns.add(new Column("SCOPE_SCHEMA", Types.VARCHAR));
-        columns.add(new Column("SCOPE_TABLE", Types.VARCHAR));
-        columns.add(new Column("SOURCE_DATA_TYPE", Types.SMALLINT));
-        columns.add(new Column("IS_AUTOINCREMENT", Types.VARCHAR));
+        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column(DATA_TYPE, ParadoxType.INTEGER));
+        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("COLUMN_SIZE", ParadoxType.INTEGER));
+        columns.add(new Column("BUFFER_LENGTH", ParadoxType.INTEGER));
+        columns.add(new Column("DECIMAL_DIGITS", ParadoxType.INTEGER));
+        columns.add(new Column("NUM_PREC_RADIX", ParadoxType.INTEGER));
+        columns.add(new Column(NULLABLE, ParadoxType.INTEGER));
+        columns.add(new Column(REMARKS, ParadoxType.INTEGER));
+        columns.add(new Column("COLUMN_DEF", ParadoxType.VARCHAR));
+        columns.add(new Column("SQL_DATA_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column("SQL_DATETIME_SUB", ParadoxType.INTEGER));
+        columns.add(new Column(CHAR_OCTET_LENGTH, ParadoxType.INTEGER));
+        columns.add(new Column(ORDINAL_POSITION, ParadoxType.INTEGER));
+        columns.add(new Column(IS_NULLABLE, ParadoxType.INTEGER));
+        columns.add(new Column("SCOPE_CATLOG", ParadoxType.VARCHAR));
+        columns.add(new Column("SCOPE_SCHEMA", ParadoxType.VARCHAR));
+        columns.add(new Column("SCOPE_TABLE", ParadoxType.VARCHAR));
+        columns.add(new Column("SOURCE_DATA_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column("IS_AUTOINCREMENT", ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
 
@@ -605,19 +579,19 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getIndexInfo(final String catalog, final String schema, final String tableNamePattern,
                                   final boolean unique, final boolean approximate) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_NAME, Types.VARCHAR));
-        columns.add(new Column("NON_UNIQUE", Types.BOOLEAN));
-        columns.add(new Column("INDEX_QUALIFIER", Types.VARCHAR));
-        columns.add(new Column("INDEX_NAME", Types.VARCHAR));
-        columns.add(new Column("TYPE", Types.INTEGER));
-        columns.add(new Column(ORDINAL_POSITION, Types.INTEGER));
-        columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
-        columns.add(new Column("ASC_OR_DESC", Types.VARCHAR));
-        columns.add(new Column("CARDINALITY", Types.INTEGER));
-        columns.add(new Column("PAGES", Types.INTEGER));
-        columns.add(new Column("FILTER_CONDITION", Types.VARCHAR));
+        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("NON_UNIQUE", ParadoxType.BOOLEAN));
+        columns.add(new Column("INDEX_QUALIFIER", ParadoxType.VARCHAR));
+        columns.add(new Column("INDEX_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("TYPE", ParadoxType.INTEGER));
+        columns.add(new Column(ORDINAL_POSITION, ParadoxType.INTEGER));
+        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("ASC_OR_DESC", ParadoxType.VARCHAR));
+        columns.add(new Column("CARDINALITY", ParadoxType.INTEGER));
+        columns.add(new Column("PAGES", ParadoxType.INTEGER));
+        columns.add(new Column("FILTER_CONDITION", ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
 
@@ -819,21 +793,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, table.getName(), this.conn)) {
             for (int loop = 0; loop < index.getFieldCount() - index.getPrimaryFieldCount(); loop++) {
                 final ParadoxField field = index.getFields()[0];
-                final Object[] row = new Object[]{
-                        catalog,
-                        currentSchema.getName(),
-                        table.getName(),
-                        !index.isUnique(),
-                        catalog,
-                        index.getName(),
-                        DatabaseMetaData.tableIndexHashed,
-                        field.getOrderNum() - 1,
-                        field.getName(),
-                        index.getOrder(),
-                        0,
-                        0,
-                        null
-                };
+                final Object[] row = new Object[]{catalog, currentSchema.getName(), table.getName(),
+                        !index.isUnique(), catalog, index.getName(), DatabaseMetaData.tableIndexHashed,
+                        field.getOrderNum() - 1, field.getName(), index.getOrder(), 0, 0, null};
 
                 values.add(row);
             }
@@ -844,29 +806,23 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getPrimaryKeys(final String catalog, final String schema, final String tableNamePattern) throws
-            SQLException {
+    public ResultSet getPrimaryKeys(final String catalog, final String schema, final String tableNamePattern)
+            throws SQLException {
         final List<Column> columns = new ArrayList<>();
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_NAME, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
-        columns.add(new Column("KEY_SEQ", Types.INTEGER));
-        columns.add(new Column("PK_NAME", Types.VARCHAR));
+        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("KEY_SEQ", ParadoxType.INTEGER));
+        columns.add(new Column("PK_NAME", ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
 
         for (final File currentSchema : this.conn.getSchema(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
                 for (final ParadoxField pk : table.getPrimaryKeys()) {
-                    final Object[] row = new Object[]{
-                            catalog,
-                            currentSchema.getName(),
-                            table.getName(),
-                            pk.getName(),
-                            pk.getOrderNum() - 1,
-                            table.getName() + ".PX",
-                    };
+                    final Object[] row = new Object[]{catalog, currentSchema.getName(), table.getName(), pk.getName(),
+                            pk.getOrderNum() - 1, table.getName() + ".PX",};
                     values.add(row);
                 }
             }
@@ -881,25 +837,25 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getProcedureColumns(final String catalog, final String schemaPattern,
                                          final String procedureNamePattern, final String columnNamePattern) {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column("PROCEDURE_CAT", Types.VARCHAR));
-        columns.add(new Column("PROCEDURE_SCHEM", Types.VARCHAR));
-        columns.add(new Column("PROCEDURE_NAME", Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
-        columns.add(new Column(COLUMN_TYPE, Types.INTEGER));
-        columns.add(new Column(DATA_TYPE, Types.INTEGER));
-        columns.add(new Column(ParadoxDatabaseMetaData.TYPE_NAME, Types.VARCHAR));
-        columns.add(new Column("PRECISION", Types.INTEGER));
-        columns.add(new Column("LENGTH", Types.INTEGER));
-        columns.add(new Column("SCALE", Types.INTEGER));
-        columns.add(new Column("RADIX", Types.INTEGER));
-        columns.add(new Column(NULLABLE, Types.INTEGER));
-        columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.VARCHAR));
-        columns.add(new Column("COLUMN_DEF", Types.VARCHAR));
-        columns.add(new Column("SQL_DATA_TYPE", Types.VARCHAR));
-        columns.add(new Column("SQL_DATETIME_SUB", Types.VARCHAR));
-        columns.add(new Column(CHAR_OCTET_LENGTH, Types.VARCHAR));
-        columns.add(new Column(IS_NULLABLE, Types.VARCHAR));
-        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
+        columns.add(new Column("PROCEDURE_CAT", ParadoxType.VARCHAR));
+        columns.add(new Column("PROCEDURE_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("PROCEDURE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column(COLUMN_TYPE, ParadoxType.INTEGER));
+        columns.add(new Column(DATA_TYPE, ParadoxType.INTEGER));
+        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("PRECISION", ParadoxType.INTEGER));
+        columns.add(new Column("LENGTH", ParadoxType.INTEGER));
+        columns.add(new Column("SCALE", ParadoxType.INTEGER));
+        columns.add(new Column("RADIX", ParadoxType.INTEGER));
+        columns.add(new Column(NULLABLE, ParadoxType.INTEGER));
+        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
+        columns.add(new Column("COLUMN_DEF", ParadoxType.VARCHAR));
+        columns.add(new Column("SQL_DATA_TYPE", ParadoxType.VARCHAR));
+        columns.add(new Column("SQL_DATETIME_SUB", ParadoxType.VARCHAR));
+        columns.add(new Column(CHAR_OCTET_LENGTH, ParadoxType.VARCHAR));
+        columns.add(new Column(IS_NULLABLE, ParadoxType.VARCHAR));
+        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
 
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), columns);
     }
@@ -944,15 +900,15 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getProcedures(final String catalog, final String schemaPattern,
                                    final String procedureNamePattern) {
         final ArrayList<Column> columns = new ArrayList<>(1);
-        columns.add(new Column("PROCEDURE_CAT", Types.VARCHAR));
-        columns.add(new Column("PROCEDURE_SCHEM", Types.VARCHAR));
-        columns.add(new Column("PROCEDURE_NAME", Types.VARCHAR));
-        columns.add(new Column("Reserved1", Types.VARCHAR));
-        columns.add(new Column("Reserved2", Types.VARCHAR));
-        columns.add(new Column("Reserved3", Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.VARCHAR));
-        columns.add(new Column("PROCEDURE_TYPE", Types.INTEGER));
-        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
+        columns.add(new Column("PROCEDURE_CAT", ParadoxType.VARCHAR));
+        columns.add(new Column("PROCEDURE_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("PROCEDURE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("Reserved1", ParadoxType.VARCHAR));
+        columns.add(new Column("Reserved2", ParadoxType.VARCHAR));
+        columns.add(new Column("Reserved3", ParadoxType.VARCHAR));
+        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
+        columns.add(new Column("PROCEDURE_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
 
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), columns);
     }
@@ -964,9 +920,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getSchemas(final String catalog, final String schemaPattern) {
         if (((catalog != null)
                 && !Expressions.accept(conn.getLocale(), this.conn.getCatalog(), catalog, false, Constants.ESCAPE_CHAR))
-                || ((schemaPattern != null)
-                && !Expressions.accept(conn.getLocale(), this.conn.getSchema(), schemaPattern, false,
-                Constants.ESCAPE_CHAR))) {
+                || ((schemaPattern != null) && !Expressions.accept(conn.getLocale(), this.conn.getSchema(),
+                schemaPattern, false, Constants.ESCAPE_CHAR))) {
             return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
         }
         return this.getSchemas();
@@ -1051,8 +1006,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     @Override
     public ResultSet getSchemas() {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(TABLE_SCHEMA, Types.VARCHAR));
-        columns.add(new Column(TABLE_CATALOG, Types.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
 
@@ -1062,10 +1017,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         if (schemas != null) {
             Arrays.sort(schemas);
             for (final File schema : schemas) {
-                final Object[] row = new Object[]{
-                        schema.getName(),
-                        catalog.getName(),
-                };
+                final Object[] row = new Object[]{schema.getName(), catalog.getName(),};
                 values.add(row);
             }
         }
@@ -1080,16 +1032,16 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getTables(final String catalog, final String schemaPattern, final String tableNamePattern,
                                final String[] types) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_CAT, Types.VARCHAR));
-        columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
-        columns.add(new Column(TABLE_NAME, Types.VARCHAR));
-        columns.add(new Column("TABLE_TYPE", Types.VARCHAR));
-        columns.add(new Column(REMARKS, Types.VARCHAR));
-        columns.add(new Column("TYPE_CAT", Types.VARCHAR));
-        columns.add(new Column("TYPE_SCHEM", Types.VARCHAR));
-        columns.add(new Column(TYPE_NAME, Types.VARCHAR));
-        columns.add(new Column("SELF_REFERENCING_COL_NAME", Types.VARCHAR));
-        columns.add(new Column("REF_GENERATION", Types.VARCHAR));
+        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
+        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("TABLE_TYPE", ParadoxType.VARCHAR));
+        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
+        columns.add(new Column("TYPE_CAT", ParadoxType.VARCHAR));
+        columns.add(new Column("TYPE_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("SELF_REFERENCING_COL_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("REF_GENERATION", ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
         if (types == null) {
@@ -1907,7 +1859,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getTableTypes() {
-        final List<Column> columns = Collections.singletonList(new Column("TABLE_TYPE", Types.VARCHAR));
+        final List<Column> columns = Collections.singletonList(new Column("TABLE_TYPE", ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>(4);
         values.add(new Object[]{ParadoxDatabaseMetaData.TABLE});
@@ -1927,12 +1879,11 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param fields            the field list.
      */
     private void fieldMetadata(final String catalog, final String schema, final String columnNamePattern,
-                               final List<Object[]> values,
-                               final String tableName, final ParadoxField[] fields) {
+                               final List<Object[]> values, final String tableName, final ParadoxField[] fields) {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
-            if ((columnNamePattern != null) && !Expressions.accept(conn.getLocale(), field.getName(),
-                    columnNamePattern, false, Constants.ESCAPE_CHAR)) {
+            if ((columnNamePattern != null) && !Expressions.accept(conn.getLocale(), field.getName(), columnNamePattern,
+                    false, Constants.ESCAPE_CHAR)) {
                 continue;
             }
 
@@ -1950,7 +1901,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             // Data type.
             row.add(type);
             // Type name.
-            row.add(JDBCType.valueOf(type).getName());
+            row.add(ParadoxType.valueOf(type).getName());
             // Column size.
             row.add(field.getSize());
             // Buffer length.
@@ -1971,7 +1922,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             row.add(null);
             // Column SQL data type.
             row.add(field.getSqlType());
-            // Subtype code for datetime and SQL-92 interval data types. For other data types, this column returns NULL.
+            // Subtype code for datetime and SQL-92 interval data types. For other data
+            // types, this column returns NULL.
             row.add(null);
             // Column type in byte octets.
             row.add(field.getSize());
@@ -2029,8 +1981,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param currentSchema    the current schema file.
      * @throws SQLException in case of errors.
      */
-    private void formatView(final String tableNamePattern, final List<Object[]> values,
-                            final File currentSchema) throws SQLException {
+    private void formatView(final String tableNamePattern, final List<Object[]> values, final File currentSchema)
+            throws SQLException {
         for (final ParadoxView view : ViewData.listViews(currentSchema, tableNamePattern, this.conn)) {
             values.add(formatRow(view.getName(), "VIEW", this.conn.getCatalog(), currentSchema.getName()));
         }

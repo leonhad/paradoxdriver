@@ -17,12 +17,12 @@ import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * The SQL EXTRACT function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -71,8 +71,8 @@ public class ExtractFunction implements IFunction {
     }
 
     @Override
-    public int sqlType() {
-        return Types.INTEGER;
+    public ParadoxType type() {
+        return ParadoxType.INTEGER;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class ExtractFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields)
             throws SQLException {
 
@@ -146,6 +146,6 @@ public class ExtractFunction implements IFunction {
         }
 
         // Convert to a non fields do avoid Planner problems.
-        parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(), Types.VARCHAR));
+        parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(), ParadoxType.VARCHAR));
     }
 }

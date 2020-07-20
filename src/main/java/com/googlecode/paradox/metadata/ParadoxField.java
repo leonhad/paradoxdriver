@@ -12,7 +12,7 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.field.BCDField;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.Types;
 import java.util.Objects;
@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Stores a field from a table.
  *
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class ParadoxField {
@@ -87,7 +87,7 @@ public final class ParadoxField {
     /**
      * Paradox field type.
      */
-    private final byte type;
+    private final ParadoxType type;
 
     private final ParadoxConnection connection;
 
@@ -97,7 +97,7 @@ public final class ParadoxField {
      * @param connection the Paradox connection.
      * @param type       the Paradox field type.
      */
-    public ParadoxField(final ParadoxConnection connection, final byte type) {
+    public ParadoxField(final ParadoxConnection connection, final ParadoxType type) {
         this(connection, type, 1);
     }
 
@@ -108,7 +108,7 @@ public final class ParadoxField {
      * @param type       the Paradox field type.
      * @param orderNum   order number to start.
      */
-    public ParadoxField(final ParadoxConnection connection, final byte type, final int orderNum) {
+    public ParadoxField(final ParadoxConnection connection, final ParadoxType type, final int orderNum) {
         this.connection = connection;
         this.type = type;
         this.orderNum = orderNum;
@@ -185,7 +185,7 @@ public final class ParadoxField {
      *
      * @return the field type.
      */
-    public byte getType() {
+    public ParadoxType getType() {
         return this.type;
     }
 
@@ -254,10 +254,10 @@ public final class ParadoxField {
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
             this.realSize -= BLOB_SIZE_PADDING;
             this.size = size;
-        } else if (type == ParadoxFieldType.CURRENCY.getType()) {
+        } else if (type == ParadoxType.CURRENCY) {
             this.precision = CURRENCY_PRECISION;
             this.size = size;
-        } else if (type == ParadoxFieldType.BCD.getType()) {
+        } else if (type == ParadoxType.BCD) {
             this.precision = size;
             this.size = BCDField.BCD_SIZE;
         } else if (sqlType == Types.NUMERIC) {
@@ -304,7 +304,7 @@ public final class ParadoxField {
      * @return the SQL field type.
      */
     public int getSqlType() {
-        return ParadoxFieldType.getSQLTypeByType(this.type);
+        return this.type.getSQLType();
     }
 
     public ParadoxConnection getConnection() {
@@ -317,7 +317,7 @@ public final class ParadoxField {
      * @return true if this field is auto increment.
      */
     boolean isAutoIncrement() {
-        return this.type == ParadoxFieldType.AUTO_INCREMENT.getType();
+        return this.type == ParadoxType.AUTO_INCREMENT;
     }
 
     public int getPrecision() {

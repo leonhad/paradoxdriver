@@ -12,15 +12,14 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.sql.Types;
 
 /**
  * Unit test for {@link SelectNode}.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -64,7 +63,7 @@ public class SelectNodeTest {
     @Test
     public void testOrderBy() {
         final SelectNode node = new SelectNode(null);
-        final ValueNode value = new ValueNode("1", null, Types.NUMERIC);
+        final ValueNode value = new ValueNode("1", null, ParadoxType.NUMBER);
         Assert.assertEquals("Invalid node size.", 0, node.getOrder().size());
         node.addOrderBy(value, OrderType.ASC);
         Assert.assertEquals("Invalid node size.", 1, node.getOrder().size());

@@ -15,13 +15,12 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-
-import java.sql.Types;
+import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL NVL function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class NvlFunction implements IFunction {
@@ -31,11 +30,11 @@ public class NvlFunction implements IFunction {
      */
     public static final String NAME = "NVL";
 
-    private int sqlType = Types.NULL;
+    private ParadoxType type = ParadoxType.NULL;
 
     @Override
-    public int sqlType() {
-        return sqlType;
+    public ParadoxType type() {
+        return type;
     }
 
     @Override
@@ -49,9 +48,9 @@ public class NvlFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
-        this.sqlType = FieldValueUtils.getSqlType(values, types);
+        this.type = FieldValueUtils.getSqlType(values, types);
 
         if (values[0] != null) {
             return values[0];

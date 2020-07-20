@@ -13,13 +13,12 @@ package com.googlecode.paradox.function.grouping;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-
-import java.sql.Types;
+import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The COUNT grouping function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class CountFunction implements IFunction {
@@ -30,8 +29,8 @@ public class CountFunction implements IFunction {
     public static final String NAME = "COUNT";
 
     @Override
-    public int sqlType() {
-        return Types.INTEGER;
+    public ParadoxType type() {
+        return ParadoxType.INTEGER;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class CountFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         return 0;
     }

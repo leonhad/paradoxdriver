@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.2
+ * @version 1.3
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -58,7 +58,7 @@ public final class Column {
      *
      * @see Types
      */
-    private int type;
+    private ParadoxType type;
 
     /**
      * Column remarks.
@@ -83,22 +83,22 @@ public final class Column {
      * @param field the paradox field.
      */
     public Column(final ParadoxField field) {
-        this(field.getName(), field.getSqlType());
+        this(field.getName(), field.getType());
         this.field = field;
         this.precision = field.getPrecision();
     }
 
     public Column(final ValueNode node) {
-        this(node.getAlias(), node.getSqlType());
+        this(node.getAlias(), node.getType());
         this.value = node.getName();
     }
 
     public Column(final FunctionNode node) {
-        this(node.getAlias(), node.getSqlType());
+        this(node.getAlias(), node.getType());
         this.function = node;
     }
 
-    public Column(final String name, final int type, final int precision, final int size, final String remarks,
+    public Column(final String name, final ParadoxType type, final int precision, final int size, final String remarks,
                   final int index, boolean nullable) {
         this.name = name;
         this.type = type;
@@ -115,10 +115,10 @@ public final class Column {
      * @param name the field name.
      * @param type the field type.
      */
-    public Column(final String name, final int type) {
+    public Column(final String name, final ParadoxType type) {
         this.name = name;
         this.type = type;
-        this.nullable = type != ParadoxFieldType.AUTO_INCREMENT.getType();
+        this.nullable = type != ParadoxType.AUTO_INCREMENT;
     }
 
     /**
@@ -192,7 +192,7 @@ public final class Column {
      *
      * @return the field SQL type.
      */
-    public int getType() {
+    public ParadoxType getType() {
         return this.type;
     }
 
@@ -206,21 +206,21 @@ public final class Column {
     }
 
     /**
+     * Sets the type.
+     *
+     * @param type the type.
+     */
+    public void setType(final ParadoxType type) {
+        this.type = type;
+    }
+
+    /**
      * Gets if this field is auto increment.
      *
      * @return true if this field is auto incremented.
      */
     public boolean isAutoIncrement() {
-        return field != null && field.getType() == ParadoxFieldType.AUTO_INCREMENT.getType();
-    }
-
-    /**
-     * Gets if this field is a currency.
-     *
-     * @return true if this field is a current.
-     */
-    public boolean isCurrency() {
-        return field != null && field.getType() == ParadoxFieldType.CURRENCY.getType();
+        return field != null && field.getType() == ParadoxType.AUTO_INCREMENT;
     }
 
     /**
@@ -242,21 +242,22 @@ public final class Column {
     }
 
     /**
+     * Gets if this field is a currency.
+     *
+     * @return true if this field is a current.
+     */
+    public boolean isCurrency() {
+        return field != null && field.getType() == ParadoxType.CURRENCY;
+    }
+
+    /**
      * Gets if this field can be search.
      *
      * @return true if this field can be search.
      */
     public boolean isSearchable() {
-        return type != Types.BLOB && type != Types.BINARY;
-    }
-
-    /**
-     * Gets if this field have sign.
-     *
-     * @return true if this field have sign.
-     */
-    public boolean isSigned() {
-        return type == Types.DECIMAL || type == Types.NUMERIC || type == Types.DOUBLE || type == Types.INTEGER;
+        // TODO Move this to ParadoxType.
+        return type != ParadoxType.BLOB && type != ParadoxType.BYTES && type != ParadoxType.GRAPHIC && type != ParadoxType.OLE;
     }
 
     /**
@@ -320,12 +321,12 @@ public final class Column {
     }
 
     /**
-     * Sets the SQL type.
+     * Gets if this field have sign.
      *
-     * @param type the SQL type.
+     * @return true if this field have sign.
      */
-    public void setType(int type) {
-        this.type = type;
+    public boolean isSigned() {
+        return type == ParadoxType.DECIMAL || type == ParadoxType.NUMBER || type == ParadoxType.CURRENCY || type == ParadoxType.INTEGER;
     }
 
     public int getSize() {

@@ -12,6 +12,7 @@ package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
 /**
  * Custom values conversion utility class.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public final class ValuesConverter {
@@ -93,6 +94,14 @@ public final class ValuesConverter {
     public static Object convert(final Object value, int sqlType) throws SQLException {
         try {
             return TYPE_MAPPING.get(sqlType).apply(value);
+        } catch (final IllegalArgumentException e) {
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
+        }
+    }
+
+    public static Object convert(final Object value, ParadoxType type) throws SQLException {
+        try {
+            return CLASS_MAPPING.get(type.getJavaClass()).apply(value);
         } catch (final IllegalArgumentException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
         }

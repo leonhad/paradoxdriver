@@ -14,13 +14,12 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-
-import java.sql.Types;
+import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL CONCAT_WS function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ConcatWSFunction implements IFunction {
@@ -31,8 +30,8 @@ public class ConcatWSFunction implements IFunction {
     public static final String NAME = "CONCAT_WS";
 
     @Override
-    public int sqlType() {
-        return Types.VARCHAR;
+    public ParadoxType type() {
+        return ParadoxType.VARCHAR;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ConcatWSFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         final Object separator = values[0];
         if (separator == null) {

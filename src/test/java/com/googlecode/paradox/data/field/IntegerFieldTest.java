@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import java.nio.ByteBuffer;
 /**
  * Unit test for {@link IntegerField} class.
  *
- * @version 1.1
+ * @version 1.3
  * @since 1.3
  */
 public class IntegerFieldTest {
@@ -28,7 +29,7 @@ public class IntegerFieldTest {
     @Test
     public void testInvalidMatch() {
         final IntegerField field = new IntegerField();
-        Assert.assertFalse("Invalid field value.", field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -55,6 +56,6 @@ public class IntegerFieldTest {
     @Test
     public void testValidMatch() {
         final IntegerField field = new IntegerField();
-        Assert.assertTrue("Invalid field type.", field.match(3));
+        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.INTEGER));
     }
 }

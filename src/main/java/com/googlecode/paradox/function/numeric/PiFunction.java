@@ -13,14 +13,14 @@ package com.googlecode.paradox.function.numeric;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * The SQL PI function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class PiFunction implements IFunction {
@@ -31,8 +31,8 @@ public class PiFunction implements IFunction {
     public static final String NAME = "PI";
 
     @Override
-    public int sqlType() {
-        return Types.NUMERIC;
+    public ParadoxType type() {
+        return ParadoxType.NUMBER;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PiFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         return Math.PI;
     }

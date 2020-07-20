@@ -12,15 +12,14 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.sql.Types;
 
 /**
  * Unit test for {@link InNode} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class InNodeTest {
@@ -32,8 +31,8 @@ public class InNodeTest {
     public void testToString() {
         final FieldNode first = new FieldNode("table", "first", null);
         final InNode node = new InNode(first, null);
-        node.addField(new ValueNode("test", null, Types.VARCHAR));
-        node.addField(new ValueNode("1", null, Types.NUMERIC));
+        node.addField(new ValueNode("test", null, ParadoxType.VARCHAR));
+        node.addField(new ValueNode("1", null, ParadoxType.NUMBER));
         Assert.assertEquals("Invalid node value.", "table.first IN ('test', 1)", node.toString());
     }
 }

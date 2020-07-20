@@ -18,20 +18,19 @@ import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-import java.sql.JDBCType;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 /**
  * The SQL CONVERT function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
@@ -44,11 +43,11 @@ public class ConvertFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "CONVERT";
-    private int sqlType = Types.VARCHAR;
+    private ParadoxType type = ParadoxType.VARCHAR;
 
     @Override
-    public int sqlType() {
-        return sqlType;
+    public ParadoxType type() {
+        return type;
     }
 
     @Override
@@ -62,7 +61,7 @@ public class ConvertFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
         if (convertCharset) {
@@ -84,7 +83,7 @@ public class ConvertFunction implements IFunction {
             }
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, value);
         } else {
-            return ValuesConverter.convert(values[0], sqlType);
+            return ValuesConverter.convert(values[0], type);
         }
     }
 
@@ -126,7 +125,7 @@ public class ConvertFunction implements IFunction {
             final SQLNode typeNode = parameters.get(1);
             if (typeNode instanceof FieldNode) {
                 try {
-                    this.sqlType = JDBCType.valueOf(typeNode.getName()).getVendorTypeNumber();
+                    this.type = ParadoxType.valueOf(typeNode.getName());
                     parameters.remove(1);
                 } catch (final IllegalArgumentException e) {
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,

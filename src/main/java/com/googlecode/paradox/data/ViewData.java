@@ -17,6 +17,7 @@ import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 
@@ -34,7 +35,7 @@ import java.util.regex.Pattern;
 /**
  * Read view files (structure).
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ViewData {
@@ -129,7 +130,7 @@ public final class ViewData {
     private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
         final ParadoxField originalField = ViewData.getField(table, name);
         if (originalField == null) {
-            return new ParadoxField(table.getConnection(), (byte) 0x1);
+            return new ParadoxField(table.getConnection(), ParadoxType.VARCHAR);
         }
         return originalField;
     }

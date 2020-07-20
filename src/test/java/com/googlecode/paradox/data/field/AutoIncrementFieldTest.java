@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import java.nio.ByteBuffer;
 /**
  * Unit test for {@link AutoIncrementField} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class AutoIncrementFieldTest {
@@ -29,7 +30,7 @@ public class AutoIncrementFieldTest {
     @Test
     public void testInvalidMatch() {
         final AutoIncrementField field = new AutoIncrementField();
-        Assert.assertFalse("Invalid field value.", field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -49,6 +50,6 @@ public class AutoIncrementFieldTest {
     @Test
     public void testValidMatch() {
         final AutoIncrementField field = new AutoIncrementField();
-        Assert.assertTrue("Invalid field type.", field.match(0x16));
+        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.AUTO_INCREMENT));
     }
 }

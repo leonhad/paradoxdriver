@@ -13,15 +13,14 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
-import java.sql.Types;
-import java.util.logging.Logger;
 
 /**
  * The SQL ASCII function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class AsciiFunction implements IFunction {
@@ -30,11 +29,10 @@ public class AsciiFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "ASCII";
-    private static final Logger LOGGER = Logger.getLogger(AsciiFunction.class.getName());
 
     @Override
-    public int sqlType() {
-        return Types.INTEGER;
+    public ParadoxType type() {
+        return ParadoxType.INTEGER;
     }
 
     @Override
@@ -43,9 +41,8 @@ public class AsciiFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
-                          final FieldNode[] fields)
-            throws SQLException {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+                          final FieldNode[] fields) throws SQLException {
         Object value = values[0];
         if (value != null && !value.toString().isEmpty()) {
             return (int) value.toString().charAt(0);

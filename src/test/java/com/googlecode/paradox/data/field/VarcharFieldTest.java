@@ -14,7 +14,7 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -28,8 +28,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link VarcharField} class.
  *
- * @author Leonardo Costa
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class VarcharFieldTest {
@@ -62,7 +61,7 @@ public class VarcharFieldTest {
     @Test
     public void testInvalidMatch() {
         final VarcharField field = new VarcharField();
-        Assert.assertFalse("Invalid field value.", field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -72,7 +71,7 @@ public class VarcharFieldTest {
     public void testParse() {
         final ParadoxTable table = new ParadoxTable(null, null, null);
         table.setCharset(StandardCharsets.ISO_8859_1);
-        final ParadoxField paradoxField = new ParadoxField(conn, ParadoxFieldType.VARCHAR.getType());
+        final ParadoxField paradoxField = new ParadoxField(conn, ParadoxType.VARCHAR);
         paradoxField.setSize("test".length());
         final VarcharField field = new VarcharField();
         final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));
@@ -86,6 +85,6 @@ public class VarcharFieldTest {
     @Test
     public void testValidMatch() {
         final VarcharField field = new VarcharField();
-        Assert.assertTrue("Field doesn't match.", field.match(1));
+        Assert.assertTrue("Field doesn't match.", field.match(ParadoxType.VARCHAR));
     }
 }

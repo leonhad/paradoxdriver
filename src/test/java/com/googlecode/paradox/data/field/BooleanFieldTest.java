@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import java.nio.ByteBuffer;
 /**
  * Unit test for {@link BooleanField} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class BooleanFieldTest {
@@ -28,7 +29,7 @@ public class BooleanFieldTest {
     @Test
     public void testInvalidMatch() {
         final BooleanField field = new BooleanField();
-        Assert.assertFalse("Invalid field value.", field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -70,6 +71,6 @@ public class BooleanFieldTest {
     @Test
     public void testValidMatch() {
         final BooleanField field = new BooleanField();
-        Assert.assertTrue("Invalid field type.", field.match(9));
+        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.BOOLEAN));
     }
 }

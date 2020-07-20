@@ -13,7 +13,7 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 /**
  * Parses boolean fields.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public final class BCDField implements FieldParser {
@@ -30,12 +30,18 @@ public final class BCDField implements FieldParser {
     public static final int MAX_DIGITS = 32;
     public static final byte SECOND_BYTE = 4;
 
+    private static void removeLeadingZeroes(final StringBuilder builder) {
+        while (builder.length() > 1 && builder.charAt(0) == '0') {
+            builder.deleteCharAt(0);
+        }
+    }
+
     /**
      * {@inheritDoc}.
      */
     @Override
-    public boolean match(final int type) {
-        return type == ParadoxFieldType.BCD.getType();
+    public boolean match(final ParadoxType type) {
+        return type == ParadoxType.BCD;
     }
 
     /**
@@ -90,11 +96,5 @@ public final class BCDField implements FieldParser {
         }
 
         return new BigDecimal(sb.toString());
-    }
-
-    private static void removeLeadingZeroes(final StringBuilder builder) {
-        while (builder.length() > 1 && builder.charAt(0) == '0') {
-            builder.deleteCharAt(0);
-        }
     }
 }

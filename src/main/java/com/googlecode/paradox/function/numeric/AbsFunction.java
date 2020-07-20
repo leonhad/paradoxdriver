@@ -14,15 +14,15 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * The SQL ABS function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class AbsFunction implements IFunction {
@@ -40,13 +40,13 @@ public class AbsFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column("number", Types.NUMERIC, 8, 15, "A numeric value.", 1, false)
+                new Column("number", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1, false)
         };
     }
 
     @Override
-    public int sqlType() {
-        return Types.NUMERIC;
+    public ParadoxType type() {
+        return ParadoxType.NUMBER;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class AbsFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         final Double value = ValuesConverter.getDouble(values[0]);
         if (value == null) {

@@ -13,8 +13,7 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-
-import java.sql.Types;
+import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL CONCAT function.
@@ -30,8 +29,8 @@ public class ConcatFunction implements IFunction {
     public static final String NAME = "CONCAT";
 
     @Override
-    public int sqlType() {
-        return Types.VARCHAR;
+    public ParadoxType type() {
+        return ParadoxType.VARCHAR;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class ConcatFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         final StringBuilder ret = new StringBuilder();
         for (final Object value : values) {

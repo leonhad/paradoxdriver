@@ -15,6 +15,7 @@ import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 
@@ -30,7 +31,7 @@ import java.util.*;
 /**
  * Utility class for loading table files.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -104,7 +105,6 @@ public final class TableData extends ParadoxData {
         final int blockSize = table.getBlockSizeBytes();
         final int recordSize = table.getRecordSize();
         final int headerSize = table.getHeaderSize();
-
 
         try (final FileInputStream fs = new FileInputStream(table.getFile());
              final FileChannel channel = fs.getChannel()) {
@@ -252,7 +252,8 @@ public final class TableData extends ParadoxData {
     private static ParadoxField[] parseTableFields(final ParadoxTable table, final ByteBuffer buffer) {
         final ParadoxField[] fields = new ParadoxField[table.getFieldCount()];
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(table.getConnection(), buffer.get(), loop + 1);
+            final ParadoxField field = new ParadoxField(table.getConnection(),
+                    ParadoxType.valueOfVendor(buffer.get()), loop + 1);
             field.setSize(buffer.get() & 0xFF);
             field.setTable(table);
             field.setTable(table);

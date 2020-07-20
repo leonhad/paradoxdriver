@@ -13,7 +13,7 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
 import java.sql.Time;
@@ -23,7 +23,7 @@ import java.util.GregorianCalendar;
 /**
  * Parses time fields.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.3
  */
 public final class TimeField implements FieldParser {
@@ -32,8 +32,8 @@ public final class TimeField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public boolean match(final int type) {
-        return type == ParadoxFieldType.TIME.getType();
+    public boolean match(final ParadoxType type) {
+        return type == ParadoxType.TIME;
     }
 
     /**

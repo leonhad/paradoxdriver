@@ -13,15 +13,15 @@ package com.googlecode.paradox.function.numeric;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.Types;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * The SQL VERSION functions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class IsNumericFunction implements IFunction {
@@ -34,8 +34,8 @@ public class IsNumericFunction implements IFunction {
     public static final String NAME = "ISNUMERIC";
 
     @Override
-    public int sqlType() {
-        return Types.INTEGER;
+    public ParadoxType type() {
+        return ParadoxType.INTEGER;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class IsNumericFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         if (values[0] == null) {
             return 0;

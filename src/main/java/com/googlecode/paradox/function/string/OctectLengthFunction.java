@@ -13,13 +13,12 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-
-import java.sql.Types;
+import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL octet length function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class OctectLengthFunction implements IFunction {
@@ -30,8 +29,8 @@ public class OctectLengthFunction implements IFunction {
     public static final String NAME = "OCTET_LENGTH";
 
     @Override
-    public int sqlType() {
-        return Types.INTEGER;
+    public ParadoxType type() {
+        return ParadoxType.INTEGER;
     }
 
     @Override
@@ -40,44 +39,43 @@ public class OctectLengthFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         Object value = values[0];
         int ret = 0;
         switch (types[0]) {
-            case Types.CLOB:
+            case MEMO:
                 // Same as VARCHAR.
-            case Types.VARCHAR:
+            case VARCHAR:
                 if (value != null) {
                     ret = value.toString().length();
                 }
                 break;
-            case Types.BOOLEAN:
-                // Same as BIT.
-            case Types.BIT:
+            case BOOLEAN:
                 ret = Byte.SIZE;
                 break;
-            case Types.INTEGER:
+            case INTEGER:
                 ret = Integer.BYTES;
                 break;
-            case Types.FLOAT:
-                ret = Float.BYTES;
-                break;
-            case Types.DECIMAL:
+            case DECIMAL:
                 // Same as numeric.
-            case Types.NUMERIC:
+            case NUMBER:
                 ret = Double.BYTES;
                 break;
-            case Types.BLOB:
+            case BLOB:
                 // Same as binary.
-            case Types.BINARY:
+            case OLE:
+                // Same as binary.
+            case GRAPHIC:
+                // Same as binary.
+            case BYTES:
                 ret = ((byte[]) value).length;
                 break;
-            case Types.TIMESTAMP:
+            case TIMESTAMP:
                 // Same as TIME.
-            case Types.TIME:
+            case TIME:
                 // Same as DATE.
-            case Types.DATE:
+            case DATE:
                 ret = Long.BYTES;
                 break;
             default:

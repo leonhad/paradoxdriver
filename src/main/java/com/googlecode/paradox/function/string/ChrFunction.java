@@ -13,15 +13,15 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
-import java.sql.Types;
 
 /**
  * The SQL CHR function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class ChrFunction implements IFunction {
@@ -32,8 +32,8 @@ public class ChrFunction implements IFunction {
     public static final String NAME = "CHR";
 
     @Override
-    public int sqlType() {
-        return Types.CHAR;
+    public ParadoxType type() {
+        return ParadoxType.CHAR;
     }
 
     @Override
@@ -42,9 +42,8 @@ public class ChrFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
-                          final FieldNode[] fields)
-            throws SQLException {
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+                          final FieldNode[] fields) throws SQLException {
 
         final int value = ValuesConverter.getPositiveInteger(values[0]);
         return (char) value;

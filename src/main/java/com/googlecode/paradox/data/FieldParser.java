@@ -12,6 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
 /**
  * Parses a database field.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public interface FieldParser {
@@ -30,7 +31,7 @@ public interface FieldParser {
      * @param type the field type.
      * @return true if I can handle this type.
      */
-    boolean match(int type);
+    boolean match(final ParadoxType type);
 
     /**
      * Parses the field.

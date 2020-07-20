@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ import java.sql.Statement;
 /**
  * Unit test for {@link NumberField} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class NumberFieldTest {
@@ -48,7 +49,7 @@ public class NumberFieldTest {
     @Test
     public void testInvalidMatch() {
         final NumberField field = new NumberField();
-        Assert.assertFalse("Invalid number value.", field.match(0));
+        Assert.assertFalse("Invalid number value.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -57,9 +58,7 @@ public class NumberFieldTest {
     @Test
     public void testParse() {
         final NumberField field = new NumberField();
-        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{
-                (byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0}
-        );
+        final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0});
         final Double value = field.parse(null, buffer, null);
         Assert.assertNotNull("Invalid value.", value);
         Assert.assertEquals("Different values.", 100.5d, value, 0);
@@ -71,7 +70,6 @@ public class NumberFieldTest {
     @Test
     public void testValidMatch() {
         final NumberField field = new NumberField();
-        Assert.assertTrue("Invalid field type.", field.match(5));
-        Assert.assertTrue("Invalid field type.", field.match(6));
+        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.NUMBER));
     }
 }

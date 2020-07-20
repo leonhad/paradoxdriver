@@ -13,15 +13,15 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 
 /**
- * Parses timestamp fields.
+ * Parses time stamp fields.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.2
  */
 public final class TimestampField implements FieldParser {
@@ -32,8 +32,8 @@ public final class TimestampField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public boolean match(final int type) {
-        return type == ParadoxFieldType.TIMESTAMP.getType();
+    public boolean match(final ParadoxType type) {
+        return type == ParadoxType.TIMESTAMP;
     }
 
     /**

@@ -27,9 +27,9 @@ import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @version 1.10
+ * @version 1.11
  * @since 1.0
  */
 public final class SQLParser {
@@ -65,6 +65,21 @@ public final class SQLParser {
      */
     public SQLParser(final String sql) throws SQLException {
         this.scanner = new Scanner(sql);
+    }
+
+    /**
+     * Parses the function name alias.
+     *
+     * @param functionName the function name.
+     * @param position     the current scanner position.
+     * @return the function node with alias set.
+     * @throws SQLException in case of failures.
+     */
+    private static FunctionNode parseFunctionAlias(final String functionName, final ScannerPosition position)
+            throws SQLException {
+        final FunctionNode functionNode = new FunctionNode(functionName, position);
+        functionNode.validate(position);
+        return functionNode;
     }
 
     /**
@@ -154,7 +169,7 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.CHARACTER);
 
-        return new ValueNode(fieldName, position, Types.VARCHAR);
+        return new ValueNode(fieldName, position, ParadoxType.VARCHAR);
     }
 
     private String getFieldAlias(String fieldName) throws SQLException {
@@ -248,16 +263,16 @@ public final class SQLParser {
             case CHARACTER:
                 // Found a String value.
                 this.expect(TokenType.CHARACTER);
-                ret = new ValueNode(fieldName, position, Types.VARCHAR);
+                ret = new ValueNode(fieldName, position, ParadoxType.VARCHAR);
                 break;
             case NUMERIC:
                 // Found a numeric value.
                 this.expect(TokenType.NUMERIC);
-                ret = new ValueNode(fieldName, position, Types.NUMERIC);
+                ret = new ValueNode(fieldName, position, ParadoxType.NUMBER);
                 break;
             case NULL:
                 this.expect(TokenType.NULL);
-                ret = new ValueNode(null, position, Types.NULL);
+                ret = new ValueNode(null, position, ParadoxType.NULL);
                 break;
             case QUESTION_MARK:
                 ret = parseParameter();
@@ -452,7 +467,8 @@ public final class SQLParser {
 
         @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
 
-        // Just change to next token because some functions have clash names with reserved words.
+        // Just change to next token because some functions have clash names with
+        // reserved words.
         if (this.scanner.hasNext()) {
             this.token = this.scanner.nextToken();
         } else {
@@ -478,21 +494,6 @@ public final class SQLParser {
         }
 
         return new FieldNode(newTableName, newFieldName, position);
-    }
-
-    /**
-     * Parses the function name alias.
-     *
-     * @param functionName the function name.
-     * @param position     the current scanner position.
-     * @return the function node with alias set.
-     * @throws SQLException in case of failures.
-     */
-    private static FunctionNode parseFunctionAlias(final String functionName, final ScannerPosition position)
-            throws SQLException {
-        final FunctionNode functionNode = new FunctionNode(functionName, position);
-        functionNode.validate(position);
-        return functionNode;
     }
 
     /**
@@ -538,7 +539,8 @@ public final class SQLParser {
             ret = true;
         } else if (functionName.equalsIgnoreCase(ConvertFunction.NAME)) {
             if (isToken(TokenType.USING)) {
-                node.getParameters().add(new ValueNode(this.token.getValue(), this.token.getPosition(), Types.VARCHAR));
+                node.getParameters()
+                        .add(new ValueNode(this.token.getValue(), this.token.getPosition(), ParadoxType.VARCHAR));
                 this.expect(TokenType.USING);
             } else {
                 this.expect(TokenType.COMMA);
@@ -644,8 +646,8 @@ public final class SQLParser {
      * @throws SQLException in case of errors.
      */
     private void parseJoin(final SelectNode select) throws SQLException {
-        while (this.scanner.hasNext() && (!isToken(TokenType.COMMA) && !isToken(TokenType.WHERE)
-                && !isToken(TokenType.ORDER))) {
+        while (this.scanner.hasNext()
+                && (!isToken(TokenType.COMMA) && !isToken(TokenType.WHERE) && !isToken(TokenType.ORDER))) {
 
             // Inner, right or cross join.
             JoinType joinType = JoinType.INNER;
@@ -798,10 +800,10 @@ public final class SQLParser {
             }
 
             if (isToken(TokenType.NUMERIC)) {
-                in.addField(new ValueNode(token.getValue(), token.getPosition(), Types.NUMERIC));
+                in.addField(new ValueNode(token.getValue(), token.getPosition(), ParadoxType.NUMBER));
                 this.expect(TokenType.NUMERIC);
             } else if (isToken(TokenType.CHARACTER)) {
-                in.addField(new ValueNode(token.getValue(), token.getPosition(), Types.VARCHAR));
+                in.addField(new ValueNode(token.getValue(), token.getPosition(), ParadoxType.VARCHAR));
                 this.expect(TokenType.CHARACTER);
             } else {
                 position = null;
@@ -886,7 +888,7 @@ public final class SQLParser {
             if (field instanceof ValueNode) {
                 ValueNode value = (ValueNode) field;
 
-                if (value.getSqlType() != Types.VARCHAR || value.getName().length() != 1) {
+                if (value.getType() != ParadoxType.VARCHAR || value.getName().length() != 1) {
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_CHAR);
                 }
 
@@ -922,14 +924,14 @@ public final class SQLParser {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NUMERIC);
 
-        return new ValueNode(fieldName, position, Types.NUMERIC);
+        return new ValueNode(fieldName, position, ParadoxType.NUMBER);
     }
 
     private ValueNode parseNull() throws SQLException {
         final ScannerPosition position = token.getPosition();
         this.expect(TokenType.NULL);
 
-        final ValueNode value = new ValueNode(null, position, Types.NULL);
+        final ValueNode value = new ValueNode(null, position, ParadoxType.NULL);
         value.setAlias("null");
         return value;
     }
@@ -997,7 +999,7 @@ public final class SQLParser {
             switch (this.token.getType()) {
                 case NUMERIC:
                     this.expect(TokenType.NUMERIC);
-                    fieldNode = new ValueNode(fieldName, position, Types.NUMERIC);
+                    fieldNode = new ValueNode(fieldName, position, ParadoxType.NUMBER);
                     break;
                 case IDENTIFIER:
                     fieldNode = parseIdentifierFieldOnly(fieldName);

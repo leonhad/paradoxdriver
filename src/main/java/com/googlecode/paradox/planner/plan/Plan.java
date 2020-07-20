@@ -12,6 +12,7 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -19,7 +20,7 @@ import java.sql.SQLFeatureNotSupportedException;
 /**
  * Used to creates and execute SQL plans.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public interface Plan {
@@ -28,13 +29,14 @@ public interface Plan {
      * Execute this plan.
      *
      * @param connection     the Paradox connection.
-     * @param maxRows        the limit of rows that can be loaded. Zero means no limit.
+     * @param maxRows        the limit of rows that can be loaded. Zero means no
+     *                       limit.
      * @param parameters     the statement parameters.
      * @param parameterTypes the parameter types.
      * @throws SQLException in case of failures.
      */
     void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters,
-                 final int[] parameterTypes) throws SQLException;
+                 final ParadoxType[] parameterTypes) throws SQLException;
 
     /**
      * Optimize the statement.
@@ -44,7 +46,8 @@ public interface Plan {
     /**
      * Cancel the statement execution.
      *
-     * @throws SQLFeatureNotSupportedException when the statement not support the cancel operation.
+     * @throws SQLFeatureNotSupportedException when the statement not support the
+     *                                         cancel operation.
      */
     default void cancel() throws SQLFeatureNotSupportedException {
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CANCEL_NOT_SUPPORTED);

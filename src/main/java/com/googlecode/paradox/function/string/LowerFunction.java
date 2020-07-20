@@ -13,13 +13,12 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-
-import java.sql.Types;
+import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL lower function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class LowerFunction implements IFunction {
@@ -30,8 +29,8 @@ public class LowerFunction implements IFunction {
     public static final String NAME = "LOWER";
 
     @Override
-    public int sqlType() {
-        return Types.VARCHAR;
+    public ParadoxType type() {
+        return ParadoxType.VARCHAR;
     }
 
     @Override
@@ -40,7 +39,7 @@ public class LowerFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         if (values[0] != null) {
             return values[0].toString().toLowerCase(connection.getLocale());

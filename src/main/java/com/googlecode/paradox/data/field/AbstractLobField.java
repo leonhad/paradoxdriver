@@ -15,7 +15,7 @@ import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
@@ -116,7 +116,7 @@ public abstract class AbstractLobField implements FieldParser {
         int headerSize = BLOB_HEADER_SIZE;
 
         // Graphic field?
-        if (field.getType() == ParadoxFieldType.GRAPHIC.getType()) {
+        if (field.getType() == ParadoxType.GRAPHIC) {
             headerSize = GRAPH_HEADER_SIZE;
         }
 

@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ import java.sql.Date;
 /**
  * Unit test for {@link DateField} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public class DateFieldTest {
@@ -30,7 +31,7 @@ public class DateFieldTest {
     @Test
     public void testInvalidMatch() {
         final DateField field = new DateField();
-        Assert.assertFalse("Invalid date type.", field.match(0));
+        Assert.assertFalse("Invalid date type.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -61,6 +62,6 @@ public class DateFieldTest {
     @Test
     public void testValidMatch() {
         final DateField field = new DateField();
-        Assert.assertTrue("Invalid date field.", field.match(2));
+        Assert.assertTrue("Invalid date field.", field.match(ParadoxType.DATE));
     }
 }

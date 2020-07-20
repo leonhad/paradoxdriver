@@ -21,7 +21,6 @@ import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Supplier;

@@ -12,6 +12,7 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -75,7 +76,7 @@ public class TimestampFieldTest {
     @Test
     public void testInvalidMatch() {
         final TimestampField field = new TimestampField();
-        Assert.assertFalse("Invalid field value.", field.match(0));
+        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
     }
 
     /**
@@ -84,7 +85,7 @@ public class TimestampFieldTest {
     @Test
     public void testValidMatch() {
         final TimestampField field = new TimestampField();
-        Assert.assertTrue("Invalid field type.", field.match(0x15));
+        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.TIMESTAMP));
     }
 
     /**
@@ -94,8 +95,8 @@ public class TimestampFieldTest {
      */
     @Test
     public void testReadTimestamp() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT \"Timestamp\" FROM fields.timestamp")) {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT \"Timestamp\" FROM fields.timestamp")) {
             Assert.assertTrue("Invalid Result Set state.", rs.next());
             Assert.assertNull("Invalid value.", rs.getTimestamp("Timestamp"));
 
@@ -103,8 +104,7 @@ public class TimestampFieldTest {
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Assert.assertEquals("Invalid value.", "2020-02-01 01:00:01",
-                    format.format(rs.getTimestamp("Timestamp")));
+            Assert.assertEquals("Invalid value.", "2020-02-01 01:00:01", format.format(rs.getTimestamp("Timestamp")));
 
             Assert.assertFalse("Invalid Result Set state.", rs.next());
         }

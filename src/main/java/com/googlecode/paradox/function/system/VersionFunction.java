@@ -13,14 +13,13 @@ package com.googlecode.paradox.function.system;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
-
-import java.sql.Types;
 
 /**
  * The SQL VERSION functions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class VersionFunction implements IFunction {
@@ -31,8 +30,8 @@ public class VersionFunction implements IFunction {
     public static final String NAME = "VERSION";
 
     @Override
-    public int sqlType() {
-        return Types.VARCHAR;
+    public ParadoxType type() {
+        return ParadoxType.VARCHAR;
     }
 
     @Override
@@ -41,7 +40,7 @@ public class VersionFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         return String.format("%s %s", Constants.DRIVER_NAME, Constants.DRIVER_VERSION);
     }

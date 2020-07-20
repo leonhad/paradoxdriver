@@ -16,6 +16,7 @@ import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxIndex;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 
@@ -159,7 +160,8 @@ public final class IndexData extends ParadoxData {
     private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) {
         final ParadoxField[] fields = new ParadoxField[index.getFieldCount()];
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(index.getConnection(), buffer.get(), loop + 1);
+            final ParadoxField field = new ParadoxField(index.getConnection(),
+                    ParadoxType.valueOfVendor(buffer.get()), loop + 1);
             field.setSize(buffer.get());
             fields[loop] = field;
         }

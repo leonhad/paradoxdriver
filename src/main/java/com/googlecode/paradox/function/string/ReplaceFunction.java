@@ -13,13 +13,12 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-
-import java.sql.Types;
+import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL REPLACE function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
@@ -31,8 +30,8 @@ public class ReplaceFunction implements IFunction {
     public static final String NAME = "REPLACE";
 
     @Override
-    public int sqlType() {
-        return Types.VARCHAR;
+    public ParadoxType type() {
+        return ParadoxType.VARCHAR;
     }
 
     @Override
@@ -41,7 +40,7 @@ public class ReplaceFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         if (values[0] == null || values[1] == null || values[2] == null) {
             return null;

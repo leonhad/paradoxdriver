@@ -16,9 +16,9 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,9 +32,6 @@ import java.util.List;
 public class TrimFunction implements IFunction {
 
     public static final String[] TYPES = {"BOTH", "LEADING", "TRAILING"};
-
-    private TrimType type = TrimType.BOTH;
-
     /**
      * The function name.
      */
@@ -45,15 +42,11 @@ public class TrimFunction implements IFunction {
         Arrays.sort(TYPES);
     }
 
-    private enum TrimType {
-        BOTH,
-        LEADING,
-        TRAILING
-    }
+    private TrimType type = TrimType.BOTH;
 
     @Override
-    public int sqlType() {
-        return Types.VARCHAR;
+    public ParadoxType type() {
+        return ParadoxType.VARCHAR;
     }
 
     @Override
@@ -67,7 +60,7 @@ public class TrimFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         if (values[0] == null || (values.length > 1 && values[1] == null)) {
             return null;
@@ -125,5 +118,9 @@ public class TrimFunction implements IFunction {
 
             this.type = TrimType.valueOf(value.getName().toUpperCase());
         }
+    }
+
+    private enum TrimType {
+        BOTH, LEADING, TRAILING
     }
 }

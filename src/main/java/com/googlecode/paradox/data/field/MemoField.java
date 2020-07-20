@@ -13,17 +13,14 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.planner.FieldValueUtils;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
 
 /**
  * Parses memo fields.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public final class MemoField extends AbstractLobField {
@@ -32,9 +29,8 @@ public final class MemoField extends AbstractLobField {
      * {@inheritDoc}.
      */
     @Override
-    public boolean match(final int type) {
-        return type == ParadoxFieldType.MEMO.getType()
-                || type == ParadoxFieldType.FORMATTED_MEMO.getType();
+    public boolean match(final ParadoxType type) {
+        return type == ParadoxType.MEMO || type == ParadoxType.FORMATTED_MEMO;
     }
 
     @Override

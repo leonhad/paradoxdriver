@@ -18,9 +18,9 @@ import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -149,12 +149,12 @@ public class FunctionNode extends FieldNode {
     }
 
     /**
-     * The returned value SQL type.
+     * The returned value type.
      *
-     * @return the returned value SQL type.
+     * @return the returned value type.
      */
-    public int getSqlType() {
-        return function.sqlType();
+    public ParadoxType getType() {
+        return function.type();
     }
 
     /**
@@ -184,17 +184,17 @@ public class FunctionNode extends FieldNode {
      * @throws SQLException in case of failures.
      */
     public Object execute(final ParadoxConnection connection, final Object[] row, final Object[] parameterValues,
-                          final int[] parameterTypes, final List<Column> loadedColumns) throws SQLException {
+                          final ParadoxType[] parameterTypes, final List<Column> loadedColumns) throws SQLException {
         final Object[] values = new Object[parameters.size()];
-        final int[] types = new int[parameters.size()];
+        final ParadoxType[] types = new ParadoxType[parameters.size()];
 
         for (int i = 0; i < parameters.size(); i++) {
             SQLNode param = parameters.get(i);
-            types[i] = Types.NULL;
+            types[i] = ParadoxType.NULL;
 
             if (param instanceof ValueNode) {
                 values[i] = param.getName();
-                types[i] = ((ValueNode) param).getSqlType();
+                types[i] = ((ValueNode) param).getType();
             } else if (param instanceof ParameterNode) {
                 values[i] = FieldValueUtils.getValue(row, (FieldNode) param, parameterValues);
                 types[i] = parameterTypes[((ParameterNode) param).getParameterIndex()];

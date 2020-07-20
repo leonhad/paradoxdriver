@@ -13,10 +13,9 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.TypeName;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Utils;
 
-import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -26,7 +25,7 @@ import java.util.List;
 /**
  * Paradox {@link ResultSetMetaData}.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ParadoxResultSetMetaData implements ResultSetMetaData {
@@ -66,7 +65,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public String getColumnClassName(final int column) throws SQLException {
-        return TypeName.getClassNameByType(this.getColumnType(column));
+        return ParadoxType.valueOf(this.getColumnType(column)).getJavaClass().getName();
     }
 
     /**
@@ -109,7 +108,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public int getColumnType(final int column) throws SQLException {
         final Column dto = this.getColumn(column);
-        return dto.getType();
+        return dto.getType().getSQLType();
     }
 
     /**
@@ -118,7 +117,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public String getColumnTypeName(final int column) throws SQLException {
         final Column dto = this.getColumn(column);
-        return JDBCType.valueOf(dto.getType()).getName();
+        return dto.getType().getName();
     }
 
     /**

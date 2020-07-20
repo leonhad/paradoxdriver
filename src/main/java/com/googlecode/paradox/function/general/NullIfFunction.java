@@ -15,14 +15,14 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.Types;
 import java.util.Objects;
 
 /**
  * The SQL NULLIF function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class NullIfFunction implements IFunction {
@@ -31,11 +31,11 @@ public class NullIfFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "NULLIF";
-    private int sqlType = Types.NULL;
+    private ParadoxType type = ParadoxType.NULL;
 
     @Override
-    public int sqlType() {
-        return sqlType;
+    public ParadoxType type() {
+        return type;
     }
 
     @Override
@@ -49,10 +49,10 @@ public class NullIfFunction implements IFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields)
             throws ParadoxSyntaxErrorException {
-        this.sqlType = FieldValueUtils.getSqlType(values, types);
+        this.type = FieldValueUtils.getSqlType(values, types);
 
         if (Objects.equals(values[0], values[1])) {
             return null;

@@ -11,14 +11,14 @@
 package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.parser.ScannerPosition;
+import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.Types;
 import java.util.Objects;
 
 /**
  * Stores a node value.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class ValueNode extends FieldNode {
@@ -26,21 +26,20 @@ public class ValueNode extends FieldNode {
     /**
      * The SQL type.
      */
-    private final int sqlType;
+    private final ParadoxType type;
 
-    public ValueNode(final String name, final ScannerPosition position, final int sqlType) {
+    public ValueNode(final String name, final ScannerPosition position, final ParadoxType type) {
         super(null, name, position);
-
-        this.sqlType = sqlType;
+        this.type = type;
     }
 
     /**
-     * Gets the SQL value.
+     * Gets the field type.
      *
-     * @return the SQL value.
+     * @return the field type.
      */
-    public int getSqlType() {
-        return sqlType;
+    public ParadoxType getType() {
+        return type;
     }
 
     @Override
@@ -48,21 +47,21 @@ public class ValueNode extends FieldNode {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         ValueNode fieldNode = (ValueNode) o;
-        return Objects.equals(sqlType, fieldNode.sqlType);
+        return Objects.equals(type, fieldNode.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tableName, alias, name, sqlType);
+        return Objects.hash(tableName, alias, name, type);
     }
 
     @Override
     public String toString() {
-        if (sqlType == Types.VARCHAR) {
+        if (type == ParadoxType.VARCHAR) {
             return String.format("'%s'", this.name);
         }
 

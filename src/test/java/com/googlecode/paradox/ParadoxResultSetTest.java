@@ -12,7 +12,7 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxFieldType;
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.*;
 
 import java.sql.*;
@@ -95,8 +95,7 @@ public class ParadoxResultSetTest {
     }
 
     /**
-     * Test for {@link ParadoxResultSet#absolute(int)} method with high row
-     * number.
+     * Test for {@link ParadoxResultSet#absolute(int)} method with high row number.
      *
      * @throws SQLException in case of failures.
      */
@@ -112,8 +111,7 @@ public class ParadoxResultSetTest {
     }
 
     /**
-     * Test for {@link ParadoxResultSet#absolute(int)} method with low row
-     * number.
+     * Test for {@link ParadoxResultSet#absolute(int)} method with low row number.
      *
      * @throws SQLException in case of failures.
      */
@@ -135,8 +133,8 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testAbsoluteNegativeRowValue() throws SQLException {
-        final List<Column> columns = Collections.singletonList(
-                new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType())));
+        final List<Column> columns = Collections
+                .singletonList(new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxType.VARCHAR)));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
@@ -152,7 +150,7 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testAfterLast() throws SQLException {
-        final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxFieldType.VARCHAR.getType());
+        final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxType.VARCHAR);
         final List<Column> columns = Collections.singletonList(new Column(field));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
@@ -300,8 +298,8 @@ public class ParadoxResultSetTest {
     public void testNoFirstResult() throws SQLException {
         final ParadoxConnection paradoxConnection = (ParadoxConnection) this.conn;
         try (ParadoxStatement statement = (ParadoxStatement) conn.createStatement();
-             ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, statement,
-                     Collections.emptyList(), Collections.emptyList())) {
+             ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, statement, Collections.emptyList(),
+                     Collections.emptyList())) {
 
             Assert.assertFalse("There is one first row", rs.next());
             Assert.assertFalse("There is one first row", rs.first());
@@ -380,9 +378,8 @@ public class ParadoxResultSetTest {
     @Test
     public void testJoinAndWhere() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select ac.AreaCode as a, st.State, st.Capital " +
-                     " from geog.tblAC ac, geog.tblsttes st" +
-                     " where st.State = ac.State")) {
+             ResultSet rs = stmt.executeQuery("select ac.AreaCode as a, st.State, st.Capital "
+                     + " from geog.tblAC ac, geog.tblsttes st" + " where st.State = ac.State")) {
             Assert.assertTrue("No First row", rs.next());
         }
     }
@@ -395,8 +392,8 @@ public class ParadoxResultSetTest {
     @Test
     public void testIsNull() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery(
-                     "select \"date\", \"time\" from fields.DATE7 where \"date\" is null")) {
+             ResultSet rs = stmt
+                     .executeQuery("select \"date\", \"time\" from fields.DATE7 where \"date\" is null")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("Invalid time value", "10:00:00", rs.getString("time"));
             Assert.assertFalse("No First row", rs.next());
@@ -432,8 +429,8 @@ public class ParadoxResultSetTest {
     @Test
     public void testConvert() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery(
-                     "select \"date\", \"time\" from fields.DATE7 where \"date\" is null")) {
+             ResultSet rs = stmt
+                     .executeQuery("select \"date\", \"time\" from fields.DATE7 where \"date\" is null")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertNotNull("Invalid instance", rs.getObject("time", Timestamp.class));
             Assert.assertFalse("No First row", rs.next());
@@ -450,8 +447,8 @@ public class ParadoxResultSetTest {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT a.AC FROM db.AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertThrows("Invalid value conversion",
-                    SQLException.class, () -> rs.getObject("ac", Timestamp.class));
+            Assert.assertThrows("Invalid value conversion", SQLException.class,
+                    () -> rs.getObject("ac", Timestamp.class));
         }
     }
 
@@ -462,8 +459,8 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testResultSetMultipleValues() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT \"ID\", NAME, MONEYS FROM db.GENERAL")) {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT \"ID\", NAME, MONEYS FROM db.GENERAL")) {
             Assert.assertTrue("First record:", rs.next());
             Assert.assertEquals("1 row: ", "1 - Mari 100.0",
                     rs.getLong(1) + " - " + rs.getString(2) + " " + rs.getFloat(3));
@@ -483,8 +480,8 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testResultSetOneColumn() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT EMail FROM CUSTOMER")) {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT EMail FROM CUSTOMER")) {
             Assert.assertTrue("No First row", rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString("email"));
             Assert.assertTrue("No second row", rs.next());
@@ -501,8 +498,8 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testResultSetTwoColumn() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT EMail,CustNo FROM CUSTOMER")) {
+        try (Statement stmt = this.conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT EMail,CustNo FROM CUSTOMER")) {
             Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
             Assert.assertEquals("1 row:", "luke@fun.com", rs.getString(1));
             Assert.assertEquals("1 row:", 1, rs.getInt(2));
@@ -523,8 +520,8 @@ public class ParadoxResultSetTest {
     @Test
     public void testLike() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
-                     " where ac.AreasCovered like 'Hackensack%'")) {
+             ResultSet rs = stmt.executeQuery(
+                     "select ac.AreasCovered from geog.tblAC ac " + " where ac.AreasCovered like 'Hackensack%'")) {
 
             Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.isAfterLast());
             Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
@@ -533,8 +530,8 @@ public class ParadoxResultSetTest {
         }
 
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
-                     " where ac.AreasCovered like 'hackensack%'")) {
+             ResultSet rs = stmt.executeQuery(
+                     "select ac.AreasCovered from geog.tblAC ac " + " where ac.AreasCovered like 'hackensack%'")) {
 
             Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.next());
         }
@@ -548,8 +545,8 @@ public class ParadoxResultSetTest {
     @Test
     public void testInsensitiveLike() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
-             ResultSet rs = stmt.executeQuery("select ac.AreasCovered from geog.tblAC ac " +
-                     " where ac.AreasCovered ilike 'hackensack%'")) {
+             ResultSet rs = stmt.executeQuery(
+                     "select ac.AreasCovered from geog.tblAC ac " + " where ac.AreasCovered ilike 'hackensack%'")) {
 
             Assert.assertFalse(INVALID_RESULT_SET_STATE, rs.isAfterLast());
             Assert.assertTrue(INVALID_RESULT_SET_STATE, rs.next());
@@ -588,8 +585,8 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testExecutePreparedStatement() throws SQLException {
-        try (final PreparedStatement stmt =
-                     this.conn.prepareStatement("select \"DECIMAL\" from db.DECIMAL where \"DECIMAL\" = 1")) {
+        try (final PreparedStatement stmt = this.conn
+                .prepareStatement("select \"DECIMAL\" from db.DECIMAL where \"DECIMAL\" = 1")) {
             boolean result = stmt.execute();
             Assert.assertTrue("Invalid result set state", result);
 

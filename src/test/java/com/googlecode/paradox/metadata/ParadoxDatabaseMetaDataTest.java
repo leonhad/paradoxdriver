@@ -718,7 +718,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testProcedureCallable() throws SQLException {
-        Assert.assertFalse("Invalid callable value.", this.conn.getMetaData().allProceduresAreCallable());
+        Assert.assertTrue("Invalid callable value.", this.conn.getMetaData().allProceduresAreCallable());
     }
 
     /**
