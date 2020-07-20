@@ -20,7 +20,7 @@ import com.googlecode.paradox.results.ParadoxType;
  * @version 1.2
  * @since 1.6.0
  */
-public class BitLengthFunction extends OctectLengthFunction {
+public class BitLengthFunction extends OctetLengthFunction {
 
     /**
      * The function name.

@@ -32,7 +32,7 @@ public class CurrentDateFunction implements IFunction {
     public static final String NAME = "CURRENT_DATE";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.DATE;
     }
 

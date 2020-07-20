@@ -32,7 +32,7 @@ public class RepeatFunction implements IFunction {
     public static final String NAME = "REPEAT";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

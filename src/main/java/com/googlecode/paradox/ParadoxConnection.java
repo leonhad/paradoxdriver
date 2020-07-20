@@ -17,6 +17,7 @@ import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.rowset.ParadoxBlob;
 import com.googlecode.paradox.rowset.ParadoxClob;
+import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
@@ -24,6 +25,7 @@ import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.stream.Stream;
 
 /**
  * JDBC Paradox connection implementation.
@@ -33,6 +35,7 @@ import java.util.concurrent.Executor;
  */
 public final class ParadoxConnection implements Connection {
 
+    public static final String INFORMATION_SCHEMA = "information_schema";
     /**
      * Database catalog.
      */
@@ -277,7 +280,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getCatalog() {
-        return this.catalog.getName();
+        return "DB";
     }
 
     /**
@@ -286,22 +289,6 @@ public final class ParadoxConnection implements Connection {
     @Override
     public void setCatalog(final String catalog) throws SQLException {
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CATALOG_CHANGE);
-    }
-
-    /**
-     * Gets the catalog by name.
-     *
-     * @param catalogName the catalog pattern.
-     * @return the catalog file.
-     * @throws SQLException in case of invalid catalog.
-     */
-    private File getCatalog(final String catalogName) throws SQLException {
-        final File parent = this.catalog.getParentFile();
-        final File currentCatalog = new File(parent, catalogName);
-        if (!currentCatalog.isDirectory()) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_CATALOG_NAME);
-        }
-        return currentCatalog;
     }
 
     /**
@@ -512,11 +499,43 @@ public final class ParadoxConnection implements Connection {
      * @param catalog       the database catalog.
      * @param schemaPattern the schema pattern.
      * @return the schema directories.
-     * @throws SQLException in case of errors.
      */
-    public File[] getSchema(final String catalog, final String schemaPattern) throws SQLException {
-        File currentCatalog = getCatalog(catalog);
-        return currentCatalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
+    public List<String> getSchemas(final String catalog, final String schemaPattern) {
+        List<String> ret = new ArrayList<>();
+        if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
+            final File[] schemas = this.catalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
+            if (schemas != null) {
+                Stream.of(schemas).filter(Objects::nonNull).map(File::getName).forEach(ret::add);
+            }
+
+            if (schemaPattern == null || Expressions.accept(this.locale, INFORMATION_SCHEMA, schemaPattern, false,
+                    '\\')) {
+                ret.add(INFORMATION_SCHEMA);
+            }
+        }
+
+        ret.sort(Comparator.comparing(a -> a));
+        return ret;
+    }
+
+    /**
+     * List the connections schema in selected catalog.
+     *
+     * @param catalog       the database catalog.
+     * @param schemaPattern the schema pattern.
+     * @return the schema directories.
+     */
+    public List<File> getSchemaFiles(final String catalog, final String schemaPattern) {
+        List<File> ret = new ArrayList<>();
+        if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
+            final File[] schemas = this.catalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
+            if (schemas != null) {
+                Stream.of(schemas).filter(Objects::nonNull).forEach(ret::add);
+            }
+        }
+
+        ret.sort(Comparator.comparing(a -> a));
+        return ret;
     }
 
     /**

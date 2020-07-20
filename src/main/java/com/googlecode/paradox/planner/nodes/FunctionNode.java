@@ -154,7 +154,7 @@ public class FunctionNode extends FieldNode {
      * @return the returned value type.
      */
     public ParadoxType getType() {
-        return function.type();
+        return function.fieldType();
     }
 
     /**

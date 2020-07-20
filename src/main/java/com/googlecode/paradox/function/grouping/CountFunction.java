@@ -29,7 +29,7 @@ public class CountFunction implements IFunction {
     public static final String NAME = "COUNT";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

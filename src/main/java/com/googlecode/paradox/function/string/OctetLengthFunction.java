@@ -21,7 +21,7 @@ import com.googlecode.paradox.results.ParadoxType;
  * @version 1.1
  * @since 1.6.0
  */
-public class OctectLengthFunction implements IFunction {
+public class OctetLengthFunction implements IFunction {
 
     /**
      * The function name.
@@ -29,7 +29,7 @@ public class OctectLengthFunction implements IFunction {
     public static final String NAME = "OCTET_LENGTH";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

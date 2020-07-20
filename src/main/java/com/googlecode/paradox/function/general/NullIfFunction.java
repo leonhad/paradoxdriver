@@ -34,7 +34,7 @@ public class NullIfFunction implements IFunction {
     private ParadoxType type = ParadoxType.NULL;
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return type;
     }
 

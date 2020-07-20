@@ -29,7 +29,7 @@ public class UserFunction implements IFunction {
     public static final String NAME = "USER";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 
@@ -46,6 +46,6 @@ public class UserFunction implements IFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        return "SYS";
+        return connection.getSchema();
     }
 }

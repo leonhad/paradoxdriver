@@ -17,6 +17,7 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -40,12 +41,15 @@ public class AbsFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column("number", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1, false)
+                new Column(null, ParadoxType.NUMBER, 8, 15, "The absolute value.", 0, false,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("number", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1, false,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.NUMBER;
     }
 

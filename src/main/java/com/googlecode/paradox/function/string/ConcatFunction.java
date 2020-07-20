@@ -29,7 +29,7 @@ public class ConcatFunction implements IFunction {
     public static final String NAME = "CONCAT";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

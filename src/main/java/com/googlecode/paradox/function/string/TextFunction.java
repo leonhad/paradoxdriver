@@ -31,7 +31,7 @@ public class TextFunction implements IFunction {
     public static final String NAME = "TEXT";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.MEMO;
     }
 

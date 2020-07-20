@@ -30,7 +30,7 @@ public class ConcatWSFunction implements IFunction {
     public static final String NAME = "CONCAT_WS";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

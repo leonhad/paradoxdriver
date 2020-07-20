@@ -31,7 +31,7 @@ public class PiFunction implements IFunction {
     public static final String NAME = "PI";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.NUMBER;
     }
 

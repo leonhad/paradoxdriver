@@ -154,7 +154,7 @@ public enum ParadoxType implements SQLType {
     /**
      * Field associated Java class.
      */
-    private Class<?> javaClass;
+    private final Class<?> javaClass;
 
     /**
      * Creates a new instance.

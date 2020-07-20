@@ -31,7 +31,7 @@ public class AsciiFunction implements IFunction {
     public static final String NAME = "ASCII";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

@@ -30,7 +30,7 @@ public class ReplaceFunction implements IFunction {
     public static final String NAME = "REPLACE";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

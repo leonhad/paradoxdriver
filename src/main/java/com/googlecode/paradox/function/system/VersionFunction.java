@@ -30,7 +30,7 @@ public class VersionFunction implements IFunction {
     public static final String NAME = "VERSION";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

@@ -82,7 +82,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
         FUNCTIONS.put(LPadFunction.NAME, LPadFunction::new);
-        FUNCTIONS.put(OctectLengthFunction.NAME, OctectLengthFunction::new);
+        FUNCTIONS.put(OctetLengthFunction.NAME, OctetLengthFunction::new);
         FUNCTIONS.put(PositionFunction.NAME, PositionFunction::new);
         FUNCTIONS.put(RPadFunction.NAME, RPadFunction::new);
         FUNCTIONS.put(RepeatFunction.NAME, RepeatFunction::new);

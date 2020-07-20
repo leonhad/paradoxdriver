@@ -32,7 +32,7 @@ public class RightFunction implements IFunction {
     public static final String NAME = "RIGHT";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

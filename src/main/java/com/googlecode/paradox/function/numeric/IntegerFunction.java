@@ -32,7 +32,7 @@ public class IntegerFunction implements IFunction {
     public static final String NAME = "INTEGER";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

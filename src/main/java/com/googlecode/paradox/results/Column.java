@@ -65,7 +65,9 @@ public final class Column {
      */
     private String remarks;
 
-    private boolean nullable;
+    private final boolean nullable;
+
+    private int columnType;
 
     /**
      * Fixed value.
@@ -99,7 +101,7 @@ public final class Column {
     }
 
     public Column(final String name, final ParadoxType type, final int precision, final int size, final String remarks,
-                  final int index, boolean nullable) {
+                  final int index, final boolean nullable, final int columnType) {
         this.name = name;
         this.type = type;
         this.precision = precision;
@@ -107,6 +109,7 @@ public final class Column {
         this.remarks = remarks;
         this.index = index;
         this.nullable = nullable;
+        this.columnType = columnType;
     }
 
     /**
@@ -270,8 +273,12 @@ public final class Column {
     }
 
     public Integer getOctets() {
-        // FIXME octets. the maximum length of binary and character based parameters or columns. For any other
-        //  datatype the returned value is a NULL.
+        if (value instanceof byte[]) {
+            return ((byte[]) value).length;
+        } else if (value instanceof String) {
+            return ((String) value).length();
+        }
+
         return null;
     }
 
@@ -346,6 +353,10 @@ public final class Column {
         }
 
         return field.toString();
+    }
+
+    public int getColumnType() {
+        return columnType;
     }
 
     @Override

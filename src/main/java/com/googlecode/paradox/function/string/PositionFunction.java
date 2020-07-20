@@ -31,7 +31,7 @@ public class PositionFunction implements IFunction {
     public static final String NAME = "POSITION";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

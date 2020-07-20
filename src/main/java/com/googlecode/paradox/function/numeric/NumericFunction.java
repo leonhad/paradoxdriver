@@ -32,7 +32,7 @@ public class NumericFunction implements IFunction {
     public static final String NAME = "NUMERIC";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.NUMBER;
     }
 

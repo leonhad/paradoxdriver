@@ -38,7 +38,7 @@ public class CastFunction implements IFunction {
     private ParadoxType type = ParadoxType.VARCHAR;
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return type;
     }
 

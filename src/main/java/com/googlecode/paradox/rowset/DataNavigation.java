@@ -25,7 +25,7 @@ import java.util.List;
 public class DataNavigation implements AutoCloseable {
 
     private boolean closed;
-    private List<Object[]> values;
+    private List<? extends Object[]> values;
     private Object[] currentRow;
     /**
      * Last got value.
@@ -40,7 +40,7 @@ public class DataNavigation implements AutoCloseable {
      */
     private int fetchDirection = ResultSet.FETCH_FORWARD;
 
-    public DataNavigation(final List<Object[]> values) {
+    public DataNavigation(final List<? extends Object[]> values) {
         this.values = values;
     }
 

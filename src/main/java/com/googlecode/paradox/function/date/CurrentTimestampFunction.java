@@ -32,7 +32,7 @@ public class CurrentTimestampFunction implements IFunction {
     public static final String NAME = "CURRENT_TIMESTAMP";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.TIMESTAMP;
     }
 

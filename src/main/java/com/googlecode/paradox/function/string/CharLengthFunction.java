@@ -29,7 +29,7 @@ public class CharLengthFunction implements IFunction {
     public static final String NAME = "CHAR_LENGTH";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

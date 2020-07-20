@@ -29,7 +29,7 @@ public class UpperFunction implements IFunction {
     public static final String NAME = "UPPER";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

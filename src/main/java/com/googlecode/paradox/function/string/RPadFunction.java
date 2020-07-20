@@ -32,7 +32,7 @@ public class RPadFunction implements IFunction {
     public static final String NAME = "RPAD";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

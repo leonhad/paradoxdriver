@@ -34,7 +34,7 @@ public class IsNumericFunction implements IFunction {
     public static final String NAME = "ISNUMERIC";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

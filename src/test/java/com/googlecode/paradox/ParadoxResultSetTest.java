@@ -23,11 +23,12 @@ import java.util.List;
 /**
  * Unit test for {@link ParadoxResultSet} class.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
 public class ParadoxResultSetTest {
+
     public static final String INVALID_FIRST_STATUS = "Invalid first status";
     public static final String INVALID_RESULT_SET_STATE = "Invalid ResultSet state";
     public static final String INVALID_LAST_STATUS = "Invalid last status";
@@ -122,6 +123,24 @@ public class ParadoxResultSetTest {
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
         try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
             Assert.assertFalse(INVALID_ABSOLUTE_VALUE, rs.absolute(-1));
+        }
+    }
+
+    /**
+     * Test for null number value.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNullNumber() throws SQLException {
+        final List<Column> columns = Collections.singletonList(new Column("A", ParadoxType.INTEGER));
+        final List<Object[]> values = Collections.singletonList(new Object[]{null});
+        final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
+        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+            Assert.assertTrue("Invalid Result Set state", rs.next());
+            Assert.assertEquals("Invalid int value", 0, rs.getInt("A"));
+            Assert.assertTrue("Invalid null state", rs.wasNull());
+            Assert.assertFalse("Invalid Result Set state", rs.next());
         }
     }
 

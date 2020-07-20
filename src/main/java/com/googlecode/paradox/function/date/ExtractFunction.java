@@ -71,7 +71,7 @@ public class ExtractFunction implements IFunction {
     }
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.INTEGER;
     }
 

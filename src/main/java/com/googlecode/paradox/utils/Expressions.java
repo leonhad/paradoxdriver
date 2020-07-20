@@ -153,8 +153,11 @@ public final class Expressions {
      * @param caseSensitive if use case sensitive option.
      * @return the char array.
      */
-    private static char[] getCharArrayWithCase(final Locale locale, final String str,
-                                               final boolean caseSensitive) {
+    private static char[] getCharArrayWithCase(final Locale locale, final String str, final boolean caseSensitive) {
+        if (str == null) {
+            return new char[0];
+        }
+
         if (caseSensitive) {
             return str.toCharArray();
         }

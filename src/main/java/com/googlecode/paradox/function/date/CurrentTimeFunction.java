@@ -37,7 +37,7 @@ public class CurrentTimeFunction implements IFunction {
     public static final String NAME = "CURRENT_TIME";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.TIME;
     }
 

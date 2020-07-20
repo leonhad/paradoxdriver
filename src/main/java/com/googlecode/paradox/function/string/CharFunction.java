@@ -31,7 +31,7 @@ public class CharFunction implements IFunction {
     public static final String NAME = "CHAR";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.CHAR;
     }
 

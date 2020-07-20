@@ -24,10 +24,15 @@ import java.util.List;
 /**
  * SQL function interface.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public interface IFunction {
+
+    /**
+     * Gets the function type.
+     */
+    //FunctionType type();
 
     /**
      * Gets the functions remarks.
@@ -53,7 +58,7 @@ public interface IFunction {
      *
      * @return the returned value type.
      */
-    ParadoxType type();
+    ParadoxType fieldType();
 
     /**
      * The function parameters count.

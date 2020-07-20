@@ -45,7 +45,7 @@ public class TrimFunction implements IFunction {
     private TrimType type = TrimType.BOTH;
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 

@@ -29,7 +29,7 @@ public class LowerFunction implements IFunction {
     public static final String NAME = "LOWER";
 
     @Override
-    public ParadoxType type() {
+    public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
     }
 
