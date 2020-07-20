@@ -43,8 +43,7 @@ public class IntegerFunction implements IFunction {
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
-                          final FieldNode[] fields)
-            throws SQLException {
+                          final FieldNode[] fields) throws SQLException {
         return ValuesConverter.getInteger(values[0]);
     }
 }

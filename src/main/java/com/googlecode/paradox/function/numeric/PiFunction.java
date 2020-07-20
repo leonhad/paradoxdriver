@@ -13,23 +13,22 @@ package com.googlecode.paradox.function.numeric;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * The SQL ABS function.
+ * The SQL PI function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class AbsFunction implements IFunction {
+public class PiFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "ABS";
+    public static final String NAME = "PI";
 
     @Override
     public int sqlType() {
@@ -38,17 +37,12 @@ public class AbsFunction implements IFunction {
 
     @Override
     public int parameterCount() {
-        return 1;
+        return 0;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final int[] types,
                           final FieldNode[] fields) throws SQLException {
-        final Double value = ValuesConverter.getDouble(values[0]);
-        if (value == null) {
-            return null;
-        }
-
-        return Math.abs(value);
+        return Math.PI;
     }
 }

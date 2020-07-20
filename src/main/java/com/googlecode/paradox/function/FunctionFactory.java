@@ -16,10 +16,7 @@ import com.googlecode.paradox.function.date.CurrentTimestampFunction;
 import com.googlecode.paradox.function.date.ExtractFunction;
 import com.googlecode.paradox.function.general.*;
 import com.googlecode.paradox.function.grouping.CountFunction;
-import com.googlecode.paradox.function.numeric.AbsFunction;
-import com.googlecode.paradox.function.numeric.IntegerFunction;
-import com.googlecode.paradox.function.numeric.IsNumericFunction;
-import com.googlecode.paradox.function.numeric.NumericFunction;
+import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
@@ -64,6 +61,7 @@ public final class FunctionFactory {
         // Numeric functions.
         FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
+        FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
 
         // String functions.
         FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);
