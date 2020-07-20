@@ -27,10 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -1871,11 +1868,13 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public ResultSet getTableTypes() {
         final List<Column> columns = Collections.singletonList(new Column("TABLE_TYPE", ParadoxType.VARCHAR));
 
-        final List<Object[]> values = new ArrayList<>(4);
-        values.add(new Object[]{ParadoxDatabaseMetaData.TABLE});
-        values.add(new Object[]{VIEW});
-        values.add(new Object[]{TABLE});
-        values.add(new Object[]{SYSTEM_TABLE});
+        final List<String[]> values = new ArrayList<>(4);
+        values.add(new String[]{VIEW});
+        values.add(new String[]{TABLE});
+        values.add(new String[]{SYSTEM_TABLE});
+
+        values.sort(Comparator.comparing(o -> o[0]));
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
 

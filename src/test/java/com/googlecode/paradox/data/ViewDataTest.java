@@ -117,7 +117,7 @@ public class ViewDataTest {
     public void testViewFileReading() throws Exception {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getColumns("test-classes", "db", "AREAS.QBE", "%")) {
+        try (ResultSet rs = meta.getColumns("DB", "db", "AREAS.QBE", "%")) {
             // This view have 3 fields.
             Assert.assertTrue("Invalid result set.", rs.next());
             Assert.assertTrue("Invalid result set.", rs.next());
