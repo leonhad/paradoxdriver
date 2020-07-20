@@ -82,7 +82,7 @@ public final class FieldValueUtils {
                     current = type;
                 }
 
-                if (current != ParadoxType.NULL && type != ParadoxType.NULL && current != type) {
+                if (current != ParadoxType.NULL && type != ParadoxType.NULL && current.getSQLType() != type.getSQLType()) {
                     // The field types isn't the same (NULL ignored).
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_DATA_TYPE,
                             current.name(), type.name());
