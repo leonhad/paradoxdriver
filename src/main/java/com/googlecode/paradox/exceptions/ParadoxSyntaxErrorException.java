@@ -154,7 +154,9 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
         /**
          * Inconsistent parameter list.
          */
-        INCONSISTENT_PARAMETER_LIST("016", "Inconsistent parameter list size");
+        INCONSISTENT_PARAMETER_LIST("016", "Inconsistent parameter list size"),
+
+        UNTERMINATED_STRING("017", "Unterminated character sequence");
 
         /**
          * SQL state code.

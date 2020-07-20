@@ -249,7 +249,7 @@ public class Scanner {
      *
      * @param type the string type (special char used to start the string).
      */
-    private void parseString(final char type) {
+    private void parseString(final char type) throws ParadoxSyntaxErrorException {
         char c = '\0';
 
         while (this.hasNext() && c != type) {
@@ -268,6 +268,10 @@ public class Scanner {
                     pushBack(nextChar);
                 }
             }
+        }
+
+        if (c != type) {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNTERMINATED_STRING, position);
         }
     }
 
@@ -403,7 +407,7 @@ public class Scanner {
         } while (hasNext() && (last != '*' || c != '/'));
     }
 
-    private Token parseIdentifier(char c) {
+    private Token parseIdentifier(char c) throws ParadoxSyntaxErrorException {
         // identifiers with special chars
         final boolean characters = Scanner.isCharacters(c);
         this.parseString(c);

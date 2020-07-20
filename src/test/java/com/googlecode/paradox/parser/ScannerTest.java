@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.parser;
 
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link Scanner}.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public class ScannerTest {
@@ -35,6 +36,17 @@ public class ScannerTest {
         Assert.assertEquals("Invalid token type.", TokenType.CHARACTER, token.getType());
         Assert.assertEquals("Invalid token value.", "test 1", token.getValue());
         Assert.assertFalse("Invalid scanner state.", scanner.hasNext());
+    }
+
+    /**
+     * Test for unterminated string.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testUnterminatedString() throws SQLException {
+        final Scanner scanner = new Scanner(" 'test 1");
+        Assert.assertThrows("Invalid string", ParadoxSyntaxErrorException.class, scanner::nextToken);
     }
 
     /**
@@ -271,7 +283,7 @@ public class ScannerTest {
      */
     @Test
     public void testDoubleQuoted() throws SQLException {
-        final Scanner scanner = new Scanner("\"a\"\"b");
+        final Scanner scanner = new Scanner("\"a\"\"b\"");
         Token token = scanner.nextToken();
         Assert.assertEquals("Invalid token type", TokenType.IDENTIFIER, token.getType());
         Assert.assertEquals("Invalid token value", "a\"b", token.getValue());
