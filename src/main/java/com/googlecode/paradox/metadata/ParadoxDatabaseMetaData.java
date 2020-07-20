@@ -16,17 +16,19 @@ import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.data.filefilters.DirectoryFilter;
+import com.googlecode.paradox.function.FunctionFactory;
+import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Creates an database metadata.
@@ -94,6 +96,13 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     private static final String TYPE_NAME = "TYPE_NAME";
     public static final int DEFAULT_NUMBER_RADIX = 10;
+    public static final String SPECIFIC_NAME = "SPECIFIC_NAME";
+    public static final String DATA_TYPE = "DATA_TYPE";
+    public static final String NULLABLE = "NULLABLE";
+    public static final String CHAR_OCTET_LENGTH = "CHAR_OCTET_LENGTH";
+    public static final String ORDINAL_POSITION = "ORDINAL_POSITION";
+    public static final String IS_NULLABLE = "IS_NULLABLE";
+    public static final String COLUMN_TYPE = "COLUMN_TYPE";
     /**
      * The database connection.
      */
@@ -113,7 +122,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean allProceduresAreCallable() {
-        return false;
+        return true;
     }
 
     /**
@@ -381,8 +390,79 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getFunctionColumns(final String catalog, final String schemaPattern,
-                                        final String functionNamePattern, final String columnNamePattern) {
-        return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
+                                        final String functionNamePattern, final String columnNamePattern) throws SQLException {
+        final ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("FUNCTION_CAT", Types.VARCHAR));
+        columns.add(new Column("FUNCTION_SCHEM", Types.VARCHAR));
+        columns.add(new Column("FUNCTION_NAME", Types.VARCHAR));
+        columns.add(new Column(COLUMN_NAME, Types.VARCHAR));
+        columns.add(new Column(COLUMN_TYPE, Types.INTEGER));
+        columns.add(new Column(DATA_TYPE, Types.INTEGER));
+        columns.add(new Column(TYPE_NAME, Types.VARCHAR));
+        columns.add(new Column("PRECISION", Types.INTEGER));
+        columns.add(new Column("LENGTH", Types.INTEGER));
+        columns.add(new Column("SCALE", Types.INTEGER));
+        columns.add(new Column("RADIX", Types.INTEGER));
+        columns.add(new Column(NULLABLE, Types.INTEGER));
+        columns.add(new Column(REMARKS, Types.VARCHAR));
+        columns.add(new Column(CHAR_OCTET_LENGTH, Types.INTEGER));
+        columns.add(new Column(ORDINAL_POSITION, Types.INTEGER));
+        columns.add(new Column(IS_NULLABLE, Types.VARCHAR));
+        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
+
+        final List<Object[]> values = new ArrayList<>();
+
+        for (final Map.Entry<String, Supplier<? extends IFunction>> function : FunctionFactory.FUNCTIONS.entrySet()) {
+            if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog()))
+                //    || (schemaPattern != null && !schemaPattern.isEmpty())
+                    || (functionNamePattern != null && !functionNamePattern.equalsIgnoreCase(function.getKey()))) {
+               // continue;
+            }
+
+            final IFunction instance = function.getValue().get();
+            for (final Column column : instance.getColumns()) {
+                final Object[] row = {
+                        // Catalog.
+                        conn.getCatalog(),
+                        // Schema.
+                        schemaPattern,
+                        // Name.
+                        function.getKey(),
+                        // Column name.
+                        column.getName(),
+                        // Column type.
+                        functionColumnIn,
+                        // Data type.
+                        column.getType(),
+                        // Data type name.
+                        JDBCType.valueOf(column.getType()).getName(),
+                        // Precision.
+                        column.getPrecision(),
+                        // Length,
+                        column.getSize(),
+                        // Scale.
+                        column.getScale(),
+                        // Radix.
+                        10,
+                        // Nullable
+                        column.isNullable() ? functionNullable : functionNoNulls,
+                        // Remarks.
+                        column.getRemarks(),
+                        // Octets.
+                        column.getOctets(),
+                        // Ordinal position.
+                        column.getIndex(),
+                        // Is nullable.
+                        column.isNullable() ? "YES" : "NO",
+                        // Specific name.
+                        column.getName()
+                };
+
+                values.add(row);
+            }
+        }
+
+        return new ParadoxResultSet(this.conn, null, values, columns);
     }
 
     /**
@@ -390,7 +470,44 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern) {
-        return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
+        final ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("FUNCTION_CAT", Types.VARCHAR));
+        columns.add(new Column("FUNCTION_SCHEM", Types.VARCHAR));
+        columns.add(new Column("FUNCTION_NAME", Types.VARCHAR));
+        columns.add(new Column(REMARKS, Types.VARCHAR));
+        columns.add(new Column("FUNCTION_TYPE", Types.INTEGER));
+        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
+
+        final List<Object[]> values = new ArrayList<>();
+
+        for (final Map.Entry<String, Supplier<? extends IFunction>> function : FunctionFactory.FUNCTIONS.entrySet()) {
+            if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog()))
+            //        || (schemaPattern != null && !schemaPattern.isEmpty())
+            ) {
+                continue;
+            }
+
+            final IFunction instance = function.getValue().get();
+
+            final Object[] row = {
+                    // Catalog.
+                    conn.getCatalog(),
+                    // Schema.
+                    null,
+                    // Name.
+                    function.getKey(),
+                    // Remarks.
+                    instance.remarks(),
+                    // Type.
+                    functionNoTable,
+                    // Specific name.
+                    function.getKey()
+            };
+
+            values.add(row);
+        }
+
+        return new ParadoxResultSet(this.conn, null, values, columns);
     }
 
     /**
@@ -406,6 +523,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public ResultSet getImportedKeys(final String catalog, final String schema, final String table) {
+        // FIXME redo this primary keys metadata.
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), Collections.emptyList());
     }
 
@@ -434,20 +552,20 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_SCHEMA, Types.VARCHAR));
         columns.add(new Column(ParadoxDatabaseMetaData.TABLE_NAME, Types.VARCHAR));
         columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
-        columns.add(new Column("DATA_TYPE", Types.INTEGER));
+        columns.add(new Column(DATA_TYPE, Types.INTEGER));
         columns.add(new Column(ParadoxDatabaseMetaData.TYPE_NAME, Types.VARCHAR));
         columns.add(new Column("COLUMN_SIZE", Types.INTEGER));
         columns.add(new Column("BUFFER_LENGTH", Types.INTEGER));
         columns.add(new Column("DECIMAL_DIGITS", Types.INTEGER));
         columns.add(new Column("NUM_PREC_RADIX", Types.INTEGER));
-        columns.add(new Column("NULLABLE", Types.INTEGER));
+        columns.add(new Column(NULLABLE, Types.INTEGER));
         columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.INTEGER));
         columns.add(new Column("COLUMN_DEF", Types.VARCHAR));
         columns.add(new Column("SQL_DATA_TYPE", Types.INTEGER));
         columns.add(new Column("SQL_DATETIME_SUB", Types.INTEGER));
-        columns.add(new Column("CHAR_OCTET_LENGTH", Types.INTEGER));
-        columns.add(new Column("ORDINAL_POSITION", Types.INTEGER));
-        columns.add(new Column("IS_NULLABLE", Types.INTEGER));
+        columns.add(new Column(CHAR_OCTET_LENGTH, Types.INTEGER));
+        columns.add(new Column(ORDINAL_POSITION, Types.INTEGER));
+        columns.add(new Column(IS_NULLABLE, Types.INTEGER));
         columns.add(new Column("SCOPE_CATLOG", Types.VARCHAR));
         columns.add(new Column("SCOPE_SCHEMA", Types.VARCHAR));
         columns.add(new Column("SCOPE_TABLE", Types.VARCHAR));
@@ -469,6 +587,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         view.getFields());
             }
         }
+
         return new ParadoxResultSet(this.conn, null, values, columns);
     }
 
@@ -486,7 +605,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("INDEX_QUALIFIER", Types.VARCHAR));
         columns.add(new Column("INDEX_NAME", Types.VARCHAR));
         columns.add(new Column("TYPE", Types.INTEGER));
-        columns.add(new Column("ORDINAL_POSITION", Types.INTEGER));
+        columns.add(new Column(ORDINAL_POSITION, Types.INTEGER));
         columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
         columns.add(new Column("ASC_OR_DESC", Types.VARCHAR));
         columns.add(new Column("CARDINALITY", Types.INTEGER));
@@ -759,21 +878,21 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("PROCEDURE_SCHEM", Types.VARCHAR));
         columns.add(new Column("PROCEDURE_NAME", Types.VARCHAR));
         columns.add(new Column(ParadoxDatabaseMetaData.COLUMN_NAME, Types.VARCHAR));
-        columns.add(new Column("COLUMN_TYPE", Types.INTEGER));
-        columns.add(new Column("DATA_TYPE", Types.INTEGER));
+        columns.add(new Column(COLUMN_TYPE, Types.INTEGER));
+        columns.add(new Column(DATA_TYPE, Types.INTEGER));
         columns.add(new Column(ParadoxDatabaseMetaData.TYPE_NAME, Types.VARCHAR));
         columns.add(new Column("PRECISION", Types.INTEGER));
         columns.add(new Column("LENGTH", Types.INTEGER));
         columns.add(new Column("SCALE", Types.INTEGER));
         columns.add(new Column("RADIX", Types.INTEGER));
-        columns.add(new Column("NULLABLE", Types.INTEGER));
+        columns.add(new Column(NULLABLE, Types.INTEGER));
         columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.VARCHAR));
         columns.add(new Column("COLUMN_DEF", Types.VARCHAR));
         columns.add(new Column("SQL_DATA_TYPE", Types.VARCHAR));
         columns.add(new Column("SQL_DATETIME_SUB", Types.VARCHAR));
-        columns.add(new Column("CHAR_OCTET_LENGTH", Types.VARCHAR));
-        columns.add(new Column("IS_NULLABLE", Types.VARCHAR));
-        columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
+        columns.add(new Column(CHAR_OCTET_LENGTH, Types.VARCHAR));
+        columns.add(new Column(IS_NULLABLE, Types.VARCHAR));
+        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
 
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), columns);
     }
@@ -826,7 +945,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column("Reserved3", Types.VARCHAR));
         columns.add(new Column(ParadoxDatabaseMetaData.REMARKS, Types.VARCHAR));
         columns.add(new Column("PROCEDURE_TYPE", Types.INTEGER));
-        columns.add(new Column("SPECIFIC_NAME", Types.VARCHAR));
+        columns.add(new Column(SPECIFIC_NAME, Types.VARCHAR));
 
         return new ParadoxResultSet(this.conn, null, Collections.emptyList(), columns);
     }
@@ -1661,7 +1780,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsStoredFunctionsUsingCallSyntax() {
-        return true;
+        return false;
     }
 
     /**
@@ -1799,11 +1918,10 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param values            the table values.
      * @param tableName         the table name.
      * @param fields            the field list.
-     * @throws SQLException in case of errors.
      */
     private void fieldMetadata(final String catalog, final String schema, final String columnNamePattern,
                                final List<Object[]> values,
-                               final String tableName, final ParadoxField[] fields) throws SQLException {
+                               final String tableName, final ParadoxField[] fields) {
         int ordinal = 1;
         for (final ParadoxField field : fields) {
             if ((columnNamePattern != null) && !Expressions.accept(conn.getLocale(), field.getName(),
@@ -1825,7 +1943,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             // Data type.
             row.add(type);
             // Type name.
-            row.add(Column.getTypeName(type));
+            row.add(JDBCType.valueOf(type).getName());
             // Column size.
             row.add(field.getSize());
             // Buffer length.

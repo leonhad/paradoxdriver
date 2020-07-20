@@ -405,7 +405,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testFunctionColumns() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getFunctionColumns("db", "%", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getFunctionColumns("test-classes", "%", null, null)) {
             Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }
@@ -417,7 +417,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testFunctions() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getFunctions("db", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getFunctions("test-classes", "%", "%")) {
             Assert.assertTrue("Invalid value.", rs instanceof ParadoxResultSet);
         }
     }

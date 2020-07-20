@@ -15,6 +15,7 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -26,6 +27,25 @@ import java.util.List;
  * @since 1.6.0
  */
 public interface IFunction {
+
+    /**
+     * Gets the functions remarks.
+     *
+     * @return the functions remarks.
+     */
+    default String remarks() {
+        // FIXME remove default.
+        return "";
+    }
+
+    /**
+     * Gets the columns metadata.
+     *
+     * @return the columns metadata.
+     */
+    default Column[] getColumns() {
+        return new Column[0];
+    }
 
     /**
      * The returned value SQL type.

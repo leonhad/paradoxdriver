@@ -196,17 +196,6 @@ public class ColumnTest {
     }
 
     /**
-     * Test for type name.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testTypeName() throws SQLException {
-        Assert.assertEquals("Invalid field type name.", TypeName.BOOLEAN.getName(),
-                Column.getTypeName(TypeName.BOOLEAN.getSQLType()));
-    }
-
-    /**
      * Test for writable.
      */
     @Test

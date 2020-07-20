@@ -16,6 +16,7 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.TypeName;
 import com.googlecode.paradox.utils.Utils;
 
+import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -117,7 +118,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public String getColumnTypeName(final int column) throws SQLException {
         final Column dto = this.getColumn(column);
-        return Column.getTypeName(dto.getType());
+        return JDBCType.valueOf(dto.getType()).getName();
     }
 
     /**

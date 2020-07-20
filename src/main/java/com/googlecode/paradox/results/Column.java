@@ -11,12 +11,11 @@
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.ParadoxResultSet;
-import com.googlecode.paradox.planner.nodes.FunctionNode;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.planner.nodes.FunctionNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 
-import java.sql.JDBCType;
 import java.sql.Types;
 import java.util.Objects;
 
@@ -50,11 +49,23 @@ public final class Column {
     private int precision;
 
     /**
+     * Column size.
+     */
+    private int size;
+
+    /**
      * The SQL data type.
      *
      * @see Types
      */
     private int type;
+
+    /**
+     * Column remarks.
+     */
+    private String remarks;
+
+    private boolean nullable;
 
     /**
      * Fixed value.
@@ -87,6 +98,17 @@ public final class Column {
         this.function = node;
     }
 
+    public Column(final String name, final int type, final int precision, final int size, final String remarks,
+                  final int index, boolean nullable) {
+        this.name = name;
+        this.type = type;
+        this.precision = precision;
+        this.size = size;
+        this.remarks = remarks;
+        this.index = index;
+        this.nullable = nullable;
+    }
+
     /**
      * Create a new instance.
      *
@@ -96,6 +118,7 @@ public final class Column {
     public Column(final String name, final int type) {
         this.name = name;
         this.type = type;
+        this.nullable = type != ParadoxFieldType.AUTO_INCREMENT.getType();
     }
 
     /**
@@ -108,16 +131,6 @@ public final class Column {
         return this.field != null
                 && this.field.getTable().getName().equalsIgnoreCase(table.getName())
                 && this.field.getTable().getSchemaName().equalsIgnoreCase(table.getSchemaName());
-    }
-
-    /**
-     * Gets the field type description.
-     *
-     * @param type the field type.
-     * @return the type description.
-     */
-    public static String getTypeName(final int type) {
-        return JDBCType.valueOf(type).name();
     }
 
     /**
@@ -216,7 +229,7 @@ public final class Column {
      * @return true if this field can be null.
      */
     public boolean isNullable() {
-        return field == null || field.getType() != ParadoxFieldType.AUTO_INCREMENT.getType();
+        return nullable;
     }
 
     /**
@@ -253,6 +266,12 @@ public final class Column {
      */
     public boolean isWritable() {
         return false;
+    }
+
+    public Integer getOctets() {
+        // FIXME octets. the maximum length of binary and character based parameters or columns. For any other
+        //  datatype the returned value is a NULL.
+        return null;
     }
 
     /**
@@ -307,6 +326,14 @@ public final class Column {
      */
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public String getRemarks() {
+        return remarks;
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.googlecode.paradox.function.system.VersionFunction;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public final class FunctionFactory {
     /**
      * The registered function list.
      */
-    private static final HashMap<String, Supplier<? extends IFunction>> FUNCTIONS = new HashMap<>();
+    public static final TreeMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
 
     /**
      * The registered function list that can be called without parenthesis.
@@ -149,4 +150,6 @@ public final class FunctionFactory {
 
         return null;
     }
+
+
 }

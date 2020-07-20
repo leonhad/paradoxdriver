@@ -39,6 +39,10 @@ public final class Expressions {
      */
     public static boolean accept(final Locale locale, final String expression, final String criteria,
                                  final boolean caseSensitive, final char escape) {
+        if ("%".equals(criteria)) {
+            return true;
+        }
+
         final char[] criterion = getCharArrayWithCase(locale, criteria, caseSensitive);
         final char[] exp = getCharArrayWithCase(locale, expression, caseSensitive);
         int index = 0;

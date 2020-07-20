@@ -13,6 +13,7 @@ package com.googlecode.paradox.function.numeric;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
@@ -30,6 +31,18 @@ public class AbsFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "ABS";
+
+    @Override
+    public String remarks() {
+        return "Returns the absolute value of a number.";
+    }
+
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column("number", Types.NUMERIC, 8, 15, "A numeric value.", 1, false)
+        };
+    }
 
     @Override
     public int sqlType() {
