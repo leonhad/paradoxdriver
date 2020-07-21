@@ -22,28 +22,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The SQL VERSION functions.
+ * The SQL SIGN functions.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
-public class IsNumericFunction implements IFunction {
+public class SignFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "ISNUMERIC";
-    private static final Logger LOGGER = Logger.getLogger(IsNumericFunction.class.getName());
+    public static final String NAME = "SIGN";
+    private static final Logger LOGGER = Logger.getLogger(SignFunction.class.getName());
 
     @Override
     public String remarks() {
-        return "Checks if the value can be a numeric value.";
+        return "Return the sign of a number.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 0, 1, "True if the value is numeric.", 0, false,
+                new Column(null, ParadoxType.INTEGER, 0, 1,
+                        "1 for positive, -1 for negative and 0 for zero..", 0, false,
                         DatabaseMetaData.functionColumnResult),
                 new Column("number", ParadoxType.NUMBER, 8, 15, "The value to check.", 1, true,
                         DatabaseMetaData.functionColumnIn)
@@ -69,12 +70,16 @@ public class IsNumericFunction implements IFunction {
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         if (values[0] == null) {
-            return 0;
+            return null;
         }
 
         try {
-            Double.parseDouble(String.valueOf(values[0]));
-            return 1;
+            double value = Double.parseDouble(String.valueOf(values[0]));
+            if (value < 0) {
+                return -1;
+            } else if (value > 0) {
+                return 1;
+            }
         } catch (final NumberFormatException e) {
             LOGGER.log(Level.FINEST, e.getMessage(), e);
         }

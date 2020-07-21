@@ -23,6 +23,7 @@ import com.googlecode.paradox.function.system.VersionFunction;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ public final class FunctionFactory {
     /**
      * The registered function list.
      */
-    public static final TreeMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
+    public static final SortedMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
 
     /**
      * The registered function list that can be called without parenthesis.
@@ -64,6 +65,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
         FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
         FUNCTIONS.put(RandFunction.NAME, RandFunction::new);
+        FUNCTIONS.put(SignFunction.NAME, SignFunction::new);
 
         // String functions.
         FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);
