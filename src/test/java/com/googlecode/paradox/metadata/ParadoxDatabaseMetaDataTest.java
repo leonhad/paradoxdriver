@@ -417,7 +417,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testFunctions() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getFunctions(conn.getCatalog(), conn.getSchema(), "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getFunctions("DATABASE", "db", "%")) {
             Assert.assertTrue("Invalid value.", rs.next());
         }
     }
@@ -819,7 +819,19 @@ public class ParadoxDatabaseMetaDataTest {
     public void testTables() throws SQLException {
         final String[] types = {"TABLE", "VIEW"};
 
-        try (ResultSet rs = this.conn.getMetaData().getTables(null, "fields", "%", types)) {
+        try (ResultSet rs = this.conn.getMetaData().getTables("DATABASE", "%", "%", types)) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+        }
+    }
+    
+    /**
+     * Test for tables in eclipse.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testTablesEclipse() throws SQLException {
+        try (ResultSet rs = this.conn.getMetaData().getTables("DATABASE", "fields", null, null)) {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
     }
