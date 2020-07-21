@@ -561,13 +561,13 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         for (final File currentSchema : this.conn.getSchemaFiles(catalog, schemaPattern)) {
             final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableNamePattern, this.conn);
             for (final ParadoxTable table : tables) {
-                this.fieldMetadata(catalog, currentSchema.getName(), columnNamePattern, values, table.getName(),
+                this.fieldMetadata(conn.getCatalog(), currentSchema.getName(), columnNamePattern, values, table.getName(),
                         table.getFields());
             }
 
             final List<ParadoxView> views = ViewData.listViews(currentSchema, tableNamePattern, this.conn);
             for (final ParadoxView view : views) {
-                this.fieldMetadata(catalog, currentSchema.getName(), columnNamePattern, values, view.getName(),
+                this.fieldMetadata(conn.getCatalog(), currentSchema.getName(), columnNamePattern, values, view.getName(),
                         view.getFields());
             }
         }
@@ -824,7 +824,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         for (final File currentSchema : this.conn.getSchemaFiles(catalog, schema)) {
             for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern, this.conn)) {
                 for (final ParadoxField pk : table.getPrimaryKeys()) {
-                    final Object[] row = new Object[]{catalog, currentSchema.getName(), table.getName(), pk.getName(),
+                    final Object[] row = new Object[]{conn.getCatalog(), currentSchema.getName(), table.getName(), pk.getName(),
                             pk.getOrderNum() - 1, table.getName() + ".PX",};
                     values.add(row);
                 }

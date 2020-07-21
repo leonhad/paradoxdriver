@@ -92,7 +92,7 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", ParadoxType.INTEGER.getJavaClass().getName(),
                 metaData.getColumnClassName(1));
-        Assert.assertEquals("Testing for catalog name.", "DB", metaData.getCatalogName(1));
+        Assert.assertEquals("Testing for catalog name.", "DATABASE", metaData.getCatalogName(1));
         Assert.assertEquals("Testing for schema name.", "db", metaData.getSchemaName(1));
         Assert.assertEquals("Testing for column display size.", Constants.MAX_STRING_SIZE,
                 metaData.getColumnDisplaySize(1));

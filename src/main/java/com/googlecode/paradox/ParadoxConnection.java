@@ -280,7 +280,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getCatalog() {
-        return "DB";
+        return "DATABASE";
     }
 
     /**
