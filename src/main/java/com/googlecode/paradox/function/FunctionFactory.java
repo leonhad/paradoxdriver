@@ -21,10 +21,8 @@ import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
 
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -39,7 +37,7 @@ public final class FunctionFactory {
     /**
      * The registered function list.
      */
-    public static final SortedMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
+    private static final SortedMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
 
     /**
      * The registered function list that can be called without parenthesis.
@@ -119,6 +117,10 @@ public final class FunctionFactory {
      */
     private FunctionFactory() {
         // Not used.
+    }
+
+    public static Map<String, Supplier<? extends IFunction>> getFunctionAlias() {
+        return Collections.unmodifiableMap(FUNCTION_ALIAS);
     }
 
     /**

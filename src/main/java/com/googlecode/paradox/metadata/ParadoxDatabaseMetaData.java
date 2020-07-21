@@ -404,7 +404,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         final List<Object[]> values = new ArrayList<>();
 
-        for (final Map.Entry<String, Supplier<? extends IFunction>> function : FunctionFactory.FUNCTIONS.entrySet()) {
+        for (final Map.Entry<String, Supplier<? extends IFunction>> function :
+                FunctionFactory.getFunctionAlias().entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog()))
                     && (schemaPattern != null
                     && !Expressions.accept(conn.getLocale(), conn.getSchema(), schemaPattern, false, '\\'))
@@ -477,7 +478,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
-        for (final Map.Entry<String, Supplier<? extends IFunction>> function : FunctionFactory.FUNCTIONS.entrySet()) {
+        for (final Map.Entry<String, Supplier<? extends IFunction>> function :
+                FunctionFactory.getFunctionAlias().entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog())) && (schemaPattern != null
                     && !Expressions.accept(conn.getLocale(), conn.getSchema(), schemaPattern, false, '\\'))) {
                 continue;
@@ -497,7 +499,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     // Type.
                     functionResultUnknown,
                     // Specific name.
-                    null};
+                    null
+            };
 
             values.add(row);
         }
