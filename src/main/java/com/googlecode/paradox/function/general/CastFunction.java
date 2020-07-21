@@ -12,70 +12,95 @@ package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
 /**
  * The SQL CAST function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
 public class CastFunction implements IFunction {
 
-    /**
-     * The function name.
-     */
-    public static final String NAME = "CAST";
-    private ParadoxType type = ParadoxType.VARCHAR;
+	/**
+	 * The function name.
+	 */
+	public static final String NAME = "CAST";
 
-    @Override
-    public ParadoxType fieldType() {
-        return type;
-    }
+	private ParadoxType type = ParadoxType.VARCHAR;
 
-    @Override
-    public int parameterCount() {
-        return 2;
-    }
+	@Override
+	public String remarks() {
+		return "Converts a field type to another.";
+	}
 
-    @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+	@Override
+	public Column[] getColumns() {
+		return new Column[] {
+				new Column(null, ParadoxType.VARCHAR, 255, 0, "The converted field.", 0, true,
+						DatabaseMetaData.functionColumnResult),
+				new Column("value", ParadoxType.VARCHAR, 255, 0, "The value to convert.", 1, true,
+						DatabaseMetaData.functionColumnIn),
+				new Column("expression2", ParadoxType.VARCHAR, 255, 0, "The SQL type to convert.", 2, true,
+						DatabaseMetaData.functionColumnIn) };
+	}
 
-        return ValuesConverter.convert(values[0], type);
-    }
+	@Override
+	public FunctionType type() {
+		return FunctionType.SYSTEM;
+	}
 
-    @Override
-    @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
-    public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        for (final SQLNode node : parameters) {
-            if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
-            }
-        }
+	@Override
+	public ParadoxType fieldType() {
+		return type;
+	}
 
-        final SQLNode typeNode = parameters.get(1);
-        if (typeNode instanceof FieldNode) {
-            try {
-                this.type = ParadoxType.valueOf(typeNode.getName());
-                parameters.remove(1);
-            } catch (final IllegalArgumentException e) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
-                        typeNode.getName(), typeNode.getPosition());
-            }
-        } else {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
-                    typeNode.getName(), typeNode.getPosition());
-        }
-    }
+	@Override
+	public int parameterCount() {
+		return 2;
+	}
+
+	@Override
+	public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+			final FieldNode[] fields) throws SQLException {
+
+		return ValuesConverter.convert(values[0], type);
+	}
+
+	@Override
+	@SuppressWarnings({ "i18n-java:V1018", "java:S1449" })
+	public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+		for (final SQLNode node : parameters) {
+			if (node instanceof AsteriskNode) {
+				throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
+						node.getPosition());
+			}
+		}
+
+		final SQLNode typeNode = parameters.get(1);
+		if (typeNode instanceof FieldNode) {
+			try {
+				this.type = ParadoxType.valueOf(typeNode.getName());
+				parameters.remove(1);
+			} catch (final IllegalArgumentException e) {
+				throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+						typeNode.getName(), typeNode.getPosition());
+			}
+		} else {
+			throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+					typeNode.getName(), typeNode.getPosition());
+		}
+	}
 }

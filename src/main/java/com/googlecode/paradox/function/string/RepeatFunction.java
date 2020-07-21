@@ -11,17 +11,20 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL REPEAT function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class RepeatFunction implements IFunction {
@@ -31,6 +34,25 @@ public class RepeatFunction implements IFunction {
      */
     public static final String NAME = "REPEAT";
 
+    @Override
+    public String remarks() {
+    	return "Return a repeated string a specified number of times.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string repeated.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to repeat.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("count", ParadoxType.INTEGER, 8, 0, "The repeat count.", 2, false, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

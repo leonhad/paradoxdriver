@@ -12,12 +12,15 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.List;
@@ -26,7 +29,7 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class CurrentTimeFunction implements IFunction {
@@ -36,6 +39,26 @@ public class CurrentTimeFunction implements IFunction {
      */
     public static final String NAME = "CURRENT_TIME";
 
+    @Override
+    public String remarks() {
+    	return "Gets the current time.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.TIME, 8, 15, "The current time.", 0, false,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("precision", ParadoxType.INTEGER, 8, 15, "The time precision from 0 to 6. Ignored", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.TIME_DATE;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.TIME;

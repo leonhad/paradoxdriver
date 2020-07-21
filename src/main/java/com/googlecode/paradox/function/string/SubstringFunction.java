@@ -12,17 +12,20 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL SUBSTRING function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class SubstringFunction implements IFunction {
@@ -32,6 +35,26 @@ public class SubstringFunction implements IFunction {
      */
     public static final String NAME = "SUBSTRING";
 
+    @Override
+    public String remarks() {
+    	return "Extracts some characters from a string.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to extract from.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("start", ParadoxType.INTEGER, 8, 0, "The start position. Begin with 1.", 2, true, DatabaseMetaData.functionColumnIn),
+                new Column("length", ParadoxType.INTEGER, 8, 0, "The amount to extract.", 3, true, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

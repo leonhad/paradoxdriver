@@ -10,41 +10,65 @@
  */
 package com.googlecode.paradox.function.string;
 
+import java.sql.DatabaseMetaData;
+
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL char length function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class CharLengthFunction implements IFunction {
 
-    /**
-     * The function name.
-     */
-    public static final String NAME = "CHAR_LENGTH";
+	/**
+	 * The function name.
+	 */
+	public static final String NAME = "CHAR_LENGTH";
 
     @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.INTEGER;
+    public String remarks() {
+    	return "Gets the length of the character values.";
     }
-
+    
     @Override
-    public int parameterCount() {
-        return 1;
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.NUMBER, 8, 15, "The char length.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 15, "The character values to count.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
     }
-
-    @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
-        if (values[0] != null) {
-            return values[0].toString().length();
-        }
-
-        return null;
+    
+	@Override
+    public FunctionType type() {
+        return FunctionType.STRING;
     }
+	
+	@Override
+	public ParadoxType fieldType() {
+		return ParadoxType.INTEGER;
+	}
+
+	@Override
+	public int parameterCount() {
+		return 1;
+	}
+
+	@Override
+	public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+			final FieldNode[] fields) {
+		if (values[0] != null) {
+			return values[0].toString().length();
+		}
+
+		return null;
+	}
 }

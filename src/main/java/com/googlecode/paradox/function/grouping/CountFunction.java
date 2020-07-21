@@ -10,15 +10,19 @@
  */
 package com.googlecode.paradox.function.grouping;
 
+import java.sql.DatabaseMetaData;
+
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The COUNT grouping function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class CountFunction implements IFunction {
@@ -28,6 +32,26 @@ public class CountFunction implements IFunction {
      */
     public static final String NAME = "COUNT";
 
+    @Override
+    public String remarks() {
+    	return "Gets the count of rows in group.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.INTEGER, 8, 15, "The row count in group.", 0, false,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The time precision from 0 to 6. Ignored", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.NUMERIC;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.INTEGER;

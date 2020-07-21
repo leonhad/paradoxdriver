@@ -10,16 +10,20 @@
  */
 package com.googlecode.paradox.function.string;
 
+import java.sql.DatabaseMetaData;
+
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL CONCAT_WS function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class ConcatWSFunction implements IFunction {
@@ -29,6 +33,25 @@ public class ConcatWSFunction implements IFunction {
      */
     public static final String NAME = "CONCAT_WS";
 
+    @Override
+    public String remarks() {
+    	return "Concatenate a sequence of strings with a separator. This functions support any number of parameters above 1.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The concatenated string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("separator", ParadoxType.VARCHAR, 255, 0, "The string separator", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 2, true, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
@@ -49,7 +72,7 @@ public class ConcatWSFunction implements IFunction {
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         final Object separator = values[0];
         if (separator == null) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, "null");
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, separator);
         }
 
         final StringBuilder ret = new StringBuilder();
@@ -59,6 +82,7 @@ public class ConcatWSFunction implements IFunction {
                 if (i != 1) {
                     ret.append(separator);
                 }
+                
                 ret.append(value);
             }
         }

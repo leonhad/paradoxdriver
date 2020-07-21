@@ -11,17 +11,20 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.sql.DatabaseMetaData;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * The SQL VERSION functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class IsNumericFunction implements IFunction {
@@ -33,6 +36,26 @@ public class IsNumericFunction implements IFunction {
      */
     public static final String NAME = "ISNUMERIC";
 
+    @Override
+    public String remarks() {
+    	return "Checks if the value can be a numeric value.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.BOOLEAN, 8, 15, "True if the value is numeric.", 0, false,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("number", ParadoxType.VARCHAR, 8, 15, "The value to check.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.NUMERIC;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.INTEGER;

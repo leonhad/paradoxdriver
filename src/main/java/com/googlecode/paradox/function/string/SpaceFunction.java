@@ -11,17 +11,20 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL SPACE function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class SpaceFunction implements IFunction {
@@ -31,6 +34,24 @@ public class SpaceFunction implements IFunction {
      */
     public static final String NAME = "SPACE";
 
+    @Override
+    public String remarks() {
+    	return "Return a string only with spaces.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string spaces.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("space_count", ParadoxType.INTEGER, 8, 0, "The space count.", 1, true, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

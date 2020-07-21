@@ -12,14 +12,17 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -31,7 +34,7 @@ import java.util.List;
 /**
  * The SQL EXTRACT function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -41,6 +44,7 @@ public class ExtractFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "EXTRACT";
+    
     private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "WEEK",
             "MONTH", "QUARTER", "YEAR"};
 
@@ -49,6 +53,28 @@ public class ExtractFunction implements IFunction {
         Arrays.sort(VALID_FORMATS);
     }
 
+    @Override
+    public String remarks() {
+    	return "Extract a value from date/time. The part to extract can be: " + Arrays.toString(VALID_FORMATS) + ".";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.INTEGER, 8, 15, "The part of the.", 0, false,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("datepart", ParadoxType.VARCHAR, 11, 0, "The part name to extract.", 1, false,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("date", ParadoxType.TIMESTAMP, 8, 0, "The date to extract.", 2, false,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.TIME_DATE;
+    }
+    
     private static Calendar getTime(final Object value) {
         Time time = ValuesConverter.getTime(value);
         Calendar c = Calendar.getInstance();

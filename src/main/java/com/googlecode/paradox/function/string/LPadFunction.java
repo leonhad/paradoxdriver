@@ -11,17 +11,20 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL RPAD function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class LPadFunction implements IFunction {
@@ -31,6 +34,26 @@ public class LPadFunction implements IFunction {
      */
     public static final String NAME = "LPAD";
 
+    @Override
+    public String remarks() {
+    	return "Left-pads a string with another string, to a certain length.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The left-padded string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The original string.", 1, false, DatabaseMetaData.functionColumnIn),
+                new Column("length", ParadoxType.VARCHAR, 255, 0, "The length of the final string.", 2, false, DatabaseMetaData.functionColumnIn),
+                new Column("lpad_string", ParadoxType.VARCHAR, 255, 0, "The filler string to use.", 3, false, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

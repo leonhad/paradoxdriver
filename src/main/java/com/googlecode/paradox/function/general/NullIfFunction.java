@@ -12,17 +12,20 @@ package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.sql.DatabaseMetaData;
 import java.util.Objects;
 
 /**
  * The SQL NULLIF function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class NullIfFunction implements IFunction {
@@ -31,8 +34,28 @@ public class NullIfFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "NULLIF";
+    
     private ParadoxType type = ParadoxType.NULL;
 
+    @Override
+    public String remarks() {
+    	return "Returns null if both values are equal, otherwise it returns the first expression.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replacement (if first is null).", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("expression1", ParadoxType.VARCHAR, 255, 0, "The first value to test.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("expression2", ParadoxType.VARCHAR, 255, 0, "The second value to test.", 2, true, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.SYSTEM;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return type;

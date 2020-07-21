@@ -12,18 +12,21 @@ package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.TokenType;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -37,14 +40,35 @@ import java.util.List;
 public class ConvertFunction implements IFunction {
 
     private boolean convertCharset;
+    
     private Charset charset;
 
     /**
      * The function name.
      */
     public static final String NAME = "CONVERT";
+    
     private ParadoxType type = ParadoxType.VARCHAR;
-
+    
+    @Override
+    public String remarks() {
+    	return "Convert a string to charset specified. Example: CONVERT('value' USING utf8)";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string converted with charset specified.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The value to convert.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("charset", ParadoxType.VARCHAR, 255, 0, "The charset name to convert.", 2, true, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.SYSTEM;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return type;

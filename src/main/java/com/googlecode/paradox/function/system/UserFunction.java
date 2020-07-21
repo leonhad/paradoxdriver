@@ -10,15 +10,19 @@
  */
 package com.googlecode.paradox.function.system;
 
+import java.sql.DatabaseMetaData;
+
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL USER functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class UserFunction implements IFunction {
@@ -28,6 +32,23 @@ public class UserFunction implements IFunction {
      */
     public static final String NAME = "USER";
 
+
+	@Override
+	public String remarks() {
+		return "Gets the current database user (default schema).";
+	}
+
+	@Override
+	public Column[] getColumns() {
+		return new Column[] { new Column(null, ParadoxType.VARCHAR, 255, 0, "The current user.", 0, false,
+				DatabaseMetaData.functionColumnResult) };
+	}
+	
+    @Override
+    public FunctionType type() {
+        return FunctionType.SYSTEM;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

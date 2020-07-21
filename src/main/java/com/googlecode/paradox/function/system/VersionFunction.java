@@ -10,16 +10,20 @@
  */
 package com.googlecode.paradox.function.system;
 
+import java.sql.DatabaseMetaData;
+
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 /**
  * The SQL VERSION functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class VersionFunction implements IFunction {
@@ -29,6 +33,23 @@ public class VersionFunction implements IFunction {
      */
     public static final String NAME = "VERSION";
 
+
+	@Override
+	public String remarks() {
+		return "Gets the driver version.";
+	}
+
+	@Override
+	public Column[] getColumns() {
+		return new Column[] { new Column(null, ParadoxType.VARCHAR, 100, 0, "The driver version.", 0, false,
+				DatabaseMetaData.functionColumnResult) };
+	}
+	
+    @Override
+    public FunctionType type() {
+        return FunctionType.SYSTEM;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

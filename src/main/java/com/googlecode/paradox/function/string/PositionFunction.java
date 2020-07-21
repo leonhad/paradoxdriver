@@ -11,16 +11,19 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL POSITION function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class PositionFunction implements IFunction {
@@ -30,6 +33,25 @@ public class PositionFunction implements IFunction {
      */
     public static final String NAME = "POSITION";
 
+    @Override
+    public String remarks() {
+    	return "Gets the position of the pattern in a string value.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.INTEGER, 8, 0, "The position in the string. Zero if no found.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to search from.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("pattern", ParadoxType.VARCHAR, 255, 0, "The pattern to find.", 2, true, DatabaseMetaData.functionColumnIn)
+        };
+    }
+   
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.INTEGER;

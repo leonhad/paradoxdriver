@@ -10,25 +10,32 @@
  */
 package com.googlecode.paradox.metadata;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.RowIdLifetime;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.function.FunctionFactory;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.*;
-import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * Creates an database metadata.
@@ -411,7 +418,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         // Catalog.
                         conn.getCatalog(),
                         // Schema.
-                        conn.getSchema(),
+                        null,
                         // Name.
                         function.getKey(),
                         // Column name.
@@ -479,7 +486,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     // Catalog.
                     conn.getCatalog(),
                     // Schema.
-                    conn.getSchema(),
+                    null,
                     // Name.
                     function.getKey(),
                     // Remarks.
@@ -789,8 +796,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getNumericFunctions() {
-        // FIXME get by function metadata.
-        return "AVERAGE,SUM";
+        return FunctionFactory.getByType(FunctionType.NUMERIC);
     }
 
     private void getSecondaryIndexInfo(String catalog, ParadoxTable table, List<Object[]> values, File currentSchema)
@@ -972,9 +978,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getStringFunctions() {
-
-        // FIXME get by metadata.
-        return "";
+    	return FunctionFactory.getByType(FunctionType.STRING);
     }
 
     /**
@@ -998,8 +1002,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSystemFunctions() {
-        // FIXME get by metadata
-        return "";
+    	return FunctionFactory.getByType(FunctionType.SYSTEM);
     }
 
     /**
@@ -1071,8 +1074,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getTimeDateFunctions() {
-        // FIXME get by metadata.
-        return "";
+    	return FunctionFactory.getByType(FunctionType.TIME_DATE);
     }
 
     /**

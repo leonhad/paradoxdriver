@@ -10,8 +10,11 @@
  */
 package com.googlecode.paradox.function.string;
 
+import java.sql.DatabaseMetaData;
+
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 /**
@@ -27,6 +30,21 @@ public class BitLengthFunction extends OctetLengthFunction {
      */
     public static final String NAME = "BIT_LENGTH";
 
+    @Override
+    public String remarks() {
+    	return "Gets the length of the binary values in bits.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.NUMBER, 8, 15, "The bit count of byte values.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("bytes", ParadoxType.BLOB, 0, 0, "The byte values to count.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {

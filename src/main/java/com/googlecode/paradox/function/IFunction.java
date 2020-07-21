@@ -32,26 +32,21 @@ public interface IFunction {
     /**
      * Gets the function type.
      */
-    //FunctionType type();
+    FunctionType type();
 
     /**
      * Gets the functions remarks.
      *
      * @return the functions remarks.
      */
-    default String remarks() {
-        // FIXME remove default.
-        return "";
-    }
+    String remarks();
 
     /**
      * Gets the columns metadata.
      *
      * @return the columns metadata.
      */
-    default Column[] getColumns() {
-        return new Column[0];
-    }
+    Column[] getColumns();
 
     /**
      * The returned value type.

@@ -10,15 +10,19 @@
  */
 package com.googlecode.paradox.function.string;
 
+import java.sql.DatabaseMetaData;
+
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * The SQL UPPER function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class UpperFunction implements IFunction {
@@ -28,6 +32,26 @@ public class UpperFunction implements IFunction {
      */
     public static final String NAME = "UPPER";
 
+    @Override
+    public String remarks() {
+    	return "Converts a texto to upper case.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.CHAR, 255, 0, "A varchar value in upper case.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "A value to convert.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

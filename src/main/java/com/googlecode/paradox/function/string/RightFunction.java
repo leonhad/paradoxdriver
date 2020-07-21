@@ -11,17 +11,20 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL RIGHT function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class RightFunction implements IFunction {
@@ -30,7 +33,25 @@ public class RightFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "RIGHT";
-
+    
+    @Override
+    public String remarks() {
+    	return "Extract a part of the string from the right side.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to extract", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("number_of_chars", ParadoxType.INTEGER, 8, 15, "The number of chars to extract", 2, false, DatabaseMetaData.functionColumnIn)
+        };
+    }
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

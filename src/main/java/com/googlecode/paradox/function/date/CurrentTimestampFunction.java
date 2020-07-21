@@ -11,17 +11,20 @@
 package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.sql.DatabaseMetaData;
 import java.sql.Timestamp;
 import java.util.TimeZone;
 
 /**
  * The SQL CURRENT_TIMESTAMP function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class CurrentTimestampFunction implements IFunction {
@@ -31,6 +34,24 @@ public class CurrentTimestampFunction implements IFunction {
      */
     public static final String NAME = "CURRENT_TIMESTAMP";
 
+    @Override
+    public String remarks() {
+    	return "Gets the current timestamp.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.TIMESTAMP, 8, 15, "The current timestamp.", 0, false,
+                        DatabaseMetaData.functionColumnResult)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.TIME_DATE;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.TIMESTAMP;

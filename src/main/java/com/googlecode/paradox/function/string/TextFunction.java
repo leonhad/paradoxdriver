@@ -11,16 +11,19 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL TEXT function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class TextFunction implements IFunction {
@@ -30,6 +33,26 @@ public class TextFunction implements IFunction {
      */
     public static final String NAME = "TEXT";
 
+    @Override
+    public String remarks() {
+    	return "Converts the value to CLOB (text) type.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.MEMO, 0, 0, "A CLOB type value.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "A value to convert.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.MEMO;

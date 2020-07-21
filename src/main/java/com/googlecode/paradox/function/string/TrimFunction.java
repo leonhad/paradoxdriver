@@ -12,12 +12,15 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -25,25 +28,44 @@ import java.util.List;
 /**
  * The SQL TRIM function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S109", "i18n-java:V1017"})
 public class TrimFunction implements IFunction {
 
     public static final String[] TYPES = {"BOTH", "LEADING", "TRAILING"};
+    
     /**
      * The function name.
      */
     public static final String NAME = "TRIM";
 
+    private TrimType type = TrimType.BOTH;
+    
     static {
         // Allow binary search.
         Arrays.sort(TYPES);
     }
 
-    private TrimType type = TrimType.BOTH;
+    @Override
+    public String remarks() {
+    	return "Remove leading and trailing spaces from a string.";
+    }
+    
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to extract from.", 1, true, DatabaseMetaData.functionColumnIn)
+        };
+    }
 
+	@Override
+	public FunctionType type() {
+		return FunctionType.STRING;
+	}
+    
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

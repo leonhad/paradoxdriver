@@ -11,41 +11,62 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL CHR function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class ChrFunction implements IFunction {
 
-    /**
-     * The function name.
-     */
-    public static final String NAME = "CHR";
+	/**
+	 * The function name.
+	 */
+	public static final String NAME = "CHR";
 
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.CHAR;
-    }
+	@Override
+	public String remarks() {
+		return "Converts a UNICODE char to integer value (UNICODE integer value).";
+	}
 
-    @Override
-    public int parameterCount() {
-        return 1;
-    }
+	@Override
+	public Column[] getColumns() {
+		return new Column[] { 
+				new Column(null, ParadoxType.NUMBER, 8, 15, "The integer value of UNICODE char.", 0, false, DatabaseMetaData.functionColumnResult),
+				new Column("number", ParadoxType.CHAR, 1, 0, "The UNICODE char to convert.", 1, true, DatabaseMetaData.functionColumnIn)
+		};
+	}
 
-    @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+	@Override
+	public FunctionType type() {
+		return FunctionType.STRING;
+	}
 
-        final int value = ValuesConverter.getPositiveInteger(values[0]);
-        return (char) value;
-    }
+	@Override
+	public ParadoxType fieldType() {
+		return ParadoxType.CHAR;
+	}
+
+	@Override
+	public int parameterCount() {
+		return 1;
+	}
+
+	@Override
+	public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+			final FieldNode[] fields) throws SQLException {
+
+		final int value = ValuesConverter.getPositiveInteger(values[0]);
+		return (char) value;
+	}
 }
