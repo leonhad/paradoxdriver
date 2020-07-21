@@ -860,8 +860,8 @@ public class SQLParserTest {
         final SelectNode select = (SelectNode) tree;
 
         Assert.assertEquals("Invalid field size", 2, select.getFields().size());
-        Assert.assertEquals("Invalid field size", "upper", select.getFields().get(0).getName());
-        Assert.assertEquals("Invalid field size", "upper", select.getFields().get(1).getName());
+        Assert.assertEquals("Invalid field size", "TRUE", select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid field size", "FALSE", select.getFields().get(1).getName());
     }
 
 }
