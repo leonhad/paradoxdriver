@@ -262,17 +262,20 @@ public final class SQLParser {
         switch (this.token.getType()) {
             case CHARACTER:
                 // Found a String value.
-                this.expect(TokenType.CHARACTER);
-                ret = new ValueNode(fieldName, position, ParadoxType.VARCHAR);
+                ret = parseCharacter(fieldName);
                 break;
             case NUMERIC:
                 // Found a numeric value.
-                this.expect(TokenType.NUMERIC);
-                ret = new ValueNode(fieldName, position, ParadoxType.NUMBER);
+                ret = parseNumeric(fieldName);
                 break;
             case NULL:
-                this.expect(TokenType.NULL);
-                ret = new ValueNode(null, position, ParadoxType.NULL);
+                ret = parseNull();
+                break;
+            case TRUE:
+                ret = parseTrue(fieldName);
+                break;
+            case FALSE:
+                ret = parseFalse(fieldName);
                 break;
             case QUESTION_MARK:
                 ret = parseParameter();
@@ -382,6 +385,12 @@ public final class SQLParser {
                     break;
                 case NULL:
                     node = this.parseNull();
+                    break;
+                case TRUE:
+                    node = this.parseTrue(fieldName);
+                    break;
+                case FALSE:
+                    node = this.parseFalse(fieldName);
                     break;
                 case ASTERISK:
                     node = this.parseAsterisk(null);
@@ -586,6 +595,12 @@ public final class SQLParser {
                     break;
                 case NULL:
                     functionNode.addParameter(this.parseNull());
+                    break;
+                case TRUE:
+                    functionNode.addParameter(this.parseTrue(this.token.getValue()));
+                    break;
+                case FALSE:
+                    functionNode.addParameter(this.parseFalse(this.token.getValue()));
                     break;
                 case ASTERISK:
                     functionNode.addParameter(this.parseAsterisk(null));
@@ -925,6 +940,38 @@ public final class SQLParser {
         this.expect(TokenType.NUMERIC);
 
         return new ValueNode(fieldName, position, ParadoxType.NUMBER);
+    }
+
+    /**
+     * Parse the true token.
+     *
+     * @param fieldName the field name.
+     * @return the field value.
+     * @throws SQLException in case of parse errors.
+     */
+    private ValueNode parseTrue(final String fieldName) throws SQLException {
+        final ScannerPosition position = token.getPosition();
+        this.expect(TokenType.TRUE);
+
+        final ValueNode value = new ValueNode("true", position, ParadoxType.BOOLEAN);
+        value.setAlias(fieldName);
+        return value;
+    }
+
+    /**
+     * Parse the false token.
+     *
+     * @param fieldName the field name.
+     * @return the field value.
+     * @throws SQLException in case of parse errors.
+     */
+    private ValueNode parseFalse(final String fieldName) throws SQLException {
+        final ScannerPosition position = token.getPosition();
+        this.expect(TokenType.FALSE);
+
+        final ValueNode value = new ValueNode("false", position, ParadoxType.BOOLEAN);
+        value.setAlias(fieldName);
+        return value;
     }
 
     private ValueNode parseNull() throws SQLException {
