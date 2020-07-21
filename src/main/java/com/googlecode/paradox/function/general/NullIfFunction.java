@@ -18,6 +18,7 @@ import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.util.Objects;
@@ -45,12 +46,13 @@ public class NullIfFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replacement (if first is null).", 0,
-                        true, DatabaseMetaData.functionColumnResult),
-                new Column("expression1", ParadoxType.VARCHAR, 255, 0, "The first value to test.", 1, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("expression2", ParadoxType.VARCHAR, 255, 0, "The second value to test.", 2, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string or replacement (if first is null).", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("expression1", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The first value to test.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("expression2", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The second value to test.", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

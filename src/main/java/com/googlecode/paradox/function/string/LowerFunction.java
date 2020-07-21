@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -40,10 +41,11 @@ public class LowerFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.CHAR, 255, 0, "A varchar value in lower case.", 0, true,
+                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "A varchar value in lower case.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "A value to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "A value to convert.", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

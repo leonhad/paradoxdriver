@@ -42,7 +42,7 @@ public class CurrentDateFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.DATE, 8, 15, "The current date.", 0, false,
+                new Column(null, ParadoxType.DATE, 0, 4, "The current date.", 0, false,
                         DatabaseMetaData.functionColumnResult)
         };
     }

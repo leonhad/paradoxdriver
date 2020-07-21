@@ -47,9 +47,9 @@ public class CurrentTimeFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.TIME, 8, 15, "The current time.", 0, false,
+                new Column(null, ParadoxType.TIME, 0, 4, "The current time.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("precision", ParadoxType.INTEGER, 8, 15, "The time precision from 0 to 6. Ignored", 1, true,
+                new Column("precision", ParadoxType.INTEGER, 0, 1, "The time precision from 0 to 6. Ignored", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

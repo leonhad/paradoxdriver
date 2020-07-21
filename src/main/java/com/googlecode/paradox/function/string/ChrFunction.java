@@ -42,9 +42,9 @@ public class ChrFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15, "The integer value of UNICODE char.", 0, false,
+                new Column(null, ParadoxType.NUMBER, 0, 4, "The integer value of UNICODE char.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.CHAR, 1, 0, "The UNICODE char to convert.", 1, true,
+                new Column("number", ParadoxType.CHAR, 0, 1, "The UNICODE char to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

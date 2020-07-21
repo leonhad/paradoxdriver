@@ -59,6 +59,7 @@ public final class Column {
      * Column remarks.
      */
     private String remarks;
+
     private int columnType;
 
     /**
@@ -92,8 +93,8 @@ public final class Column {
         this.function = node;
     }
 
-    public Column(final String name, final ParadoxType type, final int precision, final int size, final String remarks,
-                  final int index, final boolean nullable, final int columnType) {
+    public Column(final String name, final ParadoxType type, final int precision, final int size,
+                  final String remarks, final int index, final boolean nullable, final int columnType) {
         this.name = name;
         this.type = type;
         this.precision = precision;
@@ -197,7 +198,11 @@ public final class Column {
      * @return the field scale.
      */
     public int getScale() {
-        return this.precision;
+        if (isSigned()) {
+            return this.precision;
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -325,7 +330,8 @@ public final class Column {
      * @return true if this field have sign.
      */
     public boolean isSigned() {
-        return type == ParadoxType.DECIMAL || type == ParadoxType.NUMBER || type == ParadoxType.CURRENCY || type == ParadoxType.INTEGER;
+        return type == ParadoxType.DECIMAL || type == ParadoxType.NUMBER || type == ParadoxType.CURRENCY
+                || type == ParadoxType.INTEGER;
     }
 
     public int getSize() {

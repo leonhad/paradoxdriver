@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -40,12 +41,12 @@ public class ConcatFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The concatenated string.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("value1", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 1, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("value2", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 2, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The concatenated string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("value1", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string to concatenate", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("value2", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string to concatenate", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

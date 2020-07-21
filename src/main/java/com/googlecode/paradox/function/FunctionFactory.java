@@ -63,6 +63,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
         FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
+        FUNCTIONS.put(RandFunction.NAME, RandFunction::new);
 
         // String functions.
         FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);

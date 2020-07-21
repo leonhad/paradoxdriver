@@ -22,6 +22,7 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
+import com.googlecode.paradox.utils.Constants;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -55,12 +56,12 @@ public class ConvertFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string converted with charset specified.", 0, true
-                        , DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The value to convert.", 1, true,
+                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string converted with charset specified.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE, "The value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn),
-                new Column("charset", ParadoxType.VARCHAR, 255, 0, "The charset name to convert.", 2, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column("charset", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The charset name to convert.", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -41,10 +42,10 @@ public class InitCapFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The capitalized string.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to capitalize", 1, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The capitalized string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string to capitalize", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

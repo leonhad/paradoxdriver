@@ -422,13 +422,13 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                         // Data type name.
                         column.getType().getName(),
                         // Precision.
-                        column.getPrecision(),
+                        column.getSize(),
                         // Length,
                         column.getSize(),
                         // Scale.
-                        column.getScale(),
+                        column.getPrecision(),
                         // Radix.
-                        10,
+                        DEFAULT_NUMBER_RADIX,
                         // Nullable
                         column.isNullable() ? functionNullable : functionNoNulls,
                         // Remarks.

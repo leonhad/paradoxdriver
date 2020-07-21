@@ -40,7 +40,7 @@ public class PiFunction implements IFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.NUMBER, 8, 15, "The value of PI constant (π).", 0, false,
+        return new Column[]{new Column(null, ParadoxType.NUMBER, 8, 9, "The value of PI constant (π).", 0, false,
                 DatabaseMetaData.functionColumnResult)};
     }
 

@@ -40,8 +40,8 @@ public class VersionFunction implements IFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.VARCHAR, 100, 0, "The driver version.", 0, false,
-                DatabaseMetaData.functionColumnResult)};
+        return new Column[]{new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                "The driver version.", 0, false, DatabaseMetaData.functionColumnResult)};
     }
 
     @Override

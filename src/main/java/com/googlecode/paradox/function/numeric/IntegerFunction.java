@@ -42,7 +42,7 @@ public class IntegerFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 8, 15, "A integer value.", 0, true,
+                new Column(null, ParadoxType.INTEGER, 0, 4, "A integer value.", 0, true,
                         DatabaseMetaData.functionColumnResult),
                 new Column("integer", ParadoxType.VARCHAR, 8, 15, "A value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn)

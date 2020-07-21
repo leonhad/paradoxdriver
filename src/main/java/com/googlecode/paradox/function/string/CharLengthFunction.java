@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -42,8 +43,8 @@ public class CharLengthFunction implements IFunction {
         return new Column[]{
                 new Column(null, ParadoxType.NUMBER, 8, 15, "The char length.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 15, "The character values to count.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The character values to count.", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -39,8 +40,8 @@ public class UserFunction implements IFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.VARCHAR, 255, 0, "The current user.", 0, false,
-                DatabaseMetaData.functionColumnResult)};
+        return new Column[]{new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                "The current user.", 0, false, DatabaseMetaData.functionColumnResult)};
     }
 
     @Override

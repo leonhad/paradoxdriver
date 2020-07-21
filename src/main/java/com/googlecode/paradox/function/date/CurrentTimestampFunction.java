@@ -42,7 +42,7 @@ public class CurrentTimestampFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.TIMESTAMP, 8, 15, "The current timestamp.", 0, false,
+                new Column(null, ParadoxType.TIMESTAMP, 0, 8, "The current timestamp.", 0, false,
                         DatabaseMetaData.functionColumnResult)
         };
     }

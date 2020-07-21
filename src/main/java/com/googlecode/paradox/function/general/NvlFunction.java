@@ -18,6 +18,7 @@ import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -44,12 +45,13 @@ public class NvlFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replacement (if first is null).", 0,
-                        true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to test if null.", 1, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("replacement", ParadoxType.VARCHAR, 255, 0, "The replacement in case of null.", 2, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string or replacement (if first is null).", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string to test if null.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("replacement", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The replacement in case of null.", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

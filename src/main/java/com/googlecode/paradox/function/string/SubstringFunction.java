@@ -18,6 +18,7 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -43,13 +44,13 @@ public class SubstringFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to extract from.", 1, true,
+                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string to extract from.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("start", ParadoxType.INTEGER, 0, 4, "The start position. Begin with 1.", 2, true,
                         DatabaseMetaData.functionColumnIn),
-                new Column("start", ParadoxType.INTEGER, 8, 0, "The start position. Begin with 1.", 2, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("length", ParadoxType.INTEGER, 8, 0, "The amount to extract.", 3, true,
+                new Column("length", ParadoxType.INTEGER, 0, 4, "The amount to extract.", 3, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

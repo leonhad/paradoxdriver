@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.string;
+package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
@@ -16,65 +16,54 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.Constants;
 
+import java.security.SecureRandom;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
- * The SQL SPACE function.
+ * The SQL RAND function.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
-public class SpaceFunction implements IFunction {
+public class RandFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "SPACE";
+    public static final String NAME = "RAND";
 
     @Override
     public String remarks() {
-        return "Return a string only with spaces.";
+        return "Returns a random number between 0 and 1.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
-                        "The string spaces.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("space_count", ParadoxType.INTEGER, 0, 4,
-                        "The space count.", 1, true, DatabaseMetaData.functionColumnIn)
-        };
+                new Column(null, ParadoxType.NUMBER, 8, 9, "The random number.", 0, false,
+                        DatabaseMetaData.functionColumnResult)};
     }
 
     @Override
     public FunctionType type() {
-        return FunctionType.STRING;
+        return FunctionType.NUMERIC;
     }
 
     @Override
     public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
+        return ParadoxType.NUMBER;
     }
 
     @Override
     public int parameterCount() {
-        return 1;
+        return 0;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-
-        final int size = ValuesConverter.getPositiveInteger(values[0]);
-        final StringBuilder ret = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            ret.append(' ');
-        }
-
-        return ret.toString();
+        return new SecureRandom().nextDouble();
     }
 }

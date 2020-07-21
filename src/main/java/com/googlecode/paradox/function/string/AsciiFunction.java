@@ -41,7 +41,7 @@ public class AsciiFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.CHAR, 1, 0, "The converter UNICODE char.", 0, true,
+                new Column(null, ParadoxType.CHAR, 0, 1, "The converter UNICODE char.", 0, true,
                         DatabaseMetaData.functionColumnResult),
                 new Column("integer", ParadoxType.NUMBER, 8, 15, "The integer value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn)

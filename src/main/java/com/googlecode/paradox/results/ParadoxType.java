@@ -30,7 +30,7 @@ public enum ParadoxType implements SQLType {
     /**
      * The CHAR type.
      */
-    CHAR(1, Types.VARCHAR, false, String.class),
+    CHAR(1, Types.CHAR, false, String.class),
 
     /**
      * The date type.

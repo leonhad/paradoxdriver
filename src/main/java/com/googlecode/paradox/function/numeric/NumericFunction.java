@@ -17,6 +17,7 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -44,8 +45,8 @@ public class NumericFunction implements IFunction {
         return new Column[]{
                 new Column(null, ParadoxType.NUMBER, 8, 15, "A number value.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 8, 15, "A value to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "A value to convert.", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

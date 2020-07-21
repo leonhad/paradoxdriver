@@ -82,11 +82,11 @@ public class ExtractFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 8, 15, "The part of the.", 0, false,
+                new Column(null, ParadoxType.INTEGER, 0, 4, "The part of the.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("datepart", ParadoxType.VARCHAR, 11, 0, "The part name to extract.", 1, false,
+                new Column("datepart", ParadoxType.VARCHAR, 0, 11, "The part name to extract.", 1, false,
                         DatabaseMetaData.functionColumnIn),
-                new Column("date", ParadoxType.TIMESTAMP, 8, 0, "The date to extract.", 2, false,
+                new Column("date", ParadoxType.TIMESTAMP, 0, 8, "The date to extract.", 2, false,
                         DatabaseMetaData.functionColumnIn)
         };
     }

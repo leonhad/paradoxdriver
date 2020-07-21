@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -41,12 +42,12 @@ public class PositionFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 8, 0, "The position in the string. Zero if no found.", 0, true,
+                new Column(null, ParadoxType.INTEGER, 0, 4, "The position in the string. Zero if no found.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to search from.", 1, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("pattern", ParadoxType.VARCHAR, 255, 0, "The pattern to find.", 2, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The string to search from.", 1, true, DatabaseMetaData.functionColumnIn),
+                new Column("pattern", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The pattern to find.", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }
 

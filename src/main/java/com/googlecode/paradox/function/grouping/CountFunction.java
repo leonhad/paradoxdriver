@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -42,8 +43,8 @@ public class CountFunction implements IFunction {
         return new Column[]{
                 new Column(null, ParadoxType.INTEGER, 8, 15, "The row count in group.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The time precision from 0 to 6. Ignored", 1, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The time precision from 0 to 6. Ignored", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }
 
