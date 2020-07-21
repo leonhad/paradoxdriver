@@ -119,8 +119,9 @@ public final class FunctionFactory {
         // Not used.
     }
 
+    @SuppressWarnings("java:S1452")
     public static Map<String, Supplier<? extends IFunction>> getFunctionAlias() {
-        return Collections.unmodifiableMap(FUNCTION_ALIAS);
+        return Collections.unmodifiableMap(FUNCTIONS);
     }
 
     /**
