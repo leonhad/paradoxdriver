@@ -59,9 +59,8 @@ public final class SecondaryIndexFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return Expressions.accept(locale, name, "%.X__", false, Constants.ESCAPE_CHAR)
-                && ((this.indexName == null) || Expressions.accept(locale, name, this.indexName, false,
-                Constants.ESCAPE_CHAR));
+        return (this.indexName == null) || Expressions.accept(locale, name, this.indexName, false,
+                Constants.ESCAPE_CHAR);
     }
 
 }

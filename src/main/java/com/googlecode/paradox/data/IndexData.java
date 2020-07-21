@@ -57,9 +57,8 @@ public final class IndexData extends ParadoxData {
     public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
                                                  final ParadoxConnection connection) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
-        final String indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".X??";
-        final File[] fileList = currentSchema.listFiles(
-                new SecondaryIndexFilter(connection.getLocale(), indexNamePattern));
+        String indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".X__";
+        File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connection.getLocale(), indexNamePattern));
 
         if (fileList != null) {
             for (final File file : fileList) {
@@ -71,6 +70,22 @@ public final class IndexData extends ParadoxData {
                 }
             }
         }
+
+        // FIXME review the filter and loading.
+        indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".Y__";
+        fileList = currentSchema.listFiles(new SecondaryIndexFilter(connection.getLocale(), indexNamePattern));
+
+        if (fileList != null) {
+            for (final File file : fileList) {
+                try {
+                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connection);
+                    indexes.add(index);
+                } catch (final IOException e) {
+                    throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
+                }
+            }
+        }
+
         return indexes;
     }
 
@@ -85,6 +100,8 @@ public final class IndexData extends ParadoxData {
     private static ParadoxIndex loadIndexHeader(final File file, final ParadoxConnection connection)
             throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
+
+        // FIXME fix Y__ index metadata
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 

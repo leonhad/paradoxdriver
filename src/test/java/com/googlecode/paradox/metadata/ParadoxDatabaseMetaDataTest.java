@@ -462,8 +462,8 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testIndexInfo() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getIndexInfo("DB", "%", "%", false, false)) {
-            Assert.assertTrue("Test for ResultSet.", rs instanceof ParadoxResultSet);
+        try (ResultSet rs = this.conn.getMetaData().getIndexInfo("DATABASE", "joins", "indexed", false, true)) {
+            Assert.assertTrue("Test for ResultSet.", rs.next());
         }
     }
 
@@ -823,7 +823,7 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
     }
-    
+
     /**
      * Test for tables in eclipse.
      *

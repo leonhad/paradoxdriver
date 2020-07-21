@@ -24,13 +24,15 @@ import java.util.List;
 /**
  * SQL function interface.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public interface IFunction {
 
     /**
      * Gets the function type.
+     *
+     * @return the function type.
      */
     FunctionType type();
 

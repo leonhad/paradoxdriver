@@ -81,7 +81,7 @@ public final class ParadoxTable extends ParadoxDataFile {
      */
     public ParadoxField[] getPrimaryKeys() {
         final ParadoxField[] ret = new ParadoxField[this.getPrimaryFieldCount()];
-        if (this.getPrimaryFieldCount() >= 0) {
+        if (this.getPrimaryFieldCount() > 0) {
             System.arraycopy(this.getFields(), 0, ret, 0, this.getPrimaryFieldCount());
         }
 

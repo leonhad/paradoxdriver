@@ -155,8 +155,7 @@ public class ColumnTest {
     @Test
     public void testScale() {
         final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
-        column.setPrecision(1);
-        Assert.assertEquals("Invalid field scale.", 1, column.getScale());
+        Assert.assertEquals("Invalid field scale.", 0, column.getScale());
     }
 
     /**
