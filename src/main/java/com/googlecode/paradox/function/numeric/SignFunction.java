@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
 import java.util.logging.Level;
@@ -69,12 +70,12 @@ public class SignFunction implements IFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] == null) {
+        Double value = ValuesConverter.getDouble(values[0]);
+        if (value == null) {
             return null;
         }
 
         try {
-            double value = Double.parseDouble(String.valueOf(values[0]));
             if (value < 0) {
                 return -1;
             } else if (value > 0) {
