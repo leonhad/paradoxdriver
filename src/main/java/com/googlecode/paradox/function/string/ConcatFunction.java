@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.function.string;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL CONCAT function.
@@ -27,56 +27,58 @@ import com.googlecode.paradox.results.ParadoxType;
  */
 public class ConcatFunction implements IFunction {
 
-	/**
-	 * The function name.
-	 */
-	public static final String NAME = "CONCAT";
+    /**
+     * The function name.
+     */
+    public static final String NAME = "CONCAT";
 
     @Override
     public String remarks() {
-    	return "Concatenate a sequence of strings. This functions support any number of parameters.";
+        return "Concatenate a sequence of strings. This functions support any number of parameters.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The concatenated string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value1", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("value2", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 2, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The concatenated string.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value1", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("value2", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 2, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
-    
-	@Override
-	public FunctionType type() {
-		return FunctionType.STRING;
-	}
 
-	@Override
-	public ParadoxType fieldType() {
-		return ParadoxType.VARCHAR;
-	}
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
 
-	@Override
-	public int parameterCount() {
-		return 0;
-	}
+    @Override
+    public ParadoxType fieldType() {
+        return ParadoxType.VARCHAR;
+    }
 
-	@Override
-	public boolean isVariableParameters() {
-		return true;
-	}
+    @Override
+    public int parameterCount() {
+        return 0;
+    }
 
-	@Override
-	public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-			final FieldNode[] fields) {
-		final StringBuilder ret = new StringBuilder();
-		for (final Object value : values) {
-			if (value != null) {
-				ret.append(value);
-			}
-		}
+    @Override
+    public boolean isVariableParameters() {
+        return true;
+    }
 
-		return ret.toString();
-	}
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+                          final FieldNode[] fields) {
+        final StringBuilder ret = new StringBuilder();
+        for (final Object value : values) {
+            if (value != null) {
+                ret.append(value);
+            }
+        }
+
+        return ret.toString();
+    }
 }

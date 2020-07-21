@@ -36,22 +36,24 @@ public class SpaceFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Return a string only with spaces.";
+        return "Return a string only with spaces.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string spaces.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("space_count", ParadoxType.INTEGER, 8, 0, "The space count.", 1, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string spaces.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("space_count", ParadoxType.INTEGER, 8, 0, "The space count.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

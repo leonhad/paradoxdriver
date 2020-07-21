@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.function.string;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL REPLACE function.
@@ -35,24 +35,28 @@ public class ReplaceFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Replaces all occurrences of a substring within a string, with a new substring.";
+        return "Replaces all occurrences of a substring within a string, with a new substring.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replaced.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The original string.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("old_string", ParadoxType.VARCHAR, 255, 0, "The string to be replaced.", 2, false, DatabaseMetaData.functionColumnIn),
-                new Column("new_string", ParadoxType.VARCHAR, 255, 0, "The new replacement string..", 3, false, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replaced.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The original string.", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("old_string", ParadoxType.VARCHAR, 255, 0, "The string to be replaced.", 2, false,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("new_string", ParadoxType.VARCHAR, 255, 0, "The new replacement string..", 3, false,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

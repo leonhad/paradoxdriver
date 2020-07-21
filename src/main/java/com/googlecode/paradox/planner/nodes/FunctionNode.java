@@ -39,16 +39,14 @@ public class FunctionNode extends FieldNode {
      * The list of parameters of this function.
      */
     private final List<SQLNode> parameters = new ArrayList<>();
-
-    /**
-     * Field nodes.
-     */
-    private FieldNode[] fields;
-
     /**
      * This function instance.
      */
     private final IFunction function;
+    /**
+     * Field nodes.
+     */
+    private FieldNode[] fields;
 
     /**
      * Creates a new instance.

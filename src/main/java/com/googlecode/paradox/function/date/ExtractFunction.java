@@ -44,7 +44,7 @@ public class ExtractFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "EXTRACT";
-    
+
     private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "WEEK",
             "MONTH", "QUARTER", "YEAR"};
 
@@ -53,28 +53,6 @@ public class ExtractFunction implements IFunction {
         Arrays.sort(VALID_FORMATS);
     }
 
-    @Override
-    public String remarks() {
-    	return "Extract a value from date/time. The part to extract can be: " + Arrays.toString(VALID_FORMATS) + ".";
-    }
-    
-    @Override
-    public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 8, 15, "The part of the.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("datepart", ParadoxType.VARCHAR, 11, 0, "The part name to extract.", 1, false,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("date", ParadoxType.TIMESTAMP, 8, 0, "The date to extract.", 2, false,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-    
-    @Override
-    public FunctionType type() {
-        return FunctionType.TIME_DATE;
-    }
-    
     private static Calendar getTime(final Object value) {
         Time time = ValuesConverter.getTime(value);
         Calendar c = Calendar.getInstance();
@@ -94,6 +72,28 @@ public class ExtractFunction implements IFunction {
         Calendar c = Calendar.getInstance();
         c.setTime(time);
         return c;
+    }
+
+    @Override
+    public String remarks() {
+        return "Extract a value from date/time. The part to extract can be: " + Arrays.toString(VALID_FORMATS) + ".";
+    }
+
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.INTEGER, 8, 15, "The part of the.", 0, false,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("datepart", ParadoxType.VARCHAR, 11, 0, "The part name to extract.", 1, false,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("date", ParadoxType.TIMESTAMP, 8, 0, "The date to extract.", 2, false,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
+
+    @Override
+    public FunctionType type() {
+        return FunctionType.TIME_DATE;
     }
 
     @Override

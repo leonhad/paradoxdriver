@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.function.string;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL UPPER function.
@@ -34,9 +34,9 @@ public class UpperFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Converts a texto to upper case.";
+        return "Converts a texto to upper case.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -46,12 +46,12 @@ public class UpperFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

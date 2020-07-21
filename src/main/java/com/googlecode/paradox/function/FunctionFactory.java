@@ -10,53 +10,22 @@
  */
 package com.googlecode.paradox.function;
 
+import com.googlecode.paradox.function.date.CurrentDateFunction;
+import com.googlecode.paradox.function.date.CurrentTimeFunction;
+import com.googlecode.paradox.function.date.CurrentTimestampFunction;
+import com.googlecode.paradox.function.date.ExtractFunction;
+import com.googlecode.paradox.function.general.*;
+import com.googlecode.paradox.function.grouping.CountFunction;
+import com.googlecode.paradox.function.numeric.*;
+import com.googlecode.paradox.function.string.*;
+import com.googlecode.paradox.function.system.UserFunction;
+import com.googlecode.paradox.function.system.VersionFunction;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import com.googlecode.paradox.function.date.CurrentDateFunction;
-import com.googlecode.paradox.function.date.CurrentTimeFunction;
-import com.googlecode.paradox.function.date.CurrentTimestampFunction;
-import com.googlecode.paradox.function.date.ExtractFunction;
-import com.googlecode.paradox.function.general.CastFunction;
-import com.googlecode.paradox.function.general.CoalesceFunction;
-import com.googlecode.paradox.function.general.ConvertFunction;
-import com.googlecode.paradox.function.general.NullIfFunction;
-import com.googlecode.paradox.function.general.NvlFunction;
-import com.googlecode.paradox.function.grouping.CountFunction;
-import com.googlecode.paradox.function.numeric.AbsFunction;
-import com.googlecode.paradox.function.numeric.IntegerFunction;
-import com.googlecode.paradox.function.numeric.IsNumericFunction;
-import com.googlecode.paradox.function.numeric.NumericFunction;
-import com.googlecode.paradox.function.numeric.PiFunction;
-import com.googlecode.paradox.function.string.AsciiFunction;
-import com.googlecode.paradox.function.string.BitLengthFunction;
-import com.googlecode.paradox.function.string.CharFunction;
-import com.googlecode.paradox.function.string.CharLengthFunction;
-import com.googlecode.paradox.function.string.ChrFunction;
-import com.googlecode.paradox.function.string.ConcatFunction;
-import com.googlecode.paradox.function.string.ConcatWSFunction;
-import com.googlecode.paradox.function.string.InitCapFunction;
-import com.googlecode.paradox.function.string.LPadFunction;
-import com.googlecode.paradox.function.string.LeftFunction;
-import com.googlecode.paradox.function.string.LowerFunction;
-import com.googlecode.paradox.function.string.OctetLengthFunction;
-import com.googlecode.paradox.function.string.PositionFunction;
-import com.googlecode.paradox.function.string.RPadFunction;
-import com.googlecode.paradox.function.string.RepeatFunction;
-import com.googlecode.paradox.function.string.ReplaceFunction;
-import com.googlecode.paradox.function.string.ReverseFunction;
-import com.googlecode.paradox.function.string.RightFunction;
-import com.googlecode.paradox.function.string.SpaceFunction;
-import com.googlecode.paradox.function.string.SubstringFunction;
-import com.googlecode.paradox.function.string.TextFunction;
-import com.googlecode.paradox.function.string.TrimFunction;
-import com.googlecode.paradox.function.string.UpperFunction;
-import com.googlecode.paradox.function.string.VarcharFunction;
-import com.googlecode.paradox.function.system.UserFunction;
-import com.googlecode.paradox.function.system.VersionFunction;
 
 /**
  * Function factory to register and produce new functions.
@@ -66,132 +35,132 @@ import com.googlecode.paradox.function.system.VersionFunction;
  */
 public final class FunctionFactory {
 
-	/**
-	 * The registered function list.
-	 */
-	public static final TreeMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
+    /**
+     * The registered function list.
+     */
+    public static final TreeMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
 
-	/**
-	 * The registered function list that can be called without parenthesis.
-	 */
-	private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
+    /**
+     * The registered function list that can be called without parenthesis.
+     */
+    private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
 
-	static {
-		// General functions.
-		FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
-		FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
-		FUNCTIONS.put(ConvertFunction.NAME, ConvertFunction::new);
-		FUNCTIONS.put(IntegerFunction.NAME, IntegerFunction::new);
-		FUNCTIONS.put("ISNULL", NvlFunction::new);
-		FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
-		FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
-		FUNCTIONS.put(NumericFunction.NAME, NumericFunction::new);
+    static {
+        // General functions.
+        FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
+        FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
+        FUNCTIONS.put(ConvertFunction.NAME, ConvertFunction::new);
+        FUNCTIONS.put(IntegerFunction.NAME, IntegerFunction::new);
+        FUNCTIONS.put("ISNULL", NvlFunction::new);
+        FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
+        FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
+        FUNCTIONS.put(NumericFunction.NAME, NumericFunction::new);
 
-		// Grouping functions.
-		FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
+        // Grouping functions.
+        FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
 
-		// Numeric functions.
-		FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
-		FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
-		FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
+        // Numeric functions.
+        FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
+        FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
+        FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
 
-		// String functions.
-		FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);
-		FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
-		FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
-		FUNCTIONS.put(CharFunction.NAME, CharFunction::new);
-		FUNCTIONS.put(ChrFunction.NAME, ChrFunction::new);
-		FUNCTIONS.put(ConcatFunction.NAME, ConcatFunction::new);
-		FUNCTIONS.put(ConcatWSFunction.NAME, ConcatWSFunction::new);
-		FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
-		FUNCTIONS.put("LENGTH", CharLengthFunction::new);
-		FUNCTIONS.put("LEN", CharLengthFunction::new);
-		FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
-		FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
-		FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
-		FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
-		FUNCTIONS.put(InitCapFunction.NAME, InitCapFunction::new);
-		FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
-		FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
-		FUNCTIONS.put(LPadFunction.NAME, LPadFunction::new);
-		FUNCTIONS.put(OctetLengthFunction.NAME, OctetLengthFunction::new);
-		FUNCTIONS.put(PositionFunction.NAME, PositionFunction::new);
-		FUNCTIONS.put(RPadFunction.NAME, RPadFunction::new);
-		FUNCTIONS.put(RepeatFunction.NAME, RepeatFunction::new);
-		FUNCTIONS.put("REPLICATE", RepeatFunction::new);
-		FUNCTIONS.put(ReplaceFunction.NAME, ReplaceFunction::new);
-		FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
-		FUNCTIONS.put(RightFunction.NAME, RightFunction::new);
-		FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
-		FUNCTIONS.put(SubstringFunction.NAME, SubstringFunction::new);
-		FUNCTIONS.put("TRANSLATE", ReplaceFunction::new);
-		FUNCTIONS.put(TextFunction.NAME, TextFunction::new);
-		FUNCTIONS.put(TrimFunction.NAME, TrimFunction::new);
-		FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
-		FUNCTIONS.put(VarcharFunction.NAME, VarcharFunction::new);
+        // String functions.
+        FUNCTIONS.put(AsciiFunction.NAME, AsciiFunction::new);
+        FUNCTIONS.put(BitLengthFunction.NAME, BitLengthFunction::new);
+        FUNCTIONS.put(CharLengthFunction.NAME, CharLengthFunction::new);
+        FUNCTIONS.put(CharFunction.NAME, CharFunction::new);
+        FUNCTIONS.put(ChrFunction.NAME, ChrFunction::new);
+        FUNCTIONS.put(ConcatFunction.NAME, ConcatFunction::new);
+        FUNCTIONS.put(ConcatWSFunction.NAME, ConcatWSFunction::new);
+        FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
+        FUNCTIONS.put("LENGTH", CharLengthFunction::new);
+        FUNCTIONS.put("LEN", CharLengthFunction::new);
+        FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
+        FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
+        FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
+        FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
+        FUNCTIONS.put(InitCapFunction.NAME, InitCapFunction::new);
+        FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
+        FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
+        FUNCTIONS.put(LPadFunction.NAME, LPadFunction::new);
+        FUNCTIONS.put(OctetLengthFunction.NAME, OctetLengthFunction::new);
+        FUNCTIONS.put(PositionFunction.NAME, PositionFunction::new);
+        FUNCTIONS.put(RPadFunction.NAME, RPadFunction::new);
+        FUNCTIONS.put(RepeatFunction.NAME, RepeatFunction::new);
+        FUNCTIONS.put("REPLICATE", RepeatFunction::new);
+        FUNCTIONS.put(ReplaceFunction.NAME, ReplaceFunction::new);
+        FUNCTIONS.put(ReverseFunction.NAME, ReverseFunction::new);
+        FUNCTIONS.put(RightFunction.NAME, RightFunction::new);
+        FUNCTIONS.put(SpaceFunction.NAME, SpaceFunction::new);
+        FUNCTIONS.put(SubstringFunction.NAME, SubstringFunction::new);
+        FUNCTIONS.put("TRANSLATE", ReplaceFunction::new);
+        FUNCTIONS.put(TextFunction.NAME, TextFunction::new);
+        FUNCTIONS.put(TrimFunction.NAME, TrimFunction::new);
+        FUNCTIONS.put(UpperFunction.NAME, UpperFunction::new);
+        FUNCTIONS.put(VarcharFunction.NAME, VarcharFunction::new);
 
-		// System functions.
-		FUNCTIONS.put("CURRENT_USER", UserFunction::new);
-		FUNCTIONS.put("SESSION_USER", UserFunction::new);
-		FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
-		FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
-		FUNCTIONS.put(VersionFunction.NAME, VersionFunction::new);
+        // System functions.
+        FUNCTIONS.put("CURRENT_USER", UserFunction::new);
+        FUNCTIONS.put("SESSION_USER", UserFunction::new);
+        FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
+        FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
+        FUNCTIONS.put(VersionFunction.NAME, VersionFunction::new);
 
-		FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-	}
+        FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
 
-	/**
-	 * Utility class, not for use.
-	 */
-	private FunctionFactory() {
-		// Not used.
-	}
+    /**
+     * Utility class, not for use.
+     */
+    private FunctionFactory() {
+        // Not used.
+    }
 
-	/**
-	 * Gets a function by alias.
-	 *
-	 * @param alias the function alias.
-	 * @return the a function by alias.
-	 */
-	@SuppressWarnings({ "i18n-java:V1018", "java:S1449" })
-	public static boolean isFunctionAlias(final String alias) {
-		if (alias != null) {
-			final Supplier<? extends IFunction> supplier = FUNCTION_ALIAS.get(alias.toUpperCase());
-			return supplier != null;
-		}
+    /**
+     * Gets a function by alias.
+     *
+     * @param alias the function alias.
+     * @return the a function by alias.
+     */
+    @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
+    public static boolean isFunctionAlias(final String alias) {
+        if (alias != null) {
+            final Supplier<? extends IFunction> supplier = FUNCTION_ALIAS.get(alias.toUpperCase());
+            return supplier != null;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * Gets a function by name.
-	 *
-	 * @param name the function by name.
-	 * @return the function by name.
-	 */
-	@SuppressWarnings({ "i18n-java:V1018", "java:S1449" })
-	public static IFunction getByName(final String name) {
-		if (name != null) {
-			final Supplier<? extends IFunction> supplier = FUNCTIONS.get(name.toUpperCase());
-			if (supplier != null) {
-				return supplier.get();
-			}
-		}
+    /**
+     * Gets a function by name.
+     *
+     * @param name the function by name.
+     * @return the function by name.
+     */
+    @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
+    public static IFunction getByName(final String name) {
+        if (name != null) {
+            final Supplier<? extends IFunction> supplier = FUNCTIONS.get(name.toUpperCase());
+            if (supplier != null) {
+                return supplier.get();
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Return the function list separated by comma filtered by the function type.
-	 * 
-	 * @param type the function type to filter.
-	 * @return the function list filtered by type.
-	 */
-	public static String getByType(final FunctionType type) {
-		return FUNCTIONS.entrySet().stream()
-				.filter(e -> e.getValue().get().type() == type).map(Entry::getKey)
-				.sorted().collect(Collectors.joining(","));
-	}
+    /**
+     * Return the function list separated by comma filtered by the function type.
+     *
+     * @param type the function type to filter.
+     * @return the function list filtered by type.
+     */
+    public static String getByType(final FunctionType type) {
+        return FUNCTIONS.entrySet().stream()
+                .filter(e -> e.getValue().get().type() == type).map(Entry::getKey)
+                .sorted().collect(Collectors.joining(","));
+    }
 
 }

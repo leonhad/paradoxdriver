@@ -36,9 +36,9 @@ public class CurrentDateFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Gets the current date.";
+        return "Gets the current date.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -46,12 +46,12 @@ public class CurrentDateFunction implements IFunction {
                         DatabaseMetaData.functionColumnResult)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.TIME_DATE;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.DATE;

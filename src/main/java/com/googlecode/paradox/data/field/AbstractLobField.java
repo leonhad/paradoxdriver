@@ -38,6 +38,10 @@ public abstract class AbstractLobField implements FieldParser {
      */
     public static final int HEAD_SIZE = 3;
     /**
+     * General log header size.
+     */
+    public static final int BLOB_HEADER_SIZE = 9;
+    /**
      * Free block value.
      */
     private static final int FREE_BLOCK = 4;
@@ -50,15 +54,9 @@ public abstract class AbstractLobField implements FieldParser {
      */
     private static final int SUB_BLOCK = 3;
     /**
-     * General log header size.
-     */
-    public static final int BLOB_HEADER_SIZE = 9;
-    /**
      * The graph specific header size.
      */
     private static final int GRAPH_HEADER_SIZE = 17;
-
-    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value) throws ParadoxDataException;
 
     private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table)
             throws IOException {
@@ -96,6 +94,8 @@ public abstract class AbstractLobField implements FieldParser {
 
         return buffer;
     }
+
+    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value) throws ParadoxDataException;
 
     /**
      * {@inheritDoc}.

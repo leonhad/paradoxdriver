@@ -43,13 +43,6 @@ public final class ValuesConverter {
      */
     private static final Map<Integer, Function<Object, Object>> TYPE_MAPPING = new HashMap<>();
 
-    /**
-     * Utility class, not for use.
-     */
-    private ValuesConverter() {
-        // Not used..
-    }
-
     static {
         CLASS_MAPPING.put(BigDecimal.class, ValuesConverter::getBigDecimal);
         CLASS_MAPPING.put(Boolean.class, ValuesConverter::getBoolean);
@@ -80,6 +73,13 @@ public final class ValuesConverter {
         TYPE_MAPPING.put(Types.TIME, ValuesConverter::getTime);
         TYPE_MAPPING.put(Types.TIMESTAMP, ValuesConverter::getTimestamp);
         TYPE_MAPPING.put(Types.TIMESTAMP_WITH_TIMEZONE, ValuesConverter::getTimestamp);
+    }
+
+    /**
+     * Utility class, not for use.
+     */
+    private ValuesConverter() {
+        // Not used..
     }
 
     @SuppressWarnings("unchecked")

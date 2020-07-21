@@ -21,14 +21,13 @@ import com.googlecode.paradox.parser.ScannerPosition;
 public final class JoinNode extends TableNode {
 
     /**
-     * The condition list.
-     */
-    private AbstractConditionalNode condition;
-
-    /**
      * The join type.
      */
     private final JoinType joinType;
+    /**
+     * The condition list.
+     */
+    private AbstractConditionalNode condition;
 
     /**
      * Create a new instance.
@@ -73,20 +72,20 @@ public final class JoinNode extends TableNode {
     }
 
     /**
-     * Sets the condition list.
-     *
-     * @param condition the condition list.
-     */
-    public void setCondition(final AbstractConditionalNode condition) {
-        this.condition = condition;
-    }
-
-    /**
      * Gets the join condition.
      *
      * @return the join condition.
      */
     public AbstractConditionalNode getCondition() {
         return condition;
+    }
+
+    /**
+     * Sets the condition list.
+     *
+     * @param condition the condition list.
+     */
+    public void setCondition(final AbstractConditionalNode condition) {
+        this.condition = condition;
     }
 }

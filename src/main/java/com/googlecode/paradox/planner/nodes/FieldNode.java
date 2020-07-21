@@ -93,12 +93,12 @@ public class FieldNode extends SQLNode {
         this.index = index;
     }
 
-    public void setTable(ParadoxTable table) {
-        this.table = table;
-    }
-
     public ParadoxTable getTable() {
         return table;
+    }
+
+    public void setTable(ParadoxTable table) {
+        this.table = table;
     }
 
     @Override

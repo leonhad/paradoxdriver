@@ -36,23 +36,26 @@ public class RepeatFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Return a repeated string a specified number of times.";
+        return "Return a repeated string a specified number of times.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string repeated.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to repeat.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("count", ParadoxType.INTEGER, 8, 0, "The repeat count.", 2, false, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string repeated.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to repeat.", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("count", ParadoxType.INTEGER, 8, 0, "The repeat count.", 2, false,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

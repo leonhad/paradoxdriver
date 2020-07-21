@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox.function.general;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
@@ -20,6 +18,8 @@ import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL NVL function.
@@ -38,23 +38,26 @@ public class NvlFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Return a specified value if the string is null.";
+        return "Return a specified value if the string is null.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replacement (if first is null).", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to test if null.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("replacement", ParadoxType.VARCHAR, 255, 0, "The replacement in case of null.", 2, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replacement (if first is null).", 0,
+                        true, DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to test if null.", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("replacement", ParadoxType.VARCHAR, 255, 0, "The replacement in case of null.", 2, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.SYSTEM;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return type;

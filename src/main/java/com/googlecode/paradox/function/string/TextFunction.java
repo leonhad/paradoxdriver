@@ -35,9 +35,9 @@ public class TextFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Converts the value to CLOB (text) type.";
+        return "Converts the value to CLOB (text) type.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -47,12 +47,12 @@ public class TextFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.MEMO;

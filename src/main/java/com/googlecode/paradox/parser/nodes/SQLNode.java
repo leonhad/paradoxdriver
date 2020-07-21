@@ -30,21 +30,18 @@ public class SQLNode {
      * Node childhood.
      */
     protected final List<SQLNode> children = new ArrayList<>();
-
-    /**
-     * The node alias.
-     */
-    protected String alias;
-
-    /**
-     * The node name.
-     */
-    protected String name;
-
     /**
      * SQL position.
      */
     private final ScannerPosition position;
+    /**
+     * The node alias.
+     */
+    protected String alias;
+    /**
+     * The node name.
+     */
+    protected String name;
 
     /**
      * Create a new instance.
@@ -72,6 +69,15 @@ public class SQLNode {
     }
 
     /**
+     * Sets the node alias.
+     *
+     * @param alias the alias name.
+     */
+    public final void setAlias(final String alias) {
+        this.alias = alias;
+    }
+
+    /**
      * Add a child.
      *
      * @param node the child to add.
@@ -96,15 +102,6 @@ public class SQLNode {
      */
     public final String getName() {
         return this.name;
-    }
-
-    /**
-     * Sets the node alias.
-     *
-     * @param alias the alias name.
-     */
-    public final void setAlias(final String alias) {
-        this.alias = alias;
     }
 
     /**

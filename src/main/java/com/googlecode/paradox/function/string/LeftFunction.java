@@ -36,23 +36,26 @@ public class LeftFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Extract a part of the string from the left side.";
+        return "Extract a part of the string from the left side.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to extract", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("number_of_chars", ParadoxType.INTEGER, 8, 15, "The number of chars to extract", 2, false, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to extract", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("number_of_chars", ParadoxType.INTEGER, 8, 15, "The number of chars to extract", 2, false,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

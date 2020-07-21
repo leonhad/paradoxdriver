@@ -28,47 +28,49 @@ import java.sql.SQLException;
  */
 public class AsciiFunction implements IFunction {
 
-	/**
-	 * The function name.
-	 */
-	public static final String NAME = "ASCII";
+    /**
+     * The function name.
+     */
+    public static final String NAME = "ASCII";
 
-	@Override
-	public String remarks() {
-		return "Converts a integer value to UNICODE char.";
-	}
+    @Override
+    public String remarks() {
+        return "Converts a integer value to UNICODE char.";
+    }
 
-	@Override
-	public Column[] getColumns() {
-		return new Column[] { 
-				new Column(null, ParadoxType.CHAR, 1, 0, "The converter UNICODE char.", 0, true, DatabaseMetaData.functionColumnResult),
-				new Column("integer", ParadoxType.NUMBER, 8, 15, "The integer value to convert.", 1, true, DatabaseMetaData.functionColumnIn)
-		};
-	}
-	
-	@Override
-	public FunctionType type() {
-		return FunctionType.STRING;
-	}
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.CHAR, 1, 0, "The converter UNICODE char.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("integer", ParadoxType.NUMBER, 8, 15, "The integer value to convert.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
+        };
+    }
 
-	@Override
-	public ParadoxType fieldType() {
-		return ParadoxType.INTEGER;
-	}
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
 
-	@Override
-	public int parameterCount() {
-		return 1;
-	}
+    @Override
+    public ParadoxType fieldType() {
+        return ParadoxType.INTEGER;
+    }
 
-	@Override
-	public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-			final FieldNode[] fields) throws SQLException {
-		Object value = values[0];
-		if (value != null && !value.toString().isEmpty()) {
-			return (int) value.toString().charAt(0);
-		}
+    @Override
+    public int parameterCount() {
+        return 1;
+    }
 
-		return null;
-	}
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+                          final FieldNode[] fields) throws SQLException {
+        Object value = values[0];
+        if (value != null && !value.toString().isEmpty()) {
+            return (int) value.toString().charAt(0);
+        }
+
+        return null;
+    }
 }

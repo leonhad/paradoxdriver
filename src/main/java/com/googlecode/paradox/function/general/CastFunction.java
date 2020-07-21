@@ -34,73 +34,73 @@ import java.util.List;
 @SuppressWarnings("java:S109")
 public class CastFunction implements IFunction {
 
-	/**
-	 * The function name.
-	 */
-	public static final String NAME = "CAST";
+    /**
+     * The function name.
+     */
+    public static final String NAME = "CAST";
 
-	private ParadoxType type = ParadoxType.VARCHAR;
+    private ParadoxType type = ParadoxType.VARCHAR;
 
-	@Override
-	public String remarks() {
-		return "Converts a field type to another.";
-	}
+    @Override
+    public String remarks() {
+        return "Converts a field type to another.";
+    }
 
-	@Override
-	public Column[] getColumns() {
-		return new Column[] {
-				new Column(null, ParadoxType.VARCHAR, 255, 0, "The converted field.", 0, true,
-						DatabaseMetaData.functionColumnResult),
-				new Column("value", ParadoxType.VARCHAR, 255, 0, "The value to convert.", 1, true,
-						DatabaseMetaData.functionColumnIn),
-				new Column("expression2", ParadoxType.VARCHAR, 255, 0, "The SQL type to convert.", 2, true,
-						DatabaseMetaData.functionColumnIn) };
-	}
+    @Override
+    public Column[] getColumns() {
+        return new Column[]{
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The converted field.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The value to convert.", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("expression2", ParadoxType.VARCHAR, 255, 0, "The SQL type to convert.", 2, true,
+                        DatabaseMetaData.functionColumnIn)};
+    }
 
-	@Override
-	public FunctionType type() {
-		return FunctionType.SYSTEM;
-	}
+    @Override
+    public FunctionType type() {
+        return FunctionType.SYSTEM;
+    }
 
-	@Override
-	public ParadoxType fieldType() {
-		return type;
-	}
+    @Override
+    public ParadoxType fieldType() {
+        return type;
+    }
 
-	@Override
-	public int parameterCount() {
-		return 2;
-	}
+    @Override
+    public int parameterCount() {
+        return 2;
+    }
 
-	@Override
-	public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-			final FieldNode[] fields) throws SQLException {
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+                          final FieldNode[] fields) throws SQLException {
 
-		return ValuesConverter.convert(values[0], type);
-	}
+        return ValuesConverter.convert(values[0], type);
+    }
 
-	@Override
-	@SuppressWarnings({ "i18n-java:V1018", "java:S1449" })
-	public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-		for (final SQLNode node : parameters) {
-			if (node instanceof AsteriskNode) {
-				throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-						node.getPosition());
-			}
-		}
+    @Override
+    @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
+    public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+        for (final SQLNode node : parameters) {
+            if (node instanceof AsteriskNode) {
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
+                        node.getPosition());
+            }
+        }
 
-		final SQLNode typeNode = parameters.get(1);
-		if (typeNode instanceof FieldNode) {
-			try {
-				this.type = ParadoxType.valueOf(typeNode.getName());
-				parameters.remove(1);
-			} catch (final IllegalArgumentException e) {
-				throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
-						typeNode.getName(), typeNode.getPosition());
-			}
-		} else {
-			throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
-					typeNode.getName(), typeNode.getPosition());
-		}
-	}
+        final SQLNode typeNode = parameters.get(1);
+        if (typeNode instanceof FieldNode) {
+            try {
+                this.type = ParadoxType.valueOf(typeNode.getName());
+                parameters.remove(1);
+            } catch (final IllegalArgumentException e) {
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                        typeNode.getName(), typeNode.getPosition());
+            }
+        } else {
+            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                    typeNode.getName(), typeNode.getPosition());
+        }
+    }
 }

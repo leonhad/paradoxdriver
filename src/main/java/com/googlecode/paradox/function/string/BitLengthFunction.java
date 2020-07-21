@@ -10,12 +10,12 @@
  */
 package com.googlecode.paradox.function.string;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL bit length function.
@@ -32,9 +32,9 @@ public class BitLengthFunction extends OctetLengthFunction {
 
     @Override
     public String remarks() {
-    	return "Gets the length of the binary values in bits.";
+        return "Gets the length of the binary values in bits.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -44,7 +44,7 @@ public class BitLengthFunction extends OctetLengthFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {

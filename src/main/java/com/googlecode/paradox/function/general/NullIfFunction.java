@@ -34,28 +34,31 @@ public class NullIfFunction implements IFunction {
      * The function name.
      */
     public static final String NAME = "NULLIF";
-    
+
     private ParadoxType type = ParadoxType.NULL;
 
     @Override
     public String remarks() {
-    	return "Returns null if both values are equal, otherwise it returns the first expression.";
+        return "Returns null if both values are equal, otherwise it returns the first expression.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replacement (if first is null).", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("expression1", ParadoxType.VARCHAR, 255, 0, "The first value to test.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("expression2", ParadoxType.VARCHAR, 255, 0, "The second value to test.", 2, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string or replacement (if first is null).", 0,
+                        true, DatabaseMetaData.functionColumnResult),
+                new Column("expression1", ParadoxType.VARCHAR, 255, 0, "The first value to test.", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("expression2", ParadoxType.VARCHAR, 255, 0, "The second value to test.", 2, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.SYSTEM;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return type;

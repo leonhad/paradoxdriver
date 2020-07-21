@@ -60,21 +60,21 @@ public final class PlanTableNode {
     }
 
     /**
-     * Gets the table plan.
-     *
-     * @return the table plan.
-     */
-    public ParadoxTable getTable() {
-        return this.table;
-    }
-
-    /**
      * Sets the plan alias.
      *
      * @param alias the plan alias to set.
      */
     public void setAlias(final String alias) {
         this.alias = alias;
+    }
+
+    /**
+     * Gets the table plan.
+     *
+     * @return the table plan.
+     */
+    public ParadoxTable getTable() {
+        return this.table;
     }
 
     /**

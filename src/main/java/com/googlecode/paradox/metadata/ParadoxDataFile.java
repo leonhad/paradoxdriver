@@ -37,13 +37,17 @@ public class ParadoxDataFile {
      */
     protected ParadoxField[] fields;
     /**
-     * The field with auto increment value.
-     */
-    private int autoIncrementValue;
-    /**
      * Block file size.
      */
     protected byte blockSize;
+    /**
+     * The file name.
+     */
+    protected String name;
+    /**
+     * The field with auto increment value.
+     */
+    private int autoIncrementValue;
     /**
      * File charset.
      */
@@ -72,10 +76,6 @@ public class ParadoxDataFile {
      * The last block in the file.
      */
     private int lastBlock;
-    /**
-     * The file name.
-     */
-    protected String name;
     /**
      * Primary key field count.
      */

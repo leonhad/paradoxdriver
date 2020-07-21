@@ -39,36 +39,36 @@ import java.util.List;
 @SuppressWarnings("java:S109")
 public class ConvertFunction implements IFunction {
 
-    private boolean convertCharset;
-    
-    private Charset charset;
-
     /**
      * The function name.
      */
     public static final String NAME = "CONVERT";
-    
+    private boolean convertCharset;
+    private Charset charset;
     private ParadoxType type = ParadoxType.VARCHAR;
-    
+
     @Override
     public String remarks() {
-    	return "Convert a string to charset specified. Example: CONVERT('value' USING utf8)";
+        return "Convert a string to charset specified. Example: CONVERT('value' USING utf8)";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string converted with charset specified.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The value to convert.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("charset", ParadoxType.VARCHAR, 255, 0, "The charset name to convert.", 2, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The string converted with charset specified.", 0, true
+                        , DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The value to convert.", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("charset", ParadoxType.VARCHAR, 255, 0, "The charset name to convert.", 2, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.SYSTEM;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return type;

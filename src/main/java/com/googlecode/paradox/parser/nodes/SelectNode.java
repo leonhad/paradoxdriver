@@ -27,14 +27,6 @@ import java.util.List;
 public final class SelectNode extends StatementNode {
 
     /**
-     * The conditions list.
-     */
-    private AbstractConditionalNode condition;
-    /**
-     * If has a distinct token.
-     */
-    private boolean distinct;
-    /**
      * The field list (SELECT).
      */
     private final List<SQLNode> fields = new ArrayList<>();
@@ -54,6 +46,14 @@ public final class SelectNode extends StatementNode {
      * The tables in from token.
      */
     private final List<TableNode> tables = new ArrayList<>();
+    /**
+     * The conditions list.
+     */
+    private AbstractConditionalNode condition;
+    /**
+     * If has a distinct token.
+     */
+    private boolean distinct;
 
     /**
      * Create a new instance.
@@ -125,15 +125,6 @@ public final class SelectNode extends StatementNode {
      */
     public List<TableNode> getTables() {
         return this.tables;
-    }
-
-    /**
-     * Sets the distinct key present.
-     *
-     * @param distinct the distinct key present.
-     */
-    public void setDistinct(final boolean distinct) {
-        this.distinct = distinct;
     }
 
     /**
@@ -281,6 +272,15 @@ public final class SelectNode extends StatementNode {
      */
     public boolean isDistinct() {
         return this.distinct;
+    }
+
+    /**
+     * Sets the distinct key present.
+     *
+     * @param distinct the distinct key present.
+     */
+    public void setDistinct(final boolean distinct) {
+        this.distinct = distinct;
     }
 
     /**

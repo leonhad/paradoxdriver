@@ -36,9 +36,9 @@ public class IntegerFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Converts the value to integer type.";
+        return "Converts the value to integer type.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -48,12 +48,12 @@ public class IntegerFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.NUMERIC;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.INTEGER;

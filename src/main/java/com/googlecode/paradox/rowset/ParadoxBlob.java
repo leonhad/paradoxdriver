@@ -44,6 +44,24 @@ public final class ParadoxBlob implements Blob {
         this.value = value;
     }
 
+    private static int areEquals(byte[] array1, int offset, byte[] array2) {
+        int ret = -1;
+        if (array2.length + offset <= array1.length) {
+            int loop;
+            for (loop = 0; loop < array2.length; loop++) {
+                if (array1[loop + offset] != array2[loop]) {
+                    break;
+                }
+            }
+
+            if (loop == array2.length) {
+                ret = offset;
+            }
+        }
+
+        return ret;
+    }
+
     /**
      * {@inheritDoc}.
      */
@@ -63,24 +81,6 @@ public final class ParadoxBlob implements Blob {
     @Override
     public long length() {
         return this.value.length;
-    }
-
-    private static int areEquals(byte[] array1, int offset, byte[] array2) {
-        int ret = -1;
-        if (array2.length + offset <= array1.length) {
-            int loop;
-            for (loop = 0; loop < array2.length; loop++) {
-                if (array1[loop + offset] != array2[loop]) {
-                    break;
-                }
-            }
-
-            if (loop == array2.length) {
-                ret = offset;
-            }
-        }
-
-        return ret;
     }
 
     @Override
@@ -139,20 +139,6 @@ public final class ParadoxBlob implements Blob {
         return new BlobStream(this);
     }
 
-    private static class BlobStream extends ByteArrayOutputStream {
-        private final ParadoxBlob parent;
-
-        public BlobStream(ParadoxBlob parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public void close() throws IOException {
-            parent.value = toByteArray();
-            super.close();
-        }
-    }
-
     /**
      * {@inheritDoc}.
      */
@@ -183,5 +169,19 @@ public final class ParadoxBlob implements Blob {
     @Override
     public int hashCode() {
         return Arrays.hashCode(value);
+    }
+
+    private static class BlobStream extends ByteArrayOutputStream {
+        private final ParadoxBlob parent;
+
+        public BlobStream(ParadoxBlob parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public void close() throws IOException {
+            parent.value = toByteArray();
+            super.close();
+        }
     }
 }

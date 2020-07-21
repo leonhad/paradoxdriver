@@ -36,24 +36,28 @@ public class RPadFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Right-pads a string with another string, to a certain length.";
+        return "Right-pads a string with another string, to a certain length.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The right-padded string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The original string.", 1, false, DatabaseMetaData.functionColumnIn),
-                new Column("length", ParadoxType.VARCHAR, 255, 0, "The length of the final string.", 2, false, DatabaseMetaData.functionColumnIn),
-                new Column("lpad_string", ParadoxType.VARCHAR, 255, 0, "The filler string to use.", 3, false, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The right-padded string.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The original string.", 1, false,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("length", ParadoxType.VARCHAR, 255, 0, "The length of the final string.", 2, false,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("lpad_string", ParadoxType.VARCHAR, 255, 0, "The filler string to use.", 3, false,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

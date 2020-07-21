@@ -33,63 +33,51 @@ public final class ParadoxField {
     private static final int CURRENCY_PRECISION = 2;
 
     private static final int BLOB_SIZE_PADDING = 10;
-
-    /**
-     * Stores the field alias.
-     */
-    private String alias;
-
-    /**
-     * If this field is checked.
-     */
-    private boolean checked;
-
-    /**
-     * This field expression.
-     */
-    private String expression;
-
-    /**
-     * The JOIN name.
-     */
-    private String joinName;
-
-    /**
-     * Field name.
-     */
-    private String name;
-
     /**
      * Order of field in table/view. The first value is one.
      */
     private final int orderNum;
-
-    /**
-     * The the field order.
-     */
-    private int realSize;
-
-    /**
-     * The field precision.
-     */
-    private int precision;
-
-    /**
-     * The field size.
-     */
-    private int size;
-
-    /**
-     * The fields owner.
-     */
-    private ParadoxTable table;
-
     /**
      * Paradox field type.
      */
     private final ParadoxType type;
-
     private final ParadoxConnection connection;
+    /**
+     * Stores the field alias.
+     */
+    private String alias;
+    /**
+     * If this field is checked.
+     */
+    private boolean checked;
+    /**
+     * This field expression.
+     */
+    private String expression;
+    /**
+     * The JOIN name.
+     */
+    private String joinName;
+    /**
+     * Field name.
+     */
+    private String name;
+    /**
+     * The the field order.
+     */
+    private int realSize;
+    /**
+     * The field precision.
+     */
+    private int precision;
+    /**
+     * The field size.
+     */
+    private int size;
+    /**
+     * The fields owner.
+     */
+    private ParadoxTable table;
 
     /**
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.
@@ -127,12 +115,30 @@ public final class ParadoxField {
     }
 
     /**
+     * Sets the field alias.
+     *
+     * @param alias the alias to set.
+     */
+    public void setAlias(final String alias) {
+        this.alias = alias;
+    }
+
+    /**
      * Gets the field expression.
      *
      * @return the field expression.
      */
     public String getExpression() {
         return this.expression;
+    }
+
+    /**
+     * Sets this field expression.
+     *
+     * @param expression the expression to set.
+     */
+    public void setExpression(final String expression) {
+        this.expression = expression;
     }
 
     /**
@@ -145,12 +151,30 @@ public final class ParadoxField {
     }
 
     /**
+     * Sets the field join name.
+     *
+     * @param joinName the join name to set.
+     */
+    public void setJoinName(final String joinName) {
+        this.joinName = joinName;
+    }
+
+    /**
      * Gets the field name.
      *
      * @return the field name.
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * Sets the field name.
+     *
+     * @param name the name to set.
+     */
+    public void setName(final String name) {
+        this.name = name;
     }
 
     /**
@@ -169,78 +193,6 @@ public final class ParadoxField {
      */
     public int getSize() {
         return this.size;
-    }
-
-    /**
-     * Gets the field table.
-     *
-     * @return the field table.
-     */
-    public ParadoxTable getTable() {
-        return this.table;
-    }
-
-    /**
-     * Gets the field type.
-     *
-     * @return the field type.
-     */
-    public ParadoxType getType() {
-        return this.type;
-    }
-
-    /**
-     * Gets field checked status.
-     *
-     * @return true if this field is checked.
-     */
-    public boolean isChecked() {
-        return this.checked;
-    }
-
-    /**
-     * Sets the field alias.
-     *
-     * @param alias the alias to set.
-     */
-    public void setAlias(final String alias) {
-        this.alias = alias;
-    }
-
-    /**
-     * Sets the field checked status.
-     *
-     * @param checked the checked to set.
-     */
-    public void setChecked(final boolean checked) {
-        this.checked = checked;
-    }
-
-    /**
-     * Sets this field expression.
-     *
-     * @param expression the expression to set.
-     */
-    public void setExpression(final String expression) {
-        this.expression = expression;
-    }
-
-    /**
-     * Sets the field join name.
-     *
-     * @param joinName the join name to set.
-     */
-    public void setJoinName(final String joinName) {
-        this.joinName = joinName;
-    }
-
-    /**
-     * Sets the field name.
-     *
-     * @param name the name to set.
-     */
-    public void setName(final String name) {
-        this.name = name;
     }
 
     /**
@@ -269,12 +221,48 @@ public final class ParadoxField {
     }
 
     /**
+     * Gets the field table.
+     *
+     * @return the field table.
+     */
+    public ParadoxTable getTable() {
+        return this.table;
+    }
+
+    /**
      * Sets the table reference.
      *
      * @param table the table reference.
      */
     public void setTable(final ParadoxTable table) {
         this.table = table;
+    }
+
+    /**
+     * Gets the field type.
+     *
+     * @return the field type.
+     */
+    public ParadoxType getType() {
+        return this.type;
+    }
+
+    /**
+     * Gets field checked status.
+     *
+     * @return true if this field is checked.
+     */
+    public boolean isChecked() {
+        return this.checked;
+    }
+
+    /**
+     * Sets the field checked status.
+     *
+     * @param checked the checked to set.
+     */
+    public void setChecked(final boolean checked) {
+        this.checked = checked;
     }
 
     /**

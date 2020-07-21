@@ -12,8 +12,8 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
-import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.utils.Expressions;
 
 /**

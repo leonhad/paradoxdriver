@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.function.string;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL OCTET_LENGTH function.
@@ -32,12 +32,11 @@ public class OctetLengthFunction implements IFunction {
      */
     public static final String NAME = "OCTET_LENGTH";
 
-
     @Override
     public String remarks() {
-    	return "Gets the length of the binary values in bytes.";
+        return "Gets the length of the binary values in bytes.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -47,12 +46,12 @@ public class OctetLengthFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.INTEGER;

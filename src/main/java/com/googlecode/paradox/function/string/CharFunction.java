@@ -35,9 +35,9 @@ public class CharFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Converts the value to char type.";
+        return "Converts the value to char type.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -47,12 +47,12 @@ public class CharFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.CHAR;
@@ -70,6 +70,6 @@ public class CharFunction implements IFunction {
             return null;
         }
 
-		return values[0].toString();
-	}
+        return values[0].toString();
+    }
 }

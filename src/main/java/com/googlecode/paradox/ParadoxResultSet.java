@@ -50,14 +50,6 @@ public final class ParadoxResultSet implements ResultSet {
      */
     private final List<Column> columns;
     /**
-     * The connection used in this {@link ResultSet}.
-     */
-    private ParadoxConnection connection;
-    /**
-     * The amount of rows fetched.
-     */
-    private int fetchSize = ParadoxResultSet.FETCH_SIZE;
-    /**
      * This {@link ResultSet} {@link Statement}.
      */
     private final Statement statement;
@@ -65,6 +57,14 @@ public final class ParadoxResultSet implements ResultSet {
      * Facade to navigate in data values.
      */
     private final DataNavigation dataNavigation;
+    /**
+     * The connection used in this {@link ResultSet}.
+     */
+    private ParadoxConnection connection;
+    /**
+     * The amount of rows fetched.
+     */
+    private int fetchSize = ParadoxResultSet.FETCH_SIZE;
     /**
      * Result set type.
      */
@@ -485,8 +485,24 @@ public final class ParadoxResultSet implements ResultSet {
      * {@inheritDoc}.
      */
     @Override
+    public void setFetchDirection(final int direction) throws SQLException {
+        this.dataNavigation.setFetchDirection(direction);
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
     public int getFetchSize() {
         return this.fetchSize;
+    }
+
+    /**
+     * {@inheritDoc}.
+     */
+    @Override
+    public void setFetchSize(final int rows) {
+        this.fetchSize = rows;
     }
 
     /**
@@ -848,14 +864,6 @@ public final class ParadoxResultSet implements ResultSet {
 
     /**
      * {@inheritDoc}.
-     */
-    @Override
-    public void setFetchDirection(final int direction) throws SQLException {
-        this.dataNavigation.setFetchDirection(direction);
-    }
-
-    /**
-     * {@inheritDoc}.
      *
      * @deprecated use {@link #getAsciiStream(String)} method.
      */
@@ -1036,14 +1044,6 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public void refreshRow() {
         // Nothing to do.
-    }
-
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public void setFetchSize(final int rows) {
-        this.fetchSize = rows;
     }
 
     /**

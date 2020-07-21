@@ -28,45 +28,37 @@ import java.util.Objects;
  */
 public final class Column {
 
+    private final boolean nullable;
     /**
      * The paradox field associated to this field.
      */
     private ParadoxField field;
-
     /**
      * Column index.
      */
     private int index;
-
     /**
      * Column Name.
      */
     private String name;
-
     /**
      * The field precision.
      */
     private int precision;
-
     /**
      * Column size.
      */
     private int size;
-
     /**
      * The SQL data type.
      *
      * @see Types
      */
     private ParadoxType type;
-
     /**
      * Column remarks.
      */
     private String remarks;
-
-    private final boolean nullable;
-
     private int columnType;
 
     /**
@@ -155,6 +147,15 @@ public final class Column {
     }
 
     /**
+     * Sets the field index.
+     *
+     * @param index the index to set.
+     */
+    public void setIndex(final int index) {
+        this.index = index;
+    }
+
+    /**
      * Gets the field name.
      *
      * @return the field name.
@@ -164,12 +165,30 @@ public final class Column {
     }
 
     /**
+     * Sets the field name
+     *
+     * @param name the field name to set.
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
      * Gets the field precision.
      *
      * @return the field precision.
      */
     public int getPrecision() {
         return this.precision;
+    }
+
+    /**
+     * Sets the field precision.
+     *
+     * @param precision the precision to set.
+     */
+    public void setPrecision(final int precision) {
+        this.precision = precision;
     }
 
     /**
@@ -200,21 +219,21 @@ public final class Column {
     }
 
     /**
-     * Gets the column value.
-     *
-     * @return the column value.
-     */
-    public Object getValue() {
-        return value;
-    }
-
-    /**
      * Sets the type.
      *
      * @param type the type.
      */
     public void setType(final ParadoxType type) {
         this.type = type;
+    }
+
+    /**
+     * Gets the column value.
+     *
+     * @return the column value.
+     */
+    public Object getValue() {
+        return value;
     }
 
     /**
@@ -280,33 +299,6 @@ public final class Column {
         }
 
         return null;
-    }
-
-    /**
-     * Sets the field index.
-     *
-     * @param index the index to set.
-     */
-    public void setIndex(final int index) {
-        this.index = index;
-    }
-
-    /**
-     * Sets the field name
-     *
-     * @param name the field name to set.
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * Sets the field precision.
-     *
-     * @param precision the precision to set.
-     */
-    public void setPrecision(final int precision) {
-        this.precision = precision;
     }
 
     /**

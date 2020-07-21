@@ -10,8 +10,6 @@
  */
 package com.googlecode.paradox.function.string;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
@@ -19,6 +17,8 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL CONCAT_WS function.
@@ -35,23 +35,27 @@ public class ConcatWSFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Concatenate a sequence of strings with a separator. This functions support any number of parameters above 1.";
+        return "Concatenate a sequence of strings with a separator. This functions support any number of parameters " +
+                "above 1.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The concatenated string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("separator", ParadoxType.VARCHAR, 255, 0, "The string separator", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 2, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The concatenated string.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("separator", ParadoxType.VARCHAR, 255, 0, "The string separator", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to concatenate", 2, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;
@@ -82,7 +86,7 @@ public class ConcatWSFunction implements IFunction {
                 if (i != 1) {
                     ret.append(separator);
                 }
-                
+
                 ret.append(value);
             }
         }

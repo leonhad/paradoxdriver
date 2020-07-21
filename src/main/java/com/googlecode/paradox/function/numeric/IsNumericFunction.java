@@ -29,18 +29,17 @@ import java.util.logging.Logger;
  */
 public class IsNumericFunction implements IFunction {
 
-    private static final Logger LOGGER = Logger.getLogger(IsNumericFunction.class.getName());
-
     /**
      * The function name.
      */
     public static final String NAME = "ISNUMERIC";
+    private static final Logger LOGGER = Logger.getLogger(IsNumericFunction.class.getName());
 
     @Override
     public String remarks() {
-    	return "Checks if the value can be a numeric value.";
+        return "Checks if the value can be a numeric value.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -50,12 +49,12 @@ public class IsNumericFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.NUMERIC;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.INTEGER;

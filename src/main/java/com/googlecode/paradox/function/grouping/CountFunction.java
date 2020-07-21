@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.function.grouping;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The COUNT grouping function.
@@ -34,9 +34,9 @@ public class CountFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Gets the count of rows in group.";
+        return "Gets the count of rows in group.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -46,12 +46,12 @@ public class CountFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.NUMERIC;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.INTEGER;

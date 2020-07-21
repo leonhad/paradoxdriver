@@ -10,19 +10,6 @@
  */
 package com.googlecode.paradox.metadata;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.RowIdLifetime;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
@@ -36,6 +23,11 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
+
+import java.io.File;
+import java.sql.*;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Creates an database metadata.
@@ -62,6 +54,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     public static final String ORDINAL_POSITION = "ORDINAL_POSITION";
     public static final String IS_NULLABLE = "IS_NULLABLE";
     public static final String COLUMN_TYPE = "COLUMN_TYPE";
+    public static final String TYPE_SCHEM = "TYPE_SCHEM";
+    public static final String VIEW = "VIEW";
+    public static final String SYSTEM_TABLE = "SYSTEM TABLE";
     /**
      * The column name field.
      */
@@ -110,9 +105,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * The type name field.
      */
     private static final String TYPE_NAME = "TYPE_NAME";
-    public static final String TYPE_SCHEM = "TYPE_SCHEM";
-    public static final String VIEW = "VIEW";
-    public static final String SYSTEM_TABLE = "SYSTEM TABLE";
     /**
      * The database connection.
      */
@@ -978,7 +970,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getStringFunctions() {
-    	return FunctionFactory.getByType(FunctionType.STRING);
+        return FunctionFactory.getByType(FunctionType.STRING);
     }
 
     /**
@@ -1002,7 +994,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getSystemFunctions() {
-    	return FunctionFactory.getByType(FunctionType.SYSTEM);
+        return FunctionFactory.getByType(FunctionType.SYSTEM);
     }
 
     /**
@@ -1074,7 +1066,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public String getTimeDateFunctions() {
-    	return FunctionFactory.getByType(FunctionType.TIME_DATE);
+        return FunctionFactory.getByType(FunctionType.TIME_DATE);
     }
 
     /**

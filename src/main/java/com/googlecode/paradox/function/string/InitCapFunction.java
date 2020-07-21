@@ -35,23 +35,24 @@ public class InitCapFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Capitalize the string.";
+        return "Capitalize the string.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The capitalized string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to capitalize", 1, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The capitalized string.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("string", ParadoxType.VARCHAR, 255, 0, "The string to capitalize", 1, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

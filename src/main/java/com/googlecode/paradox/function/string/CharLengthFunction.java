@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.function.string;
 
-import java.sql.DatabaseMetaData;
-
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.DatabaseMetaData;
 
 /**
  * The SQL char length function.
@@ -27,16 +27,16 @@ import com.googlecode.paradox.results.ParadoxType;
  */
 public class CharLengthFunction implements IFunction {
 
-	/**
-	 * The function name.
-	 */
-	public static final String NAME = "CHAR_LENGTH";
+    /**
+     * The function name.
+     */
+    public static final String NAME = "CHAR_LENGTH";
 
     @Override
     public String remarks() {
-    	return "Gets the length of the character values.";
+        return "Gets the length of the character values.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
@@ -46,29 +46,29 @@ public class CharLengthFunction implements IFunction {
                         DatabaseMetaData.functionColumnIn)
         };
     }
-    
-	@Override
+
+    @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-	
-	@Override
-	public ParadoxType fieldType() {
-		return ParadoxType.INTEGER;
-	}
 
-	@Override
-	public int parameterCount() {
-		return 1;
-	}
+    @Override
+    public ParadoxType fieldType() {
+        return ParadoxType.INTEGER;
+    }
 
-	@Override
-	public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-			final FieldNode[] fields) {
-		if (values[0] != null) {
-			return values[0].toString().length();
-		}
+    @Override
+    public int parameterCount() {
+        return 1;
+    }
 
-		return null;
-	}
+    @Override
+    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+                          final FieldNode[] fields) {
+        if (values[0] != null) {
+            return values[0].toString().length();
+        }
+
+        return null;
+    }
 }

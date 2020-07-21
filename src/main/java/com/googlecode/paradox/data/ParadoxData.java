@@ -26,14 +26,12 @@ import java.util.logging.Logger;
  */
 public class ParadoxData {
 
-    private static final int CHARSET_DEFAULT = 437;
-    private static final Charset CP437 = Charset.forName("cp437");
-
     /**
      * Minimum paradox file version.
      */
     protected static final int MINIMUM_VERSION = 4;
-
+    private static final int CHARSET_DEFAULT = 437;
+    private static final Charset CP437 = Charset.forName("cp437");
     private static final Map<Integer, Charset> CHARSET_TABLE = new HashMap<>();
 
     static {

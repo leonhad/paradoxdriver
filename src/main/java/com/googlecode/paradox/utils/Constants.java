@@ -17,15 +17,11 @@ package com.googlecode.paradox.utils;
  * @since 1.0
  */
 public final class Constants {
-    
+
     /**
      * Driver Name.
      */
     public static final String DRIVER_NAME = "Paradox Driver";
-    /**
-     * Driver String Version.
-     */
-    public static final String DRIVER_VERSION = Constants.MAJOR_VERSION + "." + Constants.MINOR_VERSION;
     /**
      * Major version of the Driver.
      */
@@ -38,6 +34,10 @@ public final class Constants {
      * Minor version of the Driver.
      */
     public static final int MINOR_VERSION = 6;
+    /**
+     * Driver String Version.
+     */
+    public static final String DRIVER_VERSION = Constants.MAJOR_VERSION + "." + Constants.MINOR_VERSION;
     /**
      * Driver prefix.
      */

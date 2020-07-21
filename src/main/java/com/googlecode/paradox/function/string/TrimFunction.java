@@ -35,37 +35,39 @@ import java.util.List;
 public class TrimFunction implements IFunction {
 
     public static final String[] TYPES = {"BOTH", "LEADING", "TRAILING"};
-    
+
     /**
      * The function name.
      */
     public static final String NAME = "TRIM";
 
-    private TrimType type = TrimType.BOTH;
-    
     static {
         // Allow binary search.
         Arrays.sort(TYPES);
     }
 
+    private TrimType type = TrimType.BOTH;
+
     @Override
     public String remarks() {
-    	return "Remove leading and trailing spaces from a string.";
+        return "Remove leading and trailing spaces from a string.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to extract from.", 1, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to extract from.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
 
-	@Override
-	public FunctionType type() {
-		return FunctionType.STRING;
-	}
-    
+    @Override
+    public FunctionType type() {
+        return FunctionType.STRING;
+    }
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

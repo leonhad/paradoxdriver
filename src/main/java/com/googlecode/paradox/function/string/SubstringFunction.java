@@ -37,24 +37,28 @@ public class SubstringFunction implements IFunction {
 
     @Override
     public String remarks() {
-    	return "Extracts some characters from a string.";
+        return "Extracts some characters from a string.";
     }
-    
+
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to extract from.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("start", ParadoxType.INTEGER, 8, 0, "The start position. Begin with 1.", 2, true, DatabaseMetaData.functionColumnIn),
-                new Column("length", ParadoxType.INTEGER, 8, 0, "The amount to extract.", 3, true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.VARCHAR, 255, 0, "The extracted string.", 0, true,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.VARCHAR, 255, 0, "The string to extract from.", 1, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("start", ParadoxType.INTEGER, 8, 0, "The start position. Begin with 1.", 2, true,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("length", ParadoxType.INTEGER, 8, 0, "The amount to extract.", 3, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
-    
+
     @Override
     public FunctionType type() {
         return FunctionType.STRING;
     }
-    
+
     @Override
     public ParadoxType fieldType() {
         return ParadoxType.VARCHAR;

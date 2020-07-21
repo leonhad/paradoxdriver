@@ -54,7 +54,6 @@ public class ParadoxDataException extends SQLDataException {
         super(ExceptionUtils.message(error.description, parameter), BASE_CODE + error.code);
     }
 
-
     /**
      * The connection error exception.
      *
