@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Unit test for {@link SQLParser}.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -845,4 +845,23 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser("select upper('2'");
         Assert.assertThrows("Invalid function definition", ParadoxSyntaxErrorException.class, parser::parse);
     }
+
+    /**
+     * Test for boolean values.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testBooleanValues() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT TRUE, FALSE");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid field size", 2, select.getFields().size());
+        Assert.assertEquals("Invalid field size", "upper", select.getFields().get(0).getName());
+        Assert.assertEquals("Invalid field size", "upper", select.getFields().get(1).getName());
+    }
+
 }

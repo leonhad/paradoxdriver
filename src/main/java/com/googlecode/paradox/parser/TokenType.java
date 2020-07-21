@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.0
  */
 public enum TokenType {
@@ -58,7 +58,7 @@ public enum TokenType {
     COMMA(","),
 
     /**
-     * Desc token.
+     * DESC token.
      */
     DESC,
 
@@ -81,6 +81,11 @@ public enum TokenType {
      * Escape token.
      */
     ESCAPE,
+
+    /**
+     * False token.
+     */
+    FALSE,
 
     /**
      * FOR token.
@@ -153,6 +158,11 @@ public enum TokenType {
     ILIKE,
 
     /**
+     * IS token (used only in null values).
+     */
+    IS,
+
+    /**
      * Left parenthesis token.
      */
     L_PAREN("("),
@@ -166,6 +176,11 @@ public enum TokenType {
      * More token.
      */
     MORE(">"),
+
+    /**
+     * Not token.
+     */
+    NOT,
 
     /**
      * Not equals token.
@@ -238,6 +253,11 @@ public enum TokenType {
     SEMI(";"),
 
     /**
+     * True token.
+     */
+    TRUE,
+
+    /**
      * Update token.
      */
     UPDATE,
@@ -250,17 +270,7 @@ public enum TokenType {
     /**
      * Where token.
      */
-    WHERE,
-
-    /**
-     * IS token (used only in null values).
-     */
-    IS,
-
-    /**
-     * Not token.
-     */
-    NOT;
+    WHERE;
 
     /**
      * Stores the conditional break values.

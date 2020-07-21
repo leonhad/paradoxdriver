@@ -46,7 +46,7 @@ public class ParadoxData {
         CHARSET_TABLE.put(867, Charset.forName("cp862"));
         CHARSET_TABLE.put(932, Charset.forName("windows-31j"));
         CHARSET_TABLE.put(936, Charset.forName("cp936"));
-        CHARSET_TABLE.put(1251, Charset.forName("windows-1251"));
+        CHARSET_TABLE.put(1251, Charset.forName("cp1251"));
         CHARSET_TABLE.put(1252, Charset.forName("cp1252"));
     }
 
