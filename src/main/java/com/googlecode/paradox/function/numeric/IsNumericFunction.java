@@ -43,7 +43,7 @@ public class IsNumericFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.BOOLEAN, 0, 1, "True if the value is numeric.", 0, false,
+                new Column(null, ParadoxType.INTEGER, 0, 1, "True if the value is numeric.", 0, false,
                         DatabaseMetaData.functionColumnResult),
                 new Column("number", ParadoxType.VARCHAR, 8, 15, "The value to check.", 1, true,
                         DatabaseMetaData.functionColumnIn)
