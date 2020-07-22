@@ -113,6 +113,7 @@ public final class FunctionFactory {
 
         // System functions.
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);
+        FUNCTIONS.put(DegreesFunction.NAME, DegreesFunction::new);
         FUNCTIONS.put(DriverMajorVersionFunction.NAME, DriverMajorVersionFunction::new);
         FUNCTIONS.put(DriverMinorVersionFunction.NAME, DriverMinorVersionFunction::new);
         FUNCTIONS.put(DriverNameFunction.NAME, DriverNameFunction::new);
