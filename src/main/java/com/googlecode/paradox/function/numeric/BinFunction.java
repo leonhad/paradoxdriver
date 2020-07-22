@@ -23,30 +23,30 @@ import java.math.BigDecimal;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL HEX functions.
+ * The SQL BIN functions.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class HexFunction implements IFunction {
+public class BinFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "HEX";
+    public static final String NAME = "BIN";
 
     @Override
     public String remarks() {
-        return "Returns a hexadecimal representation of a number, as a string value..";
+        return "Returns a binary representation of a number, as a string value..";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
                 new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
-                        "The the hexadecimal representation of a number.", 0, false,
+                        "The the binay representation of a number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.LONG, 0, 8, "A numeric value.", 1,
+                new Column("number", ParadoxType.INTEGER, 0, 4, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
     }
@@ -74,6 +74,6 @@ public class HexFunction implements IFunction {
             return null;
         }
 
-        return value.toBigInteger().toString(0x10);
+        return value.toBigInteger().toString(0x02);
     }
 }
