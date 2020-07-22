@@ -114,6 +114,7 @@ public final class FunctionFactory {
         // System functions.
         FUNCTIONS.put(ACosFunction.NAME, ACosFunction::new);
         FUNCTIONS.put(ACotFunction.NAME, ACotFunction::new);
+        FUNCTIONS.put(ASinFunction.NAME, ASinFunction::new);
         FUNCTIONS.put(CeilingFunction.NAME, CeilingFunction::new);
         FUNCTIONS.put(CosFunction.NAME, CosFunction::new);
         FUNCTIONS.put(CoshFunction.NAME, CoshFunction::new);
@@ -125,6 +126,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(DriverNameFunction.NAME, DriverNameFunction::new);
         FUNCTIONS.put(FloorFunction.NAME, FloorFunction::new);
         FUNCTIONS.put("SESSION_USER", UserFunction::new);
+        FUNCTIONS.put(SinFunction.NAME, SinFunction::new);
         FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
         FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
         FUNCTIONS.put(VersionFunction.NAME, VersionFunction::new);

@@ -21,28 +21,28 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL ACOS functions.
+ * The SQL ASIN functions.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class ACosFunction implements IFunction {
+public class ASinFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "ACOS";
+    public static final String NAME = "ASIN";
 
     @Override
     public String remarks() {
-        return "Returns the arc-cosine of a number.";
+        return "Returns the arc-sine of a number.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
                 new Column(null, ParadoxType.NUMBER, 8, 15,
-                        "The the arc-cosine of a number.", 0, false,
+                        "The the arc-sine of a number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
                 new Column("number", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn)
@@ -72,6 +72,6 @@ public class ACosFunction implements IFunction {
             return null;
         }
 
-        return Math.acos(value);
+        return Math.asin(value);
     }
 }
