@@ -10,12 +10,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link DateFunction}.
+ * Unit test for {@link DateFromPartsFunction}.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class DateFunctionTest {
+public class DateFromPartsFunctionTest {
 
     /**
      * The connection string used in this tests.
@@ -30,7 +30,7 @@ public class DateFunctionTest {
     /**
      * Creates a new instance.
      */
-    public DateFunctionTest() {
+    public DateFromPartsFunctionTest() {
         super();
     }
 
@@ -66,32 +66,33 @@ public class DateFunctionTest {
     }
 
     /**
-     * Test for time value.
+     * Test function.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTime() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select DATE('01:02:03') ");
+    public void testFunction() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEFROMPARTS(2018, 10, 31)");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNull("Invalid date", rs.getDate(1));
+            Assert.assertNotNull("Null date value", rs.getDate(1));
+            Assert.assertEquals("Invalid date", "2018-10-31", rs.getDate(1).toString());
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
 
     /**
-     * Test for date function.
+     * Test for invalid date.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDate() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select DATE('2020-01-01') ");
+    public void testInvalid() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEFROMPARTS(2018, 2, 31)");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotNull("Invalid date", rs.getDate(1));
-            Assert.assertEquals("Invalid date", "2020-01-01", rs.getDate(1).toString());
+            Assert.assertNotNull("Null date value", rs.getDate(1));
+            Assert.assertEquals("Invalid date", "2018-03-03", rs.getDate(1).toString());
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
