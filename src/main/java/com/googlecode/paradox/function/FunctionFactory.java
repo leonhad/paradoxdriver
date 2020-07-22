@@ -59,7 +59,6 @@ public final class FunctionFactory {
         FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(ConvertFunction.NAME, ConvertFunction::new);
-        FUNCTIONS.put(IntegerFunction.NAME, IntegerFunction::new);
         FUNCTIONS.put("ISNULL", NvlFunction::new);
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
@@ -83,6 +82,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(DegreesFunction.NAME, DegreesFunction::new);
         FUNCTIONS.put(ExpFunction.NAME, ExpFunction::new);
         FUNCTIONS.put(FloorFunction.NAME, FloorFunction::new);
+        FUNCTIONS.put(IntegerFunction.NAME, IntegerFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
         FUNCTIONS.put(Log10Function.NAME, Log10Function::new);
         FUNCTIONS.put(LogFunction.NAME, LogFunction::new);
@@ -129,7 +129,10 @@ public final class FunctionFactory {
         FUNCTIONS.put(VarcharFunction.NAME, VarcharFunction::new);
 
         // System functions.
+        FUNCTIONS.put(ConnectionIDFunction.NAME, ConnectionIDFunction::new);
+        FUNCTIONS.put(CurrentSchemaFunction.NAME, CurrentSchemaFunction::new);
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);
+        FUNCTIONS.put(DatabaseFunction.NAME, DatabaseFunction::new);
         FUNCTIONS.put(DriverMajorVersionFunction.NAME, DriverMajorVersionFunction::new);
         FUNCTIONS.put(DriverMinorVersionFunction.NAME, DriverMinorVersionFunction::new);
         FUNCTIONS.put(DriverNameFunction.NAME, DriverNameFunction::new);
