@@ -15,8 +15,7 @@ import com.googlecode.paradox.function.general.*;
 import com.googlecode.paradox.function.grouping.CountFunction;
 import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
-import com.googlecode.paradox.function.system.UserFunction;
-import com.googlecode.paradox.function.system.VersionFunction;
+import com.googlecode.paradox.function.system.*;
 
 import java.util.Collections;
 import java.util.Map;
@@ -114,10 +113,14 @@ public final class FunctionFactory {
 
         // System functions.
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);
+        FUNCTIONS.put(DriverMajorVersionFunction.NAME, DriverMajorVersionFunction::new);
+        FUNCTIONS.put(DriverMinorVersionFunction.NAME, DriverMinorVersionFunction::new);
+        FUNCTIONS.put(DriverNameFunction.NAME, DriverNameFunction::new);
         FUNCTIONS.put("SESSION_USER", UserFunction::new);
         FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
         FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
         FUNCTIONS.put(VersionFunction.NAME, VersionFunction::new);
+        FUNCTIONS.put(VersionNumberFunction.NAME, VersionNumberFunction::new);
 
         FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));

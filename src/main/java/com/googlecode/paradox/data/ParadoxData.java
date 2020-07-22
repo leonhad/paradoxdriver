@@ -83,7 +83,7 @@ public class ParadoxData {
             } else {
                 dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
                 if (CHARSET_TABLE.get(cp) == null) {
-                    Logger.getLogger(ParadoxData.class.getName()).severe(() -> "Charset " + cp + " not found.");
+                    Logger.getLogger(ParadoxData.class.getName()).finest(() -> "Charset " + cp + " not found.");
                 }
             }
             buffer.position(0x78);
