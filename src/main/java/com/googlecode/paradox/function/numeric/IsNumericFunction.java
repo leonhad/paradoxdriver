@@ -41,7 +41,7 @@ public class IsNumericFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 0, 1, "True if the value is numeric.", 0, false,
+                new Column(null, ParadoxType.BOOLEAN, 0, 1, "True if the value is numeric.", 0, false,
                         DatabaseMetaData.functionColumnResult),
                 new Column("number", ParadoxType.NUMBER, 8, 15, "The value to check.", 1, true,
                         DatabaseMetaData.functionColumnIn)
@@ -55,7 +55,7 @@ public class IsNumericFunction implements IFunction {
 
     @Override
     public ParadoxType fieldType() {
-        return ParadoxType.INTEGER;
+        return ParadoxType.BOOLEAN;
     }
 
     @Override
@@ -71,9 +71,9 @@ public class IsNumericFunction implements IFunction {
         }
 
         if (ValuesConverter.getDouble(values[0]) != null) {
-            return 1;
+            return Boolean.TRUE;
         }
 
-        return 0;
+        return Boolean.FALSE;
     }
 }

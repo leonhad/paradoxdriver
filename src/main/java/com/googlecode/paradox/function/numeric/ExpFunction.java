@@ -21,7 +21,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL SIGN functions.
+ * The SQL EXP functions.
  *
  * @version 1.0
  * @since 1.6.0

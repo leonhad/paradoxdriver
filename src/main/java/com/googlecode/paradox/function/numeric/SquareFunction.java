@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.date;
+package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
@@ -21,41 +21,42 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL ISDATE functions.
+ * The SQL SQUARE functions.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class IsDateFunction implements IFunction {
+public class SquareFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "ISDATE";
+    public static final String NAME = "SQUARE";
 
     @Override
     public String remarks() {
-        return "Checks if the value can be a date or time value.";
+        return "Returns the square of a number.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.BOOLEAN, 0, 1, "True if the value is date.", 0, false,
+                new Column(null, ParadoxType.NUMBER, 8, 15,
+                        "The number in power of 2.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.DATE, 0, 4, "The value to check.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
+                new Column("number", ParadoxType.NUMBER, 8, 15, "A positive number to calculate the square of.", 1,
+                        true, DatabaseMetaData.functionColumnIn)
         };
     }
 
     @Override
     public FunctionType type() {
-        return FunctionType.TIME_DATE;
+        return FunctionType.NUMERIC;
     }
 
     @Override
     public ParadoxType fieldType() {
-        return ParadoxType.BOOLEAN;
+        return ParadoxType.NUMBER;
     }
 
     @Override
@@ -66,14 +67,11 @@ public class IsDateFunction implements IFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] == null) {
-            return 0;
+        final Double value = ValuesConverter.getDouble(values[0]);
+        if (value == null) {
+            return null;
         }
 
-        if (ValuesConverter.getDate(values[0]) != null) {
-            return Boolean.TRUE;
-        }
-
-        return Boolean.FALSE;
+        return Math.pow(value, 2);
     }
 }
