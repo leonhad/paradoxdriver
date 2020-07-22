@@ -326,7 +326,7 @@ public final class ValuesConverter {
         return ret;
     }
 
-    private static Time removeDate(java.util.Date date) {
+    public static Time removeDate(java.util.Date date) {
         if (date == null) {
             return null;
         }
@@ -418,6 +418,21 @@ public final class ValuesConverter {
         return ret;
     }
 
+    public static Date removeTime(java.util.Date date) {
+        if (date == null) {
+            return null;
+        }
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+
+        return new Date(c.getTimeInMillis());
+    }
+
     /**
      * Converts the value to date.
      *
@@ -429,7 +444,7 @@ public final class ValuesConverter {
         if (value instanceof Date) {
             ret = (Date) value;
         } else if (value instanceof java.util.Date) {
-            ret = new Date(((java.util.Date) value).getTime());
+            ret = removeTime((java.util.Date) value);
         } else if (value != null) {
             try {
                 ret = Date.valueOf(value.toString());
@@ -439,17 +454,9 @@ public final class ValuesConverter {
                 try {
                     // Trying with timestamp instead.
                     final Timestamp timestamp = Timestamp.valueOf(value.toString());
-                    ret = new Date(timestamp.getTime());
+                    ret = removeTime(timestamp);
                 } catch (final IllegalArgumentException e1) {
                     LOGGER.log(Level.FINEST, e1.getMessage(), e1);
-
-                    try {
-                        // Trying with time instead.
-                        final Time time = Time.valueOf(value.toString());
-                        ret = new Date(time.getTime());
-                    } catch (final IllegalArgumentException e2) {
-                        LOGGER.log(Level.FINEST, e2.getMessage(), e2);
-                    }
                 }
             }
         }

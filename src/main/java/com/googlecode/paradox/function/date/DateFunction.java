@@ -11,10 +11,8 @@
 package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.IFunction;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -22,34 +20,33 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.util.List;
-import java.util.TimeZone;
 
 /**
- * The SQL CURRENT_TIME function.
+ * The SQL DATE function.
  *
- * @version 1.4
+ * @version 1.0
  * @since 1.6.0
  */
-public class CurrentTimeFunction implements IFunction {
+@SuppressWarnings({"i18n-java:V1017", "java:S109"})
+public class DateFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "CURRENT_TIME";
+    public static final String NAME = "DATE";
 
     @Override
     public String remarks() {
-        return "Gets the current time.";
+        return "Extract date from a timestamp value.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.TIME, 0, 4, "The current time.", 0, false,
+                new Column(null, ParadoxType.TIME, 0, 4, "The date.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("precision", ParadoxType.INTEGER, 0, 1, "The time precision from 0 to 6. Ignored", 1, true,
+                new Column("date", ParadoxType.TIMESTAMP, 0, 11, "The time/datetime to extract the time from.", 1,
+                        false,
                         DatabaseMetaData.functionColumnIn)
         };
     }
@@ -61,43 +58,18 @@ public class CurrentTimeFunction implements IFunction {
 
     @Override
     public ParadoxType fieldType() {
-        return ParadoxType.TIME;
+        return ParadoxType.DATE;
     }
 
     @Override
     public int parameterCount() {
-        return 0;
-    }
-
-    @Override
-    public boolean isAllowAlias() {
-        return true;
-    }
-
-    @Override
-    public boolean isVariableParameters() {
-        return true;
+        return 1;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-        if (types.length == 1) {
-            final int value = ValuesConverter.getPositiveInteger(values[0]);
-            if (value < 0x00 || value > 0x06) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
-                        values[0]);
-            }
-        }
 
-        long time = System.currentTimeMillis();
-        return ValuesConverter.removeDate(new Time(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)));
-    }
-
-    @Override
-    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        if (parameters.size() > 1) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, "1");
-        }
+        return ValuesConverter.getDate(values[0]);
     }
 }

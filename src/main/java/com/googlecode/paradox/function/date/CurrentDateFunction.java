@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
 import java.sql.Date;
@@ -71,6 +72,6 @@ public class CurrentDateFunction implements IFunction {
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         long time = System.currentTimeMillis();
-        return new Date(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time));
+        return ValuesConverter.removeTime(new Date(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)));
     }
 }
