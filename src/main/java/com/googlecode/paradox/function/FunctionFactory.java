@@ -18,7 +18,6 @@ import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
 
-import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -70,6 +69,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
         FUNCTIONS.put(ExpFunction.NAME, ExpFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
+        FUNCTIONS.put(LogFunction.NAME, LogFunction::new);
         FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
         FUNCTIONS.put(PowerFunction.NAME, PowerFunction::new);
         FUNCTIONS.put(RadiansFunction.NAME, RadiansFunction::new);
