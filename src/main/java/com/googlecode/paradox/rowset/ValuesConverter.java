@@ -140,6 +140,12 @@ public final class ValuesConverter {
             ret = (Byte) value;
         } else if (value instanceof Number) {
             ret = ((Number) value).byteValue();
+        } else if (value instanceof Boolean) {
+            if (((boolean) value)) {
+                ret = 1;
+            } else {
+                ret = 0;
+            }
         } else if (value != null) {
             try {
                 ret = Byte.valueOf(value.toString());
@@ -157,6 +163,12 @@ public final class ValuesConverter {
             ret = (Short) value;
         } else if (value instanceof Number) {
             ret = ((Number) value).shortValue();
+        } else if (value instanceof Boolean) {
+            if (((boolean) value)) {
+                ret = 1;
+            } else {
+                ret = 0;
+            }
         } else if (value != null) {
             try {
                 ret = Short.valueOf(value.toString());
@@ -186,10 +198,17 @@ public final class ValuesConverter {
 
     public static Integer getInteger(final Object value) {
         Integer ret = null;
+
         if (value instanceof Integer) {
             ret = (Integer) value;
         } else if (value instanceof Number) {
             ret = ((Number) value).intValue();
+        } else if (value instanceof Boolean) {
+            if (((boolean) value)) {
+                ret = 1;
+            } else {
+                ret = 0;
+            }
         } else if (value != null) {
             try {
                 ret = Integer.valueOf(value.toString());
@@ -204,7 +223,6 @@ public final class ValuesConverter {
                 }
             }
         }
-
         return ret;
     }
 
@@ -214,6 +232,12 @@ public final class ValuesConverter {
             ret = (Long) value;
         } else if (value instanceof Number) {
             ret = ((Number) value).longValue();
+        } else if (value instanceof Boolean) {
+            if (((boolean) value)) {
+                ret = 1L;
+            } else {
+                ret = 0L;
+            }
         } else if (value != null) {
             try {
                 ret = Long.valueOf(value.toString());
@@ -238,6 +262,12 @@ public final class ValuesConverter {
             return (BigDecimal) value;
         } else if (value instanceof Number) {
             ret = BigDecimal.valueOf(((Number) value).doubleValue());
+        } else if (value instanceof Boolean) {
+            if (((boolean) value)) {
+                ret = BigDecimal.ONE;
+            } else {
+                ret = BigDecimal.ZERO;
+            }
         } else if (value != null) {
             try {
                 ret = new BigDecimal(value.toString());
@@ -255,6 +285,12 @@ public final class ValuesConverter {
             ret = (Float) value;
         } else if (value instanceof Number) {
             ret = ((Number) value).floatValue();
+        } else if (value instanceof Boolean) {
+            if (((boolean) value)) {
+                ret = 1.0F;
+            } else {
+                ret = 0.0F;
+            }
         } else if (value != null) {
             try {
                 ret = Float.valueOf(value.toString());
@@ -272,6 +308,12 @@ public final class ValuesConverter {
             ret = (Double) value;
         } else if (value instanceof Number) {
             ret = ((Number) value).doubleValue();
+        } else if (value instanceof Boolean) {
+            if (((boolean) value)) {
+                ret = 1.0;
+            } else {
+                ret = 0.0;
+            }
         } else if (value != null) {
             try {
                 ret = Double.valueOf(value.toString());
