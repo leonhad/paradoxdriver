@@ -72,6 +72,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
         FUNCTIONS.put(RandFunction.NAME, RandFunction::new);
         FUNCTIONS.put(SignFunction.NAME, SignFunction::new);
+        FUNCTIONS.put(SqrtFunction.NAME, SqrtFunction::new);
         FUNCTIONS.put(SquareFunction.NAME, SquareFunction::new);
         FUNCTIONS.put(TanFunction.NAME, TanFunction::new);
 
