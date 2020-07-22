@@ -354,7 +354,7 @@ public final class ValuesConverter {
             ret = removeDate((java.util.Date) value);
         } else if (value != null) {
             try {
-                ret = Time.valueOf(value.toString());
+                ret = Time.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
 
@@ -393,7 +393,7 @@ public final class ValuesConverter {
             ret = new Timestamp(((java.util.Date) value).getTime());
         } else if (value != null) {
             try {
-                ret = Timestamp.valueOf(value.toString());
+                ret = Timestamp.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
 
@@ -447,7 +447,7 @@ public final class ValuesConverter {
             ret = removeTime((java.util.Date) value);
         } else if (value != null) {
             try {
-                ret = Date.valueOf(value.toString());
+                ret = Date.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
 
