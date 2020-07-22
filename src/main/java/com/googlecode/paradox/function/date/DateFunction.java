@@ -43,7 +43,7 @@ public class DateFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.TIME, 0, 4, "The date.", 0, false,
+                new Column(null, ParadoxType.DATE, 0, 4, "The date.", 0, false,
                         DatabaseMetaData.functionColumnResult),
                 new Column("date", ParadoxType.TIMESTAMP, 0, 11, "The time/datetime to extract the time from.", 1,
                         false,
