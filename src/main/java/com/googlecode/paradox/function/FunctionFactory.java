@@ -112,6 +112,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(VarcharFunction.NAME, VarcharFunction::new);
 
         // System functions.
+        FUNCTIONS.put(CeilingFunction.NAME, CeilingFunction::new);
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);
         FUNCTIONS.put(DegreesFunction.NAME, DegreesFunction::new);
         FUNCTIONS.put(DriverMajorVersionFunction.NAME, DriverMajorVersionFunction::new);
