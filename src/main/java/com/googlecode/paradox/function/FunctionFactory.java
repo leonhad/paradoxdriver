@@ -115,6 +115,8 @@ public final class FunctionFactory {
         FUNCTIONS.put(ACosFunction.NAME, ACosFunction::new);
         FUNCTIONS.put(ACotFunction.NAME, ACotFunction::new);
         FUNCTIONS.put(ASinFunction.NAME, ASinFunction::new);
+        FUNCTIONS.put(ATanFunction.NAME, ATanFunction::new);
+        FUNCTIONS.put(ATN2Function.NAME, ATN2Function::new);
         FUNCTIONS.put(CeilingFunction.NAME, CeilingFunction::new);
         FUNCTIONS.put(CosFunction.NAME, CosFunction::new);
         FUNCTIONS.put(CoshFunction.NAME, CoshFunction::new);
