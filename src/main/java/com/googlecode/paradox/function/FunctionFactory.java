@@ -82,6 +82,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(DegreesFunction.NAME, DegreesFunction::new);
         FUNCTIONS.put(ExpFunction.NAME, ExpFunction::new);
         FUNCTIONS.put(FloorFunction.NAME, FloorFunction::new);
+        FUNCTIONS.put(HexFunction.NAME, HexFunction::new);
         FUNCTIONS.put(IntegerFunction.NAME, IntegerFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
         FUNCTIONS.put(Log10Function.NAME, Log10Function::new);
