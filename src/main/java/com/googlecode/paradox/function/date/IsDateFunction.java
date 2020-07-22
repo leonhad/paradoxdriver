@@ -35,7 +35,7 @@ public class IsDateFunction implements IFunction {
 
     @Override
     public String remarks() {
-        return "Checks if the value can be a date value.";
+        return "Checks if the value can be a date or time value.";
     }
 
     @Override
