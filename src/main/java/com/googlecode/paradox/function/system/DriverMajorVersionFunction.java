@@ -40,7 +40,7 @@ public class DriverMajorVersionFunction implements IFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+        return new Column[]{new Column(null, ParadoxType.INTEGER, 0, 4,
                 "The driver major version.", 0, false, DatabaseMetaData.functionColumnResult)};
     }
 
@@ -51,7 +51,7 @@ public class DriverMajorVersionFunction implements IFunction {
 
     @Override
     public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
+        return ParadoxType.INTEGER;
     }
 
     @Override

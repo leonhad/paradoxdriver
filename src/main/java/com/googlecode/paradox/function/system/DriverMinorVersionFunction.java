@@ -40,8 +40,9 @@ public class DriverMinorVersionFunction implements IFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
-                "The driver minor version.", 0, false, DatabaseMetaData.functionColumnResult)};
+        return new Column[]{new Column(null, ParadoxType.INTEGER, 0, 4,
+                "The driver minor version.", 0, false, DatabaseMetaData.functionColumnResult)
+        };
     }
 
     @Override
@@ -51,7 +52,7 @@ public class DriverMinorVersionFunction implements IFunction {
 
     @Override
     public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
+        return ParadoxType.INTEGER;
     }
 
     @Override
