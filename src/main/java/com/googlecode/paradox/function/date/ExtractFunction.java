@@ -108,8 +108,7 @@ public class ExtractFunction implements IFunction {
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields)
-            throws SQLException {
+                          final FieldNode[] fields) throws SQLException {
 
         if (values[0] == null || values[1] == null) {
             return null;

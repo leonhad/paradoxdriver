@@ -17,6 +17,7 @@ import com.googlecode.paradox.results.ParadoxType;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -325,6 +326,20 @@ public final class ValuesConverter {
         return ret;
     }
 
+    private static Time removeDate(java.util.Date date) {
+        if (date == null) {
+            return null;
+        }
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.YEAR, 0);
+        c.set(Calendar.MONTH, 0);
+        c.set(Calendar.DAY_OF_MONTH, 0);
+
+        return new Time(c.getTimeInMillis());
+    }
+
     /**
      * Converts the value to time.
      *
@@ -336,7 +351,7 @@ public final class ValuesConverter {
         if (value instanceof Time) {
             ret = (Time) value;
         } else if (value instanceof java.util.Date) {
-            ret = new Time(((java.util.Date) value).getTime());
+            ret = removeDate((java.util.Date) value);
         } else if (value != null) {
             try {
                 ret = Time.valueOf(value.toString());
@@ -346,14 +361,14 @@ public final class ValuesConverter {
                 try {
                     // Trying with Date instead.
                     final Date date = Date.valueOf(value.toString());
-                    ret = new Time(date.getTime());
+                    ret = removeDate(date);
                 } catch (final IllegalArgumentException e1) {
                     LOGGER.log(Level.FINEST, e1.getMessage(), e1);
 
                     try {
                         // Trying with Timestamp instead.
                         final Timestamp timestamp = Timestamp.valueOf(value.toString());
-                        ret = new Time(timestamp.getTime());
+                        ret = removeDate(timestamp);
                     } catch (final IllegalArgumentException e2) {
                         LOGGER.log(Level.FINEST, e2.getMessage(), e2);
                     }
