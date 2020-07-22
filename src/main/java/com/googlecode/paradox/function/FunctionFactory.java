@@ -112,6 +112,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(VarcharFunction.NAME, VarcharFunction::new);
 
         // System functions.
+        FUNCTIONS.put(ACosFunction.NAME, ACosFunction::new);
         FUNCTIONS.put(ACotFunction.NAME, ACotFunction::new);
         FUNCTIONS.put(CeilingFunction.NAME, CeilingFunction::new);
         FUNCTIONS.put(CosFunction.NAME, CosFunction::new);
