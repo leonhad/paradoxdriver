@@ -21,30 +21,30 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL SQUARE functions.
+ * The SQL TAN functions.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class SquareFunction implements IFunction {
+public class TanFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "SQUARE";
+    public static final String NAME = "TAN";
 
     @Override
     public String remarks() {
-        return "Returns the square of a number.";
+        return "Returns the tangent of a number.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
                 new Column(null, ParadoxType.NUMBER, 8, 15,
-                        "The number in power of 2.", 0, false,
+                        "The the tangent of a number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15, "A number to calculate the square of.", 1,
+                new Column("number", ParadoxType.NUMBER, 8, 15, "A number to calculate the tangent.", 1,
                         true, DatabaseMetaData.functionColumnIn)
         };
     }
@@ -72,6 +72,6 @@ public class SquareFunction implements IFunction {
             return null;
         }
 
-        return Math.pow(value, 2);
+        return Math.tan(value);
     }
 }
