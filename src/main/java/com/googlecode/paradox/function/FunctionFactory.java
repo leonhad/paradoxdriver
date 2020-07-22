@@ -69,6 +69,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
         FUNCTIONS.put(ExpFunction.NAME, ExpFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
+        FUNCTIONS.put(Log10Function.NAME, Log10Function::new);
         FUNCTIONS.put(LogFunction.NAME, LogFunction::new);
         FUNCTIONS.put(PiFunction.NAME, PiFunction::new);
         FUNCTIONS.put(PowerFunction.NAME, PowerFunction::new);
