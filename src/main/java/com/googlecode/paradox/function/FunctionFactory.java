@@ -50,6 +50,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
         FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
         FUNCTIONS.put(IsDateFunction.NAME, IsDateFunction::new);
+        FUNCTIONS.put("SYSDATE", CurrentTimestampFunction::new);
 
         // General functions.
         FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
@@ -66,7 +67,19 @@ public final class FunctionFactory {
 
         // Numeric functions.
         FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
+        FUNCTIONS.put(ACosFunction.NAME, ACosFunction::new);
+        FUNCTIONS.put(ACotFunction.NAME, ACotFunction::new);
+        FUNCTIONS.put(ASinFunction.NAME, ASinFunction::new);
+        FUNCTIONS.put(ATanFunction.NAME, ATanFunction::new);
+        FUNCTIONS.put(ATN2Function.NAME, ATN2Function::new);
+        FUNCTIONS.put("CEIL", CeilingFunction::new);
+        FUNCTIONS.put(CeilingFunction.NAME, CeilingFunction::new);
+        FUNCTIONS.put(CosFunction.NAME, CosFunction::new);
+        FUNCTIONS.put(CoshFunction.NAME, CoshFunction::new);
+        FUNCTIONS.put(CotFunction.NAME, CotFunction::new);
+        FUNCTIONS.put(DegreesFunction.NAME, DegreesFunction::new);
         FUNCTIONS.put(ExpFunction.NAME, ExpFunction::new);
+        FUNCTIONS.put(FloorFunction.NAME, FloorFunction::new);
         FUNCTIONS.put(IsNumericFunction.NAME, IsNumericFunction::new);
         FUNCTIONS.put(Log10Function.NAME, Log10Function::new);
         FUNCTIONS.put(LogFunction.NAME, LogFunction::new);
@@ -76,6 +89,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(RandFunction.NAME, RandFunction::new);
         FUNCTIONS.put(RoundFunction.NAME, RoundFunction::new);
         FUNCTIONS.put(SignFunction.NAME, SignFunction::new);
+        FUNCTIONS.put(SinFunction.NAME, SinFunction::new);
         FUNCTIONS.put(SqrtFunction.NAME, SqrtFunction::new);
         FUNCTIONS.put(SquareFunction.NAME, SquareFunction::new);
         FUNCTIONS.put(TanFunction.NAME, TanFunction::new);
@@ -112,23 +126,11 @@ public final class FunctionFactory {
         FUNCTIONS.put(VarcharFunction.NAME, VarcharFunction::new);
 
         // System functions.
-        FUNCTIONS.put(ACosFunction.NAME, ACosFunction::new);
-        FUNCTIONS.put(ACotFunction.NAME, ACotFunction::new);
-        FUNCTIONS.put(ASinFunction.NAME, ASinFunction::new);
-        FUNCTIONS.put(ATanFunction.NAME, ATanFunction::new);
-        FUNCTIONS.put(ATN2Function.NAME, ATN2Function::new);
-        FUNCTIONS.put(CeilingFunction.NAME, CeilingFunction::new);
-        FUNCTIONS.put(CosFunction.NAME, CosFunction::new);
-        FUNCTIONS.put(CoshFunction.NAME, CoshFunction::new);
-        FUNCTIONS.put(CotFunction.NAME, CotFunction::new);
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);
-        FUNCTIONS.put(DegreesFunction.NAME, DegreesFunction::new);
         FUNCTIONS.put(DriverMajorVersionFunction.NAME, DriverMajorVersionFunction::new);
         FUNCTIONS.put(DriverMinorVersionFunction.NAME, DriverMinorVersionFunction::new);
         FUNCTIONS.put(DriverNameFunction.NAME, DriverNameFunction::new);
-        FUNCTIONS.put(FloorFunction.NAME, FloorFunction::new);
         FUNCTIONS.put("SESSION_USER", UserFunction::new);
-        FUNCTIONS.put(SinFunction.NAME, SinFunction::new);
         FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
         FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
         FUNCTIONS.put(VersionFunction.NAME, VersionFunction::new);
