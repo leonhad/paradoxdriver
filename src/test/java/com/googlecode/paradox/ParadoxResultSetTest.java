@@ -466,8 +466,7 @@ public class ParadoxResultSetTest {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT a.AC FROM db.AREACODES a")) {
             Assert.assertTrue("No First row", rs.next());
-            Assert.assertThrows("Invalid value conversion", SQLException.class,
-                    () -> rs.getObject("ac", Timestamp.class));
+            Assert.assertNull("Error in value conversion", rs.getObject("ac", Timestamp.class));
         }
     }
 
