@@ -113,6 +113,7 @@ public final class FunctionFactory {
 
         // System functions.
         FUNCTIONS.put(CeilingFunction.NAME, CeilingFunction::new);
+        FUNCTIONS.put(CotFunction.NAME, CotFunction::new);
         FUNCTIONS.put("CURRENT_USER", UserFunction::new);
         FUNCTIONS.put(DegreesFunction.NAME, DegreesFunction::new);
         FUNCTIONS.put(DriverMajorVersionFunction.NAME, DriverMajorVersionFunction::new);

@@ -21,28 +21,28 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL TAN functions.
+ * The SQL COT functions.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class TanFunction implements IFunction {
+public class CotFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "TAN";
+    public static final String NAME = "COT";
 
     @Override
     public String remarks() {
-        return "Returns the tangent of a number.";
+        return "Returns the cotangent of a number.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
                 new Column(null, ParadoxType.NUMBER, 8, 15,
-                        "The the tangent of a number.", 0, false,
+                        "The the cotangent of a number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
                 new Column("number", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn)
@@ -72,6 +72,6 @@ public class TanFunction implements IFunction {
             return null;
         }
 
-        return Math.tan(value);
+        return 1.0 / Math.tan(value);
     }
 }
