@@ -118,7 +118,17 @@ public final class ValuesConverter {
                 ret = Boolean.TRUE;
             }
         } else if (value != null) {
-            ret = Boolean.valueOf(value.toString());
+            final Integer i = getInteger(value);
+            if (i != null) {
+                // Try to convert with integers.
+                if (i == 0) {
+                    ret = Boolean.FALSE;
+                } else {
+                    ret = Boolean.TRUE;
+                }
+            } else {
+                ret = Boolean.valueOf(value.toString());
+            }
         }
 
         return ret;

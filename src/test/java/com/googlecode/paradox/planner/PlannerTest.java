@@ -305,4 +305,19 @@ public class PlannerTest {
             }
         }
     }
+
+    /**
+     * Test for boolean in conditionals.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testBoolean() throws Exception {
+        try (Statement stmt = this.conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
+                Assert.assertTrue("Invalid result set", rs.next());
+                Assert.assertTrue("Invalid ResultSet value", rs.getBoolean("BOOL"));
+            }
+        }
+    }
 }
