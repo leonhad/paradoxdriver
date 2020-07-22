@@ -40,7 +40,7 @@ public class CastFunction implements IFunction {
      */
     public static final String NAME = "CAST";
 
-    private ParadoxType type = ParadoxType.VARCHAR;
+    private ParadoxType type = ParadoxType.BYTES;
 
     @Override
     public String remarks() {
@@ -50,7 +50,7 @@ public class CastFunction implements IFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE, "The converted field.", 0, true,
+                new Column(null, ParadoxType.BYTES, 0, Constants.MAX_STRING_SIZE, "The converted field.", 0, true,
                         DatabaseMetaData.functionColumnResult),
                 new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE, "The value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn),

@@ -90,6 +90,10 @@ public final class ParadoxBlob implements Blob {
 
     @Override
     public byte[] getBytes(long pos, int length) {
+        if (pos <= 0) {
+            pos = 1;
+        }
+
         final int endPos = (int) (pos - 1 + length);
         return Arrays.copyOfRange(this.value, (int) pos - 1, endPos);
     }
