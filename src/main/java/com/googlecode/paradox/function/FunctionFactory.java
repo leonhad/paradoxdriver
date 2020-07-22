@@ -116,6 +116,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(DriverMajorVersionFunction.NAME, DriverMajorVersionFunction::new);
         FUNCTIONS.put(DriverMinorVersionFunction.NAME, DriverMinorVersionFunction::new);
         FUNCTIONS.put(DriverNameFunction.NAME, DriverNameFunction::new);
+        FUNCTIONS.put(FloorFunction.NAME, FloorFunction::new);
         FUNCTIONS.put("SESSION_USER", UserFunction::new);
         FUNCTIONS.put("SYSTEM_USER", UserFunction::new);
         FUNCTIONS.put(UserFunction.NAME, UserFunction::new);
