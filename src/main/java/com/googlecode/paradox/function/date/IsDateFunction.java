@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.numeric;
+package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
@@ -21,36 +21,36 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL ISNUMERIC functions.
+ * The SQL ISDATE functions.
  *
- * @version 1.3
+ * @version 1.0
  * @since 1.6.0
  */
-public class IsNumericFunction implements IFunction {
+public class IsDateFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "ISNUMERIC";
+    public static final String NAME = "ISDATE";
 
     @Override
     public String remarks() {
-        return "Checks if the value can be a numeric value.";
+        return "Checks if the value can be a date value.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 0, 1, "True if the value is numeric.", 0, false,
+                new Column(null, ParadoxType.BOOLEAN, 0, 1, "True if the value is date.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15, "The value to check.", 1, true,
+                new Column("number", ParadoxType.DATE, 0, 4, "The value to check.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }
 
     @Override
     public FunctionType type() {
-        return FunctionType.NUMERIC;
+        return FunctionType.TIME_DATE;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class IsNumericFunction implements IFunction {
             return 0;
         }
 
-        if (ValuesConverter.getDouble(values[0]) != null) {
+        if (ValuesConverter.getDate(values[0]) != null) {
             return 1;
         }
 

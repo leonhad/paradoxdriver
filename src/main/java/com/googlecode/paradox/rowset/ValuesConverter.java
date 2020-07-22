@@ -298,9 +298,13 @@ public final class ValuesConverter {
                 } catch (final IllegalArgumentException e1) {
                     LOGGER.log(Level.FINEST, e1.getMessage(), e1);
 
-                    // Trying with Timestamp instead.
-                    final Timestamp timestamp = Timestamp.valueOf(value.toString());
-                    ret = new Time(timestamp.getTime());
+                    try {
+                        // Trying with Timestamp instead.
+                        final Timestamp timestamp = Timestamp.valueOf(value.toString());
+                        ret = new Time(timestamp.getTime());
+                    } catch (final IllegalArgumentException e2) {
+                        LOGGER.log(Level.FINEST, e2.getMessage(), e2);
+                    }
                 }
             }
         }
@@ -333,9 +337,13 @@ public final class ValuesConverter {
                 } catch (final IllegalArgumentException e1) {
                     LOGGER.log(Level.FINEST, e1.getMessage(), e1);
 
-                    // Trying with Time instead.
-                    final Time time = Time.valueOf(value.toString());
-                    ret = new Timestamp(time.getTime());
+                    try {
+                        // Trying with Time instead.
+                        final Time time = Time.valueOf(value.toString());
+                        ret = new Timestamp(time.getTime());
+                    } catch (final IllegalArgumentException e2) {
+                        LOGGER.log(Level.FINEST, e2.getMessage(), e2);
+                    }
                 }
             }
         }
@@ -368,9 +376,13 @@ public final class ValuesConverter {
                 } catch (final IllegalArgumentException e1) {
                     LOGGER.log(Level.FINEST, e1.getMessage(), e1);
 
-                    // Trying with time instead.
-                    final Time time = Time.valueOf(value.toString());
-                    ret = new Date(time.getTime());
+                    try {
+                        // Trying with time instead.
+                        final Time time = Time.valueOf(value.toString());
+                        ret = new Date(time.getTime());
+                    } catch (final IllegalArgumentException e2) {
+                        LOGGER.log(Level.FINEST, e2.getMessage(), e2);
+                    }
                 }
             }
         }

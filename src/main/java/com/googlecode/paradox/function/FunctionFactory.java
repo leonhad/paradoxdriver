@@ -10,10 +10,7 @@
  */
 package com.googlecode.paradox.function;
 
-import com.googlecode.paradox.function.date.CurrentDateFunction;
-import com.googlecode.paradox.function.date.CurrentTimeFunction;
-import com.googlecode.paradox.function.date.CurrentTimestampFunction;
-import com.googlecode.paradox.function.date.ExtractFunction;
+import com.googlecode.paradox.function.date.*;
 import com.googlecode.paradox.function.general.*;
 import com.googlecode.paradox.function.grouping.CountFunction;
 import com.googlecode.paradox.function.numeric.*;
@@ -21,8 +18,11 @@ import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.UserFunction;
 import com.googlecode.paradox.function.system.VersionFunction;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -45,6 +45,13 @@ public final class FunctionFactory {
     private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
 
     static {
+        // Date functions.
+        FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
+        FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
+        FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
+        FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
+        FUNCTIONS.put(IsDateFunction.NAME, IsDateFunction::new);
+
         // General functions.
         FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
@@ -77,10 +84,6 @@ public final class FunctionFactory {
         FUNCTIONS.put("CHARACTER_LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LENGTH", CharLengthFunction::new);
         FUNCTIONS.put("LEN", CharLengthFunction::new);
-        FUNCTIONS.put(CurrentDateFunction.NAME, CurrentDateFunction::new);
-        FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
-        FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
-        FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
         FUNCTIONS.put(InitCapFunction.NAME, InitCapFunction::new);
         FUNCTIONS.put(LeftFunction.NAME, LeftFunction::new);
         FUNCTIONS.put(LowerFunction.NAME, LowerFunction::new);
