@@ -57,6 +57,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(YearFunction.NAME, YearFunction::new);
 
         // General functions.
+        FUNCTIONS.put(BinaryFunction.NAME, BinaryFunction::new);
         FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
         FUNCTIONS.put(CoalesceFunction.NAME, CoalesceFunction::new);
         FUNCTIONS.put(ConvertFunction.NAME, ConvertFunction::new);
