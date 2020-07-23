@@ -54,6 +54,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(IsDateFunction.NAME, IsDateFunction::new);
         FUNCTIONS.put("SYSDATE", CurrentTimestampFunction::new);
         FUNCTIONS.put(TimeFunction.NAME, TimeFunction::new);
+        FUNCTIONS.put(YearFunction.NAME, YearFunction::new);
 
         // General functions.
         FUNCTIONS.put(CastFunction.NAME, CastFunction::new);
