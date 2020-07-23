@@ -24,26 +24,24 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
- * The SQL EXTRACT function.
+ * The SQL DATEADD function.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
-public class ExtractFunction implements IFunction {
+public class DateAddFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "EXTRACT";
+    public static final String NAME = "DATEADD";
 
     private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "DAYOFYEAR",
             "WEEK", "MONTH", "QUARTER", "YEAR"};
@@ -53,30 +51,10 @@ public class ExtractFunction implements IFunction {
         Arrays.sort(VALID_FORMATS);
     }
 
-    private static Calendar getTime(final Object value) {
-        Time time = ValuesConverter.getTime(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(time);
-        return c;
-    }
-
-    private static Calendar getTimestamp(final Object value) {
-        Timestamp timestamp = ValuesConverter.getTimestamp(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(timestamp);
-        return c;
-    }
-
-    private static Calendar getDate(final Object value) {
-        Date time = ValuesConverter.getDate(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(time);
-        return c;
-    }
-
     @Override
     public String remarks() {
-        return "Extract a value from date/time. The part to extract can be: " + Arrays.toString(VALID_FORMATS) + ".";
+        return "Adds a time/date interval to a date and then returns the date. The interval can be: "
+                + Arrays.toString(VALID_FORMATS) + ".";
     }
 
     @Override
@@ -98,63 +76,66 @@ public class ExtractFunction implements IFunction {
 
     @Override
     public ParadoxType fieldType() {
-        return ParadoxType.INTEGER;
+        return ParadoxType.DATE;
     }
 
     @Override
     public int parameterCount() {
-        return 2;
+        return 3;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        if (values[0] == null || values[1] == null) {
+        final Integer number = ValuesConverter.getInteger(values[1]);
+        final Timestamp timestamp = ValuesConverter.getTimestamp(values[2]);
+        if (number == null || timestamp == null) {
             return null;
         }
 
         final String format = values[0].toString();
-        final Object value = values[1];
 
-        int ret;
+        final Calendar c = Calendar.getInstance();
+        c.setTime(timestamp);
+
         switch (format) {
             case "MILLISECOND":
-                ret = getTimestamp(value).get(Calendar.MILLISECOND);
+                c.add(Calendar.MILLISECOND, number);
                 break;
             case "SECOND":
-                ret = getTime(value).get(Calendar.SECOND);
+                c.add(Calendar.SECOND, number);
                 break;
             case "MINUTE":
-                ret = getTime(value).get(Calendar.MINUTE);
+                c.add(Calendar.MINUTE, number);
                 break;
             case "HOUR":
-                ret = getTime(value).get(Calendar.HOUR_OF_DAY);
+                c.add(Calendar.HOUR_OF_DAY, number);
                 break;
             case "DAY":
-                ret = getDate(value).get(Calendar.DAY_OF_MONTH);
+                c.add(Calendar.DAY_OF_MONTH, number);
                 break;
             case "DAYOFYEAR":
-                ret = getDate(value).get(Calendar.DAY_OF_YEAR);
+                c.add(Calendar.DAY_OF_YEAR, number);
                 break;
             case "MONTH":
-                ret = getDate(value).get(Calendar.MONTH) + 1;
+                c.add(Calendar.MONTH, number);
                 break;
             case "YEAR":
-                ret = getDate(value).get(Calendar.YEAR);
+                c.add(Calendar.YEAR, number);
                 break;
             case "WEEK":
-                ret = getDate(value).get(Calendar.WEEK_OF_YEAR);
+                c.add(Calendar.WEEK_OF_MONTH, number);
                 break;
             case "QUARTER":
-                ret = (getDate(value).get(Calendar.MONTH) / 3) + 1;
+                c.add(Calendar.MONTH, number * 0x03);
                 break;
             default:
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
                         format);
         }
 
-        return ret;
+        return new Timestamp(c.getTimeInMillis());
     }
 
     @Override
