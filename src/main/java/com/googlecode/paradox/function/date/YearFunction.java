@@ -39,7 +39,7 @@ public class YearFunction implements IFunction {
 
     @Override
     public String remarks() {
-        return "Extract year from a timestamp value.";
+        return "Extract the year from a timestamp value.";
     }
 
     @Override

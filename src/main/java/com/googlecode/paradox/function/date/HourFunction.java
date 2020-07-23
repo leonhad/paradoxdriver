@@ -19,35 +19,35 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
-import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.Calendar;
 
 /**
- * The SQL DAYOFWEEK function.
+ * The SQL HOUR function.
  *
  * @version 1.0
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
-public class DayOfWeekFunction implements IFunction {
+public class HourFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "DAYOFWEEK";
+    public static final String NAME = "HOUR";
 
     @Override
     public String remarks() {
-        return "Extract the weekday from a timestamp value  (a number from 1 to 7).";
+        return "Extract the hour from a timestamp value.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 0, 4, "The weekday (a number from 1 to 7).", 0, false,
+                new Column(null, ParadoxType.INTEGER, 0, 4, "The hour.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("date", ParadoxType.TIMESTAMP, 0, 11, "The time/datetime to extract the day from.", 1,
+                new Column("date", ParadoxType.TIMESTAMP, 0, 11, "The time/datetime to extract the hour from.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
     }
@@ -71,13 +71,14 @@ public class DayOfWeekFunction implements IFunction {
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final Date date = ValuesConverter.getDate(values[0]);
-        if (date == null) {
+        final Time time = ValuesConverter.getTime(values[0]);
+        if (time == null) {
             return null;
         }
 
         final Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        return c.get(Calendar.DAY_OF_WEEK);
+        c.setTime(time);
+        // TODO more than 24 hours?
+        return c.get(Calendar.HOUR_OF_DAY);
     }
 }

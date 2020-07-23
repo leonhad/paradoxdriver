@@ -55,6 +55,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(DateFunction.NAME, DateFunction::new);
         FUNCTIONS.put(DateFromPartsFunction.NAME, DateFromPartsFunction::new);
         FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
+        FUNCTIONS.put(HourFunction.NAME, HourFunction::new);
         FUNCTIONS.put(IsDateFunction.NAME, IsDateFunction::new);
         FUNCTIONS.put(MonthFunction.NAME, MonthFunction::new);
         FUNCTIONS.put("SYSDATE", CurrentTimestampFunction::new);

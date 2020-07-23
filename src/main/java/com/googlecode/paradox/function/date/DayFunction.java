@@ -39,7 +39,7 @@ public class DayFunction implements IFunction {
 
     @Override
     public String remarks() {
-        return "Extract day from a timestamp value  (a number from 1 to 31).";
+        return "Extract the day from a timestamp value  (a number from 1 to 31).";
     }
 
     @Override

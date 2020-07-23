@@ -39,7 +39,7 @@ public class MonthFunction implements IFunction {
 
     @Override
     public String remarks() {
-        return "Extract month from a timestamp value  (a number from 1 to 12).";
+        return "Extract the month from a timestamp value  (a number from 1 to 12).";
     }
 
     @Override

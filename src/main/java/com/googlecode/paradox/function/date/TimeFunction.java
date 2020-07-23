@@ -37,7 +37,7 @@ public class TimeFunction implements IFunction {
 
     @Override
     public String remarks() {
-        return "Extract time from a timestamp value.";
+        return "Extract the time from a timestamp value.";
     }
 
     @Override
