@@ -20,7 +20,7 @@ import com.googlecode.paradox.results.ParadoxType;
 import java.sql.DatabaseMetaData;
 
 /**
- * The SQL CONNECTIONID functions.
+ * The SQL CONNECTION_ID functions.
  *
  * @version 1.0
  * @since 1.6.0
@@ -30,7 +30,7 @@ public class ConnectionIDFunction implements IFunction {
     /**
      * The function name.
      */
-    public static final String NAME = "CONNECTIONID";
+    public static final String NAME = "CONNECTION_ID";
 
     @Override
     public String remarks() {

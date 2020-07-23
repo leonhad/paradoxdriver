@@ -20,31 +20,35 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
 import java.sql.Date;
-import java.util.TimeZone;
+import java.sql.SQLException;
+import java.util.Calendar;
 
 /**
- * The SQL CURRENT_DATE function.
+ * The SQL LAST_DAY function.
  *
- * @version 1.4
+ * @version 1.0
  * @since 1.6.0
  */
-public class CurrentDateFunction implements IFunction {
+@SuppressWarnings({"i18n-java:V1017", "java:S109"})
+public class LastDayFunction implements IFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "CURRENT_DATE";
+    public static final String NAME = "LAST_DAY";
 
     @Override
     public String remarks() {
-        return "Gets the current date.";
+        return "Extract the last day of the month for a given date.";
     }
 
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.DATE, 0, 4, "The current date.", 0, false,
-                        DatabaseMetaData.functionColumnResult)
+                new Column(null, ParadoxType.DATE, 0, 4, "The date with the last day of the month.", 0, false,
+                        DatabaseMetaData.functionColumnResult),
+                new Column("date", ParadoxType.TIMESTAMP, 0, 11, "The time/datetime to extract the last day from.", 1,
+                        false, DatabaseMetaData.functionColumnIn)
         };
     }
 
@@ -60,19 +64,21 @@ public class CurrentDateFunction implements IFunction {
 
     @Override
     public int parameterCount() {
-        return 0;
-    }
-
-    @Override
-    public boolean isAllowAlias() {
-        return true;
+        return 1;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
-        long time = System.currentTimeMillis();
-        return ValuesConverter.removeTime(
-                new Date(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)));
+                          final FieldNode[] fields) throws SQLException {
+
+        final Date date = ValuesConverter.getDate(values[0]);
+        if (date == null) {
+            return null;
+        }
+
+        final Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return ValuesConverter.removeTime(c.getTime());
     }
 }
