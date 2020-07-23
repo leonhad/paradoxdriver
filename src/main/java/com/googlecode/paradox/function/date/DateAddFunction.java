@@ -62,7 +62,7 @@ public class DateAddFunction implements IFunction {
         return new Column[]{
                 new Column(null, ParadoxType.TIMESTAMP, 0, 8, "The result date.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.VARCHAR, 0, 11, "The value to add.", 1, false,
+                new Column("number", ParadoxType.INTEGER, 0, 4, "The value to add.", 1, false,
                         DatabaseMetaData.functionColumnIn),
                 new Column("date", ParadoxType.TIMESTAMP, 0, 8, "The date to add.", 2, false,
                         DatabaseMetaData.functionColumnIn)

@@ -836,6 +836,31 @@ public class SQLParserTest {
     }
 
     /**
+     * Test for subfunctions.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testSubFunction() throws SQLException {
+        final SQLParser parser = new SQLParser("select upper(lower('Name')) as alias");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
+
+        final FunctionNode upper = (FunctionNode) select.getFields().get(0);
+        Assert.assertEquals("Invalid field size", "upper", upper.getName());
+        Assert.assertEquals("Invalid field size", "alias", upper.getAlias());
+        Assert.assertEquals("Invalid field size", 1, upper.getParameters().size());
+
+        Assert.assertTrue("Invalid field size", upper.getParameters().get(0) instanceof FunctionNode);
+    }
+
+    /**
      * Test for unterminated function.
      *
      * @throws SQLException in case of failures.

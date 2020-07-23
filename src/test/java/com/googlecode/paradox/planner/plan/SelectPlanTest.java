@@ -347,6 +347,21 @@ public class SelectPlanTest {
     }
 
     /**
+     * Test for subfunction.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testSubFunction() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select SUBSTRING(upper('upper'), 1, 2) as ret");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "UP", rs.getString("ret"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
      * Test for function alias.
      *
      * @throws SQLException in case of failures.

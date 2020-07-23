@@ -84,7 +84,7 @@ public class ExtractFunction implements IFunction {
         return new Column[]{
                 new Column(null, ParadoxType.INTEGER, 0, 4, "The part of the.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("datepart", ParadoxType.VARCHAR, 0, 11, "The part name to extract.", 1, false,
+                new Column("date_part", ParadoxType.VARCHAR, 0, 11, "The part name to extract.", 1, false,
                         DatabaseMetaData.functionColumnIn),
                 new Column("date", ParadoxType.TIMESTAMP, 0, 8, "The date to extract.", 2, false,
                         DatabaseMetaData.functionColumnIn)
