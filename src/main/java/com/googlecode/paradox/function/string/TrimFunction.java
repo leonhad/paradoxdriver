@@ -141,7 +141,7 @@ public class TrimFunction implements IFunction {
             // Remove the first parameter and convert it to enum type.
             parameters.remove(0);
 
-            this.type = TrimType.valueOf(value.getName().toUpperCase());
+            this.type = TrimType.valueOf(value.getName().toString().toUpperCase());
         }
     }
 

@@ -130,7 +130,7 @@ public final class FieldValueUtils {
                 continue;
             }
 
-            if (column.getField().getName().equalsIgnoreCase(field.getName())) {
+            if (column.getField().getName().equalsIgnoreCase(field.getName().toString())) {
                 if (index != -1) {
                     throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, field.toString());
                 }

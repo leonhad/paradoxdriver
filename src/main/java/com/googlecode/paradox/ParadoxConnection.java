@@ -127,7 +127,7 @@ public final class ParadoxConnection implements Connection {
         if (localeName != null && !localeName.trim().isEmpty()) {
             this.locale = Locale.forLanguageTag(localeName);
         } else {
-            this.locale = Locale.ENGLISH;
+            this.locale = Locale.US;
         }
 
         final String bcdRoundingName = info.getProperty(Driver.BCD_ROUNDING_KEY);

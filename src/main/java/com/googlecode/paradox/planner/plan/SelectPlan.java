@@ -274,15 +274,15 @@ public final class SelectPlan implements Plan {
             if (node.getTableName() == null || table.isThis(node.getTableName())) {
                 node.setTable(table.getTable());
                 fields.addAll(Arrays.stream(table.getTable().getFields())
-                        .filter(f -> f.getName().equalsIgnoreCase(node.getName())).collect(Collectors.toList()));
+                        .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
+                        .collect(Collectors.toList()));
             }
         }
 
         if (fields.isEmpty()) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node.toString());
+            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node);
         } else if (fields.size() > 1) {
-            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(),
-                    node.toString());
+            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(), node);
         }
 
         return fields;
@@ -349,7 +349,8 @@ public final class SelectPlan implements Plan {
                 for (final PlanTableNode table : this.tables) {
                     if (table.isThis(fn.getTableName())) {
                         conditionalFields.addAll(Arrays.stream(table.getTable().getFields())
-                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName())).collect(Collectors.toSet()));
+                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName()))
+                                .collect(Collectors.toSet()));
                     }
                 }
             });
@@ -597,14 +598,14 @@ public final class SelectPlan implements Plan {
 
         filter(connection, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
 
-        processOrderBy(rawData);
+        processOrderBy();
 
         if (!orderByFields.isEmpty() && maxRows != 0 && values.size() > maxRows) {
             values = values.subList(0, maxRows);
         }
     }
 
-    private void processOrderBy(final List<Object[]> rawData) {
+    private void processOrderBy() {
         if (orderByFields.isEmpty()) {
             // Nothing to do here, there are no order by fields.
             return;

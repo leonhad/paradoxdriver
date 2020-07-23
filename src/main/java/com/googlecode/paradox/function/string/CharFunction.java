@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
@@ -71,6 +72,6 @@ public class CharFunction implements IFunction {
             return null;
         }
 
-        return values[0].toString();
+        return ValuesConverter.getString(values[0]);
     }
 }

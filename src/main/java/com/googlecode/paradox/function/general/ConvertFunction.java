@@ -125,14 +125,14 @@ public class ConvertFunction implements IFunction {
         if (parameters.size() == 3) {
             // If three parameters, the second needs to be a valid type.
 
-            if (!parameters.get(1).getName().equalsIgnoreCase(TokenType.USING.name())) {
+            if (!parameters.get(1).getName().toString().equalsIgnoreCase(TokenType.USING.name())) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                         parameters.get(1).getPosition());
             }
 
             SQLNode charsetNode = parameters.get(2);
             try {
-                charset = Charset.forName(charsetNode.getName());
+                charset = Charset.forName(charsetNode.getName().toString());
             } catch (final UnsupportedCharsetException e) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                         charsetNode.getPosition(), charsetNode.getName(), e);
@@ -150,7 +150,7 @@ public class ConvertFunction implements IFunction {
             final SQLNode typeNode = parameters.get(1);
             if (typeNode instanceof FieldNode) {
                 try {
-                    this.type = ParadoxType.valueOf(typeNode.getName());
+                    this.type = ParadoxType.valueOf(typeNode.getName().toString());
                     parameters.remove(1);
                 } catch (final IllegalArgumentException e) {
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,

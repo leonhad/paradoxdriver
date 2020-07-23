@@ -93,7 +93,7 @@ public class CastFunction implements IFunction {
         final SQLNode typeNode = parameters.get(1);
         if (typeNode instanceof FieldNode) {
             try {
-                this.type = ParadoxType.valueOf(typeNode.getName());
+                this.type = ParadoxType.valueOf(typeNode.getName().toUpperCase());
                 parameters.remove(1);
             } catch (final IllegalArgumentException e) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
