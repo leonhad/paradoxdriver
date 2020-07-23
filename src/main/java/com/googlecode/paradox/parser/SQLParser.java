@@ -486,7 +486,7 @@ public final class SQLParser {
 
         if (isToken(TokenType.L_PAREN)) {
             // function
-            return parseFunction(fieldName);
+            return parseFunction(fieldName, position);
         } else if (isToken(TokenType.PERIOD)) {
             this.expect(TokenType.PERIOD);
             newTableName = fieldName;
@@ -568,11 +568,13 @@ public final class SQLParser {
      * Parses a function node.
      *
      * @param functionName the function name.
+     * @param position     the current scanner position.
      * @return the function node.
      * @throws SQLException in case of failures.
      */
-    private FunctionNode parseFunction(final String functionName) throws SQLException {
-        final FunctionNode functionNode = new FunctionNode(functionName, token.getPosition());
+    private FunctionNode parseFunction(final String functionName, final ScannerPosition position)
+            throws SQLException {
+        final FunctionNode functionNode = new FunctionNode(functionName, position);
         this.expect(TokenType.L_PAREN);
 
         boolean first = true;
@@ -614,13 +616,13 @@ public final class SQLParser {
             }
         }
 
-        ScannerPosition position = null;
+        ScannerPosition endPosition = null;
         if (this.token != null) {
-            position = this.token.getPosition();
+            endPosition = this.token.getPosition();
         }
         this.expect(TokenType.R_PAREN);
 
-        functionNode.validate(position);
+        functionNode.validate(endPosition);
         return functionNode;
     }
 
@@ -641,7 +643,7 @@ public final class SQLParser {
 
         if (isToken(TokenType.L_PAREN)) {
             // function
-            return parseFunction(fieldName);
+            return parseFunction(fieldName, position);
         } else if (isToken(TokenType.PERIOD)) {
             // If it has a Table Name.
             this.expect(TokenType.PERIOD);
