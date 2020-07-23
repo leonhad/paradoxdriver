@@ -63,6 +63,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(SecondFunction.NAME, SecondFunction::new);
         FUNCTIONS.put("SYSDATE", CurrentTimestampFunction::new);
         FUNCTIONS.put(TimeFunction.NAME, TimeFunction::new);
+        FUNCTIONS.put(WeekOfYearFunction.NAME, WeekOfYearFunction::new);
         FUNCTIONS.put(YearFunction.NAME, YearFunction::new);
 
         // General functions.
