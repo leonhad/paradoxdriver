@@ -49,6 +49,8 @@ public final class FunctionFactory {
         FUNCTIONS.put(CurrentTimeFunction.NAME, CurrentTimeFunction::new);
         FUNCTIONS.put(CurrentTimestampFunction.NAME, CurrentTimestampFunction::new);
         FUNCTIONS.put(DayFunction.NAME, DayFunction::new);
+        FUNCTIONS.put("DAYOFMONTH", DayFunction::new);
+        FUNCTIONS.put(DayOfWeekFunction.NAME, DayOfWeekFunction::new);
         FUNCTIONS.put(DateFunction.NAME, DateFunction::new);
         FUNCTIONS.put(DateFromPartsFunction.NAME, DateFromPartsFunction::new);
         FUNCTIONS.put(ExtractFunction.NAME, ExtractFunction::new);
