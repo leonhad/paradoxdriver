@@ -651,6 +651,9 @@ public final class SQLParser {
             newFieldName = this.token.getValue();
 
             this.expect(TokenType.IDENTIFIER);
+        } else if (FunctionFactory.isFunctionAlias(fieldName)) {
+            // A field without table alias can be a function alias.
+            return parseFunctionAlias(fieldName, position);
         }
 
         return new FieldNode(newTableName, newFieldName, position);

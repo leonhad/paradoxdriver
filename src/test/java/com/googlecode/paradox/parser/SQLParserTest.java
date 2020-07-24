@@ -773,7 +773,7 @@ public class SQLParserTest {
     }
 
     /**
-     * Test for function in fields.
+     * Test for recursive function call.
      *
      * @throws SQLException in case of failures.
      */
@@ -799,6 +799,34 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid field size", "lower", lower.getName());
         Assert.assertEquals("Invalid field size", 1, lower.getParameters().size());
         Assert.assertEquals("Invalid field value", "2", lower.getParameters().get(0).getName());
+    }
+
+    /**
+     * Test for recursive function with alias.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testRecursiveFunctionAlias() throws SQLException {
+        final SQLParser parser = new SQLParser("select varchar(current_date)");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
+
+        final FunctionNode upper = (FunctionNode) select.getFields().get(0);
+        Assert.assertEquals("Invalid field size", "varchar", upper.getName());
+        Assert.assertEquals("Invalid field size", 1, upper.getParameters().size());
+
+        Assert.assertTrue("Invalid field value", upper.getParameters().get(0) instanceof FunctionNode);
+
+        final FunctionNode lower = (FunctionNode) upper.getParameters().get(0);
+        Assert.assertEquals("Invalid field size", "current_date", lower.getName());
+        Assert.assertEquals("Invalid field size", 0, lower.getParameters().size());
     }
 
     /**
@@ -836,12 +864,12 @@ public class SQLParserTest {
     }
 
     /**
-     * Test for subfunctions.
+     * Test for recursive functions with alias name.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSubFunction() throws SQLException {
+    public void testRecursiveFunctionAliasName() throws SQLException {
         final SQLParser parser = new SQLParser("select upper(lower('Name')) as alias");
         final List<StatementNode> list = parser.parse();
         final StatementNode tree = list.get(0);

@@ -332,6 +332,21 @@ public class SelectPlanTest {
     }
 
     /**
+     * Test for function with function alias.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFunctionWithFunctionAlias() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select DATE(CURRENT_DATE)");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNotNull("Invalid value", rs.getString(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
      * Test for function.
      *
      * @throws SQLException in case of failures.
@@ -347,12 +362,12 @@ public class SelectPlanTest {
     }
 
     /**
-     * Test for sub function.
+     * Test for recursive function.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSubFunction() throws SQLException {
+    public void testRecursiveFunction() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select SUBSTRING(upper('upper'), 1, 2) as ret");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertEquals("Invalid column count", 1, rs.getMetaData().getColumnCount());
