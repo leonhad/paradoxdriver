@@ -21,6 +21,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
+import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -62,9 +63,12 @@ public class DateAddFunction implements IFunction {
         return new Column[]{
                 new Column(null, ParadoxType.TIMESTAMP, 0, 8, "The result date.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.INTEGER, 0, 4, "The value to add.", 1, false,
+                new Column("format", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                        "The interval format. The interval can be: " + Arrays.toString(VALID_FORMATS) + ".", 1, false,
                         DatabaseMetaData.functionColumnIn),
-                new Column("date", ParadoxType.TIMESTAMP, 0, 8, "The date to add.", 2, false,
+                new Column("number", ParadoxType.INTEGER, 0, 4, "The value to add.", 2, false,
+                        DatabaseMetaData.functionColumnIn),
+                new Column("date", ParadoxType.TIMESTAMP, 0, 8, "The date to add.", 3, false,
                         DatabaseMetaData.functionColumnIn)
         };
     }
