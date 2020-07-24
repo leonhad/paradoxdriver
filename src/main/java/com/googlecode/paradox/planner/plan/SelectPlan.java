@@ -19,7 +19,6 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
@@ -48,11 +47,6 @@ public final class SelectPlan implements Plan {
     private final List<Column> columns = new ArrayList<>();
 
     /**
-     * The function columns in this plan.
-     */
-    private final List<Column> functionColumns = new ArrayList<>();
-
-    /**
      * The tables in this plan.
      */
     private final List<PlanTableNode> tables = new ArrayList<>();
@@ -71,7 +65,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private List<Object[]> values = new ArrayList<>(50);
+    private List<Object[]> values = new ArrayList<>(0x7F);
     /**
      * The conditions to filter values
      */
@@ -243,13 +237,6 @@ public final class SelectPlan implements Plan {
     public void addColumn(final FieldNode node) throws SQLException {
         if (node instanceof ValueNode) {
             this.columns.add(new Column((ValueNode) node));
-        } else if (node instanceof FunctionNode) {
-            final FunctionNode functionNode = (FunctionNode) node;
-            this.columns.add(new Column(functionNode));
-
-            for (final FieldNode fieldNode : functionNode.getFields()) {
-                processParadoxFields(fieldNode, this.functionColumns::add);
-            }
         } else {
             processParadoxFields(node, this.columns::add);
         }
@@ -257,17 +244,23 @@ public final class SelectPlan implements Plan {
 
     private void processParadoxFields(final FieldNode node, final Consumer<Column> consumer) throws ParadoxException {
         if (node instanceof FunctionNode) {
-            final Column column = new Column((FunctionNode) node);
+            final FunctionNode functionNode = (FunctionNode) node;
+            final Column column = new Column(functionNode);
             consumer.accept(column);
-        } else if(!(node instanceof ValueNode) && !(node instanceof ParameterNode)) {
+
+            for (final FieldNode field : functionNode.getFields()) {
+                processParadoxFields(field, consumer);
+            }
+        } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode)) {
             int total = 0;
             for (final PlanTableNode table : this.tables) {
                 if (node.getTableName() == null || table.isThis(node.getTableName())) {
                     node.setTable(table.getTable());
                     final List<ParadoxField> fields = Arrays.stream(table.getTable().getFields())
-                            .filter(f -> f.getName().equalsIgnoreCase(node.getName())).collect(Collectors.toList());
-                    total += fields.size();
+                            .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
+                            .collect(Collectors.toList());
 
+                    total += fields.size();
                     fields.stream().map(Column::new).forEach(consumer);
                 }
             }
@@ -322,6 +315,7 @@ public final class SelectPlan implements Plan {
      * @param node the node to process.
      * @return <code>true</code> if the node is processed and needed to be removed.
      */
+    @SuppressWarnings("java:S3776")
     private boolean optimizeConditions(final SQLNode node) {
         if (node instanceof ANDNode) {
             ANDNode andNode = (ANDNode) node;
@@ -496,6 +490,7 @@ public final class SelectPlan implements Plan {
      * {@inheritDoc}.
      */
     @Override
+    @SuppressWarnings("java:S3776")
     public void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters,
                         final ParadoxType[] parameterTypes) throws SQLException {
 
@@ -515,10 +510,6 @@ public final class SelectPlan implements Plan {
             // Columns in SELECT clause.
             final Set<Column> columnsToLoad = this.columns.stream().filter(c -> c.isThis(table.getTable()))
                     .collect(Collectors.toSet());
-
-            // Columns in SELECT clause from function.
-            columnsToLoad.addAll(
-                    this.functionColumns.stream().filter(c -> c.isThis(table.getTable())).collect(Collectors.toSet()));
 
             // Columns in ORDER BY clause.
             columnsToLoad.addAll(
@@ -578,7 +569,6 @@ public final class SelectPlan implements Plan {
         }
 
         setIndexes(columnsLoaded);
-        setFunctionIndexes(columnsLoaded);
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
@@ -636,14 +626,6 @@ public final class SelectPlan implements Plan {
         for (final PlanTableNode table : this.tables) {
             if (table.getConditionalJoin() != null) {
                 table.getConditionalJoin().setFieldIndexes(columns, tables);
-            }
-        }
-    }
-
-    private void setFunctionIndexes(final List<Column> loadedColumns) throws SQLException {
-        for (final Column column : functionColumns) {
-            for (final FieldNode node : column.getFunction().getFields()) {
-                FieldValueUtils.setFieldIndex(node, loadedColumns, this.tables);
             }
         }
     }
