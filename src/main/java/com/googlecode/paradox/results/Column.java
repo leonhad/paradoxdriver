@@ -78,7 +78,7 @@ public final class Column {
      * @param field the paradox field.
      */
     public Column(final ParadoxField field) {
-        this(field.getName(), field.getType());
+        this(field.getAlias(), field.getType());
         this.field = field;
         this.precision = field.getPrecision();
     }

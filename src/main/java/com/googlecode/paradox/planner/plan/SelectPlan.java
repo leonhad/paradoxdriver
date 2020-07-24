@@ -31,6 +31,7 @@ import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -247,54 +248,41 @@ public final class SelectPlan implements Plan {
             this.columns.add(new Column(functionNode));
 
             for (final FieldNode fieldNode : functionNode.getFields()) {
-                final List<ParadoxField> fields = getParadoxFields(fieldNode);
-                fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
-                    c.setFunction(functionNode);
-                    this.functionColumns.add(c);
-                });
+                processParadoxFields(fieldNode, this.functionColumns::add);
             }
         } else {
-            final List<ParadoxField> fields = getParadoxFields(node);
-            fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
-                c.setName(node.getAlias());
-                this.columns.add(c);
-            });
+            processParadoxFields(node, this.columns::add);
         }
     }
 
-    private List<ParadoxField> getParadoxFields(final FieldNode node) throws ParadoxException {
-        if (node instanceof ValueNode || node instanceof ParameterNode) {
-            // Do not process value nodes.
-            return Collections.emptyList();
-        }
+    private void processParadoxFields(final FieldNode node, final Consumer<Column> consumer) throws ParadoxException {
+        if (node instanceof FunctionNode) {
+            final Column column = new Column((FunctionNode) node);
+            consumer.accept(column);
+        } else if(!(node instanceof ValueNode) && !(node instanceof ParameterNode)) {
+            int total = 0;
+            for (final PlanTableNode table : this.tables) {
+                if (node.getTableName() == null || table.isThis(node.getTableName())) {
+                    node.setTable(table.getTable());
+                    final List<ParadoxField> fields = Arrays.stream(table.getTable().getFields())
+                            .filter(f -> f.getName().equalsIgnoreCase(node.getName())).collect(Collectors.toList());
+                    total += fields.size();
 
-        final List<ParadoxField> fields = new ArrayList<>();
+                    fields.stream().map(Column::new).forEach(consumer);
+                }
+            }
 
-        for (final PlanTableNode table : this.tables) {
-            if (node.getTableName() == null || table.isThis(node.getTableName())) {
-                node.setTable(table.getTable());
-                fields.addAll(Arrays.stream(table.getTable().getFields())
-                        .filter(f -> f.getName().equalsIgnoreCase(node.getName())).collect(Collectors.toList()));
+            if (total == 0) {
+                throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node.toString());
+            } else if (total > 1) {
+                throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(),
+                        node.toString());
             }
         }
-
-        if (fields.isEmpty()) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node.toString());
-        } else if (fields.size() > 1) {
-            throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(),
-                    node.toString());
-        }
-
-        return fields;
     }
 
     public void addOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
-        final List<ParadoxField> fields = getParadoxFields(node);
-        fields.stream().map(Column::new).findFirst().ifPresent((Column c) -> {
-            c.setName(node.getAlias());
-            this.orderByFields.add(c);
-            this.orderTypes.add(type);
-        });
+        processParadoxFields(node, c -> addOrderColumn(c, type));
     }
 
     public void addOrderColumn(final Column column, final OrderType type) {
@@ -597,14 +585,14 @@ public final class SelectPlan implements Plan {
 
         filter(connection, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
 
-        processOrderBy(rawData);
+        processOrderBy();
 
         if (!orderByFields.isEmpty() && maxRows != 0 && values.size() > maxRows) {
             values = values.subList(0, maxRows);
         }
     }
 
-    private void processOrderBy(final List<Object[]> rawData) {
+    private void processOrderBy() {
         if (orderByFields.isEmpty()) {
             // Nothing to do here, there are no order by fields.
             return;
