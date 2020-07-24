@@ -530,7 +530,9 @@ public final class SelectPlan implements Plan {
 
         final List<Column> columnsLoaded = new ArrayList<>();
         final List<Object[]> rawData = new ArrayList<>(100);
-        for (final PlanTableNode table : this.tables) {
+
+        for (int tableIndex = 0; tableIndex < this.tables.size(); tableIndex++) {
+            PlanTableNode table = this.tables.get(tableIndex);
             checkCancel();
 
             // Columns in SELECT clause.
@@ -571,7 +573,7 @@ public final class SelectPlan implements Plan {
             }
 
             // First table
-            if (rawData.isEmpty()) {
+            if (tableIndex == 0) {
                 if (table.getConditionalJoin() != null) {
                     // Filter WHERE joins.
                     final Iterator<Object[]> i = tableData.iterator();

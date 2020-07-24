@@ -435,7 +435,7 @@ public class SelectPlanTest {
                 " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State and " +
                 " AreasCovered like 'hackensack%'");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
 
