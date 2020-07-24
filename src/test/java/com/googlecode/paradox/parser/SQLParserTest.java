@@ -889,6 +889,30 @@ public class SQLParserTest {
     }
 
     /**
+     * Test for function in clause.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFunctionInClause() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from fields.date7 where \"DATE\" = DATE('2018-01-02')");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof AsteriskNode);
+
+        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
+        final ANDNode andNode = (ANDNode) select.getCondition();
+        Assert.assertEquals("Invalid conditional size", 2, andNode.getChildren().size());
+        Assert.assertTrue("Invalid field type", andNode.getChildren().get(0) instanceof FieldNode);
+        Assert.assertTrue("Invalid field type", andNode.getChildren().get(1) instanceof FunctionNode);
+    }
+
+    /**
      * Test for unterminated function.
      *
      * @throws SQLException in case of failures.
