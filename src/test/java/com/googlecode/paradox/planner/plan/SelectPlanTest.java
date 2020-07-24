@@ -410,12 +410,12 @@ public class SelectPlanTest {
     }
 
     /**
-     * Test for order by desc.
+     * Test for order by nulls.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrderByDesc() throws SQLException {
+    public void testOrderByNull() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
                 " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State " +
                 " order by 12 desc, 3 desc");
@@ -449,6 +449,51 @@ public class SelectPlanTest {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
                 " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State " +
                 " and upper(AreasCovered) like upper('hackensack%')");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for left join with no values in first table.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLeftInNoValuesTable() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
+                " left join geog.tblsttes st on st.State = ac.State " +
+                " left join geog.County c on c.StateID = st.State where AreasCovered like 'hackensack%'");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for left join and full join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLeftAndFull() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
+                " left join geog.tblsttes st on st.State = ac.State " +
+                " left join geog.County c on c.StateID = st.State where AreasCovered like 'hackensack%'");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for left join and cross join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLeftAndCoss() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
+                " left join geog.tblsttes st on st.State = ac.State " +
+                " cross join geog.County c where c.StateID = st.State and AreasCovered like 'hackensack%'");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
