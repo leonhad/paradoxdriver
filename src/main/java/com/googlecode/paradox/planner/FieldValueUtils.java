@@ -112,6 +112,9 @@ public final class FieldValueUtils {
         // Do not set indexes in value or parameter nodes.
         if (field == null || field instanceof ValueNode || field instanceof ParameterNode) {
             return;
+        } else if (field instanceof FunctionNode) {
+            setFunctionIndexes(((FunctionNode) field), columns, tables);
+            return;
         }
 
         final String tableName = tables.stream()
@@ -128,7 +131,7 @@ public final class FieldValueUtils {
                 continue;
             }
 
-            if (column.getField().getName().equalsIgnoreCase(field.getName().toString())) {
+            if (column.getField().getName().equalsIgnoreCase(field.getName())) {
                 if (index != -1) {
                     throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, field.toString());
                 }
@@ -141,6 +144,17 @@ public final class FieldValueUtils {
         }
 
         field.setIndex(index);
+    }
+
+    public static void setFunctionIndexes(final FunctionNode function, final List<Column> columnsLoaded,
+                                          final Collection<PlanTableNode> tables) throws SQLException {
+        for (final FieldNode node : function.getFields()) {
+            if (node instanceof FunctionNode) {
+                setFunctionIndexes((FunctionNode) node, columnsLoaded, tables);
+            } else {
+                FieldValueUtils.setFieldIndex(node, columnsLoaded, tables);
+            }
+        }
     }
 
     /**

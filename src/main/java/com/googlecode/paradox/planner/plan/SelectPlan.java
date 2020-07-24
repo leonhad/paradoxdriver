@@ -673,17 +673,7 @@ public final class SelectPlan implements Plan {
     private void setFunctionIndexes(final List<Column> columnsLoaded) throws SQLException {
         for (final Column column : this.columns) {
             if (column.getFunction() != null) {
-                setFunctionIndexes(column.getFunction(), columnsLoaded);
-            }
-        }
-    }
-
-    private void setFunctionIndexes(final FunctionNode function, final List<Column> columnsLoaded) throws SQLException {
-        for (final FieldNode node : function.getFields()) {
-            if (node instanceof FunctionNode) {
-                setFunctionIndexes((FunctionNode) node, columnsLoaded);
-            } else {
-                FieldValueUtils.setFieldIndex(node, columnsLoaded, this.tables);
+                FieldValueUtils.setFunctionIndexes(column.getFunction(), columnsLoaded, this.tables);
             }
         }
     }
