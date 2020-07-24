@@ -23,9 +23,10 @@ import java.util.logging.Logger;
 /**
  * Compare Paradox values.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.6.0
  */
+@SuppressWarnings({"java:S1142", "java:S3776", "java:S1541"})
 public final class ValuesComparator {
 
     private static final Logger LOGGER = Logger.getLogger(ValuesComparator.class.getName());
@@ -167,8 +168,11 @@ public final class ValuesComparator {
         return false;
     }
 
+    @SuppressWarnings("java:S138")
     public static int compare(final Object o1, final Object o2) {
-        if (o1 == null) {
+        if (o1 == o2) {
+            return 0;
+        } else if (o1 == null) {
             return 1;
         } else if (o2 == null) {
             return -1;
