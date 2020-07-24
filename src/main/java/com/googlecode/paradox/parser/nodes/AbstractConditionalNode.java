@@ -16,6 +16,7 @@ import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -51,7 +52,9 @@ public abstract class AbstractConditionalNode extends SQLNode {
         this(name, null, position);
     }
 
-    public abstract boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters);
+    public abstract boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters,
+                                     final ParadoxType[] parameterTypes, final List<Column> columnsLoaded)
+            throws SQLException;
 
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
         FieldValueUtils.setFieldIndex(field, columns, tables);

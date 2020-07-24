@@ -14,12 +14,17 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesComparator;
+
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Stores the between node.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
@@ -52,10 +57,14 @@ public final class BetweenNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters) {
-        final Object value1 = FieldValueUtils.getValue(row, field, parameters);
-        final Object value2 = FieldValueUtils.getValue(row, first, parameters);
-        final Object value3 = FieldValueUtils.getValue(row, last, parameters);
+    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters,
+                            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
+        final Object value1 = FieldValueUtils.getValue(connection, row, field, parameters, parameterTypes,
+                columnsLoaded);
+        final Object value2 = FieldValueUtils.getValue(connection, row, first, parameters, parameterTypes,
+                columnsLoaded);
+        final Object value3 = FieldValueUtils.getValue(connection, row, last, parameters, parameterTypes,
+                columnsLoaded);
 
         return ValuesComparator.compare(value1, value2, i -> i >= 0) &&
                 ValuesComparator.compare(value1, value3, i -> i <= 0);

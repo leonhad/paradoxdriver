@@ -10,14 +10,12 @@
  */
 package com.googlecode.paradox.planner;
 
+import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.ParameterNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
-import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
@@ -153,10 +151,14 @@ public final class FieldValueUtils {
      * @param parameters the parameters list.
      * @return the column value.
      */
-    public static Object getValue(final Object[] row, final FieldNode field, final Object[] parameters) {
+    public static Object getValue(final ParadoxConnection connection, final Object[] row, final FieldNode field,
+                                  final Object[] parameters, final ParadoxType[] parameterTypes,
+                                  final List<Column> columnsLoaded) throws SQLException {
         Object ret;
         if (field instanceof ParameterNode) {
             ret = ((ParameterNode) field).getValue(parameters);
+        } else if (field instanceof FunctionNode) {
+            ret = ((FunctionNode) field).execute(connection, row, parameters, parameterTypes, columnsLoaded);
         } else if (field.getIndex() == -1) {
             // Not a table field.
             ret = field.getName();

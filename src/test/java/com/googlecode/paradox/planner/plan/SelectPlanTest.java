@@ -362,6 +362,22 @@ public class SelectPlanTest {
     }
 
     /**
+     * Test for function in clause.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFunctionInClause() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select \"DATE\" from fields.date7 where \"DATE\" = DATE('2018-01-02')");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-01-02", rs.getString("DATE"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
      * Test for recursive function.
      *
      * @throws SQLException in case of failures.
@@ -390,6 +406,51 @@ public class SelectPlanTest {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", "UPPER", rs.getString("upper('upper')"));
             Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for order by desc.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOrderByDesc() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
+                " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State " +
+                " order by 12 desc, 3 desc");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for like.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLike() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
+                " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State and " +
+                " AreasCovered like 'hackensack%'");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for upper in like.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testUpperInLike() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
+                " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State " +
+                " and upper(AreasCovered) like upper('hackensack%')");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
         }
     }
 }

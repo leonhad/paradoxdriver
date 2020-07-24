@@ -194,14 +194,16 @@ public class FunctionNode extends FieldNode {
                 values[i] = param.getName();
                 types[i] = ((ValueNode) param).getType();
             } else if (param instanceof ParameterNode) {
-                values[i] = FieldValueUtils.getValue(row, (FieldNode) param, parameterValues);
+                values[i] = FieldValueUtils.getValue(connection, row, (FieldNode) param, parameterValues,
+                        parameterTypes, loadedColumns);
                 types[i] = parameterTypes[((ParameterNode) param).getParameterIndex()];
             } else if (param instanceof FunctionNode) {
                 final FunctionNode functionNode = (FunctionNode) param;
                 values[i] = functionNode.execute(connection, row, parameterValues, parameterTypes, loadedColumns);
                 types[i] = functionNode.getType();
             } else {
-                values[i] = FieldValueUtils.getValue(row, (FieldNode) param, parameterValues);
+                values[i] = FieldValueUtils.getValue(connection, row, (FieldNode) param, parameterValues,
+                        parameterTypes, loadedColumns);
                 types[i] = loadedColumns.get(((FieldNode) param).getIndex()).getType();
             }
 
