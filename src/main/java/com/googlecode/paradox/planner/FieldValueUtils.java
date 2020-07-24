@@ -177,9 +177,6 @@ public final class FieldValueUtils {
             // Not a table field.
             ret = field.getName();
         } else {
-            if (field.getIndex() == 18) {
-                System.out.println("aqui");
-            }
             ret = row[field.getIndex()];
         }
 
