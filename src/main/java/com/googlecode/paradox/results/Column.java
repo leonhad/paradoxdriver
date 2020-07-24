@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.3
+ * @version 1.4
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -93,6 +93,7 @@ public final class Column {
         this.function = node;
     }
 
+    @SuppressWarnings("java:S107")
     public Column(final String name, final ParadoxType type, final int precision, final int size,
                   final String remarks, final int index, final boolean nullable, final int columnType) {
         this.name = name;

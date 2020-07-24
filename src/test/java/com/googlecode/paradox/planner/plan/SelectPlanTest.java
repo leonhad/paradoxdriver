@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -162,7 +162,7 @@ public class SelectPlanTest {
      */
     @Test
     public void testInvalidColumnName() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select current from fields.date7")) {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select invalid from fields.date7")) {
             Assert.assertThrows("Invalid column name", ParadoxException.class, stmt::executeQuery);
         }
     }
@@ -347,7 +347,7 @@ public class SelectPlanTest {
     }
 
     /**
-     * Test for subfunction.
+     * Test for sub function.
      *
      * @throws SQLException in case of failures.
      */

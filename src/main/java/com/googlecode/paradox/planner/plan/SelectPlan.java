@@ -13,12 +13,14 @@ package com.googlecode.paradox.planner.plan;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.function.IFunction;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
@@ -30,7 +32,6 @@ import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -42,10 +43,13 @@ import java.util.stream.Collectors;
 public final class SelectPlan implements Plan {
 
     /**
-     * The columns in this plan.
+     * The columns in this plan to show in result set.
      */
     private final List<Column> columns = new ArrayList<>();
-
+    /**
+     * The columns to load in this plan, not only in result set.
+     */
+    private final List<Column> columnsFromFunctions = new ArrayList<>();
     /**
      * The tables in this plan.
      */
@@ -237,45 +241,61 @@ public final class SelectPlan implements Plan {
     public void addColumn(final FieldNode node) throws SQLException {
         if (node instanceof ValueNode) {
             this.columns.add(new Column((ValueNode) node));
+        } else if (node instanceof FunctionNode) {
+            final List<Column> columnsToProcess = getParadoxFields(node);
+
+            // The fist column is always the function column.
+            final Column column = columnsToProcess.get(0);
+            column.setName(node.getAlias());
+            columns.add(column);
+            this.columnsFromFunctions.addAll(columnsToProcess);
         } else {
-            processParadoxFields(node, this.columns::add);
+            final List<Column> columnsToProcess = getParadoxFields(node);
+            columnsToProcess.forEach((Column column) -> {
+                column.setName(node.getAlias());
+                this.columns.add(column);
+                this.columnsFromFunctions.add(column);
+            });
         }
     }
 
-    private void processParadoxFields(final FieldNode node, final Consumer<Column> consumer) throws ParadoxException {
+    private List<Column> getParadoxFields(final FieldNode node) throws ParadoxException {
+        final List<Column> ret = new ArrayList<>();
+
         if (node instanceof FunctionNode) {
             final FunctionNode functionNode = (FunctionNode) node;
-            final Column column = new Column(functionNode);
-            consumer.accept(column);
 
+            // Create the column for the function.
+            ret.add(new Column(functionNode));
+
+            // Parses function fields in function parameters.
             for (final FieldNode field : functionNode.getFields()) {
-                processParadoxFields(field, consumer);
+                ret.addAll(getParadoxFields(field));
             }
         } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode)) {
-            int total = 0;
             for (final PlanTableNode table : this.tables) {
                 if (node.getTableName() == null || table.isThis(node.getTableName())) {
                     node.setTable(table.getTable());
-                    final List<ParadoxField> fields = Arrays.stream(table.getTable().getFields())
+                    ret.addAll(Arrays.stream(table.getTable().getFields())
                             .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                            .collect(Collectors.toList());
-
-                    total += fields.size();
-                    fields.stream().map(Column::new).forEach(consumer);
+                            .map(Column::new)
+                            .collect(Collectors.toList()));
                 }
             }
 
-            if (total == 0) {
+            if (ret.isEmpty()) {
                 throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node.toString());
-            } else if (total > 1) {
+            } else if (ret.size() > 1) {
                 throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(),
                         node.toString());
             }
         }
+
+        return ret;
     }
 
     public void addOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
-        processParadoxFields(node, c -> addOrderColumn(c, type));
+        getParadoxFields(node).forEach(column -> addOrderColumn(column, type));
     }
 
     public void addOrderColumn(final Column column, final OrderType type) {
@@ -315,7 +335,7 @@ public final class SelectPlan implements Plan {
      * @param node the node to process.
      * @return <code>true</code> if the node is processed and needed to be removed.
      */
-    @SuppressWarnings("java:S3776")
+    @SuppressWarnings({"java:S3776", "java:S1541"})
     private boolean optimizeConditions(final SQLNode node) {
         if (node instanceof ANDNode) {
             ANDNode andNode = (ANDNode) node;
@@ -323,7 +343,6 @@ public final class SelectPlan implements Plan {
             return node.getClauseFields().isEmpty();
         } else if (node != null && !(node instanceof ORNode)) {
             // Don't process OR nodes.
-
             final List<ParadoxField> conditionalFields = new ArrayList<>();
 
             final Set<FieldNode> fields = node.getClauseFields();
@@ -490,7 +509,7 @@ public final class SelectPlan implements Plan {
      * {@inheritDoc}.
      */
     @Override
-    @SuppressWarnings("java:S3776")
+    @SuppressWarnings({"java:S3776", "java:S1541"})
     public void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters,
                         final ParadoxType[] parameterTypes) throws SQLException {
 
@@ -508,31 +527,38 @@ public final class SelectPlan implements Plan {
             checkCancel();
 
             // Columns in SELECT clause.
-            final Set<Column> columnsToLoad = this.columns.stream().filter(c -> c.isThis(table.getTable()))
+            final Set<Column> tableColumns = this.columns.stream()
+                    .filter(c -> c.isThis(table.getTable()))
                     .collect(Collectors.toSet());
 
+            // Columns in columns to load (hidden columns).
+            tableColumns.addAll(this.columnsFromFunctions.stream()
+                    .filter(c -> c.isThis(table.getTable()))
+                    .collect(Collectors.toSet()));
+
             // Columns in ORDER BY clause.
-            columnsToLoad.addAll(
-                    this.orderByFields.stream().filter(c -> c.isThis(table.getTable())).collect(Collectors.toSet()));
+            tableColumns.addAll(this.orderByFields.stream()
+                    .filter(c -> c.isThis(table.getTable()))
+                    .collect(Collectors.toSet()));
 
             // Fields from WHERE clause.
-            getConditionalFields(table, columnsToLoad, this.condition);
+            getConditionalFields(table, tableColumns, this.condition);
 
             // Get fields from other tables join.
             for (final PlanTableNode tableToField : this.tables) {
-                getConditionalFields(table, columnsToLoad, tableToField.getConditionalJoin());
+                getConditionalFields(table, tableColumns, tableToField.getConditionalJoin());
             }
 
             // If there is a column to load.
-            if (columnsToLoad.isEmpty()) {
+            if (tableColumns.isEmpty()) {
                 // Force the table loading (used in joins).
-                columnsToLoad.add(new Column(table.getTable().getFields()[0]));
+                tableColumns.add(new Column(table.getTable().getFields()[0]));
             }
 
-            columnsLoaded.addAll(columnsToLoad);
+            columnsLoaded.addAll(tableColumns);
 
             final List<Object[]> tableData = TableData.loadData(table.getTable(),
-                    columnsToLoad.stream().map(Column::getField).toArray(ParadoxField[]::new));
+                    tableColumns.stream().map(Column::getField).toArray(ParadoxField[]::new));
             if (table.getConditionalJoin() != null) {
                 table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
             }
@@ -569,6 +595,7 @@ public final class SelectPlan implements Plan {
         }
 
         setIndexes(columnsLoaded);
+        setFunctionIndexes(columnsLoaded);
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
@@ -626,6 +653,24 @@ public final class SelectPlan implements Plan {
         for (final PlanTableNode table : this.tables) {
             if (table.getConditionalJoin() != null) {
                 table.getConditionalJoin().setFieldIndexes(columns, tables);
+            }
+        }
+    }
+
+    private void setFunctionIndexes(final List<Column> columnsLoaded) throws SQLException {
+        for (final Column column : this.columns) {
+            if (column.getFunction() != null) {
+                setFunctionIndexes(column.getFunction(), columnsLoaded);
+            }
+        }
+    }
+
+    private void setFunctionIndexes(final FunctionNode function, final List<Column> columnsLoaded) throws SQLException {
+        for (final FieldNode node : function.getFields()) {
+            if (node instanceof FunctionNode) {
+                setFunctionIndexes((FunctionNode) node, columnsLoaded);
+            } else {
+                FieldValueUtils.setFieldIndex(node, columnsLoaded, this.tables);
             }
         }
     }
