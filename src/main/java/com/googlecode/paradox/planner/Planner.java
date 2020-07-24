@@ -23,6 +23,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.planner.sorting.OrderType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -93,7 +94,7 @@ public class Planner {
             final FieldNode field = statement.getOrder().get(i);
             final OrderType type = statement.getOrderTypes().get(i);
             if (field instanceof ValueNode) {
-                int index = Integer.parseInt(field.getName());
+                int index = ValuesConverter.getInteger(field.getName());
                 if (index > plan.getColumns().size()) {
                     throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, Integer.toString(index));
                 }

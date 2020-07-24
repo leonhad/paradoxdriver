@@ -349,7 +349,8 @@ public final class SelectPlan implements Plan {
                 for (final PlanTableNode table : this.tables) {
                     if (table.isThis(fn.getTableName())) {
                         conditionalFields.addAll(Arrays.stream(table.getTable().getFields())
-                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName())).collect(Collectors.toSet()));
+                                .filter(f -> f.getName().equalsIgnoreCase(fn.getName()))
+                                .collect(Collectors.toSet()));
                     }
                 }
             });

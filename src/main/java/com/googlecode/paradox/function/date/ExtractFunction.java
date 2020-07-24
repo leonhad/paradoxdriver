@@ -168,12 +168,13 @@ public class ExtractFunction implements IFunction {
         }
 
         final SQLNode value = parameters.get(0);
-        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {
+        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toString().toUpperCase()) < 0) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
                     value.getName());
         }
 
         // Convert to a non fields do avoid Planner problems.
-        parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(), ParadoxType.VARCHAR));
+        parameters.set(0, new ValueNode(value.getName().toString().toUpperCase(), value.getPosition(),
+                ParadoxType.VARCHAR));
     }
 }
