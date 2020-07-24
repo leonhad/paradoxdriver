@@ -905,11 +905,11 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid field size", 1, select.getFields().size());
         Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof AsteriskNode);
 
-        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
-        final ANDNode andNode = (ANDNode) select.getCondition();
-        Assert.assertEquals("Invalid conditional size", 2, andNode.getChildren().size());
-        Assert.assertTrue("Invalid field type", andNode.getChildren().get(0) instanceof FieldNode);
-        Assert.assertTrue("Invalid field type", andNode.getChildren().get(1) instanceof FunctionNode);
+        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof EqualsNode);
+        final EqualsNode equalsNode = (EqualsNode) select.getCondition();
+        Assert.assertEquals("Invalid conditional size", 0, equalsNode.getChildren().size());
+        Assert.assertNotNull("Invalid field type", equalsNode.getField());
+        Assert.assertTrue("Invalid field type", equalsNode.getLast() instanceof FunctionNode);
     }
 
     /**

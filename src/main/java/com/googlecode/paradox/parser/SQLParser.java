@@ -300,7 +300,11 @@ public final class SQLParser {
             tableName = name;
             name = this.token.getValue();
             this.expect(TokenType.IDENTIFIER);
+        } else if (isToken(TokenType.L_PAREN)) {
+            // function
+            return parseFunction(fieldName, position);
         }
+
         return new FieldNode(tableName, name, position);
     }
 
