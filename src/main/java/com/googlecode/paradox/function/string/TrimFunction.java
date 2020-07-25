@@ -107,14 +107,14 @@ public class TrimFunction extends AbstractFunction {
 
             if (type == TrimType.BOTH || type == TrimType.LEADING) {
                 // Trim left.
-                while (ret.length() > 0 && Arrays.binarySearch(chars, ret.charAt(0)) >= 0) {
+                while (ret.length() > 0 && Arrays.binarySearch(chars, ret.charAt(0)) > -1) {
                     ret.deleteCharAt(0);
                 }
             }
 
             if (type == TrimType.BOTH || type == TrimType.TRAILING) {
                 // Trim right.
-                while (ret.length() > 0 && Arrays.binarySearch(chars, ret.charAt(ret.length() - 1)) >= 0) {
+                while (ret.length() > 0 && Arrays.binarySearch(chars, ret.charAt(ret.length() - 1)) > -1) {
                     ret.deleteCharAt(ret.length() - 1);
                 }
             }
