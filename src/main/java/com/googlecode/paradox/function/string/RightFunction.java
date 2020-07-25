@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,6 +31,15 @@ public class RightFunction extends AbstractStringFunction {
      */
     public static final String NAME = "RIGHT";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The extracted string.", 0, true, RESULT),
+            new Column("string", ParadoxType.VARCHAR, "The string to extract", 1, false, IN),
+            new Column("number_of_chars", ParadoxType.INTEGER, "The number of chars to extract", 2, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Extract a part of the string from the right side.";
@@ -39,28 +47,12 @@ public class RightFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The string to extract", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("number_of_chars", ParadoxType.INTEGER, "The number of chars to extract", 2, false,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-
-        if (values[0] == null) {
-            return null;
-        }
 
         final int size = ValuesConverter.getPositiveInteger(values[1]);
         final StringBuilder ret = new StringBuilder(values[0].toString());

@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -35,6 +34,14 @@ public class WeekOfYearFunction extends AbstractDateFunction {
      */
     public static final String NAME = "WEEKOFYEAR";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "The week of the year.", 0, false, RESULT),
+            new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract from.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Extract the week of the year from a timestamp value  (a number from 1 to 31).";
@@ -42,22 +49,7 @@ public class WeekOfYearFunction extends AbstractDateFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.INTEGER, "The week of the year.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the week of the year " +
-                        "from.", 1, false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

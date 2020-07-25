@@ -35,7 +35,7 @@ public abstract class AbstractFunction {
     /**
      * Function IN parameter.
      */
-    protected static final int IN = DatabaseMetaData.functionColumnIn;
+    public static final int IN = DatabaseMetaData.functionColumnIn;
 
     /**
      * Function returns parameter.

@@ -12,7 +12,6 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * Base class for date functions.
@@ -26,10 +25,4 @@ public abstract class AbstractDateFunction extends AbstractFunction {
     public FunctionType getType() {
         return FunctionType.TIME_DATE;
     }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.TIMESTAMP;
-    }
-
 }

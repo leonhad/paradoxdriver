@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL POWER functions.
  *
@@ -31,6 +29,15 @@ public class PowerFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "POWER";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.NUMBER, "A radian number.", 0, false, RESULT),
+            new Column("number", ParadoxType.NUMBER, "The base number.", 1, false, IN),
+            new Column("exponent", ParadoxType.NUMBER, "The exponent number.", 2, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Returns the value of a number raised to the power of another number.";
@@ -38,20 +45,7 @@ public class PowerFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER,
-                        "A radian number.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, "The base number.", 1,
-                        true, DatabaseMetaData.functionColumnIn),
-                new Column("exponent", ParadoxType.NUMBER, "The exponent number.", 2,
-                        true, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
+        return COLUMNS;
     }
 
     @Override

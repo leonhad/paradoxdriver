@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.security.SecureRandom;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,6 +31,13 @@ public class RandFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "RAND";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.NUMBER, "The random number.", 0, false, RESULT)
+    };
+
     @Override
     public String getRemarks() {
         return "Returns a random number between 0 and 1.";
@@ -39,9 +45,7 @@ public class RandFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER, "The random number.", 0, false,
-                        DatabaseMetaData.functionColumnResult)};
+        return COLUMNS;
     }
 
     @Override

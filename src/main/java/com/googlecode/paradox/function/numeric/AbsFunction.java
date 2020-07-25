@@ -11,14 +11,11 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -27,17 +24,20 @@ import java.sql.SQLException;
  * @version 1.2
  * @since 1.6.0
  */
-public class AbsFunction extends AbstractFunction {
+public class AbsFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
      */
     public static final String NAME = "ABS";
 
-    @Override
-    public FunctionType getType() {
-        return FunctionType.NUMERIC;
-    }
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.NUMBER, "A absolute value.", 0, true, RESULT),
+            new Column("number", ParadoxType.NUMBER, "A numeric value.", 1, false, IN)
+    };
 
     @Override
     public String getRemarks() {
@@ -46,22 +46,7 @@ public class AbsFunction extends AbstractFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER, "A absolute value.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, "A numeric value.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.NUMBER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

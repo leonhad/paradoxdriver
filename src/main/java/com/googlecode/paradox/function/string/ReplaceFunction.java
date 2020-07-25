@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL REPLACE function.
  *
@@ -31,6 +29,16 @@ public class ReplaceFunction extends AbstractStringFunction {
      */
     public static final String NAME = "REPLACE";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The string or replaced.", 0, true, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "The original string.", 1, false, IN),
+            new Column("old_string", ParadoxType.VARCHAR, "The string to be replaced.", 2, false, IN),
+            new Column("new_string", ParadoxType.VARCHAR, "The new replacement string..", 3, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Replaces all occurrences of a substring within a string, with a new substring.";
@@ -38,29 +46,12 @@ public class ReplaceFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The string or replaced.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR,
-                        "The original string.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("old_string", ParadoxType.VARCHAR,
-                        "The string to be replaced.", 2, false, DatabaseMetaData.functionColumnIn),
-                new Column("new_string", ParadoxType.VARCHAR,
-                        "The new replacement string..", 3, false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 3;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] == null || values[1] == null || values[2] == null) {
-            return null;
-        }
 
         return values[0].toString().replace(values[1].toString(), values[2].toString());
     }

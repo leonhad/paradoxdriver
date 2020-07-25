@@ -17,8 +17,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL NVL function.
  *
@@ -32,6 +30,15 @@ public class NvlFunction extends AbstractGeneralFunction {
      */
     public static final String NAME = "NVL";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The string or replacement (if first is null).", 0, true, RESULT),
+            new Column("string", ParadoxType.VARCHAR, "The string to test if null.", 1, true, IN),
+            new Column("replacement", ParadoxType.VARCHAR, "The replacement in case of null.", 2, true, IN)
+    };
+
     private ParadoxType type = ParadoxType.NULL;
 
     @Override
@@ -41,30 +48,12 @@ public class NvlFunction extends AbstractGeneralFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The string or replacement (if first is null).", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The string to test if null.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("replacement", ParadoxType.VARCHAR,
-                        "The replacement in case of null.", 2, true, DatabaseMetaData.functionColumnIn)
-        };
+        return COLUMNS;
     }
 
     @Override
     public ParadoxType getFieldType() {
         return type;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
-    }
-
-    @Override
-    public boolean isVariableParameters() {
-        return false;
     }
 
     @Override

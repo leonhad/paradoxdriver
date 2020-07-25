@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL DRIVER_NAME functions.
  *
@@ -31,6 +29,13 @@ public class DriverNameFunction extends AbstractSystemFunction {
      */
     public static final String NAME = "DRIVER_NAME";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The driver name.", 0, false, RESULT)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the driver name.";
@@ -38,8 +43,7 @@ public class DriverNameFunction extends AbstractSystemFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.VARCHAR,
-                "The driver name.", 0, false, DatabaseMetaData.functionColumnResult)};
+        return COLUMNS;
     }
 
     @Override

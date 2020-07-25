@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL char length function.
  *
@@ -30,6 +28,14 @@ public class CharLengthFunction extends AbstractStringFunction {
      */
     public static final String NAME = "CHAR_LENGTH";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "The char length.", 0, true, RESULT),
+            new Column("string", ParadoxType.VARCHAR, "The character values to count.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the length of the character values.";
@@ -37,31 +43,12 @@ public class CharLengthFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER, "The char length.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The character values to count.", 1, true, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] != null) {
-            return values[0].toString().length();
-        }
-
-        return null;
+        return values[0].toString().length();
     }
 }

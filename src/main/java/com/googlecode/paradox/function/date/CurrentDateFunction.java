@@ -16,14 +16,13 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.Date;
 import java.util.TimeZone;
 
 /**
  * The SQL CURRENT_DATE function.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public class CurrentDateFunction extends AbstractDateFunction {
@@ -33,6 +32,13 @@ public class CurrentDateFunction extends AbstractDateFunction {
      */
     public static final String NAME = "CURRENT_DATE";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.DATE, "The current date.", 0, false, RESULT)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the current date.";
@@ -40,9 +46,7 @@ public class CurrentDateFunction extends AbstractDateFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.DATE, "The current date.", 0, false, DatabaseMetaData.functionColumnResult)
-        };
+        return COLUMNS;
     }
 
     @Override
@@ -51,15 +55,11 @@ public class CurrentDateFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.TIMESTAMP;
-    }
-
-    @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        long time = System.currentTimeMillis();
-        return ValuesConverter.removeTime(
-                new Date(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)));
+        final long time = System.currentTimeMillis();
+        return ValuesConverter.removeTime(new Date(
+                time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)
+        ));
     }
 }

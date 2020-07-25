@@ -19,7 +19,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -37,6 +36,15 @@ public class CastFunction extends AbstractGeneralFunction {
      */
     public static final String NAME = "CAST";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.BYTES, "The converted field.", 0, true, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "The value to convert.", 1, true, IN),
+            new Column("sql_type", ParadoxType.VARCHAR, "The SQL type to convert.", 2, true, IN)
+    };
+
     private ParadoxType type = ParadoxType.BYTES;
 
     @Override
@@ -46,23 +54,12 @@ public class CastFunction extends AbstractGeneralFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.BYTES, "The converted field.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, "The value to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("sql_type", ParadoxType.VARCHAR,
-                        "The SQL type to convert.", 2, true, DatabaseMetaData.functionColumnIn)};
+        return COLUMNS;
     }
 
     @Override
     public ParadoxType getFieldType() {
         return type;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
     }
 
     @Override

@@ -24,7 +24,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -45,6 +44,16 @@ public class ConvertFunction extends AbstractGeneralFunction {
     private Charset charset;
     private ParadoxType type = ParadoxType.VARCHAR;
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR,
+                    "The string converted with charset specified.", 0, true, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "The value to convert.", 1, true, IN),
+            new Column("charset", ParadoxType.VARCHAR, "The charset name to convert.", 2, true, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Convert a string to charset specified. Example: CONVERT('value' USING utf8)";
@@ -52,14 +61,7 @@ public class ConvertFunction extends AbstractGeneralFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The string converted with charset specified.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, "The value to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("charset", ParadoxType.VARCHAR,
-                        "The charset name to convert.", 2, true, DatabaseMetaData.functionColumnIn)
-        };
+        return COLUMNS;
     }
 
     @Override
@@ -68,8 +70,8 @@ public class ConvertFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public int getParameterCount() {
-        return 2;
+    public int getMaxParameterCount() {
+        return 0x03;
     }
 
     @Override

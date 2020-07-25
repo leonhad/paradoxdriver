@@ -17,7 +17,6 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.math.BigDecimal;
-import java.sql.DatabaseMetaData;
 
 /**
  * The SQL BIN functions.
@@ -32,6 +31,14 @@ public class BinFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "BIN";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The the binary representation of a number.", 0, false, RESULT),
+            new Column("number", ParadoxType.INTEGER, "A numeric value.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Returns a binary representation of a number, as a string value..";
@@ -39,23 +46,7 @@ public class BinFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The the binary representation of a number.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.INTEGER, "A numeric value.", 1,
-                        false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.VARCHAR;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

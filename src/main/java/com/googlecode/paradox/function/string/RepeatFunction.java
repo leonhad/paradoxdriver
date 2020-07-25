@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,6 +31,15 @@ public class RepeatFunction extends AbstractStringFunction {
      */
     public static final String NAME = "REPEAT";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The string repeated.", 0, true, RESULT),
+            new Column("string", ParadoxType.VARCHAR, "The string to repeat.", 1, false, IN),
+            new Column("count", ParadoxType.INTEGER, "The repeat count.", 2, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Return a repeated string a specified number of times.";
@@ -39,19 +47,7 @@ public class RepeatFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The string repeated.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The string to repeat.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("count", ParadoxType.INTEGER,
-                        "The repeat count.", 2, false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
+        return COLUMNS;
     }
 
     @Override

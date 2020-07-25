@@ -12,13 +12,10 @@ package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.util.Objects;
@@ -39,6 +36,17 @@ public class CoalesceFunction extends AbstractGeneralFunction {
 
     private ParadoxType type = ParadoxType.NULL;
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR,
+                    "The string or replacement (if first is null).", 0, true,
+                    DatabaseMetaData.functionColumnResult),
+            new Column("string", ParadoxType.VARCHAR, "The string to test if null.", 1, true, IN),
+            new Column("replacement", ParadoxType.VARCHAR, "The replacement in case of null.", 2, true, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Return a specified value if the string is null.";
@@ -46,16 +54,7 @@ public class CoalesceFunction extends AbstractGeneralFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The string or replacement (if first is null).", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The string to test if null.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("replacement", ParadoxType.VARCHAR,
-                        "The replacement in case of null.", 2, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
+        return COLUMNS;
     }
 
     @Override

@@ -349,6 +349,15 @@ public final class Column {
     }
 
     /**
+     * Sets the column size.
+     *
+     * @param size the column size.
+     */
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    /**
      * Gets if this field have sign.
      *
      * @return true if this field have sign.

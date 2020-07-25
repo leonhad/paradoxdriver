@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Stores a function node.
@@ -72,6 +73,7 @@ public class FunctionNode extends FieldNode {
      * @throws ParadoxSyntaxErrorException in case of invalid function call.
      */
     public void validate(final ScannerPosition position) throws ParadoxSyntaxErrorException {
+        // Test for parameters count.
         final int parameterCount = function.getParameterCount();
         final int maxParameterCount = function.getMaxParameterCount();
         if (function.isVariableParameters()) {
@@ -86,6 +88,7 @@ public class FunctionNode extends FieldNode {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, position, parameterCount);
         }
 
+        // Lets the function validade the parameters statically.
         this.function.validate(this.parameters);
     }
 
@@ -213,9 +216,16 @@ public class FunctionNode extends FieldNode {
                         parameterTypes, loadedColumns);
                 types[i] = loadedColumns.get(((FieldNode) param).getIndex()).getType();
             }
-
         }
 
+        // Validate null parameter values.
+        if (Stream.of(function.getColumns())
+                .filter(c -> c.getColumnType() == AbstractFunction.IN && !c.isNullable())
+                .anyMatch(c -> values[c.getIndex() - 1] == null)) {
+            return null;
+        }
+
+        // If no problems found, execute the procedure.
         return function.execute(connection, values, types, fields);
     }
 

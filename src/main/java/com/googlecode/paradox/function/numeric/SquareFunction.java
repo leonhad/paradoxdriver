@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL SQUARE functions.
  *
@@ -31,6 +29,14 @@ public class SquareFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "SQUARE";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.NUMBER, "The number in power of 2.", 0, false, RESULT),
+            new Column("number", ParadoxType.NUMBER, "A number to calculate the square of.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Returns the square of a number.";
@@ -38,17 +44,7 @@ public class SquareFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER, "The number in power of 2.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, "A number to calculate the square of.", 1,
-                        true, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,6 +31,14 @@ public class CharFunction extends AbstractStringFunction {
      */
     public static final String NAME = "CHAR";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.CHAR, "A char type value.", 0, true, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, true, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Converts the value to char type.";
@@ -39,22 +46,7 @@ public class CharFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.CHAR, "A char type value.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR,
-                        "A value to convert.", 1, true, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.CHAR;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -36,6 +35,16 @@ public class DateFromPartsFunction extends AbstractDateFunction {
      */
     public static final String NAME = "DATEFROMPARTS";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.DATE, "The date value.", 0, false, RESULT),
+            new Column("year", ParadoxType.INTEGER, "Specifies a year (4 digits).", 1, false, IN),
+            new Column("month", ParadoxType.INTEGER, "Specifies a month (from 1 to 12).", 2, false, IN),
+            new Column("day", ParadoxType.INTEGER, "Specifies a day (from 1 to 31).", 3, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Extract a date from the specified parts (year, month, and day values).";
@@ -43,26 +52,7 @@ public class DateFromPartsFunction extends AbstractDateFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.DATE, "The date value.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("year", ParadoxType.INTEGER, "Specifies a year (4 digits).", 1,
-                        false, DatabaseMetaData.functionColumnIn),
-                new Column("month", ParadoxType.INTEGER, "Specifies a month (from 1 to 12).", 2,
-                        false, DatabaseMetaData.functionColumnIn),
-                new Column("day", ParadoxType.INTEGER, "Specifies a day (from 1 to 31).", 3,
-                        false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.DATE;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 3;
+        return COLUMNS;
     }
 
     @Override

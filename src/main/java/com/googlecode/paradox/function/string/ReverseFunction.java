@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL reverse function.
  *
@@ -30,6 +28,14 @@ public class ReverseFunction extends AbstractStringFunction {
      */
     public static final String NAME = "REVERSE";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The string inverted.", 0, false, RESULT),
+            new Column("string", ParadoxType.VARCHAR, "The string to invert.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Return a string in inverted order.";
@@ -37,28 +43,15 @@ public class ReverseFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The string inverted.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The string to invert.", 1, true, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] != null) {
-            StringBuilder builder = new StringBuilder(values[0].toString());
-            builder.reverse();
-            return builder.toString();
-        }
 
-        return null;
+        final StringBuilder builder = new StringBuilder(values[0].toString());
+        builder.reverse();
+        return builder.toString();
     }
 }

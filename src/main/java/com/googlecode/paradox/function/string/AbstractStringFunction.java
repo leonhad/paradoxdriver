@@ -12,7 +12,6 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * Base class for string functions.
@@ -26,10 +25,4 @@ public abstract class AbstractStringFunction extends AbstractFunction {
     public FunctionType getType() {
         return FunctionType.STRING;
     }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.VARCHAR;
-    }
-
 }

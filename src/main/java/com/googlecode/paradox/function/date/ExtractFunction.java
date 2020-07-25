@@ -20,7 +20,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -43,8 +42,18 @@ public class ExtractFunction extends AbstractDateFunction {
      */
     public static final String NAME = "EXTRACT";
 
+    // FIXME use enum.
     private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "DAYOFYEAR",
             "WEEK", "MONTH", "QUARTER", "YEAR"};
+
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "The part of the.", 0, false, RESULT),
+            new Column("date_part", ParadoxType.VARCHAR, "The part name to extract.", 1, false, IN),
+            new Column("date", ParadoxType.TIMESTAMP, "The date to extract.", 2, false, IN)
+    };
 
     static {
         // Allow binary search.
@@ -79,19 +88,7 @@ public class ExtractFunction extends AbstractDateFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.INTEGER, "The part of the.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("date_part", ParadoxType.VARCHAR, "The part name to extract.", 1, false,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("date", ParadoxType.TIMESTAMP, "The date to extract.", 2, false,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
+        return COLUMNS;
     }
 
     @Override
@@ -102,10 +99,6 @@ public class ExtractFunction extends AbstractDateFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-
-        if (values[0] == null || values[1] == null) {
-            return null;
-        }
 
         final String format = values[0].toString();
         final Object value = values[1];

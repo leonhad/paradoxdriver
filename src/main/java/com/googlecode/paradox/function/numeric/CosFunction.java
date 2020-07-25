@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL COS functions.
  *
@@ -31,6 +29,14 @@ public class CosFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "COS";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.NUMBER, "The the cosine of a number.", 0, false, RESULT),
+            new Column("number", ParadoxType.NUMBER, "A numeric value.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Returns the cosine of a number.";
@@ -38,18 +44,7 @@ public class CosFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER,
-                        "The the cosine of a number.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, "A numeric value.", 1,
-                        false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

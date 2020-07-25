@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL OCTET_LENGTH function.
  *
@@ -30,6 +28,14 @@ public class OctetLengthFunction extends AbstractStringFunction {
      */
     public static final String NAME = "OCTET_LENGTH";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "The bytes count.", 0, false, RESULT),
+            new Column("bytes", ParadoxType.BLOB, "The byte values to count.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the length of the binary values in bytes.";
@@ -37,22 +43,7 @@ public class OctetLengthFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER, "The bytes count.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("bytes", ParadoxType.BLOB, "The byte values to count.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override
@@ -61,23 +52,14 @@ public class OctetLengthFunction extends AbstractStringFunction {
         Object value = values[0];
         int ret = 0;
         switch (types[0]) {
+            case CHAR:
+                // Same as memo.
             case MEMO:
                 // Same as VARCHAR.
             case VARCHAR:
                 if (value != null) {
                     ret = value.toString().length();
                 }
-                break;
-            case BOOLEAN:
-                ret = Byte.SIZE;
-                break;
-            case INTEGER:
-                ret = Integer.BYTES;
-                break;
-            case DECIMAL:
-                // Same as numeric.
-            case NUMBER:
-                ret = Double.BYTES;
                 break;
             case BLOB:
                 // Same as binary.
@@ -88,15 +70,9 @@ public class OctetLengthFunction extends AbstractStringFunction {
             case BYTES:
                 ret = ((byte[]) value).length;
                 break;
-            case TIMESTAMP:
-                // Same as TIME.
-            case TIME:
-                // Same as DATE.
-            case DATE:
-                ret = Long.BYTES;
-                break;
             default:
-                ret = 0;
+                // Uses the default size.
+                ret = types[0].getSize();
         }
 
         return ret;

@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -34,6 +33,16 @@ public class SubstringFunction extends AbstractStringFunction {
      */
     public static final String NAME = "SUBSTRING";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The extracted string.", 0, false, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "The string to extract from.", 1, false, IN),
+            new Column("start", ParadoxType.INTEGER, "The start position. Begin with 1.", 2, false, IN),
+            new Column("length", ParadoxType.INTEGER, "The amount to extract.", 3, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Extracts some characters from a string.";
@@ -41,29 +50,12 @@ public class SubstringFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR,
-                        "The string to extract from.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("start", ParadoxType.INTEGER, "The start position. Begin with 1.", 2, true,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("length", ParadoxType.INTEGER, "The amount to extract.", 3, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 3;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-        if (values[0] == null) {
-            return null;
-        }
 
         final int index = ValuesConverter.getPositiveInteger(values[1]) - 1;
         if (index == -1) {

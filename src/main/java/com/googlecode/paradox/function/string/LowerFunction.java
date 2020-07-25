@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL lower function.
  *
@@ -30,6 +28,14 @@ public class LowerFunction extends AbstractStringFunction {
      */
     public static final String NAME = "LOWER";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "A varchar value in lower case.", 0, true, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Converts a texto to lower case.";
@@ -37,12 +43,7 @@ public class LowerFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, "A varchar value in lower case.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
+        return COLUMNS;
     }
 
     @Override
@@ -53,10 +54,6 @@ public class LowerFunction extends AbstractStringFunction {
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] != null) {
-            return values[0].toString().toLowerCase(connection.getLocale());
-        }
-
-        return null;
+        return values[0].toString().toLowerCase(connection.getLocale());
     }
 }

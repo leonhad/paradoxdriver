@@ -15,7 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -31,6 +30,15 @@ public class PositionFunction extends AbstractStringFunction {
      */
     public static final String NAME = "POSITION";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "The position in the string. Zero if no found.", 0, true, RESULT),
+            new Column("string", ParadoxType.VARCHAR, "The string to search from.", 1, false, IN),
+            new Column("pattern", ParadoxType.VARCHAR, "The pattern to find.", 2, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the position of the pattern in a string value.";
@@ -38,33 +46,12 @@ public class PositionFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.INTEGER, "The position in the string. Zero if no found.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The string to search from.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("pattern", ParadoxType.VARCHAR,
-                        "The pattern to find.", 2, true, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-
-        if (values[0] == null || values[1] == null) {
-            return null;
-        }
 
         return values[1].toString().indexOf(values[0].toString()) + 1;
     }

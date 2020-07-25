@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL VERSION_NUMBER functions.
  *
@@ -31,6 +29,13 @@ public class VersionNumberFunction extends AbstractSystemFunction {
      */
     public static final String NAME = "VERSION_NUMBER";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The driver version number.", 0, false, RESULT)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the driver version number.";
@@ -38,8 +43,7 @@ public class VersionNumberFunction extends AbstractSystemFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.VARCHAR,
-                "The driver version number.", 0, false, DatabaseMetaData.functionColumnResult)};
+        return COLUMNS;
     }
 
     @Override

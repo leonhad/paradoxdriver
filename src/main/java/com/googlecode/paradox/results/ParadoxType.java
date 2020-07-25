@@ -42,27 +42,27 @@ public enum ParadoxType implements SQLType {
     /**
      * The integer type.
      */
-    INTEGER(3, Types.INTEGER, true, Integer.class, 0, 4, true),
+    INTEGER(3, Types.INTEGER, true, Integer.class, 0, Integer.BYTES, true),
 
     /**
      * The integer type. Variant 2.
      */
-    LONG(4, Types.INTEGER, true, Integer.class, 0, 8, true),
+    LONG(4, Types.INTEGER, true, Integer.class, 0, Long.BYTES, true),
 
     /**
      * The double type.
      */
-    CURRENCY(5, Types.DOUBLE, true, Double.class, 10, 2, true),
+    CURRENCY(5, Types.DOUBLE, true, Double.class, 10, Double.BYTES, true),
 
     /**
      * The numeric type.
      */
-    NUMBER(6, Types.NUMERIC, true, Double.class, 4, 10, true),
+    NUMBER(6, Types.NUMERIC, true, Double.class, 6, Double.BYTES, true),
 
     /**
      * The numeric type.
      */
-    DECIMAL(6, Types.DECIMAL, false, Double.class, 4, 10, true),
+    DECIMAL(6, Types.DECIMAL, false, Double.class, 6, Double.BYTES, true),
 
     /**
      * The boolean type.
@@ -134,7 +134,7 @@ public enum ParadoxType implements SQLType {
     /**
      * Null Type.
      */
-    NULL(0x0, Types.NULL, false, Object.class, 0, 0, false);
+    NULL(0x0, Types.NULL, false, Object.class, 0, 4, false);
 
     private static final ParadoxType[] VALUES = ParadoxType.values();
 

@@ -19,7 +19,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Utils;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +43,14 @@ public class TrimFunction extends AbstractStringFunction {
     private TrimType type = TrimType.BOTH;
 
     /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The extracted string.", 0, true, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "The string to extract from.", 1, false, IN)
+    };
+
+    /**
      * Creates a new instance.
      */
     public TrimFunction() {
@@ -57,17 +64,7 @@ public class TrimFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, "The extracted string.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, "The string to extract from.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override
@@ -76,9 +73,14 @@ public class TrimFunction extends AbstractStringFunction {
     }
 
     @Override
+    public int getMaxParameterCount() {
+        return 0x03;
+    }
+
+    @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-        if (values[0] == null || (values.length > 1 && values[1] == null)) {
+        if (values.length > 1 && values[1] == null) {
             return null;
         }
 
@@ -131,13 +133,33 @@ public class TrimFunction extends AbstractStringFunction {
         }
     }
 
+    /**
+     * Check for invalid trim type.
+     *
+     * @param value the value to check.
+     * @return <code>true</code> if the {@code value} is a valid trim type.
+     */
     public static boolean isInvalidType(final String value) {
         return Utils.searchEnum(TrimType.class, value) == null;
     }
 
+    /**
+     * Valids TRIM types.
+     */
     private enum TrimType {
+        /**
+         * Trim both sides.
+         */
         BOTH,
+
+        /**
+         * Trim only leading side.
+         */
         LEADING,
+
+        /**
+         * Trim only trailing side.
+         */
         TRAILING
     }
 }

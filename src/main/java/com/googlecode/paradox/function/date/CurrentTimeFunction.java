@@ -13,7 +13,6 @@ package com.googlecode.paradox.function.date;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -21,7 +20,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.sql.Time;
-import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -76,13 +74,19 @@ public class CurrentTimeFunction extends AbstractDateFunction {
     }
 
     @Override
+    public int getMaxParameterCount() {
+        return 1;
+    }
+
+    @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         if (types.length == 1) {
+            // This method is keep to adere SQL92 standards. The standards have values between 0 and 6.
+            // This value is not used here.
             final int value = ValuesConverter.getPositiveInteger(values[0]);
             if (value < 0x00 || value > 0x06) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
-                        values[0]);
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, value);
             }
         }
 
@@ -90,14 +94,5 @@ public class CurrentTimeFunction extends AbstractDateFunction {
         return ValuesConverter.removeDate(new Time(
                 time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)
         ));
-    }
-
-    @Override
-    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        super.validate(parameters);
-
-        if (parameters.size() > 1) {
-            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, 1);
-        }
     }
 }

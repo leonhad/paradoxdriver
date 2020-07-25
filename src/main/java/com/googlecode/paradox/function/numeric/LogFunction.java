@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL LOG functions.
  *
@@ -31,6 +29,17 @@ public class LogFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "LOG";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.NUMBER, "The logarithm of the number.", 0, false, RESULT),
+            new Column("number", ParadoxType.NUMBER, "The number to return the natural logarithm of. Must be greater " +
+                    "than 0.", 1, false, IN),
+            new Column("base", ParadoxType.NUMBER, "The base the natural logarithm is to be calculated with. Must be " +
+                    "greater than 1.", 2, true, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Returns the natural logarithm of a specified number, " +
@@ -39,17 +48,7 @@ public class LogFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER,
-                        "The logarithm of the number.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER,
-                        "The number to return the natural logarithm of. Must be greater than 0.", 1,
-                        false, DatabaseMetaData.functionColumnIn),
-                new Column("base", ParadoxType.NUMBER,
-                        "The base the natural logarithm is to be calculated with. Must be greater than 1.", 2,
-                        true, DatabaseMetaData.functionColumnIn)
-        };
+        return COLUMNS;
     }
 
     @Override

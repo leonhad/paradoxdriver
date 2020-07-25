@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL ATN2 functions.
  *
@@ -31,6 +29,15 @@ public class ATN2Function extends AbstractNumericFunction {
      */
     public static final String NAME = "ATN2";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.NUMBER, "The the arc-tangent of a number.", 0, false, RESULT),
+            new Column("number1", ParadoxType.NUMBER, "A numeric value.", 1, false, IN),
+            new Column("number2", ParadoxType.NUMBER, "A numeric value.", 2, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Returns the arc-tangent of two numbers.";
@@ -38,20 +45,7 @@ public class ATN2Function extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER,
-                        "The the arc-tangent of a number.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number1", ParadoxType.NUMBER, "A numeric value.", 1,
-                        false, DatabaseMetaData.functionColumnIn),
-                new Column("number2", ParadoxType.NUMBER, "A numeric value.", 2,
-                        false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
+        return COLUMNS;
     }
 
     @Override

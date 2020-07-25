@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL CONCAT function.
  *
@@ -30,6 +28,15 @@ public class ConcatFunction extends AbstractStringFunction {
      */
     public static final String NAME = "CONCAT";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The concatenated string.", 0, true, RESULT),
+            new Column("value1", ParadoxType.VARCHAR, "The string to concatenate", 1, true, IN),
+            new Column("value2", ParadoxType.VARCHAR, "The string to concatenate", 2, true, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Concatenate a sequence of strings. This functions support any number of parameters.";
@@ -37,14 +44,7 @@ public class ConcatFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The concatenated string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value1", ParadoxType.VARCHAR,
-                        "The string to concatenate", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("value2", ParadoxType.VARCHAR,
-                        "The string to concatenate", 2, true, DatabaseMetaData.functionColumnIn)
-        };
+        return COLUMNS;
     }
 
     @Override

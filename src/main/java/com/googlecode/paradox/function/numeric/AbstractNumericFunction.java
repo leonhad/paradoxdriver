@@ -12,7 +12,6 @@ package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * Base class for numeric functions.
@@ -26,10 +25,4 @@ public abstract class AbstractNumericFunction extends AbstractFunction {
     public FunctionType getType() {
         return FunctionType.NUMERIC;
     }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.NUMBER;
-    }
-
 }

@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL SIGN functions.
  *
@@ -31,6 +29,14 @@ public class SignFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "SIGN";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "1 for positive, -1 for negative and 0 for zero.", 0, false, RESULT),
+            new Column("number", ParadoxType.NUMBER, "The value to check.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Return the sign of a number.";
@@ -38,23 +44,7 @@ public class SignFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.INTEGER,
-                        "1 for positive, -1 for negative and 0 for zero.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, "The value to check.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override
@@ -65,12 +55,6 @@ public class SignFunction extends AbstractNumericFunction {
             return null;
         }
 
-        if (value < 0) {
-            return -1;
-        } else if (value > 0) {
-            return 1;
-        }
-
-        return 0;
+        return Math.signum(value);
     }
 }

@@ -12,7 +12,6 @@ package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.results.ParadoxType;
 
 /**
  * Base class for general functions.
@@ -26,10 +25,4 @@ public abstract class AbstractGeneralFunction extends AbstractFunction {
     public FunctionType getType() {
         return FunctionType.SYSTEM;
     }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.NULL;
-    }
-
 }

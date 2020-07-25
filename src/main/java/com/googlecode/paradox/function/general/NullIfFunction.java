@@ -17,7 +17,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
 import java.util.Objects;
 
 /**
@@ -33,6 +32,16 @@ public class NullIfFunction extends AbstractGeneralFunction {
      */
     public static final String NAME = "NULLIF";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR,
+                    "The string or replacement (if first is null).", 0, true, RESULT),
+            new Column("expression1", ParadoxType.VARCHAR, "The first value to test.", 1, true, IN),
+            new Column("expression2", ParadoxType.VARCHAR, "The second value to test.", 2, true, IN)
+    };
+
     private ParadoxType type = ParadoxType.NULL;
 
     @Override
@@ -42,30 +51,12 @@ public class NullIfFunction extends AbstractGeneralFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The string or replacement (if first is null).", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("expression1", ParadoxType.VARCHAR,
-                        "The first value to test.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("expression2", ParadoxType.VARCHAR,
-                        "The second value to test.", 2, true, DatabaseMetaData.functionColumnIn)
-        };
+        return COLUMNS;
     }
 
     @Override
     public ParadoxType getFieldType() {
         return type;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 2;
-    }
-
-    @Override
-    public boolean isVariableParameters() {
-        return false;
     }
 
     @Override

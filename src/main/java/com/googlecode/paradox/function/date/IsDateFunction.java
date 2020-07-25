@@ -16,8 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL ISDATE functions.
  *
@@ -31,6 +29,14 @@ public class IsDateFunction extends AbstractDateFunction {
      */
     public static final String NAME = "ISDATE";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.BOOLEAN, "True if the value is date.", 0, false, RESULT),
+            new Column("date", ParadoxType.DATE, "The value to check.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Checks if the value can be a date or time value.";
@@ -38,31 +44,12 @@ public class IsDateFunction extends AbstractDateFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.BOOLEAN, "True if the value is date.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.DATE, "The value to check.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.BOOLEAN;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] == null) {
-            return 0;
-        }
-
         if (ValuesConverter.getDate(values[0]) != null) {
             return Boolean.TRUE;
         }

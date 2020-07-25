@@ -15,7 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -29,32 +28,30 @@ public class AsciiFunction extends AbstractStringFunction {
     /**
      * The function name.
      */
+    @SuppressWarnings("i18n-java:V1008")
     public static final String NAME = "ASCII";
+
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "A unicode integer value.", 0, true, RESULT),
+            new Column("integer", ParadoxType.CHAR, "The char value to convert.", 1, false, IN)
+    };
+
+    static {
+        // Fix the second parameter size.
+        COLUMNS[1].setSize(1);
+    }
 
     @Override
     public String getRemarks() {
-        return "Converts a integer value to UNICODE char.";
+        return "Converts a character value to unicode integer value.";
     }
 
     @Override
     public Column[] getColumns() {
-        // FIXME char 1
-        return new Column[]{
-                new Column(null, ParadoxType.CHAR, "The converter UNICODE char.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("integer", ParadoxType.NUMBER, "The integer value to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

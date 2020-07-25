@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,30 +31,27 @@ public class ChrFunction extends AbstractStringFunction {
      */
     public static final String NAME = "CHR";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.CHAR, "A char value.", 0, false, RESULT),
+            new Column("number", ParadoxType.INTEGER, "The integer to convert.", 1, true, IN)
+    };
+
+    static {
+        // Fix the column return size.
+        COLUMNS[0].setSize(1);
+    }
+
     @Override
     public String getRemarks() {
-        return "Converts a UNICODE char to integer value (UNICODE integer value).";
+        return "Converts a unicode integer value to char.";
     }
 
     @Override
     public Column[] getColumns() {
-        // FIXME char 1
-        return new Column[]{
-                new Column(null, ParadoxType.NUMBER, "The integer value of UNICODE char.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.CHAR, "The UNICODE char to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.CHAR;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

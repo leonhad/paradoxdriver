@@ -15,14 +15,13 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
 import java.sql.Timestamp;
 import java.util.TimeZone;
 
 /**
  * The SQL CURRENT_TIMESTAMP function.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public class CurrentTimestampFunction extends AbstractDateFunction {
@@ -32,6 +31,13 @@ public class CurrentTimestampFunction extends AbstractDateFunction {
      */
     public static final String NAME = "CURRENT_TIMESTAMP";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.TIMESTAMP, "The current timestamp.", 0, false, RESULT)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the current timestamp.";
@@ -39,10 +45,7 @@ public class CurrentTimestampFunction extends AbstractDateFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.TIMESTAMP, "The current timestamp.", 0, false,
-                        DatabaseMetaData.functionColumnResult)
-        };
+        return COLUMNS;
     }
 
     @Override

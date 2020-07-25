@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,6 +31,16 @@ public class LPadFunction extends AbstractStringFunction {
      */
     public static final String NAME = "LPAD";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The left-padded string.", 0, true, RESULT),
+            new Column("string", ParadoxType.VARCHAR, "The original string.", 1, false, IN),
+            new Column("length", ParadoxType.VARCHAR, "The length of the final string.", 2, false, IN),
+            new Column("lpad_string", ParadoxType.VARCHAR, "The filler string to use.", 3, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Left-pads a string with another string, to a certain length.";
@@ -39,30 +48,12 @@ public class LPadFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "The left-padded string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR,
-                        "The original string.", 1, false, DatabaseMetaData.functionColumnIn),
-                new Column("length", ParadoxType.VARCHAR,
-                        "The length of the final string.", 2, false, DatabaseMetaData.functionColumnIn),
-                new Column("lpad_string", ParadoxType.VARCHAR,
-                        "The filler string to use.", 3, false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 3;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-
-        if (values[0] == null || values[1] == null) {
-            return null;
-        }
 
         final String value = values[0].toString();
         final int size = ValuesConverter.getPositiveInteger(values[1]);

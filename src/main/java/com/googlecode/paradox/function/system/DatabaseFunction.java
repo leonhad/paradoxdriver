@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL DATABASE functions.
  *
@@ -30,6 +28,13 @@ public class DatabaseFunction extends AbstractSystemFunction {
      */
     public static final String NAME = "DATABASE";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "The current database.", 0, false, RESULT)
+    };
+
     @Override
     public String getRemarks() {
         return "Gets the current database name (catalog).";
@@ -37,8 +42,7 @@ public class DatabaseFunction extends AbstractSystemFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.VARCHAR,
-                "The current database.", 0, false, DatabaseMetaData.functionColumnResult)};
+        return COLUMNS;
     }
 
     @Override

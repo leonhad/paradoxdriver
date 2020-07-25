@@ -16,7 +16,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
@@ -32,6 +31,14 @@ public class IntegerFunction extends AbstractNumericFunction {
      */
     public static final String NAME = "INTEGER";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.INTEGER, "A integer value.", 0, true, RESULT),
+            new Column("integer", ParadoxType.VARCHAR, "A value to convert.", 1, true, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Converts the value to integer type.";
@@ -39,22 +46,7 @@ public class IntegerFunction extends AbstractNumericFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.INTEGER, "A integer value.", 0, true,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("integer", ParadoxType.VARCHAR, "A value to convert.", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType getFieldType() {
-        return ParadoxType.INTEGER;
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -41,8 +40,19 @@ public class DateAddFunction extends AbstractDateFunction {
      */
     public static final String NAME = "DATEADD";
 
+    // FIXME change to ENUM.
     private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "DAYOFYEAR",
             "WEEK", "MONTH", "QUARTER", "YEAR"};
+
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.TIMESTAMP, "The result date.", 0, false, RESULT),
+            new Column("format", ParadoxType.VARCHAR, "The interval format.", 1, false, IN),
+            new Column("number", ParadoxType.INTEGER, "The value to add.", 2, false, IN),
+            new Column("date", ParadoxType.TIMESTAMP, "The date to add.", 3, false, IN)
+    };
 
     static {
         // Allow binary search.
@@ -57,22 +67,7 @@ public class DateAddFunction extends AbstractDateFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.TIMESTAMP, "The result date.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("format", ParadoxType.VARCHAR,
-                        "The interval format. The interval can be: " + Arrays.toString(VALID_FORMATS) + ".", 1, false,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("number", ParadoxType.INTEGER, "The value to add.", 2, false,
-                        DatabaseMetaData.functionColumnIn),
-                new Column("date", ParadoxType.TIMESTAMP, "The date to add.", 3, false,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 3;
+        return COLUMNS;
     }
 
     @Override

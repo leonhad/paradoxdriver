@@ -15,8 +15,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.DatabaseMetaData;
-
 /**
  * The SQL UPPER function.
  *
@@ -30,6 +28,14 @@ public class UpperFunction extends AbstractStringFunction {
      */
     public static final String NAME = "UPPER";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.VARCHAR, "A varchar value in upper case.", 0, true, RESULT),
+            new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, false, IN)
+    };
+
     @Override
     public String getRemarks() {
         return "Converts a texto to upper case.";
@@ -37,26 +43,13 @@ public class UpperFunction extends AbstractStringFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.VARCHAR,
-                        "A varchar value in upper case.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR,
-                        "A value to convert.", 1, true, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public int getParameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override
     public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (values[0] != null) {
-            return values[0].toString().toUpperCase(connection.getLocale());
-        }
 
-        return null;
+        return values[0].toString().toUpperCase(connection.getLocale());
     }
 }
