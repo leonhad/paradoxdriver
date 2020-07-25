@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.results.Column;
@@ -82,7 +83,7 @@ public final class FieldValueUtils {
 
                 if (current != ParadoxType.NULL && type != ParadoxType.NULL && current.getSQLType() != type.getSQLType()) {
                     // The field types isn't the same (NULL ignored).
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_DATA_TYPE,
+                    throw new ParadoxSyntaxErrorException(SyntaxError.INCONSISTENT_DATA_TYPE,
                             current.name(), type.name());
                 }
             }

@@ -11,10 +11,7 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.exceptions.ParadoxException;
-import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.*;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -23,7 +20,6 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.planner.sorting.OrderType;
-import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
@@ -73,7 +69,7 @@ public class Planner {
         for (final SQLNode field : statement.getFields()) {
             if (field instanceof AsteriskNode) {
                 if (plan.getTables().isEmpty()) {
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_WITHOUT_TABLE,
+                    throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_WITHOUT_TABLE,
                             field.getPosition());
                 }
                 parseAsterisk(plan, (AsteriskNode) field);
@@ -175,7 +171,7 @@ public class Planner {
         parseOrderBy(statement, plan);
 
         if (plan.getColumns().isEmpty()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_COLUMN_LIST);
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST);
         }
 
         return plan;

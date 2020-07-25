@@ -15,7 +15,7 @@ import java.sql.SQLFeatureNotSupportedException;
 /**
  * Exception related to unsupported features.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ParadoxNotSupportedException extends SQLFeatureNotSupportedException {
@@ -31,7 +31,7 @@ public class ParadoxNotSupportedException extends SQLFeatureNotSupportedExceptio
      * @param error the error.
      */
     public ParadoxNotSupportedException(final Error error) {
-        super(ExceptionUtils.message(error.description), BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description), BASE_CODE, Integer.parseInt(0x0A + error.code));
     }
 
     /**

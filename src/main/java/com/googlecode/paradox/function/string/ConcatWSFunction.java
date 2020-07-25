@@ -12,12 +12,12 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -80,7 +80,7 @@ public class ConcatWSFunction extends AbstractFunction {
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         final Object separator = values[0];
         if (separator == null) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, separator);
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, separator);
         }
 
         final StringBuilder ret = new StringBuilder();

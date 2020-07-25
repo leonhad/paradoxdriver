@@ -21,9 +21,10 @@ import java.util.logging.Logger;
 /**
  * Handles the paradox files (structure).
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.4.0
  */
+@SuppressWarnings({"i18n-java:V1008", "java:S109", "i18n-java:V1004"})
 public class ParadoxData {
 
     /**
@@ -46,8 +47,8 @@ public class ParadoxData {
         CHARSET_TABLE.put(867, Charset.forName("cp862"));
         CHARSET_TABLE.put(932, Charset.forName("windows-31j"));
         CHARSET_TABLE.put(936, Charset.forName("cp936"));
-        CHARSET_TABLE.put(1251, Charset.forName("cp1251"));
-        CHARSET_TABLE.put(1252, Charset.forName("cp1252"));
+        CHARSET_TABLE.put(0x4e3, Charset.forName("cp1251"));
+        CHARSET_TABLE.put(0x4e4, Charset.forName("cp1252"));
     }
 
     /**

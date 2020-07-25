@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -78,7 +79,7 @@ public class SubstringFunction extends AbstractFunction {
 
         final int index = ValuesConverter.getPositiveInteger(values[1]) - 1;
         if (index == -1) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, values[1]);
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, values[1]);
         }
 
         final String value = values[0].toString();

@@ -28,7 +28,7 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
@@ -171,7 +171,7 @@ public abstract class AbstractLobField implements FieldParser {
                                  final int headerSize, final FileChannel channel) throws IOException, SQLException {
         channel.position(channel.position() + headerSize);
 
-        channel.position(offset + 12 + index * 5);
+        channel.position(offset + 0x0C + index * 0x05);
         final ByteBuffer head = readBlock(channel, 5, table);
         head.order(ByteOrder.LITTLE_ENDIAN);
 

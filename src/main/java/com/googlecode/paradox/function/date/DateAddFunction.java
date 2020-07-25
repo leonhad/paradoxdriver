@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -133,7 +134,7 @@ public class DateAddFunction extends AbstractFunction {
                 c.add(Calendar.MONTH, number * 0x03);
                 break;
             default:
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                         format);
         }
 
@@ -147,7 +148,7 @@ public class DateAddFunction extends AbstractFunction {
 
         final SQLNode value = parameters.get(0);
         if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                     value.getName());
         }
 

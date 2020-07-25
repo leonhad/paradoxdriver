@@ -11,6 +11,7 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 
 import java.nio.CharBuffer;
 import java.sql.SQLException;
@@ -74,7 +75,7 @@ public class Scanner {
      */
     Scanner(final String buffer) throws SQLException {
         if (buffer == null || buffer.trim().isEmpty()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_SQL);
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_SQL);
         }
 
         this.buffer = CharBuffer.wrap(buffer.trim());
@@ -88,7 +89,7 @@ public class Scanner {
      */
     private static void checkDotCount(final int dotCount) throws SQLException {
         if (dotCount > 1) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.NUMBER_FORMAT);
+            throw new ParadoxSyntaxErrorException(SyntaxError.NUMBER_FORMAT);
         }
     }
 
@@ -271,7 +272,7 @@ public class Scanner {
         }
 
         if (c != type) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNTERMINATED_STRING, position);
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNTERMINATED_STRING, position);
         }
     }
 
@@ -300,7 +301,7 @@ public class Scanner {
      */
     private void assertNotEmptyStatement() throws ParadoxSyntaxErrorException {
         if (!this.hasNext()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_END_OF_STATEMENT);
         }
     }
 

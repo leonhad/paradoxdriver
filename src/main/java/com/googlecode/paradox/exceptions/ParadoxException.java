@@ -17,7 +17,7 @@ import java.sql.SQLDataException;
 /**
  * Generic exception.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ParadoxException extends SQLDataException {
@@ -33,7 +33,7 @@ public class ParadoxException extends SQLDataException {
      * @param error the error.
      */
     public ParadoxException(final Error error) {
-        super(ExceptionUtils.message(error.description), BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description), BASE_CODE, Integer.parseInt(BASE_CODE + error.code));
     }
 
     /**
@@ -43,7 +43,8 @@ public class ParadoxException extends SQLDataException {
      * @param parameter message parameters.
      */
     public ParadoxException(final Error error, final Object... parameter) {
-        super(ExceptionUtils.message(error.description, parameter), BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description, parameter), BASE_CODE,
+                Integer.parseInt(BASE_CODE + error.code));
     }
 
     /**
@@ -54,7 +55,8 @@ public class ParadoxException extends SQLDataException {
      * @param parameter message parameters.
      */
     public ParadoxException(final Error error, final ScannerPosition position, final Object... parameter) {
-        super(ExceptionUtils.message(error.description, position, parameter), BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description, position, parameter), BASE_CODE,
+                Integer.parseInt(BASE_CODE + error.code));
     }
 
     /**

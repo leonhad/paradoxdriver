@@ -11,6 +11,7 @@
 package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.date.ExtractFunction;
 import com.googlecode.paradox.function.general.CastFunction;
@@ -90,7 +91,7 @@ public final class SQLParser {
      */
     public List<StatementNode> parse() throws SQLException {
         if (!this.scanner.hasNext()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_END_OF_STATEMENT);
         }
 
         this.token = this.scanner.nextToken();
@@ -99,7 +100,7 @@ public final class SQLParser {
         if (isToken(TokenType.SELECT)) {
             statementNodes.add(this.parseSelect());
         } else {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                     token.getPosition());
         }
 
@@ -116,9 +117,9 @@ public final class SQLParser {
      */
     private void expect(final TokenType token) throws SQLException {
         if (this.token == null) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_END_OF_STATEMENT);
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_END_OF_STATEMENT);
         } else if (this.token.getType() != token) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                     this.token.getPosition());
         }
 
@@ -347,7 +348,7 @@ public final class SQLParser {
                 node = this.parseILike(firstField);
                 break;
             default:
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                         this.token.getPosition());
         }
 
@@ -463,7 +464,7 @@ public final class SQLParser {
                 position.addOffset(TokenType.FROM.name().length());
             }
 
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_TABLE_LIST, position);
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_TABLE_LIST, position);
         }
     }
 
@@ -834,7 +835,7 @@ public final class SQLParser {
                 if (this.token != null) {
                     position = this.token.getPosition();
                 }
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN, position);
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
             }
 
         } while (!isToken(TokenType.R_PAREN));
@@ -913,12 +914,12 @@ public final class SQLParser {
                 ValueNode value = (ValueNode) field;
 
                 if (value.getType() != ParadoxType.VARCHAR || value.getName().length() != 1) {
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_CHAR);
+                    throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_CHAR);
                 }
 
                 likeNode.setEscape(value.getName().charAt(0));
             } else {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_CHAR);
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_CHAR);
             }
         }
     }
@@ -1039,7 +1040,7 @@ public final class SQLParser {
 
         if (this.token == null) {
             position.addOffset(TokenType.BY.name().length());
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_COLUMN_LIST, position);
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST, position);
         }
 
         boolean firstField = true;
@@ -1061,7 +1062,7 @@ public final class SQLParser {
                     fieldNode = parseIdentifierFieldOnly(fieldName);
                     break;
                 default:
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN, position);
+                    throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
             }
 
             OrderType type = OrderType.ASC;
@@ -1120,7 +1121,7 @@ public final class SQLParser {
 
         if (select.getFields().isEmpty()) {
             position.addOffset(TokenType.SELECT.name().length());
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_COLUMN_LIST, position);
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST, position);
         }
 
         if (isToken(TokenType.FROM)) {
@@ -1134,7 +1135,7 @@ public final class SQLParser {
 
                 if (select.getCondition() == null) {
                     position.addOffset(TokenType.WHERE.name().length());
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_CONDITIONAL_LIST,
+                    throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_CONDITIONAL_LIST,
                             position);
                 }
             }
@@ -1145,7 +1146,7 @@ public final class SQLParser {
         }
 
         if (this.scanner.hasNext() || this.token != null) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                     this.token.getPosition());
         }
 

@@ -15,7 +15,7 @@ import java.sql.SQLNonTransientException;
 /**
  * Exception for connection problems.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ParadoxConnectionException extends SQLNonTransientException {
@@ -31,7 +31,7 @@ public class ParadoxConnectionException extends SQLNonTransientException {
      * @param error the error.
      */
     public ParadoxConnectionException(final Error error) {
-        super(ExceptionUtils.message(error.description), BASE_CODE + error.code);
+        super(ExceptionUtils.message(error.description), BASE_CODE, Integer.parseInt(BASE_CODE + error.code));
     }
 
     /**

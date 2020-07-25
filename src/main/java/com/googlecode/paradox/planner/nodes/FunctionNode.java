@@ -12,6 +12,7 @@ package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.ScannerPosition;
@@ -60,7 +61,7 @@ public class FunctionNode extends FieldNode {
 
         function = FunctionFactory.getByName(name);
         if (function == null) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.FUNCTION_NOT_FOUND, position, name);
+            throw new ParadoxSyntaxErrorException(SyntaxError.FUNCTION_NOT_FOUND, position, name);
         }
     }
 
@@ -72,10 +73,10 @@ public class FunctionNode extends FieldNode {
      */
     public void validate(final ScannerPosition position) throws ParadoxSyntaxErrorException {
         if (function.isVariableParameters() && parameters.size() < function.parameterCount()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT_MINIMUM,
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT_MINIMUM,
                     position, Integer.toString(function.parameterCount()));
         } else if (!function.isVariableParameters() && (function.parameterCount() != parameters.size())) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT,
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT,
                     position, Integer.toString(function.parameterCount()));
         }
 

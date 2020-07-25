@@ -13,6 +13,7 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
@@ -271,7 +272,7 @@ class ParadoxStatement implements Statement {
             return getResultSet();
         }
 
-        throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_SELECT_STATEMENT);
+        throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_SELECT_STATEMENT);
     }
 
     /**

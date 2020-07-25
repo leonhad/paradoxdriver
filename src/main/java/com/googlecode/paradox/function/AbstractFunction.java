@@ -12,6 +12,7 @@ package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -123,7 +124,7 @@ public abstract class AbstractFunction {
     protected static void testForAsterisk(final Iterable<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         for (final SQLNode node : parameters) {
             if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
+                throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_IN_FUNCTION,
                         node.getPosition());
             }
         }

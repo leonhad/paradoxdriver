@@ -13,6 +13,7 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
@@ -64,7 +65,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
         statements.addAll(parser.parse());
 
         if (statements.isEmpty()) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.EMPTY_SQL);
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_SQL);
         } else if (statements.size() > 1) {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.USE_BATCH_OPERATION);
         }
@@ -248,11 +249,15 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
     }
 
     @Override
-    public void setObject(int parameterIndex, Object x) throws SQLException {
+    public void setObject(int parameterIndex, Object instance) throws SQLException {
         checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
-        // TODO infer by instance.
-        currentParameterTypes[parameterIndex - 1] = ParadoxType.NULL;
+        currentParameterValues[parameterIndex - 1] = instance;
+
+        if (instance != null) {
+            currentParameterTypes[parameterIndex - 1] = ParadoxType.valueOf(instance.getClass());
+        } else {
+            currentParameterTypes[parameterIndex - 1] = ParadoxType.NULL;
+        }
     }
 
     @Override
@@ -446,7 +451,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
         for (final StatementNode statement : batchStatements) {
             if (statement.getParameterCount() != currentParameterValues.length) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INCONSISTENT_PARAMETER_LIST);
+                throw new ParadoxSyntaxErrorException(SyntaxError.INCONSISTENT_PARAMETER_LIST);
             }
         }
 

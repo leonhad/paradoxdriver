@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -100,7 +101,7 @@ public class LogFunction extends AbstractFunction {
         testForAsterisk(parameters);
 
         if (parameters.size() > 2) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, 3);
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, 3);
         }
     }
 }

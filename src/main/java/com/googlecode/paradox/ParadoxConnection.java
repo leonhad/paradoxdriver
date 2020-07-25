@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 /**
  * JDBC Paradox connection implementation.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class ParadoxConnection implements Connection {
@@ -101,7 +101,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * BCD field precision.
      */
-    private final boolean bcdRounding ;
+    private final boolean bcdRounding;
 
     /**
      * Creates a new paradox connection.
@@ -501,8 +501,8 @@ public final class ParadoxConnection implements Connection {
                 ret.addAll(Stream.of(schemas).filter(Objects::nonNull).map(File::getName).collect(Collectors.toList()));
             }
 
-            if (schemaPattern == null || Expressions.accept(this.locale, INFORMATION_SCHEMA, schemaPattern, false,
-                    '\\')) {
+            if (schemaPattern == null
+                    || Expressions.accept(this.locale, INFORMATION_SCHEMA, schemaPattern, false, '\\')) {
                 ret.add(INFORMATION_SCHEMA);
             }
 

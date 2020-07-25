@@ -18,7 +18,7 @@ import java.sql.*;
 /**
  * Stores the Paradox field types and SQL Types.
  *
- * @version 2.1
+ * @version 2.2
  * @see SQLType
  * @since 1.3
  */
@@ -221,14 +221,30 @@ public enum ParadoxType implements SQLType {
      *                                  the specified {@code Types} value
      * @see Types
      */
-    public static ParadoxType valueOf(int type) {
+    public static ParadoxType valueOf(final int type) {
         for (ParadoxType sqlType : ParadoxType.class.getEnumConstants()) {
             if (type == sqlType.sqlType) {
                 return sqlType;
             }
         }
 
-        throw new IllegalArgumentException("Type:" + type + " is not a valid Types.java value.");
+        throw new IllegalArgumentException("The type " + type + " is not a valid Types.java value.");
+    }
+
+    /**
+     * Gets the type based on a Java class.
+     *
+     * @param desiredClass the class to use in search.
+     * @return the associated type.
+     */
+    public static ParadoxType valueOf(final Class<?> desiredClass) {
+        for (ParadoxType sqlType : ParadoxType.class.getEnumConstants()) {
+            if (desiredClass == sqlType.javaClass) {
+                return sqlType;
+            }
+        }
+
+        throw new IllegalArgumentException("The class " + desiredClass + " is not a supported class name.");
     }
 
     /**

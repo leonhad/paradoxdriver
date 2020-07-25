@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.TokenType;
@@ -21,7 +22,6 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.Constants;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -105,7 +105,7 @@ public class ConvertFunction extends AbstractFunction {
             } else if (value instanceof byte[]) {
                 return FieldValueUtils.convert((byte[]) value, this.charset).replace("\u0000", "");
             }
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE, value);
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, value);
         } else {
             return ValuesConverter.convert(values[0], type);
         }
@@ -120,7 +120,7 @@ public class ConvertFunction extends AbstractFunction {
             // If three parameters, the second needs to be a valid type.
 
             if (!parameters.get(1).getName().equalsIgnoreCase(TokenType.USING.name())) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                         parameters.get(1).getPosition());
             }
 
@@ -128,7 +128,7 @@ public class ConvertFunction extends AbstractFunction {
             try {
                 charset = Charset.forName(charsetNode.getName());
             } catch (final UnsupportedCharsetException e) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                         charsetNode.getPosition(), charsetNode.getName(), e);
             }
 
@@ -147,11 +147,11 @@ public class ConvertFunction extends AbstractFunction {
                     this.type = ParadoxType.valueOf(typeNode.getName());
                     parameters.remove(1);
                 } catch (final IllegalArgumentException e) {
-                    throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                    throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                             typeNode.getName(), typeNode.getPosition());
                 }
             } else {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                         typeNode.getName(), typeNode.getPosition());
             }
         }

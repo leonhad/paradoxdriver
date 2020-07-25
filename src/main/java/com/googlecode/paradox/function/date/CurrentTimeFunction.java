@@ -12,6 +12,7 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -85,7 +86,7 @@ public class CurrentTimeFunction extends AbstractFunction {
         if (types.length == 1) {
             final int value = ValuesConverter.getPositiveInteger(values[0]);
             if (value < 0x00 || value > 0x06) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                         values[0]);
             }
         }
@@ -97,7 +98,7 @@ public class CurrentTimeFunction extends AbstractFunction {
     @Override
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         if (parameters.size() > 1) {
-            throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, "1");
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, "1");
         }
     }
 }
