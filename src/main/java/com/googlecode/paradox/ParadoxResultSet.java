@@ -87,7 +87,6 @@ public final class ParadoxResultSet implements ResultSet {
         this.statement = statement;
         this.columns = columns;
         this.connection = connection;
-        this.dataNavigation = new DataNavigation(columns, values);
 
         // Fix column indexes.
         int index = 1;
@@ -97,6 +96,8 @@ public final class ParadoxResultSet implements ResultSet {
                 index++;
             }
         }
+
+        this.dataNavigation = new DataNavigation(columns, values);
     }
 
     /**

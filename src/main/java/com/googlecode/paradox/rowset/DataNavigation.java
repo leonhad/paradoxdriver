@@ -41,9 +41,9 @@ public class DataNavigation implements AutoCloseable {
      */
     private int fetchDirection = ResultSet.FETCH_FORWARD;
     /**
-     * The column list.
+     * The column mapping.
      */
-    private final List<Column> columns;
+    private final int[] columns;
 
     /**
      * Creates a new instance.
@@ -52,7 +52,7 @@ public class DataNavigation implements AutoCloseable {
      * @param values  the value list.
      */
     public DataNavigation(final List<Column> columns, final List<? extends Object[]> values) {
-        this.columns = columns;
+        this.columns = columns.stream().mapToInt(Column::getIndex).toArray();
         this.values = values;
     }
 
@@ -61,9 +61,9 @@ public class DataNavigation implements AutoCloseable {
         verifyRow();
 
         int currentIndex = -1;
-        for (int loop = 0; loop < this.columns.size(); loop++) {
-            final Column column = this.columns.get(loop);
-            if (!column.isHidden() && column.getIndex() == columnIndex) {
+        for (int loop = 0; loop < this.columns.length; loop++) {
+            final int column = this.columns[loop];
+            if (column == columnIndex) {
                 currentIndex = loop;
                 break;
             }
