@@ -275,7 +275,9 @@ public enum TokenType {
     /**
      * Stores the conditional break values.
      */
-    private static final TokenType[] CONDITIONAL_BREAKS = {ORDER, R_PAREN, LEFT, RIGHT, OUTER, INNER, JOIN};
+    private static final TokenType[] CONDITIONAL_BREAKS = {
+            ORDER, R_PAREN, LEFT, RIGHT, OUTER, INNER, JOIN, FULL, CROSS
+    };
 
     /**
      * Stores the operator values.
@@ -330,6 +332,7 @@ public enum TokenType {
                 return true;
             }
         }
+
         return false;
     }
 

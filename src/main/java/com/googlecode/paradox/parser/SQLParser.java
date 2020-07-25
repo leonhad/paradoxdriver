@@ -37,9 +37,10 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @version 1.11
+ * @version 1.12
  * @since 1.0
  */
+@SuppressWarnings("java:S1448")
 public final class SQLParser {
 
     /**

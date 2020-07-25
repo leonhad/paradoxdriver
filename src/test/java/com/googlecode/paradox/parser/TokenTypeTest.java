@@ -16,32 +16,10 @@ import org.junit.Test;
 /**
  * Unit test for {@link TokenType} class.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public class TokenTypeTest {
-
-    /**
-     * Used to test the conditional breaks.
-     */
-    private static final TokenType[] CONDITIONAL_BREAKS = {TokenType.ORDER, TokenType.R_PAREN,
-            TokenType.LEFT, TokenType.RIGHT, TokenType.OUTER, TokenType.INNER, TokenType.JOIN};
-
-    /**
-     * Used to test the operator values.
-     */
-    private static final TokenType[] OPERATORS = {TokenType.AND, TokenType.OR};
-
-    /**
-     * Test for conditional breaks.
-     */
-    @Test
-    public void testConditionalBreaks() {
-        for (final TokenType token : TokenType.values()) {
-            final boolean test = this.isConditionalBreak(token);
-            Assert.assertEquals("Invalid token type.", test, TokenType.isConditionalBreak(token));
-        }
-    }
 
     /**
      * Test for null conditional break.
@@ -60,17 +38,6 @@ public class TokenTypeTest {
     }
 
     /**
-     * Test for operators.
-     */
-    @Test
-    public void testOperators() {
-        for (final TokenType token : TokenType.values()) {
-            final boolean test = this.isOperator(token);
-            Assert.assertEquals("Operators not the same.", test, TokenType.isOperator(token));
-        }
-    }
-
-    /**
      * Test the get token by nonexistent value.
      */
     @Test
@@ -84,35 +51,5 @@ public class TokenTypeTest {
     @Test
     public void testTokenByValue() {
         Assert.assertEquals("Invalid token type.", TokenType.PLUS, TokenType.get("+"));
-    }
-
-    /**
-     * Test for a conditional break.
-     *
-     * @param tokenType the token to test.
-     * @return true if the token is a conditional break;
-     */
-    private boolean isConditionalBreak(final TokenType tokenType) {
-        for (final TokenType token : TokenTypeTest.CONDITIONAL_BREAKS) {
-            if (token.equals(tokenType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Test for operator types.
-     *
-     * @param tokenType the type to test of.
-     * @return true if this token is an operator.
-     */
-    private boolean isOperator(final TokenType tokenType) {
-        for (final TokenType token : TokenTypeTest.OPERATORS) {
-            if (token.equals(tokenType)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

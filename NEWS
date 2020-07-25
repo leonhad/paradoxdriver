@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-08-24 Added support to functions in SELECT and WHERE expressions.
 2020-08-21 Added TRUE and FALSE literals to SQL values.
 2020-08-20 Fixed function metadata.
 2020-08-19 Added a connection parameter for timezones. Improved date and time conversions.

@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
