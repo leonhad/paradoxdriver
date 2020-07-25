@@ -291,15 +291,15 @@ public class SelectPlanTest {
             // Test for hidden columns.
             Assert.assertEquals("Invalid column list", 1, rs.getMetaData().getColumnCount());
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
-            Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", "2018-01-02", rs.getString(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNull("Invalid value", rs.getString("DATE"));
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", "2018-02-01", rs.getString(1));
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNull("Invalid value", rs.getString("DATE"));
+            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
