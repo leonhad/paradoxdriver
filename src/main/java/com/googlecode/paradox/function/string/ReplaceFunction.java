@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -22,11 +20,11 @@ import java.sql.DatabaseMetaData;
 /**
  * The SQL REPLACE function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
-public class ReplaceFunction extends AbstractFunction {
+public class ReplaceFunction extends AbstractStringFunction {
 
     /**
      * The function name.
@@ -50,16 +48,6 @@ public class ReplaceFunction extends AbstractFunction {
                 new Column("new_string", ParadoxType.VARCHAR,
                         "The new replacement string..", 3, false, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.STRING;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
     }
 
     @Override

@@ -13,8 +13,6 @@ package com.googlecode.paradox.function.date;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -30,10 +28,10 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
-public class CurrentTimeFunction extends AbstractFunction {
+public class CurrentTimeFunction extends AbstractDateFunction {
 
     /**
      * The function name.
@@ -56,18 +54,8 @@ public class CurrentTimeFunction extends AbstractFunction {
     }
 
     @Override
-    public FunctionType type() {
-        return FunctionType.TIME_DATE;
-    }
-
-    @Override
     public ParadoxType fieldType() {
         return ParadoxType.TIME;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 0;
     }
 
     @Override
@@ -92,7 +80,9 @@ public class CurrentTimeFunction extends AbstractFunction {
         }
 
         long time = System.currentTimeMillis();
-        return ValuesConverter.removeDate(new Time(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)));
+        return ValuesConverter.removeDate(new Time(
+                time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)
+        ));
     }
 
     @Override

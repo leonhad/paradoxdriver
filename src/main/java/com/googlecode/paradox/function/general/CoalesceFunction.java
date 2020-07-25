@@ -27,10 +27,10 @@ import java.util.stream.Stream;
 /**
  * The SQL coalesce function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
-public class CoalesceFunction extends AbstractFunction {
+public class CoalesceFunction extends AbstractGeneralFunction {
 
     /**
      * The function name.
@@ -59,18 +59,8 @@ public class CoalesceFunction extends AbstractFunction {
     }
 
     @Override
-    public FunctionType type() {
-        return FunctionType.SYSTEM;
-    }
-
-    @Override
     public ParadoxType fieldType() {
         return type;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 0;
     }
 
     @Override

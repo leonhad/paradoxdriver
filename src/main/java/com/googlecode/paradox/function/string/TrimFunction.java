@@ -13,8 +13,6 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -29,11 +27,11 @@ import java.util.List;
 /**
  * The SQL TRIM function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S109", "i18n-java:V1017"})
-public class TrimFunction extends AbstractFunction {
+public class TrimFunction extends AbstractStringFunction {
 
     /**
      * The function name.
@@ -65,16 +63,6 @@ public class TrimFunction extends AbstractFunction {
                 new Column("value", ParadoxType.VARCHAR, "The string to extract from.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.STRING;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
     }
 
     @Override

@@ -11,13 +11,10 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -25,10 +22,10 @@ import java.sql.SQLException;
 /**
  * The SQL LEFT function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
-public class LeftFunction extends AbstractFunction {
+public class LeftFunction extends AbstractStringFunction {
 
     /**
      * The function name.
@@ -50,16 +47,6 @@ public class LeftFunction extends AbstractFunction {
                 new Column("number_of_chars", ParadoxType.INTEGER, "The number of chars to extract", 2, false,
                         DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.STRING;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
     }
 
     @Override

@@ -11,22 +11,19 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
 /**
  * The SQL CONCAT function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
-public class ConcatFunction extends AbstractFunction {
+public class ConcatFunction extends AbstractStringFunction {
 
     /**
      * The function name.
@@ -48,21 +45,6 @@ public class ConcatFunction extends AbstractFunction {
                 new Column("value2", ParadoxType.VARCHAR,
                         "The string to concatenate", 2, true, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.STRING;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 0;
     }
 
     @Override

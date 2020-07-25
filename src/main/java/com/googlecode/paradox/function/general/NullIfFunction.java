@@ -12,13 +12,10 @@ package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.util.Objects;
@@ -26,10 +23,10 @@ import java.util.Objects;
 /**
  * The SQL NULLIF function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
-public class NullIfFunction extends AbstractFunction {
+public class NullIfFunction extends AbstractGeneralFunction {
 
     /**
      * The function name.
@@ -54,11 +51,6 @@ public class NullIfFunction extends AbstractFunction {
                 new Column("expression2", ParadoxType.VARCHAR,
                         "The second value to test.", 2, true, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.SYSTEM;
     }
 
     @Override

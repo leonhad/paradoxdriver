@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -23,10 +21,10 @@ import java.sql.DatabaseMetaData;
 /**
  * The SQL POWER functions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class PowerFunction extends AbstractFunction {
+public class PowerFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
@@ -49,16 +47,6 @@ public class PowerFunction extends AbstractFunction {
                 new Column("exponent", ParadoxType.NUMBER, "The exponent number.", 2,
                         true, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.NUMBER;
     }
 
     @Override

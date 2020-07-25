@@ -13,8 +13,6 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.TokenType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
@@ -33,11 +31,11 @@ import java.util.List;
 /**
  * The SQL CONVERT function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
-public class ConvertFunction extends AbstractFunction {
+public class ConvertFunction extends AbstractGeneralFunction {
 
     /**
      * The function name.
@@ -57,16 +55,11 @@ public class ConvertFunction extends AbstractFunction {
         return new Column[]{
                 new Column(null, ParadoxType.VARCHAR,
                         "The string converted with charset specified.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR,  "The value to convert.", 1, true,
+                new Column("value", ParadoxType.VARCHAR, "The value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn),
                 new Column("charset", ParadoxType.VARCHAR,
                         "The charset name to convert.", 2, true, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.SYSTEM;
     }
 
     @Override

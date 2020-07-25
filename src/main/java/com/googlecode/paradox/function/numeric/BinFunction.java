@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -24,10 +22,10 @@ import java.sql.DatabaseMetaData;
 /**
  * The SQL BIN functions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class BinFunction extends AbstractFunction {
+public class BinFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
@@ -48,11 +46,6 @@ public class BinFunction extends AbstractFunction {
                 new Column("number", ParadoxType.INTEGER, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
     }
 
     @Override

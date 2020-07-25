@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -24,10 +22,10 @@ import java.sql.SQLException;
 /**
  * The SQL RAND function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class RandFunction extends AbstractFunction {
+public class RandFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
@@ -44,21 +42,6 @@ public class RandFunction extends AbstractFunction {
         return new Column[]{
                 new Column(null, ParadoxType.NUMBER, "The random number.", 0, false,
                         DatabaseMetaData.functionColumnResult)};
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.NUMBER;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 0;
     }
 
     @Override

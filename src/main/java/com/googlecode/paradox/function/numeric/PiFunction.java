@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -23,10 +21,10 @@ import java.sql.SQLException;
 /**
  * The SQL PI function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
-public class PiFunction extends AbstractFunction {
+public class PiFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
@@ -42,21 +40,6 @@ public class PiFunction extends AbstractFunction {
     public Column[] getColumns() {
         return new Column[]{new Column(null, ParadoxType.NUMBER, "The value of PI constant (π).", 0, false,
                 DatabaseMetaData.functionColumnResult)};
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.NUMBER;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 0;
     }
 
     @Override

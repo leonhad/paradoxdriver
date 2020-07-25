@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -24,10 +22,10 @@ import java.sql.SQLException;
 /**
  * The SQL CHR function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
-public class ChrFunction extends AbstractFunction {
+public class ChrFunction extends AbstractStringFunction {
 
     /**
      * The function name.
@@ -43,16 +41,11 @@ public class ChrFunction extends AbstractFunction {
     public Column[] getColumns() {
         // FIXME char 1
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER,"The integer value of UNICODE char.", 0, false,
+                new Column(null, ParadoxType.NUMBER, "The integer value of UNICODE char.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.CHAR,  "The UNICODE char to convert.", 1, true,
+                new Column("number", ParadoxType.CHAR, "The UNICODE char to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.STRING;
     }
 
     @Override

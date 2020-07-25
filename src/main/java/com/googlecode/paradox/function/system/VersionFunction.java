@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.system;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -23,10 +21,10 @@ import java.sql.DatabaseMetaData;
 /**
  * The SQL VERSION functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
-public class VersionFunction extends AbstractFunction {
+public class VersionFunction extends AbstractSystemFunction {
 
     /**
      * The function name.
@@ -42,21 +40,6 @@ public class VersionFunction extends AbstractFunction {
     public Column[] getColumns() {
         return new Column[]{new Column(null, ParadoxType.VARCHAR,
                 "The driver version.", 0, false, DatabaseMetaData.functionColumnResult)};
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.SYSTEM;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.VARCHAR;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 0;
     }
 
     @Override

@@ -13,8 +13,6 @@ package com.googlecode.paradox.function.date;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
@@ -32,11 +30,11 @@ import java.util.List;
 /**
  * The SQL DATE ADD function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
-public class DateAddFunction extends AbstractFunction {
+public class DateAddFunction extends AbstractDateFunction {
 
     /**
      * The function name.
@@ -70,16 +68,6 @@ public class DateAddFunction extends AbstractFunction {
                 new Column("date", ParadoxType.TIMESTAMP, "The date to add.", 3, false,
                         DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.TIME_DATE;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.TIMESTAMP;
     }
 
     @Override

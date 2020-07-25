@@ -13,8 +13,6 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -28,11 +26,11 @@ import java.util.List;
 /**
  * The SQL CAST function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
-public class CastFunction extends AbstractFunction {
+public class CastFunction extends AbstractGeneralFunction {
 
     /**
      * The function name.
@@ -49,17 +47,12 @@ public class CastFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.BYTES,  "The converted field.", 0, true,
+                new Column(null, ParadoxType.BYTES, "The converted field.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR,  "The value to convert.", 1, true,
+                new Column("value", ParadoxType.VARCHAR, "The value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn),
                 new Column("sql_type", ParadoxType.VARCHAR,
                         "The SQL type to convert.", 2, true, DatabaseMetaData.functionColumnIn)};
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.SYSTEM;
     }
 
     @Override

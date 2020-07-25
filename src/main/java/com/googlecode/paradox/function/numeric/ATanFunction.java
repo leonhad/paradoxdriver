@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -26,7 +24,7 @@ import java.sql.DatabaseMetaData;
  * @version 1.0
  * @since 1.6.0
  */
-public class ATanFunction extends AbstractFunction {
+public class ATanFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
@@ -47,16 +45,6 @@ public class ATanFunction extends AbstractFunction {
                 new Column("number", ParadoxType.NUMBER, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.NUMBER;
     }
 
     @Override

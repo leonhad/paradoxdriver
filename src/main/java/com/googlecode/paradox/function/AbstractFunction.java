@@ -63,7 +63,9 @@ public abstract class AbstractFunction {
      *
      * @return the function parameters count.
      */
-    public abstract int parameterCount();
+    public int parameterCount() {
+        return 0;
+    }
 
     /**
      * Gets if this function has variable parameters.

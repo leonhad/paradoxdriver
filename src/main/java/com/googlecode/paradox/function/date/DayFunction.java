@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -26,11 +24,11 @@ import java.util.Calendar;
 /**
  * The SQL DAY function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
-public class DayFunction extends AbstractFunction {
+public class DayFunction extends AbstractDateFunction {
 
     /**
      * The function name.
@@ -50,11 +48,6 @@ public class DayFunction extends AbstractFunction {
                 new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the day from.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.TIME_DATE;
     }
 
     @Override

@@ -11,30 +11,25 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The SQL SIGN functions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class SignFunction extends AbstractFunction {
+public class SignFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
      */
     public static final String NAME = "SIGN";
-    private static final Logger LOGGER = Logger.getLogger(SignFunction.class.getName());
 
     @Override
     public String remarks() {
@@ -50,11 +45,6 @@ public class SignFunction extends AbstractFunction {
                 new Column("number", ParadoxType.NUMBER, "The value to check.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
     }
 
     @Override
@@ -75,14 +65,10 @@ public class SignFunction extends AbstractFunction {
             return null;
         }
 
-        try {
-            if (value < 0) {
-                return -1;
-            } else if (value > 0) {
-                return 1;
-            }
-        } catch (final NumberFormatException e) {
-            LOGGER.log(Level.FINEST, e.getMessage(), e);
+        if (value < 0) {
+            return -1;
+        } else if (value > 0) {
+            return 1;
         }
 
         return 0;

@@ -11,8 +11,6 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -23,10 +21,10 @@ import java.sql.DatabaseMetaData;
 /**
  * The SQL ATN2 functions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class ATN2Function extends AbstractFunction {
+public class ATN2Function extends AbstractNumericFunction {
 
     /**
      * The function name.
@@ -49,16 +47,6 @@ public class ATN2Function extends AbstractFunction {
                 new Column("number2", ParadoxType.NUMBER, "A numeric value.", 2,
                         false, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.NUMBER;
     }
 
     @Override

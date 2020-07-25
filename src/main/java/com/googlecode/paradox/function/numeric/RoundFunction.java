@@ -13,8 +13,6 @@ package com.googlecode.paradox.function.numeric;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.function.AbstractFunction;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -29,10 +27,10 @@ import java.util.List;
 /**
  * The SQL ROUND functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
-public class RoundFunction extends AbstractFunction {
+public class RoundFunction extends AbstractNumericFunction {
 
     /**
      * The function name.
@@ -58,16 +56,6 @@ public class RoundFunction extends AbstractFunction {
                         "decimal, otherwise it truncates the result to the number of decimals. " +
                         "Default value is false.", 3, true, DatabaseMetaData.functionColumnIn)
         };
-    }
-
-    @Override
-    public FunctionType type() {
-        return FunctionType.NUMERIC;
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.NUMBER;
     }
 
     @Override
