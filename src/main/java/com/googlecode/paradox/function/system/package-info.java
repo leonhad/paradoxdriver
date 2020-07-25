@@ -10,8 +10,8 @@
  */
 
 /**
- * Data parser package.
+ * System related functions package.
  *
  * @since 1.0
  */
-package com.googlecode.paradox.data;
+package com.googlecode.paradox.function.system;

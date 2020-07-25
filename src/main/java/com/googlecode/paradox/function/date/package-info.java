@@ -10,8 +10,8 @@
  */
 
 /**
- * Data parser package.
+ * Date related functions package.
  *
  * @since 1.0
  */
-package com.googlecode.paradox.data;
+package com.googlecode.paradox.function.date;

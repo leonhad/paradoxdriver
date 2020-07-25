@@ -10,8 +10,8 @@
  */
 
 /**
- * Data parser package.
+ * Planner ordering utilities.
  *
  * @since 1.0
  */
-package com.googlecode.paradox.data;
+package com.googlecode.paradox.planner.sorting;

@@ -25,6 +25,8 @@ import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -99,7 +101,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * BCD field precision.
      */
-    private boolean bcdRounding = true;
+    private final boolean bcdRounding ;
 
     /**
      * Creates a new paradox connection.
@@ -109,6 +111,7 @@ public final class ParadoxConnection implements Connection {
      * @param info the connection properties.
      * @throws SQLException in any connection fault.
      */
+    @SuppressWarnings("i18n-java:V1019")
     public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
         this.url = url;
 
@@ -116,35 +119,34 @@ public final class ParadoxConnection implements Connection {
             throw new ParadoxConnectionException(ParadoxConnectionException.Error.DIRECTORY_NOT_FOUND);
         }
 
-        final String charsetName = info.getProperty(Driver.CHARSET_KEY);
-        if (charsetName != null && !charsetName.trim().isEmpty()) {
-            this.charset = Charset.forName(charsetName);
-        } else {
-            this.charset = null;
-        }
-
-        final String localeName = info.getProperty(Driver.LOCALE_KEY);
-        if (localeName != null && !localeName.trim().isEmpty()) {
-            this.locale = Locale.forLanguageTag(localeName);
-        } else {
-            this.locale = Locale.US;
-        }
-
-        final String bcdRoundingName = info.getProperty(Driver.BCD_ROUNDING_KEY);
-        if (bcdRoundingName != null && !bcdRoundingName.trim().isEmpty()) {
-            this.bcdRounding = Boolean.parseBoolean(bcdRoundingName);
-        }
-
-        final String timeZoneId = info.getProperty(Driver.TIME_ZONE_KEY);
-        if (timeZoneId != null && !timeZoneId.trim().isEmpty()) {
-            this.timeZone = TimeZone.getTimeZone(timeZoneId);
-        } else {
-            this.timeZone = TimeZone.getDefault();
-        }
+        this.charset = getProperty(Driver.CHARSET_KEY, info, null, Charset::forName);
+        this.locale = getProperty(Driver.LOCALE_KEY, info, Locale.US, Locale::forLanguageTag);
+        this.bcdRounding = getProperty(Driver.BCD_ROUNDING_KEY, info, true, Boolean::parseBoolean);
+        this.timeZone = getProperty(Driver.TIME_ZONE_KEY, info, TimeZone.getDefault(), TimeZone::getTimeZone);
 
         // Is a schema.
         this.schema = dir;
         this.catalog = dir.getParentFile();
+    }
+
+    /**
+     * Gets a translated property with a {@code defaultValue} in case of nonexistent.
+     *
+     * @param name         the property name.
+     * @param info         the property info list.
+     * @param defaultValue the default value to use in case of nonexistent property info.
+     * @param converter    the converter from property info string to desired type.
+     * @param <T>          the desired type.
+     * @return the converted type or {@code defaultValue} if nonexistent.
+     */
+    private static <T> T getProperty(final String name, final Properties info, final T defaultValue,
+                                     final Function<String, T> converter) {
+        final String value = info.getProperty(name);
+        if (value != null && !value.trim().isEmpty()) {
+            return converter.apply(value);
+        } else {
+            return defaultValue;
+        }
     }
 
     /**
@@ -325,15 +327,6 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * Gets the current catalog directory.
-     *
-     * @return the current catalog directory.
-     */
-    public File getCurrentCatalog() {
-        return this.catalog;
-    }
-
-    /**
      * {@inheritDoc}.
      */
     @Override
@@ -501,20 +494,21 @@ public final class ParadoxConnection implements Connection {
      * @return the schema directories.
      */
     public List<String> getSchemas(final String catalog, final String schemaPattern) {
-        List<String> ret = new ArrayList<>();
+        final List<String> ret = new ArrayList<>();
         if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
             final File[] schemas = this.catalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
             if (schemas != null) {
-                Stream.of(schemas).filter(Objects::nonNull).map(File::getName).forEach(ret::add);
+                ret.addAll(Stream.of(schemas).filter(Objects::nonNull).map(File::getName).collect(Collectors.toList()));
             }
 
             if (schemaPattern == null || Expressions.accept(this.locale, INFORMATION_SCHEMA, schemaPattern, false,
                     '\\')) {
                 ret.add(INFORMATION_SCHEMA);
             }
+
+            ret.sort(Comparator.comparing(a -> a));
         }
 
-        ret.sort(Comparator.comparing(a -> a));
         return ret;
     }
 
@@ -526,16 +520,17 @@ public final class ParadoxConnection implements Connection {
      * @return the schema directories.
      */
     public List<File> getSchemaFiles(final String catalog, final String schemaPattern) {
-        List<File> ret = new ArrayList<>();
         if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
             final File[] schemas = this.catalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
             if (schemas != null) {
-                Stream.of(schemas).filter(Objects::nonNull).forEach(ret::add);
+                return Stream.of(schemas)
+                        .filter(Objects::nonNull)
+                        .sorted(Comparator.comparing(a -> a))
+                        .collect(Collectors.toList());
             }
         }
 
-        ret.sort(Comparator.comparing(a -> a));
-        return ret;
+        return Collections.emptyList();
     }
 
     /**

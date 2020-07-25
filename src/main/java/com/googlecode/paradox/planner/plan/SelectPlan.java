@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
  * @version 1.10
  * @since 1.1
  */
+@SuppressWarnings("java:S1448")
 public final class SelectPlan implements Plan {
 
     /**
@@ -90,18 +91,31 @@ public final class SelectPlan implements Plan {
         this.distinct = distinct;
     }
 
+    /**
+     * Functional interface to allow the use of exceptions in function execution.
+     *
+     * @param <T> the predicate type.
+     * @param <E> the exception type.
+     */
     @FunctionalInterface
-    public interface PredicateWithExceptions<T, E extends Exception> {
-
+    public interface PredicateWithExceptions<T, E extends SQLException> {
         boolean test(T t) throws E;
     }
 
-    private <T, E extends Exception> Predicate<T> wrapper(PredicateWithExceptions<T, E> fe) {
-        return arg -> {
+    /**
+     * The predicate wrapper to allow the use of exceptions in function executions (stream API).
+     *
+     * @param fe  the predicate with exception.
+     * @param <T> the predicate type.
+     * @param <E> the exception type.
+     * @return the predicate result.
+     */
+    @SuppressWarnings("java:S112")
+    private static <T, E extends SQLException> Predicate<T> wrapper(PredicateWithExceptions<T, E> fe) {
+        return (T arg) -> {
             try {
                 return fe.test(arg);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (final SQLException e) {
                 throw new RuntimeException(e);
             }
         };
@@ -719,6 +733,7 @@ public final class SelectPlan implements Plan {
                         final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
                         final List<Column> columnsLoaded) throws SQLException {
 
+        // FIXME change to use parallel processing.
         for (final Object[] tableRow : rowValues) {
             checkCancel();
 
@@ -745,7 +760,7 @@ public final class SelectPlan implements Plan {
                             // Not process grouping function by now.
                             finalRow[i] = functionNode.execute(connection, tableRow, parameters, parameterTypes,
                                     columnsLoaded);
-                            // The function may change the result type.
+                            // The function may change the result type in execution based on parameters values.
                             this.columns.get(i).setType(functionNode.getType());
                         }
                     }
@@ -770,6 +785,7 @@ public final class SelectPlan implements Plan {
      * @return <code>true</code> if row is already in values list.
      */
     private boolean isRowRepeated(final Object[] row) {
+        // FIXME use bloom filter.
         boolean ret = false;
         for (final Object[] currentRow : this.values) {
             if (Arrays.deepEquals(currentRow, row)) {
