@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -44,10 +44,10 @@ public class SignFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 0, 1,
+                new Column(null, ParadoxType.INTEGER,
                         "1 for positive, -1 for negative and 0 for zero.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15, "The value to check.", 1, true,
+                new Column("number", ParadoxType.NUMBER, "The value to check.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

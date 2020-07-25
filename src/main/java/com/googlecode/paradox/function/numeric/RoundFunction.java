@@ -12,8 +12,8 @@ package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -46,14 +46,14 @@ public class RoundFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15,
+                new Column(null, ParadoxType.NUMBER,
                         "The rounded number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15, "The number to be rounded.", 1,
+                new Column("number", ParadoxType.NUMBER, "The number to be rounded.", 1,
                         false, DatabaseMetaData.functionColumnIn),
-                new Column("decimal", ParadoxType.INTEGER, 0, 4, "The number of decimal places to round number to.", 2,
+                new Column("decimal", ParadoxType.INTEGER, "The number of decimal places to round number to.", 2,
                         false, DatabaseMetaData.functionColumnIn),
-                new Column("operation", ParadoxType.BOOLEAN, 0, 1, "If true, it rounds the result to the number of " +
+                new Column("operation", ParadoxType.BOOLEAN, "If true, it rounds the result to the number of " +
                         "decimal, otherwise it truncates the result to the number of decimals. " +
                         "Default value is false.", 3, true, DatabaseMetaData.functionColumnIn)
         };

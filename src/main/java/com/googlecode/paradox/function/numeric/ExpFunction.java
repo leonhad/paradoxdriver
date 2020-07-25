@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -41,10 +41,10 @@ public class ExpFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15,
+                new Column(null, ParadoxType.NUMBER,
                         "e raised to the power of the specified number", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15, "The power number.", 1, true,
+                new Column("number", ParadoxType.NUMBER, "The power number.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

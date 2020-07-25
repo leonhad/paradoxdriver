@@ -11,13 +11,12 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -43,9 +42,9 @@ public class SpaceFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The string spaces.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("space_count", ParadoxType.INTEGER, 0, 4,
+                new Column("space_count", ParadoxType.INTEGER,
                         "The space count.", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }

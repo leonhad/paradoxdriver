@@ -39,7 +39,7 @@ public class ConnectionIDFunction extends AbstractFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.INTEGER, 0, 4,
+        return new Column[]{new Column(null, ParadoxType.INTEGER,
                 "The connection ID.", 0, false, DatabaseMetaData.functionColumnResult)};
     }
 

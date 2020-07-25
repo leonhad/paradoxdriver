@@ -11,13 +11,12 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -43,13 +42,13 @@ public class LPadFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The left-padded string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("string", ParadoxType.VARCHAR,
                         "The original string.", 1, false, DatabaseMetaData.functionColumnIn),
-                new Column("length", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("length", ParadoxType.VARCHAR,
                         "The length of the final string.", 2, false, DatabaseMetaData.functionColumnIn),
-                new Column("lpad_string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("lpad_string", ParadoxType.VARCHAR,
                         "The filler string to use.", 3, false, DatabaseMetaData.functionColumnIn)
         };
     }

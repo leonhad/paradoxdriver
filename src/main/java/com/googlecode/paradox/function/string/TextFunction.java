@@ -11,12 +11,11 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -42,9 +41,9 @@ public class TextFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.MEMO, 0, 0, "A CLOB type value.", 0, true,
+                new Column(null, ParadoxType.MEMO, "A CLOB type value.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("value", ParadoxType.VARCHAR,
                         "A value to convert.", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }

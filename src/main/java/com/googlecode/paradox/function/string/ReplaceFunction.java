@@ -11,12 +11,11 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -42,13 +41,13 @@ public class ReplaceFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The string or replaced.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("value", ParadoxType.VARCHAR,
                         "The original string.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("old_string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("old_string", ParadoxType.VARCHAR,
                         "The string to be replaced.", 2, false, DatabaseMetaData.functionColumnIn),
-                new Column("new_string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("new_string", ParadoxType.VARCHAR,
                         "The new replacement string..", 3, false, DatabaseMetaData.functionColumnIn)
         };
     }

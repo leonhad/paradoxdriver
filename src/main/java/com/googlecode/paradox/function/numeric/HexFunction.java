@@ -11,13 +11,12 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.Constants;
 
 import java.math.BigDecimal;
 import java.sql.DatabaseMetaData;
@@ -43,10 +42,10 @@ public class HexFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The the hexadecimal representation of a number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.LONG, 0, 8, "A numeric value.", 1,
+                new Column("number", ParadoxType.LONG, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
     }

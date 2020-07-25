@@ -41,10 +41,10 @@ public class CeilingFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15,
+                new Column(null, ParadoxType.NUMBER,
                         "The the result number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1,
+                new Column("number", ParadoxType.NUMBER, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
     }

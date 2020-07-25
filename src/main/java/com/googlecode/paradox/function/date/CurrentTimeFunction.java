@@ -12,8 +12,8 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -47,9 +47,9 @@ public class CurrentTimeFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.TIME, 0, 4, "The current time.", 0, false,
+                new Column(null, ParadoxType.TIME, "The current time.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("precision", ParadoxType.INTEGER, 0, 1, "The time precision from 0 to 6. Ignored", 1, true,
+                new Column("precision", ParadoxType.INTEGER, "The time precision from 0 to 6. Ignored", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

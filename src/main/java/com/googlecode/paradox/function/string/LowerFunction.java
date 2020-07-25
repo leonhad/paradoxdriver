@@ -11,12 +11,11 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 
@@ -41,11 +40,10 @@ public class LowerFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
-                        "A varchar value in lower case.", 0, true,
+                new Column(null, ParadoxType.VARCHAR, "A varchar value in lower case.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
-                        "A value to convert.", 1, true, DatabaseMetaData.functionColumnIn)
+                new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
 

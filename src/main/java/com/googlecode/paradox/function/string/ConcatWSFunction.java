@@ -43,13 +43,13 @@ public class ConcatWSFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The concatenated string.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("separator", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("separator", ParadoxType.VARCHAR,
                         "The string separator", 1, true,
                         DatabaseMetaData.functionColumnIn),
-                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("value", ParadoxType.VARCHAR,
                         "The string to concatenate", 2, true,
                         DatabaseMetaData.functionColumnIn)
         };

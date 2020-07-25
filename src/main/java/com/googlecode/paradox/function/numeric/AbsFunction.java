@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -47,9 +47,9 @@ public class AbsFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15, "A absolute value.", 0, true,
+                new Column(null, ParadoxType.NUMBER, "A absolute value.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1, true,
+                new Column("number", ParadoxType.NUMBER, "A numeric value.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

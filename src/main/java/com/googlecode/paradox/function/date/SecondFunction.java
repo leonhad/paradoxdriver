@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -45,9 +45,9 @@ public class SecondFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 0, 4, "The second.", 0, false,
+                new Column(null, ParadoxType.INTEGER, "The second.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("date", ParadoxType.TIMESTAMP, 0, 11, "The time/datetime to extract the minute from.", 1,
+                new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the minute from.", 1,
                         false, DatabaseMetaData.functionColumnIn)
         };
     }

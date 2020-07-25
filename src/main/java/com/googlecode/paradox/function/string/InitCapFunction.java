@@ -42,9 +42,9 @@ public class InitCapFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The capitalized string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("string", ParadoxType.VARCHAR,
                         "The string to capitalize", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }

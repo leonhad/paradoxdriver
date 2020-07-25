@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -40,7 +40,7 @@ public class PiFunction extends AbstractFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.NUMBER, 8, 9, "The value of PI constant (π).", 0, false,
+        return new Column[]{new Column(null, ParadoxType.NUMBER, "The value of PI constant (π).", 0, false,
                 DatabaseMetaData.functionColumnResult)};
     }
 

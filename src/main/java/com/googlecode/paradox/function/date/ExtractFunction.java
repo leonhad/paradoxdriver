@@ -12,8 +12,8 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
@@ -81,11 +81,11 @@ public class ExtractFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 0, 4, "The part of the.", 0, false,
+                new Column(null, ParadoxType.INTEGER, "The part of the.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("date_part", ParadoxType.VARCHAR, 0, 11, "The part name to extract.", 1, false,
+                new Column("date_part", ParadoxType.VARCHAR, "The part name to extract.", 1, false,
                         DatabaseMetaData.functionColumnIn),
-                new Column("date", ParadoxType.TIMESTAMP, 0, 8, "The date to extract.", 2, false,
+                new Column("date", ParadoxType.TIMESTAMP, "The date to extract.", 2, false,
                         DatabaseMetaData.functionColumnIn)
         };
     }

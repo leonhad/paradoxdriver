@@ -38,9 +38,9 @@ public class BitLengthFunction extends OctetLengthFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15, "The bit count of byte values.", 0, true,
+                new Column(null, ParadoxType.NUMBER, "The bit count of byte values.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("bytes", ParadoxType.BLOB, 0, 0, "The byte values to count.", 1, true,
+                new Column("bytes", ParadoxType.BLOB, "The byte values to count.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -40,9 +40,9 @@ public class OctetLengthFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15, "The bytes count.", 0, true,
+                new Column(null, ParadoxType.NUMBER, "The bytes count.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("bytes", ParadoxType.BLOB, 0, 0, "The byte values to count.", 1, true,
+                new Column("bytes", ParadoxType.BLOB, "The byte values to count.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

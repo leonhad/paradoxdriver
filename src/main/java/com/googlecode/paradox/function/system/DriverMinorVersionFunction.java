@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.system;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -40,7 +40,7 @@ public class DriverMinorVersionFunction extends AbstractFunction {
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{new Column(null, ParadoxType.INTEGER, 0, 4,
+        return new Column[]{new Column(null, ParadoxType.INTEGER,
                 "The driver minor version.", 0, false, DatabaseMetaData.functionColumnResult)
         };
     }

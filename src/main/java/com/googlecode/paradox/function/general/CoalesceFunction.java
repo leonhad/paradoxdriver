@@ -47,12 +47,12 @@ public class CoalesceFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The string or replacement (if first is null).", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("string", ParadoxType.VARCHAR,
                         "The string to test if null.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("replacement", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("replacement", ParadoxType.VARCHAR,
                         "The replacement in case of null.", 2, true,
                         DatabaseMetaData.functionColumnIn)
         };

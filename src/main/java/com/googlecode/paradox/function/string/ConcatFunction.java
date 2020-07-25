@@ -41,11 +41,11 @@ public class ConcatFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The concatenated string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value1", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("value1", ParadoxType.VARCHAR,
                         "The string to concatenate", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("value2", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("value2", ParadoxType.VARCHAR,
                         "The string to concatenate", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }

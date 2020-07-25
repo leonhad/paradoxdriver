@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.5
+ * @version 1.6
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -100,12 +100,12 @@ public final class Column {
     }
 
     @SuppressWarnings("java:S107")
-    public Column(final String name, final ParadoxType type, final int precision, final int size,
-                  final String remarks, final int index, final boolean nullable, final int columnType) {
+    public Column(final String name, final ParadoxType type, final String remarks, final int index,
+                  final boolean nullable, final int columnType) {
         this.name = name;
         this.type = type;
-        this.precision = precision;
-        this.size = size;
+        this.precision = type.getPrecision();
+        this.size = type.getSize();
         this.remarks = remarks;
         this.index = index;
         this.nullable = nullable;
@@ -290,8 +290,7 @@ public final class Column {
      * @return true if this field can be search.
      */
     public boolean isSearchable() {
-        // TODO Move this to ParadoxType.
-        return type != ParadoxType.BLOB && type != ParadoxType.BYTES && type != ParadoxType.GRAPHIC && type != ParadoxType.OLE;
+        return type.isSearchable();
     }
 
     /**

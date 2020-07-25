@@ -55,11 +55,11 @@ public class ConvertFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The string converted with charset specified.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE, "The value to convert.", 1, true,
+                new Column("value", ParadoxType.VARCHAR,  "The value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn),
-                new Column("charset", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("charset", ParadoxType.VARCHAR,
                         "The charset name to convert.", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }

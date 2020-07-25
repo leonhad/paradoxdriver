@@ -46,12 +46,12 @@ public class NullIfFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The string or replacement (if first is null).", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("expression1", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("expression1", ParadoxType.VARCHAR,
                         "The first value to test.", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("expression2", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("expression2", ParadoxType.VARCHAR,
                         "The second value to test.", 2, true, DatabaseMetaData.functionColumnIn)
         };
     }

@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -41,12 +41,12 @@ public class ATN2Function extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15,
+                new Column(null, ParadoxType.NUMBER,
                         "The the arc-tangent of a number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number1", ParadoxType.NUMBER, 8, 15, "A numeric value.", 1,
+                new Column("number1", ParadoxType.NUMBER, "A numeric value.", 1,
                         false, DatabaseMetaData.functionColumnIn),
-                new Column("number2", ParadoxType.NUMBER, 8, 15, "A numeric value.", 2,
+                new Column("number2", ParadoxType.NUMBER, "A numeric value.", 2,
                         false, DatabaseMetaData.functionColumnIn)
         };
     }

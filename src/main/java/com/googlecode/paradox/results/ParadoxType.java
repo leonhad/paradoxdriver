@@ -10,13 +10,15 @@
  */
 package com.googlecode.paradox.results;
 
+import com.googlecode.paradox.utils.Constants;
+
 import java.math.BigDecimal;
 import java.sql.*;
 
 /**
  * Stores the Paradox field types and SQL Types.
  *
- * @version 2.0
+ * @version 2.1
  * @see SQLType
  * @since 1.3
  */
@@ -25,114 +27,114 @@ public enum ParadoxType implements SQLType {
     /**
      * The VARCHAR type.
      */
-    VARCHAR(1, Types.VARCHAR, true, String.class),
+    VARCHAR(1, Types.VARCHAR, true, String.class, 0, Constants.MAX_STRING_SIZE, true),
 
     /**
      * The CHAR type.
      */
-    CHAR(1, Types.CHAR, false, String.class),
+    CHAR(1, Types.CHAR, false, String.class, 0, Constants.MAX_STRING_SIZE, true),
 
     /**
      * The date type.
      */
-    DATE(2, Types.DATE, true, Date.class),
+    DATE(2, Types.DATE, true, Date.class, 0, 4, true),
 
     /**
      * The integer type.
      */
-    INTEGER(3, Types.INTEGER, true, Integer.class),
+    INTEGER(3, Types.INTEGER, true, Integer.class, 0, 4, true),
 
     /**
      * The integer type. Variant 2.
      */
-    LONG(4, Types.INTEGER, true, Integer.class),
+    LONG(4, Types.INTEGER, true, Integer.class, 0, 8, true),
 
     /**
      * The double type.
      */
-    CURRENCY(5, Types.DOUBLE, true, Double.class),
+    CURRENCY(5, Types.DOUBLE, true, Double.class, 10, 2, true),
 
     /**
      * The numeric type.
      */
-    NUMBER(6, Types.NUMERIC, true, Double.class),
+    NUMBER(6, Types.NUMERIC, true, Double.class, 4, 10, true),
 
     /**
      * The numeric type.
      */
-    DECIMAL(6, Types.DECIMAL, false, Double.class),
+    DECIMAL(6, Types.DECIMAL, false, Double.class, 4, 10, true),
 
     /**
      * The boolean type.
      */
-    BOOLEAN(9, Types.BOOLEAN, true, Boolean.class),
+    BOOLEAN(9, Types.BOOLEAN, true, Boolean.class, 0, 1, true),
 
     /**
      * The CLOB type.
      */
-    MEMO(0xC, Types.CLOB, true, Clob.class),
+    MEMO(0xC, Types.CLOB, true, Clob.class, 0, 0, true),
 
     /**
      * the BLOB type.
      */
-    BLOB(0xD, Types.BLOB, true, byte[].class),
+    BLOB(0xD, Types.BLOB, true, byte[].class, 0, 0, true),
 
     /**
      * The VARCHAR type, variant 2.
      */
-    FORMATTED_MEMO(0xE, Types.CLOB, true, Clob.class),
+    FORMATTED_MEMO(0xE, Types.CLOB, true, Clob.class, 0, 0, true),
 
     /**
      * the BLOB type, variant 2.
      */
-    OLE(0xF, Types.BLOB, true, byte[].class),
+    OLE(0xF, Types.BLOB, true, byte[].class, 0, 0, true),
 
     /**
      * The graphics type.
      * <p>
      * It's really a BLOB that contains an image file.
      */
-    GRAPHIC(0x10, Types.BLOB, true, byte[].class),
+    GRAPHIC(0x10, Types.BLOB, true, byte[].class, 0, 0, true),
 
     /**
      * The time type.
      */
-    TIME(0x14, Types.TIME, true, Time.class),
+    TIME(0x14, Types.TIME, true, Time.class, 0, 2, true),
 
     /**
      * The time with timezone type.
      */
-    TIME_WITH_TIMEZONE(0x14, Types.TIME_WITH_TIMEZONE, false, Time.class),
+    TIME_WITH_TIMEZONE(0x14, Types.TIME_WITH_TIMEZONE, false, Time.class, 0, 2, true),
 
     /**
      * The TIMESTAMP type.
      */
-    TIMESTAMP(0x15, Types.TIMESTAMP, true, Timestamp.class),
+    TIMESTAMP(0x15, Types.TIMESTAMP, true, Timestamp.class, 0, 8, true),
 
     /**
      * The timestamp with timezone type.
      */
-    TIMESTAMP_WITH_TIMEZONE(0x15, Types.TIMESTAMP_WITH_TIMEZONE, false, Timestamp.class),
+    TIMESTAMP_WITH_TIMEZONE(0x15, Types.TIMESTAMP_WITH_TIMEZONE, false, Timestamp.class, 0, 8, true),
 
     /**
      * The auto increment type.
      */
-    AUTO_INCREMENT(0x16, Types.INTEGER, true, Integer.class),
+    AUTO_INCREMENT(0x16, Types.INTEGER, true, Integer.class, 0, 4, true),
 
     /**
      * The binary type.
      */
-    BCD(0x17, Types.NUMERIC, true, BigDecimal.class),
+    BCD(0x17, Types.NUMERIC, true, BigDecimal.class, 32, 2, true),
 
     /**
      * The BLOB type, variant 3.
      */
-    BYTES(0x18, Types.BINARY, true, byte[].class),
+    BYTES(0x18, Types.BINARY, true, byte[].class, 0, 255, true),
 
     /**
      * Null Type.
      */
-    NULL(0x0, Types.NULL, false, Object.class);
+    NULL(0x0, Types.NULL, false, Object.class, 0, 0, false);
 
     private static final ParadoxType[] VALUES = ParadoxType.values();
 
@@ -157,17 +159,40 @@ public enum ParadoxType implements SQLType {
     private final Class<?> javaClass;
 
     /**
+     * Default field precision.
+     */
+    private final int precision;
+
+    /**
+     * Default field size.
+     */
+    private final int size;
+
+    /**
+     * Is searchable.
+     */
+    private final boolean searchable;
+
+    /**
      * Creates a new instance.
      *
      * @param type           the Paradox type.
      * @param sqlType        the SQL type.
      * @param vendorSpecific if this value is vendor specific.
+     * @param javaClass      the associated Java class.
+     * @param precision      the default field precision.
+     * @param size           the default field size.
+     * @param searchable     if the field type is searchable.
      */
-    ParadoxType(final int type, final int sqlType, final boolean vendorSpecific, final Class<?> javaClass) {
+    ParadoxType(final int type, final int sqlType, final boolean vendorSpecific, final Class<?> javaClass,
+                final int precision, final int size, final boolean searchable) {
         this.type = (byte) type;
         this.sqlType = sqlType;
         this.vendorSpecific = vendorSpecific;
         this.javaClass = javaClass;
+        this.precision = precision;
+        this.size = size;
+        this.searchable = searchable;
     }
 
     /**
@@ -198,8 +223,9 @@ public enum ParadoxType implements SQLType {
      */
     public static ParadoxType valueOf(int type) {
         for (ParadoxType sqlType : ParadoxType.class.getEnumConstants()) {
-            if (type == sqlType.sqlType)
+            if (type == sqlType.sqlType) {
                 return sqlType;
+            }
         }
 
         throw new IllegalArgumentException("Type:" + type + " is not a valid Types.java value.");
@@ -246,7 +272,39 @@ public enum ParadoxType implements SQLType {
         return JDBCType.valueOf(sqlType).name();
     }
 
+    /**
+     * Gets the corresponding Java class for this type.
+     *
+     * @return the corresponding Java class for this type.
+     */
     public Class<?> getJavaClass() {
         return javaClass;
+    }
+
+    /**
+     * Gets the default field precision.
+     *
+     * @return the default field precision.
+     */
+    public int getPrecision() {
+        return precision;
+    }
+
+    /**
+     * Gets the default field size.
+     *
+     * @return the default field size.
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * If the field type is searchable.
+     *
+     * @return the field type is searchable.
+     */
+    public boolean isSearchable() {
+        return searchable;
     }
 }

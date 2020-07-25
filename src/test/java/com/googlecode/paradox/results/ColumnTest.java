@@ -166,11 +166,8 @@ public class ColumnTest {
         final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
         Assert.assertTrue("Invalid field searchable.", column.isSearchable());
 
-        final Column column2 = new Column("NAME", ParadoxType.BLOB);
+        final Column column2 = new Column("NAME", ParadoxType.NULL);
         Assert.assertFalse("Invalid field searchable.", column2.isSearchable());
-
-        final Column column3 = new Column("NAME", ParadoxType.GRAPHIC);
-        Assert.assertFalse("Invalid field searchable.", column3.isSearchable());
     }
 
     /**

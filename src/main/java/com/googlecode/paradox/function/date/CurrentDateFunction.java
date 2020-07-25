@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -43,8 +43,7 @@ public class CurrentDateFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.DATE, 0, 4, "The current date.", 0, false,
-                        DatabaseMetaData.functionColumnResult)
+                new Column(null, ParadoxType.DATE, "The current date.", 0, false, DatabaseMetaData.functionColumnResult)
         };
     }
 

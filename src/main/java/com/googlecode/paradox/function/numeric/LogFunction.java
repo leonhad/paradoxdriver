@@ -12,8 +12,8 @@ package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -45,13 +45,13 @@ public class LogFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 8, 15,
+                new Column(null, ParadoxType.NUMBER,
                         "The logarithm of the number.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.NUMBER, 8, 15,
+                new Column("number", ParadoxType.NUMBER,
                         "The number to return the natural logarithm of. Must be greater than 0.", 1,
                         false, DatabaseMetaData.functionColumnIn),
-                new Column("base", ParadoxType.NUMBER, 8, 15,
+                new Column("base", ParadoxType.NUMBER,
                         "The base the natural logarithm is to be calculated with. Must be greater than 1.", 2,
                         true, DatabaseMetaData.functionColumnIn)
         };

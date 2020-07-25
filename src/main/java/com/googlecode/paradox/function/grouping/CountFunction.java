@@ -41,9 +41,9 @@ public class CountFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.INTEGER, 8, 15, "The row count in group.", 0, false,
+                new Column(null, ParadoxType.INTEGER, "The row count in group.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("value", ParadoxType.VARCHAR,
                         "The time precision from 0 to 6. Ignored", 1, true, DatabaseMetaData.functionColumnIn)
         };
     }

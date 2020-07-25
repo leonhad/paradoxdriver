@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -40,10 +40,11 @@ public class AsciiFunction extends AbstractFunction {
 
     @Override
     public Column[] getColumns() {
+        // FIXME char 1
         return new Column[]{
-                new Column(null, ParadoxType.CHAR, 0, 1, "The converter UNICODE char.", 0, true,
+                new Column(null, ParadoxType.CHAR, "The converter UNICODE char.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("integer", ParadoxType.NUMBER, 8, 15, "The integer value to convert.", 1, true,
+                new Column("integer", ParadoxType.NUMBER, "The integer value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

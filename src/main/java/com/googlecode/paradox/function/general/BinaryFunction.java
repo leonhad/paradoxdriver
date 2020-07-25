@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.general;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -41,11 +41,9 @@ public class BinaryFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.BLOB, 0, 0,
-                        "The BLOB value.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.NUMBER, 0, 0, "A value to convert.", 1,
-                        true, DatabaseMetaData.functionColumnIn)
+                new Column(null, ParadoxType.BLOB, "The BLOB value.", 0, false, DatabaseMetaData.functionColumnResult),
+                new Column("value", ParadoxType.NUMBER, "A value to convert.", 1, true,
+                        DatabaseMetaData.functionColumnIn)
         };
     }
 

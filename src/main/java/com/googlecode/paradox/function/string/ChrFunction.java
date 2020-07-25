@@ -41,10 +41,11 @@ public class ChrFunction extends AbstractFunction {
 
     @Override
     public Column[] getColumns() {
+        // FIXME char 1
         return new Column[]{
-                new Column(null, ParadoxType.NUMBER, 0, 4, "The integer value of UNICODE char.", 0, false,
+                new Column(null, ParadoxType.NUMBER,"The integer value of UNICODE char.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("number", ParadoxType.CHAR, 0, 1, "The UNICODE char to convert.", 1, true,
+                new Column("number", ParadoxType.CHAR,  "The UNICODE char to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn)
         };
     }

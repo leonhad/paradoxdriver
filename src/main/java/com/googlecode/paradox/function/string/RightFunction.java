@@ -11,13 +11,12 @@
 package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
-import com.googlecode.paradox.utils.Constants;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -43,11 +42,11 @@ public class RightFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column(null, ParadoxType.VARCHAR,
                         "The extracted string.", 0, true, DatabaseMetaData.functionColumnResult),
-                new Column("string", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("string", ParadoxType.VARCHAR,
                         "The string to extract", 1, true, DatabaseMetaData.functionColumnIn),
-                new Column("number_of_chars", ParadoxType.INTEGER, 0, 4, "The number of chars to extract", 2, false,
+                new Column("number_of_chars", ParadoxType.INTEGER, "The number of chars to extract", 2, false,
                         DatabaseMetaData.functionColumnIn)
         };
     }

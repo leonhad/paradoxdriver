@@ -49,11 +49,11 @@ public class CastFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.BYTES, 0, Constants.MAX_STRING_SIZE, "The converted field.", 0, true,
+                new Column(null, ParadoxType.BYTES,  "The converted field.", 0, true,
                         DatabaseMetaData.functionColumnResult),
-                new Column("value", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE, "The value to convert.", 1, true,
+                new Column("value", ParadoxType.VARCHAR,  "The value to convert.", 1, true,
                         DatabaseMetaData.functionColumnIn),
-                new Column("sql_type", ParadoxType.VARCHAR, 0, Constants.MAX_STRING_SIZE,
+                new Column("sql_type", ParadoxType.VARCHAR,
                         "The SQL type to convert.", 2, true, DatabaseMetaData.functionColumnIn)};
     }
 

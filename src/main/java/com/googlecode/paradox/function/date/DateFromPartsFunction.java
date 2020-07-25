@@ -11,8 +11,8 @@
 package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionType;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -46,13 +46,13 @@ public class DateFromPartsFunction extends AbstractFunction {
     @Override
     public Column[] getColumns() {
         return new Column[]{
-                new Column(null, ParadoxType.DATE, 0, 4, "The date value.", 0, false,
+                new Column(null, ParadoxType.DATE, "The date value.", 0, false,
                         DatabaseMetaData.functionColumnResult),
-                new Column("year", ParadoxType.INTEGER, 0, 4, "Specifies a year (4 digits).", 1,
+                new Column("year", ParadoxType.INTEGER, "Specifies a year (4 digits).", 1,
                         false, DatabaseMetaData.functionColumnIn),
-                new Column("month", ParadoxType.INTEGER, 0, 4, "Specifies a month (from 1 to 12).", 2,
+                new Column("month", ParadoxType.INTEGER, "Specifies a month (from 1 to 12).", 2,
                         false, DatabaseMetaData.functionColumnIn),
-                new Column("day", ParadoxType.INTEGER, 0, 4, "Specifies a day (from 1 to 31).", 3,
+                new Column("day", ParadoxType.INTEGER, "Specifies a day (from 1 to 31).", 3,
                         false, DatabaseMetaData.functionColumnIn)
         };
     }
