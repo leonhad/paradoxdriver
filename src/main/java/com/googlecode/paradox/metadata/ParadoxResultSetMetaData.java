@@ -73,7 +73,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      */
     @Override
     public int getColumnCount() {
-        return this.columns.size();
+        return (int) this.columns.stream().filter(c -> !c.isHidden()).count();
     }
 
     /**
@@ -264,10 +264,10 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
      * @throws SQLException in case of invalid type.
      */
     private Column getColumn(final int column) throws SQLException {
-        if ((column < 1) || (column > this.columns.size())) {
-            throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, column);
-        }
-
-        return this.columns.get(column - 1);
+        // Not hidden and by index.
+        return this.columns.stream()
+                .filter(c -> !c.isHidden())
+                .filter(c -> c.getIndex() == column)
+                .findFirst().orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, column));
     }
 }

@@ -87,12 +87,14 @@ public final class ParadoxResultSet implements ResultSet {
         this.statement = statement;
         this.columns = columns;
         this.connection = connection;
-        this.dataNavigation = new DataNavigation(values);
+        this.dataNavigation = new DataNavigation(columns, values);
 
-        // Fill column indexes
-        for (int loop = 0; loop < columns.size(); loop++) {
-            if (columns.get(loop) != null) {
-                columns.get(loop).setIndex(loop);
+        // Fix column indexes.
+        int index = 1;
+        for (final Column column : this.columns) {
+            if (!column.isHidden()) {
+                column.setIndex(index);
+                index++;
             }
         }
     }
@@ -161,7 +163,7 @@ public final class ParadoxResultSet implements ResultSet {
     public int findColumn(final String columnLabel) throws SQLException {
         for (final Column column : this.columns) {
             if (column.getName().equalsIgnoreCase(columnLabel)) {
-                return column.getIndex() + 1;
+                return column.getIndex();
             }
         }
 

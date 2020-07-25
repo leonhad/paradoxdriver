@@ -304,6 +304,12 @@ public final class SelectPlan implements Plan {
     public void addOrderColumn(final Column column, final OrderType type) {
         this.orderByFields.add(column);
         this.orderTypes.add(type);
+
+        if (!this.columns.contains(column)) {
+            // If not in SELECT statement, add as a hidden column in ResultSet.
+            column.setHidden(true);
+            this.columns.add(column);
+        }
     }
 
     private List<Object[]> processInnerJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
@@ -796,15 +802,6 @@ public final class SelectPlan implements Plan {
      */
     public AbstractConditionalNode getCondition() {
         return condition;
-    }
-
-    /**
-     * Gets the order by fields.
-     *
-     * @return the order by fields.
-     */
-    public List<Column> getOrderByFields() {
-        return orderByFields;
     }
 
     /**

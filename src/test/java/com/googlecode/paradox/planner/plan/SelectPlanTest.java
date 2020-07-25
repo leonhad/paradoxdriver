@@ -23,7 +23,6 @@ import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
-import com.googlecode.paradox.results.Column;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -250,35 +249,12 @@ public class SelectPlanTest {
     }
 
     /**
-     * Test for order by.
-     *
-     * @throws SQLException if has errors.
-     */
-    @Test
-    public void testOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "select \"DATE\", \"TIME\" from fields.date7 order by \"DATE\", \"TIME\"");
-        final List<StatementNode> list = parser.parse();
-        Assert.assertEquals("Invalid list size", 1, list.size());
-
-        final Plan plan = Planner.create(conn, list.get(0));
-        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
-
-        final SelectPlan selectPlan = (SelectPlan) plan;
-        final List<Column> columns = selectPlan.getOrderByFields();
-
-        Assert.assertEquals("Invalid column list size", 2, columns.size());
-        Assert.assertEquals("Invalid column list size", "DATE", columns.get(0).getName());
-        Assert.assertEquals("Invalid column list size", "TIME", columns.get(1).getName());
-    }
-
-    /**
-     * Test order by in execution.
+     * Test order by.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrderByExecution() throws SQLException {
+    public void testOrderBy() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select \"DATE\", \"TIME\" from fields.date7 order by \"DATE\", \"TIME\"");
              final ResultSet rs = stmt.executeQuery()) {
@@ -297,6 +273,33 @@ public class SelectPlanTest {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertNull("Invalid value", rs.getString("DATE"));
             Assert.assertEquals("Invalid value", "10:00:00", rs.getString("TIME"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test order by with fiels not in SELECT expression.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOrderByNotInSelect() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select \"DATE\" from fields.date7 order by \"TIME\"");
+             final ResultSet rs = stmt.executeQuery()) {
+
+            // Test for hidden columns.
+            Assert.assertEquals("Invalid column list", 1, rs.getMetaData().getColumnCount());
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-01-02", rs.getString(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "2018-02-01", rs.getString(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNull("Invalid value", rs.getString("DATE"));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }

@@ -85,6 +85,7 @@ public class ParadoxResultSetMetaDataTest {
         column.getField().setTable(new ParadoxTable(null, "NAME", conn));
         column.getField().setSize(255);
         column.setName("name");
+        column.setIndex(1);
         column.setPrecision(2);
         column.getField().setTable(new ParadoxTable(null, "table", conn));
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn,
@@ -154,21 +155,6 @@ public class ParadoxResultSetMetaDataTest {
     public void testIsWrapFor() {
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn, Collections.emptyList());
         Assert.assertTrue("Invalid value.", metaData.isWrapperFor(ParadoxResultSetMetaData.class));
-    }
-
-    /**
-     * Test for null column metadata.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testNullColumn() throws SQLException {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.AUTO_INCREMENT));
-        final Column column2 = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn,
-                Arrays.asList(column, column2));
-        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNoNulls, metaData.isNullable(1));
-        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNullable, metaData.isNullable(2));
     }
 
     /**

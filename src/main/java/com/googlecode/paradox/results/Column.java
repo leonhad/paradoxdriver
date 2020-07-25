@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.4
+ * @version 1.5
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -59,8 +59,14 @@ public final class Column {
      * Column remarks.
      */
     private String remarks;
-
+    /**
+     * The column type.
+     */
     private int columnType;
+    /**
+     * Is this a hidden column.
+     */
+    private boolean hidden;
 
     /**
      * Fixed value.
@@ -308,6 +314,24 @@ public final class Column {
     }
 
     /**
+     * Gets the hidden status.
+     *
+     * @return <code>true</code> if this column is hidden in ResultSet statement.
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Sets the hidden status of this column.
+     *
+     * @param hidden <code>true</code> if this column is hidden.
+     */
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    /**
      * Gets the function associated to this value.
      *
      * @return the function associated to this value.
@@ -347,7 +371,7 @@ public final class Column {
     public String toString() {
         if (field == null) {
             return name;
-        } else if (!field.getName().equals(name)) {
+        } else if (!Objects.equals(field.getName(), name)) {
             return field.toString() + " AS " + name;
         }
 

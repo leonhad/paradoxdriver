@@ -23,6 +23,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.planner.sorting.OrderType;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
@@ -169,6 +170,8 @@ public class Planner {
         // Load the table metadata.
         parseTableMetaData(connection, statement, plan);
         parseColumns(statement, plan);
+
+        // Needs to be the last one always because of the hidden columns.
         parseOrderBy(statement, plan);
 
         if (plan.getColumns().isEmpty()) {

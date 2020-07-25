@@ -11,6 +11,7 @@
 package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.results.Column;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,8 +40,19 @@ public class DataNavigation implements AutoCloseable {
      * ResultSet fetch direction.
      */
     private int fetchDirection = ResultSet.FETCH_FORWARD;
+    /**
+     * The column list.
+     */
+    private final List<Column> columns;
 
-    public DataNavigation(final List<? extends Object[]> values) {
+    /**
+     * Creates a new instance.
+     *
+     * @param columns the column list.
+     * @param values  the value list.
+     */
+    public DataNavigation(final List<Column> columns, final List<? extends Object[]> values) {
+        this.columns = columns;
         this.values = values;
     }
 
@@ -48,11 +60,21 @@ public class DataNavigation implements AutoCloseable {
         verifyStatus();
         verifyRow();
 
-        if (columnIndex > currentRow.length) {
+        int currentIndex = -1;
+        for (int loop = 0; loop < this.columns.size(); loop++) {
+            final Column column = this.columns.get(loop);
+            if (!column.isHidden() && column.getIndex() == columnIndex) {
+                currentIndex = loop;
+                break;
+            }
+        }
+
+        // Found a column?
+        if (currentIndex == -1) {
             throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, columnIndex);
         }
 
-        this.lastValue = currentRow[columnIndex - 1];
+        this.lastValue = currentRow[currentIndex];
         return this.lastValue;
     }
 
