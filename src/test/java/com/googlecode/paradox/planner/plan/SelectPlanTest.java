@@ -478,7 +478,7 @@ public class SelectPlanTest {
     public void testLeftAndFull() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
                 " left join geog.tblsttes st on st.State = ac.State " +
-                " left join geog.County c on c.StateID = st.State where AreasCovered like 'hackensack%'");
+                " left join geog.County c on c.StateID = st.State");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
@@ -490,10 +490,10 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLeftAndCoss() throws SQLException {
+    public void testLeftAndCross() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
                 " left join geog.tblsttes st on st.State = ac.State " +
-                " cross join geog.County c where c.StateID = st.State and AreasCovered like 'hackensack%'");
+                " cross join geog.County c where c.StateID = st.State");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
