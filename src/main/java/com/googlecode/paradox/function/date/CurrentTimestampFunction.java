@@ -12,7 +12,7 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -27,7 +27,7 @@ import java.util.TimeZone;
  * @version 1.4
  * @since 1.6.0
  */
-public class CurrentTimestampFunction implements IFunction {
+public class CurrentTimestampFunction extends AbstractFunction {
 
     /**
      * The function name.

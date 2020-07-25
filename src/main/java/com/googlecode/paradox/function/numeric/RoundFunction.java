@@ -13,8 +13,7 @@ package com.googlecode.paradox.function.numeric;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
-import com.googlecode.paradox.parser.nodes.AsteriskNode;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -29,10 +28,10 @@ import java.util.List;
 /**
  * The SQL ROUND functions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
-public class RoundFunction implements IFunction {
+public class RoundFunction extends AbstractFunction {
 
     /**
      * The function name.
@@ -104,12 +103,7 @@ public class RoundFunction implements IFunction {
 
     @Override
     public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        for (final SQLNode node : parameters) {
-            if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
-            }
-        }
+        testForAsterisk(parameters);
 
         if (parameters.size() > 3) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, 3);

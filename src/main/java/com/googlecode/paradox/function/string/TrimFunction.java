@@ -13,13 +13,13 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
-import com.googlecode.paradox.parser.nodes.AsteriskNode;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
+import com.googlecode.paradox.utils.Utils;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -29,25 +29,28 @@ import java.util.List;
 /**
  * The SQL TRIM function.
  *
- * @version 1.2
+ * @version 1.4
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S109", "i18n-java:V1017"})
-public class TrimFunction implements IFunction {
-
-    public static final String[] TYPES = {"BOTH", "LEADING", "TRAILING"};
+public class TrimFunction extends AbstractFunction {
 
     /**
      * The function name.
      */
     public static final String NAME = "TRIM";
 
-    static {
-        // Allow binary search.
-        Arrays.sort(TYPES);
-    }
-
+    /**
+     * The trim type to use.
+     */
     private TrimType type = TrimType.BOTH;
+
+    /**
+     * Creates a new instance.
+     */
+    public TrimFunction() {
+        super();
+    }
 
     @Override
     public String remarks() {
@@ -123,29 +126,30 @@ public class TrimFunction implements IFunction {
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        for (final SQLNode node : parameters) {
-            if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
-            }
-        }
+        testForAsterisk(parameters);
 
         // If three parameters, the first needs to be a valid type.
         if (parameters.size() > 2) {
             final SQLNode value = parameters.get(0);
 
-            if (Arrays.binarySearch(TrimFunction.TYPES, value.getName()) < 0) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_COUNT, 2);
+            this.type = Utils.searchEnum(TrimType.class, value.getName());
+            if (type == null) {
+                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
+                        value.getName());
             }
 
             // Remove the first parameter and convert it to enum type.
             parameters.remove(0);
-
-            this.type = TrimType.valueOf(value.getName().toString().toUpperCase());
         }
     }
 
+    public static boolean isInvalidType(final String value) {
+        return Utils.searchEnum(TrimType.class, value) == null;
+    }
+
     private enum TrimType {
-        BOTH, LEADING, TRAILING
+        BOTH,
+        LEADING,
+        TRAILING
     }
 }

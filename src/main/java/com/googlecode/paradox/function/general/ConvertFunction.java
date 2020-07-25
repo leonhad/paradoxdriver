@@ -13,9 +13,8 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.TokenType;
-import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -34,11 +33,11 @@ import java.util.List;
 /**
  * The SQL CONVERT function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
-public class ConvertFunction implements IFunction {
+public class ConvertFunction extends AbstractFunction {
 
     /**
      * The function name.
@@ -115,24 +114,19 @@ public class ConvertFunction implements IFunction {
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        for (final SQLNode node : parameters) {
-            if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
-            }
-        }
+        testForAsterisk(parameters);
 
         if (parameters.size() == 3) {
             // If three parameters, the second needs to be a valid type.
 
-            if (!parameters.get(1).getName().toString().equalsIgnoreCase(TokenType.USING.name())) {
+            if (!parameters.get(1).getName().equalsIgnoreCase(TokenType.USING.name())) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                         parameters.get(1).getPosition());
             }
 
             SQLNode charsetNode = parameters.get(2);
             try {
-                charset = Charset.forName(charsetNode.getName().toString());
+                charset = Charset.forName(charsetNode.getName());
             } catch (final UnsupportedCharsetException e) {
                 throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.UNEXPECTED_TOKEN,
                         charsetNode.getPosition(), charsetNode.getName(), e);
@@ -150,7 +144,7 @@ public class ConvertFunction implements IFunction {
             final SQLNode typeNode = parameters.get(1);
             if (typeNode instanceof FieldNode) {
                 try {
-                    this.type = ParadoxType.valueOf(typeNode.getName().toString());
+                    this.type = ParadoxType.valueOf(typeNode.getName());
                     parameters.remove(1);
                 } catch (final IllegalArgumentException e) {
                     throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,

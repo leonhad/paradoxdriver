@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.nodes;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionFactory;
-import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
@@ -42,7 +42,7 @@ public class FunctionNode extends FieldNode {
     /**
      * This function instance.
      */
-    private final IFunction function;
+    private final AbstractFunction function;
     /**
      * Field nodes.
      */

@@ -31,7 +31,6 @@ import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -533,7 +532,7 @@ public final class SQLParser {
             // 2. TRIM([TYPE] 'CHARS' FROM 'TEXT).
 
             if (node.getParameters().size() > 1
-                    || Arrays.binarySearch(TrimFunction.TYPES, node.getParameters().get(0).getName()) < 0) {
+                    || TrimFunction.isInvalidType(node.getParameters().get(0).getName())) {
                 this.expect(TokenType.FROM);
             }
 

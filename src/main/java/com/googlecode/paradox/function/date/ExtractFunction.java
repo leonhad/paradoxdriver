@@ -13,8 +13,7 @@ package com.googlecode.paradox.function.date;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
-import com.googlecode.paradox.parser.nodes.AsteriskNode;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
@@ -34,11 +33,11 @@ import java.util.List;
 /**
  * The SQL EXTRACT function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
-public class ExtractFunction implements IFunction {
+public class ExtractFunction extends AbstractFunction {
 
     /**
      * The function name.
@@ -160,21 +159,16 @@ public class ExtractFunction implements IFunction {
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        for (final SQLNode node : parameters) {
-            if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
-            }
-        }
+        testForAsterisk(parameters);
 
         final SQLNode value = parameters.get(0);
-        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toString().toUpperCase()) < 0) {
+        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {
             throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.INVALID_PARAMETER_VALUE,
                     value.getName());
         }
 
         // Convert to a non fields do avoid Planner problems.
-        parameters.set(0, new ValueNode(value.getName().toString().toUpperCase(), value.getPosition(),
+        parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(),
                 ParadoxType.VARCHAR));
     }
 }

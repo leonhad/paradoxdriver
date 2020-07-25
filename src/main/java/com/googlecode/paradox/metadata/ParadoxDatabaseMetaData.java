@@ -17,7 +17,7 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
@@ -404,7 +404,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         final List<Object[]> values = new ArrayList<>();
 
-        for (final Map.Entry<String, Supplier<? extends IFunction>> function :
+        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> function :
                 FunctionFactory.getFunctionAlias().entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog()))
                     && (schemaPattern != null
@@ -414,7 +414,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                 continue;
             }
 
-            final IFunction instance = function.getValue().get();
+            final AbstractFunction instance = function.getValue().get();
             for (final Column column : instance.getColumns()) {
                 if (columnNamePattern != null
                         && !Expressions.accept(conn.getLocale(), column.getName(), columnNamePattern, false, '\\')) {
@@ -478,14 +478,14 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
-        for (final Map.Entry<String, Supplier<? extends IFunction>> function :
+        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> function :
                 FunctionFactory.getFunctionAlias().entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(conn.getCatalog())) && (schemaPattern != null
                     && !Expressions.accept(conn.getLocale(), conn.getSchema(), schemaPattern, false, '\\'))) {
                 continue;
             }
 
-            final IFunction instance = function.getValue().get();
+            final AbstractFunction instance = function.getValue().get();
 
             final Object[] row = {
                     // Catalog.

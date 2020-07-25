@@ -13,7 +13,7 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -29,7 +29,7 @@ import java.util.Objects;
  * @version 1.2
  * @since 1.6.0
  */
-public class NullIfFunction implements IFunction {
+public class NullIfFunction extends AbstractFunction {
 
     /**
      * The function name.

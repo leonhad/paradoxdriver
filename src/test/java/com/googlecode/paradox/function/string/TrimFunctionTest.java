@@ -13,6 +13,7 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -156,7 +157,6 @@ public class TrimFunctionTest {
         }
     }
 
-
     /**
      * Test for trim with spaces.
      *
@@ -164,12 +164,31 @@ public class TrimFunctionTest {
      */
     @Test
     public void testTrimSpaces() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select trim(BOTH ' ' from '   3   1') ");
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select trim(both ' ' from '   3   1') ");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
 
             Assert.assertEquals("Invalid value", "3   1", rs.getString(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
+    }
+
+    /**
+     * Test for trim with invalid size count.
+     */
+    @Test
+    public void testTrimInvalidCount() {
+        Assert.assertThrows("Invalid trim validation", ParadoxSyntaxErrorException.class,
+                () -> this.conn.prepareStatement("select trim(1 from ' ' from '   3   1') "));
+    }
+
+
+    /**
+     * Test for trim with invalid type.
+     */
+    @Test
+    public void testTrimInvalid() {
+        Assert.assertThrows("Invalid trim validation", ParadoxSyntaxErrorException.class,
+                () -> this.conn.prepareStatement("select trim(INVALID ' ' from '   3   1') "));
     }
 }

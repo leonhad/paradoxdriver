@@ -13,8 +13,7 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.function.FunctionType;
-import com.googlecode.paradox.function.IFunction;
-import com.googlecode.paradox.parser.nodes.AsteriskNode;
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -29,11 +28,11 @@ import java.util.List;
 /**
  * The SQL CAST function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
-public class CastFunction implements IFunction {
+public class CastFunction extends AbstractFunction {
 
     /**
      * The function name.
@@ -83,12 +82,7 @@ public class CastFunction implements IFunction {
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        for (final SQLNode node : parameters) {
-            if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(ParadoxSyntaxErrorException.Error.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
-            }
-        }
+        testForAsterisk(parameters);
 
         final SQLNode typeNode = parameters.get(1);
         if (typeNode instanceof FieldNode) {

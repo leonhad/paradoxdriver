@@ -36,12 +36,12 @@ public final class FunctionFactory {
     /**
      * The registered function list.
      */
-    private static final SortedMap<String, Supplier<? extends IFunction>> FUNCTIONS = new TreeMap<>();
+    private static final SortedMap<String, Supplier<? extends AbstractFunction>> FUNCTIONS = new TreeMap<>();
 
     /**
      * The registered function list that can be called without parenthesis.
      */
-    private static final Map<String, Supplier<? extends IFunction>> FUNCTION_ALIAS;
+    private static final Map<String, Supplier<? extends AbstractFunction>> FUNCTION_ALIAS;
 
     static {
         // Date functions.
@@ -170,7 +170,7 @@ public final class FunctionFactory {
     }
 
     @SuppressWarnings("java:S1452")
-    public static Map<String, Supplier<? extends IFunction>> getFunctionAlias() {
+    public static Map<String, Supplier<? extends AbstractFunction>> getFunctionAlias() {
         return Collections.unmodifiableMap(FUNCTIONS);
     }
 
@@ -183,7 +183,7 @@ public final class FunctionFactory {
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public static boolean isFunctionAlias(final String alias) {
         if (alias != null) {
-            final Supplier<? extends IFunction> supplier = FUNCTION_ALIAS.get(alias.toUpperCase());
+            final Supplier<? extends AbstractFunction> supplier = FUNCTION_ALIAS.get(alias.toUpperCase());
             return supplier != null;
         }
 
@@ -197,9 +197,9 @@ public final class FunctionFactory {
      * @return the function by name.
      */
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
-    public static IFunction getByName(final String name) {
+    public static AbstractFunction getByName(final String name) {
         if (name != null) {
-            final Supplier<? extends IFunction> supplier = FUNCTIONS.get(name.toUpperCase());
+            final Supplier<? extends AbstractFunction> supplier = FUNCTIONS.get(name.toUpperCase());
             if (supplier != null) {
                 return supplier.get();
             }

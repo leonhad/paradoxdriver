@@ -18,7 +18,7 @@ import java.sql.Wrapper;
 /**
  * Driver utilities.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.2
  */
 public final class Utils {
@@ -81,4 +81,23 @@ public final class Utils {
         }
         return name;
     }
+
+    /**
+     * Searchs a value in enum with insensitive case.
+     *
+     * @param enumeration the enumeration to search.
+     * @param search      the value to search.
+     * @param <T>         the result type (same as enumeration).
+     * @return The enumeration or <code>null</code> if not found.
+     */
+    public static <T extends Enum<?>> T searchEnum(final Class<T> enumeration, final String search) {
+        for (T each : enumeration.getEnumConstants()) {
+            if (each.name().equalsIgnoreCase(search)) {
+                return each;
+            }
+        }
+
+        return null;
+    }
+
 }
