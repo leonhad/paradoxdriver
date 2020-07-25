@@ -417,9 +417,8 @@ public final class SelectPlan implements Plan {
 
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
-                if (table.getConditionalJoin() != null
-                        && !table.getConditionalJoin().evaluate(connection, column, parameters, parameterTypes,
-                        columnsLoaded)) {
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
                     continue;
                 }
 
@@ -432,6 +431,7 @@ public final class SelectPlan implements Plan {
                 localValues.add(column.clone());
             }
         }
+
         return localValues;
     }
 
@@ -451,9 +451,8 @@ public final class SelectPlan implements Plan {
 
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
-                if (table.getConditionalJoin() != null
-                        && !table.getConditionalJoin().evaluate(connection, column, parameters, parameterTypes,
-                        columnsLoaded)) {
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
                     continue;
                 }
 
@@ -488,8 +487,8 @@ public final class SelectPlan implements Plan {
                 final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin().evaluate(connection, column,
-                        parameters, parameterTypes, columnsLoaded)) {
+                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
+                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
                     continue;
                 }
 
@@ -515,6 +514,7 @@ public final class SelectPlan implements Plan {
                 localValues.add(column.clone());
             }
         }
+
         return localValues;
     }
 

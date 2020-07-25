@@ -468,7 +468,7 @@ public class SelectPlanTest {
                 " left join geog.tblsttes st on st.State = ac.State " +
                 " left join geog.County c on c.StateID = st.State where AreasCovered like 'hackensack%'");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
 
