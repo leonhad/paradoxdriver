@@ -31,7 +31,7 @@ public class ConcatFunction extends AbstractStringFunction {
     public static final String NAME = "CONCAT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Concatenate a sequence of strings. This functions support any number of parameters.";
     }
 

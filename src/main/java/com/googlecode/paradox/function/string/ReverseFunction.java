@@ -31,7 +31,7 @@ public class ReverseFunction extends AbstractStringFunction {
     public static final String NAME = "REVERSE";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Return a string in inverted order.";
     }
 
@@ -46,7 +46,7 @@ public class ReverseFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

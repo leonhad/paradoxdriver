@@ -32,7 +32,7 @@ public class SinFunction extends AbstractNumericFunction {
     public static final String NAME = "SIN";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the sine of a number.";
     }
 
@@ -47,7 +47,7 @@ public class SinFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

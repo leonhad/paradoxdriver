@@ -32,7 +32,7 @@ public class PositionFunction extends AbstractStringFunction {
     public static final String NAME = "POSITION";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the position of the pattern in a string value.";
     }
 
@@ -49,12 +49,12 @@ public class PositionFunction extends AbstractStringFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 

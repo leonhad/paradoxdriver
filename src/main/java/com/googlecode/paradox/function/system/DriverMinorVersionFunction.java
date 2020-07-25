@@ -32,7 +32,7 @@ public class DriverMinorVersionFunction extends AbstractSystemFunction {
     public static final String NAME = "DRIVER_MINOR_VERSION";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the driver minor version.";
     }
 
@@ -44,7 +44,7 @@ public class DriverMinorVersionFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 

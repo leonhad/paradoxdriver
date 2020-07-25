@@ -31,7 +31,7 @@ public class CurrentSchemaFunction extends AbstractSystemFunction {
     public static final String NAME = "CURRENT_SCHEMA";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the current schema.";
     }
 

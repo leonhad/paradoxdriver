@@ -33,7 +33,7 @@ public class IntegerFunction extends AbstractNumericFunction {
     public static final String NAME = "INTEGER";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts the value to integer type.";
     }
 
@@ -48,12 +48,12 @@ public class IntegerFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

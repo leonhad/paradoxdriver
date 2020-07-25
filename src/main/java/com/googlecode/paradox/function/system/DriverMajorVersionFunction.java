@@ -32,7 +32,7 @@ public class DriverMajorVersionFunction extends AbstractSystemFunction {
     public static final String NAME = "DRIVER_MAJOR_VERSION";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the driver major version.";
     }
 
@@ -43,7 +43,7 @@ public class DriverMajorVersionFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 

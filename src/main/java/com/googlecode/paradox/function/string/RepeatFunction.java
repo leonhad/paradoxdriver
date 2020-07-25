@@ -33,7 +33,7 @@ public class RepeatFunction extends AbstractStringFunction {
     public static final String NAME = "REPEAT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Return a repeated string a specified number of times.";
     }
 
@@ -50,7 +50,7 @@ public class RepeatFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 

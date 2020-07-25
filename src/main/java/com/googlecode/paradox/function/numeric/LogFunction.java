@@ -11,16 +11,12 @@
 package com.googlecode.paradox.function.numeric;
 
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.DatabaseMetaData;
-import java.util.List;
 
 /**
  * The SQL LOG functions.
@@ -36,7 +32,7 @@ public class LogFunction extends AbstractNumericFunction {
     public static final String NAME = "LOG";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the natural logarithm of a specified number, " +
                 "or the logarithm of the number to the specified base.";
     }
@@ -57,8 +53,13 @@ public class LogFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
+    }
+
+    @Override
+    public int getMaxParameterCount() {
+        return 0x02;
     }
 
     @Override
@@ -74,7 +75,8 @@ public class LogFunction extends AbstractNumericFunction {
             return null;
         }
 
-        if (values.length == 2) {
+        // There is a base to process?
+        if (values.length > 1) {
             final Double base = ValuesConverter.getDouble(values[1]);
             if (base != null) {
                 return Math.log(value) / Math.log(base);
@@ -82,14 +84,5 @@ public class LogFunction extends AbstractNumericFunction {
         }
 
         return Math.log(value);
-    }
-
-    @Override
-    public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
-
-        if (parameters.size() > 2) {
-            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, 3);
-        }
     }
 }

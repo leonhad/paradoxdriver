@@ -31,7 +31,7 @@ public class LowerFunction extends AbstractStringFunction {
     public static final String NAME = "LOWER";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts a texto to lower case.";
     }
 
@@ -46,7 +46,7 @@ public class LowerFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

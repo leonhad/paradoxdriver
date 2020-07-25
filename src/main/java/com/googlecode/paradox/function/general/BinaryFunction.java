@@ -32,7 +32,7 @@ public class BinaryFunction extends AbstractGeneralFunction {
     public static final String NAME = "BINARY";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the square root of a number.";
     }
 
@@ -46,12 +46,12 @@ public class BinaryFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.BLOB;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

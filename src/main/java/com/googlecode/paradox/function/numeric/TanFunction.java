@@ -32,7 +32,7 @@ public class TanFunction extends AbstractNumericFunction {
     public static final String NAME = "TAN";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the tangent of a number.";
     }
 
@@ -47,7 +47,7 @@ public class TanFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

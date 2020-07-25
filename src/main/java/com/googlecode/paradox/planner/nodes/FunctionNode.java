@@ -13,8 +13,8 @@ package com.googlecode.paradox.planner.nodes;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.AbstractFunction;
+import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
@@ -72,12 +72,18 @@ public class FunctionNode extends FieldNode {
      * @throws ParadoxSyntaxErrorException in case of invalid function call.
      */
     public void validate(final ScannerPosition position) throws ParadoxSyntaxErrorException {
-        if (function.isVariableParameters() && parameters.size() < function.parameterCount()) {
-            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT_MINIMUM,
-                    position, Integer.toString(function.parameterCount()));
-        } else if (!function.isVariableParameters() && (function.parameterCount() != parameters.size())) {
-            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT,
-                    position, Integer.toString(function.parameterCount()));
+        final int parameterCount = function.getParameterCount();
+        final int maxParameterCount = function.getMaxParameterCount();
+        if (function.isVariableParameters()) {
+            if (parameters.size() < parameterCount) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT_MINIMUM, position,
+                        parameterCount);
+            } else if (maxParameterCount != 0 && maxParameterCount < parameters.size()) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT_MAXIMUM, position,
+                        parameters.size(), maxParameterCount);
+            }
+        } else if (parameterCount != parameters.size()) {
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, position, parameterCount);
         }
 
         this.function.validate(this.parameters);
@@ -153,7 +159,7 @@ public class FunctionNode extends FieldNode {
      * @return the returned value type.
      */
     public ParadoxType getType() {
-        return function.fieldType();
+        return function.getFieldType();
     }
 
     /**

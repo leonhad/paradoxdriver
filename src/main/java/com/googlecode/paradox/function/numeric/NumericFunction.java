@@ -33,7 +33,7 @@ public class NumericFunction extends AbstractNumericFunction {
     public static final String NAME = "NUMERIC";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts the value to numeric type.";
     }
 
@@ -48,7 +48,7 @@ public class NumericFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

@@ -32,7 +32,7 @@ public class CoshFunction extends AbstractNumericFunction {
     public static final String NAME = "COSH";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the hyperbolic cosine of a number.";
     }
 
@@ -48,7 +48,7 @@ public class CoshFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

@@ -32,7 +32,7 @@ public class IsDateFunction extends AbstractDateFunction {
     public static final String NAME = "ISDATE";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Checks if the value can be a date or time value.";
     }
 
@@ -47,12 +47,12 @@ public class IsDateFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.BOOLEAN;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

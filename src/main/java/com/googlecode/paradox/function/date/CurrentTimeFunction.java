@@ -19,7 +19,6 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public class CurrentTimeFunction extends AbstractDateFunction {
@@ -38,24 +37,22 @@ public class CurrentTimeFunction extends AbstractDateFunction {
      */
     public static final String NAME = "CURRENT_TIME";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.TIME, "The current time.", 0, false, RESULT),
+            new Column("precision", ParadoxType.INTEGER, "The time precision from 0 to 6. Ignored", 1, true, IN)
+    };
+
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the current time.";
     }
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.TIME, "The current time.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("precision", ParadoxType.INTEGER, "The time precision from 0 to 6. Ignored", 1, true,
-                        DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.TIME;
+        return COLUMNS;
     }
 
     @Override
@@ -66,6 +63,16 @@ public class CurrentTimeFunction extends AbstractDateFunction {
     @Override
     public boolean isVariableParameters() {
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return <code>0</code>, because it can be called without any parameters.
+     */
+    @Override
+    public int getParameterCount() {
+        return 0;
     }
 
     @Override
@@ -87,8 +94,10 @@ public class CurrentTimeFunction extends AbstractDateFunction {
 
     @Override
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+        super.validate(parameters);
+
         if (parameters.size() > 1) {
-            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, "1");
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, 1);
         }
     }
 }

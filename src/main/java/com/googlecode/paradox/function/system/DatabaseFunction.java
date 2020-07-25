@@ -31,7 +31,7 @@ public class DatabaseFunction extends AbstractSystemFunction {
     public static final String NAME = "DATABASE";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the current database name (catalog).";
     }
 

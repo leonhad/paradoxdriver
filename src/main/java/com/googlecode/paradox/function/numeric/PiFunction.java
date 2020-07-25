@@ -32,7 +32,7 @@ public class PiFunction extends AbstractNumericFunction {
     public static final String NAME = "PI";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the PI constant (π).";
     }
 

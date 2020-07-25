@@ -33,7 +33,7 @@ public class LPadFunction extends AbstractStringFunction {
     public static final String NAME = "LPAD";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Left-pads a string with another string, to a certain length.";
     }
 
@@ -52,7 +52,7 @@ public class LPadFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 3;
     }
 

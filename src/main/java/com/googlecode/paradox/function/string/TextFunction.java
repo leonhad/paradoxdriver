@@ -32,7 +32,7 @@ public class TextFunction extends AbstractStringFunction {
     public static final String NAME = "TEXT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts the value to CLOB (text) type.";
     }
 
@@ -47,12 +47,12 @@ public class TextFunction extends AbstractStringFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.MEMO;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

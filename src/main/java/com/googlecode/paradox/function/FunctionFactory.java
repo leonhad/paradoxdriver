@@ -216,7 +216,7 @@ public final class FunctionFactory {
      */
     public static String getByType(final FunctionType type) {
         return FUNCTIONS.entrySet().stream()
-                .filter(e -> e.getValue().get().type() == type).map(Entry::getKey)
+                .filter(e -> e.getValue().get().getType() == type).map(Entry::getKey)
                 .sorted().collect(Collectors.joining(","));
     }
 

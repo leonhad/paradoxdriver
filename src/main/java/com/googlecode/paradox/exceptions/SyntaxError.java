@@ -80,32 +80,37 @@ public enum SyntaxError {
     /**
      * Invalid parameter count (minimum).
      */
-    INVALID_PARAMETER_COUNT_MINIMUM("012", "Invalid function parameter count, expected at last %s"),
+    INVALID_PARAMETER_COUNT_MINIMUM("013", "Invalid function parameter count, expected at last %s"),
+
+    /**
+     * Invalid parameter count (maximum).
+     */
+    INVALID_PARAMETER_COUNT_MAXIMUM("014", "Invalid function parameter count, got %s expected at maximum %s"),
 
     /**
      * Can't use asterisk in function parameter.
      */
-    ASTERISK_IN_FUNCTION("013", "Asterisk not supported in this type of function"),
+    ASTERISK_IN_FUNCTION("015", "Asterisk not supported in this type of function"),
 
     /**
      * Inconsistent data type.
      */
-    INCONSISTENT_DATA_TYPE("014", "Inconsistent data types: expected %s got %s"),
+    INCONSISTENT_DATA_TYPE("016", "Inconsistent data types: expected %s got %s"),
 
     /**
      * Invalid parameter value.
      */
-    INVALID_PARAMETER_VALUE("015", "Invalid parameter value: %s"),
+    INVALID_PARAMETER_VALUE("017", "Invalid parameter value: %s"),
 
     /**
      * Inconsistent parameter list.
      */
-    INCONSISTENT_PARAMETER_LIST("016", "Inconsistent parameter list size"),
+    INCONSISTENT_PARAMETER_LIST("018", "Inconsistent parameter list size"),
 
     /**
      * A character string without a ending char.
      */
-    UNTERMINATED_STRING("017", "Unterminated character sequence");
+    UNTERMINATED_STRING("019", "Unterminated character sequence");
 
     /**
      * SQL state code.

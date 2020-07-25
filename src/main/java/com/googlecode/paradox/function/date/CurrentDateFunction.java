@@ -34,7 +34,7 @@ public class CurrentDateFunction extends AbstractDateFunction {
     public static final String NAME = "CURRENT_DATE";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the current date.";
     }
 
@@ -51,7 +51,7 @@ public class CurrentDateFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.TIMESTAMP;
     }
 

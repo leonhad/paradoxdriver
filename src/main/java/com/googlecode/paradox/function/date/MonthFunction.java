@@ -36,7 +36,7 @@ public class MonthFunction extends AbstractDateFunction {
     public static final String NAME = "MONTH";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract the month from a timestamp value  (a number from 1 to 12).";
     }
 
@@ -51,12 +51,12 @@ public class MonthFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

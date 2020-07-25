@@ -33,7 +33,7 @@ public class LeftFunction extends AbstractStringFunction {
     public static final String NAME = "LEFT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract a part of the string from the left side.";
     }
 
@@ -50,7 +50,7 @@ public class LeftFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 

@@ -32,7 +32,7 @@ public class CosFunction extends AbstractNumericFunction {
     public static final String NAME = "COS";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the cosine of a number.";
     }
 
@@ -48,7 +48,7 @@ public class CosFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

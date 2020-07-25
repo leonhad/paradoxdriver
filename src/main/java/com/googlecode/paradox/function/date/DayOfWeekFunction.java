@@ -36,7 +36,7 @@ public class DayOfWeekFunction extends AbstractDateFunction {
     public static final String NAME = "DAYOFWEEK";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract the weekday from a timestamp value  (a number from 1 to 7).";
     }
 
@@ -51,12 +51,12 @@ public class DayOfWeekFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

@@ -38,7 +38,7 @@ public class RoundFunction extends AbstractNumericFunction {
     public static final String NAME = "ROUND";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns a number to a specified number of decimal places.";
     }
 
@@ -59,7 +59,7 @@ public class RoundFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 
@@ -91,8 +91,8 @@ public class RoundFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
+    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+        super.validate(parameters);
 
         if (parameters.size() > 3) {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_COUNT, 3);

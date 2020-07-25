@@ -32,7 +32,7 @@ public class ATN2Function extends AbstractNumericFunction {
     public static final String NAME = "ATN2";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the arc-tangent of two numbers.";
     }
 
@@ -50,7 +50,7 @@ public class ATN2Function extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 

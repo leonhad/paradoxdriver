@@ -31,7 +31,7 @@ public class BitLengthFunction extends OctetLengthFunction {
     public static final String NAME = "BIT_LENGTH";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the length of the binary values in bits.";
     }
 

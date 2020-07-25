@@ -40,7 +40,7 @@ public class CastFunction extends AbstractGeneralFunction {
     private ParadoxType type = ParadoxType.BYTES;
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts a field type to another.";
     }
 
@@ -56,12 +56,12 @@ public class CastFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return type;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 
@@ -74,8 +74,8 @@ public class CastFunction extends AbstractGeneralFunction {
 
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
-    public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
+    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+        super.validate(parameters);
 
         final SQLNode typeNode = parameters.get(1);
         if (typeNode instanceof FieldNode) {

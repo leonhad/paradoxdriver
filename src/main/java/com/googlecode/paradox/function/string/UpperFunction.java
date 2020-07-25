@@ -31,7 +31,7 @@ public class UpperFunction extends AbstractStringFunction {
     public static final String NAME = "UPPER";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts a texto to upper case.";
     }
 
@@ -46,7 +46,7 @@ public class UpperFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

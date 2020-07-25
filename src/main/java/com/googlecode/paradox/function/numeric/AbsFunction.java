@@ -35,12 +35,12 @@ public class AbsFunction extends AbstractFunction {
     public static final String NAME = "ABS";
 
     @Override
-    public FunctionType type() {
+    public FunctionType getType() {
         return FunctionType.NUMERIC;
     }
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the absolute value of a number.";
     }
 
@@ -55,12 +55,12 @@ public class AbsFunction extends AbstractFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.NUMBER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

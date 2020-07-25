@@ -33,7 +33,7 @@ public class VarcharFunction extends AbstractStringFunction {
     public static final String NAME = "VARCHAR";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts the value to VARCHAR type.";
     }
 
@@ -48,7 +48,7 @@ public class VarcharFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

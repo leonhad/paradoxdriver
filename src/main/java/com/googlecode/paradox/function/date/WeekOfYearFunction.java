@@ -36,7 +36,7 @@ public class WeekOfYearFunction extends AbstractDateFunction {
     public static final String NAME = "WEEKOFYEAR";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract the week of the year from a timestamp value  (a number from 1 to 31).";
     }
 
@@ -51,12 +51,12 @@ public class WeekOfYearFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

@@ -31,7 +31,7 @@ public class ConnectionIDFunction extends AbstractSystemFunction {
     public static final String NAME = "CONNECTION_ID";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the current schema.";
     }
 

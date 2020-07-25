@@ -32,7 +32,7 @@ public class SignFunction extends AbstractNumericFunction {
     public static final String NAME = "SIGN";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Return the sign of a number.";
     }
 
@@ -48,12 +48,12 @@ public class SignFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

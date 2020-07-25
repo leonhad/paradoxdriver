@@ -32,7 +32,7 @@ public class CotFunction extends AbstractNumericFunction {
     public static final String NAME = "COT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the cotangent of a number.";
     }
 
@@ -48,7 +48,7 @@ public class CotFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

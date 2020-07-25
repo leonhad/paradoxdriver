@@ -32,7 +32,7 @@ public class SqrtFunction extends AbstractNumericFunction {
     public static final String NAME = "SQRT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the square root of a number.";
     }
 
@@ -48,7 +48,7 @@ public class SqrtFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

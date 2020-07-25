@@ -32,7 +32,7 @@ public class DriverNameFunction extends AbstractSystemFunction {
     public static final String NAME = "DRIVER_NAME";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the driver name.";
     }
 

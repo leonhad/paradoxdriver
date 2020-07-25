@@ -33,7 +33,7 @@ public class SpaceFunction extends AbstractStringFunction {
     public static final String NAME = "SPACE";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Return a string only with spaces.";
     }
 
@@ -48,7 +48,7 @@ public class SpaceFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

@@ -37,7 +37,7 @@ public class DateFromPartsFunction extends AbstractDateFunction {
     public static final String NAME = "DATEFROMPARTS";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract a date from the specified parts (year, month, and day values).";
     }
 
@@ -56,12 +56,12 @@ public class DateFromPartsFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.DATE;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 3;
     }
 

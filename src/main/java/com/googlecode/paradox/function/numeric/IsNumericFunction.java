@@ -32,7 +32,7 @@ public class IsNumericFunction extends AbstractNumericFunction {
     public static final String NAME = "ISNUMERIC";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Checks if the value can be a numeric value.";
     }
 
@@ -47,12 +47,12 @@ public class IsNumericFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.BOOLEAN;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

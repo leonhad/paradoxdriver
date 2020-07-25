@@ -31,7 +31,7 @@ public class OctetLengthFunction extends AbstractStringFunction {
     public static final String NAME = "OCTET_LENGTH";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the length of the binary values in bytes.";
     }
 
@@ -46,12 +46,12 @@ public class OctetLengthFunction extends AbstractStringFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

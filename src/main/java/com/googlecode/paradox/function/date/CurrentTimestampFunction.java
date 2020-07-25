@@ -33,7 +33,7 @@ public class CurrentTimestampFunction extends AbstractDateFunction {
     public static final String NAME = "CURRENT_TIMESTAMP";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the current timestamp.";
     }
 

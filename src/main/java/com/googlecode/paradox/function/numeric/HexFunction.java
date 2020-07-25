@@ -33,7 +33,7 @@ public class HexFunction extends AbstractNumericFunction {
     public static final String NAME = "HEX";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns a hexadecimal representation of a number, as a string value..";
     }
 
@@ -49,12 +49,12 @@ public class HexFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.VARCHAR;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

@@ -32,7 +32,7 @@ public class AsciiFunction extends AbstractStringFunction {
     public static final String NAME = "ASCII";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts a integer value to UNICODE char.";
     }
 
@@ -48,12 +48,12 @@ public class AsciiFunction extends AbstractStringFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

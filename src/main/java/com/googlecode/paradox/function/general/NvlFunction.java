@@ -35,7 +35,7 @@ public class NvlFunction extends AbstractGeneralFunction {
     private ParadoxType type = ParadoxType.NULL;
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Return a specified value if the string is null.";
     }
 
@@ -53,12 +53,12 @@ public class NvlFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return type;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 

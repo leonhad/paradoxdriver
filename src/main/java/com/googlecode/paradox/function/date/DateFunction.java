@@ -16,13 +16,12 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 /**
  * The SQL DATE function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -33,29 +32,22 @@ public class DateFunction extends AbstractDateFunction {
      */
     public static final String NAME = "DATE";
 
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.DATE, "The date.", 0, false, RESULT),
+            new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the time from.", 1, false, IN)
+    };
+
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract date from a timestamp value.";
     }
 
     @Override
     public Column[] getColumns() {
-        return new Column[]{
-                new Column(null, ParadoxType.DATE, "The date.", 0, false,
-                        DatabaseMetaData.functionColumnResult),
-                new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the time from.", 1,
-                        false, DatabaseMetaData.functionColumnIn)
-        };
-    }
-
-    @Override
-    public ParadoxType fieldType() {
-        return ParadoxType.DATE;
-    }
-
-    @Override
-    public int parameterCount() {
-        return 1;
+        return COLUMNS;
     }
 
     @Override

@@ -32,7 +32,7 @@ public class VersionNumberFunction extends AbstractSystemFunction {
     public static final String NAME = "VERSION_NUMBER";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the driver version number.";
     }
 

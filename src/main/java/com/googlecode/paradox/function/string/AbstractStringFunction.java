@@ -23,12 +23,12 @@ import com.googlecode.paradox.results.ParadoxType;
 public abstract class AbstractStringFunction extends AbstractFunction {
 
     @Override
-    public FunctionType type() {
+    public FunctionType getType() {
         return FunctionType.STRING;
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.VARCHAR;
     }
 

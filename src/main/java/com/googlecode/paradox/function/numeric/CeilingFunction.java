@@ -32,7 +32,7 @@ public class CeilingFunction extends AbstractNumericFunction {
     public static final String NAME = "CEILING";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the largest integer value that is greater than or equal to a number.";
     }
 
@@ -48,7 +48,7 @@ public class CeilingFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

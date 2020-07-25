@@ -33,7 +33,7 @@ public class ConcatWSFunction extends AbstractStringFunction {
     public static final String NAME = "CONCAT_WS";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Concatenate a sequence of strings with a separator. This functions support any number of parameters " +
                 "above 1.";
     }
@@ -54,7 +54,7 @@ public class ConcatWSFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

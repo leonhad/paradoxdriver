@@ -33,7 +33,7 @@ public class RPadFunction extends AbstractStringFunction {
     public static final String NAME = "RPAD";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Right-pads a string with another string, to a certain length.";
     }
 
@@ -52,7 +52,7 @@ public class RPadFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 3;
     }
 

@@ -31,7 +31,7 @@ public class CharLengthFunction extends AbstractStringFunction {
     public static final String NAME = "CHAR_LENGTH";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the length of the character values.";
     }
 
@@ -46,12 +46,12 @@ public class CharLengthFunction extends AbstractStringFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

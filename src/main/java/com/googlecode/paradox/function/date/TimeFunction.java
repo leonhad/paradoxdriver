@@ -34,7 +34,7 @@ public class TimeFunction extends AbstractDateFunction {
     public static final String NAME = "TIME";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract the time from a timestamp value.";
     }
 
@@ -50,12 +50,12 @@ public class TimeFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.TIME;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

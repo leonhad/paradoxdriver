@@ -36,7 +36,7 @@ public class SecondFunction extends AbstractDateFunction {
     public static final String NAME = "SECOND";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract the second from a timestamp value.";
     }
 
@@ -51,12 +51,12 @@ public class SecondFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

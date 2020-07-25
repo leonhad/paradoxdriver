@@ -36,7 +36,7 @@ public class LastDayFunction extends AbstractDateFunction {
     public static final String NAME = "LAST_DAY";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract the last day of the month for a given date.";
     }
 
@@ -51,12 +51,12 @@ public class LastDayFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.DATE;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

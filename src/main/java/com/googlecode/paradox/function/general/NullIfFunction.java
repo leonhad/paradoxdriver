@@ -36,7 +36,7 @@ public class NullIfFunction extends AbstractGeneralFunction {
     private ParadoxType type = ParadoxType.NULL;
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns null if both values are equal, otherwise it returns the first expression.";
     }
 
@@ -54,12 +54,12 @@ public class NullIfFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return type;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 

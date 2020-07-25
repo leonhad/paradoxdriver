@@ -32,7 +32,7 @@ public class ACotFunction extends AbstractNumericFunction {
     public static final String NAME = "ACOT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the arc-cotangent of a number.";
     }
 
@@ -48,7 +48,7 @@ public class ACotFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

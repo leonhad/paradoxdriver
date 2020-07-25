@@ -31,7 +31,7 @@ public class UserFunction extends AbstractSystemFunction {
     public static final String NAME = "USER";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the current database user (default schema).";
     }
 

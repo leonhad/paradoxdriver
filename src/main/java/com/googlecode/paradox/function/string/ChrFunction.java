@@ -33,7 +33,7 @@ public class ChrFunction extends AbstractStringFunction {
     public static final String NAME = "CHR";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts a UNICODE char to integer value (UNICODE integer value).";
     }
 
@@ -49,12 +49,12 @@ public class ChrFunction extends AbstractStringFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.CHAR;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

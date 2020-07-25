@@ -495,7 +495,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     // Name.
                     function.getKey(),
                     // Remarks.
-                    instance.remarks(),
+                    instance.getRemarks(),
                     // Type.
                     functionResultUnknown,
                     // Specific name.

@@ -32,7 +32,7 @@ public class PowerFunction extends AbstractNumericFunction {
     public static final String NAME = "POWER";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the value of a number raised to the power of another number.";
     }
 
@@ -50,7 +50,7 @@ public class PowerFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 

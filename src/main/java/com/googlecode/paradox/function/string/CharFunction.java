@@ -33,7 +33,7 @@ public class CharFunction extends AbstractStringFunction {
     public static final String NAME = "CHAR";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts the value to char type.";
     }
 
@@ -48,12 +48,12 @@ public class CharFunction extends AbstractStringFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.CHAR;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

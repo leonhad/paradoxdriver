@@ -46,7 +46,7 @@ public class ConvertFunction extends AbstractGeneralFunction {
     private ParadoxType type = ParadoxType.VARCHAR;
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Convert a string to charset specified. Example: CONVERT('value' USING utf8)";
     }
 
@@ -63,12 +63,12 @@ public class ConvertFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return type;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 
@@ -106,8 +106,8 @@ public class ConvertFunction extends AbstractGeneralFunction {
 
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
-    public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
+    public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
+        super.validate(parameters);
 
         if (parameters.size() == 3) {
             // If three parameters, the second needs to be a valid type.

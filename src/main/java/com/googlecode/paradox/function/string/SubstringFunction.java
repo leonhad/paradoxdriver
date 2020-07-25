@@ -35,7 +35,7 @@ public class SubstringFunction extends AbstractStringFunction {
     public static final String NAME = "SUBSTRING";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extracts some characters from a string.";
     }
 
@@ -54,7 +54,7 @@ public class SubstringFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 3;
     }
 

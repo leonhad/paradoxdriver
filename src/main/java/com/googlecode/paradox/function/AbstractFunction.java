@@ -19,30 +19,42 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * SQL function interface.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public abstract class AbstractFunction {
+
+    /**
+     * Function IN parameter.
+     */
+    protected static final int IN = DatabaseMetaData.functionColumnIn;
+
+    /**
+     * Function returns parameter.
+     */
+    protected static final int RESULT = DatabaseMetaData.functionColumnResult;
 
     /**
      * Gets the function type.
      *
      * @return the function type.
      */
-    public abstract FunctionType type();
+    public abstract FunctionType getType();
 
     /**
      * Gets the functions remarks.
      *
      * @return the functions remarks.
      */
-    public abstract String remarks();
+    public abstract String getRemarks();
 
     /**
      * Gets the columns metadata.
@@ -56,15 +68,22 @@ public abstract class AbstractFunction {
      *
      * @return the returned value type.
      */
-    public abstract ParadoxType fieldType();
+    public ParadoxType getFieldType() {
+        return Stream.of(getColumns())
+                .filter(c -> c.getColumnType() == RESULT)
+                .map(Column::getType)
+                .findFirst().orElse(ParadoxType.NULL);
+    }
 
     /**
      * The function parameters count.
      *
      * @return the function parameters count.
      */
-    public int parameterCount() {
-        return 0;
+    public int getParameterCount() {
+        return (int) Stream.of(getColumns())
+                .filter(c -> c.getColumnType() == IN)
+                .count();
     }
 
     /**
@@ -108,22 +127,23 @@ public abstract class AbstractFunction {
     }
 
     /**
+     * Gets the max parameters allowed in function.
+     *
+     * @return the max parameters allowed in function.
+     */
+    @SuppressWarnings("java:S3400")
+    public int getMaxParameterCount() {
+        return 0;
+    }
+
+    /**
      * Lets the function validate the parameters in static way.
      *
      * @param parameters the parameter list.
      * @throws ParadoxSyntaxErrorException in case of syntax errors.
      */
+    @SuppressWarnings("java:S3242")
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
-    }
-
-    /**
-     * Do not allow the use of asterisk node.
-     *
-     * @param parameters the parameter list.
-     * @throws ParadoxSyntaxErrorException in case of syntax errors.
-     */
-    protected static void testForAsterisk(final Iterable<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         for (final SQLNode node : parameters) {
             if (node instanceof AsteriskNode) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_IN_FUNCTION,

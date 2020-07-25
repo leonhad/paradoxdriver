@@ -32,7 +32,7 @@ public class SquareFunction extends AbstractNumericFunction {
     public static final String NAME = "SQUARE";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the square of a number.";
     }
 
@@ -47,7 +47,7 @@ public class SquareFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

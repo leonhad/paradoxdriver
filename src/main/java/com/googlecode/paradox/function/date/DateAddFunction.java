@@ -50,7 +50,7 @@ public class DateAddFunction extends AbstractDateFunction {
     }
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Adds a time/date interval to a date and then returns the date. The interval can be: "
                 + Arrays.toString(VALID_FORMATS) + ".";
     }
@@ -71,7 +71,7 @@ public class DateAddFunction extends AbstractDateFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 3;
     }
 
@@ -132,7 +132,7 @@ public class DateAddFunction extends AbstractDateFunction {
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
+        super.validate(parameters);
 
         final SQLNode value = parameters.get(0);
         if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {

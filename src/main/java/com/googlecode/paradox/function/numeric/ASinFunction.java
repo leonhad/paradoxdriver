@@ -32,7 +32,7 @@ public class ASinFunction extends AbstractNumericFunction {
     public static final String NAME = "ASIN";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the arc-sine of a number.";
     }
 
@@ -48,7 +48,7 @@ public class ASinFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

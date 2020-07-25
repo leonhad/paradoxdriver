@@ -32,7 +32,7 @@ public class Log10Function extends AbstractNumericFunction {
     public static final String NAME = "LOG10";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the natural logarithm of a number to base 10.";
     }
 
@@ -48,7 +48,7 @@ public class Log10Function extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

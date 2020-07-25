@@ -32,7 +32,7 @@ public class ACosFunction extends AbstractNumericFunction {
     public static final String NAME = "ACOS";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns the arc-cosine of a number.";
     }
 
@@ -48,7 +48,7 @@ public class ACosFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

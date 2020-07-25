@@ -32,7 +32,7 @@ public class ReplaceFunction extends AbstractStringFunction {
     public static final String NAME = "REPLACE";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Replaces all occurrences of a substring within a string, with a new substring.";
     }
 
@@ -51,7 +51,7 @@ public class ReplaceFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 3;
     }
 

@@ -33,7 +33,7 @@ public class RandFunction extends AbstractNumericFunction {
     public static final String NAME = "RAND";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Returns a random number between 0 and 1.";
     }
 

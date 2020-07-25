@@ -51,7 +51,7 @@ public class TrimFunction extends AbstractStringFunction {
     }
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Remove leading and trailing spaces from a string.";
     }
 
@@ -66,7 +66,7 @@ public class TrimFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 
@@ -114,7 +114,7 @@ public class TrimFunction extends AbstractStringFunction {
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public void validate(List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
+        super.validate(parameters);
 
         // If three parameters, the first needs to be a valid type.
         if (parameters.size() > 2) {

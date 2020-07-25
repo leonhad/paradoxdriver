@@ -36,7 +36,7 @@ public class HourFunction extends AbstractDateFunction {
     public static final String NAME = "HOUR";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract the hour from a timestamp value.";
     }
 
@@ -51,12 +51,12 @@ public class HourFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

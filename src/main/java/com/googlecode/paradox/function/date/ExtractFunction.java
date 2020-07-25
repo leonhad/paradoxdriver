@@ -73,7 +73,7 @@ public class ExtractFunction extends AbstractDateFunction {
     }
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Extract a value from date/time. The part to extract can be: " + Arrays.toString(VALID_FORMATS) + ".";
     }
 
@@ -90,12 +90,12 @@ public class ExtractFunction extends AbstractDateFunction {
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 2;
     }
 
@@ -153,7 +153,7 @@ public class ExtractFunction extends AbstractDateFunction {
     @Override
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
-        testForAsterisk(parameters);
+        super.validate(parameters);
 
         final SQLNode value = parameters.get(0);
         if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {

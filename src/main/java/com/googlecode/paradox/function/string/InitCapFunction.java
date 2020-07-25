@@ -32,7 +32,7 @@ public class InitCapFunction extends AbstractStringFunction {
     public static final String NAME = "INITCAP";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Capitalize the string.";
     }
 
@@ -47,7 +47,7 @@ public class InitCapFunction extends AbstractStringFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

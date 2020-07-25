@@ -34,7 +34,7 @@ public class CountFunction extends AbstractFunction {
     public static final String NAME = "COUNT";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Gets the count of rows in group.";
     }
 
@@ -49,17 +49,17 @@ public class CountFunction extends AbstractFunction {
     }
 
     @Override
-    public FunctionType type() {
+    public FunctionType getType() {
         return FunctionType.NUMERIC;
     }
 
     @Override
-    public ParadoxType fieldType() {
+    public ParadoxType getFieldType() {
         return ParadoxType.INTEGER;
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 

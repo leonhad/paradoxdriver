@@ -32,7 +32,7 @@ public class RadiansFunction extends AbstractNumericFunction {
     public static final String NAME = "RADIANS";
 
     @Override
-    public String remarks() {
+    public String getRemarks() {
         return "Converts a degree value into radians.";
     }
 
@@ -48,7 +48,7 @@ public class RadiansFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public int parameterCount() {
+    public int getParameterCount() {
         return 1;
     }
 
