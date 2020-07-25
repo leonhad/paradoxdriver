@@ -31,6 +31,7 @@ import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -87,6 +88,23 @@ public final class SelectPlan implements Plan {
     public SelectPlan(final AbstractConditionalNode condition, final boolean distinct) {
         this.condition = condition;
         this.distinct = distinct;
+    }
+
+    @FunctionalInterface
+    public interface PredicateWithExceptions<T, E extends Exception> {
+
+        boolean test(T t) throws E;
+    }
+
+    private <T, E extends Exception> Predicate<T> wrapper(PredicateWithExceptions<T, E> fe) {
+        return arg -> {
+            try {
+                return fe.test(arg);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     private static AbstractConditionalNode reduce(final AbstractConditionalNode node) {
@@ -201,6 +219,7 @@ public final class SelectPlan implements Plan {
                         parameterTypes);
                 break;
         }
+
         return localValues;
     }
 
@@ -347,10 +366,11 @@ public final class SelectPlan implements Plan {
      */
     @SuppressWarnings({"java:S3776", "java:S1541"})
     private boolean optimizeConditions(final SQLNode node) {
+        boolean ret = false;
         if (node instanceof ANDNode) {
             ANDNode andNode = (ANDNode) node;
             andNode.getChildren().removeIf(this::optimizeConditions);
-            return node.getClauseFields().isEmpty();
+            ret = node.getClauseFields().isEmpty();
         } else if (node != null && !(node instanceof ORNode)) {
             // Don't process OR nodes.
             final List<ParadoxField> conditionalFields = new ArrayList<>();
@@ -376,7 +396,7 @@ public final class SelectPlan implements Plan {
                         || planTableNode.getJoinType() == JoinType.INNER)) {
                     // Do not change OUTER joins.
                     addAndClause(planTableNode, node);
-                    return true;
+                    ret = true;
                 }
             } else if (conditionalFields.size() > 1) {
                 // FIELD = FIELD
@@ -392,13 +412,13 @@ public final class SelectPlan implements Plan {
                     int lastIndex = Math.max(index1, index2);
 
                     addAndClause(this.tables.get(lastIndex), node);
-                    return true;
+                    ret = true;
                 }
             }
         }
 
         // Unprocessed.
-        return false;
+        return ret;
     }
 
     private List<Object[]> processLeftJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
@@ -535,7 +555,7 @@ public final class SelectPlan implements Plan {
         cancelled = false;
 
         final List<Column> columnsLoaded = new ArrayList<>();
-        final List<Object[]> rawData = new ArrayList<>(100);
+        List<Object[]> rawData = Collections.emptyList();
 
         for (int tableIndex = 0; tableIndex < this.tables.size(); tableIndex++) {
             PlanTableNode table = this.tables.get(tableIndex);
@@ -578,27 +598,19 @@ public final class SelectPlan implements Plan {
                 table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
             }
 
-            // First table
+            // First table?
             if (tableIndex == 0) {
                 if (table.getConditionalJoin() != null) {
-                    // Filter WHERE joins.
-                    final Iterator<Object[]> i = tableData.iterator();
-                    while (i.hasNext()) {
-                        Object[] tableRow = i.next();
-                        if (!table.getConditionalJoin().evaluate(connection, tableRow, parameters,
-                                parameterTypes, columnsLoaded)) {
-                            i.remove();
-                        }
-                    }
+                    rawData = tableData.parallelStream().filter(wrapper(tableRow -> table.getConditionalJoin()
+                            .evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)))
+                            .collect(Collectors.toList());
+                } else {
+                    // No conditions to process. Just use it.
+                    rawData = tableData;
                 }
-
-                rawData.addAll(tableData);
             } else {
-                final List<Object[]> localValues = processJoinByType(connection, columnsLoaded, rawData, table,
-                        tableData, parameters, parameterTypes);
-
-                rawData.clear();
-                rawData.addAll(localValues);
+                rawData = processJoinByType(connection, columnsLoaded, rawData, table, tableData, parameters,
+                        parameterTypes);
             }
         }
 
@@ -610,8 +622,9 @@ public final class SelectPlan implements Plan {
                 row[i] = this.columns.get(i).getValue();
             }
 
-            rawData.add(row);
+            rawData = Collections.singletonList(row);
         } else if (rawData.isEmpty()) {
+            // No result to process, just return.
             return;
         }
 
