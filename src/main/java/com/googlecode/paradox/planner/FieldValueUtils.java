@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Field processing utilities.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public final class FieldValueUtils {
@@ -73,7 +73,8 @@ public final class FieldValueUtils {
      * @return the first non NULL parameter's type.
      * @throws ParadoxSyntaxErrorException in case of inconsistent parameter types.
      */
-    public static ParadoxType getSqlType(final Object[] values, final ParadoxType[] types) throws ParadoxSyntaxErrorException {
+    public static ParadoxType getSqlType(final Object[] values, final ParadoxType[] types)
+            throws ParadoxSyntaxErrorException {
         if (types.length > 0) {
             ParadoxType current = ParadoxType.NULL;
             for (ParadoxType type : types) {
@@ -81,7 +82,8 @@ public final class FieldValueUtils {
                     current = type;
                 }
 
-                if (current != ParadoxType.NULL && type != ParadoxType.NULL && current.getSQLType() != type.getSQLType()) {
+                if (current != ParadoxType.NULL && type != ParadoxType.NULL
+                        && current.getSQLType() != type.getSQLType()) {
                     // The field types isn't the same (NULL ignored).
                     throw new ParadoxSyntaxErrorException(SyntaxError.INCONSISTENT_DATA_TYPE,
                             current.name(), type.name());
@@ -107,6 +109,7 @@ public final class FieldValueUtils {
      * @param tables  the table list.
      * @throws SQLException in case of column ambiguous defined or field not found.
      */
+    @SuppressWarnings("java:S1541")
     public static void setFieldIndex(final FieldNode field, final List<Column> columns,
                                      final Collection<PlanTableNode> tables) throws SQLException {
 
@@ -136,6 +139,7 @@ public final class FieldValueUtils {
                 if (index != -1) {
                     throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, field.toString());
                 }
+
                 index = i;
             }
         }
@@ -147,6 +151,14 @@ public final class FieldValueUtils {
         field.setIndex(index);
     }
 
+    /**
+     * Sets the column indexes inside a function.
+     *
+     * @param function      the function to set the column indexes.
+     * @param columnsLoaded the current column loaded list.
+     * @param tables        the current select tables.
+     * @throws SQLException in case of column not found.
+     */
     public static void setFunctionIndexes(final FunctionNode function, final List<Column> columnsLoaded,
                                           final Collection<PlanTableNode> tables) throws SQLException {
         for (final FieldNode node : function.getFields()) {
@@ -161,9 +173,12 @@ public final class FieldValueUtils {
     /**
      * Gets the row value based on field node.
      *
-     * @param row        the row with values.
-     * @param field      the field node with column data.
-     * @param parameters the parameters list.
+     * @param connection     the Paradox connection.
+     * @param row            the row with values.
+     * @param field          the field node with column data.
+     * @param parameters     the parameters list.
+     * @param parameterTypes the current parameter types.
+     * @param columnsLoaded  the current column loaded list.
      * @return the column value.
      */
     public static Object getValue(final ParadoxConnection connection, final Object[] row, final FieldNode field,
