@@ -324,7 +324,19 @@ public final class SelectPlan implements Plan {
                                             final List<Object[]> tableData, final Object[] parameters,
                                             final ParadoxType[] parameterTypes) throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
+
+        int initialCapacity;
+
+        // Is this a cartesian merge?
+        if (table.getConditionalJoin() != null) {
+            // Start with the final size.
+            initialCapacity = rawData.size() * tableData.size();
+        } else {
+            // If not, start with 100% of the total size.
+            initialCapacity = (int) (rawData.size() * tableData.size() * 0.1D);
+        }
+
+        final ArrayList<Object[]> localValues = new ArrayList<>(initialCapacity);
 
         for (final Object[] cols : rawData) {
             System.arraycopy(cols, 0, column, 0, cols.length);
@@ -543,7 +555,7 @@ public final class SelectPlan implements Plan {
         cancelled = false;
 
         final List<Column> columnsLoaded = new ArrayList<>();
-        List<Object[]> rawData = Collections.emptyList();
+        final List<Object[]> rawData = new ArrayList<>(0xFF);
 
         for (int tableIndex = 0; tableIndex < this.tables.size(); tableIndex++) {
             PlanTableNode table = this.tables.get(tableIndex);
@@ -589,16 +601,21 @@ public final class SelectPlan implements Plan {
             // First table?
             if (tableIndex == 0) {
                 if (table.getConditionalJoin() != null) {
-                    rawData = tableData.parallelStream().filter(predicateWrapper(tableRow -> table.getConditionalJoin()
-                            .evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)))
-                            .collect(Collectors.toList());
+                    rawData.addAll(tableData.parallelStream()
+                            .filter(predicateWrapper(o -> ensureNotCancelled()))
+                            .filter(predicateWrapper(tableRow -> table.getConditionalJoin()
+                                    .evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)))
+                            .collect(Collectors.toList()));
                 } else {
                     // No conditions to process. Just use it.
-                    rawData = tableData;
+                    rawData.addAll(tableData);
                 }
             } else {
-                rawData = processJoinByType(connection, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
+                final List<Object[]> ret = processJoinByType(connection, columnsLoaded, rawData, table, tableData,
+                        parameters, parameterTypes);
+
+                rawData.clear();
+                rawData.addAll(ret);
             }
         }
 
@@ -610,7 +627,7 @@ public final class SelectPlan implements Plan {
                 row[i] = this.columns.get(i).getValue();
             }
 
-            rawData = Collections.singletonList(row);
+            rawData.add(row);
         } else if (rawData.isEmpty()) {
             // No result to process, just return.
             return;
@@ -702,6 +719,8 @@ public final class SelectPlan implements Plan {
                             final List<Column> columnsLoaded) throws SQLException {
         final Object[] finalRow = new Object[mapColumns.length];
         for (int i = 0; i < mapColumns.length; i++) {
+            ensureNotCancelled();
+
             int index = mapColumns[i];
             if (index != -1) {
                 // A field mapped value.
