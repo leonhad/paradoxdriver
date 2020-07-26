@@ -554,6 +554,38 @@ public class SQLParserTest {
     }
 
     /**
+     * Test a where with or and not.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNotLike() throws SQLException {
+        final SQLParser parser = new SQLParser(
+                "select * from joins.joinb where Id not like '2' "
+        );
+
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "joinb", select.getTables().get(0).getName());
+
+        Assert.assertNotNull("Invalid node value.", select.getCondition());
+        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof NotNode);
+
+        final NotNode node = (NotNode) select.getCondition();
+        Assert.assertEquals("Invalid node size.", 1, node.getChildren().size());
+        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof LikeNode);
+    }
+
+    /**
      * Test for SQL exceptions.
      *
      * @throws SQLException in case of failures.

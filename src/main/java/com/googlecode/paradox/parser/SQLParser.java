@@ -368,6 +368,9 @@ public final class SQLParser {
             case ILIKE:
                 node = this.parseILike(firstField);
                 break;
+            case NOT:
+                node = this.parseNot(firstField);
+                break;
             default:
                 throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                         this.token.getPosition());
@@ -886,6 +889,32 @@ public final class SQLParser {
 
         this.expect(TokenType.NULL);
         return ret;
+    }
+
+    /**
+     * Parses not conditional.
+     *
+     * @param firstField the left more token field.
+     * @return the null than node.
+     * @throws SQLException in case of parse errors.
+     */
+    private NotNode parseNot(final FieldNode firstField) throws SQLException {
+        ScannerPosition position = this.token.getPosition();
+        this.expect(TokenType.NOT);
+
+        final NotNode not = new NotNode(position);
+        if (isToken(TokenType.LIKE)) {
+            not.addChild(this.parseLike(firstField));
+        } else if (isToken(TokenType.ILIKE)) {
+            not.addChild(this.parseILike(firstField));
+        } else if (isToken(TokenType.IN)) {
+            not.addChild(this.parseIn(firstField));
+        } else {
+            position = this.token.getPosition();
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
+        }
+
+        return not;
     }
 
     /**
