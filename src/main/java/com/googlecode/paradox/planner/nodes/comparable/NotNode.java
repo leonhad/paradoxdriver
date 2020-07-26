@@ -12,8 +12,10 @@ package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.parser.ScannerPosition;
+import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
@@ -42,20 +44,29 @@ public final class NotNode extends AbstractComparableNode {
     public Set<FieldNode> getClauseFields() {
         final Set<FieldNode> nodes = super.getClauseFields();
         for (final SQLNode node : children) {
-            if (node instanceof AbstractComparableNode) {
-                nodes.addAll(node.getClauseFields());
-            }
+            nodes.addAll(node.getClauseFields());
         }
 
         return nodes;
     }
 
     @Override
+    public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables)
+            throws SQLException {
+        for (final SQLNode node : children) {
+            ((AbstractConditionalNode) node).setFieldIndexes(columns, tables);
+        }
+    }
+
+    @Override
     public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters,
                             final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
         if (!children.isEmpty() && children.get(0) instanceof AbstractComparableNode) {
-            return !((AbstractComparableNode) children.get(0)).evaluate(connection, row, parameters,
+
+            boolean child = ((AbstractComparableNode) children.get(0)).evaluate(connection, row, parameters,
                     parameterTypes, columnsLoaded);
+
+            return !child;
         }
 
         // Should not never happens.

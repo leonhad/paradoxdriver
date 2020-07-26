@@ -309,11 +309,13 @@ public class SelectPlanTest {
     @Test
     public void testNotExpression() throws SQLException {
         try (final Statement stmt = this.conn.createStatement();
-             final ResultSet rs = stmt.executeQuery("SELECT State FROM AREACODES WHERE NOT State = 'NY'")) {
+             final ResultSet rs = stmt.executeQuery("select * from joins.joinb where not Id = 2 order by Id")) {
 
-            while (rs.next()) {
-                Assert.assertNotEquals("Invalid value", "NY", rs.getString("State"));
-            }
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 3, rs.getInt("Id"));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 4, rs.getInt("Id"));
+            Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
 
