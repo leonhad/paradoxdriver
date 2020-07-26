@@ -16,6 +16,7 @@ import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.sql.SQLException;
@@ -54,6 +55,7 @@ public class ILikeNode extends LikeNode {
             return false;
         }
 
-        return Expressions.accept(connection.getLocale(), (String) value1, (String) value2, false, escape);
+        return Expressions.accept(connection.getLocale(),
+                ValuesConverter.getString(value1), ValuesConverter.getString(value2), false, escape);
     }
 }
