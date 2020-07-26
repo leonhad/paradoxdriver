@@ -64,11 +64,8 @@ public final class NotNode extends AbstractComparableNode {
     public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters,
                             final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
         if (!children.isEmpty()) {
-
-            boolean child = ((AbstractConditionalNode) children.get(0)).evaluate(connection, row, parameters,
+            return !((AbstractConditionalNode) children.get(0)).evaluate(connection, row, parameters,
                     parameterTypes, columnsLoaded);
-
-            return !child;
         }
 
         // Should not never happens.
