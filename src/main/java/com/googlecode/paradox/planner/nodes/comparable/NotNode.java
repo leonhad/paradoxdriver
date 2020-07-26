@@ -68,7 +68,7 @@ public final class NotNode extends AbstractComparableNode {
                     parameterTypes, columnsLoaded);
         }
 
-        // Should not never happens.
+        // Should never happens.
         throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_SELECT_STATEMENT);
     }
 
