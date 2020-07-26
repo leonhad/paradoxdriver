@@ -78,7 +78,8 @@ public final class NotNode extends AbstractComparableNode {
     @Override
     public String toString() {
         if (!children.isEmpty()) {
-            return String.format("%s%s", name, children.get(0).toString());
+            final SQLNode child = children.get(0);
+            return String.format("%s %s", name, child.toString());
         }
 
         return name;
