@@ -28,11 +28,15 @@ import com.googlecode.paradox.planner.sorting.OrderByComparator;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.utils.FunctionalUtils;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.googlecode.paradox.utils.FunctionalUtils.functionWrapper;
+import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 
 /**
  * Creates a SELECT plan for execution.
@@ -89,36 +93,6 @@ public final class SelectPlan implements Plan {
     public SelectPlan(final AbstractConditionalNode condition, final boolean distinct) {
         this.condition = condition;
         this.distinct = distinct;
-    }
-
-    /**
-     * Functional interface to allow the use of exceptions in function execution.
-     *
-     * @param <T> the predicate type.
-     * @param <E> the exception type.
-     */
-    @FunctionalInterface
-    public interface PredicateWithExceptions<T, E extends SQLException> {
-        boolean test(T t) throws E;
-    }
-
-    /**
-     * The predicate wrapper to allow the use of exceptions in function executions (stream API).
-     *
-     * @param fe  the predicate with exception.
-     * @param <T> the predicate type.
-     * @param <E> the exception type.
-     * @return the predicate result.
-     */
-    @SuppressWarnings("java:S112")
-    private static <T, E extends SQLException> Predicate<T> wrapper(PredicateWithExceptions<T, E> fe) {
-        return (T arg) -> {
-            try {
-                return fe.test(arg);
-            } catch (final SQLException e) {
-                throw new RuntimeException(e);
-            }
-        };
     }
 
     private static AbstractConditionalNode reduce(final AbstractConditionalNode node) {
@@ -615,7 +589,7 @@ public final class SelectPlan implements Plan {
             // First table?
             if (tableIndex == 0) {
                 if (table.getConditionalJoin() != null) {
-                    rawData = tableData.parallelStream().filter(wrapper(tableRow -> table.getConditionalJoin()
+                    rawData = tableData.parallelStream().filter(predicateWrapper(tableRow -> table.getConditionalJoin()
                             .evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)))
                             .collect(Collectors.toList());
                 } else {
@@ -649,18 +623,12 @@ public final class SelectPlan implements Plan {
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
         filter(connection, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
-
-        processOrderBy();
-
-        if (!orderByFields.isEmpty() && maxRows != 0 && values.size() > maxRows) {
-            values = values.subList(0, maxRows);
-        }
     }
 
-    private void processOrderBy() {
+    private Comparator<Object[]> processOrderBy() {
         if (orderByFields.isEmpty()) {
             // Nothing to do here, there are no order by fields.
-            return;
+            return null;
         }
 
         final int[] mapColumns = new int[this.orderByFields.size()];
@@ -688,7 +656,7 @@ public final class SelectPlan implements Plan {
             }
         }
 
-        values.sort(comparator);
+        return comparator;
     }
 
     private void setIndexes(final List<Column> columns) throws SQLException {
@@ -729,53 +697,63 @@ public final class SelectPlan implements Plan {
         return mapColumns;
     }
 
-    private void filter(final ParadoxConnection connection, final List<Object[]> rowValues, final int[] mapColumns,
-                        final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
-                        final List<Column> columnsLoaded) throws SQLException {
-
-        // FIXME change to use parallel processing.
-        for (final Object[] tableRow : rowValues) {
-            checkCancel();
-
-            // Filter WHERE joins.
-            if (condition != null && !condition.evaluate(connection, tableRow, parameters, parameterTypes,
-                    columnsLoaded)) {
-                continue;
-            }
-
-            final Object[] finalRow = new Object[mapColumns.length];
-            for (int i = 0; i < mapColumns.length; i++) {
-                int index = mapColumns[i];
-                if (index != -1) {
-                    // A field mapped value.
-                    finalRow[i] = tableRow[index];
-                } else {
-                    FunctionNode functionNode = this.columns.get(i).getFunction();
-                    if (functionNode == null) {
-                        // A fixed value.
-                        finalRow[i] = this.columns.get(i).getValue();
-                    } else {
-                        // A function processed value.
-                        if (!functionNode.isGrouping()) {
-                            // Not process grouping function by now.
-                            finalRow[i] = functionNode.execute(connection, tableRow, parameters, parameterTypes,
-                                    columnsLoaded);
-                            // The function may change the result type in execution based on parameters values.
-                            this.columns.get(i).setType(functionNode.getType());
-                        }
-                    }
+    private Object[] mapRow(final ParadoxConnection connection, final Object[] tableRow, final int[] mapColumns,
+                            final Object[] parameters, final ParadoxType[] parameterTypes,
+                            final List<Column> columnsLoaded) throws SQLException {
+        final Object[] finalRow = new Object[mapColumns.length];
+        for (int i = 0; i < mapColumns.length; i++) {
+            int index = mapColumns[i];
+            if (index != -1) {
+                // A field mapped value.
+                finalRow[i] = tableRow[index];
+            } else {
+                final FunctionNode functionNode = this.columns.get(i).getFunction();
+                if (functionNode == null) {
+                    // A fixed value.
+                    finalRow[i] = this.columns.get(i).getValue();
+                } else if (!functionNode.isGrouping()) {
+                    // A function processed value.
+                    // Not process grouping function by now.
+                    finalRow[i] = functionNode.execute(connection, tableRow, parameters, parameterTypes,
+                            columnsLoaded);
+                    // The function may change the result type in execution based on parameters values.
+                    this.columns.get(i).setType(functionNode.getType());
                 }
             }
-
-            if (!distinct || !isRowRepeated(finalRow)) {
-                this.values.add(finalRow);
-            }
-
-            if (orderByFields.isEmpty() && maxRows != 0 && values.size() == maxRows) {
-                // Stop loading on max rows limit.
-                break;
-            }
         }
+
+        return finalRow;
+    }
+
+    private void filter(final ParadoxConnection connection, final List<Object[]> rowValues, final int[] mapColumns,
+                        final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
+                        final List<Column> columnsLoaded) {
+
+        Stream<Object[]> stream = rowValues.parallelStream();
+
+        if (condition != null) {
+            stream = stream.filter(predicateWrapper((Object[] tableRow) ->
+                    condition.evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)
+            ));
+        }
+
+        stream = stream.map(functionWrapper((Object[] tableRow) ->
+                mapRow(connection, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
+        ));
+
+        if (!orderByFields.isEmpty()) {
+            stream = stream.sorted(Objects.requireNonNull(processOrderBy()));
+        }
+
+        if (distinct) {
+            stream = stream.sequential().filter(FunctionalUtils.distinctByKey());
+        }
+
+        if (maxRows != 0) {
+            stream = stream.limit(maxRows);
+        }
+
+        this.values = stream.collect(Collectors.toList());
     }
 
     /**
