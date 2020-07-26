@@ -320,6 +320,24 @@ public class SelectPlanTest {
     }
 
     /**
+     * Test NOT statement with parenthesis SELECT expression.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNotWithParenthesis() throws SQLException {
+        try (final Statement stmt = this.conn.createStatement();
+             final ResultSet rs = stmt.executeQuery(
+                     "select * from joins.joinb where not (Id = 2 or Id = 3) order by Id"
+             )) {
+
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 4, rs.getInt("Id"));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
      * Test error in date conversion.
      *
      * @throws SQLException in case of failures.

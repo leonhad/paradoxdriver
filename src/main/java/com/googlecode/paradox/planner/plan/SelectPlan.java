@@ -601,7 +601,7 @@ public final class SelectPlan implements Plan {
             // First table?
             if (tableIndex == 0) {
                 if (table.getConditionalJoin() != null) {
-                    rawData.addAll(tableData.parallelStream()
+                    rawData.addAll(tableData.stream()
                             .filter(predicateWrapper(o -> ensureNotCancelled()))
                             .filter(predicateWrapper(tableRow -> table.getConditionalJoin()
                                     .evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)))

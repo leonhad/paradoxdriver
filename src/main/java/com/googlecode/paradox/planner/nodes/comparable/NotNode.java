@@ -11,6 +11,8 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -61,22 +63,22 @@ public final class NotNode extends AbstractComparableNode {
     @Override
     public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters,
                             final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
-        if (!children.isEmpty() && children.get(0) instanceof AbstractComparableNode) {
+        if (!children.isEmpty()) {
 
-            boolean child = ((AbstractComparableNode) children.get(0)).evaluate(connection, row, parameters,
+            boolean child = ((AbstractConditionalNode) children.get(0)).evaluate(connection, row, parameters,
                     parameterTypes, columnsLoaded);
 
             return !child;
         }
 
         // Should not never happens.
-        return false;
+        throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_SELECT_STATEMENT);
     }
 
     @Override
     public String toString() {
         if (!children.isEmpty()) {
-            return String.format("%s %s", name, children.get(0));
+            return String.format("%s%s", name, children.get(0).toString());
         }
 
         return name;

@@ -200,26 +200,47 @@ public final class SQLParser {
      */
     private AbstractConditionalNode parseCondition() throws SQLException {
         AbstractConditionalNode ret = null;
-        while (this.scanner.hasNext() && !this.token.isConditionBreak()) {
-            if (this.token.isOperator()) {
+        while (this.scanner.hasNext() && !this.token.isConditionBreak() && !isConditionalEnd()) {
+            ret = parseSubCondition(ret);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Parses the conditional statements.
+     *
+     * @return the node.
+     * @throws SQLException in case of parse errors.
+     */
+    private AbstractConditionalNode parseSubCondition(final AbstractConditionalNode parent) throws SQLException {
+        AbstractConditionalNode ret = parent;
+
+        if (!this.token.isConditionBreak() && !isConditionalEnd()) {
+            if (ret != null && this.token.isOperator()) {
+                // Not in first expression.
                 ret = this.parseOperators(ret);
             } else if (isToken(TokenType.L_PAREN)) {
                 this.expect(TokenType.L_PAREN);
-                AbstractConditionalNode retValue = parseCondition();
-                if (ret == null) {
-                    ret = retValue;
-                } else {
-                    ret.addChild(retValue);
+                while (!isToken(TokenType.R_PAREN)) {
+                    ret = parseSubCondition(ret);
                 }
+
                 this.expect(TokenType.R_PAREN);
-            } else if (isConditionalEnd()) {
-                return ret;
-            } else {
-                if (ret == null) {
-                    ret = this.parseFieldNode();
+            } else if (isToken(TokenType.NOT)) {
+                // Token type NOT.
+                final ScannerPosition position = this.token.getPosition();
+                this.expect(TokenType.NOT);
+                final NotNode node = new NotNode(position);
+                node.addChild(parseSubCondition(null));
+
+                if (parent == null) {
+                    ret = node;
                 } else {
-                    ret.addChild(this.parseFieldNode());
+                    parent.addChild(node);
                 }
+            } else {
+                ret = this.parseFieldNode();
             }
         }
 
@@ -996,41 +1017,35 @@ public final class SQLParser {
     /**
      * Parses the operators token.
      *
-     * @param child the node child.
+     * @param parent the node child.
      * @return the conditional operator node.
      * @throws SQLException in case or errors.
      */
-    private AbstractConditionalNode parseOperators(final AbstractConditionalNode child) throws SQLException {
+    private AbstractConditionalNode parseOperators(final AbstractConditionalNode parent) throws SQLException {
         final ScannerPosition position = this.token.getPosition();
         AbstractConditionalNode ret;
         if (isToken(TokenType.AND)) {
             // Token type AND.
             this.expect(TokenType.AND);
-            if (child instanceof ANDNode) {
-                ret = child;
+
+            if (parent instanceof ANDNode) {
+                ret = parent;
             } else {
-                ret = new ANDNode(child, position);
+                ret = new ANDNode(parent, position);
             }
-        } else if (isToken(TokenType.OR)) {
+
+            ret.addChild(this.parseSubCondition(null));
+        } else {
             // Token type OR.
             this.expect(TokenType.OR);
-            if (child instanceof ORNode) {
-                ret = child;
-            } else {
-                ret = new ORNode(child, position);
-            }
-        } else {
-            // Token type NOT.
-            this.expect(TokenType.NOT);
-            final NotNode node = new NotNode(position);
-            node.addChild(parseCondition());
 
-            if (child == null) {
-                ret = node;
+            if (parent instanceof ORNode) {
+                ret = parent;
             } else {
-                child.addChild(node);
-                ret = child;
+                ret = new ORNode(parent, position);
             }
+
+            ret.addChild(this.parseSubCondition(null));
         }
 
         return ret;

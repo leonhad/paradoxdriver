@@ -482,9 +482,75 @@ public class SQLParserTest {
         Assert.assertNotNull("Invalid node value.", select.getCondition());
         Assert.assertTrue("Invalid node type.", select.getCondition() instanceof NotNode);
 
-        final NotNode node = ((NotNode) select.getCondition());
+        final NotNode node = (NotNode) select.getCondition();
         Assert.assertEquals("Invalid node table name.", 1, node.getChildren().size());
         Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof EqualsNode);
+    }
+
+    /**
+     * Test a where with not and or.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNotAndOr() throws SQLException {
+        final SQLParser parser = new SQLParser(
+                "select * from joins.joinb where not (Id = 2 or Id = 3) or Id = 2 order by Id"
+        );
+
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "joinb", select.getTables().get(0).getName());
+
+        Assert.assertNotNull("Invalid node value.", select.getCondition());
+        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof ORNode);
+
+        final ORNode node = (ORNode) select.getCondition();
+        Assert.assertEquals("Invalid node size.", 2, node.getChildren().size());
+        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof NotNode);
+        Assert.assertTrue("Invalid node name.", node.getChildren().get(1) instanceof EqualsNode);
+    }
+
+    /**
+     * Test a where with or and not.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOrAndNot() throws SQLException {
+        final SQLParser parser = new SQLParser(
+                "select * from joins.joinb where Id = 2 or not (Id = 2 or Id = 3) order by Id"
+        );
+
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "joinb", select.getTables().get(0).getName());
+
+        Assert.assertNotNull("Invalid node value.", select.getCondition());
+        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof ORNode);
+
+        final ORNode node = (ORNode) select.getCondition();
+        Assert.assertEquals("Invalid node size.", 2, node.getChildren().size());
+        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof EqualsNode);
+        Assert.assertTrue("Invalid node name.", node.getChildren().get(1) instanceof NotNode);
     }
 
     /**

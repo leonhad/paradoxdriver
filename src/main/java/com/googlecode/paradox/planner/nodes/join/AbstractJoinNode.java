@@ -66,14 +66,18 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
         boolean first = true;
         for (final SQLNode node : children) {
             if (first) {
+                builder.append(" (");
                 first = false;
             } else {
                 builder.append(" ");
                 builder.append(this.name);
                 builder.append(" ");
             }
+
             builder.append(node.toString());
         }
+
+        builder.append(") ");
         return builder.toString();
     }
 }
