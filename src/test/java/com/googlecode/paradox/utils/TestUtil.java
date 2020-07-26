@@ -40,7 +40,7 @@ public final class TestUtil {
      * @param classReference utility class to verify.
      * @return true if there are no errors.
      */
-    public static boolean assertUtilityClassWellDefined(final Class<?> classReference) {
+    public static boolean assertSanity(final Class<?> classReference) {
         Assert.assertTrue("class must be final", Modifier.isFinal(classReference.getModifiers()));
         Assert.assertEquals("There must be only one constructor", 1, classReference.getDeclaredConstructors().length);
 

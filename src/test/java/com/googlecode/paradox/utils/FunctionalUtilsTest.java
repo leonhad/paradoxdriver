@@ -8,13 +8,11 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.data;
+
+package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.TestUtil;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -24,12 +22,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link FieldFactory} class.
+ * Unit test for {@link FunctionalUtils} class.
  *
- * @version 1.2
- * @since 1.3
+ * @version 1.0
+ * @since 1.6.0
  */
-public class FieldFactoryTest {
+public class FunctionalUtilsTest {
 
     /**
      * The connection string used in this tests.
@@ -62,17 +60,6 @@ public class FieldFactoryTest {
      */
     @Test
     public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(FieldFactory.class));
-    }
-
-    /**
-     * Test for invalid field type.
-     *
-     * @throws SQLException in case of success.
-     */
-    @Test(expected = SQLException.class)
-    public void testUnsupportedType() throws SQLException {
-        final ParadoxField field = new ParadoxField(conn, ParadoxType.NULL);
-        FieldFactory.parse(null, null, field);
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(FunctionalUtils.class));
     }
 }

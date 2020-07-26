@@ -27,6 +27,6 @@ public class ConstantsTest {
      */
     @Test
     public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Constants.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Constants.class));
     }
 }

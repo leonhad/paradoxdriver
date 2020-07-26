@@ -105,7 +105,7 @@ public class ViewDataTest {
      */
     @Test
     public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(ViewData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(ViewData.class));
     }
 
     /**

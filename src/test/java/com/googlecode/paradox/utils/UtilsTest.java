@@ -77,7 +77,7 @@ public class UtilsTest {
      */
     @Test
     public void testConstructorIsPrivate() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Utils.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Utils.class));
     }
 
     /**
@@ -144,14 +144,14 @@ public class UtilsTest {
      */
     @Test
     public void testClassesIntegrity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Utils.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(DateUtils.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(TableData.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(ViewData.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Expressions.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(IndexData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Utils.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(DateUtils.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(TableData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(ViewData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Expressions.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(IndexData.class));
         Assert.assertTrue("Utility class in wrong format.",
-                TestUtil.assertUtilityClassWellDefined(PrimaryKeyData.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Constants.class));
+                TestUtil.assertSanity(PrimaryKeyData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Constants.class));
     }
 }

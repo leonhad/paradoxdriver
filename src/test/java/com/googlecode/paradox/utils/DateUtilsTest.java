@@ -83,7 +83,7 @@ public class DateUtilsTest {
      */
     @Test
     public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(DateUtils.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(DateUtils.class));
     }
 
     /**

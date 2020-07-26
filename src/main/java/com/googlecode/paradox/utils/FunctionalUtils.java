@@ -22,8 +22,17 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+/**
+ * Utility class to use with functional programming, mostly in Java Stream API.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public final class FunctionalUtils {
 
+    /**
+     * Utility class, not for use.
+     */
     private FunctionalUtils() {
         // Not used.
     }

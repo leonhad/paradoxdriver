@@ -163,6 +163,6 @@ public class TableDataTest {
      */
     @Test
     public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(TableData.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(TableData.class));
     }
 }

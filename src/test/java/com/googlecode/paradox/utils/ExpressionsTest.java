@@ -73,7 +73,7 @@ public class ExpressionsTest {
      */
     @Test
     public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertUtilityClassWellDefined(Expressions.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Expressions.class));
     }
 
     /**
