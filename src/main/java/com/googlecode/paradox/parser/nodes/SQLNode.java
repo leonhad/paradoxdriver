@@ -13,10 +13,7 @@ package com.googlecode.paradox.parser.nodes;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Stores a SQL node.
@@ -56,7 +53,7 @@ public class SQLNode {
     }
 
     public Set<FieldNode> getClauseFields() {
-        return Collections.emptySet();
+        return new HashSet<>();
     }
 
     /**

@@ -1004,19 +1004,32 @@ public final class SQLParser {
         final ScannerPosition position = this.token.getPosition();
         AbstractConditionalNode ret;
         if (isToken(TokenType.AND)) {
+            // Token type AND.
             this.expect(TokenType.AND);
             if (child instanceof ANDNode) {
                 ret = child;
             } else {
                 ret = new ANDNode(child, position);
             }
-        } else {
-            // TokenType OR.
+        } else if (isToken(TokenType.OR)) {
+            // Token type OR.
             this.expect(TokenType.OR);
             if (child instanceof ORNode) {
                 ret = child;
             } else {
                 ret = new ORNode(child, position);
+            }
+        } else {
+            // Token type NOT.
+            this.expect(TokenType.NOT);
+            final NotNode node = new NotNode(position);
+            node.addChild(parseCondition());
+
+            if (child == null) {
+                ret = node;
+            } else {
+                child.addChild(node);
+                ret = child;
             }
         }
 

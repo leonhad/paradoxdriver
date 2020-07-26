@@ -459,6 +459,35 @@ public class SQLParserTest {
     }
 
     /**
+     * Test a where with not.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNot() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT * FROM AREACODES WHERE NOT State = 'NY'");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+
+        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
+        Assert.assertEquals("Invalid node name.", "AREACODES", select.getTables().get(0).getName());
+
+        Assert.assertNotNull("Invalid node value.", select.getCondition());
+        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof NotNode);
+
+        final NotNode node = ((NotNode) select.getCondition());
+        Assert.assertEquals("Invalid node table name.", 1, node.getChildren().size());
+        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof EqualsNode);
+    }
+
+    /**
      * Test for SQL exceptions.
      *
      * @throws SQLException in case of failures.

@@ -13,7 +13,7 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @version 1.10
+ * @version 1.11
  * @since 1.0
  */
 public enum TokenType {
@@ -282,7 +282,7 @@ public enum TokenType {
     /**
      * Stores the operator values.
      */
-    private static final TokenType[] OPERATORS = {AND, OR};
+    private static final TokenType[] OPERATORS = {AND, OR, NOT};
 
     /**
      * Token value.
@@ -317,6 +317,7 @@ public enum TokenType {
                 return token;
             }
         }
+
         return null;
     }
 
@@ -348,6 +349,7 @@ public enum TokenType {
                 return true;
             }
         }
+
         return false;
     }
 }

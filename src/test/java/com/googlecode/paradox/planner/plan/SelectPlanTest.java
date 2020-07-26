@@ -25,10 +25,7 @@ import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import org.junit.*;
 
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -278,7 +275,7 @@ public class SelectPlanTest {
     }
 
     /**
-     * Test order by with fiels not in SELECT expression.
+     * Test order by with fields not in SELECT expression.
      *
      * @throws SQLException in case of failures.
      */
@@ -301,6 +298,22 @@ public class SelectPlanTest {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
             Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test NOT statement SELECT expression.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testNotExpression() throws SQLException {
+        try (final Statement stmt = this.conn.createStatement();
+             final ResultSet rs = stmt.executeQuery("SELECT State FROM AREACODES WHERE NOT State = 'NY'")) {
+
+            while (rs.next()) {
+                Assert.assertNotEquals("Invalid value", "NY", rs.getString("State"));
+            }
         }
     }
 

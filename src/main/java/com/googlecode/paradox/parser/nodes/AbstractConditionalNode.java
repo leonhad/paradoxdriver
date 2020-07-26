@@ -19,14 +19,13 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Stores a abstract comparable node.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
@@ -62,11 +61,11 @@ public abstract class AbstractConditionalNode extends SQLNode {
 
     @Override
     public Set<FieldNode> getClauseFields() {
-        final Set<FieldNode> set = new HashSet<>();
+        final Set<FieldNode> set = super.getClauseFields();
         if (field != null) {
             set.add(field);
         }
-        set.addAll(super.getClauseFields());
+
         return set;
     }
 
