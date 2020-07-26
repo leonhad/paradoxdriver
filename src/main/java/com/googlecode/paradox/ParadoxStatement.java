@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * JDBC statement implementation.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")
@@ -125,8 +125,8 @@ class ParadoxStatement implements Statement {
             activeExecutions.add(plan);
             try {
                 plan.execute(this.connection, maxRows, null, null);
-            } catch(@SuppressWarnings("java:S1166") final InternalException e) {
-                throw (SQLException) e.getCause();
+            } catch (@SuppressWarnings("java:S1166") final InternalException e) {
+                throw e.getCause();
             } finally {
                 activeExecutions.remove(plan);
             }

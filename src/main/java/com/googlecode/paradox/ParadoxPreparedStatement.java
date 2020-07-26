@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * PreparedStatement implementation class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -89,7 +89,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
                 try {
                     plan.execute(this.connection, maxRows, params, types);
                 } catch (@SuppressWarnings("java:S1166") final InternalException e) {
-                    throw (SQLException) e.getCause();
+                    throw e.getCause();
                 }
 
                 ret.addAll(executeSelectStatement(plan));

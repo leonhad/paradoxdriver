@@ -11,11 +11,12 @@
 package com.googlecode.paradox.exceptions;
 
 import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * Exception used internally to enable Stream API with exceptions.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class InternalException extends RuntimeException {
@@ -25,6 +26,16 @@ public class InternalException extends RuntimeException {
      * @param cause the original exception.
      */
     public InternalException(final SQLException cause) {
-        super(cause);
+        super(Objects.requireNonNull(cause));
+    }
+
+    /**
+     * Gets the original exception. It's always a SQL exception.
+     *
+     * @return the original exception.
+     */
+    @Override
+    public synchronized SQLException getCause() {
+        return (SQLException) super.getCause();
     }
 }
