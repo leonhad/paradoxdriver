@@ -44,7 +44,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
  * @version 1.10
  * @since 1.1
  */
-@SuppressWarnings("java:S1448")
+@SuppressWarnings({"java:S1448", "java:S1200"})
 public final class SelectPlan implements Plan {
 
     /**
@@ -754,25 +754,6 @@ public final class SelectPlan implements Plan {
         }
 
         this.values = stream.collect(Collectors.toList());
-    }
-
-    /**
-     * Validate if this row is already in values list.
-     *
-     * @param row the row to check.
-     * @return <code>true</code> if row is already in values list.
-     */
-    private boolean isRowRepeated(final Object[] row) {
-        // FIXME use bloom filter.
-        boolean ret = false;
-        for (final Object[] currentRow : this.values) {
-            if (Arrays.deepEquals(currentRow, row)) {
-                ret = true;
-                break;
-            }
-        }
-
-        return ret;
     }
 
     /**
