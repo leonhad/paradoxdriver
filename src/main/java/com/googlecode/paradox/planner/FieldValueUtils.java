@@ -180,6 +180,7 @@ public final class FieldValueUtils {
      * @param parameterTypes the current parameter types.
      * @param columnsLoaded  the current column loaded list.
      * @return the column value.
+     * @throws SQLException in case of conversion failures.
      */
     public static Object getValue(final ParadoxConnection connection, final Object[] row, final FieldNode field,
                                   final Object[] parameters, final ParadoxType[] parameterTypes,

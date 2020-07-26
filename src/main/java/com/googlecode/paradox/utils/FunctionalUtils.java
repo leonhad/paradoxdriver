@@ -74,6 +74,7 @@ public final class FunctionalUtils {
      *
      * @param fe  the predicate with exception.
      * @param <T> the predicate type.
+     * @param <R> the predicate return type.
      * @param <E> the exception type.
      * @return the predicate result.
      */

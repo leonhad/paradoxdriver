@@ -46,7 +46,7 @@ public final class TestUtil {
 
         try {
             final Constructor<?> constructor = classReference.getDeclaredConstructor();
-            if (constructor.isAccessible() || !Modifier.isPrivate(constructor.getModifiers())) {
+            if (!Modifier.isPrivate(constructor.getModifiers())) {
                 throw new SQLException("Constructor not accessible");
             }
             constructor.setAccessible(true);
