@@ -330,7 +330,7 @@ public final class SelectPlan implements Plan {
             System.arraycopy(cols, 0, column, 0, cols.length);
 
             for (final Object[] newCols : tableData) {
-                checkCancel();
+                ensureNotCancelled();
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null
@@ -421,7 +421,7 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (final Object[] newCols : tableData) {
-                checkCancel();
+                ensureNotCancelled();
 
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
@@ -455,7 +455,7 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (final Object[] cols : rawData) {
-                checkCancel();
+                ensureNotCancelled();
 
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
@@ -490,7 +490,7 @@ public final class SelectPlan implements Plan {
 
             boolean changed = false;
             for (int i = 0; i < tableData.size(); i++) {
-                checkCancel();
+                ensureNotCancelled();
 
                 final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
@@ -514,7 +514,7 @@ public final class SelectPlan implements Plan {
         // Itens not used in left join.
         Arrays.fill(column, 0, column.length, null);
         for (int i = 0; i < tableData.size(); i++) {
-            checkCancel();
+            ensureNotCancelled();
 
             if (!inLeft.contains(i)) {
                 final Object[] newCols = tableData.get(i);
@@ -547,7 +547,7 @@ public final class SelectPlan implements Plan {
 
         for (int tableIndex = 0; tableIndex < this.tables.size(); tableIndex++) {
             PlanTableNode table = this.tables.get(tableIndex);
-            checkCancel();
+            ensureNotCancelled();
 
             // Columns in SELECT clause.
             final Set<Column> tableColumns = this.columns.stream()
@@ -729,7 +729,8 @@ public final class SelectPlan implements Plan {
                         final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
                         final List<Column> columnsLoaded) {
 
-        Stream<Object[]> stream = rowValues.parallelStream();
+        Stream<Object[]> stream = rowValues.parallelStream()
+                .filter(predicateWrapper(c -> ensureNotCancelled()));
 
         if (condition != null) {
             stream = stream.filter(predicateWrapper((Object[] tableRow) ->
@@ -803,13 +804,16 @@ public final class SelectPlan implements Plan {
     /**
      * Check if this execution was cancelled.
      *
+     * @return <code>true</code> if this statement was not cancelled.
      * @throws SQLException if this execution was cancelled.
      */
-    private void checkCancel() throws SQLException {
+    private boolean ensureNotCancelled() throws SQLException {
         if (cancelled) {
             cancelled = false;
             throw new ParadoxException(ParadoxException.Error.OPERATION_CANCELLED);
         }
+
+        return true;
     }
 
     @Override
