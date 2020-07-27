@@ -16,6 +16,7 @@ import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -154,16 +155,16 @@ public final class FieldValueUtils {
     /**
      * Sets the column indexes inside a function.
      *
-     * @param function      the function to set the column indexes.
+     * @param functionNode  the function to set the column indexes.
      * @param columnsLoaded the current column loaded list.
      * @param tables        the current select tables.
      * @throws SQLException in case of column not found.
      */
-    public static void setFunctionIndexes(final FunctionNode function, final List<Column> columnsLoaded,
+    public static void setFunctionIndexes(final SQLNode functionNode, final List<Column> columnsLoaded,
                                           final Collection<PlanTableNode> tables) throws SQLException {
-        for (final FieldNode node : function.getFields()) {
+        for (final FieldNode node : functionNode.getClauseFields()) {
             if (node instanceof FunctionNode) {
-                setFunctionIndexes((FunctionNode) node, columnsLoaded, tables);
+                setFunctionIndexes(node, columnsLoaded, tables);
             } else {
                 FieldValueUtils.setFieldIndex(node, columnsLoaded, tables);
             }

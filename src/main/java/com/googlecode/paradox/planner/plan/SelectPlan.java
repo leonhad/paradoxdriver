@@ -74,7 +74,7 @@ public final class SelectPlan implements Plan {
     /**
      * The data values.
      */
-    private List<Object[]> values = new ArrayList<>(0x7F);
+    private List<Object[]> values = Collections.emptyList();
     /**
      * The conditions to filter values
      */
@@ -83,6 +83,10 @@ public final class SelectPlan implements Plan {
      * If this statement was cancelled.
      */
     private boolean cancelled;
+    /**
+     * Table joiner.
+     */
+    private final TableJoiner joiner = new TableJoiner();
 
     /**
      * Creates a SELECT plan with conditions.
@@ -183,34 +187,6 @@ public final class SelectPlan implements Plan {
         return tables.stream().filter(t -> table.equals(t.getTable())).findFirst().orElse(null);
     }
 
-    private List<Object[]> processJoinByType(final ParadoxConnection connection, final List<Column> columnsLoaded,
-                                             final List<Object[]> rawData, final PlanTableNode table,
-                                             final List<Object[]> tableData, final Object[] parameters,
-                                             final ParadoxType[] parameterTypes) throws SQLException {
-        List<Object[]> localValues;
-        switch (table.getJoinType()) {
-            case RIGHT:
-                localValues = processRightJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
-                break;
-            case LEFT:
-                localValues = processLeftJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
-                break;
-            case FULL:
-                localValues = processFullJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
-                break;
-            default:
-                // CROSS and INNER joins.
-                localValues = processInnerJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
-                break;
-        }
-
-        return localValues;
-    }
-
     /**
      * Associate all columns from a table.
      *
@@ -279,7 +255,7 @@ public final class SelectPlan implements Plan {
             ret.add(new Column(functionNode));
 
             // Parses function fields in function parameters.
-            for (final FieldNode field : functionNode.getFields()) {
+            for (final FieldNode field : functionNode.getClauseFields()) {
                 ret.addAll(getParadoxFields(field));
             }
         } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode)) {
@@ -317,45 +293,6 @@ public final class SelectPlan implements Plan {
             column.setHidden(true);
             this.columns.add(column);
         }
-    }
-
-    private List<Object[]> processInnerJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
-                                            final List<Object[]> rawData, final PlanTableNode table,
-                                            final List<Object[]> tableData, final Object[] parameters,
-                                            final ParadoxType[] parameterTypes) throws SQLException {
-        final Object[] column = new Object[columnsLoaded.size()];
-
-        int initialCapacity;
-
-        // Is this a cartesian merge?
-        if (table.getConditionalJoin() != null) {
-            // Start with the final size.
-            initialCapacity = rawData.size() * tableData.size();
-        } else {
-            // If not, start with 100% of the total size.
-            initialCapacity = (int) (rawData.size() * tableData.size() * 0.1D);
-        }
-
-        final ArrayList<Object[]> localValues = new ArrayList<>(initialCapacity);
-
-        for (final Object[] cols : rawData) {
-            System.arraycopy(cols, 0, column, 0, cols.length);
-
-            for (final Object[] newCols : tableData) {
-                ensureNotCancelled();
-                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
-
-                if (table.getConditionalJoin() != null
-                        && !table.getConditionalJoin().evaluate(connection, column, parameters, parameterTypes,
-                        columnsLoaded)) {
-                    continue;
-                }
-
-                localValues.add(column.clone());
-            }
-        }
-
-        return localValues;
     }
 
     /**
@@ -421,123 +358,6 @@ public final class SelectPlan implements Plan {
         return ret;
     }
 
-    private List<Object[]> processLeftJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
-                                           final List<Object[]> rawData, final PlanTableNode table,
-                                           final List<Object[]> tableData, final Object[] parameters,
-                                           final ParadoxType[] parameterTypes) throws SQLException {
-        final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
-
-        for (final Object[] cols : rawData) {
-            System.arraycopy(cols, 0, column, 0, cols.length);
-
-            boolean changed = false;
-            for (final Object[] newCols : tableData) {
-                ensureNotCancelled();
-
-                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
-
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
-                    continue;
-                }
-
-                changed = true;
-                localValues.add(column.clone());
-            }
-
-            if (!changed) {
-                Arrays.fill(column, cols.length, column.length, null);
-                localValues.add(column.clone());
-            }
-        }
-
-        return localValues;
-    }
-
-    private List<Object[]> processRightJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
-                                            final List<Object[]> rawData, final PlanTableNode table,
-                                            final List<Object[]> tableData, final Object[] parameters,
-                                            final ParadoxType[] parameterTypes) throws SQLException {
-        final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
-
-        for (final Object[] newCols : tableData) {
-            System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
-
-            boolean changed = false;
-            for (final Object[] cols : rawData) {
-                ensureNotCancelled();
-
-                System.arraycopy(cols, 0, column, 0, cols.length);
-
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
-                    continue;
-                }
-
-                changed = true;
-                localValues.add(column.clone());
-            }
-
-            if (!changed) {
-                Arrays.fill(column, 0, column.length - newCols.length, null);
-                localValues.add(column.clone());
-            }
-        }
-
-        return localValues;
-    }
-
-    private List<Object[]> processFullJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
-                                           final List<Object[]> rawData, final PlanTableNode table,
-                                           final List<Object[]> tableData, final Object[] parameters,
-                                           final ParadoxType[] parameterTypes) throws SQLException {
-        final Object[] column = new Object[columnsLoaded.size()];
-        final List<Object[]> localValues = new ArrayList<>(100);
-
-        Set<Integer> inLeft = new HashSet<>();
-        for (final Object[] cols : rawData) {
-            System.arraycopy(cols, 0, column, 0, cols.length);
-
-            boolean changed = false;
-            for (int i = 0; i < tableData.size(); i++) {
-                ensureNotCancelled();
-
-                final Object[] newCols = tableData.get(i);
-                System.arraycopy(newCols, 0, column, cols.length, newCols.length);
-
-                if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
-                    continue;
-                }
-
-                inLeft.add(i);
-                changed = true;
-                localValues.add(column.clone());
-            }
-
-            if (!changed) {
-                Arrays.fill(column, cols.length, column.length, null);
-                localValues.add(column.clone());
-            }
-        }
-
-        // Itens not used in left join.
-        Arrays.fill(column, 0, column.length, null);
-        for (int i = 0; i < tableData.size(); i++) {
-            ensureNotCancelled();
-
-            if (!inLeft.contains(i)) {
-                final Object[] newCols = tableData.get(i);
-                System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
-                localValues.add(column.clone());
-            }
-        }
-
-        return localValues;
-    }
-
     /**
      * {@inheritDoc}.
      */
@@ -553,6 +373,7 @@ public final class SelectPlan implements Plan {
 
         // Reset the cancelled state.
         cancelled = false;
+        joiner.reset();
 
         final List<Column> columnsLoaded = new ArrayList<>();
         final List<Object[]> rawData = new ArrayList<>(0xFF);
@@ -611,8 +432,8 @@ public final class SelectPlan implements Plan {
                     rawData.addAll(tableData);
                 }
             } else {
-                final List<Object[]> ret = processJoinByType(connection, columnsLoaded, rawData, table, tableData,
-                        parameters, parameterTypes);
+                final List<Object[]> ret = joiner.processJoinByType(connection, columnsLoaded, rawData, table,
+                        tableData, parameters, parameterTypes);
 
                 rawData.clear();
                 rawData.addAll(ret);
@@ -818,6 +639,7 @@ public final class SelectPlan implements Plan {
     @Override
     public void cancel() {
         cancelled = true;
+        joiner.cancel();
     }
 
     /**
@@ -828,7 +650,6 @@ public final class SelectPlan implements Plan {
      */
     private boolean ensureNotCancelled() throws SQLException {
         if (cancelled) {
-            cancelled = false;
             throw new ParadoxException(ParadoxException.Error.OPERATION_CANCELLED);
         }
 
