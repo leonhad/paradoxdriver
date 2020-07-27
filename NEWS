@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-08-26 Fixed parenthesis parser and NOT keyword.
 2020-08-24 Added support to functions in SELECT and WHERE expressions.
 2020-08-21 Added TRUE and FALSE literals to SQL values.
 2020-08-20 Fixed function metadata.
