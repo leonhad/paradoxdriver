@@ -26,12 +26,17 @@ public class ParadoxNotSupportedException extends SQLFeatureNotSupportedExceptio
     private static final String BASE_CODE = "0A";
 
     /**
+     * Base code for SQL State.
+     */
+    private static final String SQL_STATE = BASE_CODE + "000";
+
+    /**
      * The connection error exception.
      *
      * @param error the error.
      */
     public ParadoxNotSupportedException(final Error error) {
-        super(ExceptionUtils.message(error.description), BASE_CODE, Integer.parseInt(0x0A + error.code));
+        super(ExceptionUtils.message(error.description), SQL_STATE, Integer.parseInt(0x0A + error.code));
     }
 
     /**

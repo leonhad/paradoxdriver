@@ -139,8 +139,8 @@ public class TrimFunction extends AbstractStringFunction {
      * @param value the value to check.
      * @return <code>true</code> if the {@code value} is a valid trim type.
      */
-    public static boolean isInvalidType(final String value) {
-        return Utils.searchEnum(TrimType.class, value) == null;
+    public static boolean isValidType(final String value) {
+        return Utils.searchEnum(TrimType.class, value) != null;
     }
 
     /**

@@ -553,12 +553,23 @@ public final class SQLParser {
             this.expect(TokenType.FROM);
             ret = true;
         } else if (functionName.equalsIgnoreCase(TrimFunction.NAME) && this.token != null) {
-            // 1. TRIM(TYPE 'CHARS' FROM... or TRIM('CHARS' FROM...
-            // 2. TRIM([TYPE] 'CHARS' FROM 'TEXT).
-
-            if (node.getParameters().size() > 1
-                    || TrimFunction.isInvalidType(node.getParameters().get(0).getName())) {
+            if (TrimFunction.isValidType(node.getParameters().get(0).getName())) {
+                // TRIM(TYPE...
+                if (node.getParameters().size() == 0x02) {
+                    // TRIM(TYPE 'CHARS'...
+                    this.expect(TokenType.FROM);
+                } else if (node.getParameters().size() != 1) {
+                    // TRIM(TYPE 'CHARS' FROM 'XXX'...
+                    throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
+                            this.token.getPosition(), this.token.getValue());
+                }
+            } else if (node.getParameters().size() == 1) {
+                // TRIM('CHARS' ...).
                 this.expect(TokenType.FROM);
+            } else {
+                // TRIM('CHARS' FROM 'TEXT).
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, this.token.getPosition(),
+                        this.token.getValue());
             }
 
             // Do nothing, no separator here. TRIM(TYPE...

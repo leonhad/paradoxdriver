@@ -26,12 +26,17 @@ public class ParadoxDataException extends SQLDataException {
     private static final String BASE_CODE = "22";
 
     /**
+     * Base code for SQL State.
+     */
+    private static final String SQL_STATE = BASE_CODE + "000";
+
+    /**
      * The connection error exception.
      *
      * @param error the error.
      */
     public ParadoxDataException(final Error error) {
-        super(ExceptionUtils.message(error.description), BASE_CODE, Integer.parseInt(BASE_CODE + error.code));
+        super(ExceptionUtils.message(error.description), SQL_STATE, Integer.parseInt(BASE_CODE + error.code));
     }
 
     /**
@@ -41,7 +46,7 @@ public class ParadoxDataException extends SQLDataException {
      * @param original original exception.
      */
     public ParadoxDataException(final Error error, final Exception original) {
-        super(ExceptionUtils.message(error.description), BASE_CODE, Integer.parseInt(BASE_CODE + error.code), original);
+        super(ExceptionUtils.message(error.description), SQL_STATE, Integer.parseInt(BASE_CODE + error.code), original);
     }
 
     /**
@@ -51,7 +56,7 @@ public class ParadoxDataException extends SQLDataException {
      * @param parameter message parameters.
      */
     public ParadoxDataException(final Error error, final Object... parameter) {
-        super(ExceptionUtils.message(error.description, parameter), BASE_CODE,
+        super(ExceptionUtils.message(error.description, parameter), SQL_STATE,
                 Integer.parseInt(BASE_CODE + error.code));
     }
 
@@ -63,7 +68,7 @@ public class ParadoxDataException extends SQLDataException {
      * @param parameter message parameters.
      */
     public ParadoxDataException(final Error error, final Exception original, final Object... parameter) {
-        super(ExceptionUtils.message(error.description, parameter), BASE_CODE,
+        super(ExceptionUtils.message(error.description, parameter), SQL_STATE,
                 Integer.parseInt(BASE_CODE + error.code), original);
     }
 

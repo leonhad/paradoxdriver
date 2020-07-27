@@ -28,12 +28,17 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
     private static final String BASE_CODE = "42";
 
     /**
+     * Base code for SQL State.
+     */
+    private static final String SQL_STATE = BASE_CODE + "000";
+
+    /**
      * The connection error exception.
      *
      * @param error the error.
      */
     public ParadoxSyntaxErrorException(final SyntaxError error) {
-        super(ExceptionUtils.message(error.getDescription()), BASE_CODE, Integer.parseInt(BASE_CODE + error.getCode()));
+        super(ExceptionUtils.message(error.getDescription()), SQL_STATE, Integer.parseInt(BASE_CODE + error.getCode()));
     }
 
     /**
@@ -43,7 +48,7 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
      * @param position the current scanner position.
      */
     public ParadoxSyntaxErrorException(final SyntaxError error, final ScannerPosition position) {
-        super(ExceptionUtils.message(error.getDescription(), position), BASE_CODE,
+        super(ExceptionUtils.message(error.getDescription(), position), SQL_STATE,
                 Integer.parseInt(BASE_CODE + error.getCode()));
     }
 
@@ -56,7 +61,7 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
      */
     public ParadoxSyntaxErrorException(final SyntaxError error, final ScannerPosition position,
                                        final Object... parameter) {
-        super(ExceptionUtils.message(error.getDescription(), position, parameter), BASE_CODE,
+        super(ExceptionUtils.message(error.getDescription(), position, parameter), SQL_STATE,
                 Integer.parseInt(BASE_CODE + error.getCode()));
     }
 
@@ -67,7 +72,7 @@ public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
      * @param parameter message parameters.
      */
     public ParadoxSyntaxErrorException(final SyntaxError error, final Object... parameter) {
-        super(ExceptionUtils.message(error.getDescription(), parameter), BASE_CODE,
+        super(ExceptionUtils.message(error.getDescription(), parameter), SQL_STATE,
                 Integer.parseInt(BASE_CODE + error.getCode()));
     }
 
