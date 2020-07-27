@@ -118,7 +118,7 @@ public final class FieldValueUtils {
         if (field == null || field instanceof ValueNode || field instanceof ParameterNode) {
             return;
         } else if (field instanceof FunctionNode) {
-            setFunctionIndexes(((FunctionNode) field), columns, tables);
+            setFunctionIndexes(field, columns, tables);
             return;
         }
 
