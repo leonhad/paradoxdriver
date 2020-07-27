@@ -328,12 +328,31 @@ public class SelectPlanTest {
     public void testNotWithParenthesis() throws SQLException {
         try (final Statement stmt = this.conn.createStatement();
              final ResultSet rs = stmt.executeQuery(
-                     "select * from joins.joinb where not (Id = 2 or Id = 3) order by Id"
-             )) {
+                     "select * from joins.joinb where not (Id = 2 or Id = 3) order by Id")) {
 
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", 4, rs.getInt("Id"));
             Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for complex column in functions.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testComplexColumnsAndFunctions() throws SQLException {
+        try (final Statement stmt = this.conn.createStatement();
+             final ResultSet rs = stmt.executeQuery(
+                     "select distinct areaCode " +
+                             "from geog.tblAC ac " +
+                             "         inner join geog.tblsttes st on st.State = ac.State " +
+                             "         inner join geog.County c on c.StateID = st.State " +
+                             "where upper(AreasCovered) like upper(trim('hackensack%')) " +
+                             "order by \"Admitted Order\" desc")) {
+
+            Assert.assertTrue("Invalid result set state", rs.next());
         }
     }
 

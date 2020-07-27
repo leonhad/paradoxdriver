@@ -69,7 +69,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
     public Set<FieldNode> getClauseFields() {
         final Set<FieldNode> set = super.getClauseFields();
         if (field != null) {
-            set.add(field);
+            set.addAll(field.getClauseFields());
         }
 
         return set;

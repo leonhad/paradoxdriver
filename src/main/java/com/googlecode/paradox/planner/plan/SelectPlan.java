@@ -240,7 +240,6 @@ public final class SelectPlan implements Plan {
             columnsToProcess.forEach((Column column) -> {
                 column.setName(node.getAlias());
                 this.columns.add(column);
-                this.columnsFromFunctions.add(column);
             });
         }
     }
@@ -387,7 +386,7 @@ public final class SelectPlan implements Plan {
                     .filter(c -> c.isThis(table.getTable()))
                     .collect(Collectors.toSet());
 
-            // Columns in columns to load (hidden columns).
+            // Columns in SELECT functions.
             tableColumns.addAll(this.columnsFromFunctions.stream()
                     .filter(c -> c.isThis(table.getTable()))
                     .collect(Collectors.toSet()));

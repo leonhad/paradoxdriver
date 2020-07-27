@@ -61,7 +61,7 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
     public Set<FieldNode> getClauseFields() {
         final Set<FieldNode> nodes = super.getClauseFields();
         if (last != null) {
-            nodes.add(last);
+            nodes.addAll(last.getClauseFields());
         }
 
         return nodes;

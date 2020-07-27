@@ -14,7 +14,9 @@ import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Stores the field values.
@@ -118,5 +120,10 @@ public class FieldNode extends SQLNode {
     @Override
     public int hashCode() {
         return Objects.hash(tableName, alias, name);
+    }
+
+    @Override
+    public Set<FieldNode> getClauseFields() {
+        return Collections.singleton(this);
     }
 }
