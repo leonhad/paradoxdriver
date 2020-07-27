@@ -1071,4 +1071,27 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid field size", "false", select.getFields().get(1).getName());
     }
 
+    /**
+     * Test for function in order by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFunctionInOrderBy() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from fields.long order by VARCHAR(Id)");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid order by size", 1, select.getOrder().size());
+        Assert.assertTrue("Invalid field type", select.getOrder().get(0) instanceof FunctionNode);
+        final FunctionNode functionNode = (FunctionNode) select.getOrder().get(0);
+
+        Assert.assertEquals("Invalid function name", "VARCHAR", functionNode.getName());
+        Assert.assertEquals("Invalid field count", 1, functionNode.getClauseFields().size());
+
+        final FieldNode fieldNode = select.getOrder().get(0);
+        Assert.assertEquals("Invalid field name", "Id", fieldNode.getName());
+    }
 }
