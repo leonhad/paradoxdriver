@@ -102,7 +102,7 @@ public class BitLengthFunctionTest {
                 "select bit_length(1) ");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", Double.BYTES * 8, rs.getInt(1));
+            Assert.assertEquals("Invalid value", 32, rs.getInt(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }

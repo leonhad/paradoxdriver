@@ -37,32 +37,32 @@ public enum ParadoxType implements SQLType {
     /**
      * The date type.
      */
-    DATE(2, Types.DATE, true, Date.class, 0, 4, true),
+    DATE(2, Types.DATE, true, Date.class, 0, 0x04, true),
 
     /**
      * The integer type.
      */
-    INTEGER(3, Types.INTEGER, true, Integer.class, 0, Integer.BYTES, true),
+    INTEGER(3, Types.INTEGER, true, Integer.class, 0, 0x02, true),
 
     /**
      * The integer type. Variant 2.
      */
-    LONG(4, Types.INTEGER, true, Integer.class, 0, Long.BYTES, true),
+    LONG(4, Types.INTEGER, true, Integer.class, 0, 0x04, true),
 
     /**
      * The double type.
      */
-    CURRENCY(5, Types.DOUBLE, true, Double.class, 10, Double.BYTES, true),
+    CURRENCY(5, Types.DOUBLE, true, Double.class, 10, 0x04, true),
 
     /**
      * The numeric type.
      */
-    NUMBER(6, Types.NUMERIC, true, Double.class, 6, Double.BYTES, true),
+    NUMBER(6, Types.NUMERIC, true, Double.class, 6, 0x04, true),
 
     /**
      * The numeric type.
      */
-    DECIMAL(6, Types.DECIMAL, false, Double.class, 6, Double.BYTES, true),
+    DECIMAL(6, Types.DECIMAL, false, Double.class, 6, 0x04, true),
 
     /**
      * The boolean type.
@@ -99,32 +99,32 @@ public enum ParadoxType implements SQLType {
     /**
      * The time type.
      */
-    TIME(0x14, Types.TIME, true, Time.class, 0, 2, true),
+    TIME(0x14, Types.TIME, true, Time.class, 0, 0x04, true),
 
     /**
      * The time with timezone type.
      */
-    TIME_WITH_TIMEZONE(0x14, Types.TIME_WITH_TIMEZONE, false, Time.class, 0, 2, true),
+    TIME_WITH_TIMEZONE(0x14, Types.TIME_WITH_TIMEZONE, false, Time.class, 0, 0x04, true),
 
     /**
      * The TIMESTAMP type.
      */
-    TIMESTAMP(0x15, Types.TIMESTAMP, true, Timestamp.class, 0, 8, true),
+    TIMESTAMP(0x15, Types.TIMESTAMP, true, Timestamp.class, 0, 0x08, true),
 
     /**
      * The timestamp with timezone type.
      */
-    TIMESTAMP_WITH_TIMEZONE(0x15, Types.TIMESTAMP_WITH_TIMEZONE, false, Timestamp.class, 0, 8, true),
+    TIMESTAMP_WITH_TIMEZONE(0x15, Types.TIMESTAMP_WITH_TIMEZONE, false, Timestamp.class, 0, 0x08, true),
 
     /**
      * The auto increment type.
      */
-    AUTO_INCREMENT(0x16, Types.INTEGER, true, Integer.class, 0, 4, true),
+    AUTO_INCREMENT(0x16, Types.INTEGER, true, Integer.class, 0, 0x04, true),
 
     /**
      * The binary type.
      */
-    BCD(0x17, Types.NUMERIC, true, BigDecimal.class, 32, 2, true),
+    BCD(0x17, Types.NUMERIC, true, BigDecimal.class, 2, 32, true),
 
     /**
      * The BLOB type, variant 3.
