@@ -19,16 +19,22 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Stores a abstract comparable node.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
+
+    /**
+     * Node childhood.
+     */
+    protected final List<SQLNode> children = new ArrayList<>();
 
     /**
      * The field node.
@@ -84,5 +90,23 @@ public abstract class AbstractConditionalNode extends SQLNode {
     @Override
     public String toString() {
         return field.toString();
+    }
+
+    /**
+     * Add a child node.
+     *
+     * @param node the child node to add.
+     */
+    public void addChild(final SQLNode node) {
+        this.children.add(node);
+    }
+
+    /**
+     * Gets the child list.
+     *
+     * @return the child list.
+     */
+    public List<SQLNode> getChildren() {
+        return children;
     }
 }

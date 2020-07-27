@@ -16,7 +16,7 @@ import org.junit.Test;
 /**
  * Unit test for {@link SQLNode} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public class SQLNodeTest {
@@ -29,14 +29,5 @@ public class SQLNodeTest {
         final JoinNode node = new JoinNode(null, null, null, JoinType.INNER, null);
         node.setAlias("alias");
         Assert.assertEquals("Invalid node alias.", "alias", node.getAlias());
-    }
-
-    /**
-     * Test conditions.
-     */
-    @Test
-    public void testConditions() {
-        final SQLNode node = new JoinNode(null, null, null, JoinType.INNER, null);
-        Assert.assertEquals("Conditional is not the same.", 0, node.getChildren().size());
     }
 }

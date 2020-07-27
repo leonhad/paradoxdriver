@@ -13,20 +13,17 @@ package com.googlecode.paradox.parser.nodes;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Stores a SQL node.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.0
  */
 public class SQLNode {
 
-    /**
-     * Node childhood.
-     */
-    protected final List<SQLNode> children = new ArrayList<>();
     /**
      * SQL position.
      */
@@ -72,24 +69,6 @@ public class SQLNode {
      */
     public final void setAlias(final String alias) {
         this.alias = alias;
-    }
-
-    /**
-     * Add a child.
-     *
-     * @param node the child to add.
-     */
-    public final void addChild(final SQLNode node) {
-        this.children.add(node);
-    }
-
-    /**
-     * Gets the childhood.
-     *
-     * @return the childhood.
-     */
-    public final List<SQLNode> getChildren() {
-        return this.children;
     }
 
     /**
