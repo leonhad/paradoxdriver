@@ -663,7 +663,7 @@ public final class SQLParser {
         return node;
     }
 
-    private SQLNode parseIdentifierFieldFunction(final String fieldName) throws SQLException {
+    private FieldNode parseIdentifierFieldFunction(final String fieldName) throws SQLException {
         String newTableName = null;
         String newFieldName = fieldName;
 
@@ -1116,7 +1116,8 @@ public final class SQLParser {
                     fieldNode = new ValueNode(fieldName, position, ParadoxType.NUMBER);
                     break;
                 case IDENTIFIER:
-                    fieldNode = parseIdentifierFieldOnly(fieldName);
+                    fieldNode = parseIdentifierFieldFunction(fieldName);
+                    // parseIdentifierFieldOnly
                     break;
                 default:
                     throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);

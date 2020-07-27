@@ -1091,7 +1091,7 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid function name", "VARCHAR", functionNode.getName());
         Assert.assertEquals("Invalid field count", 1, functionNode.getClauseFields().size());
 
-        final FieldNode fieldNode = select.getOrder().get(0);
+        final FieldNode fieldNode = functionNode.getClauseFields().iterator().next();
         Assert.assertEquals("Invalid field name", "Id", fieldNode.getName());
     }
 }
