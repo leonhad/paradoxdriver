@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.ScannerPosition;
@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * Stores the not node.
  *
- * @version 1.10
+ * @version 1.11
  * @since 1.1
  */
 public final class NotNode extends AbstractComparableNode {
@@ -61,10 +61,10 @@ public final class NotNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters,
+    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
                             final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
         if (!children.isEmpty()) {
-            return !((AbstractConditionalNode) children.get(0)).evaluate(connection, row, parameters,
+            return !((AbstractConditionalNode) children.get(0)).evaluate(connectionInfo, row, parameters,
                     parameterTypes, columnsLoaded);
         }
 

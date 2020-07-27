@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.general;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -19,7 +19,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL BINARY functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class BinaryFunction extends AbstractGeneralFunction {
@@ -48,7 +48,7 @@ public class BinaryFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         return ValuesConverter.getByteArray(values[0]);
     }

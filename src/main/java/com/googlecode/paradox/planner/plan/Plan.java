@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner.plan;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.results.ParadoxType;
 
@@ -20,7 +20,7 @@ import java.sql.SQLFeatureNotSupportedException;
 /**
  * Used to creates and execute SQL plans.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public interface Plan {
@@ -28,14 +28,14 @@ public interface Plan {
     /**
      * Execute this plan.
      *
-     * @param connection     the Paradox connection.
+     * @param connectionInfo the connection information.
      * @param maxRows        the limit of rows that can be loaded. Zero means no
      *                       limit.
      * @param parameters     the statement parameters.
      * @param parameterTypes the parameter types.
      * @throws SQLException in case of failures.
      */
-    void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters,
+    void execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
                  final ParadoxType[] parameterTypes) throws SQLException;
 
     /**

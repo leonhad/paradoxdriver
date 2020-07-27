@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.string;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
 /**
  * The SQL INITCAP function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class InitCapFunction extends AbstractStringFunction {
@@ -49,10 +49,10 @@ public class InitCapFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final char[] chars = values[0].toString().toLowerCase(connection.getLocale()).toCharArray();
+        final char[] chars = values[0].toString().toLowerCase(connectionInfo.getLocale()).toCharArray();
         boolean found = false;
         for (int i = 0; i < chars.length; i++) {
             if (!found && Character.isLetter(chars[i])) {

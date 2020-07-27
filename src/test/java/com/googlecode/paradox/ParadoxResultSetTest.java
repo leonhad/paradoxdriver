@@ -41,7 +41,7 @@ public class ParadoxResultSetTest {
     /**
      * The database connection.
      */
-    private Connection conn;
+    private ParadoxConnection conn;
 
     /**
      * Creates a new instance.
@@ -78,7 +78,7 @@ public class ParadoxResultSetTest {
     @Before
     @SuppressWarnings("java:S2115")
     public void connect() throws SQLException {
-        this.conn = DriverManager.getConnection(ParadoxResultSetTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(ParadoxResultSetTest.CONNECTION_STRING + "db");
     }
 
     /**
@@ -89,7 +89,7 @@ public class ParadoxResultSetTest {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
-        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+        try (final ParadoxResultSet rs = new ParadoxResultSet(this.conn.getConnectionInfo(), stmt, values, columns)) {
             Assert.assertFalse(INVALID_ABSOLUTE_VALUE, rs.absolute(1));
             Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.isAfterLast());
         }
@@ -105,7 +105,7 @@ public class ParadoxResultSetTest {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
-        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+        try (final ParadoxResultSet rs = new ParadoxResultSet(this.conn.getConnectionInfo(), stmt, values, columns)) {
             Assert.assertFalse(INVALID_ABSOLUTE_VALUE, rs.absolute(-1));
             Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.isBeforeFirst());
         }
@@ -121,7 +121,7 @@ public class ParadoxResultSetTest {
         final List<Column> columns = new ArrayList<>();
         final List<Object[]> values = new ArrayList<>();
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
-        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+        try (final ParadoxResultSet rs = new ParadoxResultSet(this.conn.getConnectionInfo(), stmt, values, columns)) {
             Assert.assertFalse(INVALID_ABSOLUTE_VALUE, rs.absolute(-1));
         }
     }
@@ -136,7 +136,7 @@ public class ParadoxResultSetTest {
         final List<Column> columns = Collections.singletonList(new Column("A", ParadoxType.INTEGER));
         final List<Object[]> values = Collections.singletonList(new Object[]{null});
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
-        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+        try (final ParadoxResultSet rs = new ParadoxResultSet(this.conn.getConnectionInfo(), stmt, values, columns)) {
             Assert.assertTrue("Invalid Result Set state", rs.next());
             Assert.assertEquals("Invalid int value", 0, rs.getInt("A"));
             Assert.assertTrue("Invalid null state", rs.wasNull());
@@ -153,10 +153,10 @@ public class ParadoxResultSetTest {
     @Test
     public void testAbsoluteNegativeRowValue() throws SQLException {
         final List<Column> columns = Collections
-                .singletonList(new Column(new ParadoxField((ParadoxConnection) this.conn, ParadoxType.VARCHAR)));
+                .singletonList(new Column(new ParadoxField(ParadoxType.VARCHAR)));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
-        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+        try (final ParadoxResultSet rs = new ParadoxResultSet(this.conn.getConnectionInfo(), stmt, values, columns)) {
             Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.absolute(1));
             Assert.assertTrue(INVALID_ABSOLUTE_VALUE, rs.absolute(-1));
         }
@@ -169,11 +169,11 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testAfterLast() throws SQLException {
-        final ParadoxField field = new ParadoxField((ParadoxConnection) this.conn, ParadoxType.VARCHAR);
+        final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         final List<Column> columns = Collections.singletonList(new Column(field));
         final List<Object[]> values = Collections.singletonList(new Object[]{"Test"});
         final ParadoxStatement stmt = (ParadoxStatement) conn.createStatement();
-        try (final ParadoxResultSet rs = new ParadoxResultSet((ParadoxConnection) this.conn, stmt, values, columns)) {
+        try (final ParadoxResultSet rs = new ParadoxResultSet(this.conn.getConnectionInfo(), stmt, values, columns)) {
             rs.afterLast();
             Assert.assertTrue("Testing for invalid position.", rs.isAfterLast());
         }
@@ -315,9 +315,9 @@ public class ParadoxResultSetTest {
      */
     @Test
     public void testNoFirstResult() throws SQLException {
-        final ParadoxConnection paradoxConnection = (ParadoxConnection) this.conn;
         try (ParadoxStatement statement = (ParadoxStatement) conn.createStatement();
-             ParadoxResultSet rs = new ParadoxResultSet(paradoxConnection, statement, Collections.emptyList(),
+             ParadoxResultSet rs = new ParadoxResultSet(this.conn.getConnectionInfo(), statement,
+                     Collections.emptyList(),
                      Collections.emptyList())) {
 
             Assert.assertFalse("There is one first row", rs.next());

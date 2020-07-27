@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
@@ -19,7 +19,7 @@ import java.nio.charset.Charset;
 /**
  * Defines the paradox default file structure.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public class ParadoxDataFile {
@@ -28,10 +28,6 @@ public class ParadoxDataFile {
      * Java file used to read the database.
      */
     protected final File file;
-    /**
-     * The database connection;
-     */
-    protected final ParadoxConnection connection;
     /**
      * Fields in this file.
      */
@@ -112,26 +108,29 @@ public class ParadoxDataFile {
      * If this file has an write protected lock.
      */
     private byte writeProtected;
-
     /**
      * Encrypted data.
      */
     private long encryptedData;
+    /**
+     * Connection information.
+     */
+    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
      *
-     * @param file       the database {@link File}.
-     * @param name       the file name.
-     * @param connection the database connection.
+     * @param file           the database {@link File}.
+     * @param name           the file name.
+     * @param connectionInfo the connection information.
      */
-    protected ParadoxDataFile(final File file, final String name, final ParadoxConnection connection) {
+    protected ParadoxDataFile(final File file, final String name, final ConnectionInfo connectionInfo) {
         this.file = file;
         this.name = Utils.removeSuffix(name, "DB");
-        if (connection != null) {
-            this.charset = connection.getCharset();
+        this.connectionInfo = connectionInfo;
+        if (connectionInfo != null && connectionInfo.getCharset() != null) {
+            this.charset = connectionInfo.getCharset();
         }
-        this.connection = connection;
     }
 
     /**
@@ -514,23 +513,38 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Gets the database connection.
+     * Gets if this table is encrypted.
      *
-     * @return the database connection.
+     * @return <code>true</code> if this table is encrypted.
      */
-    public ParadoxConnection getConnection() {
-        return connection;
-    }
-
     public boolean isEncrypted() {
         return encryptedData != 0;
     }
 
+    /**
+     * Gets the encryption data.
+     *
+     * @return the encryption data.
+     */
     public long getEncryptedData() {
         return encryptedData;
     }
 
+    /**
+     * Sets   the encryption data.
+     *
+     * @param encryptedData the encryption data.
+     */
     public void setEncryptedData(long encryptedData) {
         this.encryptedData = encryptedData;
+    }
+
+    /**
+     * Gets the connection information.
+     *
+     * @return the connection information.
+     */
+    public ConnectionInfo getConnectionInfo() {
+        return connectionInfo;
     }
 }

@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  * Unit test for connection.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S2115", "java:S1192"})
@@ -93,7 +93,7 @@ public class ParadoxConnectionTest {
 
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
             Assert.assertEquals("Invalid charset", charsetName,
-                    ((ParadoxConnection) conn).getCharset().displayName());
+                    ((ParadoxConnection) conn).getConnectionInfo().getCharset().displayName());
         }
     }
 
@@ -105,7 +105,7 @@ public class ParadoxConnectionTest {
     @Test
     public void testDefaultCharset() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertNull("Invalid charset", ((ParadoxConnection) conn).getCharset());
+            Assert.assertNull("Invalid charset", ((ParadoxConnection) conn).getConnectionInfo().getCharset());
         }
     }
 
@@ -117,7 +117,8 @@ public class ParadoxConnectionTest {
     @Test
     public void testDefaultLocale() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertEquals("Invalid charset", "en", ((ParadoxConnection) conn).getLocale().getLanguage());
+            Assert.assertEquals("Invalid charset", "en",
+                    ((ParadoxConnection) conn).getConnectionInfo().getLocale().getLanguage());
         }
     }
 
@@ -135,7 +136,7 @@ public class ParadoxConnectionTest {
 
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
             Assert.assertEquals("Invalid locale", locale,
-                    ((ParadoxConnection) conn).getLocale());
+                    ((ParadoxConnection) conn).getConnectionInfo().getLocale());
         }
     }
 
@@ -147,7 +148,7 @@ public class ParadoxConnectionTest {
     @Test
     public void testDefaultBCDRounding() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertTrue("Invalid BCD rounding", ((ParadoxConnection) conn).isBcdRounding());
+            Assert.assertTrue("Invalid BCD rounding", ((ParadoxConnection) conn).getConnectionInfo().isBcdRounding());
         }
     }
 
@@ -162,7 +163,7 @@ public class ParadoxConnectionTest {
         info.put("bcd_rounding", "false");
 
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
-            Assert.assertFalse("Invalid BCD rounding", ((ParadoxConnection) conn).isBcdRounding());
+            Assert.assertFalse("Invalid BCD rounding", ((ParadoxConnection) conn).getConnectionInfo().isBcdRounding());
         }
     }
 

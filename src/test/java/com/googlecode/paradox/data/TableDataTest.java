@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Unit test for {@link TableData}.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public class TableDataTest {
@@ -81,7 +81,8 @@ public class TableDataTest {
     @Test
     public void testInvalidTable() throws SQLException {
         Assert.assertEquals("Failed in count invalid tables.", 0,
-                TableData.listTables(this.conn.getCurrentSchema(), "not found.db", this.conn).size());
+                TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "not found.db",
+                        this.conn.getConnectionInfo()).size());
     }
 
     /**
@@ -91,7 +92,8 @@ public class TableDataTest {
      */
     @Test
     public void testLoadAreaCodes() throws SQLException {
-        final List<ParadoxTable> tables = TableData.listTables(this.conn.getCurrentSchema(), "areacodes.db", this.conn);
+        final List<ParadoxTable> tables = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(),
+                "areacodes.db", this.conn.getConnectionInfo());
         Assert.assertNotNull("List tables is null", tables);
         Assert.assertFalse("List tables is empty", tables.isEmpty());
         final ParadoxTable table = tables.get(0);
@@ -106,7 +108,8 @@ public class TableDataTest {
      */
     @Test
     public void testLoadContacts() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "contacts.db", this.conn).get(0);
+        final ParadoxTable table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "contacts" +
+                ".db", this.conn.getConnectionInfo()).get(0);
         final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading contacts.db table data.", TableData.loadData(table, fields));
     }
@@ -118,7 +121,8 @@ public class TableDataTest {
      */
     @Test
     public void testLoadCustomer() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "customer.db", this.conn).get(0);
+        final ParadoxTable table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "customer" +
+                ".db", this.conn.getConnectionInfo()).get(0);
         final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading customer.db table data.", TableData.loadData(table, fields));
     }
@@ -130,7 +134,8 @@ public class TableDataTest {
      */
     @Test
     public void testLoadHercules() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "hercules.db", this.conn).get(0);
+        final ParadoxTable table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "hercules" +
+                ".db", this.conn.getConnectionInfo()).get(0);
         Assert.assertNotNull("Error loading hercules.db table data.", TableData.loadData(table, table.getFields()));
     }
 
@@ -141,7 +146,8 @@ public class TableDataTest {
      */
     @Test
     public void testLoadOrders() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "orders.db", this.conn).get(0);
+        final ParadoxTable table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "orders.db"
+                , this.conn.getConnectionInfo()).get(0);
         final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading table data.", TableData.loadData(table, fields));
     }
@@ -153,7 +159,8 @@ public class TableDataTest {
      */
     @Test
     public void testLoadServer() throws SQLException {
-        final ParadoxTable table = TableData.listTables(this.conn.getCurrentSchema(), "server.db", this.conn).get(0);
+        final ParadoxTable table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "server.db"
+                , this.conn.getConnectionInfo()).get(0);
         final ParadoxField[] fields = new ParadoxField[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading table data.", TableData.loadData(table, fields));
     }

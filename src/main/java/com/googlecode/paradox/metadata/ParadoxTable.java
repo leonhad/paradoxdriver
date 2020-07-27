@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 
@@ -22,7 +22,7 @@ import java.sql.SQLException;
 /**
  * Stores a table data file.
  *
- * @version 1.6
+ * @version 1.8
  * @since 1.0
  */
 public final class ParadoxTable extends ParadoxDataFile {
@@ -30,16 +30,23 @@ public final class ParadoxTable extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file       table references file.
-     * @param name       table name.
-     * @param connection the database connection.
+     * @param file           table references file.
+     * @param name           table name.
+     * @param connectionInfo the connection information.
      */
-    public ParadoxTable(final File file, final String name, final ParadoxConnection connection) {
-        super(file, name, connection);
+    public ParadoxTable(final File file, final String name, final ConnectionInfo connectionInfo) {
+        super(file, name, connectionInfo);
     }
 
+    /**
+     * Gets the associated blob file (MB).
+     *
+     * @return the associated blob file (MB).
+     * @throws SQLException in case of failures.
+     */
     public FileInputStream openBlobs() throws SQLException {
-        final File[] fileList = file.getParentFile().listFiles(new TableFilter(connection.getLocale(), name, "mb"));
+        final File[] fileList = file.getParentFile().listFiles(new TableFilter(getConnectionInfo().getLocale(), name,
+                "mb"));
         if ((fileList == null) || (fileList.length == 0)) {
             throw new ParadoxDataException(ParadoxDataException.Error.BLOB_FILE_NOT_FOUND);
         }

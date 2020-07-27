@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.field.BCDField;
 import com.googlecode.paradox.results.ParadoxType;
 
@@ -41,7 +40,6 @@ public final class ParadoxField {
      * Paradox field type.
      */
     private final ParadoxType type;
-    private final ParadoxConnection connection;
     /**
      * Stores the field alias.
      */
@@ -82,22 +80,19 @@ public final class ParadoxField {
     /**
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.
      *
-     * @param connection the Paradox connection.
-     * @param type       the Paradox field type.
+     * @param type the Paradox field type.
      */
-    public ParadoxField(final ParadoxConnection connection, final ParadoxType type) {
-        this(connection, type, 1);
+    public ParadoxField(final ParadoxType type) {
+        this(type, 1);
     }
 
     /**
      * Creates a new instance.
      *
-     * @param connection the Paradox connection.
-     * @param type       the Paradox field type.
-     * @param orderNum   order number to start.
+     * @param type     the Paradox field type.
+     * @param orderNum order number to start.
      */
-    public ParadoxField(final ParadoxConnection connection, final ParadoxType type, final int orderNum) {
-        this.connection = connection;
+    public ParadoxField(final ParadoxType type, final int orderNum) {
         this.type = type;
         this.orderNum = orderNum;
     }
@@ -293,10 +288,6 @@ public final class ParadoxField {
      */
     public int getSqlType() {
         return this.type.getSQLType();
-    }
-
-    public ParadoxConnection getConnection() {
-        return connection;
     }
 
     /**

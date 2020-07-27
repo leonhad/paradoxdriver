@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.SecondaryIndexFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Reads index data files.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public final class IndexData extends ParadoxData {
@@ -48,22 +48,23 @@ public final class IndexData extends ParadoxData {
     /**
      * List the indexes in a database file.
      *
-     * @param currentSchema the current schema file.
-     * @param tableName     the table name.
-     * @param connection    the database connection.
+     * @param currentSchema  the current schema file.
+     * @param tableName      the table name.
+     * @param connectionInfo the connection information.
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException in case of reading failures.
      */
     public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
-                                                 final ParadoxConnection connection) throws SQLException {
+                                                 final ConnectionInfo connectionInfo) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
         String indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".X__";
-        File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connection.getLocale(), indexNamePattern));
+        File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(),
+                indexNamePattern));
 
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
-                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connection);
+                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connectionInfo);
                     indexes.add(index);
                 } catch (final IOException e) {
                     throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
@@ -73,12 +74,12 @@ public final class IndexData extends ParadoxData {
 
         // FIXME review the filter and loading.
         indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".Y__";
-        fileList = currentSchema.listFiles(new SecondaryIndexFilter(connection.getLocale(), indexNamePattern));
+        fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(), indexNamePattern));
 
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
-                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connection);
+                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connectionInfo);
                     indexes.add(index);
                 } catch (final IOException e) {
                     throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
@@ -92,12 +93,12 @@ public final class IndexData extends ParadoxData {
     /**
      * Loads the database file header.
      *
-     * @param file       the database {@link File}.
-     * @param connection the database connection.
+     * @param file           the database {@link File}.
+     * @param connectionInfo the connection information.
      * @return the {@link ParadoxIndex} reference.
      * @throws IOException if case of I/O exceptions.
      */
-    private static ParadoxIndex loadIndexHeader(final File file, final ParadoxConnection connection)
+    private static ParadoxIndex loadIndexHeader(final File file, final ConnectionInfo connectionInfo)
             throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
 
@@ -105,7 +106,7 @@ public final class IndexData extends ParadoxData {
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connection);
+        final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connectionInfo);
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
@@ -177,8 +178,7 @@ public final class IndexData extends ParadoxData {
     private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) {
         final ParadoxField[] fields = new ParadoxField[index.getFieldCount()];
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(index.getConnection(),
-                    ParadoxType.valueOfVendor(buffer.get()), loop + 1);
+            final ParadoxField field = new ParadoxField(ParadoxType.valueOfVendor(buffer.get()), loop + 1);
             field.setSize(buffer.get());
             fields[loop] = field;
         }

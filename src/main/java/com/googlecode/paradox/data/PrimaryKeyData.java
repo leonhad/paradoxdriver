@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.PrimaryKeyFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
@@ -28,7 +28,7 @@ import java.sql.SQLException;
 /**
  * Reads primary key data fields.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class PrimaryKeyData extends ParadoxData {
@@ -43,20 +43,20 @@ public final class PrimaryKeyData extends ParadoxData {
     /**
      * Gets the primary keys from the database file.
      *
-     * @param currentSchema the current schema file.
-     * @param table         the tables primary key.
-     * @param connection    the database connection.
+     * @param currentSchema  the current schema file.
+     * @param table          the tables primary key.
+     * @param connectionInfo the connection information.
      * @return the primary keys.
      * @throws SQLException in case of load failures.
      */
     public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxDataFile table,
-                                          final ParadoxConnection connection) throws SQLException {
+                                          final ConnectionInfo connectionInfo) throws SQLException {
         final String name = table.getName() + ".PX";
 
-        final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(connection.getLocale(), name));
+        final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(connectionInfo.getLocale(), name));
         if ((fileList != null) && (fileList.length > 0)) {
             try {
-                return PrimaryKeyData.loadPKHeader(fileList[0], connection);
+                return PrimaryKeyData.loadPKHeader(fileList[0], connectionInfo);
             } catch (final IOException ex) {
                 throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, ex);
             }
@@ -67,15 +67,15 @@ public final class PrimaryKeyData extends ParadoxData {
     /**
      * Gets the {@link ParadoxPK} from a PK file.
      *
-     * @param file       the file to read.
-     * @param connection the database connection.
+     * @param file           the file to read.
+     * @param connectionInfo the connection information.
      * @return the {@link ParadoxPK}.
      * @throws IOException in case of I/O exceptions.
      */
-    private static ParadoxPK loadPKHeader(final File file, final ParadoxConnection connection) throws IOException {
+    private static ParadoxPK loadPKHeader(final File file, final ConnectionInfo connectionInfo) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        final ParadoxPK pk = new ParadoxPK(connection);
+        final ParadoxPK pk = new ParadoxPK(connectionInfo);
 
         try (final FileInputStream fs = new FileInputStream(file); final FileChannel channel = fs.getChannel()) {
             channel.read(buffer);

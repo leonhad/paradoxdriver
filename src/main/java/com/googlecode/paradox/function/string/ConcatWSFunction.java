@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.string;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -20,7 +20,7 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL CONCAT_WS function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class ConcatWSFunction extends AbstractStringFunction {
@@ -56,7 +56,7 @@ public class ConcatWSFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         final Object separator = values[0];
         if (separator == null) {

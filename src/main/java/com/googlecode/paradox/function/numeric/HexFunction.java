@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.numeric;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 /**
  * The SQL HEX functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class HexFunction extends AbstractNumericFunction {
@@ -50,7 +50,7 @@ public class HexFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
         if (value == null) {

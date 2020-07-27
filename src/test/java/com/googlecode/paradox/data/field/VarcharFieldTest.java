@@ -10,50 +10,22 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link VarcharField} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public class VarcharFieldTest {
-    /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
 
     /**
      * Test for invalid match.
@@ -71,7 +43,7 @@ public class VarcharFieldTest {
     public void testParse() {
         final ParadoxTable table = new ParadoxTable(null, null, null);
         table.setCharset(StandardCharsets.ISO_8859_1);
-        final ParadoxField paradoxField = new ParadoxField(conn, ParadoxType.VARCHAR);
+        final ParadoxField paradoxField = new ParadoxField(ParadoxType.VARCHAR);
         paradoxField.setSize("test".length());
         final VarcharField field = new VarcharField();
         final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));

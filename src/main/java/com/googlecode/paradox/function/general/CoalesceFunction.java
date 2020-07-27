@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.general;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 /**
  * The SQL coalesce function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class CoalesceFunction extends AbstractGeneralFunction {
@@ -68,7 +68,7 @@ public class CoalesceFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         this.type = FieldValueUtils.getSqlType(values, types);
         return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);

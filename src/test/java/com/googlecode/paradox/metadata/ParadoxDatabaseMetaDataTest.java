@@ -112,7 +112,7 @@ public class ParadoxDatabaseMetaDataTest {
         final DatabaseMetaData meta = this.conn.getMetaData();
         try (ResultSet rs = meta.getCatalogs()) {
             if (rs.next()) {
-                Assert.assertEquals("Invalid value.", "DATABASE", rs.getString("TABLE_CAT"));
+                Assert.assertEquals("Invalid value.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             } else {
                 Assert.fail("No catalog selected.");
             }
@@ -462,7 +462,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testIndexInfo() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getIndexInfo("DATABASE", "joins", "indexed", false, true)) {
+        try (ResultSet rs = this.conn.getMetaData().getIndexInfo(conn.getCatalog(), "joins", "indexed", false, true)) {
             Assert.assertTrue("Test for ResultSet.", rs.next());
         }
     }
@@ -819,7 +819,7 @@ public class ParadoxDatabaseMetaDataTest {
     public void testTables() throws SQLException {
         final String[] types = {"TABLE", "VIEW"};
 
-        try (ResultSet rs = this.conn.getMetaData().getTables("DATABASE", "%", "%", types)) {
+        try (ResultSet rs = this.conn.getMetaData().getTables(conn.getCatalog(), "%", "%", types)) {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
     }
@@ -831,7 +831,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testTablesEclipse() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getTables("DATABASE", "fields", null, null)) {
+        try (ResultSet rs = this.conn.getMetaData().getTables(conn.getCatalog(), "fields", null, null)) {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
     }
@@ -853,7 +853,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testTablesWithNullType() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getTables("db", "%", "%", null)) {
+        try (ResultSet rs = this.conn.getMetaData().getTables(conn.getCatalog(), "%", "%", null)) {
             Assert.assertTrue("Invalid ResultSet instance.", rs instanceof ParadoxResultSet);
         }
     }
@@ -887,7 +887,7 @@ public class ParadoxDatabaseMetaDataTest {
 
         try (ResultSet rs = meta.getPrimaryKeys(null, "db", "CUSTOMER.db")) {
             Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertEquals("Invalid value.", "DATABASE", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid value.", "CUSTOMER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Invalid value.", "CustNo", rs.getString("COLUMN_NAME"));
@@ -909,7 +909,7 @@ public class ParadoxDatabaseMetaDataTest {
         try (ResultSet rs = meta.getColumns(null, "db", "AREAS.QBE", "%")) {
             // Test for AC field.
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Testing for table catalog.", "DATABASE", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table catalog.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "AC", rs.getString("COLUMN_NAME"));
@@ -922,7 +922,7 @@ public class ParadoxDatabaseMetaDataTest {
 
             // Test for State field.
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Testing for table catalog.", "DATABASE", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table catalog.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "State", rs.getString("COLUMN_NAME"));
@@ -935,7 +935,7 @@ public class ParadoxDatabaseMetaDataTest {
 
             // Test for Cities field.
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Testing for table catalog.", "DATABASE", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Testing for table catalog.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Testing for column name.", "Cities", rs.getString("COLUMN_NAME"));
@@ -962,14 +962,14 @@ public class ParadoxDatabaseMetaDataTest {
 
         try (ResultSet rs = meta.getPrimaryKeys(null, "db", "SERVER.db")) {
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid value.", "DATABASE", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Invalid value.", "REQTYPE", rs.getString("COLUMN_NAME"));
             Assert.assertEquals("Invalid value.", "0", rs.getString("KEY_SEQ"));
             Assert.assertEquals("Invalid value.", "SERVER.PX", rs.getString("PK_NAME"));
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid value.", "DATABASE", rs.getString("TABLE_CAT"));
+            Assert.assertEquals("Invalid value.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Invalid value.", "URI", rs.getString("COLUMN_NAME"));

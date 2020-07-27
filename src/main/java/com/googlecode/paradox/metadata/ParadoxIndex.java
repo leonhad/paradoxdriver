@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 
 import java.io.File;
 
 /**
  * Stores index data.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class ParadoxIndex extends ParadoxDataFile {
@@ -30,12 +30,12 @@ public final class ParadoxIndex extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file       the file to read of.
-     * @param name       index name.
-     * @param connection the database connection.
+     * @param file           the file to read of.
+     * @param name           index name.
+     * @param connectionInfo the connection information.
      */
-    public ParadoxIndex(final File file, final String name, final ParadoxConnection connection) {
-        super(file, name, connection);
+    public ParadoxIndex(final File file, final String name, final ConnectionInfo connectionInfo) {
+        super(file, name, connectionInfo);
     }
 
     /**

@@ -26,7 +26,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link FieldFactory} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class FieldFactoryTest {
@@ -72,7 +72,7 @@ public class FieldFactoryTest {
      */
     @Test(expected = SQLException.class)
     public void testUnsupportedType() throws SQLException {
-        final ParadoxField field = new ParadoxField(conn, ParadoxType.NULL);
+        final ParadoxField field = new ParadoxField(ParadoxType.NULL);
         FieldFactory.parse(null, null, field);
     }
 }

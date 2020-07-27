@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
@@ -181,7 +181,7 @@ public class FunctionNode extends FieldNode {
     /**
      * Execute  the function.
      *
-     * @param connection      the paradox connection.
+     * @param connectionInfo  the connection information.
      * @param row             the current row values.
      * @param parameterValues the parameters values.
      * @param parameterTypes  the parameter types.
@@ -189,7 +189,8 @@ public class FunctionNode extends FieldNode {
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    public Object execute(final ParadoxConnection connection, final Object[] row, final Object[] parameterValues,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] row,
+                          final Object[] parameterValues,
                           final ParadoxType[] parameterTypes, final List<Column> loadedColumns) throws SQLException {
         final Object[] values = new Object[parameters.size()];
         final ParadoxType[] types = new ParadoxType[parameters.size()];
@@ -202,15 +203,15 @@ public class FunctionNode extends FieldNode {
                 values[i] = param.getName();
                 types[i] = ((ValueNode) param).getType();
             } else if (param instanceof ParameterNode) {
-                values[i] = FieldValueUtils.getValue(connection, row, (FieldNode) param, parameterValues,
+                values[i] = FieldValueUtils.getValue(connectionInfo, row, (FieldNode) param, parameterValues,
                         parameterTypes, loadedColumns);
                 types[i] = parameterTypes[((ParameterNode) param).getParameterIndex()];
             } else if (param instanceof FunctionNode) {
                 final FunctionNode functionNode = (FunctionNode) param;
-                values[i] = functionNode.execute(connection, row, parameterValues, parameterTypes, loadedColumns);
+                values[i] = functionNode.execute(connectionInfo, row, parameterValues, parameterTypes, loadedColumns);
                 types[i] = functionNode.getType();
             } else {
-                values[i] = FieldValueUtils.getValue(connection, row, (FieldNode) param, parameterValues,
+                values[i] = FieldValueUtils.getValue(connectionInfo, row, (FieldNode) param, parameterValues,
                         parameterTypes, loadedColumns);
                 types[i] = loadedColumns.get(((FieldNode) param).getIndex()).getType();
             }
@@ -224,7 +225,7 @@ public class FunctionNode extends FieldNode {
         }
 
         // If no problems found, execute the procedure.
-        return function.execute(connection, values, types, fields);
+        return function.execute(connectionInfo, values, types, fields);
     }
 
     @Override

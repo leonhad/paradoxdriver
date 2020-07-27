@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
@@ -31,7 +31,7 @@ import java.util.*;
 /**
  * Utility class for loading table files.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -46,20 +46,20 @@ public final class TableData extends ParadoxData {
     /**
      * List all database tables.
      *
-     * @param schema     the current schema name.
-     * @param connection the database connection.
+     * @param schema         the current schema name.
+     * @param connectionInfo the connection information.
      * @return all {@link ParadoxTable}.
      * @throws SQLException in case of failures.
      */
-    public static List<ParadoxTable> listTables(final String schema, final ParadoxConnection connection) throws
+    public static List<ParadoxTable> listTables(final String schema, final ConnectionInfo connectionInfo) throws
             SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<>();
-        final File currentSchema = new File(connection.getCurrentSchema().getParent(), schema);
+        final File currentSchema = new File(connectionInfo.getCurrentSchema().getParent(), schema);
 
-        final File[] fileList = currentSchema.listFiles(new TableFilter(connection.getLocale()));
+        final File[] fileList = currentSchema.listFiles(new TableFilter(connectionInfo.getLocale()));
         if (fileList != null) {
             for (final File file : fileList) {
-                final ParadoxTable table = TableData.loadTableHeader(file, connection);
+                final ParadoxTable table = TableData.loadTableHeader(file, connectionInfo);
                 tables.add(table);
             }
         }
@@ -69,22 +69,22 @@ public final class TableData extends ParadoxData {
     /**
      * Gets all tables within a pattern.
      *
-     * @param schema     the schema directory.
-     * @param pattern    the pattern.
-     * @param connection the database connection.
+     * @param schema         the schema directory.
+     * @param pattern        the pattern.
+     * @param connectionInfo the connection information.
      * @return the tables filtered.
      * @throws SQLException in case of failures.
      */
     public static List<ParadoxTable> listTables(final File schema, final String pattern,
-                                                final ParadoxConnection connection) throws SQLException {
+                                                final ConnectionInfo connectionInfo) throws SQLException {
         final List<ParadoxTable> tables = new ArrayList<>();
         final File[] fileList = schema.listFiles
-                (new TableFilter(connection.getLocale(), Utils.removeSuffix(pattern, "DB")));
+                (new TableFilter(connectionInfo.getLocale(), Utils.removeSuffix(pattern, "DB")));
 
         if (fileList != null) {
             Arrays.sort(fileList);
             for (final File file : fileList) {
-                final ParadoxTable table = TableData.loadTableHeader(file, connection);
+                final ParadoxTable table = TableData.loadTableHeader(file, connectionInfo);
                 tables.add(table);
             }
         }
@@ -170,14 +170,14 @@ public final class TableData extends ParadoxData {
     /**
      * Gets the table header from a file.
      *
-     * @param file       the {@link File} to read.
-     * @param connection the database connection.
+     * @param file           the {@link File} to read.
+     * @param connectionInfo the connection information.
      * @return the {@link ParadoxTable}.
      * @throws SQLException in case of reading errors.
      */
-    private static ParadoxTable loadTableHeader(final File file, final ParadoxConnection connection) throws
+    private static ParadoxTable loadTableHeader(final File file, final ConnectionInfo connectionInfo) throws
             SQLException {
-        final ParadoxTable table = new ParadoxTable(file, file.getName(), connection);
+        final ParadoxTable table = new ParadoxTable(file, file.getName(), connectionInfo);
 
         ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -252,10 +252,8 @@ public final class TableData extends ParadoxData {
     private static ParadoxField[] parseTableFields(final ParadoxTable table, final ByteBuffer buffer) {
         final ParadoxField[] fields = new ParadoxField[table.getFieldCount()];
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(table.getConnection(),
-                    ParadoxType.valueOfVendor(buffer.get()), loop + 1);
+            final ParadoxField field = new ParadoxField(ParadoxType.valueOfVendor(buffer.get()), loop + 1);
             field.setSize(buffer.get() & 0xFF);
-            field.setTable(table);
             field.setTable(table);
             fields[loop] = field;
         }

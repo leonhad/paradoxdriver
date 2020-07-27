@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.general;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -20,7 +20,7 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL NVL function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class NvlFunction extends AbstractGeneralFunction {
@@ -57,7 +57,7 @@ public class NvlFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         this.type = FieldValueUtils.getSqlType(values, types);
 

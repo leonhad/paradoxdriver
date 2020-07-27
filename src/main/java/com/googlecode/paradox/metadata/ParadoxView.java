@@ -10,14 +10,14 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 
 import java.io.File;
 
 /**
  * Stores the paradox view data.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ParadoxView extends ParadoxDataFile {
@@ -30,12 +30,12 @@ public final class ParadoxView extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param file       the file to read of.
-     * @param name       the view name.
-     * @param connection the database connection.
+     * @param file           the file to read of.
+     * @param name           the view name.
+     * @param connectionInfo the connection information.
      */
-    public ParadoxView(final File file, final String name, final ParadoxConnection connection) {
-        super(file, name, connection);
+    public ParadoxView(final File file, final String name, final ConnectionInfo connectionInfo) {
+        super(file, name, connectionInfo);
     }
 
     /**

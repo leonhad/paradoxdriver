@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.general;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * The SQL CAST function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
@@ -63,7 +63,7 @@ public class CastFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
         return ValuesConverter.convert(values[0], type);

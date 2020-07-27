@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Unit test for {@link Planner}.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.1
  */
 public class PlannerTest {
@@ -80,7 +80,7 @@ public class PlannerTest {
     @Test
     public void testAsterisk() throws Exception {
         final SQLParser parser = new SQLParser("select * from areacodes a");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
         Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
@@ -96,7 +96,7 @@ public class PlannerTest {
     @Test
     public void testAsteriskWithTables() throws Exception {
         final SQLParser parser = new SQLParser("select a.* from areacodes a");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         Assert.assertNotNull("No columns.", plan.getColumns());
         Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
         Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
@@ -112,7 +112,7 @@ public class PlannerTest {
     @Test
     public void testColumnName() throws SQLException {
         final SQLParser parser = new SQLParser("select ac from areacodes a");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         Assert.assertEquals("Test the column size.", 1, plan.getColumns().size());
         Assert.assertEquals("Test the column name.", "ac", plan.getColumns().get(0).getName());
     }
@@ -125,7 +125,7 @@ public class PlannerTest {
     @Test(expected = SQLFeatureNotSupportedException.class)
     public void testInvalid() throws SQLException {
         final StatementNode node = new StatementNode("node", null);
-        Planner.create(conn, node);
+        Planner.create(conn.getConnectionInfo(), node);
     }
 
     /**
@@ -136,7 +136,7 @@ public class PlannerTest {
     @Test(expected = SQLException.class)
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser("select * from invalid");
-        Planner.create(conn, parser.parse().get(0));
+        Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
     }
 
     /**
@@ -147,7 +147,7 @@ public class PlannerTest {
     @Test(expected = SQLException.class)
     public void testSelectWithoutColumns() throws SQLException {
         final SelectNode node = new SelectNode(null);
-        Planner.create(conn, node);
+        Planner.create(conn.getConnectionInfo(), node);
     }
 
     /**
@@ -159,8 +159,8 @@ public class PlannerTest {
     public void testSelectWhereEquals() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select ac from areacodes where state = 'NY' and ac = 212 or ac=315 or ac=917");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute(conn, 0, null, null);
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 0, null, null);
         Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
 
         List<Object[]> values = new ArrayList<>(plan.getValues());
@@ -178,8 +178,8 @@ public class PlannerTest {
     public void testSelectWhereNotEquals() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select ac from areacodes where state <> 'NY' and (ac = 212 or ac=315 or ac=917)");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute(conn, 0, null, null);
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 0, null, null);
         Assert.assertEquals("Test the result size.", 0, plan.getValues().size());
     }
 
@@ -191,8 +191,8 @@ public class PlannerTest {
     @Test
     public void testSelectWhereGreaterThan() throws SQLException {
         final SQLParser parser = new SQLParser("select ac from areacodes where state = 'NY' and ac > 845");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute(conn, 0, null, null);
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 0, null, null);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
     }
 
@@ -204,8 +204,8 @@ public class PlannerTest {
     @Test
     public void testSelectWhereLessThan() throws SQLException {
         final SQLParser parser = new SQLParser("select ac from areacodes where state = 'NY' and ac < 320");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute(conn, 0, null, null);
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 0, null, null);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
     }
 
@@ -217,8 +217,8 @@ public class PlannerTest {
     @Test
     public void testSelectWhereMultipleColumns() throws SQLException {
         final SQLParser parser = new SQLParser("select * from areacodes where state = 'NY' and ac < 320");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute(conn, 0, null, null);
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 0, null, null);
         Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
         Assert.assertEquals("Field expected", "AC", plan.getColumns().get(0).getField().getName());
         Assert.assertEquals("Field expected", "State", plan.getColumns().get(1).getField().getName());
@@ -233,8 +233,8 @@ public class PlannerTest {
     @Test
     public void testValuesInFields() throws SQLException {
         final SQLParser parser = new SQLParser("select 1 as \"1\", 'value' as b, null from areacodes");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn, parser.parse().get(0));
-        plan.execute(conn, 1, null, null);
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 1, null, null);
         Assert.assertEquals("Invalid result set", 3, plan.getColumns().size());
         Assert.assertEquals("Field expected", "1", plan.getColumns().get(0).getValue());
         Assert.assertEquals("Field expected", "b", plan.getColumns().get(1).getName());
@@ -252,7 +252,7 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser("select * from notfound");
         final StatementNode statementNode = parser.parse().get(0);
         Assert.assertThrows("Invalid table loaded", SQLException.class,
-                () -> Planner.create(conn, statementNode));
+                () -> Planner.create(conn.getConnectionInfo(), statementNode));
     }
 
     /**

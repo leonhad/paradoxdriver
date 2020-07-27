@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.system;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -18,7 +18,7 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL CONNECTION_ID functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ConnectionIDFunction extends AbstractSystemFunction {
@@ -51,8 +51,8 @@ public class ConnectionIDFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        return System.identityHashCode(connection);
+        return System.identityHashCode(connectionInfo);
     }
 }

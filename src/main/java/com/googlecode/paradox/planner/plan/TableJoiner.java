@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner.plan;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * Table joiner.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 class TableJoiner {
@@ -38,27 +38,27 @@ class TableJoiner {
         cancelled = false;
     }
 
-    public List<Object[]> processJoinByType(final ParadoxConnection connection, final List<Column> columnsLoaded,
+    public List<Object[]> processJoinByType(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
                                             final List<Object[]> rawData, final PlanTableNode table,
                                             final List<Object[]> tableData, final Object[] parameters,
                                             final ParadoxType[] parameterTypes) throws SQLException {
         List<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
-                localValues = processRightJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
+                localValues = processRightJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
                         parameterTypes);
                 break;
             case LEFT:
-                localValues = processLeftJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
+                localValues = processLeftJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
                         parameterTypes);
                 break;
             case FULL:
-                localValues = processFullJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
+                localValues = processFullJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
                         parameterTypes);
                 break;
             default:
                 // CROSS and INNER joins.
-                localValues = processInnerJoin(connection, columnsLoaded, rawData, table, tableData, parameters,
+                localValues = processInnerJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
                         parameterTypes);
                 break;
         }
@@ -66,7 +66,7 @@ class TableJoiner {
         return localValues;
     }
 
-    private List<Object[]> processLeftJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
+    private List<Object[]> processLeftJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
                                            final List<Object[]> rawData, final PlanTableNode table,
                                            final List<Object[]> tableData, final Object[] parameters,
                                            final ParadoxType[] parameterTypes) throws SQLException {
@@ -83,7 +83,7 @@ class TableJoiner {
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
+                        .evaluate(connectionInfo, column, parameters, parameterTypes, columnsLoaded)) {
                     continue;
                 }
 
@@ -100,7 +100,7 @@ class TableJoiner {
         return localValues;
     }
 
-    private List<Object[]> processRightJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
+    private List<Object[]> processRightJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
                                             final List<Object[]> rawData, final PlanTableNode table,
                                             final List<Object[]> tableData, final Object[] parameters,
                                             final ParadoxType[] parameterTypes) throws SQLException {
@@ -117,7 +117,7 @@ class TableJoiner {
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
+                        .evaluate(connectionInfo, column, parameters, parameterTypes, columnsLoaded)) {
                     continue;
                 }
 
@@ -134,7 +134,7 @@ class TableJoiner {
         return localValues;
     }
 
-    private List<Object[]> processFullJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
+    private List<Object[]> processFullJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
                                            final List<Object[]> rawData, final PlanTableNode table,
                                            final List<Object[]> tableData, final Object[] parameters,
                                            final ParadoxType[] parameterTypes) throws SQLException {
@@ -153,7 +153,7 @@ class TableJoiner {
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connection, column, parameters, parameterTypes, columnsLoaded)) {
+                        .evaluate(connectionInfo, column, parameters, parameterTypes, columnsLoaded)) {
                     continue;
                 }
 
@@ -183,7 +183,7 @@ class TableJoiner {
         return localValues;
     }
 
-    private List<Object[]> processInnerJoin(final ParadoxConnection connection, final List<Column> columnsLoaded,
+    private List<Object[]> processInnerJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
                                             final List<Object[]> rawData, final PlanTableNode table,
                                             final List<Object[]> tableData, final Object[] parameters,
                                             final ParadoxType[] parameterTypes) throws SQLException {
@@ -210,7 +210,7 @@ class TableJoiner {
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null
-                        && !table.getConditionalJoin().evaluate(connection, column, parameters, parameterTypes,
+                        && !table.getConditionalJoin().evaluate(connectionInfo, column, parameters, parameterTypes,
                         columnsLoaded)) {
                     continue;
                 }

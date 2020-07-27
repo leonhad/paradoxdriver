@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner.plan;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
@@ -41,7 +41,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.10
+ * @version 1.11
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -363,7 +363,7 @@ public final class SelectPlan implements Plan {
      */
     @Override
     @SuppressWarnings({"java:S3776", "java:S1541"})
-    public void execute(final ParadoxConnection connection, final int maxRows, final Object[] parameters,
+    public void execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
                         final ParadoxType[] parameterTypes) throws SQLException {
 
         // Can't do anything without fields defined.
@@ -425,14 +425,14 @@ public final class SelectPlan implements Plan {
                     rawData.addAll(tableData.stream()
                             .filter(predicateWrapper(o -> ensureNotCancelled()))
                             .filter(predicateWrapper(tableRow -> table.getConditionalJoin()
-                                    .evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)))
+                                    .evaluate(connectionInfo, tableRow, parameters, parameterTypes, columnsLoaded)))
                             .collect(Collectors.toList()));
                 } else {
                     // No conditions to process. Just use it.
                     rawData.addAll(tableData);
                 }
             } else {
-                final List<Object[]> ret = joiner.processJoinByType(connection, columnsLoaded, rawData, table,
+                final List<Object[]> ret = joiner.processJoinByType(connectionInfo, columnsLoaded, rawData, table,
                         tableData, parameters, parameterTypes);
 
                 rawData.clear();
@@ -460,7 +460,7 @@ public final class SelectPlan implements Plan {
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
-        filter(connection, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
+        filter(connectionInfo, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
     }
 
     private Comparator<Object[]> processOrderBy() {
@@ -535,7 +535,7 @@ public final class SelectPlan implements Plan {
         return mapColumns;
     }
 
-    private Object[] mapRow(final ParadoxConnection connection, final Object[] tableRow, final int[] mapColumns,
+    private Object[] mapRow(final ConnectionInfo connectionInfo, final Object[] tableRow, final int[] mapColumns,
                             final Object[] parameters, final ParadoxType[] parameterTypes,
                             final List<Column> columnsLoaded) throws SQLException {
         final Object[] finalRow = new Object[mapColumns.length];
@@ -554,7 +554,7 @@ public final class SelectPlan implements Plan {
                 } else if (!functionNode.isGrouping()) {
                     // A function processed value.
                     // Not process grouping function by now.
-                    finalRow[i] = functionNode.execute(connection, tableRow, parameters, parameterTypes,
+                    finalRow[i] = functionNode.execute(connectionInfo, tableRow, parameters, parameterTypes,
                             columnsLoaded);
                     // The function may change the result type in execution based on parameters values.
                     this.columns.get(i).setType(functionNode.getType());
@@ -565,7 +565,7 @@ public final class SelectPlan implements Plan {
         return finalRow;
     }
 
-    private void filter(final ParadoxConnection connection, final List<Object[]> rowValues, final int[] mapColumns,
+    private void filter(final ConnectionInfo connectionInfo, final List<Object[]> rowValues, final int[] mapColumns,
                         final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
                         final List<Column> columnsLoaded) {
 
@@ -574,12 +574,12 @@ public final class SelectPlan implements Plan {
 
         if (condition != null) {
             stream = stream.filter(predicateWrapper((Object[] tableRow) ->
-                    condition.evaluate(connection, tableRow, parameters, parameterTypes, columnsLoaded)
+                    condition.evaluate(connectionInfo, tableRow, parameters, parameterTypes, columnsLoaded)
             ));
         }
 
         stream = stream.map(functionWrapper((Object[] tableRow) ->
-                mapRow(connection, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
+                mapRow(connectionInfo, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
         ));
 
         if (!orderByFields.isEmpty()) {

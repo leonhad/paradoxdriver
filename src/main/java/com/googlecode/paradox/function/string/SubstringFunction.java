@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.string;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * The SQL SUBSTRING function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class SubstringFunction extends AbstractStringFunction {
@@ -54,7 +54,7 @@ public class SubstringFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
         final int index = ValuesConverter.getPositiveInteger(values[1]) - 1;

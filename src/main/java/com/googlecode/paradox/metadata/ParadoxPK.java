@@ -10,12 +10,12 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 
 /**
  * Stores a primary key definition..
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class ParadoxPK extends ParadoxDataFile {
@@ -28,10 +28,10 @@ public final class ParadoxPK extends ParadoxDataFile {
     /**
      * Creates a new instance.
      *
-     * @param connection the database connection.
+     * @param connectionInfo the connection information.
      */
-    public ParadoxPK(final ParadoxConnection connection) {
-        super(null, null, connection);
+    public ParadoxPK(final ConnectionInfo connectionInfo) {
+        super(null, null, connectionInfo);
     }
 
     /**

@@ -10,54 +10,24 @@
  */
 package com.googlecode.paradox.results;
 
-import com.googlecode.paradox.Driver;
-import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.ParadoxField;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Unit test for {@link Column} class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public class ColumnTest {
-
-    /**
-     * The connection string used in this tests.
-     */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
-
-    private static ParadoxConnection conn;
-
-    /**
-     * Register the database driver.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @BeforeClass
-    public static void setUp() throws SQLException {
-        new Driver();
-        conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
-    }
-
-    @AfterClass
-    public static void tearDown() throws SQLException {
-        conn.close();
-    }
 
     /**
      * Test for auto increment.
      */
     @Test
     public void testAutoincrement() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.AUTO_INCREMENT));
+        final Column column = new Column(new ParadoxField(ParadoxType.AUTO_INCREMENT));
         Assert.assertTrue("Invalid field type.", column.isAutoIncrement());
 
         final Column column2 = new Column("NAME", ParadoxType.INTEGER);
@@ -69,7 +39,7 @@ public class ColumnTest {
      */
     @Test
     public void testCurrency() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.CURRENCY));
+        final Column column = new Column(new ParadoxField(ParadoxType.CURRENCY));
         Assert.assertTrue("Invalid field type.", column.isCurrency());
 
         final Column column2 = new Column("NAME", ParadoxType.INTEGER);
@@ -81,7 +51,7 @@ public class ColumnTest {
      */
     @Test
     public void testField() {
-        final ParadoxField field = new ParadoxField(conn, ParadoxType.INTEGER);
+        final ParadoxField field = new ParadoxField(ParadoxType.INTEGER);
         final Column column = new Column(field);
         Assert.assertEquals("Invalid field.", field, column.getField());
     }
@@ -91,7 +61,7 @@ public class ColumnTest {
      */
     @Test
     public void testIndex() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
+        final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
         column.setIndex(1);
         Assert.assertEquals("Invalid field type.", 1, column.getIndex());
     }
@@ -101,7 +71,7 @@ public class ColumnTest {
      */
     @Test
     public void testInstanceWithFields() {
-        final ParadoxField field = new ParadoxField(conn, ParadoxType.INTEGER);
+        final ParadoxField field = new ParadoxField(ParadoxType.INTEGER);
         field.setName("field");
         final Column column = new Column(field);
         Assert.assertEquals("Invalid field.", field, column.getField());
@@ -136,7 +106,7 @@ public class ColumnTest {
         final Column column = new Column("NAME", ParadoxType.INTEGER);
         Assert.assertTrue("Invalid field nullable.", column.isNullable());
 
-        final Column column2 = new Column(new ParadoxField(conn, ParadoxType.AUTO_INCREMENT));
+        final Column column2 = new Column(new ParadoxField(ParadoxType.AUTO_INCREMENT));
         Assert.assertFalse("Invalid field nullable.", column2.isNullable());
     }
 
@@ -145,7 +115,7 @@ public class ColumnTest {
      */
     @Test
     public void testReadOnly() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
+        final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
         Assert.assertTrue("Invalid field readonly.", column.isReadOnly());
     }
 
@@ -154,7 +124,7 @@ public class ColumnTest {
      */
     @Test
     public void testScale() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
+        final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
         Assert.assertEquals("Invalid field scale.", 0, column.getScale());
     }
 
@@ -163,7 +133,7 @@ public class ColumnTest {
      */
     @Test
     public void testSearchable() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
+        final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
         Assert.assertTrue("Invalid field searchable.", column.isSearchable());
 
         final Column column2 = new Column("NAME", ParadoxType.NULL);
@@ -187,7 +157,7 @@ public class ColumnTest {
      */
     @Test
     public void testType() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
+        final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
         Assert.assertEquals("Invalid field type.", ParadoxType.VARCHAR, column.getType());
     }
 
@@ -196,7 +166,7 @@ public class ColumnTest {
      */
     @Test
     public void testWritable() {
-        final Column column = new Column(new ParadoxField(conn, ParadoxType.VARCHAR));
+        final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
         Assert.assertFalse("Invalid field writable.", column.isWritable());
     }
 }

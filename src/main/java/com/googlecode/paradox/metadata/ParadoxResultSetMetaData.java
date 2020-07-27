@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Paradox {@link ResultSetMetaData}.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public final class ParadoxResultSetMetaData implements ResultSetMetaData {
@@ -36,19 +36,19 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     private final List<Column> columns;
 
     /**
-     * The database connection.
+     * The connection information.
      */
-    private final ParadoxConnection conn;
+    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new {@link ResultSetMetaData}.
      *
-     * @param conn    the Paradox connection.
-     * @param columns columns in {@link ResultSet}.
+     * @param connectionInfo the connection information.
+     * @param columns        columns in {@link ResultSet}.
      */
-    public ParadoxResultSetMetaData(final ParadoxConnection conn, final List<Column> columns) {
+    public ParadoxResultSetMetaData(final ConnectionInfo connectionInfo, final List<Column> columns) {
         this.columns = Collections.unmodifiableList(columns);
-        this.conn = conn;
+        this.connectionInfo = connectionInfo;
     }
 
     /**
@@ -57,7 +57,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public String getCatalogName(final int column) throws SQLException {
         this.getColumn(column);
-        return this.conn.getCatalog();
+        return this.connectionInfo.getCatalog();
     }
 
     /**
@@ -144,7 +144,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public String getSchemaName(final int column) throws SQLException {
         this.getColumn(column);
-        return this.conn.getSchema();
+        return this.connectionInfo.getSchema();
     }
 
     /**

@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.date;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL DATE function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -51,7 +51,7 @@ public class DateFunction extends AbstractDateFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
         return ValuesConverter.getDate(values[0]);

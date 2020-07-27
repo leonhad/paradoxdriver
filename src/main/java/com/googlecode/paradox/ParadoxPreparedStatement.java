@@ -29,9 +29,9 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * PreparedStatement implementation class.
+ * {@link PreparedStatement} implementation class.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -80,14 +80,14 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
         final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
         for (final StatementNode statement : statements) {
-            final Plan plan = Planner.create(connection, statement);
+            final Plan plan = Planner.create(connectionInfo, statement);
 
             // One for parameters.
             for (int i = 0; i < executions.size(); i++) {
                 final Object[] params = executions.get(i);
                 final ParadoxType[] types = executionTypes.get(i);
                 try {
-                    plan.execute(this.connection, maxRows, params, types);
+                    plan.execute(this.connectionInfo, maxRows, params, types);
                 } catch (@SuppressWarnings("java:S1166") final InternalException e) {
                     throw e.getCause();
                 }

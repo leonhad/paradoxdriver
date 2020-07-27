@@ -25,7 +25,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link PlanTableNode} class.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public class PlanTableNodeTest {
@@ -63,7 +63,7 @@ public class PlanTableNodeTest {
         TableNode table = new TableNode(null, "areacodes", "alias", null);
 
         PlanTableNode node = new PlanTableNode();
-        node.setTable(conn, table);
+        node.setTable(conn.getConnectionInfo(), table);
 
         Assert.assertEquals("Alias not equals.", "alias", node.getAlias());
         Assert.assertNotNull("Table not equals.", node.getTable());

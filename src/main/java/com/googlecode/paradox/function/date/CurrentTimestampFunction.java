@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.date;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -21,7 +21,7 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIMESTAMP function.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.6.0
  */
 public class CurrentTimestampFunction extends AbstractDateFunction {
@@ -54,9 +54,9 @@ public class CurrentTimestampFunction extends AbstractDateFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         long time = System.currentTimeMillis();
-        return new Timestamp(time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time));
+        return new Timestamp(time + connectionInfo.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time));
     }
 }

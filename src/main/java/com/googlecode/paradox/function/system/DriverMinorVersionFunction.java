@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.system;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -19,7 +19,7 @@ import com.googlecode.paradox.utils.Constants;
 /**
  * The SQL DRIVER_MINOR_VERSION functions.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class DriverMinorVersionFunction extends AbstractSystemFunction {
@@ -47,7 +47,7 @@ public class DriverMinorVersionFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         return Constants.MINOR_VERSION;
     }

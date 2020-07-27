@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.numeric;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -22,7 +22,7 @@ import java.math.RoundingMode;
 /**
  * The SQL ROUND functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class RoundFunction extends AbstractNumericFunction {
@@ -72,7 +72,7 @@ public class RoundFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
         final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
         final Integer decimal = ValuesConverter.getInteger(values[1]);

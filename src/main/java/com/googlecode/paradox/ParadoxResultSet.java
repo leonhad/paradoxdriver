@@ -58,9 +58,9 @@ public final class ParadoxResultSet implements ResultSet {
      */
     private final DataNavigation dataNavigation;
     /**
-     * The connection used in this {@link ResultSet}.
+     * The connection information.
      */
-    private ParadoxConnection connection;
+    private ConnectionInfo connectionInfo;
     /**
      * The amount of rows fetched.
      */
@@ -77,16 +77,16 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * Creates a new {@link ResultSet}.
      *
-     * @param connection the database connection.
-     * @param statement  the {@link Statement} for this {@link ResultSet}.
-     * @param values     row and column values.
-     * @param columns    the columns name.
+     * @param connectionInfo the connection information.
+     * @param statement      the {@link Statement} for this {@link ResultSet}.
+     * @param values         row and column values.
+     * @param columns        the columns name.
      */
-    public ParadoxResultSet(final ParadoxConnection connection, final Statement statement,
+    public ParadoxResultSet(final ConnectionInfo connectionInfo, final Statement statement,
                             final List<? extends Object[]> values, final List<Column> columns) {
         this.statement = statement;
         this.columns = columns;
-        this.connection = connection;
+        this.connectionInfo = connectionInfo;
 
         // Fix column indexes.
         int index = 1;
@@ -146,7 +146,7 @@ public final class ParadoxResultSet implements ResultSet {
     @Override
     public void close() {
         this.dataNavigation.close();
-        this.connection = null;
+        this.connectionInfo = null;
     }
 
     /**
@@ -534,7 +534,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getHoldability() {
-        return this.connection.getHoldability();
+        return this.connectionInfo.getHoldability();
     }
 
     /**
@@ -584,7 +584,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public ResultSetMetaData getMetaData() {
-        return new ParadoxResultSetMetaData(this.connection, this.columns);
+        return new ParadoxResultSetMetaData(this.connectionInfo, this.columns);
     }
 
     /**

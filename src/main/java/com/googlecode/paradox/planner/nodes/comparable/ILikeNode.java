@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Insensitive like node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class ILikeNode extends LikeNode {
@@ -44,18 +44,18 @@ public class ILikeNode extends LikeNode {
     }
 
     @Override
-    public boolean evaluate(final ParadoxConnection connection, final Object[] row, final Object[] parameters,
+    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
                             final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
-        final Object value1 = FieldValueUtils.getValue(connection, row, field, parameters, parameterTypes,
+        final Object value1 = FieldValueUtils.getValue(connectionInfo, row, field, parameters, parameterTypes,
                 columnsLoaded);
-        final Object value2 = FieldValueUtils.getValue(connection, row, last, parameters, parameterTypes,
+        final Object value2 = FieldValueUtils.getValue(connectionInfo, row, last, parameters, parameterTypes,
                 columnsLoaded);
 
         if (value1 == null || value2 == null) {
             return false;
         }
 
-        return Expressions.accept(connection.getLocale(),
+        return Expressions.accept(connectionInfo.getLocale(),
                 ValuesConverter.getString(value1), ValuesConverter.getString(value2), false, escape);
     }
 }

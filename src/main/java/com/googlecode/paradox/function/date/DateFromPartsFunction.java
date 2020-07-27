@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.date;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
 /**
  * The SQL DATE FROM PARTS function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -56,7 +56,7 @@ public class DateFromPartsFunction extends AbstractDateFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
         final Integer year = ValuesConverter.getInteger(values[0]);

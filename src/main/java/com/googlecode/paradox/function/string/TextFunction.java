@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.string;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
 /**
  * The SQL TEXT function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class TextFunction extends AbstractStringFunction {
@@ -49,7 +49,7 @@ public class TextFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
         return values[0].toString();

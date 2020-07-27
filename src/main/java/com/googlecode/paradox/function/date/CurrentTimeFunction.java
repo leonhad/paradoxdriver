@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function.date;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -25,7 +25,7 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.6.0
  */
 public class CurrentTimeFunction extends AbstractDateFunction {
@@ -79,7 +79,7 @@ public class CurrentTimeFunction extends AbstractDateFunction {
     }
 
     @Override
-    public Object execute(final ParadoxConnection connection, final Object[] values, final ParadoxType[] types,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         if (types.length == 1) {
             // This method is keep to adere SQL92 standards. The standards have values between 0 and 6.
@@ -92,7 +92,7 @@ public class CurrentTimeFunction extends AbstractDateFunction {
 
         long time = System.currentTimeMillis();
         return ValuesConverter.removeDate(new Time(
-                time + connection.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)
+                time + connectionInfo.getTimeZone().getOffset(time) - TimeZone.getDefault().getOffset(time)
         ));
     }
 }

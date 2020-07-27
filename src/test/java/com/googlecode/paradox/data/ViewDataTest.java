@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Unit test for {@link ViewData}.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public class ViewDataTest {
@@ -80,7 +80,8 @@ public class ViewDataTest {
      */
     @Test
     public void testListViews() throws Exception {
-        final List<ParadoxView> list = ViewData.listViews(this.conn.getCurrentSchema(), this.conn);
+        final List<ParadoxView> list = ViewData.listViews(this.conn.getConnectionInfo().getCurrentSchema(),
+                this.conn.getConnectionInfo());
         Assert.assertEquals("Invalid views", 1, list.size());
         Assert.assertEquals("Invalid view name.", "AREAS", list.get(0).getName());
     }
@@ -90,8 +91,8 @@ public class ViewDataTest {
      */
     @Test
     public void testParseExpression() {
-        final ParadoxField field = new ParadoxField(conn, ParadoxType.VARCHAR);
-        ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS TOTAL_COST");
+        final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
+        ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS TOTAL_COST", conn.getConnectionInfo());
         Assert.assertTrue("Field is not checked.", field.isChecked());
         Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());
         Assert.assertEquals("Invalid field name.", "CALC _PC*_QTD", field.getExpression());

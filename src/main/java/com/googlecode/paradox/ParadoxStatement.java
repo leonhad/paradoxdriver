@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * JDBC statement implementation.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")
@@ -61,7 +61,7 @@ class ParadoxStatement implements Statement {
     /**
      * The Paradox connection.
      */
-    protected ParadoxConnection connection;
+    private final ParadoxConnection connection;
     /**
      * Auto generated keys.
      */
@@ -102,15 +102,23 @@ class ParadoxStatement implements Statement {
      * The query timeout.
      */
     private int queryTimeout;
+    /**
+     * The connection information.
+     */
+    protected ConnectionInfo connectionInfo;
 
     /**
      * Creates a statement.
      *
-     * @param connection the paradox connection.
+     * @param connection           the Paradox connection.
+     * @param resultSetConcurrency the result set concurrency.
+     * @param resultSetHoldability the result set holdability.
+     * @param resultSetType        the result set type.
      */
     ParadoxStatement(final ParadoxConnection connection, final int resultSetType, final int resultSetConcurrency,
                      final int resultSetHoldability) {
         this.connection = connection;
+        this.connectionInfo = connection.getConnectionInfo();
         this.resultSetType = resultSetType;
         this.resultSetConcurrency = resultSetConcurrency;
         this.resultSetHoldability = resultSetHoldability;
@@ -121,10 +129,10 @@ class ParadoxStatement implements Statement {
         final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
         for (final StatementNode statement : statements) {
-            final Plan plan = Planner.create(connection, statement);
+            final Plan plan = Planner.create(connectionInfo, statement);
             activeExecutions.add(plan);
             try {
-                plan.execute(this.connection, maxRows, null, null);
+                plan.execute(this.connectionInfo, maxRows, null, null);
             } catch (@SuppressWarnings("java:S1166") final InternalException e) {
                 throw e.getCause();
             } finally {
@@ -140,7 +148,7 @@ class ParadoxStatement implements Statement {
     protected List<Integer> executeSelectStatement(final Plan plan) throws SQLException {
         ArrayList<Integer> ret = new ArrayList<>();
         if (plan instanceof SelectPlan) {
-            final ParadoxResultSet resultSet = new ParadoxResultSet(this.connection, this,
+            final ParadoxResultSet resultSet = new ParadoxResultSet(this.connectionInfo, this,
                     ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
             resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
             resultSet.setType(resultSetType);
@@ -200,7 +208,7 @@ class ParadoxStatement implements Statement {
         this.statements.clear();
 
         this.closed = true;
-        this.connection = null;
+        this.connectionInfo = null;
     }
 
     /**
@@ -368,7 +376,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public ResultSet getGeneratedKeys() {
-        return new ParadoxResultSet(this.connection, this, new ArrayList<>(), new ArrayList<>());
+        return new ParadoxResultSet(this.connectionInfo, this, new ArrayList<>(), new ArrayList<>());
     }
 
     /**

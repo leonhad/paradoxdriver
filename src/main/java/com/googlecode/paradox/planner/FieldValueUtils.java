@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Field processing utilities.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public final class FieldValueUtils {
@@ -174,7 +174,7 @@ public final class FieldValueUtils {
     /**
      * Gets the row value based on field node.
      *
-     * @param connection     the Paradox connection.
+     * @param connectionInfo the connection information.
      * @param row            the row with values.
      * @param field          the field node with column data.
      * @param parameters     the parameters list.
@@ -183,14 +183,14 @@ public final class FieldValueUtils {
      * @return the column value.
      * @throws SQLException in case of conversion failures.
      */
-    public static Object getValue(final ParadoxConnection connection, final Object[] row, final FieldNode field,
+    public static Object getValue(final ConnectionInfo connectionInfo, final Object[] row, final FieldNode field,
                                   final Object[] parameters, final ParadoxType[] parameterTypes,
                                   final List<Column> columnsLoaded) throws SQLException {
         Object ret;
         if (field instanceof ParameterNode) {
             ret = ((ParameterNode) field).getValue(parameters);
         } else if (field instanceof FunctionNode) {
-            ret = ((FunctionNode) field).execute(connection, row, parameters, parameterTypes, columnsLoaded);
+            ret = ((FunctionNode) field).execute(connectionInfo, row, parameters, parameterTypes, columnsLoaded);
         } else if (field.getIndex() == -1) {
             // Not a table field.
             ret = field.getName();

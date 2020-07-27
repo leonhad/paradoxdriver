@@ -91,7 +91,7 @@ public final class BCDField implements FieldParser {
             sb.insert(0, '-');
         }
 
-        if (field.getConnection().isBcdRounding()) {
+        if (table.getConnectionInfo().isBcdRounding()) {
             return Double.valueOf(sb.toString());
         }
 

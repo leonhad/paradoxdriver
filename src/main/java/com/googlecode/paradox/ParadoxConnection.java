@@ -10,14 +10,12 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.rowset.ParadoxBlob;
 import com.googlecode.paradox.rowset.ParadoxClob;
-import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
@@ -26,42 +24,19 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * JDBC Paradox connection implementation.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class ParadoxConnection implements Connection {
 
-    public static final String INFORMATION_SCHEMA = "information_schema";
-    /**
-     * Database catalog.
-     */
-    private final File catalog;
     /**
      * Stores the opened statements.
      */
     private final ArrayList<Statement> statements = new ArrayList<>();
-    /**
-     * Driver URL.
-     */
-    private final String url;
-    /**
-     * Default charset.
-     */
-    private final Charset charset;
-    /**
-     * Connection locale.
-     */
-    private final Locale locale;
-    /**
-     * Time zone.
-     */
-    private final TimeZone timeZone;
     /**
      * Auto Commit flag.
      */
@@ -75,10 +50,6 @@ public final class ParadoxConnection implements Connection {
      */
     private boolean closed;
     /**
-     * This connection holdability.
-     */
-    private int holdability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
-    /**
      * Default timeout.
      */
     private int networkTimeout;
@@ -86,10 +57,6 @@ public final class ParadoxConnection implements Connection {
      * If this connection is read only.
      */
     private boolean readonly = true;
-    /**
-     * Selected Schema.
-     */
-    private File schema;
     /**
      * Stores the transaction isolation mode.
      */
@@ -99,9 +66,9 @@ public final class ParadoxConnection implements Connection {
      */
     private Map<String, Class<?>> typeMap;
     /**
-     * BCD field precision.
+     * The connection property information.
      */
-    private final boolean bcdRounding;
+    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new paradox connection.
@@ -113,20 +80,19 @@ public final class ParadoxConnection implements Connection {
      */
     @SuppressWarnings("i18n-java:V1019")
     public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
-        this.url = url;
-
         if (!dir.exists() && !dir.isDirectory()) {
             throw new ParadoxConnectionException(ParadoxConnectionException.Error.DIRECTORY_NOT_FOUND);
         }
 
-        this.charset = getProperty(Driver.CHARSET_KEY, info, null, Charset::forName);
-        this.locale = getProperty(Driver.LOCALE_KEY, info, Locale.US, Locale::forLanguageTag);
-        this.bcdRounding = getProperty(Driver.BCD_ROUNDING_KEY, info, true, Boolean::parseBoolean);
-        this.timeZone = getProperty(Driver.TIME_ZONE_KEY, info, TimeZone.getDefault(), TimeZone::getTimeZone);
+        this.connectionInfo = new ConnectionInfo(url);
+        connectionInfo.setCharset(getProperty(Driver.CHARSET_KEY, info, null, Charset::forName));
+        connectionInfo.setLocale(getProperty(Driver.LOCALE_KEY, info, Locale.US, Locale::forLanguageTag));
+        connectionInfo.setBcdRounding(getProperty(Driver.BCD_ROUNDING_KEY, info, true, Boolean::parseBoolean));
+        connectionInfo.setTimeZone(getProperty(Driver.TIME_ZONE_KEY, info, TimeZone.getDefault(),
+                TimeZone::getTimeZone));
 
-        // Is a schema.
-        this.schema = dir;
-        this.catalog = dir.getParentFile();
+        connectionInfo.setCurrentSchema(dir);
+        connectionInfo.setCurrentCatalog(dir.getParentFile());
     }
 
     /**
@@ -238,7 +204,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency) {
-        return createStatement(resultSetType, resultSetConcurrency, holdability);
+        return createStatement(resultSetType, resultSetConcurrency, connectionInfo.getHoldability());
     }
 
     /**
@@ -282,7 +248,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getCatalog() {
-        return "DATABASE";
+        return connectionInfo.getCatalog();
     }
 
     /**
@@ -318,20 +284,11 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * Gets the current schema directory.
-     *
-     * @return the current schema directory.
-     */
-    public File getCurrentSchema() {
-        return this.schema;
-    }
-
-    /**
      * {@inheritDoc}.
      */
     @Override
     public int getHoldability() {
-        return this.holdability;
+        return this.connectionInfo.getHoldability();
     }
 
     /**
@@ -339,7 +296,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setHoldability(final int holdability) {
-        this.holdability = holdability;
+        this.connectionInfo.setHoldability(holdability);
     }
 
     /**
@@ -363,7 +320,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getSchema() {
-        return this.schema.getName();
+        return this.connectionInfo.getSchema();
     }
 
     /**
@@ -371,11 +328,12 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setSchema(final String schema) throws SQLException {
-        final File file = new File(this.catalog, schema);
+        final File file = new File(this.connectionInfo.getCurrentCatalog(), schema);
         if (!file.isDirectory()) {
             throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
         }
-        this.schema = file;
+
+        this.connectionInfo.setCurrentSchema(file);
     }
 
     /**
@@ -419,7 +377,7 @@ public final class ParadoxConnection implements Connection {
      * @return the URL connection
      */
     public String getUrl() {
-        return this.url;
+        return this.connectionInfo.getUrl();
     }
 
     /**
@@ -487,53 +445,6 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * List the connections schema in selected catalog.
-     *
-     * @param catalog       the database catalog.
-     * @param schemaPattern the schema pattern.
-     * @return the schema directories.
-     */
-    public List<String> getSchemas(final String catalog, final String schemaPattern) {
-        final List<String> ret = new ArrayList<>();
-        if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
-            final File[] schemas = this.catalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
-            if (schemas != null) {
-                ret.addAll(Stream.of(schemas).filter(Objects::nonNull).map(File::getName).collect(Collectors.toList()));
-            }
-
-            if (schemaPattern == null
-                    || Expressions.accept(this.locale, INFORMATION_SCHEMA, schemaPattern, false, '\\')) {
-                ret.add(INFORMATION_SCHEMA);
-            }
-
-            ret.sort(Comparator.comparing(a -> a));
-        }
-
-        return ret;
-    }
-
-    /**
-     * List the connections schema in selected catalog.
-     *
-     * @param catalog       the database catalog.
-     * @param schemaPattern the schema pattern.
-     * @return the schema directories.
-     */
-    public List<File> getSchemaFiles(final String catalog, final String schemaPattern) {
-        if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
-            final File[] schemas = this.catalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
-            if (schemas != null) {
-                return Stream.of(schemas)
-                        .filter(Objects::nonNull)
-                        .sorted(Comparator.comparing(a -> a))
-                        .collect(Collectors.toList());
-            }
-        }
-
-        return Collections.emptyList();
-    }
-
-    /**
      * {@inheritDoc}.
      */
     @Override
@@ -556,7 +467,7 @@ public final class ParadoxConnection implements Connection {
     @Override
     public PreparedStatement prepareStatement(final String sql, final int resultSetType,
                                               final int resultSetConcurrency) throws SQLException {
-        return prepareStatement(sql, resultSetType, resultSetConcurrency, holdability);
+        return prepareStatement(sql, resultSetType, resultSetConcurrency, connectionInfo.getHoldability());
     }
 
     /**
@@ -565,7 +476,7 @@ public final class ParadoxConnection implements Connection {
     @Override
     public PreparedStatement prepareStatement(final String sql, final int autoGeneratedKeys) throws SQLException {
         final PreparedStatement statement = prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
-                ResultSet.CONCUR_READ_ONLY, holdability);
+                ResultSet.CONCUR_READ_ONLY, connectionInfo.getHoldability());
         ((ParadoxPreparedStatement) statement).setAutoGeneratedKeys(autoGeneratedKeys);
         return statement;
     }
@@ -586,7 +497,7 @@ public final class ParadoxConnection implements Connection {
     public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency,
                                               final int resultSetHoldability) throws SQLException {
         final ParadoxPreparedStatement statement = new ParadoxPreparedStatement(this, sql, resultSetType,
-                resultSetConcurrency, holdability);
+                resultSetConcurrency, connectionInfo.getHoldability());
         this.statements.add(statement);
         return statement;
     }
@@ -664,24 +575,6 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * Gets the default charset.
-     *
-     * @return the default charset.
-     */
-    public Charset getCharset() {
-        return charset;
-    }
-
-    /**
-     * Gets the connection locale.
-     *
-     * @return the connection locale.
-     */
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
      * {@inheritDoc}.
      */
     @Override
@@ -690,20 +583,11 @@ public final class ParadoxConnection implements Connection {
     }
 
     /**
-     * Gets the BCD rounding.
+     * Gets the connection information.
      *
-     * @return <code>true</code> if the BCD rounding is enabled.
+     * @return the connection information.
      */
-    public boolean isBcdRounding() {
-        return bcdRounding;
-    }
-
-    /**
-     * Gets the connection time zone.
-     *
-     * @return the connection time zone.
-     */
-    public TimeZone getTimeZone() {
-        return timeZone;
+    public ConnectionInfo getConnectionInfo() {
+        return connectionInfo;
     }
 }

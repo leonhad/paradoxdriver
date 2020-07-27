@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -98,7 +98,7 @@ public class SelectPlanTest {
         TableNode table = new TableNode(null, AREA_CODES, "test", null);
 
         PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn, table);
+        tableNode.setTable(conn.getConnectionInfo(), table);
         plan.addTable(tableNode);
 
         plan.addColumn(new FieldNode("test", "ac", null));
@@ -128,7 +128,7 @@ public class SelectPlanTest {
         TableNode table = new TableNode(null, AREA_CODES, "test", null);
 
         PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn, table);
+        tableNode.setTable(conn.getConnectionInfo(), table);
         plan.addTable(tableNode);
 
         plan.addColumn(new FieldNode("test2", "ac", null));
@@ -175,7 +175,7 @@ public class SelectPlanTest {
         final List<StatementNode> list = parser.parse();
         Assert.assertEquals("Invalid list size", 1, list.size());
 
-        final Plan plan = Planner.create(conn, list.get(0));
+        final Plan plan = Planner.create(conn.getConnectionInfo(), list.get(0));
         Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;
@@ -203,7 +203,7 @@ public class SelectPlanTest {
         final List<StatementNode> list = parser.parse();
         Assert.assertEquals("Invalid list size", 1, list.size());
 
-        final Plan plan = Planner.create(conn, list.get(0));
+        final Plan plan = Planner.create(conn.getConnectionInfo(), list.get(0));
         Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;
@@ -230,7 +230,7 @@ public class SelectPlanTest {
         final List<StatementNode> list = parser.parse();
         Assert.assertEquals("Invalid list size", 1, list.size());
 
-        final Plan plan = Planner.create(conn, list.get(0));
+        final Plan plan = Planner.create(conn.getConnectionInfo(), list.get(0));
         Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;

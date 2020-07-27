@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.function;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 /**
  * SQL function interface.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public abstract class AbstractFunction {
@@ -107,14 +107,14 @@ public abstract class AbstractFunction {
     /**
      * Execute the function.
      *
-     * @param connection the Paradox connection.
-     * @param values     the row values.
-     * @param types      the fields SQL type.
-     * @param fields     the original field list.
+     * @param connectionInfo the connection information.
+     * @param values         the row values.
+     * @param types          the fields SQL type.
+     * @param fields         the original field list.
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    public abstract Object execute(final ParadoxConnection connection, final Object[] values,
+    public abstract Object execute(final ConnectionInfo connectionInfo, final Object[] values,
                                    final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
 
     /**

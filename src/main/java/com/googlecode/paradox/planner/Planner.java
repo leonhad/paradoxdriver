@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner;
 
-import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.*;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SQL execution plan.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public class Planner {
@@ -44,16 +44,16 @@ public class Planner {
     /**
      * Parses the table metadata.
      *
-     * @param connection the Paradox connection.
-     * @param statement  the SELECT statement.
-     * @param plan       the select execution plan.
+     * @param connectionInfo the connection information.
+     * @param statement      the SELECT statement.
+     * @param plan           the select execution plan.
      * @throws SQLException in case of parse errors.
      */
-    private static void parseTableMetaData(final ParadoxConnection connection, final SelectNode statement,
+    private static void parseTableMetaData(final ConnectionInfo connectionInfo, final SelectNode statement,
                                            final SelectPlan plan) throws SQLException {
         for (final TableNode table : statement.getTables()) {
             final PlanTableNode node = new PlanTableNode();
-            node.setTable(connection, table);
+            node.setTable(connectionInfo, table);
             plan.addTable(node);
         }
     }
@@ -132,16 +132,16 @@ public class Planner {
     /**
      * Create a plan from given statement.
      *
-     * @param connection the Paradox connection.
-     * @param statement  the statement to plan.
+     * @param connectionInfo the connection information.
+     * @param statement      the statement to plan.
      * @return the execution plan.
      * @throws SQLException in case of plan errors.
      */
-    public static Plan create(final ParadoxConnection connection, final StatementNode statement)
+    public static Plan create(final ConnectionInfo connectionInfo, final StatementNode statement)
             throws SQLException {
         Plan ret;
         if (statement instanceof SelectNode) {
-            ret = createSelect(connection, (SelectNode) statement);
+            ret = createSelect(connectionInfo, (SelectNode) statement);
         } else {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
@@ -154,17 +154,17 @@ public class Planner {
     /**
      * Creates an SELECT plan.
      *
-     * @param connection the Paradox connection.
-     * @param statement  the statement to parse.
+     * @param connectionInfo the connection information.
+     * @param statement      the statement to parse.
      * @return the SELECT plan.
      * @throws SQLException in case of syntax error.
      */
-    private static Plan createSelect(final ParadoxConnection connection, final SelectNode statement)
+    private static Plan createSelect(final ConnectionInfo connectionInfo, final SelectNode statement)
             throws SQLException {
         final SelectPlan plan = new SelectPlan(statement.getCondition(), statement.isDistinct());
 
         // Load the table metadata.
-        parseTableMetaData(connection, statement, plan);
+        parseTableMetaData(connectionInfo, statement, plan);
         parseColumns(statement, plan);
 
         // Needs to be the last one always because of the hidden columns.
