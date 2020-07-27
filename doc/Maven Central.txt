@@ -1,6 +1,0 @@
-Maven Central
-
-http://jroller.com/holy/entry/releasing_a_project_to_maven
-http://maven.apache.org/guides/mini/guide-central-repository-upload.html
-http://central.sonatype.org/pages/producers.html
-http://central.sonatype.org/pages/ossrh-guide.html
