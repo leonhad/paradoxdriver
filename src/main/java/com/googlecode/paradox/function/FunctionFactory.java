@@ -12,7 +12,6 @@ package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.function.date.*;
 import com.googlecode.paradox.function.general.*;
-import com.googlecode.paradox.function.grouping.CountFunction;
 import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.*;
@@ -77,9 +76,6 @@ public final class FunctionFactory {
         FUNCTIONS.put(NullIfFunction.NAME, NullIfFunction::new);
         FUNCTIONS.put(NvlFunction.NAME, NvlFunction::new);
         FUNCTIONS.put(NumericFunction.NAME, NumericFunction::new);
-
-        // Grouping functions.
-        FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
 
         // Numeric functions.
         FUNCTIONS.put(AbsFunction.NAME, AbsFunction::new);
