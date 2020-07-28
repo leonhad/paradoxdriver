@@ -17,16 +17,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * PARADOX JDBC Driver type 4.
  *
- * @version 2.4
+ * @version 2.5
  * @since 1.0
  */
 @SuppressWarnings("squid:S2176")
@@ -98,7 +96,7 @@ public final class Driver implements java.sql.Driver {
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
-        return ConnectionInfo.getMetadata(info);
+        return ConnectionInfo.getMetaData(info);
     }
 
     /**

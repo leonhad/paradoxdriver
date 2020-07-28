@@ -141,6 +141,39 @@ public class ParadoxConnectionTest {
     }
 
     /**
+     * Test for schema switch.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testSchemaSwitch() throws SQLException {
+        try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
+            Assert.assertEquals("Invalid schema name", "db", conn.getSchema());
+
+            conn.setSchema("fields");
+            Assert.assertEquals("Invalid schema name", "fields", conn.getSchema());
+        }
+    }
+
+    /**
+     * Test for schema switch with catalog enabled.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testSchemaSwitchWithCatalog() throws SQLException {
+        Properties info = new Properties();
+        info.put(ConnectionInfo.ENABLE_CATALOG_KEY, "true");
+
+        try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
+            Assert.assertEquals("Invalid schema name", "db", conn.getSchema());
+
+            conn.setSchema("fields");
+            Assert.assertEquals("Invalid schema name", "fields", conn.getSchema());
+        }
+    }
+
+    /**
      * Test for default BCD rounding.
      *
      * @throws SQLException in case of failures.

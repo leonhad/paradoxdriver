@@ -10,12 +10,14 @@
  */
 package com.googlecode.paradox.exceptions;
 
+import com.googlecode.paradox.parser.ScannerPosition;
+
 import java.sql.SQLDataException;
 
 /**
  * Exception related to data errors.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ParadoxDataException extends SQLDataException {
@@ -57,6 +59,18 @@ public class ParadoxDataException extends SQLDataException {
      */
     public ParadoxDataException(final Error error, final Object... parameter) {
         super(ExceptionUtils.message(error.description, parameter), SQL_STATE,
+                Integer.parseInt(BASE_CODE + error.code));
+    }
+
+    /**
+     * The connection error exception.
+     *
+     * @param error     the error.
+     * @param position  the current scanner position.
+     * @param parameter message parameters.
+     */
+    public ParadoxDataException(final Error error, final ScannerPosition position, final Object... parameter) {
+        super(ExceptionUtils.message(error.description, position, parameter), SQL_STATE,
                 Integer.parseInt(BASE_CODE + error.code));
     }
 
@@ -119,7 +133,7 @@ public class ParadoxDataException extends SQLDataException {
         /**
          * Table not found.
          */
-        TABLE_NOT_FOUND("009", "Table %s not found."),
+        TABLE_NOT_FOUND("009", "Table %s not found"),
 
         /**
          * Error trying to load a lob head block.

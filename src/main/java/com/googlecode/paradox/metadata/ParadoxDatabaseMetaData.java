@@ -16,6 +16,7 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.FunctionType;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.sql.*;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Creates an database metadata.
@@ -539,13 +541,13 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getCatalogs() {
+    public ResultSet getCatalogs() throws ParadoxDataException {
         final List<Column> columns = Collections
                 .singletonList(new Column(ParadoxDatabaseMetaData.TABLE_CAT, ParadoxType.VARCHAR));
 
-        final List<Object[]> values = Collections.singletonList(new Object[]{
-                this.connectionInfo.getCatalog()
-        });
+        final List<Object[]> values = connectionInfo.listCatalogs().stream()
+                .map(name -> new Object[]{name})
+                .collect(Collectors.toList());
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
@@ -969,15 +971,14 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getSchemas(final String catalog, final String schemaPattern) {
+    public ResultSet getSchemas(final String catalog, final String schemaPattern) throws ParadoxDataException {
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
         columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
 
-        final List<String[]> values = new ArrayList<>();
-        for (final String schema : this.connectionInfo.getSchemas(catalog, schemaPattern)) {
-            values.add(new String[]{schema, catalog});
-        }
+        final List<String[]> values = this.connectionInfo.getSchemas(catalog, schemaPattern).stream()
+                .map(schema -> new String[]{schema, catalog})
+                .collect(Collectors.toList());
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
@@ -1059,17 +1060,16 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getSchemas() {
+    public ResultSet getSchemas() throws ParadoxDataException {
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
         columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
 
         final String catalog = this.connectionInfo.getCatalog();
 
-        final List<String[]> values = new ArrayList<>();
-        for (final String schema : this.connectionInfo.getSchemas(this.connectionInfo.getCatalog(), null)) {
-            values.add(new String[]{schema, catalog});
-        }
+        final List<String[]> values = this.connectionInfo.getSchemas(catalog, null).stream()
+                .map(schema -> new String[]{schema, catalog})
+                .collect(Collectors.toList());
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }

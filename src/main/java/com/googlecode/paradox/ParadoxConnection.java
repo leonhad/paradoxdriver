@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox;
 
+import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
@@ -299,12 +300,14 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setSchema(final String schema) throws SQLException {
-        final File file = new File(this.connectionInfo.getCurrentCatalog(), schema);
-        if (!file.isDirectory()) {
+        final File[] schemas = this.connectionInfo.getCurrentCatalog()
+                .listFiles(new DirectoryFilter(connectionInfo.getLocale(), schema));
+
+        if (schemas == null || schemas.length != 1) {
             throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
         }
 
-        this.connectionInfo.setCurrentSchema(file);
+        this.connectionInfo.setCurrentSchema(schemas[0]);
     }
 
     /**

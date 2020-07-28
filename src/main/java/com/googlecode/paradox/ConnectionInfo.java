@@ -13,7 +13,6 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -55,10 +54,6 @@ public final class ConnectionInfo {
 
     public static final boolean DEFAULT_ENABLE_CATALOG = false;
 
-    /**
-     * Information schema name.
-     */
-    public static final String INFORMATION_SCHEMA = "information_schema";
     /**
      * Driver URL.
      */
@@ -133,24 +128,38 @@ public final class ConnectionInfo {
      * @param schemaPattern the schema pattern.
      * @return the schema directories.
      */
-    public List<String> getSchemas(final String catalog, final String schemaPattern) {
-        final List<String> ret = new ArrayList<>();
-        if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
-            final File[] schemas = this.currentCatalog.listFiles(
-                    new DirectoryFilter(this.locale, schemaPattern));
-            if (schemas != null) {
-                ret.addAll(Stream.of(schemas).filter(Objects::nonNull).map(File::getName).collect(Collectors.toList()));
+    public List<String> getSchemas(final String catalog, final String schemaPattern) throws ParadoxDataException {
+        File[] catalogs = null;
+
+        if (!enableCatalogChange) {
+            if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
+                catalogs = new File[]{
+                        currentCatalog
+                };
+            }
+        } else {
+            File parent = currentCatalog.getParentFile();
+            if (!parent.isDirectory()) {
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
             }
 
-            if (schemaPattern == null
-                    || Expressions.accept(this.locale, INFORMATION_SCHEMA,
-                    schemaPattern, false, '\\')) {
-                ret.add(INFORMATION_SCHEMA);
-            }
-
-            ret.sort(Comparator.comparing(a -> a));
+            catalogs = parent.listFiles(new DirectoryFilter(locale, catalog));
         }
 
+        final List<String> ret = new ArrayList<>();
+        if (catalogs != null) {
+            for (final File catalogFile : catalogs) {
+                final File[] schemas = catalogFile.listFiles(new DirectoryFilter(this.locale, schemaPattern));
+                if (schemas != null) {
+                    ret.addAll(Stream.of(schemas)
+                            .filter(Objects::nonNull)
+                            .map(File::getName)
+                            .collect(Collectors.toList()));
+                }
+            }
+        }
+
+        ret.sort(String::compareTo);
         return ret;
     }
 
@@ -248,7 +257,7 @@ public final class ConnectionInfo {
     }
 
     @SuppressWarnings("i18n-java:V1017")
-    public static DriverPropertyInfo[] getMetadata(final Properties info) {
+    public static DriverPropertyInfo[] getMetaData(final Properties info) {
         final String charsetValue = getPropertyValue(CHARSET_KEY, null, info);
         final String localeValue = getPropertyValue(LOCALE_KEY, DEFAULT_LOCALE.toLanguageTag(), info);
         final String bcdRounding = getPropertyValue(BCD_ROUNDING_KEY, String.valueOf(DEFAULT_BCD_ROUND), info);
@@ -295,6 +304,10 @@ public final class ConnectionInfo {
 
     public void setCatalog(final String name) throws SQLException {
         if (!enableCatalogChange) {
+            if ("DB".equalsIgnoreCase(name)) {
+                return;
+            }
+
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CATALOG_CHANGE);
         }
 
@@ -309,6 +322,29 @@ public final class ConnectionInfo {
         }
 
         this.currentCatalog = newCatalog;
+    }
+
+    public List<String> listCatalogs() throws ParadoxDataException {
+        final List<String> catalogs = new ArrayList<>();
+        if (enableCatalogChange) {
+            final File parent = this.currentCatalog.getParentFile();
+            if (!parent.isDirectory()) {
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+            }
+
+            final File[] catalogFiles = parent.listFiles(new DirectoryFilter(locale));
+            if (catalogFiles != null) {
+                catalogs.addAll(Arrays.stream(catalogFiles)
+                        .filter(File::isDirectory)
+                        .map(File::getName)
+                        .collect(Collectors.toList())
+                );
+            }
+        }
+
+        catalogs.add(getCatalog());
+        catalogs.sort(String::compareTo);
+        return catalogs;
     }
 
     /**
@@ -378,7 +414,7 @@ public final class ConnectionInfo {
      *
      * @param currentSchema the current connection schema.
      */
-    public void setCurrentSchema(File currentSchema) {
+    public void setCurrentSchema(final File currentSchema) {
         this.currentSchema = currentSchema;
     }
 
@@ -387,14 +423,18 @@ public final class ConnectionInfo {
     }
 
     public String getCatalog() {
-        return currentCatalog.getName();
+        if (enableCatalogChange) {
+            return currentCatalog.getName();
+        }
+
+        return "DB";
     }
 
-    public File getCurrentCatalog() {
+    File getCurrentCatalog() {
         return currentCatalog;
     }
 
-    public void setCurrentCatalog(File currentCatalog) {
+    void setCurrentCatalog(final File currentCatalog) {
         this.currentCatalog = currentCatalog;
     }
 
@@ -402,7 +442,7 @@ public final class ConnectionInfo {
         return holdability;
     }
 
-    public void setHoldability(int holdability) {
+    public void setHoldability(final int holdability) {
         this.holdability = holdability;
     }
 }
