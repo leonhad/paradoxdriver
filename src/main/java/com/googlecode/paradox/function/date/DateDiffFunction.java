@@ -22,64 +22,44 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.Utils;
 
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
- * The SQL EXTRACT function.
+ * The SQL DATEDIFF function.
  *
  * @version 1.5
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
-public class ExtractFunction extends AbstractDateFunction {
+public class DateDiffFunction extends AbstractDateFunction {
 
     /**
      * The function name.
      */
-    public static final String NAME = "EXTRACT";
-
+    public static final String NAME = "DATEDIFF";
+    /**
+     * Column parameter list.
+     */
+    private static final Column[] COLUMNS = {
+            new Column(null, ParadoxType.LONG, "The difference between dates.", 0, false, RESULT),
+            new Column("interval", ParadoxType.VARCHAR, "The date interval to compare.", 1, false, IN),
+            new Column("start_date", ParadoxType.TIMESTAMP, "The start date.", 2, false, IN),
+            new Column("end_date", ParadoxType.TIMESTAMP, "The end date.", 3, false, IN)
+    };
     /**
      * Time interval type.
      */
     private TimeIntervalType type;
 
-    /**
-     * Column parameter list.
-     */
-    private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.INTEGER, "The part of the.", 0, false, RESULT),
-            new Column("date_part", ParadoxType.VARCHAR, "The part name to extract.", 1, false, IN),
-            new Column("date", ParadoxType.TIMESTAMP, "The date to extract.", 2, false, IN)
-    };
-
-    private static Calendar getTime(final Object value) {
-        Time time = ValuesConverter.getTime(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(time);
-        return c;
-    }
-
-    private static Calendar getTimestamp(final Object value) {
-        Timestamp timestamp = ValuesConverter.getTimestamp(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(timestamp);
-        return c;
-    }
-
-    private static Calendar getDate(final Object value) {
-        Date time = ValuesConverter.getDate(value);
-        Calendar c = Calendar.getInstance();
-        c.setTime(time);
-        return c;
-    }
-
     @Override
     public String getRemarks() {
-        return "Extract a value from date/time.";
+        return "Returns the difference between two dates.";
     }
 
     @Override
@@ -91,39 +71,50 @@ public class ExtractFunction extends AbstractDateFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final Object value = values[1];
+        final Timestamp beginDate = ValuesConverter.getTimestamp(values[1]);
+        final Timestamp endDate = ValuesConverter.getTimestamp(values[2]);
+        if (beginDate == null || endDate == null) {
+            return null;
+        }
 
-        int ret = 0;
+        final Instant localBeginDate = Instant.ofEpochMilli(beginDate.getTime());
+        final Instant localEndDate = Instant.ofEpochMilli(endDate.getTime());
+
+        final ZoneId zoneId = ZoneId.of(connectionInfo.getTimeZone().getID());
+        final LocalDateTime localDate1 = LocalDateTime.ofInstant(localBeginDate, zoneId);
+        final LocalDateTime localDate2 = LocalDateTime.ofInstant(localEndDate, zoneId);
+        final Period period = Period.between(localDate1.toLocalDate(), localDate2.toLocalDate());
+
+        long ret = 0;
         switch (type) {
             case MILLISECOND:
-                ret = getTimestamp(value).get(Calendar.MILLISECOND);
+                ret = ChronoUnit.MILLIS.between(localBeginDate, localEndDate);
                 break;
             case SECOND:
-                ret = getTime(value).get(Calendar.SECOND);
+                ret = ChronoUnit.SECONDS.between(localBeginDate, localEndDate);
                 break;
             case MINUTE:
-                ret = getTime(value).get(Calendar.MINUTE);
+                ret = ChronoUnit.MINUTES.between(localBeginDate, localEndDate);
                 break;
             case HOUR:
-                ret = getTime(value).get(Calendar.HOUR_OF_DAY);
+                ret = ChronoUnit.HOURS.between(localBeginDate, localEndDate);
                 break;
             case DAY:
-                ret = getDate(value).get(Calendar.DAY_OF_MONTH);
-                break;
+                // Same as days of the year.
             case DAYOFYEAR:
-                ret = getDate(value).get(Calendar.DAY_OF_YEAR);
+                ret = ChronoUnit.DAYS.between(localBeginDate, localEndDate);
                 break;
             case MONTH:
-                ret = getDate(value).get(Calendar.MONTH) + 1;
+                ret = period.toTotalMonths();
                 break;
             case YEAR:
-                ret = getDate(value).get(Calendar.YEAR);
+                ret = period.getYears();
                 break;
             case WEEK:
-                ret = getDate(value).get(Calendar.WEEK_OF_YEAR);
+                ret = ChronoUnit.DAYS.between(localBeginDate, localEndDate) / 7;
                 break;
             case QUARTER:
-                ret = (getDate(value).get(Calendar.MONTH) / 3) + 1;
+                ret = period.toTotalMonths() / 3;
                 break;
         }
 
