@@ -64,7 +64,6 @@ public class HourFunction extends AbstractDateFunction {
         final Calendar c = Calendar.getInstance();
         c.setTime(time);
 
-        // TODO more than 24 hours.
         return c.get(Calendar.HOUR_OF_DAY);
     }
 }
