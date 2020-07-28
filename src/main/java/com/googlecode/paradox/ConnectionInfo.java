@@ -321,6 +321,14 @@ public final class ConnectionInfo {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_NAME, name);
         }
 
+        final File[] schemas = newCatalog.listFiles(new DirectoryFilter(locale));
+        if (schemas != null && schemas.length > 0) {
+            // Default to the first schema.
+            currentSchema = schemas[0];
+        } else {
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+        }
+
         this.currentCatalog = newCatalog;
     }
 
@@ -336,6 +344,11 @@ public final class ConnectionInfo {
             if (catalogFiles != null) {
                 catalogs.addAll(Arrays.stream(catalogFiles)
                         .filter(File::isDirectory)
+                        .filter((File catalog) -> {
+                            // Not showing catalogs without schemas.
+                            final File[] schemas = catalog.listFiles(new DirectoryFilter(locale));
+                            return schemas != null && schemas.length > 0;
+                        })
                         .map(File::getName)
                         .collect(Collectors.toList())
                 );
