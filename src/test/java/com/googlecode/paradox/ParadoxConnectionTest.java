@@ -289,4 +289,14 @@ public class ParadoxConnectionTest {
         conn.close();
         Assert.assertTrue("Invalid connection state", conn.isClosed());
     }
+
+    /**
+     * Test for connection in root.
+     */
+    @Test
+    @SuppressWarnings("java:S2095")
+    public void testRoot() {
+        Assert.assertThrows("Invalid connection in root", ParadoxConnectionException.class,
+                () -> DriverManager.getConnection("jdbc:paradox:/"));
+    }
 }

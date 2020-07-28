@@ -334,7 +334,7 @@ public final class ConnectionInfo {
 
     public List<String> listCatalogs() throws ParadoxDataException {
         final List<String> catalogs = new ArrayList<>();
-        if (enableCatalogChange) {
+        if (enableCatalogChange && currentCatalog.getParent() != null) {
             final File parent = this.currentCatalog.getParentFile();
             if (!parent.isDirectory()) {
                 throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
@@ -436,7 +436,7 @@ public final class ConnectionInfo {
     }
 
     public String getCatalog() {
-        if (enableCatalogChange) {
+        if (enableCatalogChange && currentCatalog.getParent() != null) {
             return currentCatalog.getName();
         }
 

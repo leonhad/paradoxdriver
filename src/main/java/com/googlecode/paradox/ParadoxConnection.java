@@ -79,6 +79,8 @@ public final class ParadoxConnection implements Connection {
     public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
         if (!dir.exists() && !dir.isDirectory()) {
             throw new ParadoxConnectionException(ParadoxConnectionException.Error.DIRECTORY_NOT_FOUND);
+        } else if (dir.getParent() == null) {
+            throw new ParadoxConnectionException(ParadoxConnectionException.Error.INVALID_ROOT_DIRECTORY);
         }
 
         this.connectionInfo = new ConnectionInfo(url);

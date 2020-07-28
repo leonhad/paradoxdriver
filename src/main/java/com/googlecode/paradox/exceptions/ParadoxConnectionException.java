@@ -46,7 +46,12 @@ public class ParadoxConnectionException extends SQLNonTransientException {
         /**
          * Directory not found in connection.
          */
-        DIRECTORY_NOT_FOUND("001", "Directory not found.");
+        DIRECTORY_NOT_FOUND("001", "Directory not found."),
+
+        /**
+         * Invalid root directory use.
+         */
+        INVALID_ROOT_DIRECTORY("002", "Can not use root directory");
 
         /**
          * SQL state code.
