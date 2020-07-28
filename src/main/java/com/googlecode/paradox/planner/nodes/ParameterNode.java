@@ -35,7 +35,7 @@ public class ParameterNode extends FieldNode {
      * @param position       the current Scanner position.
      */
     public ParameterNode(final int parameterIndex, final ScannerPosition position) {
-        super(null, null, position);
+        super(null, "?", position);
         this.parameterIndex = parameterIndex;
     }
 
@@ -75,5 +75,14 @@ public class ParameterNode extends FieldNode {
      */
     public Object getValue(final Object[] values) {
         return values[parameterIndex];
+    }
+
+    @Override
+    public String toString() {
+        if (alias != null && !"?".equals(alias)) {
+            return "? as " + alias;
+        }
+
+        return "?";
     }
 }

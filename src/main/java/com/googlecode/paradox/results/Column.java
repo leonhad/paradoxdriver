@@ -14,6 +14,7 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.planner.nodes.FunctionNode;
+import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 
 import java.sql.Types;
@@ -22,7 +23,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.6
+ * @version 1.7
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -67,16 +68,18 @@ public final class Column {
      * Is this a hidden column.
      */
     private boolean hidden;
-
     /**
      * Fixed value.
      */
     private Object value;
-
     /**
      * The function associated to this value.
      */
     private FunctionNode function;
+    /**
+     * A parameter value.
+     */
+    private ParameterNode parameter;
 
     /**
      * Create a new instance.
@@ -87,6 +90,11 @@ public final class Column {
         this(field.getAlias(), field.getType());
         this.field = field;
         this.precision = field.getPrecision();
+    }
+
+    public Column(final ParameterNode parameter) {
+        this(parameter.getAlias(), ParadoxType.NULL);
+        this.parameter = parameter;
     }
 
     public Column(final ValueNode node) {
@@ -388,6 +396,10 @@ public final class Column {
 
     public int getColumnType() {
         return columnType;
+    }
+
+    public ParameterNode getParameter() {
+        return parameter;
     }
 
     @Override

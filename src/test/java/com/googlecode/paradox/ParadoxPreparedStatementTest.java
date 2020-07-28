@@ -12,15 +12,19 @@ package com.googlecode.paradox;
 
 import org.junit.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 
 /**
  * Unit test for Paradox Prepared Statement.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class ParadoxPreparedStatementTest {
+
     /**
      * The connection string used in this tests.
      */
@@ -91,6 +95,58 @@ public class ParadoxPreparedStatementTest {
                 Assert.assertEquals("Invalid value", "NJ", rs.getString("State"));
                 Assert.assertNull("Invalid value", rs.getObject("Effective"));
 
+                Assert.assertFalse("Invalid result set state", rs.next());
+            }
+        }
+    }
+
+    /**
+     * Test for set scale.
+     */
+    @Test
+    public void testSetScale() throws SQLException {
+        try (final PreparedStatement preparedStatement = conn.prepareStatement("select ?")) {
+            preparedStatement.setObject(1, 12.012345, Types.NUMERIC, 2);
+
+            try (final ResultSet rs = preparedStatement.executeQuery()) {
+                Assert.assertTrue("Invalid result set state", rs.next());
+                Assert.assertEquals("Invalid value", 12.01D, rs.getDouble(1), 0.0001D);
+                Assert.assertFalse("Invalid result set state", rs.next());
+            }
+        }
+    }
+
+    /**
+     * Test for set length with reader.
+     */
+    @Test
+    public void testSetLengthWithReader() throws SQLException {
+        final StringReader reader = new StringReader("test");
+
+        try (final PreparedStatement preparedStatement = conn.prepareStatement("select ?")) {
+            preparedStatement.setObject(1, reader, Types.VARCHAR, 2);
+
+            try (final ResultSet rs = preparedStatement.executeQuery()) {
+                Assert.assertTrue("Invalid result set state", rs.next());
+                Assert.assertEquals("Invalid value", "te", rs.getString(1));
+                Assert.assertFalse("Invalid result set state", rs.next());
+            }
+        }
+    }
+
+    /**
+     * Test for set length with inputStream.
+     */
+    @Test
+    public void testSetLengthWithInputStream() throws SQLException {
+        final ByteArrayInputStream is = new ByteArrayInputStream("test".getBytes(StandardCharsets.UTF_8));
+
+        try (final PreparedStatement preparedStatement = conn.prepareStatement("select ?")) {
+            preparedStatement.setObject(1, is, Types.VARCHAR, 2);
+
+            try (final ResultSet rs = preparedStatement.executeQuery()) {
+                Assert.assertTrue("Invalid result set state", rs.next());
+                Assert.assertEquals("Invalid value", "te", rs.getString(1));
                 Assert.assertFalse("Invalid result set state", rs.next());
             }
         }

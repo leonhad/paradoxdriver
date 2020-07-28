@@ -15,6 +15,10 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
@@ -484,6 +488,38 @@ public final class ValuesConverter {
             ret = new String((byte[]) value, StandardCharsets.UTF_8);
         } else if (value != null) {
             ret = value.toString();
+        }
+
+        return ret;
+    }
+
+    public static byte[] getBytes(final InputStream inputStream, final int length) throws ParadoxDataException {
+        byte[] ret = null;
+        if (inputStream != null) {
+            try (final DataInputStream dis = new DataInputStream(inputStream)) {
+                ret = new byte[length];
+                dis.readFully(ret);
+            } catch (final IOException e) {
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, inputStream);
+            }
+        }
+
+        return ret;
+    }
+
+    public static String getChars(final Reader reader, final int length) throws ParadoxDataException {
+        String ret = null;
+        if (reader != null) {
+            try {
+                final char[] buffer = new char[length];
+                if (reader.read(buffer) != length) {
+                    throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, reader);
+                }
+
+                ret = new String(buffer);
+            } catch (final IOException e) {
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, reader);
+            }
         }
 
         return ret;

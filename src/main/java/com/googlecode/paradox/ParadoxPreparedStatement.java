@@ -16,11 +16,14 @@ import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.Utils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
@@ -380,12 +383,32 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
     }
 
     @Override
-    public void setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
+    public void setObject(final int parameterIndex, final Object x, final int sqlType, final int scaleOrLength)
+            throws SQLException {
         checkIndex(parameterIndex);
-        currentParameterValues[parameterIndex - 1] = x;
-        currentParameterTypes[parameterIndex - 1] = ParadoxType.valueOf(targetSqlType);
 
-        // FIXME fix the scaleOrLength parameter.
+        Object value = x;
+
+        if (x != null) {
+            if (x instanceof InputStream) {
+                value = ValuesConverter.getBytes((InputStream) x, scaleOrLength);
+            } else if (x instanceof Reader) {
+                try {
+                    final char[] chars = new char[scaleOrLength];
+                    if (((Reader) x).read(chars) != scaleOrLength) {
+                        throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, x);
+                    }
+                    value = new String(chars);
+                } catch (final IOException e) {
+                    throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, x);
+                }
+            } else if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL) {
+                value = ValuesConverter.getBigDecimal(x).setScale(scaleOrLength, RoundingMode.DOWN);
+            }
+        }
+
+        currentParameterValues[parameterIndex - 1] = value;
+        currentParameterTypes[parameterIndex - 1] = ParadoxType.valueOf(sqlType);
     }
 
     @Override

@@ -732,6 +732,27 @@ public class SQLParserTest {
     }
 
     /**
+     * Test for parameters in select.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testParametersInSelect() throws SQLException {
+        final SQLParser parser = new SQLParser("select ? as test");
+        final List<StatementNode> list = parser.parse();
+        final StatementNode tree = list.get(0);
+        Assert.assertEquals("Invalid parameter count.", 1, tree.getParameterCount());
+
+        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        Assert.assertTrue("Invalid conditional type", select.getFields().get(0) instanceof ParameterNode);
+        Assert.assertEquals("Invalid conditional type", "test", select.getFields().get(0).getAlias());
+    }
+
+    /**
      * Test for invalid join node.
      *
      * @throws SQLException in case of failures.

@@ -424,6 +424,9 @@ public final class SQLParser {
                 case ASTERISK:
                     node = this.parseAsterisk(null);
                     break;
+                case QUESTION_MARK:
+                    node = parseParameter();
+                    break;
                 default:
                     node = this.parseIdentifier(fieldName);
                     break;

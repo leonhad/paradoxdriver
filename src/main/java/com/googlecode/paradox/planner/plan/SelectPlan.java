@@ -41,7 +41,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.11
+ * @version 1.12
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -227,6 +227,8 @@ public final class SelectPlan implements Plan {
     public void addColumn(final FieldNode node) throws SQLException {
         if (node instanceof ValueNode) {
             this.columns.add(new Column((ValueNode) node));
+        } else if (node instanceof ParameterNode) {
+            this.columns.add(new Column((ParameterNode) node));
         } else if (node instanceof FunctionNode) {
             final List<Column> columnsToProcess = getParadoxFields(node);
 
@@ -455,11 +457,21 @@ public final class SelectPlan implements Plan {
 
         setIndexes(columnsLoaded);
         setFunctionIndexes(columnsLoaded);
+        setSelectParameters(this.columns, parameterTypes);
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
         filter(connectionInfo, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
+    }
+
+    private void setSelectParameters(final List<Column> columns, final ParadoxType[] parameterTypes) {
+        for (final Column column : columns) {
+            final ParameterNode parameterNode = column.getParameter();
+            if (parameterNode != null) {
+                column.setType(parameterTypes[parameterNode.getParameterIndex()]);
+            }
+        }
     }
 
     private Comparator<Object[]> processOrderBy() {
@@ -546,8 +558,12 @@ public final class SelectPlan implements Plan {
                 // A field mapped value.
                 finalRow[i] = tableRow[index];
             } else {
+                final ParameterNode parameterNode = this.columns.get(i).getParameter();
                 final FunctionNode functionNode = this.columns.get(i).getFunction();
-                if (functionNode == null) {
+                if (parameterNode != null) {
+                    // A parameter value.
+                    finalRow[i] = parameters[parameterNode.getParameterIndex()];
+                } else if (functionNode == null) {
                     // A fixed value.
                     finalRow[i] = this.columns.get(i).getValue();
                 } else if (!functionNode.isGrouping()) {
