@@ -154,7 +154,17 @@ public class ParadoxDataException extends SQLDataException {
         /**
          * Invalid value conversion.
          */
-        INVALID_CONVERSION("016", "Invalid value conversion: %s");
+        INVALID_CONVERSION("016", "Invalid value conversion: %s"),
+
+        /**
+         * Invalid catalog path.
+         */
+        INVALID_CATALOG_PATH("017", "Invalid catalog path"),
+
+        /**
+         * Invalid catalog name.
+         */
+        INVALID_CATALOG_NAME("018", "Invalid catalog name: %s");
 
         /**
          * SQL state code.

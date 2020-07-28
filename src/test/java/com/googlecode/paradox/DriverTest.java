@@ -89,7 +89,7 @@ public final class DriverTest {
     @Test
     public void testNullProperty() {
         final Driver driver = new Driver();
-        Assert.assertEquals("Invalid property info.", 4, driver.getPropertyInfo(null, null).length);
+        Assert.assertEquals("Invalid property info.", 5, driver.getPropertyInfo(null, null).length);
     }
 
     /**
@@ -98,7 +98,7 @@ public final class DriverTest {
     @Test
     public void testNullPropertyInfo() {
         final Driver driver = new Driver();
-        Assert.assertEquals("Invalid property size", 4,
+        Assert.assertEquals("Invalid property size", 5,
                 driver.getPropertyInfo("jdbc:paradox:target/test-classes/", null).length);
     }
 
@@ -109,11 +109,12 @@ public final class DriverTest {
     public void testPropertyInfo() {
         final Driver driver = new Driver();
         final DriverPropertyInfo[] info = driver.getPropertyInfo("jdbc:paradox:target/test-classes/", new Properties());
-        Assert.assertEquals("Invalid info length.", 4, info.length);
-        Assert.assertEquals("Invalid info name.", Driver.CHARSET_KEY, info[0].name);
-        Assert.assertEquals("Invalid info name.", Driver.LOCALE_KEY, info[1].name);
-        Assert.assertEquals("Invalid info name.", Driver.BCD_ROUNDING_KEY, info[2].name);
-        Assert.assertEquals("Invalid info name.", Driver.TIME_ZONE_KEY, info[3].name);
+        Assert.assertEquals("Invalid info length.", 5, info.length);
+        Assert.assertEquals("Invalid info name.", ConnectionInfo.BCD_ROUNDING_KEY, info[0].name);
+        Assert.assertEquals("Invalid info name.", ConnectionInfo.CHARSET_KEY, info[1].name);
+        Assert.assertEquals("Invalid info name.", ConnectionInfo.ENABLE_CATALOG_KEY, info[2].name);
+        Assert.assertEquals("Invalid info name.", ConnectionInfo.LOCALE_KEY, info[3].name);
+        Assert.assertEquals("Invalid info name.", ConnectionInfo.TIME_ZONE_KEY, info[4].name);
     }
 
     /**

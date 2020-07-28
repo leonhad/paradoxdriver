@@ -543,7 +543,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<Column> columns = Collections
                 .singletonList(new Column(ParadoxDatabaseMetaData.TABLE_CAT, ParadoxType.VARCHAR));
 
-        final List<Object[]> values = Collections.singletonList(new Object[]{this.connectionInfo.getCatalog()});
+        final List<Object[]> values = Collections.singletonList(new Object[]{
+                this.connectionInfo.getCatalog()
+        });
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }

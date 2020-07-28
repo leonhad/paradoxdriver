@@ -11,12 +11,17 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.data.filefilters.DirectoryFilter;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.*;
+import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,28 +33,52 @@ import java.util.stream.Stream;
  */
 public final class ConnectionInfo {
 
-    public static final String INFORMATION_SCHEMA = "information_schema";
+    private static final Logger LOGGER = Logger.getLogger(ConnectionInfo.class.getName());
 
+    public static final String CHARSET_KEY = "charset";
+
+    public static final String LOCALE_KEY = "locale";
+
+    public static final String BCD_ROUNDING_KEY = "bcd_rounding";
+
+    public static final String TIME_ZONE_KEY = "timezone";
+
+    public static final String ENABLE_CATALOG_KEY = "enable_catalogs";
+
+    public static final Charset DEFAULT_CHARSET = null;
+
+    public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
+
+    public static final boolean DEFAULT_BCD_ROUND = true;
+
+    public static final TimeZone DEFAULT_TIMEZONE = TimeZone.getDefault();
+
+    public static final boolean DEFAULT_ENABLE_CATALOG = false;
+
+    /**
+     * Information schema name.
+     */
+    public static final String INFORMATION_SCHEMA = "information_schema";
     /**
      * Driver URL.
      */
-    private String url;
+    private final String url;
     /**
      * Default charset.
      */
-    private Charset charset;
+    private Charset charset = DEFAULT_CHARSET;
     /**
      * Connection locale.
      */
-    private Locale locale;
+    private Locale locale = DEFAULT_LOCALE;
     /**
      * Time zone.
      */
-    private TimeZone timeZone;
+    private TimeZone timeZone = DEFAULT_TIMEZONE;
     /**
      * BCD field precision.
      */
-    private boolean bcdRounding;
+    private boolean bcdRounding = DEFAULT_BCD_ROUND;
     /**
      * The current connection schema.
      */
@@ -62,9 +91,15 @@ public final class ConnectionInfo {
      * This connection holdability.
      */
     private int holdability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
+    /**
+     * Enable catalog change.
+     */
+    private boolean enableCatalogChange = DEFAULT_ENABLE_CATALOG;
 
     /**
      * Creates a new instance.
+     *
+     * @param url the connection url.
      */
     public ConnectionInfo(final String url) {
         this.url = url;
@@ -119,6 +154,163 @@ public final class ConnectionInfo {
         return ret;
     }
 
+    private static String getPropertyValue(final String key, final String defaultValue, final Properties info) {
+        String ret = null;
+        if (info != null) {
+            ret = info.getProperty(key);
+        }
+
+        if (ret == null) {
+            ret = defaultValue;
+        }
+
+        return ret;
+    }
+
+    public Properties getProperties() {
+        final Properties properties = new Properties();
+
+        properties.put(BCD_ROUNDING_KEY, Boolean.toString(bcdRounding));
+        if (charset != null) {
+            properties.put(CHARSET_KEY, charset.displayName());
+        }
+
+        properties.put(DEFAULT_ENABLE_CATALOG, Boolean.toString(enableCatalogChange));
+        properties.put(LOCALE_KEY, locale.toLanguageTag());
+        properties.put(DEFAULT_TIMEZONE, timeZone.getID());
+
+        return properties;
+    }
+
+    public String getProperty(final String name) {
+        return getProperties().getProperty(name);
+    }
+
+    @SuppressWarnings("java:S2221")
+    private static <T> T getProperty(final String name, final String value, final Map<String, ClientInfoStatus> errors,
+                                     final T defaultValue, final Function<String, T> converter) {
+        try {
+            if (value != null && !value.trim().isEmpty()) {
+                return converter.apply(value);
+            } else {
+                return defaultValue;
+            }
+        } catch (final Exception e) {
+            LOGGER.log(Level.FINEST, e.getMessage(), e);
+            errors.put(name, ClientInfoStatus.REASON_VALUE_INVALID);
+        }
+
+        return defaultValue;
+    }
+
+    public void put(final String name, final String value) throws SQLClientInfoException {
+        final Map<String, ClientInfoStatus> errors = new HashMap<>();
+        if (name == null) {
+            throw new SQLClientInfoException("Property name can not be null.", errors);
+        } else {
+            switch (name) {
+                case BCD_ROUNDING_KEY:
+                    bcdRounding = getProperty(name, value, errors, DEFAULT_BCD_ROUND, Boolean::parseBoolean);
+                    break;
+                case CHARSET_KEY:
+                    charset = getProperty(name, value, errors, DEFAULT_CHARSET, Charset::forName);
+                    break;
+                case ENABLE_CATALOG_KEY:
+                    enableCatalogChange = getProperty(name, value, errors, DEFAULT_ENABLE_CATALOG,
+                            Boolean::parseBoolean);
+                    break;
+                case LOCALE_KEY:
+                    locale = getProperty(name, value, errors, DEFAULT_LOCALE, Locale::forLanguageTag);
+                    break;
+                case TIME_ZONE_KEY:
+                    timeZone = getProperty(name, value, errors, DEFAULT_TIMEZONE, TimeZone::getTimeZone);
+                    break;
+                default:
+                    errors.put(name, ClientInfoStatus.REASON_UNKNOWN_PROPERTY);
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new SQLClientInfoException(errors);
+        }
+    }
+
+    public void setProperties(final Properties info) throws SQLClientInfoException {
+        for (Map.Entry<Object, Object> entry : info.entrySet()) {
+            final String key = String.valueOf(entry.getKey());
+            String value = null;
+            if (entry.getValue() != null) {
+                value = String.valueOf(entry.getValue());
+            }
+
+            put(key, value);
+        }
+    }
+
+    @SuppressWarnings("i18n-java:V1017")
+    public static DriverPropertyInfo[] getMetadata(final Properties info) {
+        final String charsetValue = getPropertyValue(CHARSET_KEY, null, info);
+        final String localeValue = getPropertyValue(LOCALE_KEY, DEFAULT_LOCALE.toLanguageTag(), info);
+        final String bcdRounding = getPropertyValue(BCD_ROUNDING_KEY, String.valueOf(DEFAULT_BCD_ROUND), info);
+        final String timeZoneId = getPropertyValue(TIME_ZONE_KEY, DEFAULT_TIMEZONE.getID(), info);
+        final String enableCatalog = getPropertyValue(ENABLE_CATALOG_KEY, String.valueOf(DEFAULT_ENABLE_CATALOG), info);
+
+        final DriverPropertyInfo bcdRoundingProp = new DriverPropertyInfo(BCD_ROUNDING_KEY, bcdRounding);
+        bcdRoundingProp.choices = new String[]{"true", "false"};
+        bcdRoundingProp.required = false;
+        bcdRoundingProp.description = "Use BCD double rounding (true to use rounding, the original used by Paradox).";
+
+        final DriverPropertyInfo enableCatalogProp = new DriverPropertyInfo(ENABLE_CATALOG_KEY, enableCatalog);
+        enableCatalogProp.choices = new String[]{"true", "false"};
+        enableCatalogProp.required = false;
+        enableCatalogProp.description = "Enable catalog info.";
+
+        final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, charsetValue);
+        charset.choices = Charset.availableCharsets().keySet().toArray(new String[0]);
+        charset.required = false;
+        charset.description = "Table charset (empty value to use the charset defined in table).";
+        Arrays.sort(charset.choices);
+
+        final DriverPropertyInfo localeProp = new DriverPropertyInfo(LOCALE_KEY, localeValue);
+        localeProp.choices = Arrays.stream(Locale.getAvailableLocales())
+                .map(Locale::toLanguageTag).toArray(String[]::new);
+        localeProp.required = false;
+        localeProp.description = "The locale to use internally by the driver.";
+        Arrays.sort(localeProp.choices);
+
+        final DriverPropertyInfo timeZoneProp = new DriverPropertyInfo(TIME_ZONE_KEY, timeZoneId);
+        timeZoneProp.choices = TimeZone.getAvailableIDs();
+        timeZoneProp.required = false;
+        timeZoneProp.description = "Time zone ID for use in date and time functions.";
+        Arrays.sort(timeZoneProp.choices);
+
+        return new DriverPropertyInfo[]{
+                bcdRoundingProp,
+                charset,
+                enableCatalogProp,
+                localeProp,
+                timeZoneProp
+        };
+    }
+
+    public void setCatalog(final String name) throws SQLException {
+        if (!enableCatalogChange) {
+            throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CATALOG_CHANGE);
+        }
+
+        final File parent = this.currentCatalog.getParentFile();
+        if (!parent.isDirectory()) {
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+        }
+
+        final File newCatalog = new File(parent, name);
+        if (!newCatalog.isDirectory()) {
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_NAME, name);
+        }
+
+        this.currentCatalog = newCatalog;
+    }
+
     /**
      * Gets the URL connection.
      *
@@ -126,10 +318,6 @@ public final class ConnectionInfo {
      */
     public String getUrl() {
         return this.url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     /**
@@ -167,10 +355,6 @@ public final class ConnectionInfo {
         return bcdRounding;
     }
 
-    public void setBcdRounding(boolean bcdRounding) {
-        this.bcdRounding = bcdRounding;
-    }
-
     /**
      * Gets the connection time zone.
      *
@@ -178,10 +362,6 @@ public final class ConnectionInfo {
      */
     public TimeZone getTimeZone() {
         return timeZone;
-    }
-
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
     }
 
     /**

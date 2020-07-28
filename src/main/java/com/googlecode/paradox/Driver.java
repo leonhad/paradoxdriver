@@ -32,14 +32,6 @@ import java.util.logging.Logger;
 @SuppressWarnings("squid:S2176")
 public final class Driver implements java.sql.Driver {
 
-    public static final String CHARSET_KEY = "charset";
-
-    public static final String LOCALE_KEY = "locale";
-
-    public static final String BCD_ROUNDING_KEY = "bcd_rounding";
-
-    public static final String TIME_ZONE_KEY = "timezone";
-
     /**
      * Logger instance for this class.
      */
@@ -106,47 +98,7 @@ public final class Driver implements java.sql.Driver {
      */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
-        String charsetValue = null;
-        String localeValue = null;
-        String bcdRounding = null;
-        String timeZoneId = null;
-
-        if (info != null) {
-            charsetValue = info.getProperty(CHARSET_KEY);
-            localeValue = info.getProperty(LOCALE_KEY);
-            bcdRounding = info.getProperty(BCD_ROUNDING_KEY);
-            timeZoneId = info.getProperty(TIME_ZONE_KEY);
-        }
-
-        if (localeValue == null) {
-            localeValue = Locale.ENGLISH.getLanguage();
-        }
-
-        if (bcdRounding == null) {
-            bcdRounding = "true";
-        }
-
-        if (timeZoneId == null) {
-            timeZoneId = TimeZone.getDefault().getID();
-        }
-
-        final DriverPropertyInfo charset = new DriverPropertyInfo(CHARSET_KEY, charsetValue);
-        charset.required = false;
-        charset.description = "Table charset (empty value to use the charset defined in table).";
-
-        final DriverPropertyInfo localeProp = new DriverPropertyInfo(LOCALE_KEY, localeValue);
-        localeProp.required = false;
-        localeProp.description = "The locale to use internally by the driver.";
-
-        final DriverPropertyInfo bcdRoundingProp = new DriverPropertyInfo(BCD_ROUNDING_KEY, bcdRounding);
-        bcdRoundingProp.required = false;
-        bcdRoundingProp.description = "Use BCD double rounding (true to use rounding, the original used by Paradox).";
-
-        final DriverPropertyInfo timeZoneProp = new DriverPropertyInfo(TIME_ZONE_KEY, timeZoneId);
-        timeZoneProp.required = false;
-        timeZoneProp.description = "Time zone ID for use in date and time functions.";
-
-        return new DriverPropertyInfo[]{charset, localeProp, bcdRoundingProp, timeZoneProp};
+        return ConnectionInfo.getMetadata(info);
     }
 
     /**

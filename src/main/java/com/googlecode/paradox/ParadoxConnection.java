@@ -19,11 +19,11 @@ import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
 
 /**
  * JDBC Paradox connection implementation.
@@ -41,10 +41,6 @@ public final class ParadoxConnection implements Connection {
      * Auto Commit flag.
      */
     private boolean autocommit = true;
-    /**
-     * Connection properties info.
-     */
-    private Properties clientInfo = new Properties();
     /**
      * If this connection is closed.
      */
@@ -85,34 +81,9 @@ public final class ParadoxConnection implements Connection {
         }
 
         this.connectionInfo = new ConnectionInfo(url);
-        connectionInfo.setCharset(getProperty(Driver.CHARSET_KEY, info, null, Charset::forName));
-        connectionInfo.setLocale(getProperty(Driver.LOCALE_KEY, info, Locale.US, Locale::forLanguageTag));
-        connectionInfo.setBcdRounding(getProperty(Driver.BCD_ROUNDING_KEY, info, true, Boolean::parseBoolean));
-        connectionInfo.setTimeZone(getProperty(Driver.TIME_ZONE_KEY, info, TimeZone.getDefault(),
-                TimeZone::getTimeZone));
-
-        connectionInfo.setCurrentSchema(dir);
-        connectionInfo.setCurrentCatalog(dir.getParentFile());
-    }
-
-    /**
-     * Gets a translated property with a {@code defaultValue} in case of nonexistent.
-     *
-     * @param name         the property name.
-     * @param info         the property info list.
-     * @param defaultValue the default value to use in case of nonexistent property info.
-     * @param converter    the converter from property info string to desired type.
-     * @param <T>          the desired type.
-     * @return the converted type or {@code defaultValue} if nonexistent.
-     */
-    private static <T> T getProperty(final String name, final Properties info, final T defaultValue,
-                                     final Function<String, T> converter) {
-        final String value = info.getProperty(name);
-        if (value != null && !value.trim().isEmpty()) {
-            return converter.apply(value);
-        } else {
-            return defaultValue;
-        }
+        this.connectionInfo.setProperties(info);
+        this.connectionInfo.setCurrentSchema(dir);
+        this.connectionInfo.setCurrentCatalog(dir.getParentFile());
     }
 
     /**
@@ -256,7 +227,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setCatalog(final String catalog) throws SQLException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CATALOG_CHANGE);
+        this.connectionInfo.setCatalog(catalog);
     }
 
     /**
@@ -264,15 +235,15 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public Properties getClientInfo() {
-        return new Properties(this.clientInfo);
+        return connectionInfo.getProperties();
     }
 
     /**
      * {@inheritDoc}.
      */
     @Override
-    public void setClientInfo(final Properties clientInfo) {
-        this.clientInfo = new Properties(clientInfo);
+    public void setClientInfo(final Properties clientInfo) throws SQLClientInfoException {
+        this.connectionInfo.setProperties(clientInfo);
     }
 
     /**
@@ -280,7 +251,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getClientInfo(final String name) {
-        return this.clientInfo.getProperty(name);
+        return this.connectionInfo.getProperty(name);
     }
 
     /**
@@ -369,15 +340,6 @@ public final class ParadoxConnection implements Connection {
     @Override
     public void setTypeMap(final Map<String, Class<?>> typeMap) {
         this.typeMap = typeMap;
-    }
-
-    /**
-     * Gets the URL connection.
-     *
-     * @return the URL connection
-     */
-    public String getUrl() {
-        return this.connectionInfo.getUrl();
     }
 
     /**
@@ -546,8 +508,8 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void setClientInfo(final String name, final String value) {
-        this.clientInfo.put(name, value);
+    public void setClientInfo(final String name, final String value) throws SQLClientInfoException {
+        this.connectionInfo.put(name, value);
     }
 
     /**
