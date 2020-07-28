@@ -127,6 +127,7 @@ public final class ConnectionInfo {
      * @param catalog       the database catalog.
      * @param schemaPattern the schema pattern.
      * @return the schema directories.
+     * @throws ParadoxDataException in case of failures.
      */
     public List<String> getSchemas(final String catalog, final String schemaPattern) throws ParadoxDataException {
         File[] catalogs = null;
