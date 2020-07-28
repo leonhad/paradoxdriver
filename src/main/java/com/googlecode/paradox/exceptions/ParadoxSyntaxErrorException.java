@@ -20,6 +20,7 @@ import java.sql.SQLSyntaxErrorException;
  * @version 1.2
  * @since 1.6.0
  */
+@SuppressWarnings("java:S110")
 public class ParadoxSyntaxErrorException extends SQLSyntaxErrorException {
 
     /**

@@ -20,6 +20,7 @@ import java.util.Objects;
  * @since 1.6.0
  */
 public class InternalException extends RuntimeException {
+
     /**
      * Creates a new instance.
      *

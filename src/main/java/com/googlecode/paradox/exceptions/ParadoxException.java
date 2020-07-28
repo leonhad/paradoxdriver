@@ -20,6 +20,7 @@ import java.sql.SQLDataException;
  * @version 1.2
  * @since 1.6.0
  */
+@SuppressWarnings("java:S110")
 public class ParadoxException extends SQLDataException {
 
     /**
