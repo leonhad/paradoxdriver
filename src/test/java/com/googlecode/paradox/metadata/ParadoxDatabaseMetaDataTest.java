@@ -783,10 +783,6 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid schema", "information_schema", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
-
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
 
