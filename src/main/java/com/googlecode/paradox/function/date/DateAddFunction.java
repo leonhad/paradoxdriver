@@ -19,10 +19,10 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
+import com.googlecode.paradox.utils.Utils;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -40,9 +40,10 @@ public class DateAddFunction extends AbstractDateFunction {
      */
     public static final String NAME = "DATEADD";
 
-    // FIXME change to ENUM.
-    private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "DAYOFYEAR",
-            "WEEK", "MONTH", "QUARTER", "YEAR"};
+    /**
+     * Time interval type.
+     */
+    private TimeIntervalType type;
 
     /**
      * Column parameter list.
@@ -54,15 +55,9 @@ public class DateAddFunction extends AbstractDateFunction {
             new Column("date", ParadoxType.TIMESTAMP, "The date to add.", 3, false, IN)
     };
 
-    static {
-        // Allow binary search.
-        Arrays.sort(VALID_FORMATS);
-    }
-
     @Override
     public String getRemarks() {
-        return "Adds a time/date interval to a date and then returns the date. The interval can be: "
-                + Arrays.toString(VALID_FORMATS) + ".";
+        return "Adds a time/date interval to a date and then returns the date.";
     }
 
     @Override
@@ -80,45 +75,40 @@ public class DateAddFunction extends AbstractDateFunction {
             return null;
         }
 
-        final String format = values[0].toString();
-
         final Calendar c = Calendar.getInstance();
         c.setTime(timestamp);
 
-        switch (format) {
-            case "MILLISECOND":
+        switch (type) {
+            case MILLISECOND:
                 c.add(Calendar.MILLISECOND, number);
                 break;
-            case "SECOND":
+            case SECOND:
                 c.add(Calendar.SECOND, number);
                 break;
-            case "MINUTE":
+            case MINUTE:
                 c.add(Calendar.MINUTE, number);
                 break;
-            case "HOUR":
+            case HOUR:
                 c.add(Calendar.HOUR_OF_DAY, number);
                 break;
-            case "DAY":
+            case DAY:
                 c.add(Calendar.DAY_OF_MONTH, number);
                 break;
-            case "DAYOFYEAR":
+            case DAYOFYEAR:
                 c.add(Calendar.DAY_OF_YEAR, number);
                 break;
-            case "MONTH":
+            case MONTH:
                 c.add(Calendar.MONTH, number);
                 break;
-            case "YEAR":
+            case YEAR:
                 c.add(Calendar.YEAR, number);
                 break;
-            case "WEEK":
+            case WEEK:
                 c.add(Calendar.WEEK_OF_MONTH, number);
                 break;
-            case "QUARTER":
+            case QUARTER:
                 c.add(Calendar.MONTH, number * 0x03);
                 break;
-            default:
-                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
-                        format);
         }
 
         return new Timestamp(c.getTimeInMillis());
@@ -130,12 +120,15 @@ public class DateAddFunction extends AbstractDateFunction {
         super.validate(parameters);
 
         final SQLNode value = parameters.get(0);
-        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {
+        type = Utils.searchEnum(TimeIntervalType.class, value.getName());
+
+        if (type == null) {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                     value.getName());
         }
 
         // Convert to a non fields do avoid Planner problems.
-        parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(), ParadoxType.VARCHAR));
+        parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(),
+                ParadoxType.VARCHAR));
     }
 }

@@ -19,11 +19,11 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
+import com.googlecode.paradox.utils.Utils;
 
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -42,9 +42,10 @@ public class ExtractFunction extends AbstractDateFunction {
      */
     public static final String NAME = "EXTRACT";
 
-    // FIXME use enum.
-    private static final String[] VALID_FORMATS = {"MILLISECOND", "SECOND", "MINUTE", "HOUR", "DAY", "DAYOFYEAR",
-            "WEEK", "MONTH", "QUARTER", "YEAR"};
+    /**
+     * Time interval type.
+     */
+    private TimeIntervalType type;
 
     /**
      * Column parameter list.
@@ -54,11 +55,6 @@ public class ExtractFunction extends AbstractDateFunction {
             new Column("date_part", ParadoxType.VARCHAR, "The part name to extract.", 1, false, IN),
             new Column("date", ParadoxType.TIMESTAMP, "The date to extract.", 2, false, IN)
     };
-
-    static {
-        // Allow binary search.
-        Arrays.sort(VALID_FORMATS);
-    }
 
     private static Calendar getTime(final Object value) {
         Time time = ValuesConverter.getTime(value);
@@ -83,7 +79,7 @@ public class ExtractFunction extends AbstractDateFunction {
 
     @Override
     public String getRemarks() {
-        return "Extract a value from date/time. The part to extract can be: " + Arrays.toString(VALID_FORMATS) + ".";
+        return "Extract a value from date/time.";
     }
 
     @Override
@@ -100,44 +96,40 @@ public class ExtractFunction extends AbstractDateFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final String format = values[0].toString();
         final Object value = values[1];
 
-        int ret;
-        switch (format) {
-            case "MILLISECOND":
+        int ret = 0;
+        switch (type) {
+            case MILLISECOND:
                 ret = getTimestamp(value).get(Calendar.MILLISECOND);
                 break;
-            case "SECOND":
+            case SECOND:
                 ret = getTime(value).get(Calendar.SECOND);
                 break;
-            case "MINUTE":
+            case MINUTE:
                 ret = getTime(value).get(Calendar.MINUTE);
                 break;
-            case "HOUR":
+            case HOUR:
                 ret = getTime(value).get(Calendar.HOUR_OF_DAY);
                 break;
-            case "DAY":
+            case DAY:
                 ret = getDate(value).get(Calendar.DAY_OF_MONTH);
                 break;
-            case "DAYOFYEAR":
+            case DAYOFYEAR:
                 ret = getDate(value).get(Calendar.DAY_OF_YEAR);
                 break;
-            case "MONTH":
+            case MONTH:
                 ret = getDate(value).get(Calendar.MONTH) + 1;
                 break;
-            case "YEAR":
+            case YEAR:
                 ret = getDate(value).get(Calendar.YEAR);
                 break;
-            case "WEEK":
+            case WEEK:
                 ret = getDate(value).get(Calendar.WEEK_OF_YEAR);
                 break;
-            case "QUARTER":
+            case QUARTER:
                 ret = (getDate(value).get(Calendar.MONTH) / 3) + 1;
                 break;
-            default:
-                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
-                        format);
         }
 
         return ret;
@@ -149,7 +141,9 @@ public class ExtractFunction extends AbstractDateFunction {
         super.validate(parameters);
 
         final SQLNode value = parameters.get(0);
-        if (Arrays.binarySearch(VALID_FORMATS, value.getName().toUpperCase()) < 0) {
+        type = Utils.searchEnum(TimeIntervalType.class, value.getName());
+
+        if (type == null) {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                     value.getName());
         }

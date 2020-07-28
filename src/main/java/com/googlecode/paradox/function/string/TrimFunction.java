@@ -78,6 +78,7 @@ public class TrimFunction extends AbstractStringFunction {
     }
 
     @Override
+    @SuppressWarnings("java:S3776")
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         if (values.length > 1 && values[1] == null) {
@@ -93,8 +94,7 @@ public class TrimFunction extends AbstractStringFunction {
             // Allow binary search.
             Arrays.sort(chars);
 
-            StringBuilder ret = new StringBuilder(value);
-
+            final StringBuilder ret = new StringBuilder(value);
             if (type == TrimType.BOTH || type == TrimType.LEADING) {
                 // Trim left.
                 while (ret.length() > 0 && Arrays.binarySearch(chars, ret.charAt(0)) > -1) {
@@ -128,7 +128,7 @@ public class TrimFunction extends AbstractStringFunction {
                         value.getName());
             }
 
-            // Remove the first parameter and convert it to enum type.
+            // Remove the first parameter.
             parameters.remove(0);
         }
     }
@@ -144,7 +144,7 @@ public class TrimFunction extends AbstractStringFunction {
     }
 
     /**
-     * Valids TRIM types.
+     * Valid TRIM types.
      */
     private enum TrimType {
         /**
