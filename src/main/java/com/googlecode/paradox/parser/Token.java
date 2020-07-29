@@ -81,6 +81,15 @@ public final class Token {
     }
 
     /**
+     * Gets if the token is a select break.
+     *
+     * @return true if this token is a conditional break.
+     */
+    boolean isSelectBreak() {
+        return TokenType.isSelectBreak(this.type);
+    }
+
+    /**
      * Gets if this token is an operator.
      *
      * @return true if this token is an operator.

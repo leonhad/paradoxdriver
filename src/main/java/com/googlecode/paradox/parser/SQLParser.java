@@ -200,7 +200,7 @@ public final class SQLParser {
      */
     private AbstractConditionalNode parseCondition() throws SQLException {
         AbstractConditionalNode ret = null;
-        while (this.scanner.hasNext() && !this.token.isConditionBreak() && !isConditionalEnd()) {
+        while (this.scanner.hasNext() && !this.token.isConditionBreak() && !this.token.isSelectBreak()) {
             ret = parseSubCondition(ret);
         }
 
@@ -216,7 +216,7 @@ public final class SQLParser {
     private AbstractConditionalNode parseSubCondition(final AbstractConditionalNode parent) throws SQLException {
         AbstractConditionalNode ret = parent;
 
-        if (!this.token.isConditionBreak() && !isConditionalEnd()) {
+        if (!this.token.isConditionBreak() && !this.token.isSelectBreak()) {
             if (ret != null && this.token.isOperator()) {
                 // Not in first expression.
                 ret = this.parseOperators(ret);
@@ -245,15 +245,6 @@ public final class SQLParser {
         }
 
         return ret;
-    }
-
-    /**
-     * Is the token indicates the end of conditionals.
-     *
-     * @return <code>true</code> is the end of conditionals.
-     */
-    private boolean isConditionalEnd() {
-        return isToken(TokenType.WHERE) || isToken(TokenType.ORDER);
     }
 
     /**
@@ -476,7 +467,7 @@ public final class SQLParser {
         this.expect(TokenType.FROM);
         boolean firstField = true;
         do {
-            if (this.token != null && TokenType.isSelectBreak(this.token.getType())) {
+            if (this.token != null && this.token.isSelectBreak()) {
                 break;
             }
             if (!firstField) {
@@ -717,8 +708,7 @@ public final class SQLParser {
      * @throws SQLException in case of errors.
      */
     private void parseJoin(final SelectNode select) throws SQLException {
-        while (this.scanner.hasNext() && !isToken(TokenType.COMMA) && !TokenType.isSelectBreak(this.token.getType())) {
-
+        while (this.scanner.hasNext() && !isToken(TokenType.COMMA) && !this.token.isSelectBreak()) {
             // Inner, right or cross join.
             JoinType joinType = JoinType.INNER;
             switch (this.token.getType()) {
@@ -1198,7 +1188,7 @@ public final class SQLParser {
             select.addGroupBy(fieldNode);
 
             firstField = false;
-        } while (this.scanner.hasNext());
+        } while (this.scanner.hasNext() && !this.token.isConditionBreak());
     }
 
     /**
@@ -1243,12 +1233,12 @@ public final class SQLParser {
             }
         }
 
-        if (isToken(TokenType.ORDER)) {
-            this.parseOrderBy(select);
-        }
-
         if (isToken(TokenType.GROUP)) {
             this.parseGroupBy(select);
+        }
+
+        if (isToken(TokenType.ORDER)) {
+            this.parseOrderBy(select);
         }
 
         if (this.scanner.hasNext() || this.token != null) {

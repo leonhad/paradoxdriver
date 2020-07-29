@@ -1137,6 +1137,52 @@ public class SQLParserTest {
     }
 
     /**
+     * Test for group by and where.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testGroupByAndWhere() throws SQLException {
+        final SQLParser parser = new SQLParser(
+                "SELECT count(*) FROM AREACODES WHERE (NOT State = 'NY') or State = 'NJ' group by State"
+        );
+
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertNotNull("Invalid where clauses", select.getCondition());
+        Assert.assertEquals("Invalid order by size", 1, select.getGroups().size());
+        final FieldNode field = select.getGroups().get(0);
+
+        Assert.assertEquals("Invalid field name", "State", field.getName());
+    }
+
+    /**
+     * Test for group by and order by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testGroupByAndOrderBy() throws SQLException {
+        final SQLParser parser = new SQLParser(
+                "SELECT count(*) FROM AREACODES group by State ORDER BY 1"
+        );
+
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertFalse("Invalid order by fields", select.getOrder().isEmpty());
+        Assert.assertEquals("Invalid order by size", 1, select.getGroups().size());
+        final FieldNode field = select.getGroups().get(0);
+
+        Assert.assertEquals("Invalid field name", "State", field.getName());
+    }
+
+    /**
      * Test for grouping function in group by.
      *
      * @throws SQLException in case of failures.
