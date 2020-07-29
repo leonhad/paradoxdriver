@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.group;
+package com.googlecode.paradox.function.grouping;
 
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
@@ -19,7 +19,7 @@ import com.googlecode.paradox.function.FunctionType;
  * @version 1.0
  * @since 1.6.0
  */
-public abstract class AbstractGroupFunction extends AbstractFunction {
+public abstract class AbstractGroupingFunction extends AbstractFunction {
 
     @Override
     public FunctionType getType() {

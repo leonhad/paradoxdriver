@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.group;
+package com.googlecode.paradox.function.grouping;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
@@ -25,7 +25,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.6.0
  */
-public class CountFunction extends AbstractGroupFunction {
+public class CountFunction extends AbstractGroupingFunction {
 
     /**
      * The function name.
