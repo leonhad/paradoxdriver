@@ -11,12 +11,14 @@
 
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.utils.Constants;
 import org.junit.*;
 
 import java.sql.*;
+import java.util.Properties;
 
 /**
  * Unit test for {@link ParadoxDatabaseMetaData} class.
@@ -785,6 +787,88 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
+
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for schemas with catalog enabled.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testSchemasWithCatalogEnabled() throws SQLException {
+        final Properties properties = new Properties();
+        properties.put(ConnectionInfo.ENABLE_CATALOG_KEY, "true");
+
+        try (final Connection connection = DriverManager.getConnection(CONNECTION_STRING + "db", properties);
+                final ResultSet rs = connection.getMetaData().getSchemas()) {
+
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "com", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "encrypt", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "fields", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "geog", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for schemas with catalog.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testSchemasWithCatalog() throws SQLException {
+        final Properties properties = new Properties();
+        properties.put(ConnectionInfo.ENABLE_CATALOG_KEY, "true");
+        try (final Connection connection = DriverManager.getConnection(CONNECTION_STRING + "db", properties);
+             final ResultSet rs = connection.getMetaData().getSchemas("%", "%")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "com", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "db", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "encrypt", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "fields", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "geog", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }

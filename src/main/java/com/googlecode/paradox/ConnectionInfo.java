@@ -354,9 +354,10 @@ public final class ConnectionInfo {
                         .collect(Collectors.toList())
                 );
             }
+        } else {
+            catalogs.add(getCatalog());
         }
 
-        catalogs.add(getCatalog());
         catalogs.sort(String::compareTo);
         return catalogs;
     }

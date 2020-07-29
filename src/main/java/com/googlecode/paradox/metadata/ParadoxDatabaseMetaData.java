@@ -976,9 +976,14 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
         columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
 
-        final List<String[]> values = this.connectionInfo.getSchemas(catalog, schemaPattern).stream()
-                .map(schema -> new String[]{schema, catalog})
-                .collect(Collectors.toList());
+        final List<String[]> values = new ArrayList<>();
+        for (final String catalogName : this.connectionInfo.listCatalogs()) {
+            if (catalog == null || Expressions.accept(connectionInfo.getLocale(), catalogName, catalog, false, '\\')) {
+                values.addAll(this.connectionInfo.getSchemas(catalogName, schemaPattern).stream()
+                        .map(schema -> new String[]{schema, catalogName})
+                        .collect(Collectors.toList()));
+            }
+        }
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
@@ -1065,11 +1070,12 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
         columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
 
-        final String catalog = this.connectionInfo.getCatalog();
-
-        final List<String[]> values = this.connectionInfo.getSchemas(catalog, null).stream()
-                .map(schema -> new String[]{schema, catalog})
-                .collect(Collectors.toList());
+        final List<String[]> values = new ArrayList<>();
+        for (final String catalog : this.connectionInfo.listCatalogs()) {
+            values.addAll(this.connectionInfo.getSchemas(catalog, null).stream()
+                    .map(schema -> new String[]{schema, catalog})
+                    .collect(Collectors.toList()));
+        }
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
@@ -1208,7 +1214,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullsAreSortedAtEnd() {
-        return true;
+        return false;
     }
 
     /**
@@ -1224,7 +1230,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullsAreSortedHigh() {
-        return false;
+        return true;
     }
 
     /**
@@ -1232,7 +1238,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean nullsAreSortedLow() {
-        return true;
+        return false;
     }
 
     /**
@@ -1520,7 +1526,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsGroupBy() {
-        return false;
+        return true;
     }
 
     /**
@@ -1528,7 +1534,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsGroupByBeyondSelect() {
-        return false;
+        return true;
     }
 
     /**
@@ -1536,7 +1542,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsGroupByUnrelated() {
-        return false;
+        return true;
     }
 
     /**
@@ -1712,7 +1718,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      */
     @Override
     public boolean supportsResultSetType(final int type) {
-        return false;
+        return type == ResultSet.TYPE_FORWARD_ONLY || type == ResultSet.TYPE_SCROLL_INSENSITIVE
+                || type == ResultSet.TYPE_SCROLL_SENSITIVE;
     }
 
     /**
