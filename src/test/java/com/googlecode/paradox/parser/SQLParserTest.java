@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.List;
 
 /**
@@ -32,7 +33,7 @@ import java.util.List;
  * @version 1.6
  * @since 1.0
  */
-@SuppressWarnings({"java:S109", "java:S1192"})
+@SuppressWarnings({"java:S109", "java:S1192", "java:S1200", "java:S1448"})
 public class SQLParserTest {
 
     /**
@@ -1133,5 +1134,38 @@ public class SQLParserTest {
         final FieldNode field = select.getGroups().get(0);
 
         Assert.assertEquals("Invalid field name", "Id", field.getName());
+    }
+
+    /**
+     * Test for grouping function in group by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testGroupingFunctionInGroupBy() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from table group by count(Id)");
+        Assert.assertThrows("Invalid use of grouping function", SQLSyntaxErrorException.class, parser::parse);
+    }
+
+    /**
+     * Test for grouping function in group by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testGroupingFunctionInOrderBy() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from table order by count(Id)");
+        Assert.assertThrows("Invalid use of grouping function", SQLSyntaxErrorException.class, parser::parse);
+    }
+
+    /**
+     * Test for grouping function in where.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testGroupingFunctionInWhere() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from table where count(Id) = 1");
+        Assert.assertThrows("Invalid use of grouping function", SQLSyntaxErrorException.class, parser::parse);
     }
 }

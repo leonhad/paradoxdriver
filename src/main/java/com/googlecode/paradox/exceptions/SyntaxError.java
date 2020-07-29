@@ -13,7 +13,7 @@ package com.googlecode.paradox.exceptions;
 /**
  * Error codes.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public enum SyntaxError {
@@ -110,7 +110,12 @@ public enum SyntaxError {
     /**
      * A character string without a ending char.
      */
-    UNTERMINATED_STRING("019", "Unterminated character sequence");
+    UNTERMINATED_STRING("019", "Unterminated character sequence"),
+
+    /**
+     * Invalid use of grouping function.
+     */
+    INVALID_GROUPING_FUNCTION("020", "Invalid use of grouping function: %s");
 
     /**
      * SQL state code.

@@ -324,7 +324,11 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
         } else if (isToken(TokenType.L_PAREN)) {
             // function
-            return parseFunction(fieldName, position);
+            final FunctionNode node = parseFunction(fieldName, position);
+            if (node.isGrouping()) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_GROUPING_FUNCTION, position, node.getName());
+            }
+            return node;
         }
 
         return new FieldNode(tableName, name, position);
@@ -472,7 +476,7 @@ public final class SQLParser {
         this.expect(TokenType.FROM);
         boolean firstField = true;
         do {
-            if (TokenType.isSelectBreak(this.token.getType())) {
+            if (this.token != null && TokenType.isSelectBreak(this.token.getType())) {
                 break;
             }
             if (!firstField) {
@@ -686,7 +690,11 @@ public final class SQLParser {
 
         if (isToken(TokenType.L_PAREN)) {
             // function
-            return parseFunction(fieldName, position);
+            final FunctionNode node = parseFunction(fieldName, position);
+            if (node.isGrouping()) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_GROUPING_FUNCTION, position, node.getName());
+            }
+            return node;
         } else if (isToken(TokenType.PERIOD)) {
             // If it has a Table Name.
             this.expect(TokenType.PERIOD);
@@ -1181,17 +1189,10 @@ public final class SQLParser {
             final String fieldName = this.token.getValue();
             FieldNode fieldNode;
             position = token.getPosition();
-            switch (this.token.getType()) {
-                case NUMERIC:
-                    this.expect(TokenType.NUMERIC);
-                    fieldNode = new ValueNode(fieldName, position, ParadoxType.NUMBER);
-                    break;
-                case IDENTIFIER:
-                    fieldNode = parseIdentifierFieldFunction(fieldName);
-                    // parseIdentifierFieldOnly
-                    break;
-                default:
-                    throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
+            if (isToken(TokenType.IDENTIFIER)) {
+                fieldNode = parseIdentifierFieldFunction(fieldName);
+            } else {
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
             }
 
             select.addGroupBy(fieldNode);
