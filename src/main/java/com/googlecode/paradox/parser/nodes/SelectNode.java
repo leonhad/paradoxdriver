@@ -15,13 +15,12 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Stores a select node.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class SelectNode extends StatementNode {
@@ -33,7 +32,7 @@ public final class SelectNode extends StatementNode {
     /**
      * Group by values.
      */
-    private final List<IdentifierNode> groups = new ArrayList<>();
+    private final List<FieldNode> groups = new ArrayList<>();
     /**
      * Order by values.
      */
@@ -192,7 +191,7 @@ public final class SelectNode extends StatementNode {
         if (!this.groups.isEmpty()) {
             builder.append(" GROUP BY ");
             first = true;
-            for (final IdentifierNode group : this.groups) {
+            for (final FieldNode group : this.groups) {
                 if (first) {
                     first = false;
                 } else {
@@ -239,10 +238,10 @@ public final class SelectNode extends StatementNode {
     /**
      * Adds the group by identifier.
      *
-     * @param identifier the group by identifier to add.
+     * @param fieldNode the group by identifier to add.
      */
-    public void addGroupBy(final IdentifierNode identifier) {
-        this.groups.add(identifier);
+    public void addGroupBy(final FieldNode fieldNode) {
+        this.groups.add(fieldNode);
     }
 
     /**
@@ -261,8 +260,8 @@ public final class SelectNode extends StatementNode {
      *
      * @return the group list.
      */
-    public List<IdentifierNode> getGroups() {
-        return Collections.unmodifiableList(this.groups);
+    public List<FieldNode> getGroups() {
+        return this.groups;
     }
 
     /**

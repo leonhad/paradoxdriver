@@ -13,10 +13,11 @@ package com.googlecode.paradox.parser;
 /**
  * SQL Tokens
  *
- * @version 1.11
+ * @version 1.12
  * @since 1.0
  */
 public enum TokenType {
+
     /**
      * And token.
      */
@@ -96,6 +97,11 @@ public enum TokenType {
      * From token.
      */
     FROM,
+
+    /**
+     * Group token.
+     */
+    GROUP,
 
     /**
      * Identifier token.
@@ -285,6 +291,11 @@ public enum TokenType {
     private static final TokenType[] OPERATORS = {AND, OR, NOT};
 
     /**
+     * Stores the select break values.
+     */
+    private static final TokenType[] SELECT_BREAKS = {WHERE, ORDER, GROUP};
+
+    /**
      * Token value.
      */
     private final String value;
@@ -329,6 +340,22 @@ public enum TokenType {
      */
     public static boolean isConditionalBreak(final TokenType tokenType) {
         for (final TokenType token : TokenType.CONDITIONAL_BREAKS) {
+            if (token == tokenType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets if the token is a select break.
+     *
+     * @param tokenType the type to test of.
+     * @return true if this token is a conditional break.
+     */
+    public static boolean isSelectBreak(final TokenType tokenType) {
+        for (final TokenType token : TokenType.SELECT_BREAKS) {
             if (token == tokenType) {
                 return true;
             }

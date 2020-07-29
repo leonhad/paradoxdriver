@@ -1115,4 +1115,23 @@ public class SQLParserTest {
         final FieldNode fieldNode = functionNode.getClauseFields().iterator().next();
         Assert.assertEquals("Invalid field name", "Id", fieldNode.getName());
     }
+
+    /**
+     * Test for group by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testGroupBy() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from fields.long group by Id");
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid order by size", 1, select.getGroups().size());
+        final FieldNode field = select.getGroups().get(0);
+
+        Assert.assertEquals("Invalid field name", "Id", field.getName());
+    }
 }

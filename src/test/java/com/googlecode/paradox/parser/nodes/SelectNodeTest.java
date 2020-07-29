@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
+import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import com.googlecode.paradox.results.ParadoxType;
@@ -51,7 +52,7 @@ public class SelectNodeTest {
     @Test
     public void testGroupBy() {
         final SelectNode node = new SelectNode(null);
-        final IdentifierNode identifier = new IdentifierNode("Node", null);
+        final FieldNode identifier = new FieldNode(null, "Node", null);
         Assert.assertEquals("Invalid node size.", 0, node.getGroups().size());
         node.addGroupBy(identifier);
         Assert.assertEquals("Invalid node size.", 1, node.getGroups().size());

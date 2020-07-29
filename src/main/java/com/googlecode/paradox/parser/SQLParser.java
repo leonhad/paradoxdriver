@@ -472,7 +472,7 @@ public final class SQLParser {
         this.expect(TokenType.FROM);
         boolean firstField = true;
         do {
-            if (isToken(TokenType.WHERE) || isToken(TokenType.ORDER)) {
+            if (TokenType.isSelectBreak(this.token.getType())) {
                 break;
             }
             if (!firstField) {
@@ -709,8 +709,7 @@ public final class SQLParser {
      * @throws SQLException in case of errors.
      */
     private void parseJoin(final SelectNode select) throws SQLException {
-        while (this.scanner.hasNext()
-                && (!isToken(TokenType.COMMA) && !isToken(TokenType.WHERE) && !isToken(TokenType.ORDER))) {
+        while (this.scanner.hasNext() && !isToken(TokenType.COMMA) && !TokenType.isSelectBreak(this.token.getType())) {
 
             // Inner, right or cross join.
             JoinType joinType = JoinType.INNER;
@@ -1152,23 +1151,53 @@ public final class SQLParser {
         } while (this.scanner.hasNext());
     }
 
-    private FieldNode parseIdentifierFieldOnly(final String fieldName) throws SQLException {
-        String newTableName = null;
-        String newFieldName = fieldName;
+    /**
+     * Parses GROUP BY node.
+     *
+     * @param select the select statement node.
+     * @throws SQLException in case of failures.
+     */
+    private void parseGroupBy(final SelectNode select) throws SQLException {
+        ScannerPosition position = this.token.getPosition();
+        this.expect(TokenType.GROUP);
 
-        @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
-        this.expect(TokenType.IDENTIFIER);
+        if (this.token != null) {
+            position = this.token.getPosition();
+        }
+        this.expect(TokenType.BY);
 
-        if (isToken(TokenType.PERIOD)) {
-            // If it has a Table Name.
-            this.expect(TokenType.PERIOD);
-            newTableName = fieldName;
-            newFieldName = this.token.getValue();
-
-            this.expect(TokenType.IDENTIFIER);
+        if (this.token == null) {
+            position.addOffset(TokenType.BY.name().length());
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST, position);
         }
 
-        return new FieldNode(newTableName, newFieldName, position);
+        boolean firstField = true;
+        do {
+            // Field Name
+            if (!firstField) {
+                this.expect(TokenType.COMMA);
+            }
+
+            final String fieldName = this.token.getValue();
+            FieldNode fieldNode;
+            position = token.getPosition();
+            switch (this.token.getType()) {
+                case NUMERIC:
+                    this.expect(TokenType.NUMERIC);
+                    fieldNode = new ValueNode(fieldName, position, ParadoxType.NUMBER);
+                    break;
+                case IDENTIFIER:
+                    fieldNode = parseIdentifierFieldFunction(fieldName);
+                    // parseIdentifierFieldOnly
+                    break;
+                default:
+                    throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
+            }
+
+            select.addGroupBy(fieldNode);
+
+            firstField = false;
+        } while (this.scanner.hasNext());
     }
 
     /**
@@ -1198,23 +1227,27 @@ public final class SQLParser {
 
         if (isToken(TokenType.FROM)) {
             this.parseFrom(select);
+        }
 
-            // Only SELECT with FROM can have WHERE clause.
-            if (isToken(TokenType.WHERE)) {
-                position = this.token.getPosition();
-                this.expect(TokenType.WHERE);
-                select.setCondition(this.parseCondition());
+        // Only SELECT with FROM can have WHERE clause.
+        if (isToken(TokenType.WHERE)) {
+            position = this.token.getPosition();
+            this.expect(TokenType.WHERE);
+            select.setCondition(this.parseCondition());
 
-                if (select.getCondition() == null) {
-                    position.addOffset(TokenType.WHERE.name().length());
-                    throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_CONDITIONAL_LIST,
-                            position);
-                }
+            if (select.getCondition() == null) {
+                position.addOffset(TokenType.WHERE.name().length());
+                throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_CONDITIONAL_LIST,
+                        position);
             }
+        }
 
-            if (isToken(TokenType.ORDER)) {
-                this.parseOrderBy(select);
-            }
+        if (isToken(TokenType.ORDER)) {
+            this.parseOrderBy(select);
+        }
+
+        if (isToken(TokenType.GROUP)) {
+            this.parseGroupBy(select);
         }
 
         if (this.scanner.hasNext() || this.token != null) {
