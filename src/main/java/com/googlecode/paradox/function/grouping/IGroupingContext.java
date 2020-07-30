@@ -1,7 +1,5 @@
 package com.googlecode.paradox.function.grouping;
 
-import com.googlecode.paradox.results.ParadoxType;
-
 /**
  * Stores a grouping value context for store temporary data.
  *
@@ -9,7 +7,5 @@ import com.googlecode.paradox.results.ParadoxType;
  * @since 1.6.0
  */
 public interface IGroupingContext {
-    String getName();
 
-    ParadoxType getType();
 }
