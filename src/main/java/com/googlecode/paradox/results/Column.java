@@ -27,6 +27,7 @@ import java.util.Objects;
  * @see ParadoxResultSet
  * @since 1.0
  */
+@SuppressWarnings("java:S1448")
 public final class Column {
 
     private final boolean nullable;
@@ -411,13 +412,16 @@ public final class Column {
             return false;
         }
         Column column = (Column) o;
+        boolean ret;
         if (field != null) {
-            return Objects.equals(field, column.field);
+            ret = Objects.equals(field, column.field);
         } else if (function != null) {
-            return function.equals(column.function);
+            ret = function.equals(column.function);
         } else {
-            return Objects.equals(name, column.name);
+            ret = Objects.equals(name, column.name);
         }
+
+        return ret;
     }
 
     @Override
