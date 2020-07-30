@@ -252,7 +252,8 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by State");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         plan.execute(conn.getConnectionInfo(), 1, null, null);
-        Assert.assertEquals("Invalid column size", 1, plan.getColumns().size());
+        Assert.assertEquals("Invalid column size", 1,
+                plan.getColumns().stream().filter(c -> !c.isHidden()).count());
         Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
         Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
         Assert.assertEquals("Invalid group by field size", 1, plan.getGroupByFields().size());
@@ -269,7 +270,8 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser("SELECT count(*), State, 1, 'a' FROM AREACODES group by State, 1, 'a'");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         plan.execute(conn.getConnectionInfo(), 1, null, null);
-        Assert.assertEquals("Invalid column size", 4, plan.getColumns().size());
+        Assert.assertEquals("Invalid column size", 4,
+                plan.getColumns().stream().filter(c -> !c.isHidden()).count());
         Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
         Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
         Assert.assertEquals("Invalid group by field size", 3, plan.getGroupByFields().size());
@@ -305,7 +307,6 @@ public class PlannerTest {
         Assert.assertThrows("Invalid planer value", SQLException.class,
                 () -> Planner.create(conn.getConnectionInfo(), nodes.get(0)));
     }
-
 
     /**
      * Test for table not found.

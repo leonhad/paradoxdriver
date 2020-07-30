@@ -246,4 +246,19 @@ public class FunctionNode extends FieldNode {
     public int hashCode() {
         return Objects.hash(super.hashCode(), parameters, function);
     }
+
+    public List<FunctionNode> getGroupingNodes() {
+        final List<FunctionNode> ret = new ArrayList<>();
+        if (function.isGrouping()) {
+            ret.add(this);
+        }
+
+        for (final SQLNode node : parameters) {
+            if (node instanceof FunctionNode) {
+                ret.addAll(((FunctionNode) node).getGroupingNodes());
+            }
+        }
+
+        return ret;
+    }
 }

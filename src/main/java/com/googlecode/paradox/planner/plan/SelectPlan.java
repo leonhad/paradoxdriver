@@ -173,6 +173,30 @@ public final class SelectPlan implements Plan {
         for (final PlanTableNode table : this.tables) {
             table.setConditionalJoin(reduce(table.getConditionalJoin()));
         }
+
+        createGroupByColumns();
+    }
+
+    private void createGroupByColumns() {
+        final List<Column> columnList = this.columns.stream()
+                .map(this::getGroupingFunctions).flatMap(Collection::stream)
+                .map(Column::new)
+                .collect(Collectors.toList());
+
+        for (final Column column : columnList) {
+            column.setHidden(true);
+            column.getFunction().setIndex(this.columns.size());
+            this.columns.add(column);
+        }
+    }
+
+    private List<FunctionNode> getGroupingFunctions(final Column column) {
+        final FunctionNode function = column.getFunction();
+        if (function == null) {
+            return Collections.emptyList();
+        }
+
+        return function.getGroupingNodes();
     }
 
     private int getTableIndex(final ParadoxTable table) {

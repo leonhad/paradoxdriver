@@ -13,6 +13,7 @@ package com.googlecode.paradox.planner;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.TestUtil;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -75,6 +76,6 @@ public class FieldValueUtilsTest {
         final String original = "String to convert.";
         final byte[] values = original.getBytes(StandardCharsets.UTF_8);
 
-        Assert.assertEquals("Invalid conversion", original, FieldValueUtils.convert(values, StandardCharsets.UTF_8));
+        Assert.assertEquals("Invalid conversion", original, ValuesConverter.convert(values, StandardCharsets.UTF_8));
     }
 }

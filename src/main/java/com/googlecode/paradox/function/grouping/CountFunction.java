@@ -69,5 +69,14 @@ public class CountFunction extends AbstractGroupingFunction {
 
     private static class CountContext implements IGroupingContext {
 
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public ParadoxType getType() {
+            return ParadoxType.LONG;
+        }
     }
 }
