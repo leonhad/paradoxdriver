@@ -69,7 +69,7 @@ public final class Column {
      */
     private boolean hidden;
     /**
-     * Fixed value.
+     * Single value.
      */
     private Object value;
     /**
@@ -411,11 +411,23 @@ public final class Column {
             return false;
         }
         Column column = (Column) o;
-        return Objects.equals(field, column.field);
+        if (field != null) {
+            return Objects.equals(field, column.field);
+        } else if (function != null) {
+            return function.equals(column.function);
+        } else {
+            return Objects.equals(name, column.name);
+        }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(field);
+        if (field != null) {
+            return Objects.hash(field);
+        } else if (function != null) {
+            return function.hashCode();
+        } else {
+            return Objects.hash(name);
+        }
     }
 }

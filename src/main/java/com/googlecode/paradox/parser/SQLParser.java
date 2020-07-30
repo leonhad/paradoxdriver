@@ -1168,6 +1168,12 @@ public final class SQLParser {
                 fieldNode = parseNumeric(fieldName);
             } else if (isToken(TokenType.CHARACTER)) {
                 fieldNode = parseCharacter(fieldName);
+            } else if (isToken(TokenType.NULL)) {
+                fieldNode = this.parseNull();
+            } else if (isToken(TokenType.TRUE)) {
+                fieldNode = this.parseTrue(this.token.getValue());
+            } else if (isToken(TokenType.FALSE)) {
+                fieldNode = this.parseFalse(this.token.getValue());
             } else if (isToken(TokenType.IDENTIFIER)) {
                 fieldNode = parseIdentifierFieldFunction(fieldName);
             } else {

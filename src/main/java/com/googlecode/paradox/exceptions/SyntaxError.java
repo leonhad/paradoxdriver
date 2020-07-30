@@ -115,7 +115,12 @@ public enum SyntaxError {
     /**
      * Invalid use of grouping function.
      */
-    INVALID_GROUPING_FUNCTION("020", "Invalid use of grouping function: %s");
+    INVALID_GROUPING_FUNCTION("020", "Invalid use of grouping function: %s"),
+
+    /**
+     * Not a group by expression.
+     */
+    NOT_GROUP_BY("021", "Not a group by expression");
 
     /**
      * SQL state code.

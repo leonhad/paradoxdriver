@@ -260,6 +260,25 @@ public class PlannerTest {
     }
 
     /**
+     * Test for group by with fix values.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupByFixValues() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT count(*), State, 1, 'a' FROM AREACODES group by State, 1, 'a'");
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 1, null, null);
+        Assert.assertEquals("Invalid column size", 4, plan.getColumns().size());
+        Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
+        Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
+        Assert.assertEquals("Invalid group by field size", 3, plan.getGroupByFields().size());
+        Assert.assertEquals("Invalid group by field name", "State", plan.getGroupByFields().get(0).getName());
+        Assert.assertEquals("Invalid group by field name", "1", plan.getGroupByFields().get(1).getName());
+        Assert.assertEquals("Invalid group by field name", "a", plan.getGroupByFields().get(2).getName());
+    }
+
+    /**
      * Test for group by with invalid field list.
      *
      * @throws SQLException in case of errors.
@@ -272,6 +291,21 @@ public class PlannerTest {
         Assert.assertThrows("Invalid planer value", SQLException.class,
                 () -> Planner.create(conn.getConnectionInfo(), nodes.get(0)));
     }
+
+    /**
+     * Test for group by with invalid fix values.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupByInvalidFieldListAndFixValues() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT count(*), 1, 'a' FROM AREACODES group by State, 1");
+        final List<StatementNode> nodes = parser.parse();
+        Assert.assertEquals("Invalid column size", 1, nodes.size());
+        Assert.assertThrows("Invalid planer value", SQLException.class,
+                () -> Planner.create(conn.getConnectionInfo(), nodes.get(0)));
+    }
+
 
     /**
      * Test for table not found.

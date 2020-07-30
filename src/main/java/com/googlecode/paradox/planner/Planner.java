@@ -89,8 +89,8 @@ public class Planner {
      * @throws SQLException in case of parse errors.
      */
     private static void parseGroupBy(final SelectNode statement, final SelectPlan plan) throws SQLException {
-        for (int i = 0; i < statement.getGroups().size(); i++) {
-            final FieldNode field = statement.getGroups().get(i);
+        // Create columns to use in SELECT statement.
+        for (final FieldNode field : statement.getGroups()) {
             if (field instanceof ParameterNode) {
                 throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED,
                         field.getPosition());
@@ -98,6 +98,22 @@ public class Planner {
                 plan.addGroupColumn(new Column((ValueNode) field));
             } else {
                 plan.addGroupColumn(field);
+            }
+        }
+
+
+        final List<Column> groupColumns = plan.getGroupByFields();
+
+        // This is a group by expression?
+        if (!groupColumns.isEmpty()) {
+            // Validate statically the group by clause.
+            final List<Column> fields = plan.getColumns().stream()
+                    .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
+                    .filter(c -> !groupColumns.contains(c))
+                    .collect(Collectors.toList());
+
+            if (!fields.isEmpty()) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.NOT_GROUP_BY);
             }
         }
     }
