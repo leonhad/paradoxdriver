@@ -30,4 +30,11 @@ public abstract class AbstractGroupingFunction extends AbstractFunction {
     public boolean isGrouping() {
         return true;
     }
+
+    /**
+     * Creates a new context to start the grouping process.
+     *
+     * @return the new context instance.
+     */
+    public abstract IGroupingContext createContext();
 }

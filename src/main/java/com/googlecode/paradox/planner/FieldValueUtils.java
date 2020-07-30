@@ -11,7 +11,6 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
@@ -21,11 +20,6 @@ import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
@@ -43,27 +37,6 @@ public final class FieldValueUtils {
      */
     private FieldValueUtils() {
         // Not used.
-    }
-
-    /**
-     * Convert a byte array to String using a charset specified.
-     *
-     * @param bytes   the byte array to convert.
-     * @param charset the charset to use.
-     * @return the converted String.
-     * @throws ParadoxDataException in case of converter errors.
-     */
-    public static String convert(final byte[] bytes, final Charset charset) throws ParadoxDataException {
-        final CharsetDecoder decoder = charset.newDecoder();
-        decoder.onMalformedInput(CodingErrorAction.IGNORE);
-        decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
-        final ByteBuffer input = ByteBuffer.wrap(bytes);
-
-        try {
-            return decoder.decode(input).toString();
-        } catch (CharacterCodingException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
-        }
     }
 
     /**

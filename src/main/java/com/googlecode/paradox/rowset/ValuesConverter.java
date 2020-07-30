@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
+import java.nio.charset.*;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -524,4 +525,26 @@ public final class ValuesConverter {
 
         return ret;
     }
+
+    /**
+     * Convert a byte array to String using a charset specified.
+     *
+     * @param bytes   the byte array to convert.
+     * @param charset the charset to use.
+     * @return the converted String.
+     * @throws ParadoxDataException in case of converter errors.
+     */
+    public static String convert(final byte[] bytes, final Charset charset) throws ParadoxDataException {
+        final CharsetDecoder decoder = charset.newDecoder();
+        decoder.onMalformedInput(CodingErrorAction.IGNORE);
+        decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
+        final ByteBuffer input = ByteBuffer.wrap(bytes);
+
+        try {
+            return decoder.decode(input).toString();
+        } catch (CharacterCodingException e) {
+            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
+        }
+    }
+
 }

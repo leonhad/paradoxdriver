@@ -47,7 +47,7 @@ public class DateDiffFunction extends AbstractDateFunction {
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.LONG, "The difference between dates.", 0, false, RESULT),
+            new Column(null, ParadoxType.BCD, "The difference between dates.", 0, false, RESULT),
             new Column("interval", ParadoxType.VARCHAR, "The date interval to compare.", 1, false, IN),
             new Column("start_date", ParadoxType.TIMESTAMP, "The start date.", 2, false, IN),
             new Column("end_date", ParadoxType.TIMESTAMP, "The end date.", 3, false, IN)

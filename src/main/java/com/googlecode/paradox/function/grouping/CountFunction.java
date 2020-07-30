@@ -36,7 +36,7 @@ public class CountFunction extends AbstractGroupingFunction {
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.INTEGER, "The number of rows.", 0, true, RESULT),
+            new Column(null, ParadoxType.LONG, "The number of rows.", 0, true, RESULT),
             new Column("value", ParadoxType.NULL, "Any value to count.", 1, false, IN),
     };
 
@@ -60,5 +60,14 @@ public class CountFunction extends AbstractGroupingFunction {
     @Override
     public void validate(List<SQLNode> parameters) {
         // Do nothing. This function is always valid. We are only counting rows.
+    }
+
+    @Override
+    public IGroupingContext createContext() {
+        return new CountContext();
+    }
+
+    private static class CountContext implements IGroupingContext {
+
     }
 }

@@ -15,7 +15,6 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.TokenType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -98,7 +97,7 @@ public class ConvertFunction extends AbstractGeneralFunction {
 
                 return new String(bytes, charset);
             } else if (value instanceof byte[]) {
-                return FieldValueUtils.convert((byte[]) value, this.charset).replace("\u0000", "");
+                return ValuesConverter.convert((byte[]) value, this.charset).replace("\u0000", "");
             }
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, value);
         } else {
