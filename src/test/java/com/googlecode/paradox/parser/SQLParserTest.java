@@ -1166,9 +1166,7 @@ public class SQLParserTest {
      */
     @Test
     public void testGroupByAndOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "SELECT count(*) FROM AREACODES group by State ORDER BY 1"
-        );
+        final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by State ORDER BY State");
 
         final List<StatementNode> list = parser.parse();
         final SQLNode tree = list.get(0);
@@ -1176,10 +1174,40 @@ public class SQLParserTest {
         final SelectNode select = (SelectNode) tree;
 
         Assert.assertFalse("Invalid order by fields", select.getOrder().isEmpty());
-        Assert.assertEquals("Invalid order by size", 1, select.getGroups().size());
+        Assert.assertEquals("Invalid group by size", 1, select.getGroups().size());
         final FieldNode field = select.getGroups().get(0);
 
         Assert.assertEquals("Invalid field name", "State", field.getName());
+    }
+
+    /**
+     * Test for group by and fixed values.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testGroupByAndFixedValues() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by 123, 'abc'");
+
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid group by size", 2, select.getGroups().size());
+        Assert.assertEquals("Invalid field name", "123", select.getGroups().get(0).getName());
+        Assert.assertEquals("Invalid field name", "abc", select.getGroups().get(1).getName());
+    }
+
+    /**
+     * Test for parameter in group by.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testParameterInGroupBy() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by ?");
+        Assert.assertThrows("Invalid parser value", SQLException.class, parser::parse);
     }
 
     /**

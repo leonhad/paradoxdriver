@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * Parses a SQL statement.
  *
- * @version 1.12
+ * @version 1.13
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")
@@ -100,12 +100,10 @@ public final class SQLParser {
         if (isToken(TokenType.SELECT)) {
             statementNodes.add(this.parseSelect());
         } else {
-            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
-                    token.getPosition());
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, token.getPosition());
         }
 
         statementNodes.forEach(s -> s.setParameterCount(parameterCount));
-
         return statementNodes;
     }
 
@@ -119,14 +117,25 @@ public final class SQLParser {
         if (this.token == null) {
             throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_END_OF_STATEMENT);
         } else if (this.token.getType() != token) {
-            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
-                    this.token.getPosition());
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, getPosition());
         }
 
         if (this.scanner.hasNext()) {
             this.token = this.scanner.nextToken();
         } else {
             this.token = null;
+        }
+    }
+
+    /**
+     * Test for expected COMMA if {@code enabled} is <code>true</code>.
+     *
+     * @param enabled <code>true</code> if the token can be checked.
+     * @throws SQLException in case of unexpected tokens.
+     */
+    private void expectComma(final boolean enabled) throws SQLException {
+        if (enabled) {
+            expect(TokenType.COMMA);
         }
     }
 
@@ -138,7 +147,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private AsteriskNode parseAsterisk(final String tableName) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.ASTERISK);
         return new AsteriskNode(tableName, position);
     }
@@ -151,7 +160,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private BetweenNode parseBetween(final FieldNode field) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.BETWEEN);
         final FieldNode left = this.parseField();
         this.expect(TokenType.AND);
@@ -167,7 +176,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private ValueNode parseCharacter(final String fieldName) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.CHARACTER);
 
         return new ValueNode(fieldName, position, ParadoxType.VARCHAR);
@@ -176,17 +185,15 @@ public final class SQLParser {
     private String getFieldAlias(String fieldName) throws SQLException {
         String fieldAlias = fieldName;
 
-        if (this.token != null) {
-            if (isToken(TokenType.AS)) {
-                // Field alias (with AS identifier)
-                this.expect(TokenType.AS);
-                fieldAlias = this.token.getValue();
-                this.expect(TokenType.IDENTIFIER);
-            } else if (isToken(TokenType.IDENTIFIER)) {
-                // Field alias (without AS identifier)
-                fieldAlias = this.token.getValue();
-                this.expect(TokenType.IDENTIFIER);
-            }
+        if (isToken(TokenType.AS)) {
+            // Field alias (with AS identifier)
+            this.expect(TokenType.AS);
+            fieldAlias = this.token.getValue();
+            this.expect(TokenType.IDENTIFIER);
+        } else if (isToken(TokenType.IDENTIFIER)) {
+            // Field alias (without AS identifier)
+            fieldAlias = this.token.getValue();
+            this.expect(TokenType.IDENTIFIER);
         }
 
         return fieldAlias;
@@ -269,7 +276,7 @@ public final class SQLParser {
      */
     private FieldNode parseField() throws SQLException {
         String fieldName = this.token.getValue();
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
 
         FieldNode ret;
         switch (this.token.getType()) {
@@ -319,6 +326,7 @@ public final class SQLParser {
             if (node.isGrouping()) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_GROUPING_FUNCTION, position, node.getName());
             }
+
             return node;
         }
 
@@ -381,20 +389,10 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseFields(final SelectNode select) throws SQLException {
-        if (this.token == null) {
-            // No tokens to process here.
-            return;
-        }
-
         boolean firstField = true;
         do {
-            if (isToken(TokenType.FROM)) {
-                break;
-            }
-
-            if (!firstField) {
-                this.expect(TokenType.COMMA);
-            }
+            expectComma(!firstField);
+            firstField = false;
 
             // Field Name
             final String fieldName = this.token.getValue();
@@ -429,9 +427,7 @@ public final class SQLParser {
 
             node.setAlias(getFieldAlias(node.getAlias()));
             select.addField(node);
-
-            firstField = false;
-        } while (this.scanner.hasNext());
+        } while (this.scanner.hasNext() && !isToken(TokenType.FROM));
     }
 
     /**
@@ -463,27 +459,21 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private void parseFrom(final SelectNode select) throws SQLException {
-        ScannerPosition position = this.token.getPosition();
+        ScannerPosition position = getPosition();
         this.expect(TokenType.FROM);
         boolean firstField = true;
-        do {
-            if (this.token != null && this.token.isSelectBreak()) {
-                break;
-            }
-            if (!firstField) {
-                this.expect(TokenType.COMMA);
-            }
-            if (isToken(TokenType.IDENTIFIER)) {
-                this.parseJoinTable(select);
-                firstField = false;
-            }
-        } while (this.scanner.hasNext());
+        while (this.token != null && !this.token.isSelectBreak()) {
+            expectComma(!firstField);
+            firstField = false;
+
+            this.parseJoinTable(select);
+        }
 
         if (select.getTables().isEmpty()) {
             if (this.token != null) {
-                position = token.getPosition();
+                position = getPosition();
             } else {
-                position.addOffset(TokenType.FROM.name().length());
+                addOffset(position, TokenType.FROM.name().length());
             }
 
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_TABLE_LIST, position);
@@ -501,7 +491,7 @@ public final class SQLParser {
         String newTableName = null;
         String newFieldName = fieldName;
 
-        @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
 
         // Just change to next token because some functions have clash names with
         // reserved words.
@@ -586,8 +576,8 @@ public final class SQLParser {
             ret = true;
         } else if (functionName.equalsIgnoreCase(ConvertFunction.NAME)) {
             if (isToken(TokenType.USING)) {
-                node.getParameters()
-                        .add(new ValueNode(this.token.getValue(), this.token.getPosition(), ParadoxType.VARCHAR));
+                node.getParameters().add(
+                        new ValueNode(this.token.getValue(), this.token.getPosition(), ParadoxType.VARCHAR));
                 this.expect(TokenType.USING);
             } else {
                 this.expect(TokenType.COMMA);
@@ -617,14 +607,12 @@ public final class SQLParser {
 
         boolean first = true;
         while (!isToken(TokenType.R_PAREN)) {
-            if (!first) {
-                // Is a function specific separator?
-                if (!isFunctionSpecific(functionName, functionNode)) {
-                    this.expect(TokenType.COMMA);
-                }
-            } else {
-                first = false;
+            // Is a function specific separator?
+            if (!first && !isFunctionSpecific(functionName, functionNode)) {
+                this.expect(TokenType.COMMA);
             }
+
+            first = false;
 
             switch (this.token.getType()) {
                 case CHARACTER:
@@ -654,10 +642,7 @@ public final class SQLParser {
             }
         }
 
-        ScannerPosition endPosition = null;
-        if (this.token != null) {
-            endPosition = this.token.getPosition();
-        }
+        final ScannerPosition endPosition = getPosition();
         this.expect(TokenType.R_PAREN);
 
         functionNode.validate(endPosition);
@@ -676,7 +661,7 @@ public final class SQLParser {
         String newTableName = null;
         String newFieldName = fieldName;
 
-        @SuppressWarnings("java:S1941") final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.IDENTIFIER);
 
         if (isToken(TokenType.L_PAREN)) {
@@ -685,6 +670,7 @@ public final class SQLParser {
             if (node.isGrouping()) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_GROUPING_FUNCTION, position, node.getName());
             }
+
             return node;
         } else if (isToken(TokenType.PERIOD)) {
             // If it has a Table Name.
@@ -710,34 +696,7 @@ public final class SQLParser {
     private void parseJoin(final SelectNode select) throws SQLException {
         while (this.scanner.hasNext() && !isToken(TokenType.COMMA) && !this.token.isSelectBreak()) {
             // Inner, right or cross join.
-            JoinType joinType = JoinType.INNER;
-            switch (this.token.getType()) {
-                case FULL:
-                    joinType = JoinType.FULL;
-                    this.expect(TokenType.FULL);
-                    testAndRemoveTokenType(TokenType.OUTER);
-                    break;
-                case LEFT:
-                    joinType = JoinType.LEFT;
-                    this.expect(TokenType.LEFT);
-                    testAndRemoveTokenType(TokenType.OUTER);
-                    break;
-                case RIGHT:
-                    joinType = JoinType.RIGHT;
-                    this.expect(TokenType.RIGHT);
-                    testAndRemoveTokenType(TokenType.OUTER);
-                    break;
-                case CROSS:
-                    joinType = JoinType.CROSS;
-                    this.expect(TokenType.CROSS);
-                    break;
-                case INNER:
-                    this.expect(TokenType.INNER);
-                    break;
-                default:
-                    // Nothing to do here.
-            }
-
+            final JoinType joinType = getJoinType();
             this.expect(TokenType.JOIN);
 
             String schemaName = null;
@@ -766,6 +725,44 @@ public final class SQLParser {
     }
 
     /**
+     * Parses the join type.
+     *
+     * @return the join type.
+     * @throws SQLException in case of failures.
+     */
+    private JoinType getJoinType() throws SQLException {
+        JoinType joinType = JoinType.INNER;
+        switch (this.token.getType()) {
+            case FULL:
+                joinType = JoinType.FULL;
+                this.expect(TokenType.FULL);
+                testAndRemoveTokenType(TokenType.OUTER);
+                break;
+            case LEFT:
+                joinType = JoinType.LEFT;
+                this.expect(TokenType.LEFT);
+                testAndRemoveTokenType(TokenType.OUTER);
+                break;
+            case RIGHT:
+                joinType = JoinType.RIGHT;
+                this.expect(TokenType.RIGHT);
+                testAndRemoveTokenType(TokenType.OUTER);
+                break;
+            case CROSS:
+                joinType = JoinType.CROSS;
+                this.expect(TokenType.CROSS);
+                break;
+            case INNER:
+                this.expect(TokenType.INNER);
+                break;
+            default:
+                // Nothing to do here.
+        }
+
+        return joinType;
+    }
+
+    /**
      * Test for a desired token and remove it if is the right token.
      *
      * @param token the token to test.
@@ -786,7 +783,7 @@ public final class SQLParser {
     private void parseJoinTable(final SelectNode select) throws SQLException {
         String schemaName = null;
         String tableName = this.token.getValue();
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.IDENTIFIER);
 
         // Have schema name.
@@ -814,7 +811,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private AbstractComparableNode parseLess(final FieldNode firstField) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.LESS);
 
         if (isToken(TokenType.EQUALS)) {
@@ -833,7 +830,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private AbstractComparableNode parseMore(final FieldNode firstField) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.MORE);
 
         if (isToken(TokenType.EQUALS)) {
@@ -845,7 +842,7 @@ public final class SQLParser {
     }
 
     private InNode parseIn(final FieldNode firstField) throws SQLException {
-        ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.IN);
         this.expect(TokenType.L_PAREN);
 
@@ -853,11 +850,8 @@ public final class SQLParser {
 
         boolean first = true;
         do {
-            if (!first) {
-                this.expect(TokenType.COMMA);
-            } else {
-                first = false;
-            }
+            expectComma(!first);
+            first = false;
 
             if (isToken(TokenType.NUMERIC)) {
                 in.addField(new ValueNode(token.getValue(), token.getPosition(), ParadoxType.NUMBER));
@@ -866,11 +860,7 @@ public final class SQLParser {
                 in.addField(new ValueNode(token.getValue(), token.getPosition(), ParadoxType.VARCHAR));
                 this.expect(TokenType.CHARACTER);
             } else {
-                position = null;
-                if (this.token != null) {
-                    position = this.token.getPosition();
-                }
-                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, getPosition());
             }
 
         } while (!isToken(TokenType.R_PAREN));
@@ -888,7 +878,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private AbstractComparableNode parseNull(final FieldNode firstField) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.IS);
         AbstractComparableNode ret;
         if (isToken(TokenType.NOT)) {
@@ -910,7 +900,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private NotNode parseNot(final FieldNode firstField) throws SQLException {
-        ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.NOT);
 
         final NotNode not = new NotNode(position);
@@ -921,8 +911,7 @@ public final class SQLParser {
         } else if (isToken(TokenType.IN)) {
             not.addChild(this.parseIn(firstField));
         } else {
-            position = this.token.getPosition();
-            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
+            throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, getPosition());
         }
 
         return not;
@@ -936,7 +925,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private LikeNode parseLike(final FieldNode firstField) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.LIKE);
 
         final LikeNode like = new LikeNode(firstField, parseField(), position);
@@ -952,7 +941,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private ILikeNode parseILike(final FieldNode firstField) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.ILIKE);
 
         final ILikeNode iLikeNode = new ILikeNode(firstField, parseField(), position);
@@ -993,7 +982,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private NotEqualsNode parseNotEquals(final FieldNode firstField) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.NOT_EQUALS);
         final FieldNode value = this.parseField();
         return new NotEqualsNode(firstField, value, position);
@@ -1007,7 +996,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private ValueNode parseNumeric(final String fieldName) throws SQLException {
-        final ScannerPosition position = token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.NUMERIC);
 
         return new ValueNode(fieldName, position, ParadoxType.NUMBER);
@@ -1021,7 +1010,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private ValueNode parseTrue(final String fieldName) throws SQLException {
-        final ScannerPosition position = token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.TRUE);
 
         final ValueNode value = new ValueNode("true", position, ParadoxType.BOOLEAN);
@@ -1037,7 +1026,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private ValueNode parseFalse(final String fieldName) throws SQLException {
-        final ScannerPosition position = token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.FALSE);
 
         final ValueNode value = new ValueNode("false", position, ParadoxType.BOOLEAN);
@@ -1046,7 +1035,7 @@ public final class SQLParser {
     }
 
     private ValueNode parseNull() throws SQLException {
-        final ScannerPosition position = token.getPosition();
+        final ScannerPosition position = getPosition();
         this.expect(TokenType.NULL);
 
         final ValueNode value = new ValueNode(null, position, ParadoxType.NULL);
@@ -1062,7 +1051,7 @@ public final class SQLParser {
      * @throws SQLException in case or errors.
      */
     private AbstractConditionalNode parseOperators(final AbstractConditionalNode parent) throws SQLException {
-        final ScannerPosition position = this.token.getPosition();
+        final ScannerPosition position = getPosition();
         AbstractConditionalNode ret;
         if (isToken(TokenType.AND)) {
             // Token type AND.
@@ -1098,55 +1087,55 @@ public final class SQLParser {
      * @throws SQLException in case of failures.
      */
     private void parseOrderBy(final SelectNode select) throws SQLException {
-        ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.ORDER);
 
-        if (this.token != null) {
-            position = this.token.getPosition();
-        }
+        ScannerPosition position = getPosition();
         this.expect(TokenType.BY);
 
         if (this.token == null) {
-            position.addOffset(TokenType.BY.name().length());
+            addOffset(position, TokenType.BY.name().length());
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST, position);
         }
 
         boolean firstField = true;
-        do {
+        while (this.token != null) {
             // Field Name
-            if (!firstField) {
-                this.expect(TokenType.COMMA);
-            }
+            expectComma(!firstField);
+            firstField = false;
 
             final String fieldName = this.token.getValue();
             FieldNode fieldNode;
-            position = token.getPosition();
-            switch (this.token.getType()) {
-                case NUMERIC:
-                    this.expect(TokenType.NUMERIC);
-                    fieldNode = new ValueNode(fieldName, position, ParadoxType.NUMBER);
-                    break;
-                case IDENTIFIER:
-                    fieldNode = parseIdentifierFieldFunction(fieldName);
-                    // parseIdentifierFieldOnly
-                    break;
-                default:
-                    throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
+            position = getPosition();
+            if (this.token.getType() == TokenType.NUMERIC) {
+                fieldNode = parseNumeric(fieldName);
+            } else if (this.token.getType() == TokenType.IDENTIFIER) {
+                fieldNode = parseIdentifierFieldFunction(fieldName);
+            } else {
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
             }
 
-            OrderType type = OrderType.ASC;
-            if (this.isToken(TokenType.ASC)) {
-                this.expect(TokenType.ASC);
-                // Default order, nothing to change on it.
-            } else if (this.isToken(TokenType.DESC)) {
-                this.expect(TokenType.DESC);
-                type = OrderType.DESC;
-            }
+            OrderType type = getOrderType();
 
             select.addOrderBy(fieldNode, type);
+        }
+    }
 
-            firstField = false;
-        } while (this.scanner.hasNext());
+    /**
+     * Parses the order by type.
+     *
+     * @return the order by type.
+     * @throws SQLException in case of failures.
+     */
+    private OrderType getOrderType() throws SQLException {
+        OrderType type = OrderType.ASC;
+        if (this.isToken(TokenType.ASC)) {
+            this.expect(TokenType.ASC);
+            // Default order, nothing to change on it.
+        } else if (this.isToken(TokenType.DESC)) {
+            this.expect(TokenType.DESC);
+            type = OrderType.DESC;
+        }
+        return type;
     }
 
     /**
@@ -1156,39 +1145,37 @@ public final class SQLParser {
      * @throws SQLException in case of failures.
      */
     private void parseGroupBy(final SelectNode select) throws SQLException {
-        ScannerPosition position = this.token.getPosition();
         this.expect(TokenType.GROUP);
 
-        if (this.token != null) {
-            position = this.token.getPosition();
-        }
+        ScannerPosition position = getPosition();
         this.expect(TokenType.BY);
 
         if (this.token == null) {
-            position.addOffset(TokenType.BY.name().length());
+            addOffset(position, TokenType.BY.name().length());
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST, position);
         }
 
         boolean firstField = true;
-        do {
+        while (this.token != null && !this.token.isConditionBreak()) {
             // Field Name
-            if (!firstField) {
-                this.expect(TokenType.COMMA);
-            }
+            expectComma(!firstField);
+            firstField = false;
 
             final String fieldName = this.token.getValue();
             FieldNode fieldNode;
-            position = token.getPosition();
-            if (isToken(TokenType.IDENTIFIER)) {
+            position = getPosition();
+            if (isToken(TokenType.NUMERIC)) {
+                fieldNode = parseNumeric(fieldName);
+            } else if (isToken(TokenType.CHARACTER)) {
+                fieldNode = parseCharacter(fieldName);
+            } else if (isToken(TokenType.IDENTIFIER)) {
                 fieldNode = parseIdentifierFieldFunction(fieldName);
             } else {
                 throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
             }
 
             select.addGroupBy(fieldNode);
-
-            firstField = false;
-        } while (this.scanner.hasNext() && !this.token.isConditionBreak());
+        }
     }
 
     /**
@@ -1198,7 +1185,7 @@ public final class SQLParser {
      * @throws SQLException in case of parse errors.
      */
     private SelectNode parseSelect() throws SQLException {
-        ScannerPosition position = this.token.getPosition();
+        ScannerPosition position = getPosition();
         final SelectNode select = new SelectNode(position);
         this.expect(TokenType.SELECT);
 
@@ -1209,10 +1196,12 @@ public final class SQLParser {
         }
 
         // Field loop
-        this.parseFields(select);
+        if (this.token != null) {
+            this.parseFields(select);
+        }
 
         if (select.getFields().isEmpty()) {
-            position.addOffset(TokenType.SELECT.name().length());
+            addOffset(position, TokenType.SELECT.name().length());
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST, position);
         }
 
@@ -1222,15 +1211,7 @@ public final class SQLParser {
 
         // Only SELECT with FROM can have WHERE clause.
         if (isToken(TokenType.WHERE)) {
-            position = this.token.getPosition();
-            this.expect(TokenType.WHERE);
-            select.setCondition(this.parseCondition());
-
-            if (select.getCondition() == null) {
-                position.addOffset(TokenType.WHERE.name().length());
-                throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_CONDITIONAL_LIST,
-                        position);
-            }
+            parseWhere(select);
         }
 
         if (isToken(TokenType.GROUP)) {
@@ -1250,6 +1231,24 @@ public final class SQLParser {
     }
 
     /**
+     * Parses the WHERE clause.
+     *
+     * @param select the select node.
+     * @throws SQLException in case of failures.
+     */
+    private void parseWhere(final SelectNode select) throws SQLException {
+        ScannerPosition position = getPosition();
+        this.expect(TokenType.WHERE);
+        select.setCondition(this.parseCondition());
+
+        if (select.getCondition() == null) {
+            addOffset(position, TokenType.WHERE.name().length());
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_CONDITIONAL_LIST,
+                    position);
+        }
+    }
+
+    /**
      * Check if the current token is the desired type.
      *
      * @param type the token to check.
@@ -1257,5 +1256,30 @@ public final class SQLParser {
      */
     private boolean isToken(final TokenType type) {
         return this.token != null && this.token.getType() == type;
+    }
+
+    /**
+     * Safe way to get current scanner position.
+     *
+     * @return the current scanner position.
+     */
+    private ScannerPosition getPosition() {
+        if (this.token != null) {
+            return this.token.getPosition();
+        }
+
+        return null;
+    }
+
+    /**
+     * Safe way to add a offset to a scanner position.
+     *
+     * @param position the scanner position.
+     * @param offset   the offset to add.
+     */
+    private static void addOffset(final ScannerPosition position, final int offset) {
+        if (position != null) {
+            position.addOffset(offset);
+        }
     }
 }

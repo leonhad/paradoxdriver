@@ -10,12 +10,14 @@
  */
 package com.googlecode.paradox.exceptions;
 
+import com.googlecode.paradox.parser.ScannerPosition;
+
 import java.sql.SQLFeatureNotSupportedException;
 
 /**
  * Exception related to unsupported features.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings("java:S110")
@@ -32,12 +34,23 @@ public class ParadoxNotSupportedException extends SQLFeatureNotSupportedExceptio
     private static final String SQL_STATE = BASE_CODE + "000";
 
     /**
-     * The connection error exception.
+     * The unsupported operation exception.
      *
      * @param error the error.
      */
     public ParadoxNotSupportedException(final Error error) {
         super(ExceptionUtils.message(error.description), SQL_STATE, Integer.parseInt(0x0A + error.code));
+    }
+
+    /**
+     * The unsupported operation exception.
+     *
+     * @param error    the error.
+     * @param position the current scanner position.
+     */
+    public ParadoxNotSupportedException(final Error error, final ScannerPosition position) {
+        super(ExceptionUtils.message(error.description, position), SQL_STATE,
+                Integer.parseInt(BASE_CODE + error.code));
     }
 
     /**

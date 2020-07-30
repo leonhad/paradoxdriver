@@ -15,11 +15,13 @@ import com.googlecode.paradox.exceptions.*;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.planner.sorting.OrderType;
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * Creates a SQL execution plan.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public class Planner {
@@ -80,6 +82,27 @@ public class Planner {
     }
 
     /**
+     * Parses the group by fields.
+     *
+     * @param statement the SELECT statement.
+     * @param plan      the SELECT execution plan.
+     * @throws SQLException in case of parse errors.
+     */
+    private static void parseGroupBy(final SelectNode statement, final SelectPlan plan) throws SQLException {
+        for (int i = 0; i < statement.getGroups().size(); i++) {
+            final FieldNode field = statement.getGroups().get(i);
+            if (field instanceof ParameterNode) {
+                throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED,
+                        field.getPosition());
+            } else if (field instanceof ValueNode) {
+                plan.addGroupColumn(new Column((ValueNode) field));
+            } else {
+                plan.addGroupColumn(field);
+            }
+        }
+    }
+
+    /**
      * Parses the order by fields.
      *
      * @param statement the SELECT statement.
@@ -93,7 +116,7 @@ public class Planner {
             if (field instanceof ValueNode) {
                 int index = ValuesConverter.getInteger(field.getName());
                 if (index > plan.getColumns().size()) {
-                    throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, Integer.toString(index));
+                    throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, index);
                 }
 
                 plan.addOrderColumn(plan.getColumns().get(index - 1), type);
@@ -166,8 +189,7 @@ public class Planner {
         // Load the table metadata.
         parseTableMetaData(connectionInfo, statement, plan);
         parseColumns(statement, plan);
-
-        // Needs to be the last one always because of the hidden columns.
+        parseGroupBy(statement, plan);
         parseOrderBy(statement, plan);
 
         if (plan.getColumns().isEmpty()) {

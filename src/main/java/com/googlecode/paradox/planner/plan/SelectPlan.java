@@ -64,6 +64,10 @@ public final class SelectPlan implements Plan {
      */
     private final boolean distinct;
     /**
+     * Group by fields.
+     */
+    private final List<Column> groupByFields = new ArrayList<>();
+    /**
      * Order by fields.
      */
     private final List<Column> orderByFields = new ArrayList<>();
@@ -283,6 +287,14 @@ public final class SelectPlan implements Plan {
 
     public void addOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
         getParadoxFields(node).forEach(column -> addOrderColumn(column, type));
+    }
+
+    public void addGroupColumn(final FieldNode node) throws SQLException {
+        groupByFields.addAll(getParadoxFields(node));
+    }
+
+    public void addGroupColumn(final Column column) {
+        groupByFields.add(column);
     }
 
     public void addOrderColumn(final Column column, final OrderType type) {
@@ -646,6 +658,10 @@ public final class SelectPlan implements Plan {
      */
     public AbstractConditionalNode getCondition() {
         return condition;
+    }
+
+    public List<Column> getGroupByFields() {
+        return groupByFields;
     }
 
     /**

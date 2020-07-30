@@ -235,11 +235,42 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser("select 1 as \"1\", 'value' as b, null from areacodes");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         plan.execute(conn.getConnectionInfo(), 1, null, null);
-        Assert.assertEquals("Invalid result set", 3, plan.getColumns().size());
+        Assert.assertEquals("Invalid column size", 3, plan.getColumns().size());
         Assert.assertEquals("Field expected", "1", plan.getColumns().get(0).getValue());
         Assert.assertEquals("Field expected", "b", plan.getColumns().get(1).getName());
         Assert.assertEquals("Field expected", "value", plan.getColumns().get(1).getValue());
         Assert.assertNull("Field expected", plan.getColumns().get(2).getValue());
+    }
+
+    /**
+     * Test for group by fields.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupBy() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by State");
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 1, null, null);
+        Assert.assertEquals("Invalid column size", 1, plan.getColumns().size());
+        Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
+        Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
+        Assert.assertEquals("Invalid group by field size", 1, plan.getGroupByFields().size());
+        Assert.assertEquals("Invalid group by field name", "State", plan.getGroupByFields().get(0).getName());
+    }
+
+    /**
+     * Test for group by with invalid field list.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupByInvalidFieldList() throws SQLException {
+        final SQLParser parser = new SQLParser("SELECT count(*), Cities FROM AREACODES group by State");
+        final List<StatementNode> nodes = parser.parse();
+        Assert.assertEquals("Invalid column size", 1, nodes.size());
+        Assert.assertThrows("Invalid planer value", SQLException.class,
+                () -> Planner.create(conn.getConnectionInfo(), nodes.get(0)));
     }
 
     /**
