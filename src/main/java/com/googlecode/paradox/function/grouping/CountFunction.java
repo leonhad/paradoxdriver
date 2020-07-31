@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * The SQL count function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class CountFunction extends AbstractGroupingFunction<Integer> {
@@ -36,12 +36,12 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
      */
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.LONG, "The number of rows.", 0, true, RESULT),
-            new Column("value", ParadoxType.NULL, "Any value to count.", 1, false, IN),
+            new Column("value", ParadoxType.NULL, "Any value to count.", 1, true, IN),
     };
 
     @Override
     public String getRemarks() {
-        return "Returns the number of rows that matches a specified criterion.";
+        return "Returns the number of rows that value is not null.";
     }
 
     @Override
@@ -51,13 +51,12 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
 
     @Override
     public CountContext execute(final ConnectionInfo connectionInfo, final Object[] values,
-                                    final ParadoxType[] types, final FieldNode[] fields) {
+                                final ParadoxType[] types, final FieldNode[] fields) {
         int value = 0;
         if (values[0] != null) {
             value = 1;
         }
 
-        // Ignore first parameter.
         return new CountContext(value);
     }
 
@@ -66,20 +65,31 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
         // Do nothing. This function is always valid. We are only counting rows.
     }
 
+    /**
+     * Count context.
+     *
+     * @version 1.0
+     * @since 1.6.0
+     */
     private static class CountContext implements IGroupingContext<Integer> {
         private int value;
 
+        /**
+         * Creates a new instance.
+         *
+         * @param value the amount to count.
+         */
         public CountContext(int value) {
             this.value = value;
         }
 
         @Override
         public void process(final IGroupingContext<Integer> context) {
-            this.value += context.getValue();
+            this.value += context.toValue();
         }
 
         @Override
-        public Integer getValue() {
+        public Integer toValue() {
             return value;
         }
 

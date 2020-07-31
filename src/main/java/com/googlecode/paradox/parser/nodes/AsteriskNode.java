@@ -12,19 +12,15 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.TokenType;
+import com.googlecode.paradox.planner.nodes.FieldNode;
 
 /**
  * Stores the asterisk node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.2
  */
-public final class AsteriskNode extends SQLNode {
-
-    /**
-     * This field table name.
-     */
-    private final String tableName;
+public final class AsteriskNode extends FieldNode {
 
     /**
      * Creates a new instance.
@@ -33,12 +29,7 @@ public final class AsteriskNode extends SQLNode {
      * @param position  the current Scanner position.
      */
     public AsteriskNode(final String tableName, final ScannerPosition position) {
-        super(TokenType.ASTERISK.name(), position);
-        this.tableName = tableName;
-    }
-
-    public String getTableName() {
-        return tableName;
+        super(tableName, TokenType.ASTERISK.name(), position);
     }
 
     @Override

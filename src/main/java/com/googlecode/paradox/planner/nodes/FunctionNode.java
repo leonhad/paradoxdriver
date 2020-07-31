@@ -16,6 +16,7 @@ import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.parser.ScannerPosition;
+import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.results.Column;
@@ -29,7 +30,7 @@ import java.util.stream.Stream;
 /**
  * Stores a function node.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class FunctionNode extends FieldNode {
@@ -209,6 +210,9 @@ public class FunctionNode extends FieldNode {
                 final FunctionNode functionNode = (FunctionNode) param;
                 values[i] = functionNode.execute(connectionInfo, row, parameterValues, parameterTypes, loadedColumns);
                 types[i] = functionNode.getType();
+            } else if (param instanceof AsteriskNode) {
+                values[i] = param;
+                types[i] = ParadoxType.NULL;
             } else {
                 values[i] = FieldValueUtils.getValue(connectionInfo, row, (FieldNode) param, parameterValues,
                         parameterTypes, loadedColumns);

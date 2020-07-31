@@ -15,6 +15,7 @@ import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.results.Column;
@@ -27,7 +28,7 @@ import java.util.List;
 /**
  * Field processing utilities.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public final class FieldValueUtils {
@@ -88,7 +89,7 @@ public final class FieldValueUtils {
                                      final Collection<PlanTableNode> tables) throws SQLException {
 
         // Do not set indexes in value or parameter nodes.
-        if (field == null || field instanceof ValueNode || field instanceof ParameterNode) {
+        if (field == null || field instanceof ValueNode || field instanceof ParameterNode || field instanceof AsteriskNode) {
             return;
         } else if (field instanceof FunctionNode) {
             setFunctionIndexes(field, columns, tables);

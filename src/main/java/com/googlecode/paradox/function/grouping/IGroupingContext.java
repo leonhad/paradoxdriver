@@ -14,7 +14,7 @@ package com.googlecode.paradox.function.grouping;
  * Stores a grouping value context for store temporary data.
  *
  * @param <T> the grouping return type.
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public interface IGroupingContext<T> {
@@ -31,5 +31,5 @@ public interface IGroupingContext<T> {
      *
      * @return the result value.
      */
-    T getValue();
+    T toValue();
 }

@@ -17,6 +17,7 @@ import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
+import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
@@ -41,7 +42,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.12
+ * @version 1.13
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -306,7 +307,7 @@ public final class SelectPlan implements Plan {
             for (final FieldNode field : functionNode.getClauseFields()) {
                 ret.addAll(getParadoxFields(field));
             }
-        } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode)) {
+        } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode) && !(node instanceof AsteriskNode)) {
             for (final PlanTableNode table : this.tables) {
                 if (node.getTableName() == null || table.isThis(node.getTableName())) {
                     node.setTable(table.getTable());

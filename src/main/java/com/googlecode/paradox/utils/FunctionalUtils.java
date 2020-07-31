@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 /**
  * Utility class to use with functional programming, mostly in Java Stream API.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public final class FunctionalUtils {
@@ -124,7 +124,7 @@ public final class FunctionalUtils {
     public static Function<Object[], Object[]> removeGrouping(final int[] indexes) {
         return (Object[] value) -> {
             Arrays.stream(indexes).forEach((int index) ->
-                    value[index] = ((IGroupingContext<?>) value[index]).getValue());
+                    value[index] = ((IGroupingContext<?>) value[index]).toValue());
             return value;
         };
     }

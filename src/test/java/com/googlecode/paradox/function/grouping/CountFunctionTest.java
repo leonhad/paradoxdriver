@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link CountFunction}.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class CountFunctionTest {
@@ -84,6 +84,36 @@ public class CountFunctionTest {
     @Test
     public void testCount() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select count(1) from fields.date7");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid column count", 5, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for count with null values.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountNull() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select count(\"DATE\") from fields.date7");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid column count", 4, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for count with asterisk.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountAsterisk() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select count(*) from fields.date7");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid column count", 5, rs.getInt(1));
