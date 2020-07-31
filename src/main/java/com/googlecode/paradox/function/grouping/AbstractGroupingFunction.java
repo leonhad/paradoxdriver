@@ -10,8 +10,13 @@
  */
 package com.googlecode.paradox.function.grouping;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionType;
+import com.googlecode.paradox.planner.nodes.FieldNode;
+import com.googlecode.paradox.results.ParadoxType;
+
+import java.sql.SQLException;
 
 /**
  * Base class for general functions.
@@ -19,7 +24,7 @@ import com.googlecode.paradox.function.FunctionType;
  * @version 1.0
  * @since 1.6.0
  */
-public abstract class AbstractGroupingFunction extends AbstractFunction {
+public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
 
     @Override
     public FunctionType getType() {
@@ -31,10 +36,7 @@ public abstract class AbstractGroupingFunction extends AbstractFunction {
         return true;
     }
 
-    /**
-     * Creates a new context to start the grouping process.
-     *
-     * @return the new context instance.
-     */
-    public abstract IGroupingContext createContext();
+    @Override
+    public abstract IGroupingContext<T> execute(final ConnectionInfo connectionInfo, final Object[] values,
+                                             final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
 }

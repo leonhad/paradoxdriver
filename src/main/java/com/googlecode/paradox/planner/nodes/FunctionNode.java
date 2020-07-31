@@ -189,8 +189,7 @@ public class FunctionNode extends FieldNode {
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] row,
-                          final Object[] parameterValues,
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameterValues,
                           final ParadoxType[] parameterTypes, final List<Column> loadedColumns) throws SQLException {
         final Object[] values = new Object[parameters.size()];
         final ParadoxType[] types = new ParadoxType[parameters.size()];

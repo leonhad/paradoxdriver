@@ -8,17 +8,15 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.exceptions.InternalException;
+import com.googlecode.paradox.function.grouping.IGroupingContext;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -96,6 +94,59 @@ public final class FunctionalUtils {
                 throw new InternalException(e);
             }
         };
+    }
+
+    /**
+     * Predicate to filter values for group by expressions.
+     *
+     * @param indexes fields with grouping functions.
+     * @return the predicate to grouping fields.
+     */
+    @SuppressWarnings({"unchecked", "raw", "java:S5612"})
+    public static Predicate<Object[]> groupingByKeys(final int[] indexes) {
+        final List<Object[]> seen = new ArrayList<>();
+        return (Object[] value) -> {
+            final Object[] current = seen.stream().filter(o -> equalsGrouping(o, value)).findAny().orElse(null);
+            if (current == null) {
+                // Just add, no grouping.
+                seen.add(value);
+                return true;
+            } else {
+                // Do grouping.
+                Arrays.stream(indexes).forEach((int index) ->
+                        ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index]));
+            }
+
+            return false;
+        };
+    }
+
+    public static Function<Object[], Object[]> removeGrouping(final int[] indexes) {
+        return (Object[] value) -> {
+            Arrays.stream(indexes).forEach((int index) ->
+                    value[index] = ((IGroupingContext<?>) value[index]).getValue());
+            return value;
+        };
+    }
+
+    /**
+     * Compute an equals in array ignores grouping values.
+     *
+     * @param o1 the first array to compare.
+     * @param o2 the second array to compare.
+     * @return <code>true</code> if the two arrays are equals.
+     */
+    private static boolean equalsGrouping(Object[] o1, Object[] o2) {
+        for (int i = 0; i < o1.length; i++) {
+            if (!(o1[i] instanceof IGroupingContext)) {
+                int ret = ValuesComparator.compare(o1[i], o2[i]);
+                if (ret != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

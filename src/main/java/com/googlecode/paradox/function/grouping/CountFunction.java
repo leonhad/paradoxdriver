@@ -11,7 +11,6 @@
 package com.googlecode.paradox.function.grouping;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -25,7 +24,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.6.0
  */
-public class CountFunction extends AbstractGroupingFunction {
+public class CountFunction extends AbstractGroupingFunction<Integer> {
 
     /**
      * The function name.
@@ -51,23 +50,42 @@ public class CountFunction extends AbstractGroupingFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws ParadoxSyntaxErrorException {
+    public CountContext execute(final ConnectionInfo connectionInfo, final Object[] values,
+                                    final ParadoxType[] types, final FieldNode[] fields) {
+        int value = 0;
+        if (values[0] != null) {
+            value = 1;
+        }
 
-        return 0;
+        // Ignore first parameter.
+        return new CountContext(value);
     }
 
     @Override
-    public void validate(List<SQLNode> parameters) {
+    public void validate(final List<SQLNode> parameters) {
         // Do nothing. This function is always valid. We are only counting rows.
     }
 
-    @Override
-    public IGroupingContext createContext() {
-        return new CountContext();
-    }
+    private static class CountContext implements IGroupingContext<Integer> {
+        private int value;
 
-    private static class CountContext implements IGroupingContext {
-        private int count;
+        public CountContext(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public void process(final IGroupingContext<Integer> context) {
+            this.value += context.getValue();
+        }
+
+        @Override
+        public Integer getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(value);
+        }
     }
 }

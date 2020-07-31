@@ -91,6 +91,10 @@ public final class SelectPlan implements Plan {
      * Table joiner.
      */
     private final TableJoiner joiner = new TableJoiner();
+    /**
+     * Grouping columns.
+     */
+    private int[] groupingColumns;
 
     /**
      * Creates a SELECT plan with conditions.
@@ -175,22 +179,37 @@ public final class SelectPlan implements Plan {
         }
 
         createGroupByColumns();
+
+        groupingColumns = getGroupingColumns();
+    }
+
+    private int[] getGroupingColumns() {
+        return this.columns.stream()
+                .filter(c -> c.getFunction() != null && c.getFunction().isGrouping())
+                .map(Column::getFunction)
+                .mapToInt(FunctionNode::getIndex)
+                .toArray();
     }
 
     private void createGroupByColumns() {
         final List<Column> columnList = this.columns.stream()
-                .map(this::getGroupingFunctions).flatMap(Collection::stream)
+                .map(SelectPlan::getGroupingFunctions).flatMap(Collection::stream)
                 .map(Column::new)
                 .collect(Collectors.toList());
 
         for (final Column column : columnList) {
-            column.setHidden(true);
-            column.getFunction().setIndex(this.columns.size());
-            this.columns.add(column);
+            final int index = this.columns.indexOf(column);
+            if (index < 0) {
+                column.setHidden(true);
+                column.getFunction().setIndex(this.columns.size());
+                this.columns.add(column);
+            } else {
+                column.getFunction().setIndex(index);
+            }
         }
     }
 
-    private List<FunctionNode> getGroupingFunctions(final Column column) {
+    private static List<FunctionNode> getGroupingFunctions(final Column column) {
         final FunctionNode function = column.getFunction();
         if (function == null) {
             return Collections.emptyList();
@@ -429,6 +448,11 @@ public final class SelectPlan implements Plan {
                     .filter(c -> c.isThis(table.getTable()))
                     .collect(Collectors.toSet()));
 
+            // Columns in GROUP BY clause.
+            tableColumns.addAll(this.groupByFields.stream()
+                    .filter(c -> c.isThis(table.getTable()))
+                    .collect(Collectors.toSet()));
+
             // Columns in ORDER BY clause.
             tableColumns.addAll(this.orderByFields.stream()
                     .filter(c -> c.isThis(table.getTable()))
@@ -602,9 +626,8 @@ public final class SelectPlan implements Plan {
                 } else if (functionNode == null) {
                     // A fixed value.
                     finalRow[i] = this.columns.get(i).getValue();
-                } else if (!functionNode.isGrouping()) {
+                } else {
                     // A function processed value.
-                    // Not process grouping function by now.
                     finalRow[i] = functionNode.execute(connectionInfo, tableRow, parameters, parameterTypes,
                             columnsLoaded);
                     // The function may change the result type in execution based on parameters values.
@@ -633,11 +656,20 @@ public final class SelectPlan implements Plan {
                 mapRow(connectionInfo, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
         ));
 
+        if (this.groupingColumns.length > 0) {
+            // Is not possible to group in parallel.
+            stream = stream.sequential()
+                    .filter(FunctionalUtils.groupingByKeys(groupingColumns))
+                    .collect(Collectors.toList())
+                    .stream().map(FunctionalUtils.removeGrouping(groupingColumns));
+        }
+
         if (!orderByFields.isEmpty()) {
             stream = stream.sorted(Objects.requireNonNull(processOrderBy()));
         }
 
         if (distinct) {
+            // Is not possible to group in parallel fashion (distinct).
             stream = stream.sequential().filter(FunctionalUtils.distinctByKey());
         }
 
