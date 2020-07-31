@@ -120,4 +120,36 @@ public class CountFunctionTest {
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
+
+    /**
+     * Test for count with group by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountWithGroupBy() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select count(State), AC from db.AREACODES group by AC");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid column count", 5, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for count with order by.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountWithOrderBy() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select count(State) from db.AREACODES order by AC");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid column count", 370, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
 }

@@ -295,6 +295,20 @@ public class PlannerTest {
     }
 
     /**
+     * Test for group by with invalid field list 2.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupByInvalidFieldList2() throws SQLException {
+        final SQLParser parser = new SQLParser("select count(State), AC from db.AREACODES");
+        final List<StatementNode> nodes = parser.parse();
+        Assert.assertEquals("Invalid column size", 1, nodes.size());
+        Assert.assertThrows("Invalid planer value", SQLException.class,
+                () -> Planner.create(conn.getConnectionInfo(), nodes.get(0)));
+    }
+
+    /**
      * Test for group by with invalid fix values.
      *
      * @throws SQLException in case of errors.
