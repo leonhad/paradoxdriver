@@ -320,7 +320,8 @@ public final class SelectPlan implements Plan {
             for (final FieldNode field : functionNode.getClauseFields()) {
                 ret.addAll(getParadoxFields(field));
             }
-        } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode) && !(node instanceof AsteriskNode)) {
+        } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode)
+                && !(node instanceof AsteriskNode)) {
             for (final PlanTableNode table : this.tables) {
                 if (node.getTableName() == null || table.isThis(node.getTableName())) {
                     node.setTable(table.getTable());
@@ -342,18 +343,23 @@ public final class SelectPlan implements Plan {
         return ret;
     }
 
+    /**
+     * Add a order by column to this plan.
+     *
+     * @param node the node to convert to a column.
+     * @param type the order by field type.
+     * @throws SQLException in case of failures.
+     */
     public void addOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
         getParadoxFields(node).forEach(column -> addOrderColumn(column, type));
     }
 
-    public void addGroupColumn(final FieldNode node) throws SQLException {
-        groupByFields.addAll(getParadoxFields(node));
-    }
-
-    public void addGroupColumn(final Column column) {
-        groupByFields.add(column);
-    }
-
+    /**
+     * Add a order by column to this plan.
+     *
+     * @param column the column to add.
+     * @param type   the order by field type.
+     */
     public void addOrderColumn(final Column column, final OrderType type) {
         this.orderByFields.add(column);
         this.orderTypes.add(type);
@@ -363,6 +369,25 @@ public final class SelectPlan implements Plan {
             column.setHidden(true);
             this.columns.add(column);
         }
+    }
+
+    /**
+     * Add a group by column to this plan.
+     *
+     * @param node the node to convert to a column.
+     * @throws SQLException in case of failures.
+     */
+    public void addGroupColumn(final FieldNode node) throws SQLException {
+        groupByFields.addAll(getParadoxFields(node));
+    }
+
+    /**
+     * Add a group by column to this plan.
+     *
+     * @param column the column to add.
+     */
+    public void addGroupColumn(final Column column) {
+        groupByFields.add(column);
     }
 
     /**
@@ -539,7 +564,7 @@ public final class SelectPlan implements Plan {
         filter(connectionInfo, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
     }
 
-    private void setSelectParameters(final List<Column> columns, final ParadoxType[] parameterTypes) {
+    private static void setSelectParameters(final List<Column> columns, final ParadoxType[] parameterTypes) {
         for (final Column column : columns) {
             final ParameterNode parameterNode = column.getParameter();
             if (parameterNode != null) {
@@ -670,7 +695,7 @@ public final class SelectPlan implements Plan {
                 mapRow(connectionInfo, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
         ));
 
-        if (this.groupFunctionColumns.length > 0) {
+        if (isGroupBy()) {
             // Is not possible to group in parallel.
             stream = stream.sequential()
                     .filter(FunctionalUtils.groupingByKeys(groupFunctionColumns, groupColumns))
@@ -730,8 +755,22 @@ public final class SelectPlan implements Plan {
         return condition;
     }
 
+    /**
+     * Gets the group by fields.
+     *
+     * @return the group by fields.
+     */
     public List<Column> getGroupByFields() {
         return groupByFields;
+    }
+
+    /**
+     * Gets the order by columns.
+     *
+     * @return the order by columns.
+     */
+    public List<Column> getOrderByFields() {
+        return orderByFields;
     }
 
     /**
@@ -755,6 +794,18 @@ public final class SelectPlan implements Plan {
         }
 
         return true;
+    }
+
+    /**
+     * Gets if this plan has a group by expression.
+     *
+     * @return <code>true</code> if this plan has a group by expression.
+     */
+    public boolean isGroupBy() {
+        return this.columns.stream()
+                .map(Column::getFunction)
+                .filter(Objects::nonNull)
+                .anyMatch(FunctionNode::isGrouping);
     }
 
     @Override

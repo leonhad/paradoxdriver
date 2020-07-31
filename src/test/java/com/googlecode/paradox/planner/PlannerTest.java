@@ -261,6 +261,21 @@ public class PlannerTest {
     }
 
     /**
+     * Test for group by fields with an invalid order by field list.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupByWithInvalidOrderBy() throws SQLException {
+        final SQLParser parser = new SQLParser(
+                "select State, count(*) from geog.tblZCode group by State order by AreaCode");
+        final List<StatementNode> list = parser.parse();
+        Assert.assertFalse("Invalid statement node", list.isEmpty());
+        Assert.assertThrows("Invalid planer value", SQLException.class,
+                () -> Planner.create(conn.getConnectionInfo(), list.get(0)));
+    }
+
+    /**
      * Test for group by with fix values.
      *
      * @throws SQLException in case of errors.

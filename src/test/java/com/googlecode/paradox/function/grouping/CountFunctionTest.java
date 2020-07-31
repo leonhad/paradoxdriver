@@ -135,20 +135,4 @@ public class CountFunctionTest {
             Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
         }
     }
-
-    /**
-     * Test for count with order by.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    public void testCountWithOrderBy() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select count(State) from db.AREACODES order by AC");
-             final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value count", 370, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
-        }
-    }
 }
