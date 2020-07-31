@@ -1213,19 +1213,19 @@ public final class SQLParser {
 
         if (isToken(TokenType.FROM)) {
             this.parseFrom(select);
-        }
 
-        // Only SELECT with FROM can have WHERE clause.
-        if (isToken(TokenType.WHERE)) {
-            parseWhere(select);
-        }
+            // Only SELECT with FROM can have WHERE, GROUP BY and ORDER BY clause.
+            if (isToken(TokenType.WHERE)) {
+                parseWhere(select);
+            }
 
-        if (isToken(TokenType.GROUP)) {
-            this.parseGroupBy(select);
-        }
+            if (isToken(TokenType.GROUP)) {
+                this.parseGroupBy(select);
+            }
 
-        if (isToken(TokenType.ORDER)) {
-            this.parseOrderBy(select);
+            if (isToken(TokenType.ORDER)) {
+                this.parseOrderBy(select);
+            }
         }
 
         if (this.scanner.hasNext() || this.token != null) {
