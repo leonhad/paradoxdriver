@@ -100,13 +100,16 @@ public final class FunctionalUtils {
      * Predicate to filter values for group by expressions.
      *
      * @param indexes fields with grouping functions.
+     * @param columns the grouping columns.
      * @return the predicate to grouping fields.
      */
     @SuppressWarnings({"unchecked", "raw", "java:S5612"})
-    public static Predicate<Object[]> groupingByKeys(final int[] indexes) {
+    public static Predicate<Object[]> groupingByKeys(final int[] indexes, final int[] columns) {
         final List<Object[]> seen = new ArrayList<>();
         return (Object[] value) -> {
-            final Object[] current = seen.stream().filter(o -> equalsGrouping(o, value)).findAny().orElse(null);
+            final Object[] current = seen.stream()
+                    .filter(o -> equalsGrouping(o, value, columns))
+                    .findAny().orElse(null);
             if (current == null) {
                 // Just add, no grouping.
                 seen.add(value);
@@ -132,12 +135,13 @@ public final class FunctionalUtils {
     /**
      * Compute an equals in array ignores grouping values.
      *
-     * @param o1 the first array to compare.
-     * @param o2 the second array to compare.
+     * @param o1      the first array to compare.
+     * @param o2      the second array to compare.
+     * @param columns the columns to compare.
      * @return <code>true</code> if the two arrays are equals.
      */
-    private static boolean equalsGrouping(Object[] o1, Object[] o2) {
-        for (int i = 0; i < o1.length; i++) {
+    private static boolean equalsGrouping(final Object[] o1, final Object[] o2, final int[] columns) {
+        for (int i : columns) {
             if (!(o1[i] instanceof IGroupingContext)) {
                 int ret = ValuesComparator.compare(o1[i], o2[i]);
                 if (ret != 0) {

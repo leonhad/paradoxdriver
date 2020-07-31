@@ -95,7 +95,11 @@ public final class SelectPlan implements Plan {
     /**
      * Grouping columns.
      */
-    private int[] groupingColumns;
+    private int[] groupFunctionColumns;
+    /**
+     * Grouping columns.
+     */
+    private int[] groupColumns;
 
     /**
      * Creates a SELECT plan with conditions.
@@ -179,16 +183,25 @@ public final class SelectPlan implements Plan {
             table.setConditionalJoin(reduce(table.getConditionalJoin()));
         }
 
+        // Sets the column indexes.
+        for (int i = 0; i < this.columns.size(); i++) {
+            this.columns.get(i).setIndex(i);
+        }
+
         createGroupByColumns();
 
-        groupingColumns = getGroupingColumns();
-    }
-
-    private int[] getGroupingColumns() {
-        return this.columns.stream()
+        // Columns with a grouping function.
+        groupFunctionColumns = this.columns.stream()
                 .filter(c -> c.getFunction() != null && c.getFunction().isGrouping())
                 .map(Column::getFunction)
                 .mapToInt(FunctionNode::getIndex)
+                .toArray();
+
+        // Key columns to do the grouping.
+        groupColumns = this.columns.stream()
+                .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
+                .filter(c -> !c.isHidden() || groupByFields.contains(c))
+                .mapToInt(Column::getIndex)
                 .toArray();
     }
 
@@ -657,12 +670,12 @@ public final class SelectPlan implements Plan {
                 mapRow(connectionInfo, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
         ));
 
-        if (this.groupingColumns.length > 0) {
+        if (this.groupFunctionColumns.length > 0) {
             // Is not possible to group in parallel.
             stream = stream.sequential()
-                    .filter(FunctionalUtils.groupingByKeys(groupingColumns))
+                    .filter(FunctionalUtils.groupingByKeys(groupFunctionColumns, groupColumns))
                     .collect(Collectors.toList())
-                    .stream().map(FunctionalUtils.removeGrouping(groupingColumns));
+                    .stream().map(FunctionalUtils.removeGrouping(groupFunctionColumns));
         }
 
         if (!orderByFields.isEmpty()) {

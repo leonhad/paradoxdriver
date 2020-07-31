@@ -116,7 +116,7 @@ public class CountFunctionTest {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select count(*) from fields.date7");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 5, rs.getInt(1));
+            Assert.assertEquals("Invalid value count", 5, rs.getInt(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
@@ -132,8 +132,7 @@ public class CountFunctionTest {
                 "select count(State), AC from db.AREACODES group by AC");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 5, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
         }
     }
 
@@ -148,7 +147,7 @@ public class CountFunctionTest {
                 "select count(State) from db.AREACODES order by AC");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 370, rs.getInt(1));
+            Assert.assertEquals("Invalid value count", 370, rs.getInt(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
