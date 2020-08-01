@@ -13,6 +13,8 @@ package com.googlecode.paradox.function;
 import com.googlecode.paradox.function.date.*;
 import com.googlecode.paradox.function.general.*;
 import com.googlecode.paradox.function.grouping.CountFunction;
+import com.googlecode.paradox.function.grouping.MaxFunction;
+import com.googlecode.paradox.function.grouping.MinFunction;
 import com.googlecode.paradox.function.grouping.SumFunction;
 import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
@@ -159,6 +161,8 @@ public final class FunctionFactory {
 
         // Grouping functions.
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
+        FUNCTIONS.put(MaxFunction.NAME, MaxFunction::new);
+        FUNCTIONS.put(MinFunction.NAME, MinFunction::new);
         FUNCTIONS.put(SumFunction.NAME, SumFunction::new);
 
         FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())

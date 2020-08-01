@@ -16,7 +16,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.IntPredicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -186,6 +185,28 @@ public final class ValuesComparator {
             return n1.compareTo(n2);
         }
 
+        // Try to compare with Double values.
+        if (o1 instanceof Double || o2 instanceof Double) {
+            try {
+                final Double n1 = ValuesConverter.getDouble(o1);
+                final Double n2 = ValuesConverter.getDouble(o2);
+                return n1.compareTo(n2);
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
+        }
+
+        // Try to compare with BigDecimal values.
+        if (o1 instanceof BigDecimal || o2 instanceof BigDecimal) {
+            try {
+                final BigDecimal n1 = ValuesConverter.getBigDecimal(o1);
+                final BigDecimal n2 = ValuesConverter.getBigDecimal(o2);
+                return n1.compareTo(n2);
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
+        }
+
         // Try to compare with Byte values.
         if (o1 instanceof Byte || o2 instanceof Byte) {
             try {
@@ -213,28 +234,6 @@ public final class ValuesComparator {
             try {
                 final Long n1 = ValuesConverter.getLong(o1);
                 final Long n2 = ValuesConverter.getLong(o2);
-                return n1.compareTo(n2);
-            } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
-            }
-        }
-
-        // Try to compare with Double values.
-        if (o1 instanceof Double || o2 instanceof Double) {
-            try {
-                final Double n1 = ValuesConverter.getDouble(o1);
-                final Double n2 = ValuesConverter.getDouble(o2);
-                return n1.compareTo(n2);
-            } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
-            }
-        }
-
-        // Try to compare with BigDecimal values.
-        if (o1 instanceof BigDecimal || o2 instanceof BigDecimal) {
-            try {
-                final BigDecimal n1 = ValuesConverter.getBigDecimal(o1);
-                final BigDecimal n2 = ValuesConverter.getBigDecimal(o2);
                 return n1.compareTo(n2);
             } catch (final NumberFormatException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
