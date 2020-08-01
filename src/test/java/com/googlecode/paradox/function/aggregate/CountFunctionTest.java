@@ -185,4 +185,20 @@ public class CountFunctionTest {
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
+
+    /**
+     * Test for count inside a function.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountInsideFunction() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "SELECT upper(count(*)) FROM AREACODES");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid column count", 370, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
 }

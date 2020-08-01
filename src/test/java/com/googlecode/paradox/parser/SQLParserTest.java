@@ -1200,6 +1200,32 @@ public class SQLParserTest {
     }
 
     /**
+     * Test for aggregate function in select function.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testAggregateFunctionInSelectFunction() throws SQLException {
+        final SQLParser parser = new SQLParser("select upper(count(1)) from fields.date7");
+
+        final List<StatementNode> list = parser.parse();
+        final SQLNode tree = list.get(0);
+
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertEquals("Invalid column size", 1, select.getFields().size());
+        Assert.assertTrue("Invalid field type", select.getFields().get(0) instanceof FunctionNode);
+        final FunctionNode node = (FunctionNode) select.getFields().get(0);
+
+        Assert.assertEquals("Invalid column size", 1, node.getClauseFields().size());
+        final FunctionNode function = (FunctionNode) node.getClauseFields().iterator().next();
+        Assert.assertEquals("Invalid field name", "count", function.getName());
+
+        Assert.assertEquals("Invalid column size", 1, node.getGroupingNodes().size());
+        Assert.assertSame("Invalid field type", function, node.getGroupingNodes().get(0));
+    }
+
+    /**
      * Test for parameter in group by.
      *
      * @throws SQLException in case of errors.

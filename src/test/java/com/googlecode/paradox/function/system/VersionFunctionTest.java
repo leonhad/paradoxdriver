@@ -28,8 +28,14 @@ public class VersionFunctionTest {
      */
     @Test
     public void testVersion() {
-        VersionFunction versionFunction = new VersionFunction();
-        Assert.assertEquals("Invalid version", Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION,
+        final String system = String.format("%s %s (%s), %s %s (%s)",
+                System.getProperty("java.vm.name"), System.getProperty("java.runtime.version"),
+                System.getProperty("java.vendor.version"), System.getProperty("os.name"),
+                System.getProperty("os.version"), System.getProperty("os.arch"));
+
+        final VersionFunction versionFunction = new VersionFunction();
+        Assert.assertEquals("Invalid version", Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION
+                + " on " + system,
                 versionFunction.execute(null, null, null, null));
     }
 }

@@ -322,7 +322,7 @@ public final class SQLParser {
             this.expect(TokenType.IDENTIFIER);
         } else if (isToken(TokenType.L_PAREN)) {
             // function
-            final FunctionNode node = parseFunction(fieldName, position);
+            final FunctionNode node = parseFunction(fieldName, position, false);
             if (node.isGrouping()) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION, position, node.getName());
             }
@@ -385,10 +385,11 @@ public final class SQLParser {
     /**
      * Parse the field list in SELECT statement.
      *
-     * @param select the select node.
+     * @param select          the select node.
+     * @param enableAggregate if this field can have a aggregate function.
      * @throws SQLException in case of parse errors.
      */
-    private void parseFields(final SelectNode select) throws SQLException {
+    private void parseFields(final SelectNode select, final boolean enableAggregate) throws SQLException {
         boolean firstField = true;
         do {
             expectComma(!firstField);
@@ -421,7 +422,7 @@ public final class SQLParser {
                     node = parseParameter();
                     break;
                 default:
-                    node = this.parseIdentifier(fieldName);
+                    node = this.parseIdentifier(fieldName, enableAggregate);
                     break;
             }
 
@@ -483,11 +484,12 @@ public final class SQLParser {
     /**
      * Parse the identifier token associated with a field.
      *
-     * @param fieldName the field name.
+     * @param fieldName       the field name.
+     * @param enableAggregate if this field can have a aggregate function.
      * @return the field node.
      * @throws SQLException in case of parse errors.
      */
-    private SQLNode parseIdentifier(final String fieldName) throws SQLException {
+    private SQLNode parseIdentifier(final String fieldName, final boolean enableAggregate) throws SQLException {
         String newTableName = null;
         String newFieldName = fieldName;
 
@@ -503,7 +505,7 @@ public final class SQLParser {
 
         if (isToken(TokenType.L_PAREN)) {
             // function
-            return parseFunction(fieldName, position);
+            return parseFunction(fieldName, position, enableAggregate);
         } else if (isToken(TokenType.PERIOD)) {
             this.expect(TokenType.PERIOD);
             newTableName = fieldName;
@@ -595,13 +597,14 @@ public final class SQLParser {
     /**
      * Parses a function node.
      *
-     * @param functionName the function name.
-     * @param position     the current scanner position.
+     * @param functionName    the function name.
+     * @param position        the current scanner position.
+     * @param enableAggregate if this field can have a aggregate function.
      * @return the function node.
      * @throws SQLException in case of failures.
      */
-    private FunctionNode parseFunction(final String functionName, final ScannerPosition position)
-            throws SQLException {
+    private FunctionNode parseFunction(final String functionName, final ScannerPosition position,
+                                       final boolean enableAggregate) throws SQLException {
         final FunctionNode functionNode = new FunctionNode(functionName, position);
         this.expect(TokenType.L_PAREN);
 
@@ -637,7 +640,8 @@ public final class SQLParser {
                     functionNode.addParameter(this.parseParameter());
                     break;
                 default:
-                    functionNode.addParameter(this.parseIdentifierFieldFunction(this.token.getValue(), false));
+                    functionNode.addParameter(this.parseIdentifierFieldFunction(this.token.getValue(),
+                            enableAggregate));
                     break;
             }
         }
@@ -667,7 +671,7 @@ public final class SQLParser {
 
         if (isToken(TokenType.L_PAREN)) {
             // function
-            final FunctionNode node = parseFunction(fieldName, position);
+            final FunctionNode node = parseFunction(fieldName, position, enableAggregate);
             if (node.isGrouping() && !enableAggregate) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION, position, node.getName());
             }
@@ -1204,7 +1208,7 @@ public final class SQLParser {
 
         // Field loop
         if (this.token != null) {
-            this.parseFields(select);
+            this.parseFields(select, true);
         }
 
         if (select.getFields().isEmpty()) {

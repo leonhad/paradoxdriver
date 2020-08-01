@@ -49,6 +49,11 @@ public class VersionFunction extends AbstractSystemFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        return String.format("%s %s", Constants.DRIVER_NAME, Constants.DRIVER_VERSION);
+        final String system = String.format("%s %s (%s), %s %s (%s)",
+                System.getProperty("java.vm.name"), System.getProperty("java.runtime.version"),
+                System.getProperty("java.vendor.version"), System.getProperty("os.name"),
+                System.getProperty("os.version"), System.getProperty("os.arch"));
+
+        return String.format("%s %s on %s", Constants.DRIVER_NAME, Constants.DRIVER_VERSION, system);
     }
 }
