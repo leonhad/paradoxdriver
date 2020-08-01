@@ -140,9 +140,10 @@ public class Planner {
 
         // This is a group by expression?
         if (plan.isGroupBy()) {
-            final List<Column> groupColumns = plan.getGroupByFields();
-            if (!groupColumns.containsAll(plan.getOrderByFields())) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.NOT_GROUP_BY);
+            final List<Column> columns = plan.getColumns().stream()
+                    .filter(c -> ! c.isHidden()).collect(Collectors.toList());
+            if (!columns.containsAll(plan.getOrderByFields())) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.ORDER_BY_NOT_IN_GROUP_BY);
             }
         }
     }

@@ -637,7 +637,7 @@ public final class SQLParser {
                     functionNode.addParameter(this.parseParameter());
                     break;
                 default:
-                    functionNode.addParameter(this.parseIdentifierFieldFunction(this.token.getValue()));
+                    functionNode.addParameter(this.parseIdentifierFieldFunction(this.token.getValue(), false));
                     break;
             }
         }
@@ -657,7 +657,8 @@ public final class SQLParser {
         return node;
     }
 
-    private FieldNode parseIdentifierFieldFunction(final String fieldName) throws SQLException {
+    private FieldNode parseIdentifierFieldFunction(final String fieldName, final boolean enableAggregate)
+            throws SQLException {
         String newTableName = null;
         String newFieldName = fieldName;
 
@@ -667,7 +668,7 @@ public final class SQLParser {
         if (isToken(TokenType.L_PAREN)) {
             // function
             final FunctionNode node = parseFunction(fieldName, position);
-            if (node.isGrouping()) {
+            if (node.isGrouping() && !enableAggregate) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_GROUPING_FUNCTION, position, node.getName());
             }
 
@@ -1109,7 +1110,7 @@ public final class SQLParser {
             if (this.token.getType() == TokenType.NUMERIC) {
                 fieldNode = parseNumeric(fieldName);
             } else if (this.token.getType() == TokenType.IDENTIFIER) {
-                fieldNode = parseIdentifierFieldFunction(fieldName);
+                fieldNode = parseIdentifierFieldFunction(fieldName, true);
             } else {
                 throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
             }
@@ -1175,7 +1176,7 @@ public final class SQLParser {
             } else if (isToken(TokenType.FALSE)) {
                 fieldNode = this.parseFalse(this.token.getValue());
             } else if (isToken(TokenType.IDENTIFIER)) {
-                fieldNode = parseIdentifierFieldFunction(fieldName);
+                fieldNode = parseIdentifierFieldFunction(fieldName, false);
             } else {
                 throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, position);
             }

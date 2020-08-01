@@ -120,7 +120,12 @@ public enum SyntaxError {
     /**
      * Not a group by expression.
      */
-    NOT_GROUP_BY("021", "Not a group by expression");
+    NOT_GROUP_BY("021", "Not a group by expression"),
+
+    /**
+     * Order by column must be an aggregate or to be in group by expression.
+     */
+    ORDER_BY_NOT_IN_GROUP_BY("022", "Order by column must be an aggregate or to be in group by expression");
 
     /**
      * SQL state code.

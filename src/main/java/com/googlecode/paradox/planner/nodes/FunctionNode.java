@@ -237,12 +237,12 @@ public class FunctionNode extends FieldNode {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
         FunctionNode that = (FunctionNode) o;
-        return Objects.equals(parameters, that.parameters) && Objects.equals(function, that.function);
+        return Objects.deepEquals(parameters, that.parameters) && Objects.equals(function, that.function);
     }
 
     @Override

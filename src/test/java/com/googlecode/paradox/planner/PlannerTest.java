@@ -296,6 +296,26 @@ public class PlannerTest {
     }
 
     /**
+     * Test for group by and order by with aggregate function.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupByAndOrderWithAggregate() throws SQLException {
+        final SQLParser parser = new SQLParser(
+                "select count(*), state from geog.tblZCode group by State order by count(*) desc");
+        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
+        plan.execute(conn.getConnectionInfo(), 1, null, null);
+        Assert.assertEquals("Invalid column size", 2, plan.getColumns().size());
+        Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
+        Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
+        Assert.assertEquals("Invalid group by field size", 1, plan.getGroupByFields().size());
+        Assert.assertEquals("Invalid group by field name", "State", plan.getGroupByFields().get(0).getName());
+        Assert.assertEquals("Invalid group by field size", 1, plan.getOrderByFields().size());
+        Assert.assertEquals("Invalid order by field name", "count(*)", plan.getOrderByFields().get(0).getName());
+    }
+
+    /**
      * Test for group by with invalid field list.
      *
      * @throws SQLException in case of errors.
