@@ -115,7 +115,7 @@ public enum SyntaxError {
     /**
      * Invalid use of grouping function.
      */
-    INVALID_GROUPING_FUNCTION("020", "Invalid use of grouping function: %s"),
+    INVALID_AGGREGATE_FUNCTION("020", "Invalid use of aggregate function: %s"),
 
     /**
      * Not a group by expression.

@@ -324,7 +324,7 @@ public final class SQLParser {
             // function
             final FunctionNode node = parseFunction(fieldName, position);
             if (node.isGrouping()) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_GROUPING_FUNCTION, position, node.getName());
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION, position, node.getName());
             }
 
             return node;
@@ -669,7 +669,7 @@ public final class SQLParser {
             // function
             final FunctionNode node = parseFunction(fieldName, position);
             if (node.isGrouping() && !enableAggregate) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_GROUPING_FUNCTION, position, node.getName());
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION, position, node.getName());
             }
 
             return node;
