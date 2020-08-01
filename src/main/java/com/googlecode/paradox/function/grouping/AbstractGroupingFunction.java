@@ -28,7 +28,7 @@ public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
 
     @Override
     public FunctionType getType() {
-        return FunctionType.SYSTEM;
+        return FunctionType.NUMERIC;
     }
 
     @Override

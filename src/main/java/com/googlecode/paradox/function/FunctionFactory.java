@@ -13,6 +13,7 @@ package com.googlecode.paradox.function;
 import com.googlecode.paradox.function.date.*;
 import com.googlecode.paradox.function.general.*;
 import com.googlecode.paradox.function.grouping.CountFunction;
+import com.googlecode.paradox.function.grouping.SumFunction;
 import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.*;
@@ -158,6 +159,7 @@ public final class FunctionFactory {
 
         // Grouping functions.
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
+        FUNCTIONS.put(SumFunction.NAME, SumFunction::new);
 
         FUNCTION_ALIAS = FUNCTIONS.entrySet().stream().filter(e -> e.getValue().get().isAllowAlias())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
