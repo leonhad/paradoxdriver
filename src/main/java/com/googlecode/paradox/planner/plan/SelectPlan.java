@@ -198,9 +198,10 @@ public final class SelectPlan implements Plan {
                 .toArray();
 
         // Key columns to do the grouping.
+        final HashSet<Column> columnsToCheck = new HashSet<>(groupByFields);
         groupColumns = this.columns.stream()
                 .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
-                .filter(c -> !c.isHidden() || groupByFields.contains(c))
+                .filter(c -> !c.isHidden() || columnsToCheck.remove(c))
                 .mapToInt(Column::getIndex)
                 .toArray();
     }
