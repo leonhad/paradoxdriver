@@ -36,10 +36,12 @@ public class MaxContext implements IGroupingContext<BigDecimal> {
 
     @Override
     public void process(final IGroupingContext<BigDecimal> context) {
-        final BigDecimal other = ((MaxContext) context).value;
+        if (context != null) {
+            final BigDecimal other = ((MaxContext) context).value;
 
-        if (ValuesComparator.compare(this.value, other) < 0) {
-            this.value = other;
+            if (ValuesComparator.compare(this.value, other) < 0) {
+                this.value = other;
+            }
         }
     }
 

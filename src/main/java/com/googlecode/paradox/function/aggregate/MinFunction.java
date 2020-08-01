@@ -39,7 +39,7 @@ public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
      */
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.NUMBER, "The minimum of the values.", 0, true, RESULT),
-            new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, true, IN),
+            new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, false, IN),
     };
 
     @Override

@@ -39,7 +39,7 @@ public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
      */
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.NUMBER, "The sum of the values.", 0, true, RESULT),
-            new Column("value", ParadoxType.NUMBER, "The numeric value to sum.", 1, true, IN),
+            new Column("value", ParadoxType.NUMBER, "The numeric value to sum.", 1, false, IN),
     };
 
     @Override

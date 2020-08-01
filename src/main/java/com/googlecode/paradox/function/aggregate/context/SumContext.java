@@ -35,7 +35,9 @@ public class SumContext implements IGroupingContext<BigDecimal> {
 
     @Override
     public void process(final IGroupingContext<BigDecimal> context) {
-        this.value = value.add(context.toValue());
+        if (context != null) {
+            this.value = value.add(((SumContext) context).value);
+        }
     }
 
     @Override

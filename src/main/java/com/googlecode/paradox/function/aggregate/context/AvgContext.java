@@ -25,7 +25,7 @@ public class AvgContext implements IGroupingContext<BigDecimal> {
 
     private BigDecimal value;
 
-    private int total;
+    private int total = 1;
 
     /**
      * Creates a new instance.
@@ -39,11 +39,13 @@ public class AvgContext implements IGroupingContext<BigDecimal> {
     @Override
     public void process(final IGroupingContext<BigDecimal> context) {
         final AvgContext current = (AvgContext) context;
-        this.total++;
-        if (this.value == null) {
-            this.value = current.value;
-        } else if (current.value != null) {
-            this.value = this.value.add(current.value);
+        if (current != null) {
+            this.total += current.total;
+            if (this.value == null) {
+                this.value = current.value;
+            } else if (current.value != null) {
+                this.value = this.value.add(current.value);
+            }
         }
     }
 

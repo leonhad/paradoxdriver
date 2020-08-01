@@ -37,7 +37,7 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
      */
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.LONG, "The number of rows.", 0, true, RESULT),
-            new Column("value", ParadoxType.NULL, "Any value to count.", 1, true, IN),
+            new Column("value", ParadoxType.NULL, "Any value to count.", 1, false, IN),
     };
 
     @Override

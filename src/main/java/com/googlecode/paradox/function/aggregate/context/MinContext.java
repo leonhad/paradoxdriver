@@ -36,10 +36,12 @@ public class MinContext implements IGroupingContext<BigDecimal> {
 
     @Override
     public void process(final IGroupingContext<BigDecimal> context) {
-        final BigDecimal other = context.toValue();
+        if (context != null) {
+            final BigDecimal other = ((MinContext) context).value;
 
-        if (ValuesComparator.compare(this.value, other) > 0) {
-            this.value = other;
+            if (ValuesComparator.compare(this.value, other) > 0) {
+                this.value = other;
+            }
         }
     }
 

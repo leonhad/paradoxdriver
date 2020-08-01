@@ -33,7 +33,9 @@ public class CountContext implements IGroupingContext<Integer> {
 
     @Override
     public void process(final IGroupingContext<Integer> context) {
-        this.value += ((CountContext) context).value;
+        if (context != null) {
+            this.value += ((CountContext) context).value;
+        }
     }
 
     @Override
