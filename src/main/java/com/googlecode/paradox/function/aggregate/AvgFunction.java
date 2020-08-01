@@ -8,40 +8,43 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.grouping;
+package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
- * The SQL count function.
+ * The SQL AVG function.
  *
- * @version 1.2
+ * @version 1.0
  * @since 1.6.0
  */
-public class CountFunction extends AbstractGroupingFunction<Integer> {
+public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
 
     /**
      * The function name.
      */
-    public static final String NAME = "COUNT";
+    public static final String NAME = "AVG";
 
     /**
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.LONG, "The number of rows.", 0, true, RESULT),
-            new Column("value", ParadoxType.NULL, "Any value to count.", 1, true, IN),
+            new Column(null, ParadoxType.NUMBER, "The average of the values.", 0, true, RESULT),
+            new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, true, IN),
     };
 
     @Override
     public String getRemarks() {
-        return "Returns the number of rows that value is not null.";
+        return "Returns the average of a set of values.";
     }
 
     @Override
@@ -52,11 +55,7 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
     @Override
     public Context execute(final ConnectionInfo connectionInfo, final Object[] values,
                            final ParadoxType[] types, final FieldNode[] fields) {
-        int value = 0;
-        if (values[0] != null) {
-            value = 1;
-        }
-
+        final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
         return new Context(value);
     }
 
@@ -68,34 +67,45 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
     /**
      * Count context.
      *
-     * @version 1.1
+     * @version 1.0
      * @since 1.6.0
      */
-    private static class Context implements IGroupingContext<Integer> {
-        private int value;
+    private static class Context implements IGroupingContext<BigDecimal> {
+        private BigDecimal value;
+        private int total;
 
         /**
          * Creates a new instance.
          *
          * @param value the amount to count.
          */
-        public Context(final int value) {
+        public Context(final BigDecimal value) {
             this.value = value;
         }
 
         @Override
-        public void process(final IGroupingContext<Integer> context) {
-            this.value += context.toValue();
+        public void process(final IGroupingContext<BigDecimal> context) {
+            final Context current = (Context) context;
+            this.total++;
+            if (this.value == null) {
+                this.value = current.value;
+            } else if (current.value != null) {
+                this.value = this.value.add(current.value);
+            }
         }
 
         @Override
-        public Integer toValue() {
-            return value;
+        public BigDecimal toValue() {
+            if (this.value != null && total != 0) {
+                return value.divide(BigDecimal.valueOf(total), RoundingMode.FLOOR);
+            }
+
+            return null;
         }
 
         @Override
         public String toString() {
-            return Integer.toString(value);
+            return value.toString();
         }
     }
 }

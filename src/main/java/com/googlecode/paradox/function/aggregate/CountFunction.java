@@ -8,43 +8,40 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.grouping;
+package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.rowset.ValuesComparator;
-import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * The SQL MAX function.
+ * The SQL count function.
  *
- * @version 1.0
+ * @version 1.2
  * @since 1.6.0
  */
-public class MaxFunction extends AbstractGroupingFunction<BigDecimal> {
+public class CountFunction extends AbstractGroupingFunction<Integer> {
 
     /**
      * The function name.
      */
-    public static final String NAME = "MAX";
+    public static final String NAME = "COUNT";
 
     /**
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.NUMBER, "The maximum of the values.", 0, true, RESULT),
-            new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, true, IN),
+            new Column(null, ParadoxType.LONG, "The number of rows.", 0, true, RESULT),
+            new Column("value", ParadoxType.NULL, "Any value to count.", 1, true, IN),
     };
 
     @Override
     public String getRemarks() {
-        return "Returns the maximum of a set of values.";
+        return "Returns the number of rows that value is not null.";
     }
 
     @Override
@@ -55,7 +52,11 @@ public class MaxFunction extends AbstractGroupingFunction<BigDecimal> {
     @Override
     public Context execute(final ConnectionInfo connectionInfo, final Object[] values,
                            final ParadoxType[] types, final FieldNode[] fields) {
-        final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
+        int value = 0;
+        if (values[0] != null) {
+            value = 1;
+        }
+
         return new Context(value);
     }
 
@@ -67,38 +68,34 @@ public class MaxFunction extends AbstractGroupingFunction<BigDecimal> {
     /**
      * Count context.
      *
-     * @version 1.0
+     * @version 1.1
      * @since 1.6.0
      */
-    private static class Context implements IGroupingContext<BigDecimal> {
-        private BigDecimal value;
+    private static class Context implements IGroupingContext<Integer> {
+        private int value;
 
         /**
          * Creates a new instance.
          *
          * @param value the amount to count.
          */
-        public Context(final BigDecimal value) {
+        public Context(final int value) {
             this.value = value;
         }
 
         @Override
-        public void process(final IGroupingContext<BigDecimal> context) {
-            final BigDecimal other = context.toValue();
-
-            if (ValuesComparator.compare(this.value, other) < 0) {
-                this.value = other;
-            }
+        public void process(final IGroupingContext<Integer> context) {
+            this.value += context.toValue();
         }
 
         @Override
-        public BigDecimal toValue() {
+        public Integer toValue() {
             return value;
         }
 
         @Override
         public String toString() {
-            return value.toString();
+            return Integer.toString(value);
         }
     }
 }

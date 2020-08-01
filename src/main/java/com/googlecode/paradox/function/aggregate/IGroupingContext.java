@@ -8,10 +8,28 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
+package com.googlecode.paradox.function.aggregate;
 
 /**
- * Grouping functions package.
+ * Stores a grouping value context for store temporary data.
  *
- * @since 1.0
+ * @param <T> the grouping return type.
+ * @version 1.2
+ * @since 1.6.0
  */
-package com.googlecode.paradox.function.grouping;
+public interface IGroupingContext<T> {
+
+    /**
+     * Process a single grouping.
+     *
+     * @param context the context to use in grouping process.
+     */
+    void process(final IGroupingContext<T> context);
+
+    /**
+     * Gets the result value.
+     *
+     * @return the result value.
+     */
+    T toValue();
+}

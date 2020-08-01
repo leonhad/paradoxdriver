@@ -8,43 +8,43 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.grouping;
+package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
- * The SQL AVG function.
+ * The SQL MAX function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
+public class MaxFunction extends AbstractGroupingFunction<BigDecimal> {
 
     /**
      * The function name.
      */
-    public static final String NAME = "AVG";
+    public static final String NAME = "MAX";
 
     /**
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.NUMBER, "The average of the values.", 0, true, RESULT),
+            new Column(null, ParadoxType.NUMBER, "The maximum of the values.", 0, true, RESULT),
             new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, true, IN),
     };
 
     @Override
     public String getRemarks() {
-        return "Returns the average of a set of values.";
+        return "Returns the maximum of a set of values.";
     }
 
     @Override
@@ -72,7 +72,6 @@ public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
      */
     private static class Context implements IGroupingContext<BigDecimal> {
         private BigDecimal value;
-        private int total;
 
         /**
          * Creates a new instance.
@@ -85,22 +84,16 @@ public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
 
         @Override
         public void process(final IGroupingContext<BigDecimal> context) {
-            final Context current = (Context) context;
-            this.total++;
-            if (this.value == null) {
-                this.value = current.value;
-            } else if (current.value != null) {
-                this.value = this.value.add(current.value);
+            final BigDecimal other = context.toValue();
+
+            if (ValuesComparator.compare(this.value, other) < 0) {
+                this.value = other;
             }
         }
 
         @Override
         public BigDecimal toValue() {
-            if (this.value != null && total != 0) {
-                return value.divide(BigDecimal.valueOf(total), RoundingMode.FLOOR);
-            }
-
-            return null;
+            return value;
         }
 
         @Override

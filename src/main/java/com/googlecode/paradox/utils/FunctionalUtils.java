@@ -11,7 +11,7 @@
 package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.exceptions.InternalException;
-import com.googlecode.paradox.function.grouping.IGroupingContext;
+import com.googlecode.paradox.function.aggregate.IGroupingContext;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.io.Serializable;

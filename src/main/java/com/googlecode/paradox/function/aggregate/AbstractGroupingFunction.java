@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.grouping;
+package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.AbstractFunction;

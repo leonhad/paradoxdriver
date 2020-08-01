@@ -8,42 +8,43 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.function.grouping;
+package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * The SQL sum function.
+ * The SQL MIN function.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
+public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
 
     /**
      * The function name.
      */
-    public static final String NAME = "SUM";
+    public static final String NAME = "MIN";
 
     /**
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.NUMBER, "The sum of the values.", 0, true, RESULT),
-            new Column("value", ParadoxType.NUMBER, "The numeric value to sum.", 1, true, IN),
+            new Column(null, ParadoxType.NUMBER, "The minimum of the values.", 0, true, RESULT),
+            new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, true, IN),
     };
 
     @Override
     public String getRemarks() {
-        return "Returns a sum of a set of values.";
+        return "Returns the minimum of a set of values.";
     }
 
     @Override
@@ -54,11 +55,7 @@ public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
     @Override
     public Context execute(final ConnectionInfo connectionInfo, final Object[] values,
                            final ParadoxType[] types, final FieldNode[] fields) {
-        BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
-        if (values[0] == null) {
-            value = BigDecimal.ZERO;
-        }
-
+        final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
         return new Context(value);
     }
 
@@ -87,7 +84,11 @@ public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
 
         @Override
         public void process(final IGroupingContext<BigDecimal> context) {
-            this.value = value.add(context.toValue());
+            final BigDecimal other = context.toValue();
+
+            if (ValuesComparator.compare(this.value, other) > 0) {
+                this.value = other;
+            }
         }
 
         @Override

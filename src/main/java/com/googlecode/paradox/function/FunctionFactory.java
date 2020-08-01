@@ -12,7 +12,7 @@ package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.function.date.*;
 import com.googlecode.paradox.function.general.*;
-import com.googlecode.paradox.function.grouping.*;
+import com.googlecode.paradox.function.aggregate.*;
 import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.*;
