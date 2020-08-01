@@ -378,7 +378,7 @@ public final class SelectPlan implements Plan {
      * @throws SQLException in case of failures.
      */
     public void addGroupColumn(final FieldNode node) throws SQLException {
-        groupByFields.addAll(getParadoxFields(node));
+        getParadoxFields(node).forEach(this::addGroupColumn);
     }
 
     /**
@@ -388,6 +388,12 @@ public final class SelectPlan implements Plan {
      */
     public void addGroupColumn(final Column column) {
         groupByFields.add(column);
+
+        if (!this.columns.contains(column)) {
+            // If not in SELECT statement, add as a hidden column in ResultSet.
+            column.setHidden(true);
+            this.columns.add(column);
+        }
     }
 
     /**

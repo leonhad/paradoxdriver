@@ -126,8 +126,12 @@ public final class FunctionalUtils {
 
     public static Function<Object[], Object[]> removeGrouping(final int[] indexes) {
         return (Object[] value) -> {
-            Arrays.stream(indexes).forEach((int index) ->
-                    value[index] = ((IGroupingContext<?>) value[index]).toValue());
+            for (final int index : indexes) {
+                if (value[index] != null) {
+                    value[index] = ((IGroupingContext<?>) value[index]).toValue();
+                }
+            }
+
             return value;
         };
     }
@@ -142,11 +146,14 @@ public final class FunctionalUtils {
      */
     private static boolean equalsGrouping(final Object[] o1, final Object[] o2, final int[] columns) {
         for (int i : columns) {
-            if (!(o1[i] instanceof IGroupingContext)) {
-                final boolean ret = ValuesComparator.equals(o1[i], o2[i]);
-                if (!ret) {
-                    return false;
-                }
+            // NULL are equals only in aggregation.
+            if (o1[i] == o2[i]) {
+                return true;
+            }
+
+            final boolean ret = ValuesComparator.equals(o1[i], o2[i]);
+            if (!ret) {
+                return false;
             }
         }
 

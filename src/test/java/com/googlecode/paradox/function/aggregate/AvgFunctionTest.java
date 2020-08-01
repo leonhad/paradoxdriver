@@ -86,7 +86,7 @@ public class AvgFunctionTest {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select avg(id) from fields.long");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 3.0, rs.getDouble(1), 0.00001D);
+            Assert.assertEquals("Invalid column count", 2.0, rs.getDouble(1), 0.00001D);
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }

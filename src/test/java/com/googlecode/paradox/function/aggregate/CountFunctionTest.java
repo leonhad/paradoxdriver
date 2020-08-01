@@ -135,4 +135,54 @@ public class CountFunctionTest {
             Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
         }
     }
+
+    /**
+     * Test for count with group by not in SELECT.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountWithGroupByNotInSelect() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "SELECT count(*) FROM AREACODES group by State");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
+        }
+    }
+
+    /**
+     * Test for count with only null values.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountWithNullValues() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select count(LONG) from fields.long where LONG is null");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid column count", 0, rs.getInt(1));
+            Assert.assertFalse("Invalid null value", rs.wasNull());
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for count with group by null values.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCountWithGroupByNullValues() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "SELECT count(*), null FROM AREACODES group by null");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid column count", 370, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
 }
