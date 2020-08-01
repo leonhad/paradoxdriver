@@ -143,8 +143,8 @@ public final class FunctionalUtils {
     private static boolean equalsGrouping(final Object[] o1, final Object[] o2, final int[] columns) {
         for (int i : columns) {
             if (!(o1[i] instanceof IGroupingContext)) {
-                int ret = ValuesComparator.compare(o1[i], o2[i]);
-                if (ret != 0) {
+                final boolean ret = ValuesComparator.equals(o1[i], o2[i]);
+                if (!ret) {
                     return false;
                 }
             }
