@@ -86,7 +86,7 @@ public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
         @Override
         public void process(final IGroupingContext<BigDecimal> context) {
             final Context current = (Context) context;
-            this.total += current.total;
+            this.total++;
             if (this.value == null) {
                 this.value = current.value;
             } else if (current.value != null) {
