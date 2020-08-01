@@ -358,6 +358,20 @@ public class PlannerTest {
     }
 
     /**
+     * Test for group by without aggregate function.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testGroupByWithoutAggregate() throws SQLException {
+        try (Statement stmt = this.conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery("select AreaCode, state from geog.tblZCode group by AreaCode, state")) {
+                Assert.assertTrue("Invalid result set", rs.next());
+            }
+        }
+    }
+
+    /**
      * Test for table not found.
      *
      * @throws SQLException in case of errors.

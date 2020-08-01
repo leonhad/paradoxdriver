@@ -164,6 +164,6 @@ public abstract class AbstractFunction {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this);
+        return Objects.hashCode(this.getClass());
     }
 }

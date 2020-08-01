@@ -1218,18 +1218,7 @@ public class SQLParserTest {
     @Test
     public void testGroupingFunctionInGroupBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from table group by count(Id)");
-        Assert.assertThrows("Invalid use of grouping function", SQLSyntaxErrorException.class, parser::parse);
-    }
-
-    /**
-     * Test for grouping function in group by.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    public void testGroupingFunctionInOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from table order by count(Id)");
-        Assert.assertThrows("Invalid use of grouping function", SQLSyntaxErrorException.class, parser::parse);
+        Assert.assertThrows("Invalid use of aggregate function", SQLSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -1240,6 +1229,6 @@ public class SQLParserTest {
     @Test
     public void testGroupingFunctionInWhere() throws SQLException {
         final SQLParser parser = new SQLParser("select * from table where count(Id) = 1");
-        Assert.assertThrows("Invalid use of grouping function", SQLSyntaxErrorException.class, parser::parse);
+        Assert.assertThrows("Invalid use of aggregate function", SQLSyntaxErrorException.class, parser::parse);
     }
 }

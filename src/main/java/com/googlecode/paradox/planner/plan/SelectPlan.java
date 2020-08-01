@@ -805,7 +805,7 @@ public final class SelectPlan implements Plan {
         return this.columns.stream()
                 .map(Column::getFunction)
                 .filter(Objects::nonNull)
-                .anyMatch(FunctionNode::isGrouping);
+                .anyMatch(FunctionNode::isGrouping) || !groupByFields.isEmpty();
     }
 
     @Override
