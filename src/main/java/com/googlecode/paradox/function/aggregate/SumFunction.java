@@ -11,6 +11,7 @@
 package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.function.aggregate.context.SumContext;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * The SQL sum function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -52,52 +53,18 @@ public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
     }
 
     @Override
-    public Context execute(final ConnectionInfo connectionInfo, final Object[] values,
-                           final ParadoxType[] types, final FieldNode[] fields) {
+    public SumContext execute(final ConnectionInfo connectionInfo, final Object[] values,
+                              final ParadoxType[] types, final FieldNode[] fields) {
         BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
         if (values[0] == null) {
             value = BigDecimal.ZERO;
         }
 
-        return new Context(value);
+        return new SumContext(value);
     }
 
     @Override
     public void validate(final List<SQLNode> parameters) {
         // Do nothing. This function is always valid. We are only counting rows.
-    }
-
-    /**
-     * Count context.
-     *
-     * @version 1.0
-     * @since 1.6.0
-     */
-    private static class Context implements IGroupingContext<BigDecimal> {
-        private BigDecimal value;
-
-        /**
-         * Creates a new instance.
-         *
-         * @param value the amount to count.
-         */
-        public Context(final BigDecimal value) {
-            this.value = value;
-        }
-
-        @Override
-        public void process(final IGroupingContext<BigDecimal> context) {
-            this.value = value.add(context.toValue());
-        }
-
-        @Override
-        public BigDecimal toValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return value.toString();
-        }
     }
 }

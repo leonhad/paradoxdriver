@@ -11,6 +11,7 @@
 package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.function.aggregate.context.AvgContext;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -18,13 +19,12 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
  * The SQL AVG function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -38,8 +38,8 @@ public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.NUMBER, "The average of the values.", 0, true, RESULT),
-            new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, true, IN),
+            new Column(null, ParadoxType.BCD, "The average of the values.", 0, true, RESULT),
+            new Column("value", ParadoxType.BCD, "The numeric value to check.", 1, true, IN),
     };
 
     @Override
@@ -53,59 +53,14 @@ public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
     }
 
     @Override
-    public Context execute(final ConnectionInfo connectionInfo, final Object[] values,
-                           final ParadoxType[] types, final FieldNode[] fields) {
+    public AvgContext execute(final ConnectionInfo connectionInfo, final Object[] values,
+                              final ParadoxType[] types, final FieldNode[] fields) {
         final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
-        return new Context(value);
+        return new AvgContext(value);
     }
 
     @Override
     public void validate(final List<SQLNode> parameters) {
         // Do nothing. This function is always valid. We are only counting rows.
-    }
-
-    /**
-     * Count context.
-     *
-     * @version 1.0
-     * @since 1.6.0
-     */
-    private static class Context implements IGroupingContext<BigDecimal> {
-        private BigDecimal value;
-        private int total;
-
-        /**
-         * Creates a new instance.
-         *
-         * @param value the amount to count.
-         */
-        public Context(final BigDecimal value) {
-            this.value = value;
-        }
-
-        @Override
-        public void process(final IGroupingContext<BigDecimal> context) {
-            final Context current = (Context) context;
-            this.total++;
-            if (this.value == null) {
-                this.value = current.value;
-            } else if (current.value != null) {
-                this.value = this.value.add(current.value);
-            }
-        }
-
-        @Override
-        public BigDecimal toValue() {
-            if (this.value != null && total != 0) {
-                return value.divide(BigDecimal.valueOf(total), RoundingMode.FLOOR);
-            }
-
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return value.toString();
-        }
     }
 }

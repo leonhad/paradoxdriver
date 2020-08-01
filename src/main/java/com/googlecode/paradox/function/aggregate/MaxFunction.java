@@ -11,11 +11,11 @@
 package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.function.aggregate.context.MaxContext;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.rowset.ValuesComparator;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * The SQL MAX function.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class MaxFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -38,8 +38,8 @@ public class MaxFunction extends AbstractGroupingFunction<BigDecimal> {
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.NUMBER, "The maximum of the values.", 0, true, RESULT),
-            new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, true, IN),
+            new Column(null, ParadoxType.BCD, "The maximum of the values.", 0, true, RESULT),
+            new Column("value", ParadoxType.BCD, "The numeric value to check.", 1, true, IN),
     };
 
     @Override
@@ -53,52 +53,14 @@ public class MaxFunction extends AbstractGroupingFunction<BigDecimal> {
     }
 
     @Override
-    public Context execute(final ConnectionInfo connectionInfo, final Object[] values,
-                           final ParadoxType[] types, final FieldNode[] fields) {
+    public MaxContext execute(final ConnectionInfo connectionInfo, final Object[] values,
+                              final ParadoxType[] types, final FieldNode[] fields) {
         final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
-        return new Context(value);
+        return new MaxContext(value);
     }
 
     @Override
     public void validate(final List<SQLNode> parameters) {
         // Do nothing. This function is always valid. We are only counting rows.
-    }
-
-    /**
-     * Count context.
-     *
-     * @version 1.0
-     * @since 1.6.0
-     */
-    private static class Context implements IGroupingContext<BigDecimal> {
-        private BigDecimal value;
-
-        /**
-         * Creates a new instance.
-         *
-         * @param value the amount to count.
-         */
-        public Context(final BigDecimal value) {
-            this.value = value;
-        }
-
-        @Override
-        public void process(final IGroupingContext<BigDecimal> context) {
-            final BigDecimal other = context.toValue();
-
-            if (ValuesComparator.compare(this.value, other) < 0) {
-                this.value = other;
-            }
-        }
-
-        @Override
-        public BigDecimal toValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return value.toString();
-        }
     }
 }

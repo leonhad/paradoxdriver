@@ -11,6 +11,7 @@
 package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.function.aggregate.context.CountContext;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
@@ -21,7 +22,7 @@ import java.util.List;
 /**
  * The SQL count function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class CountFunction extends AbstractGroupingFunction<Integer> {
@@ -50,52 +51,18 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
     }
 
     @Override
-    public Context execute(final ConnectionInfo connectionInfo, final Object[] values,
-                           final ParadoxType[] types, final FieldNode[] fields) {
+    public CountContext execute(final ConnectionInfo connectionInfo, final Object[] values,
+                                final ParadoxType[] types, final FieldNode[] fields) {
         int value = 0;
         if (values[0] != null) {
             value = 1;
         }
 
-        return new Context(value);
+        return new CountContext(value);
     }
 
     @Override
     public void validate(final List<SQLNode> parameters) {
         // Do nothing. This function is always valid. We are only counting rows.
-    }
-
-    /**
-     * Count context.
-     *
-     * @version 1.1
-     * @since 1.6.0
-     */
-    private static class Context implements IGroupingContext<Integer> {
-        private int value;
-
-        /**
-         * Creates a new instance.
-         *
-         * @param value the amount to count.
-         */
-        public Context(final int value) {
-            this.value = value;
-        }
-
-        @Override
-        public void process(final IGroupingContext<Integer> context) {
-            this.value += context.toValue();
-        }
-
-        @Override
-        public Integer toValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(value);
-        }
     }
 }
