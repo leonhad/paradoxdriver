@@ -12,10 +12,7 @@ package com.googlecode.paradox.function;
 
 import com.googlecode.paradox.function.date.*;
 import com.googlecode.paradox.function.general.*;
-import com.googlecode.paradox.function.grouping.CountFunction;
-import com.googlecode.paradox.function.grouping.MaxFunction;
-import com.googlecode.paradox.function.grouping.MinFunction;
-import com.googlecode.paradox.function.grouping.SumFunction;
+import com.googlecode.paradox.function.grouping.*;
 import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.*;
@@ -160,6 +157,7 @@ public final class FunctionFactory {
         FUNCTIONS.put(VersionNumberFunction.NAME, VersionNumberFunction::new);
 
         // Grouping functions.
+        FUNCTIONS.put(AvgFunction.NAME, AvgFunction::new);
         FUNCTIONS.put(CountFunction.NAME, CountFunction::new);
         FUNCTIONS.put(MaxFunction.NAME, MaxFunction::new);
         FUNCTIONS.put(MinFunction.NAME, MinFunction::new);

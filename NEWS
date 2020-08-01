@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-08-31 Added standard aggregate functions and GROUP BY support.
 2020-08-27 Now is possible to change catalogs (needs to be enabled in properties).
 2020-08-26 Fixed parenthesis parser and NOT keyword.
 2020-08-24 Added support to functions in SELECT and WHERE expressions.
