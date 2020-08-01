@@ -125,7 +125,7 @@ public enum SyntaxError {
     /**
      * Order by column must be an aggregate or to be in group by expression.
      */
-    ORDER_BY_NOT_IN_GROUP_BY("022", "Order by column must be an aggregate or to be in group by expression");
+    ORDER_BY_NOT_IN_GROUP_BY("022", "Order by columns must be an aggregate or to be in group by expression");
 
     /**
      * SQL state code.
