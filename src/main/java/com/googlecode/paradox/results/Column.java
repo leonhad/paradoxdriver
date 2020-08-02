@@ -455,8 +455,8 @@ public final class Column {
     public boolean isSecondPass() {
         if (function != null) {
             return function.isSecondPass();
-
         }
+
         return false;
     }
 
