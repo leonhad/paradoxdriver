@@ -120,8 +120,8 @@ public final class FunctionalUtils {
                 return true;
             } else {
                 // Do grouping.
-                Arrays.stream(indexes).forEach((int index) -> ((IGroupingContext<?>) current[index])
-                        .process((IGroupingContext) value[index]));
+                Arrays.stream(indexes).forEach((int index) ->
+                        ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index]));
             }
 
             return false;
