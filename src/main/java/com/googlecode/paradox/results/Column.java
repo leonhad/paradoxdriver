@@ -170,6 +170,10 @@ public final class Column {
      */
     public void setIndex(final int index) {
         this.index = index;
+
+        if (this.function != null) {
+            this.function.setIndex(index);
+        }
     }
 
     /**

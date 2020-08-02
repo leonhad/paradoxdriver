@@ -10,8 +10,11 @@
  */
 package com.googlecode.paradox.utils;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.InternalException;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
+import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.io.Serializable;
@@ -110,26 +113,35 @@ public final class FunctionalUtils {
             final Object[] current = seen.stream()
                     .filter(o -> equalsGrouping(o, value, columns))
                     .findAny().orElse(null);
+
             if (current == null) {
                 // Just add, no grouping.
                 seen.add(value);
                 return true;
             } else {
                 // Do grouping.
-                Arrays.stream(indexes).forEach((int index) ->
-                        ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index]));
+                Arrays.stream(indexes).forEach((int index) -> ((IGroupingContext<?>) current[index])
+                        .process((IGroupingContext) value[index]));
             }
 
             return false;
         };
     }
 
-    public static Function<Object[], Object[]> removeGrouping(final int[] indexes) {
+    public static FunctionWithExceptions<Object[], Object[], SQLException> removeGrouping(
+            final int[] indexes, final List<Integer> secondPass, final ConnectionInfo connectionInfo,
+            final Object[] parameters, final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) {
         return (Object[] value) -> {
             for (final int index : indexes) {
                 if (value[index] != null) {
                     value[index] = ((IGroupingContext<?>) value[index]).toValue();
                 }
+            }
+
+            for (final Integer i : secondPass) {
+                // A function processed value.
+                value[i] = columnsLoaded.get(i).getFunction().execute(connectionInfo, value, parameters, parameterTypes,
+                        columnsLoaded);
             }
 
             return value;

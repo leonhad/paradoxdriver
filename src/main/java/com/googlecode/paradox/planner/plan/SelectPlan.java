@@ -100,6 +100,10 @@ public final class SelectPlan implements Plan {
      * Grouping columns.
      */
     private int[] groupColumns;
+    /**
+     * Columns that need a second pass in group by expressions.
+     */
+    private List<Integer> secondPass;
 
     /**
      * Creates a SELECT plan with conditions.
@@ -188,12 +192,18 @@ public final class SelectPlan implements Plan {
             this.columns.get(i).setIndex(i);
         }
 
+        processGroupBy();
+    }
+
+    private void processGroupBy() {
         createGroupByColumns();
 
         // Columns with a grouping function.
         groupFunctionColumns = this.columns.stream()
-                .filter(c -> c.getFunction() != null && c.getFunction().isGrouping())
                 .map(Column::getFunction)
+                .filter(Objects::nonNull)
+                .filter(FunctionNode::isGrouping)
+                .filter(f -> !f.isSecondPass())
                 .mapToInt(FunctionNode::getIndex)
                 .toArray();
 
@@ -204,6 +214,14 @@ public final class SelectPlan implements Plan {
                 .filter(c -> !c.isHidden() || columnsToCheck.remove(c))
                 .mapToInt(Column::getIndex)
                 .toArray();
+
+        // Check for second passes.
+        secondPass = this.columns.stream()
+                .map(Column::getFunction)
+                .filter(Objects::nonNull)
+                .filter(FunctionNode::isSecondPass)
+                .map(FunctionNode::getIndex)
+                .collect(Collectors.toList());
     }
 
     private void createGroupByColumns() {
@@ -672,7 +690,7 @@ public final class SelectPlan implements Plan {
                 } else if (functionNode == null) {
                     // A fixed value.
                     finalRow[i] = this.columns.get(i).getValue();
-                } else {
+                } else if (!secondPass.contains(i)) {
                     // A function processed value.
                     finalRow[i] = functionNode.execute(connectionInfo, tableRow, parameters, parameterTypes,
                             columnsLoaded);
@@ -707,7 +725,10 @@ public final class SelectPlan implements Plan {
             stream = stream.sequential()
                     .filter(FunctionalUtils.groupingByKeys(groupFunctionColumns, groupColumns))
                     .collect(Collectors.toList())
-                    .stream().map(FunctionalUtils.removeGrouping(groupFunctionColumns));
+                    .stream()
+                    .filter(predicateWrapper(c -> ensureNotCancelled()))
+                    .map(functionWrapper(FunctionalUtils.removeGrouping(groupFunctionColumns, secondPass,
+                            connectionInfo, parameters, parameterTypes, this.columns)));
         }
 
         if (!orderByFields.isEmpty()) {
@@ -812,7 +833,7 @@ public final class SelectPlan implements Plan {
         return this.columns.stream()
                 .map(Column::getFunction)
                 .filter(Objects::nonNull)
-                .anyMatch(FunctionNode::isGrouping) || !groupByFields.isEmpty();
+                .anyMatch(FunctionNode::isGrouping);
     }
 
     @Override

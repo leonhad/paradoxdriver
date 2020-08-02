@@ -125,7 +125,13 @@ public class FunctionNode extends FieldNode {
      * @return <code>true</code> if this function is a grouping function.
      */
     public boolean isGrouping() {
-        return function.isGrouping();
+        final List<FunctionNode> functionNodes = this.getGroupingNodes();
+        return function.isGrouping() || !functionNodes.isEmpty();
+    }
+
+    public boolean isSecondPass() {
+        final List<FunctionNode> functionNodes = this.getGroupingNodes();
+        return !function.isGrouping() && !functionNodes.isEmpty();
     }
 
     /**
@@ -208,8 +214,27 @@ public class FunctionNode extends FieldNode {
                 types[i] = parameterTypes[((ParameterNode) param).getParameterIndex()];
             } else if (param instanceof FunctionNode) {
                 final FunctionNode functionNode = (FunctionNode) param;
-                values[i] = functionNode.execute(connectionInfo, row, parameterValues, parameterTypes, loadedColumns);
-                types[i] = functionNode.getType();
+                if (functionNode.isGrouping()) {
+                    int index = -1;
+                    for (int l = 0; l < loadedColumns.size(); l++) {
+                        if (functionNode.equals(loadedColumns.get(l).getFunction())) {
+                            index = l;
+                            break;
+                        }
+                    }
+
+                    if (index == -1) {
+                        throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION,
+                                functionNode.getName());
+                    }
+
+                    values[i] = row[index];
+                    types[i] = loadedColumns.get(index).getType();
+                } else {
+                    values[i] = functionNode.execute(connectionInfo, row, parameterValues, parameterTypes,
+                            loadedColumns);
+                    types[i] = functionNode.getType();
+                }
             } else if (param instanceof AsteriskNode) {
                 values[i] = param;
                 types[i] = ParadoxType.NULL;
