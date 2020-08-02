@@ -479,6 +479,7 @@ public final class Column {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+
         Column column = (Column) o;
         boolean ret;
         if (field != null) {

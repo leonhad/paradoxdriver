@@ -138,16 +138,22 @@ public final class FunctionalUtils {
                 }
             }
 
-            for (int i = 0; i < columnsLoaded.size(); i++) {
-                if (columnsLoaded.get(i).isSecondPass()) {
-                    // A function processed value.
-                    value[i] = columnsLoaded.get(i).getFunction().execute(connectionInfo, value, parameters,
-                            parameterTypes, columnsLoaded);
-                }
-            }
+            processSecondPass(connectionInfo, parameters, parameterTypes, columnsLoaded, value);
 
             return value;
         };
+    }
+
+    private static void processSecondPass(final ConnectionInfo connectionInfo, final Object[] parameters,
+                                          final ParadoxType[] parameterTypes, final List<Column> columnsLoaded,
+                                          final Object[] value) throws SQLException {
+        for (int i = 0; i < columnsLoaded.size(); i++) {
+            if (columnsLoaded.get(i).isSecondPass()) {
+                // A function processed value.
+                value[i] = columnsLoaded.get(i).getFunction().execute(connectionInfo, value, parameters,
+                        parameterTypes, columnsLoaded);
+            }
+        }
     }
 
     /**
