@@ -12,14 +12,11 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.exceptions.*;
 import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.parser.nodes.AsteriskNode;
-import com.googlecode.paradox.parser.nodes.JoinType;
-import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
@@ -29,6 +26,7 @@ import com.googlecode.paradox.planner.sorting.OrderByComparator;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.FunctionalUtils;
 
 import java.sql.SQLException;
@@ -112,6 +110,153 @@ public final class SelectPlan implements Plan {
         this.distinct = distinct;
     }
 
+    /**
+     * Creates a SELECT plan.
+     *
+     * @param connectionInfo the connection info.
+     * @param statement      the statement node.
+     * @throws ParadoxSyntaxErrorException in case of failures.
+     */
+    public SelectPlan(final ConnectionInfo connectionInfo, final SelectNode statement) throws SQLException {
+        this.condition = statement.getCondition();
+        this.distinct = statement.isDistinct();
+
+        parseTableMetaData(connectionInfo, statement);
+        parseColumns(statement);
+        parseGroupBy(statement);
+        parseOrderBy(statement);
+
+        if (this.columns.isEmpty()) {
+            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST);
+        }
+    }
+
+    /**
+     * Parses the table metadata.
+     *
+     * @param connectionInfo the connection information.
+     * @param statement      the SELECT statement.
+     * @throws SQLException in case of parse errors.
+     */
+    private void parseTableMetaData(final ConnectionInfo connectionInfo, final SelectNode statement)
+            throws SQLException {
+        for (final TableNode table : statement.getTables()) {
+            final PlanTableNode node = new PlanTableNode();
+            node.setTable(connectionInfo, table);
+            this.tables.add(node);
+        }
+    }
+
+    /**
+     * Parses the table columns.
+     *
+     * @param statement the SELECT statement.
+     * @throws SQLException in case of parse errors.
+     */
+    private void parseColumns(final SelectNode statement) throws SQLException {
+        for (final SQLNode field : statement.getFields()) {
+            if (field instanceof AsteriskNode) {
+                if (this.tables.isEmpty()) {
+                    throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_WITHOUT_TABLE,
+                            field.getPosition());
+                }
+                parseAsterisk((AsteriskNode) field);
+            } else {
+                addColumn((FieldNode) field);
+            }
+        }
+    }
+
+    /**
+     * Parses the group by fields.
+     *
+     * @param statement the SELECT statement.
+     * @throws SQLException in case of parse errors.
+     */
+    private void parseGroupBy(final SelectNode statement) throws SQLException {
+        // Create columns to use in SELECT statement.
+        for (final FieldNode field : statement.getGroups()) {
+            if (field instanceof ParameterNode) {
+                throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED,
+                        field.getPosition());
+            } else if (field instanceof ValueNode) {
+                addGroupColumn(new Column((ValueNode) field));
+            } else {
+                addGroupColumn(field);
+            }
+        }
+
+        if (isGroupBy()) {
+            // Validate statically the group by clause.
+            final List<Column> fields = this.columns.stream()
+                    .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
+                    .filter(c -> !groupByFields.contains(c))
+                    .collect(Collectors.toList());
+
+            if (!fields.isEmpty()) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.NOT_GROUP_BY);
+            }
+        }
+    }
+
+    /**
+     * Parses the order by fields.
+     *
+     * @param statement the SELECT statement.
+     * @throws SQLException in case of parse errors.
+     */
+    private void parseOrderBy(final SelectNode statement) throws SQLException {
+        for (int i = 0; i < statement.getOrder().size(); i++) {
+            final FieldNode field = statement.getOrder().get(i);
+            final OrderType type = statement.getOrderTypes().get(i);
+            if (field instanceof ValueNode) {
+                int index = ValuesConverter.getInteger(field.getName());
+                if (index > this.columns.size()) {
+                    throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, index);
+                }
+
+                addOrderColumn(this.columns.get(index - 1), type);
+            } else {
+                addOrderColumn(field, type);
+            }
+        }
+
+        // This is a group by expression?
+        if (isGroupBy()) {
+            final List<Column> columns = this.columns.stream()
+                    .filter(c -> !c.isHidden()).collect(Collectors.toList());
+            if (!columns.containsAll(orderByFields)) {
+                throw new ParadoxSyntaxErrorException(SyntaxError.ORDER_BY_NOT_IN_GROUP_BY);
+            }
+        }
+    }
+
+    /**
+     * Parses the asterisk fields in SELECT.
+     *
+     * @param field the asterisk field.
+     * @throws SQLException in case of parse errors.
+     */
+    private void parseAsterisk(final AsteriskNode field) throws SQLException {
+        if (field.getTableName() != null) {
+            final List<ParadoxTable> tables = this.tables.stream()
+                    .filter(t -> t.isThis(field.getTableName()))
+                    .map(PlanTableNode::getTable).collect(Collectors.toList());
+
+            if (tables.isEmpty()) {
+                throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, field.getPosition(),
+                        field.getTableName());
+            } else if (tables.size() > 1) {
+                throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getPosition(),
+                        field.getTableName());
+            }
+
+            addColumnFromTable(tables.get(0));
+        } else {
+            addColumnFromTables();
+        }
+    }
+
     private static AbstractConditionalNode reduce(final AbstractConditionalNode node) {
         AbstractConditionalNode ret = node;
 
@@ -166,11 +311,13 @@ public final class SelectPlan implements Plan {
         }
     }
 
-    /**
-     * Optimize the joins clause.
-     */
     @Override
     public void compile() {
+
+    }
+
+    @Override
+    public void optimize() {
         if (optimizeConditions(condition)) {
             condition = null;
         }
@@ -268,22 +415,11 @@ public final class SelectPlan implements Plan {
 
     /**
      * Associate all columns from a list of tables.
-     *
-     * @param tables the table list to scan.
      */
-    public void addColumnFromTables(final Iterable<PlanTableNode> tables) {
-        for (final PlanTableNode table : tables) {
+    public void addColumnFromTables() {
+        for (final PlanTableNode table : this.tables) {
             addColumnFromTable(table.getTable());
         }
-    }
-
-    /**
-     * Adds a table to this plan.
-     *
-     * @param table the table.
-     */
-    public void addTable(final PlanTableNode table) {
-        this.tables.add(table);
     }
 
     /**
@@ -745,15 +881,6 @@ public final class SelectPlan implements Plan {
     }
 
     /**
-     * Gets the tables in this plan.
-     *
-     * @return the tables in this plan.
-     */
-    public List<PlanTableNode> getTables() {
-        return this.tables;
-    }
-
-    /**
      * Values from tables in column order.
      *
      * @return array of array of values / Can be null (empty result set);
@@ -769,24 +896,6 @@ public final class SelectPlan implements Plan {
      */
     public AbstractConditionalNode getCondition() {
         return condition;
-    }
-
-    /**
-     * Gets the group by fields.
-     *
-     * @return the group by fields.
-     */
-    public List<Column> getGroupByFields() {
-        return groupByFields;
-    }
-
-    /**
-     * Gets the order by columns.
-     *
-     * @return the order by columns.
-     */
-    public List<Column> getOrderByFields() {
-        return orderByFields;
     }
 
     /**
@@ -810,6 +919,33 @@ public final class SelectPlan implements Plan {
         }
 
         return true;
+    }
+
+    /**
+     * Gets the group by fields.
+     *
+     * @return the group by fields.
+     */
+    public List<Column> getGroupByFields() {
+        return groupByFields;
+    }
+
+    /**
+     * Gets the order by fields.
+     *
+     * @return the order by fields.
+     */
+    public List<Column> getOrderByFields() {
+        return orderByFields;
+    }
+
+    /**
+     * Gets the tables.
+     *
+     * @return the tables.
+     */
+    public List<PlanTableNode> getTables() {
+        return tables;
     }
 
     /**

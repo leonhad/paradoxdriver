@@ -39,9 +39,14 @@ public interface Plan {
                  final ParadoxType[] parameterTypes) throws SQLException;
 
     /**
-     * Optimize the statement.
+     * Compile the statement.
      */
     void compile();
+
+    /**
+     * Optimize the statement.
+     */
+    void optimize();
 
     /**
      * Cancel the statement execution.

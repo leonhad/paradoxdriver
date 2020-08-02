@@ -86,25 +86,6 @@ public class SelectPlanTest {
     }
 
     /**
-     * Test for column value with table alias.
-     *
-     * @throws SQLException if has errors.
-     */
-    @Test
-    public void testColumnWithTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null, false);
-
-        TableNode table = new TableNode(null, AREA_CODES, "test", null);
-
-        PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn.getConnectionInfo(), table);
-        plan.addTable(tableNode);
-
-        plan.addColumn(new FieldNode("test", "ac", null));
-        Assert.assertEquals("Invalid column size.", 1, plan.getColumns().size());
-    }
-
-    /**
      * Test for invalid column value.
      *
      * @throws SQLException if there are no errors.
@@ -113,24 +94,6 @@ public class SelectPlanTest {
     public void testInvalidColumn() throws SQLException {
         final SelectPlan plan = new SelectPlan(null, false);
         plan.addColumn(new FieldNode(null, "invalid", null));
-    }
-
-    /**
-     * Test for invalid table alias.
-     *
-     * @throws SQLException if has errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testInvalidTableAlias() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null, false);
-
-        TableNode table = new TableNode(null, AREA_CODES, "test", null);
-
-        PlanTableNode tableNode = new PlanTableNode();
-        tableNode.setTable(conn.getConnectionInfo(), table);
-        plan.addTable(tableNode);
-
-        plan.addColumn(new FieldNode("test2", "ac", null));
     }
 
     /**
