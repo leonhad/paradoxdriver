@@ -214,19 +214,9 @@ public class FunctionNode extends FieldNode {
                 types[i] = parameterTypes[((ParameterNode) param).getParameterIndex()];
             } else if (param instanceof FunctionNode) {
                 final FunctionNode functionNode = (FunctionNode) param;
-                if (functionNode.isGrouping()) {
-                    int index = -1;
-                    for (int l = 0; l < loadedColumns.size(); l++) {
-                        if (functionNode.equals(loadedColumns.get(l).getFunction())) {
-                            index = l;
-                            break;
-                        }
-                    }
 
-                    if (index == -1) {
-                        throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION,
-                                functionNode.getName());
-                    }
+                if (functionNode.isGrouping()) {
+                    final int index = getIndex(loadedColumns, functionNode);
 
                     values[i] = row[index];
                     types[i] = loadedColumns.get(index).getType();
@@ -254,6 +244,23 @@ public class FunctionNode extends FieldNode {
 
         // If no problems found, execute the procedure.
         return function.execute(connectionInfo, values, types, fields);
+    }
+
+    private static int getIndex(List<Column> loadedColumns, FunctionNode functionNode)
+            throws ParadoxSyntaxErrorException {
+        int index = -1;
+        for (int l = 0; l < loadedColumns.size(); l++) {
+            if (functionNode.equals(loadedColumns.get(l).getFunction())) {
+                index = l;
+                break;
+            }
+        }
+
+        if (index == -1) {
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION,
+                    functionNode.getName());
+        }
+        return index;
     }
 
     @Override

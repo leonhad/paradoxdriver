@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.7
+ * @version 1.8
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -93,21 +93,47 @@ public final class Column {
         this.precision = field.getPrecision();
     }
 
+    /**
+     * Creates a new instance.
+     *
+     * @param parameter the parameter node.
+     */
     public Column(final ParameterNode parameter) {
         this(parameter.getAlias(), ParadoxType.NULL);
         this.parameter = parameter;
     }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param node the value node.
+     */
 
     public Column(final ValueNode node) {
         this(node.getAlias(), node.getType());
         this.value = node.getName();
     }
 
+    /**
+     * Creates a new instance.
+     *
+     * @param node the function node.
+     */
     public Column(final FunctionNode node) {
         this(node.getAlias(), node.getType());
         this.function = node;
     }
 
+    /**
+     * Creates a new instance.
+     *
+     * @param name       the column name.
+     * @param type       the column type.
+     * @param remarks    the column remarks.
+     * @param index      the column index.
+     * @param nullable   the column nullable.
+     * @param columnType the column return type (IN ou RESULT).
+     */
     @SuppressWarnings("java:S107")
     public Column(final String name, final ParadoxType type, final String remarks, final int index,
                   final boolean nullable, final int columnType) {
@@ -315,6 +341,11 @@ public final class Column {
         return false;
     }
 
+    /**
+     * Gets the column octets size.
+     *
+     * @return the column octets size.
+     */
     public Integer getOctets() {
         if (value instanceof byte[]) {
             return ((byte[]) value).length;
@@ -380,12 +411,53 @@ public final class Column {
                 || type == ParadoxType.INTEGER;
     }
 
+    /**
+     * Gets the column size.
+     *
+     * @return the column size.
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * Gets the columns remarks.
+     *
+     * @return the columns remarks.
+     */
     public String getRemarks() {
         return remarks;
+    }
+
+    /**
+     * Gets the column type.
+     *
+     * @return the column type.
+     */
+    public int getColumnType() {
+        return columnType;
+    }
+
+    /**
+     * Gets the parameter node.
+     *
+     * @return the parameter node.
+     */
+    public ParameterNode getParameter() {
+        return parameter;
+    }
+
+    /**
+     * Gets the second pass status.
+     *
+     * @return the second pass status.
+     */
+    public boolean isSecondPass() {
+        if (function != null) {
+            return function.isSecondPass();
+
+        }
+        return false;
     }
 
     @Override
@@ -397,14 +469,6 @@ public final class Column {
         }
 
         return field.toString();
-    }
-
-    public int getColumnType() {
-        return columnType;
-    }
-
-    public ParameterNode getParameter() {
-        return parameter;
     }
 
     @Override

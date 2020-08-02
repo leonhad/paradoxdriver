@@ -100,10 +100,6 @@ public final class SelectPlan implements Plan {
      * Grouping columns.
      */
     private int[] groupColumns;
-    /**
-     * Columns that need a second pass in group by expressions.
-     */
-    private List<Integer> secondPass;
 
     /**
      * Creates a SELECT plan with conditions.
@@ -214,14 +210,6 @@ public final class SelectPlan implements Plan {
                 .filter(c -> !c.isHidden() || columnsToCheck.remove(c))
                 .mapToInt(Column::getIndex)
                 .toArray();
-
-        // Check for second passes.
-        secondPass = this.columns.stream()
-                .map(Column::getFunction)
-                .filter(Objects::nonNull)
-                .filter(FunctionNode::isSecondPass)
-                .map(FunctionNode::getIndex)
-                .collect(Collectors.toList());
     }
 
     private void createGroupByColumns() {
@@ -690,7 +678,7 @@ public final class SelectPlan implements Plan {
                 } else if (functionNode == null) {
                     // A fixed value.
                     finalRow[i] = this.columns.get(i).getValue();
-                } else if (!secondPass.contains(i)) {
+                } else if (!this.columns.get(i).isSecondPass()) {
                     // A function processed value.
                     finalRow[i] = functionNode.execute(connectionInfo, tableRow, parameters, parameterTypes,
                             columnsLoaded);
@@ -727,8 +715,8 @@ public final class SelectPlan implements Plan {
                     .collect(Collectors.toList())
                     .stream()
                     .filter(predicateWrapper(c -> ensureNotCancelled()))
-                    .map(functionWrapper(FunctionalUtils.removeGrouping(groupFunctionColumns, secondPass,
-                            connectionInfo, parameters, parameterTypes, this.columns)));
+                    .map(functionWrapper(FunctionalUtils.removeGrouping(groupFunctionColumns, connectionInfo,
+                            parameters, parameterTypes, this.columns)));
         }
 
         if (!orderByFields.isEmpty()) {

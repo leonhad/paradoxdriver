@@ -14,10 +14,7 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.*;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
-import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.ParameterNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
-import com.googlecode.paradox.planner.nodes.ValueNode;
+import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.planner.sorting.OrderType;
@@ -26,6 +23,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**

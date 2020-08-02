@@ -129,8 +129,8 @@ public final class FunctionalUtils {
     }
 
     public static FunctionWithExceptions<Object[], Object[], SQLException> removeGrouping(
-            final int[] indexes, final List<Integer> secondPass, final ConnectionInfo connectionInfo,
-            final Object[] parameters, final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) {
+            final int[] indexes, final ConnectionInfo connectionInfo, final Object[] parameters,
+            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) {
         return (Object[] value) -> {
             for (final int index : indexes) {
                 if (value[index] != null) {
@@ -138,10 +138,12 @@ public final class FunctionalUtils {
                 }
             }
 
-            for (final Integer i : secondPass) {
-                // A function processed value.
-                value[i] = columnsLoaded.get(i).getFunction().execute(connectionInfo, value, parameters, parameterTypes,
-                        columnsLoaded);
+            for (int i = 0; i < columnsLoaded.size(); i++) {
+                if (columnsLoaded.get(i).isSecondPass()) {
+                    // A function processed value.
+                    value[i] = columnsLoaded.get(i).getFunction().execute(connectionInfo, value, parameters,
+                            parameterTypes, columnsLoaded);
+                }
             }
 
             return value;
