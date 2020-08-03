@@ -121,11 +121,27 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 .collect(Collectors.toList());
 
         parseColumns(statement);
+
         this.groupBy = parseGroupBy(statement);
         parseOrderBy(statement);
 
         if (this.columns.isEmpty()) {
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST);
+        }
+    }
+
+    @Override
+    public void optimize() {
+        if (optimizeConditions(condition)) {
+            condition = null;
+        }
+
+        // Optimize default conditions.
+        condition = SelectUtils.joinClauses(condition);
+
+        // Optimize table conditions.
+        for (final PlanTableNode table : this.tables) {
+            table.setConditionalJoin(SelectUtils.joinClauses(table.getConditionalJoin()));
         }
     }
 
@@ -146,6 +162,11 @@ public final class SelectPlan implements Plan<List<Object[]>> {
             } else {
                 addColumn((FieldNode) field);
             }
+        }
+
+        // Sets the column indexes.
+        for (int i = 0; i < this.columns.size(); i++) {
+            this.columns.get(i).setIndex(i);
         }
     }
 
@@ -187,6 +208,39 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 throw new ParadoxSyntaxErrorException(SyntaxError.NOT_GROUP_BY);
             }
         }
+
+        final List<Column> columnList = this.columns.stream()
+                .map(SelectUtils::getGroupingFunctions).flatMap(Collection::stream)
+                .map(Column::new)
+                .collect(Collectors.toList());
+
+        for (final Column column : columnList) {
+            final int index = this.columns.indexOf(column);
+            if (index < 0) {
+                column.setHidden(true);
+                column.getFunction().setIndex(this.columns.size());
+                this.columns.add(column);
+            } else {
+                column.getFunction().setIndex(index);
+            }
+        }
+
+        // Columns with a grouping function.
+        groupFunctionColumns = this.columns.stream()
+                .map(Column::getFunction)
+                .filter(Objects::nonNull)
+                .filter(FunctionNode::isGrouping)
+                .filter(f -> !f.isSecondPass())
+                .mapToInt(FunctionNode::getIndex)
+                .toArray();
+
+        // Key columns to do the grouping.
+        final HashSet<Column> columnsToCheck = new HashSet<>(groupByFields);
+        groupColumns = this.columns.stream()
+                .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
+                .filter(c -> !c.isHidden() || columnsToCheck.remove(c))
+                .mapToInt(Column::getIndex)
+                .toArray();
 
         return grouping;
     }
@@ -246,67 +300,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
             addColumnFromTable(tablesFound.get(0));
         } else {
             addColumnFromTables();
-        }
-    }
-
-    @Override
-    public void optimize() {
-        if (optimizeConditions(condition)) {
-            condition = null;
-        }
-
-        // Optimize default conditions.
-        condition = SelectUtils.joinClauses(condition);
-
-        // Optimize table conditions.
-        for (final PlanTableNode table : this.tables) {
-            table.setConditionalJoin(SelectUtils.joinClauses(table.getConditionalJoin()));
-        }
-
-        // Sets the column indexes.
-        for (int i = 0; i < this.columns.size(); i++) {
-            this.columns.get(i).setIndex(i);
-        }
-
-        processGroupBy();
-    }
-
-    private void processGroupBy() {
-        createGroupByColumns();
-
-        // Columns with a grouping function.
-        groupFunctionColumns = this.columns.stream()
-                .map(Column::getFunction)
-                .filter(Objects::nonNull)
-                .filter(FunctionNode::isGrouping)
-                .filter(f -> !f.isSecondPass())
-                .mapToInt(FunctionNode::getIndex)
-                .toArray();
-
-        // Key columns to do the grouping.
-        final HashSet<Column> columnsToCheck = new HashSet<>(groupByFields);
-        groupColumns = this.columns.stream()
-                .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
-                .filter(c -> !c.isHidden() || columnsToCheck.remove(c))
-                .mapToInt(Column::getIndex)
-                .toArray();
-    }
-
-    private void createGroupByColumns() {
-        final List<Column> columnList = this.columns.stream()
-                .map(SelectUtils::getGroupingFunctions).flatMap(Collection::stream)
-                .map(Column::new)
-                .collect(Collectors.toList());
-
-        for (final Column column : columnList) {
-            final int index = this.columns.indexOf(column);
-            if (index < 0) {
-                column.setHidden(true);
-                column.getFunction().setIndex(this.columns.size());
-                this.columns.add(column);
-            } else {
-                column.getFunction().setIndex(index);
-            }
         }
     }
 
