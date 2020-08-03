@@ -122,7 +122,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 .collect(Collectors.toList());
 
         parseColumns(statement);
-        groupBy = parseGroupBy(statement);
+        this.groupBy = parseGroupBy(statement);
         parseOrderBy(statement);
 
         if (this.columns.isEmpty()) {

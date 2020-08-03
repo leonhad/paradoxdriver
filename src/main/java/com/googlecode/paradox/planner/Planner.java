@@ -21,22 +21,22 @@ import com.googlecode.paradox.planner.plan.SelectPlan;
 import java.sql.SQLException;
 
 /**
- * Creates a SQL execution plan.
+ * Factory to create a SQL execution plan.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.1
  */
-public class Planner {
+public final class Planner {
 
     /**
-     * Create a new instance.
+     * Utility class, not for use..
      */
-    protected Planner() {
-        super();
+    private Planner() {
+        // Unused.
     }
 
     /**
-     * Create a plan from given statement.
+     * Create an execution plan from given statement.
      *
      * @param connectionInfo the connection information.
      * @param statement      the statement to plan.
@@ -57,6 +57,7 @@ public class Planner {
             // Optimize the plan.
             ret.optimize();
         } catch (@SuppressWarnings("java:S1166") final InternalException e) {
+            // Allow the use of exception functional wrapping.
             throw e.getCause();
         }
 
