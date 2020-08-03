@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Unit test for {@link Planner}.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.1
  */
 public class PlannerTest {

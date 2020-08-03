@@ -40,7 +40,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.13
+ * @version 1.14
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})

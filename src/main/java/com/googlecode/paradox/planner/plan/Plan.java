@@ -21,7 +21,7 @@ import java.sql.SQLFeatureNotSupportedException;
  * Used to creates and execute SQL plans.
  *
  * @param <T> the return type.
- * @version 1.6
+ * @version 1.7
  * @since 1.1
  */
 public interface Plan<T> {
@@ -41,9 +41,11 @@ public interface Plan<T> {
               final ParadoxType[] parameterTypes) throws SQLException;
 
     /**
-     * Optimize the statement.
+     * Optimize the statement. This step is optional for most planing.
      */
-    void optimize();
+    default void optimize() {
+        // Do nothing.
+    }
 
     /**
      * Cancel the statement execution.

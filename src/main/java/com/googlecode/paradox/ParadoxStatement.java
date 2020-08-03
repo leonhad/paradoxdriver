@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * JDBC statement implementation.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")

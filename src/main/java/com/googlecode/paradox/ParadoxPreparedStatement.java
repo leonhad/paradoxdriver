@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * {@link PreparedStatement} implementation class.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
