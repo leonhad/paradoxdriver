@@ -45,46 +45,12 @@ public final class PlanTableNode {
 
     /**
      * Creates a new instance.
-     */
-    public PlanTableNode() {
-        super();
-    }
-
-    /**
-     * Gets the plan alias.
-     *
-     * @return the plan alias.
-     */
-    public String getAlias() {
-        return this.alias;
-    }
-
-    /**
-     * Sets the plan alias.
-     *
-     * @param alias the plan alias to set.
-     */
-    public void setAlias(final String alias) {
-        this.alias = alias;
-    }
-
-    /**
-     * Gets the table plan.
-     *
-     * @return the table plan.
-     */
-    public ParadoxTable getTable() {
-        return this.table;
-    }
-
-    /**
-     * Sets the plan table.
      *
      * @param connectionInfo the connection information.
      * @param table          the table data to use.
      * @throws SQLException in case of failures.
      */
-    public void setTable(final ConnectionInfo connectionInfo, final TableNode table)
+    public PlanTableNode(final ConnectionInfo connectionInfo, final TableNode table)
             throws SQLException {
         String schemaName = table.getSchemaName();
         if (schemaName == null) {
@@ -114,6 +80,33 @@ public final class PlanTableNode {
             conditionalJoin = null;
             joinType = JoinType.INNER;
         }
+    }
+
+    /**
+     * Gets the plan alias.
+     *
+     * @return the plan alias.
+     */
+    public String getAlias() {
+        return this.alias;
+    }
+
+    /**
+     * Sets the plan alias.
+     *
+     * @param alias the plan alias to set.
+     */
+    public void setAlias(final String alias) {
+        this.alias = alias;
+    }
+
+    /**
+     * Gets the table plan.
+     *
+     * @return the table plan.
+     */
+    public ParadoxTable getTable() {
+        return this.table;
     }
 
     /**

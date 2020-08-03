@@ -12,6 +12,7 @@ package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
@@ -132,7 +133,7 @@ public class PlannerTest {
      *
      * @throws Exception in case of failures.
      */
-    @Test(expected = SQLException.class)
+    @Test(expected = ParadoxDataException.class)
     public void testInvalidTable() throws Exception {
         final SQLParser parser = new SQLParser("select * from invalid");
         Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
@@ -374,12 +375,11 @@ public class PlannerTest {
      *
      * @throws SQLException in case of errors.
      */
-    @Test
+    @Test(expected = ParadoxDataException.class)
     public void testTableNotFound() throws SQLException {
         final SQLParser parser = new SQLParser("select * from notfound");
         final StatementNode statementNode = parser.parse().get(0);
-        Assert.assertThrows("Invalid table loaded", SQLException.class,
-                () -> Planner.create(conn.getConnectionInfo(), statementNode));
+        Planner.create(conn.getConnectionInfo(), statementNode);
     }
 
     /**

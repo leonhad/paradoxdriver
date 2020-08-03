@@ -57,7 +57,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     /**
      * The tables in this plan.
      */
-    private final List<PlanTableNode> tables = new ArrayList<>();
+    private final List<PlanTableNode> tables;
     /**
      * If this result needs to be distinct.
      */
@@ -84,6 +84,8 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     private AbstractConditionalNode condition;
     /**
      * If this statement was cancelled.
+     * <p>
+     * FIXME move to execution context.
      */
     private boolean cancelled;
     /**
@@ -114,29 +116,17 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         this.condition = statement.getCondition();
         this.distinct = statement.isDistinct();
 
-        parseTableMetaData(connectionInfo, statement);
+        // Load the table information.
+        this.tables = statement.getTables().stream()
+                .map(functionWrapper(table -> new PlanTableNode(connectionInfo, table)))
+                .collect(Collectors.toList());
+
         parseColumns(statement);
         groupBy = parseGroupBy(statement);
         parseOrderBy(statement);
 
         if (this.columns.isEmpty()) {
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST);
-        }
-    }
-
-    /**
-     * Parses the table metadata.
-     *
-     * @param connectionInfo the connection information.
-     * @param statement      the SELECT statement.
-     * @throws SQLException in case of parse errors.
-     */
-    private void parseTableMetaData(final ConnectionInfo connectionInfo, final SelectNode statement)
-            throws SQLException {
-        for (final TableNode table : statement.getTables()) {
-            final PlanTableNode node = new PlanTableNode();
-            node.setTable(connectionInfo, table);
-            this.tables.add(node);
         }
     }
 
@@ -701,9 +691,9 @@ public final class SelectPlan implements Plan<List<Object[]>> {
             return Collections.emptyList();
         }
 
-        setIndexes(columnsLoaded);
-        setFunctionIndexes(columnsLoaded);
-        setSelectParameters(this.columns, parameterTypes);
+        processIndexes(columnsLoaded);
+        processFunctionIndexes(columnsLoaded);
+        processSelectParameters(this.columns, parameterTypes);
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
@@ -713,7 +703,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         return this.values;
     }
 
-    private static void setSelectParameters(final List<Column> columns, final ParadoxType[] parameterTypes) {
+    private static void processSelectParameters(final List<Column> columns, final ParadoxType[] parameterTypes) {
         for (final Column column : columns) {
             final ParameterNode parameterNode = column.getParameter();
             if (parameterNode != null) {
@@ -756,7 +746,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         return comparator;
     }
 
-    private void setIndexes(final List<Column> columns) throws SQLException {
+    private void processIndexes(final List<Column> columns) throws SQLException {
         // Set conditional indexes.
         if (this.condition != null) {
             this.condition.setFieldIndexes(columns, tables);
@@ -770,7 +760,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         }
     }
 
-    private void setFunctionIndexes(final List<Column> columnsLoaded) throws SQLException {
+    private void processFunctionIndexes(final List<Column> columnsLoaded) throws SQLException {
         for (final Column column : this.columns) {
             if (column.getFunction() != null) {
                 FieldValueUtils.setFunctionIndexes(column.getFunction(), columnsLoaded, this.tables);

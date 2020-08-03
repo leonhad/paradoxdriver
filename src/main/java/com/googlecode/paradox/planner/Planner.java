@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.exceptions.InternalException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
@@ -22,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Creates a SQL execution plan.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.1
  */
 public class Planner {
@@ -42,16 +43,22 @@ public class Planner {
      * @return the execution plan.
      * @throws SQLException in case of plan errors.
      */
-    public static Plan create(final ConnectionInfo connectionInfo, final StatementNode statement)
+    @SuppressWarnings("java:S1452")
+    public static Plan<?> create(final ConnectionInfo connectionInfo, final StatementNode statement)
             throws SQLException {
-        Plan ret;
-        if (statement instanceof SelectNode) {
-            ret = new SelectPlan(connectionInfo, (SelectNode) statement);
-        } else {
-            throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
-        }
+        Plan<?> ret;
+        try {
+            if (statement instanceof SelectNode) {
+                ret = new SelectPlan(connectionInfo, (SelectNode) statement);
+            } else {
+                throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+            }
 
-        ret.optimize();
+            // Optimize the plan.
+            ret.optimize();
+        } catch (@SuppressWarnings("java:S1166") final InternalException e) {
+            throw e.getCause();
+        }
 
         return ret;
     }

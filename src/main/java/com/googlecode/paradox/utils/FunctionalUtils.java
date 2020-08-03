@@ -111,7 +111,7 @@ public final class FunctionalUtils {
         final List<Object[]> seen = new ArrayList<>();
         return (Object[] value) -> {
             final Object[] current = seen.stream()
-                    .filter(o -> equalsGrouping(o, value, columns))
+                    .filter(o -> equalsAggregate(o, value, columns))
                     .findAny().orElse(null);
 
             if (current == null) {
@@ -164,7 +164,7 @@ public final class FunctionalUtils {
      * @param columns the columns to compare.
      * @return <code>true</code> if the two arrays are equals.
      */
-    private static boolean equalsGrouping(final Object[] o1, final Object[] o2, final int[] columns) {
+    private static boolean equalsAggregate(final Object[] o1, final Object[] o2, final int[] columns) {
         for (int i : columns) {
             // NULL are equals only in aggregation.
             if (o1[i] == o2[i]) {
