@@ -51,9 +51,8 @@ public class Planner {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
         }
 
-        ret.compile();
         ret.optimize();
-        
+
         return ret;
     }
 }

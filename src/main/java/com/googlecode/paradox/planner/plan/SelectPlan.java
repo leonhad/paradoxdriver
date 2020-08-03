@@ -44,7 +44,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
-public final class SelectPlan implements Plan {
+public final class SelectPlan implements Plan<List<Object[]>> {
 
     /**
      * The columns in this plan to show in result set.
@@ -98,17 +98,10 @@ public final class SelectPlan implements Plan {
      * Grouping columns.
      */
     private int[] groupColumns;
-
     /**
-     * Creates a SELECT plan with conditions.
-     *
-     * @param condition the conditions to filter results.
-     * @param distinct  if this SELECT uses DISTINCT.
+     * Is this plan is has a group by.
      */
-    public SelectPlan(final AbstractConditionalNode condition, final boolean distinct) {
-        this.condition = condition;
-        this.distinct = distinct;
-    }
+    private final boolean groupBy;
 
     /**
      * Creates a SELECT plan.
@@ -123,7 +116,7 @@ public final class SelectPlan implements Plan {
 
         parseTableMetaData(connectionInfo, statement);
         parseColumns(statement);
-        parseGroupBy(statement);
+        groupBy = parseGroupBy(statement);
         parseOrderBy(statement);
 
         if (this.columns.isEmpty()) {
@@ -171,9 +164,11 @@ public final class SelectPlan implements Plan {
      * Parses the group by fields.
      *
      * @param statement the SELECT statement.
+     * @return <code>true</code> if this statement uses a group by.
      * @throws SQLException in case of parse errors.
      */
-    private void parseGroupBy(final SelectNode statement) throws SQLException {
+    private boolean parseGroupBy(final SelectNode statement) throws SQLException {
+
         // Create columns to use in SELECT statement.
         for (final FieldNode field : statement.getGroups()) {
             if (field instanceof ParameterNode) {
@@ -186,17 +181,25 @@ public final class SelectPlan implements Plan {
             }
         }
 
-        if (isGroupBy()) {
+        final boolean grouping = this.columns.stream()
+                .map(Column::getFunction)
+                .filter(Objects::nonNull)
+                .anyMatch(FunctionNode::isGrouping) || !groupByFields.isEmpty();
+
+        if (grouping) {
             // Validate statically the group by clause.
+            final Set<Column> groupColumnsToCheck = new HashSet<>(groupByFields);
             final List<Column> fields = this.columns.stream()
                     .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
-                    .filter(c -> !groupByFields.contains(c))
+                    .filter(c -> !groupColumnsToCheck.remove(c))
                     .collect(Collectors.toList());
 
             if (!fields.isEmpty()) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.NOT_GROUP_BY);
             }
         }
+
+        return grouping;
     }
 
     /**
@@ -222,10 +225,10 @@ public final class SelectPlan implements Plan {
         }
 
         // This is a group by expression?
-        if (isGroupBy()) {
-            final List<Column> columns = this.columns.stream()
+        if (groupBy) {
+            final List<Column> columnsFound = this.columns.stream()
                     .filter(c -> !c.isHidden()).collect(Collectors.toList());
-            if (!columns.containsAll(orderByFields)) {
+            if (!columnsFound.containsAll(orderByFields)) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.ORDER_BY_NOT_IN_GROUP_BY);
             }
         }
@@ -239,19 +242,19 @@ public final class SelectPlan implements Plan {
      */
     private void parseAsterisk(final AsteriskNode field) throws SQLException {
         if (field.getTableName() != null) {
-            final List<ParadoxTable> tables = this.tables.stream()
+            final List<ParadoxTable> tablesFound = this.tables.stream()
                     .filter(t -> t.isThis(field.getTableName()))
                     .map(PlanTableNode::getTable).collect(Collectors.toList());
 
-            if (tables.isEmpty()) {
+            if (tablesFound.isEmpty()) {
                 throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, field.getPosition(),
                         field.getTableName());
-            } else if (tables.size() > 1) {
+            } else if (tablesFound.size() > 1) {
                 throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getPosition(),
                         field.getTableName());
             }
 
-            addColumnFromTable(tables.get(0));
+            addColumnFromTable(tablesFound.get(0));
         } else {
             addColumnFromTables();
         }
@@ -309,11 +312,6 @@ public final class SelectPlan implements Plan {
                 }
             });
         }
-    }
-
-    @Override
-    public void compile() {
-
     }
 
     @Override
@@ -407,7 +405,7 @@ public final class SelectPlan implements Plan {
      *
      * @param table the table to scan.
      */
-    public void addColumnFromTable(final ParadoxDataFile table) {
+    private void addColumnFromTable(final ParadoxDataFile table) {
         for (final ParadoxField field : table.getFields()) {
             this.columns.add(new Column(field));
         }
@@ -416,7 +414,7 @@ public final class SelectPlan implements Plan {
     /**
      * Associate all columns from a list of tables.
      */
-    public void addColumnFromTables() {
+    private void addColumnFromTables() {
         for (final PlanTableNode table : this.tables) {
             addColumnFromTable(table.getTable());
         }
@@ -428,7 +426,7 @@ public final class SelectPlan implements Plan {
      * @param node SQL node with column attributes.
      * @throws SQLException search column exception.
      */
-    public void addColumn(final FieldNode node) throws SQLException {
+    private void addColumn(final FieldNode node) throws SQLException {
         if (node instanceof ValueNode) {
             this.columns.add(new Column((ValueNode) node));
         } else if (node instanceof ParameterNode) {
@@ -493,7 +491,7 @@ public final class SelectPlan implements Plan {
      * @param type the order by field type.
      * @throws SQLException in case of failures.
      */
-    public void addOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
+    private void addOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
         getParadoxFields(node).forEach(column -> addOrderColumn(column, type));
     }
 
@@ -503,7 +501,7 @@ public final class SelectPlan implements Plan {
      * @param column the column to add.
      * @param type   the order by field type.
      */
-    public void addOrderColumn(final Column column, final OrderType type) {
+    private void addOrderColumn(final Column column, final OrderType type) {
         this.orderByFields.add(column);
         this.orderTypes.add(type);
 
@@ -520,7 +518,7 @@ public final class SelectPlan implements Plan {
      * @param node the node to convert to a column.
      * @throws SQLException in case of failures.
      */
-    public void addGroupColumn(final FieldNode node) throws SQLException {
+    private void addGroupColumn(final FieldNode node) throws SQLException {
         getParadoxFields(node).forEach(this::addGroupColumn);
     }
 
@@ -529,7 +527,7 @@ public final class SelectPlan implements Plan {
      *
      * @param column the column to add.
      */
-    public void addGroupColumn(final Column column) {
+    private void addGroupColumn(final Column column) {
         groupByFields.add(column);
 
         if (!this.columns.contains(column)) {
@@ -607,12 +605,12 @@ public final class SelectPlan implements Plan {
      */
     @Override
     @SuppressWarnings({"java:S3776", "java:S1541"})
-    public void execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
-                        final ParadoxType[] parameterTypes) throws SQLException {
+    public List<Object[]> execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
+                                  final ParadoxType[] parameterTypes) throws SQLException {
 
         // Can't do anything without fields defined.
         if (this.columns.isEmpty()) {
-            return;
+            return Collections.emptyList();
         }
 
         // Reset the cancelled state.
@@ -700,7 +698,7 @@ public final class SelectPlan implements Plan {
             rawData.add(row);
         } else if (rawData.isEmpty()) {
             // No result to process, just return.
-            return;
+            return Collections.emptyList();
         }
 
         setIndexes(columnsLoaded);
@@ -711,6 +709,8 @@ public final class SelectPlan implements Plan {
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
         filter(connectionInfo, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
+
+        return this.values;
     }
 
     private static void setSelectParameters(final List<Column> columns, final ParadoxType[] parameterTypes) {
@@ -844,7 +844,7 @@ public final class SelectPlan implements Plan {
                 mapRow(connectionInfo, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
         ));
 
-        if (isGroupBy()) {
+        if (groupBy) {
             // Is not possible to group in parallel.
             stream = stream.sequential()
                     .filter(FunctionalUtils.groupingByKeys(groupFunctionColumns, groupColumns))
@@ -878,15 +878,6 @@ public final class SelectPlan implements Plan {
      */
     public List<Column> getColumns() {
         return this.columns;
-    }
-
-    /**
-     * Values from tables in column order.
-     *
-     * @return array of array of values / Can be null (empty result set);
-     */
-    public List<Object[]> getValues() {
-        return this.values;
     }
 
     /**
@@ -946,18 +937,6 @@ public final class SelectPlan implements Plan {
      */
     public List<PlanTableNode> getTables() {
         return tables;
-    }
-
-    /**
-     * Gets if this plan has a group by expression.
-     *
-     * @return <code>true</code> if this plan has a group by expression.
-     */
-    public boolean isGroupBy() {
-        return this.columns.stream()
-                .map(Column::getFunction)
-                .filter(Objects::nonNull)
-                .anyMatch(FunctionNode::isGrouping);
     }
 
     @Override

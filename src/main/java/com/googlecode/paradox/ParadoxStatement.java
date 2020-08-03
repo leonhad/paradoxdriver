@@ -16,6 +16,7 @@ import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 
@@ -129,27 +130,30 @@ class ParadoxStatement implements Statement {
         final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
         for (final StatementNode statement : statements) {
-            final Plan plan = Planner.create(connectionInfo, statement);
+            final Plan<?> plan = Planner.create(connectionInfo, statement);
             activeExecutions.add(plan);
             try {
-                plan.execute(this.connectionInfo, maxRows, null, null);
+                ret.addAll(executeSelectStatement(plan, null, null));
             } catch (@SuppressWarnings("java:S1166") final InternalException e) {
                 throw e.getCause();
             } finally {
                 activeExecutions.remove(plan);
             }
 
-            ret.addAll(executeSelectStatement(plan));
         }
 
         return ret.stream().mapToInt(Integer::intValue).toArray();
     }
 
-    protected List<Integer> executeSelectStatement(final Plan plan) throws SQLException {
+    protected List<Integer> executeSelectStatement(final Plan<?> plan, final Object[] params,
+                                                   final ParadoxType[] types) throws SQLException {
         ArrayList<Integer> ret = new ArrayList<>();
         if (plan instanceof SelectPlan) {
-            final ParadoxResultSet resultSet = new ParadoxResultSet(this.connectionInfo, this,
-                    ((SelectPlan) plan).getValues(), ((SelectPlan) plan).getColumns());
+            final SelectPlan selectPlan = (SelectPlan) plan;
+            final List<Object[]> values = selectPlan.execute(this.connectionInfo, maxRows, params, types);
+
+            final ParadoxResultSet resultSet = new ParadoxResultSet(this.connectionInfo, this, values,
+                    selectPlan.getColumns());
             resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
             resultSet.setType(resultSetType);
             resultSet.setConcurrency(resultSetConcurrency);

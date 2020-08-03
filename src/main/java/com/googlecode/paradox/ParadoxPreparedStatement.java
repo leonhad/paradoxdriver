@@ -83,19 +83,17 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
         final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
         for (final StatementNode statement : statements) {
-            final Plan plan = Planner.create(connectionInfo, statement);
+            final Plan<?> plan = Planner.create(connectionInfo, statement);
 
             // One for parameters.
             for (int i = 0; i < executions.size(); i++) {
                 final Object[] params = executions.get(i);
                 final ParadoxType[] types = executionTypes.get(i);
                 try {
-                    plan.execute(this.connectionInfo, maxRows, params, types);
+                    ret.addAll(executeSelectStatement(plan, params, types));
                 } catch (@SuppressWarnings("java:S1166") final InternalException e) {
                     throw e.getCause();
                 }
-
-                ret.addAll(executeSelectStatement(plan));
             }
         }
 

@@ -20,10 +20,11 @@ import java.sql.SQLFeatureNotSupportedException;
 /**
  * Used to creates and execute SQL plans.
  *
+ * @param <T> the return type.
  * @version 1.6
  * @since 1.1
  */
-public interface Plan {
+public interface Plan<T> {
 
     /**
      * Execute this plan.
@@ -33,15 +34,11 @@ public interface Plan {
      *                       limit.
      * @param parameters     the statement parameters.
      * @param parameterTypes the parameter types.
+     * @return the processed value. In SELECT, it returns the values, in others, the columns affected.
      * @throws SQLException in case of failures.
      */
-    void execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
-                 final ParadoxType[] parameterTypes) throws SQLException;
-
-    /**
-     * Compile the statement.
-     */
-    void compile();
+    T execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
+              final ParadoxType[] parameterTypes) throws SQLException;
 
     /**
      * Optimize the statement.

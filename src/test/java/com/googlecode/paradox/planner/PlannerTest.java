@@ -19,7 +19,6 @@ import com.googlecode.paradox.planner.plan.SelectPlan;
 import org.junit.*;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -160,10 +159,8 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser(
                 "select ac from areacodes where state = 'NY' and ac = 212 or ac=315 or ac=917");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
-        plan.execute(conn.getConnectionInfo(), 0, null, null);
-        Assert.assertEquals("Test the result size.", 3, plan.getValues().size());
-
-        List<Object[]> values = new ArrayList<>(plan.getValues());
+        final List<Object[]> values = plan.execute(conn.getConnectionInfo(), 0, null, null);
+        Assert.assertEquals("Test the result size.", 3, values.size());
         Assert.assertEquals("Test the result value.", "212", values.get(0)[0]);
         Assert.assertEquals("Test the result value.", "315", values.get(1)[0]);
         Assert.assertEquals("Test the result value.", "917", values.get(2)[0]);
@@ -179,8 +176,8 @@ public class PlannerTest {
         final SQLParser parser = new SQLParser(
                 "select ac from areacodes where state <> 'NY' and (ac = 212 or ac=315 or ac=917)");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
-        plan.execute(conn.getConnectionInfo(), 0, null, null);
-        Assert.assertEquals("Test the result size.", 0, plan.getValues().size());
+        final List<Object[]> values = plan.execute(conn.getConnectionInfo(), 0, null, null);
+        Assert.assertEquals("Test the result size.", 0, values.size());
     }
 
     /**
@@ -192,8 +189,8 @@ public class PlannerTest {
     public void testSelectWhereGreaterThan() throws SQLException {
         final SQLParser parser = new SQLParser("select ac from areacodes where state = 'NY' and ac > 845");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
-        plan.execute(conn.getConnectionInfo(), 0, null, null);
-        Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
+        final List<Object[]> values = plan.execute(conn.getConnectionInfo(), 0, null, null);
+        Assert.assertEquals("Test the result size.", 2, values.size());
     }
 
     /**
@@ -205,8 +202,8 @@ public class PlannerTest {
     public void testSelectWhereLessThan() throws SQLException {
         final SQLParser parser = new SQLParser("select ac from areacodes where state = 'NY' and ac < 320");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
-        plan.execute(conn.getConnectionInfo(), 0, null, null);
-        Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
+        final List<Object[]> values = plan.execute(conn.getConnectionInfo(), 0, null, null);
+        Assert.assertEquals("Test the result size.", 2, values.size());
     }
 
     /**
@@ -218,8 +215,8 @@ public class PlannerTest {
     public void testSelectWhereMultipleColumns() throws SQLException {
         final SQLParser parser = new SQLParser("select * from areacodes where state = 'NY' and ac < 320");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
-        plan.execute(conn.getConnectionInfo(), 0, null, null);
-        Assert.assertEquals("Test the result size.", 2, plan.getValues().size());
+        final List<Object[]> values = plan.execute(conn.getConnectionInfo(), 0, null, null);
+        Assert.assertEquals("Test the result size.", 2, values.size());
         Assert.assertEquals("Field expected", "AC", plan.getColumns().get(0).getField().getName());
         Assert.assertEquals("Field expected", "State", plan.getColumns().get(1).getField().getName());
         Assert.assertEquals("Field expected", "Cities", plan.getColumns().get(2).getField().getName());
@@ -365,7 +362,8 @@ public class PlannerTest {
     @Test
     public void testGroupByWithoutAggregate() throws SQLException {
         try (Statement stmt = this.conn.createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("select AreaCode, state from geog.tblZCode group by AreaCode, state")) {
+            try (ResultSet rs = stmt.executeQuery("select AreaCode, state from geog.tblZCode group by AreaCode, " +
+                    "state")) {
                 Assert.assertTrue("Invalid result set", rs.next());
             }
         }

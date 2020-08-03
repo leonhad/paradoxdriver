@@ -15,10 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.parser.nodes.TableNode;
 import com.googlecode.paradox.planner.Planner;
-import com.googlecode.paradox.planner.nodes.FieldNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
@@ -83,17 +80,6 @@ public class SelectPlanTest {
     @SuppressWarnings("java:S2115")
     public void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(SelectPlanTest.CONNECTION_STRING + "db");
-    }
-
-    /**
-     * Test for invalid column value.
-     *
-     * @throws SQLException if there are no errors.
-     */
-    @Test(expected = SQLException.class)
-    public void testInvalidColumn() throws SQLException {
-        final SelectPlan plan = new SelectPlan(null, false);
-        plan.addColumn(new FieldNode(null, "invalid", null));
     }
 
     /**
