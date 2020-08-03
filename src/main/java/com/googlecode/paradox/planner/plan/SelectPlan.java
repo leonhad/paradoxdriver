@@ -20,7 +20,6 @@ import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
-import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderByComparator;
 import com.googlecode.paradox.planner.sorting.OrderType;
@@ -250,72 +249,18 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         }
     }
 
-    private static AbstractConditionalNode reduce(final AbstractConditionalNode node) {
-        AbstractConditionalNode ret = node;
-
-        // It is an AND and OR node?
-        if (node instanceof AbstractJoinNode) {
-            final List<SQLNode> children = node.getChildren();
-
-            // Reduce all children.
-            for (int loop = 0; loop < children.size(); loop++) {
-                children.set(loop, reduce((AbstractConditionalNode) children.get(loop)));
-            }
-
-            // Reduce only AND and OR nodes.
-            while (ret instanceof AbstractJoinNode && ret.getChildren().size() <= 1) {
-                if (ret.getChildren().isEmpty()) {
-                    ret = null;
-                } else {
-                    ret = (AbstractConditionalNode) ret.getChildren().get(0);
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    private static void addAndClause(final PlanTableNode table, SQLNode clause) {
-        if (table.getConditionalJoin() instanceof ANDNode) {
-            // Exists and it is an AND node.
-            table.getConditionalJoin().addChild(clause);
-        } else if (table.getConditionalJoin() != null) {
-            // Exists, but any other type.
-            final ANDNode andNode = new ANDNode(table.getConditionalJoin(), null);
-            andNode.addChild(clause);
-            table.setConditionalJoin(andNode);
-        } else {
-            // There is no conditionals in this table.
-            table.setConditionalJoin((AbstractConditionalNode) clause);
-        }
-    }
-
-    private static void getConditionalFields(final PlanTableNode table, final Set<Column> columnsToLoad,
-                                             final AbstractConditionalNode condition) {
-        if (condition != null) {
-            final Set<FieldNode> fields = condition.getClauseFields();
-            fields.forEach((FieldNode node) -> {
-                if (table.isThis(node.getTableName())) {
-                    Arrays.stream(table.getTable().getFields())
-                            .filter(f -> f.getName().equalsIgnoreCase(node.getName())).map(Column::new)
-                            .forEach(columnsToLoad::add);
-                }
-            });
-        }
-    }
-
     @Override
     public void optimize() {
         if (optimizeConditions(condition)) {
             condition = null;
         }
 
-        // Reduce default conditions.
-        condition = reduce(condition);
+        // Optimize default conditions.
+        condition = SelectUtils.joinClauses(condition);
 
-        // Reduce table conditions.
+        // Optimize table conditions.
         for (final PlanTableNode table : this.tables) {
-            table.setConditionalJoin(reduce(table.getConditionalJoin()));
+            table.setConditionalJoin(SelectUtils.joinClauses(table.getConditionalJoin()));
         }
 
         // Sets the column indexes.
@@ -349,7 +294,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
 
     private void createGroupByColumns() {
         final List<Column> columnList = this.columns.stream()
-                .map(SelectPlan::getGroupingFunctions).flatMap(Collection::stream)
+                .map(SelectUtils::getGroupingFunctions).flatMap(Collection::stream)
                 .map(Column::new)
                 .collect(Collectors.toList());
 
@@ -363,15 +308,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 column.getFunction().setIndex(index);
             }
         }
-    }
-
-    private static List<FunctionNode> getGroupingFunctions(final Column column) {
-        final FunctionNode function = column.getFunction();
-        if (function == null) {
-            return Collections.emptyList();
-        }
-
-        return function.getGroupingNodes();
     }
 
     private int getTableIndex(final ParadoxTable table) {
@@ -564,7 +500,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 if (planTableNode != null && (planTableNode.getJoinType() == JoinType.CROSS
                         || planTableNode.getJoinType() == JoinType.INNER)) {
                     // Do not change OUTER joins.
-                    addAndClause(planTableNode, node);
+                    SelectUtils.addAndClause(planTableNode, node);
                     ret = true;
                 }
             } else if (conditionalFields.size() > 1) {
@@ -580,7 +516,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                     // Use the last table to
                     int lastIndex = Math.max(index1, index2);
 
-                    addAndClause(this.tables.get(lastIndex), node);
+                    SelectUtils.addAndClause(this.tables.get(lastIndex), node);
                     ret = true;
                 }
             }
@@ -635,11 +571,11 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                     .collect(Collectors.toSet()));
 
             // Fields from WHERE clause.
-            getConditionalFields(table, tableColumns, this.condition);
+            tableColumns.addAll(SelectUtils.getConditionalFields(table, this.condition));
 
             // Get fields from other tables join.
             for (final PlanTableNode tableToField : this.tables) {
-                getConditionalFields(table, tableColumns, tableToField.getConditionalJoin());
+                tableColumns.addAll(SelectUtils.getConditionalFields(table, tableToField.getConditionalJoin()));
             }
 
             // If there is a column to load.
@@ -693,7 +629,11 @@ public final class SelectPlan implements Plan<List<Object[]>> {
 
         processIndexes(columnsLoaded);
         processFunctionIndexes(columnsLoaded);
-        processSelectParameters(this.columns, parameterTypes);
+
+        // Process parameter types.
+        columns.stream()
+                .filter(column -> column.getParameter() != null)
+                .forEach(column -> column.setType(parameterTypes[column.getParameter().getParameterIndex()]));
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
@@ -701,15 +641,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         filter(connectionInfo, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
 
         return this.values;
-    }
-
-    private static void processSelectParameters(final List<Column> columns, final ParadoxType[] parameterTypes) {
-        for (final Column column : columns) {
-            final ParameterNode parameterNode = column.getParameter();
-            if (parameterNode != null) {
-                column.setType(parameterTypes[parameterNode.getParameterIndex()]);
-            }
-        }
     }
 
     private Comparator<Object[]> processOrderBy() {

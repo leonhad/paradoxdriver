@@ -13,6 +13,7 @@ package com.googlecode.paradox.planner.nodes;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.JoinNode;
@@ -20,11 +21,12 @@ import com.googlecode.paradox.parser.nodes.JoinType;
 import com.googlecode.paradox.parser.nodes.TableNode;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 
 /**
  * Stores the execution plan table node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public final class PlanTableNode {
@@ -39,9 +41,14 @@ public final class PlanTableNode {
      */
     private ParadoxTable table;
 
+    /**
+     * The table join type.
+     */
+    private final JoinType joinType;
+    /**
+     * The table join filters.
+     */
     private AbstractConditionalNode conditionalJoin;
-
-    private JoinType joinType = JoinType.INNER;
 
     /**
      * Creates a new instance.
@@ -80,6 +87,18 @@ public final class PlanTableNode {
             conditionalJoin = null;
             joinType = JoinType.INNER;
         }
+    }
+
+    /**
+     * Gets the associated table field.
+     *
+     * @param field the table field.
+     * @return the table field or <code>null</code> if not found.
+     */
+    public ParadoxField getField(final FieldNode field) {
+        return Arrays.stream(table.getFields())
+                .filter(f -> f.getName().equalsIgnoreCase(field.getName()))
+                .findFirst().orElse(null);
     }
 
     /**
