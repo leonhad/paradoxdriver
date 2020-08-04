@@ -10,16 +10,21 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.planner.plan.SelectUtils;
+import com.googlecode.paradox.planner.sorting.OrderByComparator;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.rowset.ValuesConverter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Stores one order by field information.
@@ -32,49 +37,36 @@ public class OrderByNode {
     /**
      * Order by columns.
      */
-    private final List<Column> column = new ArrayList<>();
+    private final List<Column> columns = new ArrayList<>();
 
     /**
      * Order by types.
      */
-    private final List<OrderType> type = new ArrayList<>();
+    private final List<OrderType> types = new ArrayList<>();
 
     /**
      * Creates a new instance.
      */
-    public OrderByNode() {
-        super();
-    }
+    public OrderByNode(final SelectNode selectNode, final List<Column> columns, final List<PlanTableNode> tables,
+                       final boolean groupBy)
+            throws SQLException {
 
-    /**
-     * If the planner has a order by.
-     *
-     * @return <code>true</code> if the planner has a order by.
-     */
-    public boolean isOrderBy() {
-        return !this.column.isEmpty();
-    }
+        for (int i = 0; i < selectNode.getOrder().size(); i++) {
+            final FieldNode field = selectNode.getOrder().get(i);
+            final OrderType type = selectNode.getOrderTypes().get(i);
+            if (field instanceof ValueNode) {
+                int index = ValuesConverter.getInteger(field.getName());
+                if (index > columns.size()) {
+                    throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, index);
+                }
 
-    /**
-     * Add a order by column.
-     *
-     * @param column the column class.
-     * @param type   the column type.
-     */
-    public void add(final Column column, final OrderType type) {
-        this.column.add(column);
-        this.type.add(type);
-    }
+                processOrderColumn(columns.get(index - 1), type, columns);
+            } else {
+                processOrderColumn(field, type, columns, tables);
+            }
+        }
 
-    /**
-     * Check if this order by is valid.
-     *
-     * @param groupBy <code>true</code> if the group by is enabled.
-     * @param columns the SELECT statement columns (hidden or not).
-     * @throws ParadoxSyntaxErrorException if the order by is invalid.
-     */
-    public void checkColumns(final boolean groupBy, final List<Column> columns) throws ParadoxSyntaxErrorException {
-        if (groupBy && isOrderBy()) {
+        if (groupBy && !this.columns.isEmpty()) {
             // Check for group by expression.
             final List<Column> columnsFound = columns.stream()
                     .filter(c -> !c.isHidden()).collect(Collectors.toList());
@@ -86,13 +78,89 @@ public class OrderByNode {
     }
 
     /**
+     * Add a order by column to this plan.
+     *
+     * @param node the node to convert to a column.
+     * @param type the order by field type.
+     * @throws SQLException in case of failures.
+     */
+    private void processOrderColumn(final FieldNode node, final OrderType type, final List<Column> selectColumns,
+                                    final List<PlanTableNode> tables)
+            throws SQLException {
+        SelectUtils.getParadoxFields(node, tables)
+                .forEach((Column c) -> processOrderColumn(c, type, selectColumns));
+    }
+
+    /**
+     * Add a order by column to this plan.
+     *
+     * @param column the column to add.
+     * @param type   the order by field type.
+     */
+    private void processOrderColumn(final Column column, final OrderType type, final List<Column> selectColumns) {
+        add(column, type);
+
+        if (!selectColumns.contains(column)) {
+            // If not in SELECT statement, add as a hidden column in ResultSet.
+            column.setHidden(true);
+            selectColumns.add(column);
+        }
+    }
+
+    public Stream<Object[]> processStream(final Stream<Object[]> stream, final List<Column> selectColumns) {
+        if (this.columns.isEmpty()) {
+            // Nothing to do here, there are no order by fields.
+            return stream;
+        }
+
+        final int[] mapColumns = new int[this.columns.size()];
+        Arrays.fill(mapColumns, -1);
+        for (int i = 0; i < this.columns.size(); i++) {
+            final Column column = this.columns.get(i);
+            mapColumns[i] = column.getIndex();
+            for (int loop = 0; loop < selectColumns.size(); loop++) {
+                if (selectColumns.get(loop).equals(column)) {
+                    mapColumns[i] = loop;
+                    break;
+                }
+            }
+        }
+
+        // Build the comparator list.
+        Comparator<Object[]> comparator = null;
+        for (int i = 0; i < mapColumns.length; i++) {
+            final int index = mapColumns[i];
+            final OrderByComparator orderByComparator = new OrderByComparator(index,
+                    this.types.get(i));
+            if (comparator == null) {
+                comparator = orderByComparator;
+            } else {
+                comparator = comparator.thenComparing(orderByComparator);
+            }
+        }
+
+        return stream.sorted(Objects.requireNonNull(comparator));
+    }
+
+    /**
+     * Add a order by column.
+     *
+     * @param column the column class.
+     * @param type   the column type.
+     */
+    public void add(final Column column, final OrderType type) {
+        this.columns.add(column);
+        this.types.add(type);
+    }
+
+    /**
      * Gets the order by column with the table specified.
      *
      * @param table the table to filter.
      * @return the column table list used in order by.
      */
     public Set<Column> getColumns(final ParadoxTable table) {
-        return this.column.stream()
+        return this.columns.stream()
                 .filter(c -> c.isThis(table))
                 .collect(Collectors.toSet());
     }
@@ -104,7 +172,7 @@ public class OrderByNode {
      * @return the column by index.
      */
     public Column getColumn(final int index) {
-        return column.get(index);
+        return columns.get(index);
     }
 
     /**
@@ -114,7 +182,7 @@ public class OrderByNode {
      * @return the column type by index.
      */
     public OrderType getType(int index) {
-        return type.get(index);
+        return types.get(index);
     }
 
     /**
@@ -123,6 +191,6 @@ public class OrderByNode {
      * @return the column count.
      */
     public int count() {
-        return column.size();
+        return columns.size();
     }
 }

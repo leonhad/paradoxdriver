@@ -25,9 +25,10 @@ import java.util.List;
 /**
  * Unit test for {@link Planner}.
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.1
  */
+@SuppressWarnings({"java:S2115", "java:S1192", "java:S109"})
 public class PlannerTest {
 
     /**
@@ -41,22 +42,27 @@ public class PlannerTest {
     private ParadoxConnection conn;
 
     /**
+     * Creates a new instance.
+     */
+    public PlannerTest() {
+        super();
+    }
+
+    /**
      * Register the driver.
-     *
-     * @throws ClassNotFoundException in case of connection errors.
      */
     @BeforeClass
-    public static void setUp() throws ClassNotFoundException {
-        Class.forName(Driver.class.getName());
+    public static void setUp() {
+        new Driver();
     }
 
     /**
      * Used to close the test connection.
      *
-     * @throws Exception in case closing of errors.
+     * @throws SQLException in case closing of errors.
      */
     @After
-    public void closeConnection() throws Exception {
+    public void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -65,20 +71,20 @@ public class PlannerTest {
     /**
      * Connect to test database.
      *
-     * @throws Exception in case of connection errors.
+     * @throws SQLException in case of connection errors.
      */
     @Before
-    public void connect() throws Exception {
+    public void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**
      * Test for a asterisk node plan.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testAsterisk() throws Exception {
+    public void testAsterisk() throws SQLException {
         final SQLParser parser = new SQLParser("select * from areacodes a");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         Assert.assertNotNull("No columns.", plan.getColumns());
@@ -91,10 +97,10 @@ public class PlannerTest {
     /**
      * Test for a asterisk node plan.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testAsteriskWithTables() throws Exception {
+    public void testAsteriskWithTables() throws SQLException {
         final SQLParser parser = new SQLParser("select a.* from areacodes a");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
         Assert.assertNotNull("No columns.", plan.getColumns());
@@ -131,10 +137,10 @@ public class PlannerTest {
     /**
      * Test for an invalid table.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test(expected = ParadoxDataException.class)
-    public void testInvalidTable() throws Exception {
+    public void testInvalidTable() throws SQLException {
         final SQLParser parser = new SQLParser("select * from invalid");
         Planner.create(conn.getConnectionInfo(), parser.parse().get(0));
     }
@@ -437,10 +443,10 @@ public class PlannerTest {
     /**
      * Test for boolean in conditionals.
      *
-     * @throws Exception in case of failures.
+     * @throws SQLException in case of failures.
      */
     @Test
-    public void testBoolean() throws Exception {
+    public void testBoolean() throws SQLException {
         try (Statement stmt = this.conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
                 Assert.assertTrue("Invalid result set", rs.next());
