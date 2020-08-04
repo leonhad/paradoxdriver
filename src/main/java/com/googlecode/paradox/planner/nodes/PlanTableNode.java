@@ -15,10 +15,7 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
-import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
-import com.googlecode.paradox.parser.nodes.JoinNode;
-import com.googlecode.paradox.parser.nodes.JoinType;
-import com.googlecode.paradox.parser.nodes.TableNode;
+import com.googlecode.paradox.parser.nodes.*;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -95,7 +92,7 @@ public final class PlanTableNode {
      * @param field the table field.
      * @return the table field or <code>null</code> if not found.
      */
-    public ParadoxField getField(final FieldNode field) {
+    public ParadoxField findField(final SQLNode field) {
         return Arrays.stream(table.getFields())
                 .filter(f -> f.getName().equalsIgnoreCase(field.getName()))
                 .findFirst().orElse(null);

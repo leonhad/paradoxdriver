@@ -13,7 +13,6 @@ package com.googlecode.paradox.planner.plan;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.*;
-import com.googlecode.paradox.metadata.ParadoxDataFile;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
@@ -48,7 +47,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     /**
      * The columns in this plan to show in result set.
      */
-    private final List<Column> columns = new ArrayList<>();
+    private final List<Column> columns;
     /**
      * The columns to load in this plan, not only in result set.
      */
@@ -120,8 +119,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 .map(functionWrapper(table -> new PlanTableNode(connectionInfo, table)))
                 .collect(Collectors.toList());
 
-        parseColumns(statement);
-
+        this.columns = parseColumns(statement);
         this.groupBy = parseGroupBy(statement);
         parseOrderBy(statement);
 
@@ -149,25 +147,29 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      * Parses the table columns.
      *
      * @param statement the SELECT statement.
+     * @return the statement columns.
      * @throws SQLException in case of parse errors.
      */
-    private void parseColumns(final SelectNode statement) throws SQLException {
+    private List<Column> parseColumns(final SelectNode statement) throws SQLException {
+        final List<Column> ret = new ArrayList<>();
         for (final SQLNode field : statement.getFields()) {
             if (field instanceof AsteriskNode) {
                 if (this.tables.isEmpty()) {
                     throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_WITHOUT_TABLE,
                             field.getPosition());
                 }
-                parseAsterisk((AsteriskNode) field);
+                ret.addAll(parseAsterisk((AsteriskNode) field));
             } else {
-                addColumn((FieldNode) field);
+                ret.addAll(processColumn((FieldNode) field));
             }
         }
 
         // Sets the column indexes.
-        for (int i = 0; i < this.columns.size(); i++) {
-            this.columns.get(i).setIndex(i);
+        for (int i = 0; i < ret.size(); i++) {
+            ret.get(i).setIndex(i);
         }
+
+        return ret;
     }
 
     /**
@@ -210,7 +212,8 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         }
 
         final List<Column> columnList = this.columns.stream()
-                .map(SelectUtils::getGroupingFunctions).flatMap(Collection::stream)
+                .map(SelectUtils::getGroupingFunctions)
+                .flatMap(Collection::stream)
                 .map(Column::new)
                 .collect(Collectors.toList());
 
@@ -281,10 +284,12 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      * Parses the asterisk fields in SELECT.
      *
      * @param field the asterisk field.
+     * @return the columns to add.
      * @throws SQLException in case of parse errors.
      */
-    private void parseAsterisk(final AsteriskNode field) throws SQLException {
+    private List<Column> parseAsterisk(final AsteriskNode field) throws SQLException {
         if (field.getTableName() != null) {
+            // Add all columns from one table.
             final List<ParadoxTable> tablesFound = this.tables.stream()
                     .filter(t -> t.isThis(field.getTableName()))
                     .map(PlanTableNode::getTable).collect(Collectors.toList());
@@ -297,9 +302,15 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                         field.getTableName());
             }
 
-            addColumnFromTable(tablesFound.get(0));
+            return Arrays.stream(tablesFound.get(0).getFields()).map(Column::new).collect(Collectors.toList());
         } else {
-            addColumnFromTables();
+            // Add all fields from all tables.
+            return this.tables.stream()
+                    .map(PlanTableNode::getTable)
+                    .map(ParadoxTable::getFields)
+                    .flatMap(Arrays::stream)
+                    .map(Column::new)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -320,51 +331,31 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     }
 
     /**
-     * Associate all columns from a table.
-     *
-     * @param table the table to scan.
-     */
-    private void addColumnFromTable(final ParadoxDataFile table) {
-        for (final ParadoxField field : table.getFields()) {
-            this.columns.add(new Column(field));
-        }
-    }
-
-    /**
-     * Associate all columns from a list of tables.
-     */
-    private void addColumnFromTables() {
-        for (final PlanTableNode table : this.tables) {
-            addColumnFromTable(table.getTable());
-        }
-    }
-
-    /**
      * Add column from select list.
      *
      * @param node SQL node with column attributes.
      * @throws SQLException search column exception.
      */
-    private void addColumn(final FieldNode node) throws SQLException {
+    private List<Column> processColumn(final FieldNode node) throws SQLException {
+        List<Column> ret;
         if (node instanceof ValueNode) {
-            this.columns.add(new Column((ValueNode) node));
+            ret = Collections.singletonList(new Column((ValueNode) node));
         } else if (node instanceof ParameterNode) {
-            this.columns.add(new Column((ParameterNode) node));
+            ret = Collections.singletonList(new Column((ParameterNode) node));
         } else if (node instanceof FunctionNode) {
             final List<Column> columnsToProcess = getParadoxFields(node);
 
             // The fist column is always the function column.
             final Column column = columnsToProcess.get(0);
             column.setName(node.getAlias());
-            columns.add(column);
+            ret = Collections.singletonList(column);
             this.columnsFromFunctions.addAll(columnsToProcess);
         } else {
-            final List<Column> columnsToProcess = getParadoxFields(node);
-            columnsToProcess.forEach((Column column) -> {
-                column.setName(node.getAlias());
-                this.columns.add(column);
-            });
+            ret = getParadoxFields(node);
+            ret.forEach((Column column) -> column.setName(node.getAlias()));
         }
+
+        return ret;
     }
 
     private List<Column> getParadoxFields(final FieldNode node) throws ParadoxException {
