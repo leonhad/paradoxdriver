@@ -396,8 +396,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      */
     private void processOrderColumn(final FieldNode node, final OrderType type, final OrderByNode orderByNode)
             throws SQLException {
-        getParadoxFields(node).stream()
-                .forEach((Column column) -> processOrderColumn(column, type, orderByNode));
+        getParadoxFields(node).forEach((Column column) -> processOrderColumn(column, type, orderByNode));
     }
 
     /**
