@@ -310,7 +310,8 @@ public class PlannerTest {
         Assert.assertEquals("Invalid group by field size", 1, plan.getGroupByFields().size());
         Assert.assertEquals("Invalid group by field name", "State", plan.getGroupByFields().get(0).getName());
         Assert.assertEquals("Invalid group by field size", 1, plan.getOrderByFields().size());
-        Assert.assertEquals("Invalid order by field name", "count(*)", plan.getOrderByFields().get(0).getName());
+        Assert.assertEquals("Invalid order by field name", "count(*)",
+                plan.getOrderByFields().get(0).getColumn().getName());
     }
 
     /**
