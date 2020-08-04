@@ -67,7 +67,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     /**
      * Order by fields.
      */
-    private final List<OrderByNode> orderByFields;
+    private final OrderByNode orderBy;
     /**
      * The data values.
      */
@@ -117,7 +117,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
 
         this.columns = parseColumns(statement);
         this.groupBy = parseGroupBy(statement);
-        this.orderByFields = parseOrderBy(statement);
+        this.orderBy = parseOrderBy(statement);
 
         if (this.columns.isEmpty()) {
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST);
@@ -248,11 +248,11 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      * Parses the order by fields.
      *
      * @param statement the SELECT statement.
-     * @return the order by fields.
+     * @return the order by node.
      * @throws SQLException in case of parse errors.
      */
-    private List<OrderByNode> parseOrderBy(final SelectNode statement) throws SQLException {
-        final List<OrderByNode> ret = new ArrayList<>();
+    private OrderByNode parseOrderBy(final SelectNode statement) throws SQLException {
+        final OrderByNode ret = new OrderByNode();
         for (int i = 0; i < statement.getOrder().size(); i++) {
             final FieldNode field = statement.getOrder().get(i);
             final OrderType type = statement.getOrderTypes().get(i);
@@ -262,21 +262,13 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                     throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, index);
                 }
 
-                ret.add(processOrderColumn(this.columns.get(index - 1), type));
+                processOrderColumn(this.columns.get(index - 1), type, ret);
             } else {
-                ret.addAll(processOrderColumn(field, type));
+                processOrderColumn(field, type, ret);
             }
         }
 
-        // This is a group by expression?
-        if (groupBy) {
-            final List<Column> columnsFound = this.columns.stream()
-                    .filter(c -> !c.isHidden()).collect(Collectors.toList());
-            if (!columnsFound.containsAll(ret.stream().map(OrderByNode::getColumn).collect(Collectors.toList()))) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.ORDER_BY_NOT_IN_GROUP_BY);
-            }
-        }
-
+        ret.checkColumns(groupBy, this.columns);
         return ret;
     }
 
@@ -397,14 +389,15 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     /**
      * Add a order by column to this plan.
      *
-     * @param node the node to convert to a column.
-     * @param type the order by field type.
+     * @param node        the node to convert to a column.
+     * @param type        the order by field type.
+     * @param orderByNode the order by node to process.
      * @throws SQLException in case of failures.
      */
-    private List<OrderByNode> processOrderColumn(final FieldNode node, final OrderType type) throws SQLException {
-        return getParadoxFields(node).stream()
-                .map((Column column) -> processOrderColumn(column, type))
-                .collect(Collectors.toList());
+    private void processOrderColumn(final FieldNode node, final OrderType type, final OrderByNode orderByNode)
+            throws SQLException {
+        getParadoxFields(node).stream()
+                .forEach((Column column) -> processOrderColumn(column, type, orderByNode));
     }
 
     /**
@@ -412,17 +405,16 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      *
      * @param column the column to add.
      * @param type   the order by field type.
+     * @param node   the order by node to process.
      */
-    private OrderByNode processOrderColumn(final Column column, final OrderType type) {
-        final OrderByNode node = new OrderByNode(column, type);
+    private void processOrderColumn(final Column column, final OrderType type, final OrderByNode node) {
+        node.add(column, type);
 
         if (!this.columns.contains(column)) {
             // If not in SELECT statement, add as a hidden column in ResultSet.
             column.setHidden(true);
             this.columns.add(column);
         }
-
-        return node;
     }
 
     /**
@@ -553,10 +545,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                     .collect(Collectors.toSet()));
 
             // Columns in ORDER BY clause.
-            tableColumns.addAll(this.orderByFields.stream()
-                    .map(OrderByNode::getColumn)
-                    .filter(c -> c.isThis(table.getTable()))
-                    .collect(Collectors.toSet()));
+            tableColumns.addAll(this.orderBy.getColumns(table.getTable()));
 
             // Fields from WHERE clause.
             tableColumns.addAll(SelectUtils.getConditionalFields(table, this.condition));
@@ -631,16 +620,17 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         return this.values;
     }
 
+    // FIXME move to order by node.
     private Comparator<Object[]> processOrderBy() {
-        if (orderByFields.isEmpty()) {
+        if (!orderBy.isOrderBy()) {
             // Nothing to do here, there are no order by fields.
             return null;
         }
 
-        final int[] mapColumns = new int[this.orderByFields.size()];
+        final int[] mapColumns = new int[this.orderBy.count()];
         Arrays.fill(mapColumns, -1);
-        for (int i = 0; i < this.orderByFields.size(); i++) {
-            final Column column = this.orderByFields.get(i).getColumn();
+        for (int i = 0; i < this.orderBy.count(); i++) {
+            final Column column = this.orderBy.getColumn(i);
             mapColumns[i] = column.getIndex();
             for (int loop = 0; loop < this.columns.size(); loop++) {
                 if (this.columns.get(loop).equals(column)) {
@@ -655,7 +645,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         for (int i = 0; i < mapColumns.length; i++) {
             final int index = mapColumns[i];
             final OrderByComparator orderByComparator = new OrderByComparator(index,
-                    this.orderByFields.get(i).getType());
+                    this.orderBy.getType(i));
             if (comparator == null) {
                 comparator = orderByComparator;
             } else {
@@ -765,7 +755,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                             parameters, parameterTypes, this.columns)));
         }
 
-        if (!orderByFields.isEmpty()) {
+        if (orderBy.isOrderBy()) {
             stream = stream.sorted(Objects.requireNonNull(processOrderBy()));
         }
 
@@ -832,12 +822,12 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     }
 
     /**
-     * Gets the order by fields.
+     * Gets the order by node.
      *
-     * @return the order by fields.
+     * @return the order by node.
      */
-    public List<OrderByNode> getOrderByFields() {
-        return orderByFields;
+    public OrderByNode getOrderBy() {
+        return orderBy;
     }
 
     /**
