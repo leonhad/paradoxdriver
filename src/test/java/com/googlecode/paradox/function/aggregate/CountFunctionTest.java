@@ -23,9 +23,10 @@ import java.sql.SQLException;
 /**
  * Unit test for {@link CountFunction}.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
+@SuppressWarnings({"java:S1192", "java:S109"})
 public class CountFunctionTest {
 
     /**

@@ -11,18 +11,16 @@
 
 package com.googlecode.paradox.planner.plan;
 
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
+import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
-import com.googlecode.paradox.planner.nodes.FunctionNode;
-import com.googlecode.paradox.planner.nodes.PlanTableNode;
+import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.AbstractJoinNode;
 import com.googlecode.paradox.results.Column;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 1.6.0
  */
-final class SelectUtils {
+public final class SelectUtils {
     /**
      * Utility class, not for use.
      */
@@ -95,6 +93,43 @@ final class SelectUtils {
                 } else {
                     ret = (AbstractConditionalNode) ret.getChildren().get(0);
                 }
+            }
+        }
+
+        return ret;
+    }
+
+    public static List<Column> getParadoxFields(final FieldNode node, final List<PlanTableNode> tables)
+            throws ParadoxException {
+        final List<Column> ret = new ArrayList<>();
+
+        if (node instanceof FunctionNode) {
+            final FunctionNode functionNode = (FunctionNode) node;
+
+            // Create the column for the function.
+            ret.add(new Column(functionNode));
+
+            // Parses function fields in function parameters.
+            for (final FieldNode field : functionNode.getClauseFields()) {
+                ret.addAll(getParadoxFields(field, tables));
+            }
+        } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode)
+                && !(node instanceof AsteriskNode)) {
+            for (final PlanTableNode table : tables) {
+                if (node.getTableName() == null || table.isThis(node.getTableName())) {
+                    node.setTable(table.getTable());
+                    ret.addAll(Arrays.stream(table.getTable().getFields())
+                            .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
+                            .map(Column::new)
+                            .collect(Collectors.toList()));
+                }
+            }
+
+            if (ret.isEmpty()) {
+                throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node.toString());
+            } else if (ret.size() > 1) {
+                throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(),
+                        node.toString());
             }
         }
 

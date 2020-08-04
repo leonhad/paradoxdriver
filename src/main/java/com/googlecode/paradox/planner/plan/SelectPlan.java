@@ -12,7 +12,10 @@ package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.exceptions.*;
+import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
+import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
@@ -61,13 +64,13 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      */
     private final boolean distinct;
     /**
-     * Group by fields.
-     */
-    private final List<Column> groupByFields = new ArrayList<>();
-    /**
      * Order by fields.
      */
     private final OrderByNode orderBy;
+    /**
+     * The group by node.
+     */
+    private final GroupByNode groupBy;
     /**
      * The data values.
      */
@@ -86,18 +89,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      * Table joiner.
      */
     private final TableJoiner joiner = new TableJoiner();
-    /**
-     * Grouping columns.
-     */
-    private int[] groupFunctionColumns;
-    /**
-     * Grouping columns.
-     */
-    private int[] groupColumns;
-    /**
-     * Is this plan is has a group by.
-     */
-    private final boolean groupBy;
 
     /**
      * Creates a SELECT plan.
@@ -116,7 +107,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 .collect(Collectors.toList());
 
         this.columns = parseColumns(statement);
-        this.groupBy = parseGroupBy(statement);
+        this.groupBy = new GroupByNode(statement, this.tables, this.columns);
         this.orderBy = parseOrderBy(statement);
 
         if (this.columns.isEmpty()) {
@@ -169,82 +160,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     }
 
     /**
-     * Parses the group by fields.
-     *
-     * @param statement the SELECT statement.
-     * @return <code>true</code> if this statement uses a group by.
-     * @throws SQLException in case of parse errors.
-     */
-    private boolean parseGroupBy(final SelectNode statement) throws SQLException {
-
-        // Create columns to use in SELECT statement.
-        for (final FieldNode field : statement.getGroups()) {
-            if (field instanceof ParameterNode) {
-                throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED,
-                        field.getPosition());
-            } else if (field instanceof ValueNode) {
-                addGroupColumn(new Column((ValueNode) field));
-            } else {
-                addGroupColumn(field);
-            }
-        }
-
-        final boolean grouping = this.columns.stream()
-                .map(Column::getFunction)
-                .filter(Objects::nonNull)
-                .anyMatch(FunctionNode::isGrouping) || !groupByFields.isEmpty();
-
-        if (grouping) {
-            // Validate statically the group by clause.
-            final Set<Column> groupColumnsToCheck = new HashSet<>(groupByFields);
-            final List<Column> fields = this.columns.stream()
-                    .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
-                    .filter(c -> !groupColumnsToCheck.remove(c))
-                    .collect(Collectors.toList());
-
-            if (!fields.isEmpty()) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.NOT_GROUP_BY);
-            }
-        }
-
-        final List<Column> columnList = this.columns.stream()
-                .map(SelectUtils::getGroupingFunctions)
-                .flatMap(Collection::stream)
-                .map(Column::new)
-                .collect(Collectors.toList());
-
-        for (final Column column : columnList) {
-            final int index = this.columns.indexOf(column);
-            if (index < 0) {
-                column.setHidden(true);
-                column.getFunction().setIndex(this.columns.size());
-                this.columns.add(column);
-            } else {
-                column.getFunction().setIndex(index);
-            }
-        }
-
-        // Columns with a grouping function.
-        groupFunctionColumns = this.columns.stream()
-                .map(Column::getFunction)
-                .filter(Objects::nonNull)
-                .filter(FunctionNode::isGrouping)
-                .filter(f -> !f.isSecondPass())
-                .mapToInt(FunctionNode::getIndex)
-                .toArray();
-
-        // Key columns to do the grouping.
-        final HashSet<Column> columnsToCheck = new HashSet<>(groupByFields);
-        groupColumns = this.columns.stream()
-                .filter(c -> c.getFunction() == null || !c.getFunction().isGrouping())
-                .filter(c -> !c.isHidden() || columnsToCheck.remove(c))
-                .mapToInt(Column::getIndex)
-                .toArray();
-
-        return grouping;
-    }
-
-    /**
      * Parses the order by fields.
      *
      * @param statement the SELECT statement.
@@ -268,7 +183,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
             }
         }
 
-        ret.checkColumns(groupBy, this.columns);
+        ret.checkColumns(groupBy.isGroupBy(), this.columns);
         return ret;
     }
 
@@ -335,7 +250,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         } else if (node instanceof ParameterNode) {
             ret = Collections.singletonList(new Column((ParameterNode) node));
         } else if (node instanceof FunctionNode) {
-            final List<Column> columnsToProcess = getParadoxFields(node);
+            final List<Column> columnsToProcess = SelectUtils.getParadoxFields(node, this.tables);
 
             // The fist column is always the function column.
             final Column column = columnsToProcess.get(0);
@@ -343,44 +258,8 @@ public final class SelectPlan implements Plan<List<Object[]>> {
             ret = Collections.singletonList(column);
             this.columnsFromFunctions.addAll(columnsToProcess);
         } else {
-            ret = getParadoxFields(node);
+            ret = SelectUtils.getParadoxFields(node, this.tables);
             ret.forEach((Column column) -> column.setName(node.getAlias()));
-        }
-
-        return ret;
-    }
-
-    private List<Column> getParadoxFields(final FieldNode node) throws ParadoxException {
-        final List<Column> ret = new ArrayList<>();
-
-        if (node instanceof FunctionNode) {
-            final FunctionNode functionNode = (FunctionNode) node;
-
-            // Create the column for the function.
-            ret.add(new Column(functionNode));
-
-            // Parses function fields in function parameters.
-            for (final FieldNode field : functionNode.getClauseFields()) {
-                ret.addAll(getParadoxFields(field));
-            }
-        } else if (!(node instanceof ValueNode) && !(node instanceof ParameterNode)
-                && !(node instanceof AsteriskNode)) {
-            for (final PlanTableNode table : this.tables) {
-                if (node.getTableName() == null || table.isThis(node.getTableName())) {
-                    node.setTable(table.getTable());
-                    ret.addAll(Arrays.stream(table.getTable().getFields())
-                            .filter(f -> f.getName().equalsIgnoreCase(node.getName()))
-                            .map(Column::new)
-                            .collect(Collectors.toList()));
-                }
-            }
-
-            if (ret.isEmpty()) {
-                throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN, node.getPosition(), node.toString());
-            } else if (ret.size() > 1) {
-                throw new ParadoxException(ParadoxException.Error.COLUMN_AMBIGUOUS_DEFINED, node.getPosition(),
-                        node.toString());
-            }
         }
 
         return ret;
@@ -396,7 +275,8 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      */
     private void processOrderColumn(final FieldNode node, final OrderType type, final OrderByNode orderByNode)
             throws SQLException {
-        getParadoxFields(node).forEach((Column column) -> processOrderColumn(column, type, orderByNode));
+        SelectUtils.getParadoxFields(node, this.tables)
+                .forEach((Column column) -> processOrderColumn(column, type, orderByNode));
     }
 
     /**
@@ -408,31 +288,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      */
     private void processOrderColumn(final Column column, final OrderType type, final OrderByNode node) {
         node.add(column, type);
-
-        if (!this.columns.contains(column)) {
-            // If not in SELECT statement, add as a hidden column in ResultSet.
-            column.setHidden(true);
-            this.columns.add(column);
-        }
-    }
-
-    /**
-     * Add a group by column to this plan.
-     *
-     * @param node the node to convert to a column.
-     * @throws SQLException in case of failures.
-     */
-    private void addGroupColumn(final FieldNode node) throws SQLException {
-        getParadoxFields(node).forEach(this::addGroupColumn);
-    }
-
-    /**
-     * Add a group by column to this plan.
-     *
-     * @param column the column to add.
-     */
-    private void addGroupColumn(final Column column) {
-        groupByFields.add(column);
 
         if (!this.columns.contains(column)) {
             // If not in SELECT statement, add as a hidden column in ResultSet.
@@ -539,9 +394,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                     .collect(Collectors.toSet()));
 
             // Columns in GROUP BY clause.
-            tableColumns.addAll(this.groupByFields.stream()
-                    .filter(c -> c.isThis(table.getTable()))
-                    .collect(Collectors.toSet()));
+            tableColumns.addAll(this.groupBy.getColumns(table.getTable()));
 
             // Columns in ORDER BY clause.
             tableColumns.addAll(this.orderBy.getColumns(table.getTable()));
@@ -730,7 +583,7 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                         final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
                         final List<Column> columnsLoaded) {
 
-        Stream<Object[]> stream = rowValues.parallelStream()
+        Stream<Object[]> stream = rowValues.stream()
                 .filter(predicateWrapper(c -> ensureNotCancelled()));
 
         if (condition != null) {
@@ -743,24 +596,16 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 mapRow(connectionInfo, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
         ));
 
-        if (groupBy) {
-            // Is not possible to group in parallel.
-            stream = stream.sequential()
-                    .filter(FunctionalUtils.groupingByKeys(groupFunctionColumns, groupColumns))
-                    .collect(Collectors.toList())
-                    .stream()
-                    .filter(predicateWrapper(c -> ensureNotCancelled()))
-                    .map(functionWrapper(FunctionalUtils.removeGrouping(groupFunctionColumns, connectionInfo,
-                            parameters, parameterTypes, this.columns)));
-        }
+        stream = this.groupBy.processStream(stream, connectionInfo, parameters, parameterTypes, this.columns,
+                predicateWrapper(c -> ensureNotCancelled()));
 
         if (orderBy.isOrderBy()) {
+            // FIXME Move to order by.
             stream = stream.sorted(Objects.requireNonNull(processOrderBy()));
         }
 
         if (distinct) {
-            // Is not possible to group in parallel fashion (distinct).
-            stream = stream.sequential().filter(FunctionalUtils.distinctByKey());
+            stream = stream.filter(FunctionalUtils.distinctByKey());
         }
 
         if (maxRows != 0) {
@@ -812,15 +657,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
     }
 
     /**
-     * Gets the group by fields.
-     *
-     * @return the group by fields.
-     */
-    public List<Column> getGroupByFields() {
-        return groupByFields;
-    }
-
-    /**
      * Gets the order by node.
      *
      * @return the order by node.
@@ -836,6 +672,15 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      */
     public List<PlanTableNode> getTables() {
         return tables;
+    }
+
+    /**
+     * Gets the group by node.
+     *
+     * @return the group by node.
+     */
+    public GroupByNode getGroupBy() {
+        return groupBy;
     }
 
     @Override
