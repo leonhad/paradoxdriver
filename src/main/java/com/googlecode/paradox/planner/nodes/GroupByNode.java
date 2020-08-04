@@ -57,8 +57,17 @@ public class GroupByNode {
      */
     private final boolean groupBy;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param statement the SELECT statement node.
+     * @param tables    the current table nodes.
+     * @param columns   the current columns.
+     * @throws SQLException in case of failures.
+     */
     public GroupByNode(final SelectNode statement, final List<PlanTableNode> tables, final List<Column> columns)
             throws SQLException {
+        // FIXME review the group by construtor.
 
         // Create columns to use in SELECT statement.
         for (final FieldNode field : statement.getGroups()) {
@@ -151,6 +160,17 @@ public class GroupByNode {
         }
     }
 
+    /**
+     * Process the group by stream.
+     *
+     * @param stream         the load stream.
+     * @param connectionInfo the connection information.
+     * @param parameters     the parameter list.
+     * @param parameterTypes the parameter type list.
+     * @param columns        the current columns.
+     * @param cancel         the cancel predicate.
+     * @return the stream with group by filter.
+     */
     public Stream<Object[]> processStream(final Stream<Object[]> stream, final ConnectionInfo connectionInfo,
                                           final Object[] parameters, final ParadoxType[] parameterTypes,
                                           final List<Column> columns, final Predicate<Object[]> cancel) {
@@ -178,10 +198,20 @@ public class GroupByNode {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Gets if this statement has a aggregation step.
+     *
+     * @return <code>true</code> if this statement has a aggregation step.
+     */
     public boolean isGroupBy() {
         return groupBy;
     }
 
+    /**
+     * Gets the group by columns.
+     *
+     * @return the group by columns.
+     */
     public List<Column> getColumns() {
         return columns;
     }
