@@ -10,13 +10,13 @@
  */
 package com.googlecode.paradox.planner;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Field processing utilities.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public final class FieldValueUtils {
@@ -89,7 +89,8 @@ public final class FieldValueUtils {
                                      final Collection<PlanTableNode> tables) throws SQLException {
 
         // Do not set indexes in value or parameter nodes.
-        if (field == null || field instanceof ValueNode || field instanceof ParameterNode || field instanceof AsteriskNode) {
+        if (field == null || field instanceof ValueNode || field instanceof ParameterNode
+                || field instanceof AsteriskNode) {
             return;
         } else if (field instanceof FunctionNode) {
             setFunctionIndexes(field, columns, tables);
@@ -148,23 +149,20 @@ public final class FieldValueUtils {
     /**
      * Gets the row value based on field node.
      *
-     * @param connectionInfo the connection information.
-     * @param row            the row with values.
-     * @param field          the field node with column data.
-     * @param parameters     the parameters list.
-     * @param parameterTypes the current parameter types.
-     * @param columnsLoaded  the current column loaded list.
+     * @param context       the execution context.
+     * @param row           the row with values.
+     * @param field         the field node with column data.
+     * @param columnsLoaded the current column loaded list.
      * @return the column value.
      * @throws SQLException in case of conversion failures.
      */
-    public static Object getValue(final ConnectionInfo connectionInfo, final Object[] row, final FieldNode field,
-                                  final Object[] parameters, final ParadoxType[] parameterTypes,
+    public static Object getValue(final Context context, final Object[] row, final FieldNode field,
                                   final List<Column> columnsLoaded) throws SQLException {
         Object ret;
         if (field instanceof ParameterNode) {
-            ret = ((ParameterNode) field).getValue(parameters);
+            ret = ((ParameterNode) field).getValue(context.getParameters());
         } else if (field instanceof FunctionNode) {
-            ret = ((FunctionNode) field).execute(connectionInfo, row, parameters, parameterTypes, columnsLoaded);
+            ret = ((FunctionNode) field).execute(context, row, columnsLoaded);
         } else if (field.getIndex() == -1) {
             // Not a table field.
             ret = field.getName();

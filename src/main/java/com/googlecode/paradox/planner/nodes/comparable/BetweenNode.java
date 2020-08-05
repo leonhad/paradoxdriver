@@ -10,12 +10,11 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.sql.SQLException;
@@ -24,7 +23,7 @@ import java.util.List;
 /**
  * Stores the between node.
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
@@ -57,14 +56,11 @@ public final class BetweenNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
-                            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
-        final Object value1 = FieldValueUtils.getValue(connectionInfo, row, field, parameters, parameterTypes,
-                columnsLoaded);
-        final Object value2 = FieldValueUtils.getValue(connectionInfo, row, first, parameters, parameterTypes,
-                columnsLoaded);
-        final Object value3 = FieldValueUtils.getValue(connectionInfo, row, last, parameters, parameterTypes,
-                columnsLoaded);
+    public boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
+            throws SQLException {
+        final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
+        final Object value2 = FieldValueUtils.getValue(context, row, first, columnsLoaded);
+        final Object value3 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
 
         return ValuesComparator.compare(value1, value2, i -> i >= 0) &&
                 ValuesComparator.compare(value1, value3, i -> i <= 0);

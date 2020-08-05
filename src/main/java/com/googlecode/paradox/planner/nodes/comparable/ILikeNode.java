@@ -10,12 +10,11 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.Expressions;
 
@@ -44,18 +43,16 @@ public class ILikeNode extends LikeNode {
     }
 
     @Override
-    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
-                            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
-        final Object value1 = FieldValueUtils.getValue(connectionInfo, row, field, parameters, parameterTypes,
-                columnsLoaded);
-        final Object value2 = FieldValueUtils.getValue(connectionInfo, row, last, parameters, parameterTypes,
-                columnsLoaded);
+    public boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
+            throws SQLException {
+        final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
+        final Object value2 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
 
         if (value1 == null || value2 == null) {
             return false;
         }
 
-        return Expressions.accept(connectionInfo.getLocale(),
-                ValuesConverter.getString(value1), ValuesConverter.getString(value2), false, escape);
+        return Expressions.accept(context.getLocale(), ValuesConverter.getString(value1),
+                ValuesConverter.getString(value2), false, escape);
     }
 }

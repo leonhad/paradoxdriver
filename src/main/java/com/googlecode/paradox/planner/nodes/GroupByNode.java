@@ -10,20 +10,18 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SelectNode;
+import com.googlecode.paradox.planner.context.SelectContext;
 import com.googlecode.paradox.planner.plan.SelectUtils;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.FunctionalUtils;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -164,16 +162,11 @@ public class GroupByNode {
      * Process the group by stream.
      *
      * @param stream         the load stream.
-     * @param connectionInfo the connection information.
-     * @param parameters     the parameter list.
-     * @param parameterTypes the parameter type list.
      * @param columns        the current columns.
-     * @param cancel         the cancel predicate.
      * @return the stream with group by filter.
      */
-    public Stream<Object[]> processStream(final Stream<Object[]> stream, final ConnectionInfo connectionInfo,
-                                          final Object[] parameters, final ParadoxType[] parameterTypes,
-                                          final List<Column> columns, final Predicate<Object[]> cancel) {
+    public Stream<Object[]> processStream(final SelectContext context, final Stream<Object[]> stream,
+                                          final List<Column> columns) {
         if (!groupBy) {
             return stream;
         }
@@ -181,9 +174,8 @@ public class GroupByNode {
         // Is not possible to group in parallel.
         return stream
                 .filter(FunctionalUtils.groupingByKeys(functionColumns, groupColumns))
-                .collect(Collectors.toList()).stream().filter(cancel)
-                .map(functionWrapper(FunctionalUtils.removeGrouping(functionColumns, connectionInfo,
-                        parameters, parameterTypes, columns)));
+                .collect(Collectors.toList()).stream().filter(context.getCancelPredicate())
+                .map(functionWrapper(FunctionalUtils.removeGrouping(context, functionColumns, columns)));
     }
 
     /**

@@ -10,11 +10,9 @@
  */
 package com.googlecode.paradox.planner.plan;
 
-import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -22,54 +20,44 @@ import java.util.*;
 /**
  * Table joiner.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
-class TableJoiner {
-    /**
-     * If this process was cancelled.
-     */
-    private boolean cancelled;
+final class TableJoiner {
 
     /**
      * Creates a new instance.
      */
-    TableJoiner() {
-        cancelled = false;
+    private TableJoiner() {
+        // Not used.
     }
 
-    public List<Object[]> processJoinByType(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
-                                            final List<Object[]> rawData, final PlanTableNode table,
-                                            final List<Object[]> tableData, final Object[] parameters,
-                                            final ParadoxType[] parameterTypes) throws SQLException {
+    public static List<Object[]> processJoinByType(final Context context, final List<Column> columnsLoaded,
+                                                   final List<Object[]> rawData, final PlanTableNode table,
+                                                   final List<Object[]> tableData) throws SQLException {
         List<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
-                localValues = processRightJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
+                localValues = processRightJoin(context, columnsLoaded, rawData, table, tableData);
                 break;
             case LEFT:
-                localValues = processLeftJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
+                localValues = processLeftJoin(context, columnsLoaded, rawData, table, tableData);
                 break;
             case FULL:
-                localValues = processFullJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
+                localValues = processFullJoin(context, columnsLoaded, rawData, table, tableData);
                 break;
             default:
                 // CROSS and INNER joins.
-                localValues = processInnerJoin(connectionInfo, columnsLoaded, rawData, table, tableData, parameters,
-                        parameterTypes);
+                localValues = processInnerJoin(context, columnsLoaded, rawData, table, tableData);
                 break;
         }
 
         return localValues;
     }
 
-    private List<Object[]> processLeftJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
-                                           final List<Object[]> rawData, final PlanTableNode table,
-                                           final List<Object[]> tableData, final Object[] parameters,
-                                           final ParadoxType[] parameterTypes) throws SQLException {
+    private static List<Object[]> processLeftJoin(final Context context, final List<Column> columnsLoaded,
+                                                  final List<Object[]> rawData, final PlanTableNode table,
+                                                  final List<Object[]> tableData) throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(0x7F);
 
@@ -78,12 +66,12 @@ class TableJoiner {
 
             boolean changed = false;
             for (final Object[] newCols : tableData) {
-                ensureNotCancelled();
+                context.checkCancelState();
 
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connectionInfo, column, parameters, parameterTypes, columnsLoaded)) {
+                        .evaluate(context, column, columnsLoaded)) {
                     continue;
                 }
 
@@ -100,10 +88,10 @@ class TableJoiner {
         return localValues;
     }
 
-    private List<Object[]> processRightJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
-                                            final List<Object[]> rawData, final PlanTableNode table,
-                                            final List<Object[]> tableData, final Object[] parameters,
-                                            final ParadoxType[] parameterTypes) throws SQLException {
+    private static List<Object[]> processRightJoin(final Context context, final List<Column> columnsLoaded,
+                                                   final List<Object[]> rawData, final PlanTableNode table,
+                                                   final List<Object[]> tableData) throws SQLException {
+
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(0x7F);
 
@@ -112,12 +100,12 @@ class TableJoiner {
 
             boolean changed = false;
             for (final Object[] cols : rawData) {
-                ensureNotCancelled();
+                context.checkCancelState();
 
                 System.arraycopy(cols, 0, column, 0, cols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connectionInfo, column, parameters, parameterTypes, columnsLoaded)) {
+                        .evaluate(context, column, columnsLoaded)) {
                     continue;
                 }
 
@@ -134,10 +122,10 @@ class TableJoiner {
         return localValues;
     }
 
-    private List<Object[]> processFullJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
-                                           final List<Object[]> rawData, final PlanTableNode table,
-                                           final List<Object[]> tableData, final Object[] parameters,
-                                           final ParadoxType[] parameterTypes) throws SQLException {
+    private static List<Object[]> processFullJoin(final Context context, final List<Column> columnsLoaded,
+                                                  final List<Object[]> rawData, final PlanTableNode table,
+                                                  final List<Object[]> tableData) throws SQLException {
+
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(0x7F);
 
@@ -147,13 +135,13 @@ class TableJoiner {
 
             boolean changed = false;
             for (int i = 0; i < tableData.size(); i++) {
-                ensureNotCancelled();
+                context.checkCancelState();
 
                 final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
-                        .evaluate(connectionInfo, column, parameters, parameterTypes, columnsLoaded)) {
+                        .evaluate(context, column, columnsLoaded)) {
                     continue;
                 }
 
@@ -171,7 +159,7 @@ class TableJoiner {
         // Itens not used in left join.
         Arrays.fill(column, 0, column.length, null);
         for (int i = 0; i < tableData.size(); i++) {
-            ensureNotCancelled();
+            context.checkCancelState();
 
             if (!inLeft.contains(i)) {
                 final Object[] newCols = tableData.get(i);
@@ -183,10 +171,10 @@ class TableJoiner {
         return localValues;
     }
 
-    private List<Object[]> processInnerJoin(final ConnectionInfo connectionInfo, final List<Column> columnsLoaded,
-                                            final List<Object[]> rawData, final PlanTableNode table,
-                                            final List<Object[]> tableData, final Object[] parameters,
-                                            final ParadoxType[] parameterTypes) throws SQLException {
+    private static List<Object[]> processInnerJoin(final Context context, final List<Column> columnsLoaded,
+                                                   final List<Object[]> rawData, final PlanTableNode table,
+                                                   final List<Object[]> tableData) throws SQLException {
+
         final Object[] column = new Object[columnsLoaded.size()];
 
         int initialCapacity;
@@ -206,12 +194,11 @@ class TableJoiner {
             System.arraycopy(cols, 0, column, 0, cols.length);
 
             for (final Object[] newCols : tableData) {
-                ensureNotCancelled();
+                context.checkCancelState();
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null
-                        && !table.getConditionalJoin().evaluate(connectionInfo, column, parameters, parameterTypes,
-                        columnsLoaded)) {
+                        && !table.getConditionalJoin().evaluate(context, column, columnsLoaded)) {
                     continue;
                 }
 
@@ -220,30 +207,5 @@ class TableJoiner {
         }
 
         return localValues;
-    }
-
-    /**
-     * Check if this execution was cancelled.
-     *
-     * @throws SQLException if this execution was cancelled.
-     */
-    private void ensureNotCancelled() throws SQLException {
-        if (cancelled) {
-            throw new ParadoxException(ParadoxException.Error.OPERATION_CANCELLED);
-        }
-    }
-
-    /**
-     * Cancel this statement execution.
-     */
-    public void cancel() {
-        cancelled = true;
-    }
-
-    /**
-     * Resets the cancel state.
-     */
-    public void reset() {
-        cancelled = false;
     }
 }

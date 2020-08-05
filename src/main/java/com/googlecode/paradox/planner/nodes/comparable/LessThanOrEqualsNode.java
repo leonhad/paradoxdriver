@@ -10,12 +10,11 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.sql.SQLException;
@@ -24,7 +23,7 @@ import java.util.List;
 /**
  * Store the less than or equals node.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.6.0
  */
 public final class LessThanOrEqualsNode extends AbstractComparableNode {
@@ -42,12 +41,10 @@ public final class LessThanOrEqualsNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
-                            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
-        final Object value1 = FieldValueUtils.getValue(connectionInfo, row, field, parameters, parameterTypes,
-                columnsLoaded);
-        final Object value2 = FieldValueUtils.getValue(connectionInfo, row, last, parameters, parameterTypes,
-                columnsLoaded);
+    public boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
+            throws SQLException {
+        final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
+        final Object value2 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
         return ValuesComparator.compare(value1, value2, i -> i <= 0);
     }
 }

@@ -10,50 +10,25 @@
  */
 package com.googlecode.paradox.planner.plan;
 
-import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.planner.context.Context;
 
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 
 /**
  * Used to creates and execute SQL plans.
  *
  * @param <T> the return type.
- * @version 1.7
+ * @version 1.8
  * @since 1.1
  */
-public interface Plan<T> {
+public interface Plan<T, C extends Context> {
 
-    /**
-     * Execute this plan.
-     *
-     * @param connectionInfo the connection information.
-     * @param maxRows        the limit of rows that can be loaded. Zero means no
-     *                       limit.
-     * @param parameters     the statement parameters.
-     * @param parameterTypes the parameter types.
-     * @return the processed value. In SELECT, it returns the values, in others, the columns affected.
-     * @throws SQLException in case of failures.
-     */
-    T execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
-              final ParadoxType[] parameterTypes) throws SQLException;
+    T execute(final C context) throws SQLException;
 
     /**
      * Optimize the statement. This step is optional for most planing.
      */
     default void optimize() {
         // Do nothing.
-    }
-
-    /**
-     * Cancel the statement execution.
-     *
-     * @throws SQLFeatureNotSupportedException when the statement not support the
-     *                                         cancel operation.
-     */
-    default void cancel() throws SQLFeatureNotSupportedException {
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.CANCEL_NOT_SUPPORTED);
     }
 }

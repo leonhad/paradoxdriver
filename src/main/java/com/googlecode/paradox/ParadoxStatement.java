@@ -14,6 +14,8 @@ import com.googlecode.paradox.exceptions.*;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.Planner;
+import com.googlecode.paradox.planner.context.Context;
+import com.googlecode.paradox.planner.context.SelectContext;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.results.ParadoxType;
@@ -23,13 +25,11 @@ import com.googlecode.paradox.utils.Utils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * JDBC statement implementation.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")
@@ -58,7 +58,7 @@ class ParadoxStatement implements Statement {
     /**
      * This statement active executions list.
      */
-    private final Queue<Plan> activeExecutions = new ConcurrentLinkedQueue<>();
+    private final ArrayList<Context> activeExecutions = new ArrayList<>();
     /**
      * The Paradox connection.
      */
@@ -130,14 +130,13 @@ class ParadoxStatement implements Statement {
         final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
         for (final StatementNode statement : statements) {
-            final Plan<?> plan = Planner.create(connectionInfo, statement);
-            activeExecutions.add(plan);
+            // FIXME plan cache here
+            final Plan<?, ?> plan = Planner.create(connectionInfo, statement);
+
             try {
-                ret.addAll(executeSelectStatement(plan, null, null));
+                ret.addAll(executeStatement(plan, null, null));
             } catch (@SuppressWarnings("java:S1166") final InternalException e) {
                 throw e.getCause();
-            } finally {
-                activeExecutions.remove(plan);
             }
 
         }
@@ -145,20 +144,26 @@ class ParadoxStatement implements Statement {
         return ret.stream().mapToInt(Integer::intValue).toArray();
     }
 
-    protected List<Integer> executeSelectStatement(final Plan<?> plan, final Object[] params,
-                                                   final ParadoxType[] types) throws SQLException {
+    protected List<Integer> executeStatement(final Plan<?, ?> plan, final Object[] params, final ParadoxType[] types)
+            throws SQLException {
         ArrayList<Integer> ret = new ArrayList<>();
         if (plan instanceof SelectPlan) {
             final SelectPlan selectPlan = (SelectPlan) plan;
-            final List<Object[]> values = selectPlan.execute(this.connectionInfo, maxRows, params, types);
+            final SelectContext context = new SelectContext(this.connectionInfo, maxRows, params, types);
+            activeExecutions.add(context);
+            try {
+                final List<Object[]> values = selectPlan.execute(context);
 
-            final ParadoxResultSet resultSet = new ParadoxResultSet(this.connectionInfo, this, values,
-                    selectPlan.getColumns());
-            resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
-            resultSet.setType(resultSetType);
-            resultSet.setConcurrency(resultSetConcurrency);
-            ret.add(Statement.SUCCESS_NO_INFO);
-            resultSets.add(resultSet);
+                final ParadoxResultSet resultSet = new ParadoxResultSet(this.connectionInfo, this, values,
+                        selectPlan.getColumns());
+                resultSet.setFetchDirection(ResultSet.FETCH_FORWARD);
+                resultSet.setType(resultSetType);
+                resultSet.setConcurrency(resultSetConcurrency);
+                ret.add(Statement.SUCCESS_NO_INFO);
+                resultSets.add(resultSet);
+            } finally {
+                activeExecutions.remove(context);
+            }
         }
 
         return ret;
@@ -178,7 +183,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public void cancel() throws SQLFeatureNotSupportedException {
-        for (final Plan node : activeExecutions) {
+        for (final Context node : activeExecutions) {
             node.cancel();
         }
     }

@@ -10,16 +10,15 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.Set;
 /**
  * Stores the not node.
  *
- * @version 1.11
+ * @version 1.12
  * @since 1.1
  */
 public final class NotNode extends AbstractComparableNode {
@@ -61,11 +60,11 @@ public final class NotNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
-                            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
+    public boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
+            throws SQLException {
+
         if (!children.isEmpty()) {
-            return !((AbstractConditionalNode) children.get(0)).evaluate(connectionInfo, row, parameters,
-                    parameterTypes, columnsLoaded);
+            return !((AbstractConditionalNode) children.get(0)).evaluate(context, row, columnsLoaded);
         }
 
         // Should never happens.

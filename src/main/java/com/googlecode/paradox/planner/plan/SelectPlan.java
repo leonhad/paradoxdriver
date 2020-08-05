@@ -20,11 +20,11 @@ import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.context.SelectContext;
 import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.FunctionalUtils;
 
 import java.sql.SQLException;
@@ -42,50 +42,42 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
-public final class SelectPlan implements Plan<List<Object[]>> {
+public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
     /**
      * The columns in this plan to show in result set.
      */
     private final List<Column> columns;
+
     /**
      * The columns to load in this plan, not only in result set.
      */
     private final List<Column> columnsFromFunctions = new ArrayList<>();
+
     /**
      * The tables in this plan.
      */
     private final List<PlanTableNode> tables;
+
     /**
      * If this result needs to be distinct.
      */
     private final boolean distinct;
+
     /**
      * Order by fields.
      */
     private final OrderByNode orderBy;
+
     /**
      * The group by node.
      */
     private final GroupByNode groupBy;
-    /**
-     * The data values.
-     */
-    private List<Object[]> values = Collections.emptyList();
+
     /**
      * The conditions to filter values
      */
     private AbstractConditionalNode condition;
-    /**
-     * If this statement was cancelled.
-     * <p>
-     * FIXME move to execution context.
-     */
-    private boolean cancelled;
-    /**
-     * Table joiner.
-     */
-    private final TableJoiner joiner = new TableJoiner();
 
     /**
      * Creates a SELECT plan.
@@ -302,24 +294,19 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      */
     @Override
     @SuppressWarnings({"java:S3776", "java:S1541"})
-    public List<Object[]> execute(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
-                                  final ParadoxType[] parameterTypes) throws SQLException {
+    public List<Object[]> execute(final SelectContext context) throws SQLException {
 
         // Can't do anything without fields defined.
         if (this.columns.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Reset the cancelled state.
-        cancelled = false;
-        joiner.reset();
-
         final List<Column> columnsLoaded = new ArrayList<>();
         final List<Object[]> rawData = new ArrayList<>(0xFF);
 
         for (int tableIndex = 0; tableIndex < this.tables.size(); tableIndex++) {
             PlanTableNode table = this.tables.get(tableIndex);
-            ensureNotCancelled();
+            context.checkCancelState();
 
             // Columns in SELECT clause.
             final Set<Column> tableColumns = this.columns.stream()
@@ -363,17 +350,17 @@ public final class SelectPlan implements Plan<List<Object[]>> {
             if (tableIndex == 0) {
                 if (table.getConditionalJoin() != null) {
                     rawData.addAll(tableData.stream()
-                            .filter(predicateWrapper(o -> ensureNotCancelled()))
-                            .filter(predicateWrapper(tableRow -> table.getConditionalJoin()
-                                    .evaluate(connectionInfo, tableRow, parameters, parameterTypes, columnsLoaded)))
+                            .filter(context.getCancelPredicate())
+                            .filter(predicateWrapper(tableRow ->
+                                    table.getConditionalJoin().evaluate(context, tableRow, columnsLoaded)))
                             .collect(Collectors.toList()));
                 } else {
                     // No conditions to process. Just use it.
                     rawData.addAll(tableData);
                 }
             } else {
-                final List<Object[]> ret = joiner.processJoinByType(connectionInfo, columnsLoaded, rawData, table,
-                        tableData, parameters, parameterTypes);
+                final List<Object[]> ret = TableJoiner.processJoinByType(context, columnsLoaded, rawData, table,
+                        tableData);
 
                 rawData.clear();
                 rawData.addAll(ret);
@@ -400,14 +387,13 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         // Process parameter types.
         columns.stream()
                 .filter(column -> column.getParameter() != null)
-                .forEach(column -> column.setType(parameterTypes[column.getParameter().getParameterIndex()]));
+                .forEach(column -> column.setType(context
+                        .getParameterTypes()[column.getParameter().getParameterIndex()]));
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
-        filter(connectionInfo, rawData, mapColumns, maxRows, parameters, parameterTypes, columnsLoaded);
-
-        return this.values;
+        return filter(context, rawData, mapColumns, columnsLoaded);
     }
 
     private void processIndexes(final List<Column> columns) throws SQLException {
@@ -448,12 +434,11 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         return mapColumns;
     }
 
-    private Object[] mapRow(final ConnectionInfo connectionInfo, final Object[] tableRow, final int[] mapColumns,
-                            final Object[] parameters, final ParadoxType[] parameterTypes,
+    private Object[] mapRow(final SelectContext context, final Object[] tableRow, final int[] mapColumns,
                             final List<Column> columnsLoaded) throws SQLException {
         final Object[] finalRow = new Object[mapColumns.length];
         for (int i = 0; i < mapColumns.length; i++) {
-            ensureNotCancelled();
+            context.checkCancelState();
 
             int index = mapColumns[i];
             if (index != -1) {
@@ -464,14 +449,13 @@ public final class SelectPlan implements Plan<List<Object[]>> {
                 final FunctionNode functionNode = this.columns.get(i).getFunction();
                 if (parameterNode != null) {
                     // A parameter value.
-                    finalRow[i] = parameters[parameterNode.getParameterIndex()];
+                    finalRow[i] = context.getParameters()[parameterNode.getParameterIndex()];
                 } else if (functionNode == null) {
                     // A fixed value.
                     finalRow[i] = this.columns.get(i).getValue();
                 } else if (!this.columns.get(i).isSecondPass()) {
                     // A function processed value.
-                    finalRow[i] = functionNode.execute(connectionInfo, tableRow, parameters, parameterTypes,
-                            columnsLoaded);
+                    finalRow[i] = functionNode.execute(context, tableRow, columnsLoaded);
                     // The function may change the result type in execution based on parameters values.
                     this.columns.get(i).setType(functionNode.getType());
                 }
@@ -481,26 +465,24 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         return finalRow;
     }
 
-    private void filter(final ConnectionInfo connectionInfo, final List<Object[]> rowValues, final int[] mapColumns,
-                        final int maxRows, final Object[] parameters, final ParadoxType[] parameterTypes,
-                        final List<Column> columnsLoaded) {
+    private List<Object[]> filter(final SelectContext context, final List<Object[]> rowValues, final int[] mapColumns,
+                                  final List<Column> columnsLoaded) {
 
         Stream<Object[]> stream = rowValues.stream()
-                .filter(predicateWrapper(c -> ensureNotCancelled()));
+                .filter(context.getCancelPredicate());
 
         if (condition != null) {
             stream = stream.filter(predicateWrapper((Object[] tableRow) ->
-                    condition.evaluate(connectionInfo, tableRow, parameters, parameterTypes, columnsLoaded)
+                    condition.evaluate(context, tableRow, columnsLoaded)
             ));
         }
 
         stream = stream.map(functionWrapper((Object[] tableRow) ->
-                mapRow(connectionInfo, tableRow, mapColumns, parameters, parameterTypes, columnsLoaded)
+                mapRow(context, tableRow, mapColumns, columnsLoaded)
         ));
 
         // Group by.
-        stream = this.groupBy.processStream(stream, connectionInfo, parameters, parameterTypes, this.columns,
-                predicateWrapper(c -> ensureNotCancelled()));
+        stream = this.groupBy.processStream(context, stream, this.columns);
 
         // Order by.
         stream = this.orderBy.processStream(stream, this.columns);
@@ -510,11 +492,11 @@ public final class SelectPlan implements Plan<List<Object[]>> {
             stream = stream.filter(FunctionalUtils.distinctByKey());
         }
 
-        if (maxRows != 0) {
-            stream = stream.limit(maxRows);
+        if (context.getMaxRows() != 0) {
+            stream = stream.limit(context.getMaxRows());
         }
 
-        this.values = stream.collect(Collectors.toList());
+        return stream.collect(Collectors.toList());
     }
 
     /**
@@ -533,29 +515,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
      */
     public AbstractConditionalNode getCondition() {
         return condition;
-    }
-
-    /**
-     * Cancel this statement execution.
-     */
-    @Override
-    public void cancel() {
-        cancelled = true;
-        joiner.cancel();
-    }
-
-    /**
-     * Check if this execution was cancelled.
-     *
-     * @return <code>true</code> if this statement was not cancelled.
-     * @throws SQLException if this execution was cancelled.
-     */
-    private boolean ensureNotCancelled() throws SQLException {
-        if (cancelled) {
-            throw new ParadoxException(ParadoxException.Error.OPERATION_CANCELLED);
-        }
-
-        return true;
     }
 
     /**

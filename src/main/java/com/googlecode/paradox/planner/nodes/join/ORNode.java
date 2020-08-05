@@ -10,12 +10,11 @@
  */
 package com.googlecode.paradox.planner.nodes.join;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AbstractConditionalNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.List;
 /**
  * Store the OR node.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.1
  */
 public class ORNode extends AbstractJoinNode {
@@ -39,11 +38,12 @@ public class ORNode extends AbstractJoinNode {
     }
 
     @Override
-    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
-                            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
+    public boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
+            throws SQLException {
+
         for (final SQLNode node : children) {
             final AbstractConditionalNode conditionalNode = (AbstractConditionalNode) node;
-            if (conditionalNode.evaluate(connectionInfo, row, parameters, parameterTypes, columnsLoaded)) {
+            if (conditionalNode.evaluate(context, row, columnsLoaded)) {
                 return true;
             }
         }

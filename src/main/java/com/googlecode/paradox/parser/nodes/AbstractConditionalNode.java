@@ -10,13 +10,12 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import java.util.Set;
 /**
  * Stores a abstract comparable node.
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
@@ -57,8 +56,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
         this(name, null, position);
     }
 
-    public abstract boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
-                                     final ParadoxType[] parameterTypes, final List<Column> columnsLoaded)
+    public abstract boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
             throws SQLException;
 
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {

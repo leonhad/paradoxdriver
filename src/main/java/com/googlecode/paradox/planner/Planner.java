@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * Factory to create a SQL execution plan.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.1
  */
 public final class Planner {
@@ -44,9 +44,9 @@ public final class Planner {
      * @throws SQLException in case of plan errors.
      */
     @SuppressWarnings("java:S1452")
-    public static Plan<?> create(final ConnectionInfo connectionInfo, final StatementNode statement)
+    public static Plan<?, ?> create(final ConnectionInfo connectionInfo, final StatementNode statement)
             throws SQLException {
-        Plan<?> ret;
+        Plan<?, ?> ret;
         try {
             if (statement instanceof SelectNode) {
                 ret = new SelectPlan(connectionInfo, (SelectNode) statement);

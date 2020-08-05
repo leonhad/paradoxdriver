@@ -10,13 +10,12 @@
  */
 package com.googlecode.paradox.planner.nodes.comparable;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.sql.SQLException;
@@ -26,7 +25,7 @@ import java.util.List;
 /**
  * Stores the IN node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public final class InNode extends AbstractComparableNode {
@@ -65,10 +64,10 @@ public final class InNode extends AbstractComparableNode {
     }
 
     @Override
-    public boolean evaluate(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameters,
-                            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) throws SQLException {
-        final Object value1 = FieldValueUtils.getValue(connectionInfo, row, field, parameters, parameterTypes,
-                columnsLoaded);
+    public boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
+            throws SQLException {
+
+        final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
 
         for (final ValueNode value : values) {
             final Object value2 = value.getName();

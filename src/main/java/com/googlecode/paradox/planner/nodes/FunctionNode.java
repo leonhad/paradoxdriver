@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
@@ -19,6 +18,7 @@ import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.FieldValueUtils;
+import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 /**
  * Stores a function node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class FunctionNode extends FieldNode {
@@ -188,16 +188,14 @@ public class FunctionNode extends FieldNode {
     /**
      * Execute  the function.
      *
-     * @param connectionInfo  the connection information.
-     * @param row             the current row values.
-     * @param parameterValues the parameters values.
-     * @param parameterTypes  the parameter types.
-     * @param loadedColumns   the list of loaded columns.
+     * @param context       the execution context.
+     * @param row           the current row values.
+     * @param loadedColumns the list of loaded columns.
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] row, final Object[] parameterValues,
-                          final ParadoxType[] parameterTypes, final List<Column> loadedColumns) throws SQLException {
+    public Object execute(final Context context, final Object[] row, final List<Column> loadedColumns)
+            throws SQLException {
         final Object[] values = new Object[parameters.size()];
         final ParadoxType[] types = new ParadoxType[parameters.size()];
 
@@ -209,9 +207,8 @@ public class FunctionNode extends FieldNode {
                 values[i] = param.getName();
                 types[i] = ((ValueNode) param).getType();
             } else if (param instanceof ParameterNode) {
-                values[i] = FieldValueUtils.getValue(connectionInfo, row, (FieldNode) param, parameterValues,
-                        parameterTypes, loadedColumns);
-                types[i] = parameterTypes[((ParameterNode) param).getParameterIndex()];
+                values[i] = FieldValueUtils.getValue(context, row, (FieldNode) param, loadedColumns);
+                types[i] = context.getParameterTypes()[((ParameterNode) param).getParameterIndex()];
             } else if (param instanceof FunctionNode) {
                 final FunctionNode functionNode = (FunctionNode) param;
 
@@ -221,16 +218,14 @@ public class FunctionNode extends FieldNode {
                     values[i] = row[index];
                     types[i] = loadedColumns.get(index).getType();
                 } else {
-                    values[i] = functionNode.execute(connectionInfo, row, parameterValues, parameterTypes,
-                            loadedColumns);
+                    values[i] = functionNode.execute(context, row, loadedColumns);
                     types[i] = functionNode.getType();
                 }
             } else if (param instanceof AsteriskNode) {
                 values[i] = param;
                 types[i] = ParadoxType.NULL;
             } else {
-                values[i] = FieldValueUtils.getValue(connectionInfo, row, (FieldNode) param, parameterValues,
-                        parameterTypes, loadedColumns);
+                values[i] = FieldValueUtils.getValue(context, row, (FieldNode) param, loadedColumns);
                 types[i] = loadedColumns.get(((FieldNode) param).getIndex()).getType();
             }
         }
@@ -243,10 +238,10 @@ public class FunctionNode extends FieldNode {
         }
 
         // If no problems found, execute the procedure.
-        return function.execute(connectionInfo, values, types, fields);
+        return function.execute(context.getConnectionInfo(), values, types, fields);
     }
 
-    private static int getIndex(List<Column> loadedColumns, FunctionNode functionNode)
+    private static int getIndex(final List<Column> loadedColumns, final FunctionNode functionNode)
             throws ParadoxSyntaxErrorException {
         int index = -1;
         for (int l = 0; l < loadedColumns.size(); l++) {
@@ -273,7 +268,7 @@ public class FunctionNode extends FieldNode {
             return false;
         }
 
-        FunctionNode that = (FunctionNode) o;
+        final FunctionNode that = (FunctionNode) o;
         return Objects.deepEquals(parameters, that.parameters) && Objects.equals(function, that.function);
     }
 

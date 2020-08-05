@@ -10,11 +10,10 @@
  */
 package com.googlecode.paradox.utils;
 
-import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.InternalException;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
+import com.googlecode.paradox.planner.context.SelectContext;
 import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
 import java.io.Serializable;
@@ -129,8 +128,7 @@ public final class FunctionalUtils {
     }
 
     public static FunctionWithExceptions<Object[], Object[], SQLException> removeGrouping(
-            final int[] indexes, final ConnectionInfo connectionInfo, final Object[] parameters,
-            final ParadoxType[] parameterTypes, final List<Column> columnsLoaded) {
+            final SelectContext context, final int[] indexes, final List<Column> columnsLoaded) {
         return (Object[] value) -> {
             for (final int index : indexes) {
                 if (value[index] != null) {
@@ -138,20 +136,18 @@ public final class FunctionalUtils {
                 }
             }
 
-            processSecondPass(connectionInfo, parameters, parameterTypes, columnsLoaded, value);
+            processSecondPass(context, columnsLoaded, value);
 
             return value;
         };
     }
 
-    private static void processSecondPass(final ConnectionInfo connectionInfo, final Object[] parameters,
-                                          final ParadoxType[] parameterTypes, final List<Column> columnsLoaded,
+    private static void processSecondPass(final SelectContext context, final List<Column> columnsLoaded,
                                           final Object[] value) throws SQLException {
         for (int i = 0; i < columnsLoaded.size(); i++) {
             if (columnsLoaded.get(i).isSecondPass()) {
                 // A function processed value.
-                value[i] = columnsLoaded.get(i).getFunction().execute(connectionInfo, value, parameters,
-                        parameterTypes, columnsLoaded);
+                value[i] = columnsLoaded.get(i).getFunction().execute(context, value, columnsLoaded);
             }
         }
     }

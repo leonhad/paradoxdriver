@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-09-05 The execution planer is now stateless. Cache may be possible.
 2020-08-31 Added standard aggregate functions and GROUP BY support.
 2020-08-27 Now is possible to change catalogs (needs to be enabled in properties).
 2020-08-26 Fixed parenthesis parser and NOT keyword.
