@@ -410,8 +410,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         return this.values;
     }
 
-    // FIXME move to order by node.
-
     private void processIndexes(final List<Column> columns) throws SQLException {
         // Set conditional indexes.
         if (this.condition != null) {
@@ -558,15 +556,6 @@ public final class SelectPlan implements Plan<List<Object[]>> {
         }
 
         return true;
-    }
-
-    /**
-     * Gets the order by node.
-     *
-     * @return the order by node.
-     */
-    public OrderByNode getOrderBy() {
-        return orderBy;
     }
 
     /**
