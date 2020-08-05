@@ -13,18 +13,29 @@ package com.googlecode.paradox.planner.context;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.results.ParadoxType;
 
+/**
+ * The SELECT execution context.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public class SelectContext extends Context {
 
     /**
      * Max rows in SELECT statement.
      */
-    private final int maxRows;
+    private int maxRows;
 
-    public SelectContext(final ConnectionInfo connectionInfo, final int maxRows, final Object[] parameters,
+    /**
+     * Creates a new SELECT context.
+     *
+     * @param connectionInfo the connection information.
+     * @param parameters     the parameter list.
+     * @param parameterTypes the parameter type list.
+     */
+    public SelectContext(final ConnectionInfo connectionInfo, final Object[] parameters,
                          final ParadoxType[] parameterTypes) {
         super(connectionInfo, parameters, parameterTypes);
-
-        this.maxRows = maxRows;
     }
 
     /**
@@ -35,7 +46,21 @@ public class SelectContext extends Context {
         this.cancelled = true;
     }
 
+    /**
+     * Gets the {@link java.sql.ResultSet} max rows.
+     *
+     * @return the {@link java.sql.ResultSet} max rows.
+     */
     public int getMaxRows() {
         return maxRows;
+    }
+
+    /**
+     * Sets the {@link java.sql.ResultSet} max rows.
+     *
+     * @param maxRows the {@link java.sql.ResultSet} max rows.
+     */
+    public void setMaxRows(int maxRows) {
+        this.maxRows = maxRows;
     }
 }

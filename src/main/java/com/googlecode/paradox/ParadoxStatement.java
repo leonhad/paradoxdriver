@@ -24,6 +24,7 @@ import com.googlecode.paradox.utils.Utils;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -58,7 +59,7 @@ class ParadoxStatement implements Statement {
     /**
      * This statement active executions list.
      */
-    private final ArrayList<Context> activeExecutions = new ArrayList<>();
+    private final HashSet<Context> activeExecutions = new HashSet<>();
     /**
      * The Paradox connection.
      */
@@ -149,8 +150,10 @@ class ParadoxStatement implements Statement {
         ArrayList<Integer> ret = new ArrayList<>();
         if (plan instanceof SelectPlan) {
             final SelectPlan selectPlan = (SelectPlan) plan;
-            final SelectContext context = new SelectContext(this.connectionInfo, maxRows, params, types);
+            final SelectContext context = selectPlan.createContext(this.connectionInfo, params, types);
+            context.setMaxRows(maxRows);
             activeExecutions.add(context);
+
             try {
                 final List<Object[]> values = selectPlan.execute(context);
 

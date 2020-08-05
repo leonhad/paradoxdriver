@@ -10,7 +10,9 @@
  */
 package com.googlecode.paradox.planner.plan;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.planner.context.Context;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
 
@@ -31,4 +33,13 @@ public interface Plan<T, C extends Context> {
     default void optimize() {
         // Do nothing.
     }
+
+    /**
+     * Creates a new execution context.
+     *
+     * @param connectionInfo the connection information.
+     * @param parameters     the parameter list.
+     * @param parameterTypes the parameter type list.
+     */
+    C createContext(final ConnectionInfo connectionInfo, final Object[] parameters, final ParadoxType[] parameterTypes);
 }

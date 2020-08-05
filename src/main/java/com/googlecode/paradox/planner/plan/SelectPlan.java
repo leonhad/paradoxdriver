@@ -25,6 +25,7 @@ import com.googlecode.paradox.planner.nodes.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.FunctionalUtils;
 
 import java.sql.SQLException;
@@ -117,6 +118,12 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         for (final PlanTableNode table : this.tables) {
             table.setConditionalJoin(SelectUtils.joinClauses(table.getConditionalJoin()));
         }
+    }
+
+    @Override
+    public SelectContext createContext(final ConnectionInfo connectionInfo, final Object[] parameters,
+                                       final ParadoxType[] parameterTypes) {
+        return new SelectContext(connectionInfo, parameters, parameterTypes);
     }
 
     /**
