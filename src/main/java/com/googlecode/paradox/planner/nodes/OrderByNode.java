@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 /**
  * Stores one order by field information.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class OrderByNode {
@@ -46,8 +46,14 @@ public class OrderByNode {
 
     /**
      * Creates a new instance.
+     *
+     * @param selectNode    the SELECT statement node.
+     * @param selectColumns the SELECT columns.
+     * @param tables        the tables.
+     * @param groupBy       if the SELECT statement has a group by.
+     * @throws SQLException in case of failures.
      */
-    public OrderByNode(final SelectNode selectNode, final List<Column> columns, final List<PlanTableNode> tables,
+    public OrderByNode(final SelectNode selectNode, final List<Column> selectColumns, final List<PlanTableNode> tables,
                        final boolean groupBy)
             throws SQLException {
 
@@ -56,39 +62,26 @@ public class OrderByNode {
             final OrderType type = selectNode.getOrderTypes().get(i);
             if (field instanceof ValueNode) {
                 int index = ValuesConverter.getInteger(field.getName());
-                if (index > columns.size()) {
+                if (index > selectColumns.size()) {
                     throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, index);
                 }
 
-                processOrderColumn(columns.get(index - 1), type, columns);
+                processOrderColumn(selectColumns.get(index - 1), type, selectColumns);
             } else {
-                processOrderColumn(field, type, columns, tables);
+                SelectUtils.getParadoxFields(field, tables)
+                        .forEach((Column c) -> processOrderColumn(c, type, selectColumns));
             }
         }
 
         if (groupBy && !this.columns.isEmpty()) {
             // Check for group by expression.
-            final List<Column> columnsFound = columns.stream()
+            final List<Column> columnsFound = selectColumns.stream()
                     .filter(c -> !c.isHidden()).collect(Collectors.toList());
 
-            if (!columnsFound.containsAll(columns)) {
+            if (!columnsFound.containsAll(selectColumns)) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.ORDER_BY_NOT_IN_GROUP_BY);
             }
         }
-    }
-
-    /**
-     * Add a order by column to this plan.
-     *
-     * @param node the node to convert to a column.
-     * @param type the order by field type.
-     * @throws SQLException in case of failures.
-     */
-    private void processOrderColumn(final FieldNode node, final OrderType type, final List<Column> selectColumns,
-                                    final List<PlanTableNode> tables)
-            throws SQLException {
-        SelectUtils.getParadoxFields(node, tables)
-                .forEach((Column c) -> processOrderColumn(c, type, selectColumns));
     }
 
     /**
@@ -98,7 +91,8 @@ public class OrderByNode {
      * @param type   the order by field type.
      */
     private void processOrderColumn(final Column column, final OrderType type, final List<Column> selectColumns) {
-        add(column, type);
+        this.columns.add(column);
+        this.types.add(type);
 
         if (!selectColumns.contains(column)) {
             // If not in SELECT statement, add as a hidden column in ResultSet.
@@ -107,6 +101,13 @@ public class OrderByNode {
         }
     }
 
+    /**
+     * Process the stream with the order by.
+     *
+     * @param stream        the stream to process.
+     * @param selectColumns the SELECT columns.
+     * @return the processes stream.
+     */
     public Stream<Object[]> processStream(final Stream<Object[]> stream, final List<Column> selectColumns) {
         if (this.columns.isEmpty()) {
             // Nothing to do here, there are no order by fields.
@@ -143,17 +144,6 @@ public class OrderByNode {
     }
 
     /**
-     * Add a order by column.
-     *
-     * @param column the column class.
-     * @param type   the column type.
-     */
-    public void add(final Column column, final OrderType type) {
-        this.columns.add(column);
-        this.types.add(type);
-    }
-
-    /**
      * Gets the order by column with the table specified.
      *
      * @param table the table to filter.
@@ -163,34 +153,5 @@ public class OrderByNode {
         return this.columns.stream()
                 .filter(c -> c.isThis(table))
                 .collect(Collectors.toSet());
-    }
-
-    /**
-     * Gets the column by index.
-     *
-     * @param index the column index.
-     * @return the column by index.
-     */
-    public Column getColumn(final int index) {
-        return columns.get(index);
-    }
-
-    /**
-     * Gets the column type by index.
-     *
-     * @param index the column index.
-     * @return the column type by index.
-     */
-    public OrderType getType(int index) {
-        return types.get(index);
-    }
-
-    /**
-     * Gets the column count.
-     *
-     * @return the column count.
-     */
-    public int count() {
-        return columns.size();
     }
 }
