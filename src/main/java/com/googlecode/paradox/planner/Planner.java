@@ -18,7 +18,9 @@ import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 
+import java.lang.ref.SoftReference;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 
 /**
  * Factory to create a SQL execution plan.

@@ -25,7 +25,6 @@ import org.junit.Test;
 
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
-import java.util.List;
 
 /**
  * Unit test for {@link SQLParser}.
@@ -44,8 +43,7 @@ public class SQLParserTest {
     @Test
     public void testIsNull() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A is NULL");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -64,8 +62,7 @@ public class SQLParserTest {
     public void testLike() throws SQLException {
         final SQLParser parser = new SQLParser("select ac.AreasCovered from geog.tblAC ac " +
                 " where ac.AreasCovered like 'Hackensack%'");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -84,8 +81,7 @@ public class SQLParserTest {
     public void testILike() throws SQLException {
         final SQLParser parser = new SQLParser("select ac.AreasCovered from geog.tblAC ac " +
                 " where ac.AreasCovered ilike 'Hackensack%'");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -103,8 +99,7 @@ public class SQLParserTest {
     @Test
     public void testIsNotNull() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A is not NULL");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -122,8 +117,7 @@ public class SQLParserTest {
     @Test
     public void testNullAsValue() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A = NULL");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -141,8 +135,7 @@ public class SQLParserTest {
     @Test
     public void testSelectWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT t.* FROM table t");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -163,8 +156,7 @@ public class SQLParserTest {
     @Test
     public void testSchemaName() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT t.* FROM db.table t");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -185,8 +177,7 @@ public class SQLParserTest {
     @Test
     public void testColumnValue() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT 'test', 123 as number, null FROM client");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -218,8 +209,7 @@ public class SQLParserTest {
     public void testJoin() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -240,8 +230,7 @@ public class SQLParserTest {
     @Test
     public void testFullJoin() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client c full join test t on test_id = id ");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -265,8 +254,7 @@ public class SQLParserTest {
     @Test
     public void testSelect() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -320,8 +308,7 @@ public class SQLParserTest {
     @Test
     public void testTable() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -342,8 +329,7 @@ public class SQLParserTest {
     @Test
     public void testTwoTable() throws SQLException {
         final SQLParser parser = new SQLParser("select a.CODE as cod, state.NAME name FROM client, state");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -370,8 +356,7 @@ public class SQLParserTest {
     @Test
     public void testTwoTableWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser("select *, name FROM client as cli, state STATE");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -396,8 +381,7 @@ public class SQLParserTest {
     @Test
     public void testWhere() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b and c <> t");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -435,8 +419,7 @@ public class SQLParserTest {
     @Test
     public void testWhereWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE test.a = c.b");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -467,8 +450,7 @@ public class SQLParserTest {
     @Test
     public void testNot() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM AREACODES WHERE NOT State = 'NY'");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -499,8 +481,7 @@ public class SQLParserTest {
                 "select * from joins.joinb where not (Id = 2 or Id = 3) or Id = 2 order by Id"
         );
 
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -532,8 +513,7 @@ public class SQLParserTest {
                 "select * from joins.joinb where Id = 2 or not (Id = 2 or Id = 3) order by Id"
         );
 
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -565,8 +545,7 @@ public class SQLParserTest {
                 "select * from joins.joinb where Id not like '2' "
         );
 
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -605,8 +584,7 @@ public class SQLParserTest {
     @Test
     public void testSelectWithoutFromTwoArguments() throws SQLException {
         final SQLParser parser = new SQLParser("select 1, 'b'");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -625,8 +603,7 @@ public class SQLParserTest {
     @Test
     public void testSelectWithoutFrom() throws SQLException {
         final SQLParser parser = new SQLParser("select 1");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -657,8 +634,7 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser(
                 "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -681,8 +657,7 @@ public class SQLParserTest {
         final SQLParser parser = new SQLParser(
                 "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         " where c.StateID = st.State or st.State = ac.State or c.CountyID = 201");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final SQLNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
 
@@ -704,8 +679,8 @@ public class SQLParserTest {
     public void testParameters() throws SQLException {
         final SQLParser parser = new SQLParser("select * from geog.tblAC ac" +
                 " where ac.State = ? and ? = ac.AreaCode");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
+
         Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
@@ -740,8 +715,7 @@ public class SQLParserTest {
     @Test
     public void testParametersInSelect() throws SQLException {
         final SQLParser parser = new SQLParser("select ? as test");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
         Assert.assertEquals("Invalid parameter count.", 1, tree.getParameterCount());
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
@@ -773,8 +747,8 @@ public class SQLParserTest {
     public void testParenthesis() throws SQLException {
         final SQLParser parser = new SQLParser("select * from geog.tblAC ac" +
                 " where (ac.State = ? and ? = ac.AreaCode)");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
+
         Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());
 
         Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
@@ -809,8 +783,7 @@ public class SQLParserTest {
     @Test
     public void testOrderBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 order by \"DATE\"");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -832,8 +805,7 @@ public class SQLParserTest {
     @Test
     public void testOrderByDesc() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 order by \"DATE\" desc, \"TIME\" asc");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -883,8 +855,7 @@ public class SQLParserTest {
     @Test
     public void testIn() throws SQLException {
         final SQLParser parser = new SQLParser("select id from fields.long where id in (1, '2')");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -906,8 +877,7 @@ public class SQLParserTest {
     @Test
     public void testFunctionInFields() throws SQLException {
         final SQLParser parser = new SQLParser("select upper('2')");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -929,8 +899,7 @@ public class SQLParserTest {
     @Test
     public void testRecursiveFunction() throws SQLException {
         final SQLParser parser = new SQLParser("select upper(lower('2'))");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -958,8 +927,7 @@ public class SQLParserTest {
     @Test
     public void testRecursiveFunctionAlias() throws SQLException {
         final SQLParser parser = new SQLParser("select varchar(current_date)");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -997,8 +965,7 @@ public class SQLParserTest {
     @Test
     public void testFunctionAlias() throws SQLException {
         final SQLParser parser = new SQLParser("select upper('2') as alias");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -1020,8 +987,7 @@ public class SQLParserTest {
     @Test
     public void testRecursiveFunctionAliasName() throws SQLException {
         final SQLParser parser = new SQLParser("select upper(lower('Name')) as alias");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -1045,8 +1011,7 @@ public class SQLParserTest {
     @Test
     public void testFunctionInClause() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 where \"DATE\" = DATE('2018-01-02')");
-        final List<StatementNode> list = parser.parse();
-        final StatementNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
         final SelectNode select = (SelectNode) tree;
@@ -1080,8 +1045,7 @@ public class SQLParserTest {
     @Test
     public void testBooleanValues() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT TRUE, FALSE");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -1101,8 +1065,7 @@ public class SQLParserTest {
     @Test
     public void testFunctionInOrderBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.long order by VARCHAR(Id)");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -1125,8 +1088,7 @@ public class SQLParserTest {
     @Test
     public void testGroupBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.long group by Id");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -1147,8 +1109,7 @@ public class SQLParserTest {
                 "SELECT count(*) FROM AREACODES WHERE (NOT State = 'NY') or State = 'NJ' group by State"
         );
 
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -1168,8 +1129,7 @@ public class SQLParserTest {
     public void testGroupByAndOrderBy() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by State ORDER BY State");
 
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -1189,8 +1149,7 @@ public class SQLParserTest {
     public void testGroupByAndFixedValues() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by 123, 'abc'");
 
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
@@ -1208,8 +1167,7 @@ public class SQLParserTest {
     public void testAggregateFunctionInSelectFunction() throws SQLException {
         final SQLParser parser = new SQLParser("select upper(count(1)) from fields.date7");
 
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 

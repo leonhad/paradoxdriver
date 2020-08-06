@@ -31,8 +31,6 @@ import com.googlecode.paradox.planner.sorting.OrderType;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parses a SQL statement.
@@ -86,25 +84,25 @@ public final class SQLParser {
     /**
      * Parses the SQL statement.
      *
-     * @return a list of statements.
+     * @return a statement node.
      * @throws SQLException in case of parse errors.
      */
-    public List<StatementNode> parse() throws SQLException {
+    public StatementNode parse() throws SQLException {
         if (!this.scanner.hasNext()) {
             throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_END_OF_STATEMENT);
         }
 
         this.token = this.scanner.nextToken();
 
-        final List<StatementNode> statementNodes = new ArrayList<>();
+        StatementNode statementNode;
         if (isToken(TokenType.SELECT)) {
-            statementNodes.add(this.parseSelect());
+            statementNode = this.parseSelect();
         } else {
             throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, token.getPosition());
         }
 
-        statementNodes.forEach(s -> s.setParameterCount(parameterCount));
-        return statementNodes;
+        statementNode.setParameterCount(parameterCount);
+        return statementNode;
     }
 
     /**

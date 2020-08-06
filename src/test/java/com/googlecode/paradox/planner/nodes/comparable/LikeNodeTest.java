@@ -11,7 +11,6 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.parser.SQLParser;
-import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
@@ -19,7 +18,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Unit test for {@link LikeNode} class.
@@ -37,8 +35,7 @@ public class LikeNodeTest {
     @Test
     public void testNullAsValue() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A LIKE 't&%' escape '&'");
-        final List<StatementNode> list = parser.parse();
-        final SQLNode tree = list.get(0);
+        final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 

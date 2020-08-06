@@ -22,12 +22,11 @@ import com.googlecode.paradox.planner.nodes.join.ORNode;
 import org.junit.*;
 
 import java.sql.*;
-import java.util.List;
 
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.3
  */
 @SuppressWarnings({"java:S109", "java:S1192"})
@@ -106,9 +105,8 @@ public class SelectPlanTest {
      */
     @Test
     public void testInvalidColumnName() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select invalid from fields.date7")) {
-            Assert.assertThrows("Invalid column name", ParadoxException.class, stmt::executeQuery);
-        }
+            Assert.assertThrows("Invalid column name", ParadoxException.class,
+                    () -> this.conn.prepareStatement("select invalid from fields.date7"));
     }
 
     /**
@@ -120,10 +118,9 @@ public class SelectPlanTest {
     public void testSelectJoinOptimization() throws SQLException {
         final SQLParser parser = new SQLParser("select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c" +
                 " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
-        final List<StatementNode> list = parser.parse();
-        Assert.assertEquals("Invalid list size", 1, list.size());
+        final StatementNode tree = parser.parse();
 
-        final Plan plan = Planner.create(conn.getConnectionInfo(), list.get(0));
+        final Plan<?, ?> plan = Planner.create(conn.getConnectionInfo(), tree);
         Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;
@@ -148,10 +145,9 @@ public class SelectPlanTest {
         final SQLParser parser = new SQLParser(
                 "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         "where c.StateID = st.State and st.State = ac.State or c.CountyID = 201");
-        final List<StatementNode> list = parser.parse();
-        Assert.assertEquals("Invalid list size", 1, list.size());
+        final StatementNode tree = parser.parse();
 
-        final Plan plan = Planner.create(conn.getConnectionInfo(), list.get(0));
+        final Plan<?, ?> plan = Planner.create(conn.getConnectionInfo(), tree);
         Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;
@@ -175,10 +171,9 @@ public class SelectPlanTest {
         final SQLParser parser = new SQLParser(
                 "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         "where c.StateID = st.State and (st.State = ac.State or c.CountyID = 201)");
-        final List<StatementNode> list = parser.parse();
-        Assert.assertEquals("Invalid list size", 1, list.size());
+        final StatementNode tree = parser.parse();
 
-        final Plan plan = Planner.create(conn.getConnectionInfo(), list.get(0));
+        final Plan<?, ?> plan = Planner.create(conn.getConnectionInfo(), tree);
         Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;

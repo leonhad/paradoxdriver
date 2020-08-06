@@ -11,9 +11,6 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.exceptions.*;
-import com.googlecode.paradox.parser.SQLParser;
-import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
@@ -25,16 +22,14 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.sql.Date;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * {@link PreparedStatement} implementation class.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -61,8 +56,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
                              final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
         super(connection, resultSetType, resultSetConcurrency, resultSetHoldability);
 
-        final SQLParser parser = new SQLParser(sql);
-        statements.addAll(parser.parse());
+        this.statements.add(connection.createPlan(sql));
 
         if (statements.isEmpty()) {
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_SQL);
@@ -82,9 +76,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
     protected int[] executeStatements() throws SQLException {
         final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
-        for (final StatementNode statement : statements) {
-            final Plan<?, ?> plan = Planner.create(connectionInfo, statement);
-
+        for (final Plan<?, ?> plan : statements) {
             // One for parameters.
             for (int i = 0; i < executions.size(); i++) {
                 final Object[] params = executions.get(i);
@@ -468,16 +460,17 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     public void addBatch(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(sql);
-        final List<StatementNode> batchStatements = parser.parse();
-
-        for (final StatementNode statement : batchStatements) {
-            if (statement.getParameterCount() != currentParameterValues.length) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.INCONSISTENT_PARAMETER_LIST);
-            }
+        if (connection == null || connection.get() == null) {
+            throw new ParadoxConnectionException(ParadoxConnectionException.Error.NOT_CONNECTED);
         }
 
-        this.statements.addAll(batchStatements);
+        final Plan<?, ?> plan = Objects.requireNonNull(connection.get()).createPlan(sql);
+
+        if (plan.getParameterCount() != currentParameterValues.length) {
+            throw new ParadoxSyntaxErrorException(SyntaxError.INCONSISTENT_PARAMETER_LIST);
+        }
+
+        this.statements.add(plan);
     }
 
     @Override

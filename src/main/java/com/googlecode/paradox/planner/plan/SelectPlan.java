@@ -39,7 +39,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.15
+ * @version 1.16
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -81,6 +81,11 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     private AbstractConditionalNode condition;
 
     /**
+     * The statement parameters count.
+     */
+    private final int parameterCount;
+
+    /**
      * Creates a SELECT plan.
      *
      * @param connectionInfo the connection info.
@@ -90,6 +95,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     public SelectPlan(final ConnectionInfo connectionInfo, final SelectNode statement) throws SQLException {
         this.condition = statement.getCondition();
         this.distinct = statement.isDistinct();
+        this.parameterCount = statement.getParameterCount();
 
         // Load the table information.
         this.tables = statement.getTables().stream()
@@ -540,6 +546,11 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
      */
     public GroupByNode getGroupBy() {
         return groupBy;
+    }
+
+    @Override
+    public int getParameterCount() {
+        return this.parameterCount;
     }
 
     @Override

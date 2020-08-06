@@ -15,13 +15,18 @@ import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
+import com.googlecode.paradox.parser.SQLParser;
+import com.googlecode.paradox.planner.Planner;
+import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.rowset.ParadoxBlob;
 import com.googlecode.paradox.rowset.ParadoxClob;
 import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -29,7 +34,7 @@ import java.util.concurrent.Executor;
 /**
  * JDBC Paradox connection implementation.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ParadoxConnection implements Connection {
@@ -66,6 +71,11 @@ public final class ParadoxConnection implements Connection {
      * The connection property information.
      */
     private final ConnectionInfo connectionInfo;
+    /**
+     * Statement cache.
+     */
+    private final LinkedHashMap<String, SoftReference<Plan<?, ?>>> statementCache =
+            new LinkedHashMap<>(0x7f, 0.75f, true);
 
     /**
      * Creates a new paradox connection.
@@ -89,11 +99,26 @@ public final class ParadoxConnection implements Connection {
         this.connectionInfo.setCurrentCatalog(dir.getParentFile());
     }
 
+    Plan<?, ?> createPlan(final String sql) throws SQLException {
+        final SoftReference<Plan<?, ?>> cached = statementCache.get(sql);
+        Plan<?, ?> plan;
+        if (cached == null || cached.get() == null) {
+            final SQLParser parser = new SQLParser(sql);
+            plan = Planner.create(connectionInfo, parser.parse());
+            statementCache.put(sql, new SoftReference<>(plan));
+        } else {
+            plan = cached.get();
+        }
+
+        return plan;
+    }
+
     /**
      * {@inheritDoc}.
      */
     @Override
     public void abort(final Executor executor) throws SQLException {
+        // FIXME abort.
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 

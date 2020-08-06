@@ -11,9 +11,6 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.exceptions.*;
-import com.googlecode.paradox.parser.SQLParser;
-import com.googlecode.paradox.parser.nodes.StatementNode;
-import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.context.SelectContext;
 import com.googlecode.paradox.planner.plan.Plan;
@@ -27,11 +24,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * JDBC statement implementation.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")
@@ -40,7 +38,7 @@ class ParadoxStatement implements Statement {
     /**
      * Statement list.
      */
-    protected final List<StatementNode> statements = new ArrayList<>();
+    protected final List<Plan<?, ?>> statements = new ArrayList<>();
     /**
      * ResultSet list.
      */
@@ -64,7 +62,7 @@ class ParadoxStatement implements Statement {
     /**
      * The Paradox connection.
      */
-    private final WeakReference<ParadoxConnection> connection;
+    protected final WeakReference<ParadoxConnection> connection;
     /**
      * Auto generated keys.
      */
@@ -131,10 +129,7 @@ class ParadoxStatement implements Statement {
     protected int[] executeStatements() throws SQLException {
         final ArrayList<Integer> ret = new ArrayList<>();
         // One for statement.
-        for (final StatementNode statement : statements) {
-            // FIXME plan cache here
-            final Plan<?, ?> plan = Planner.create(connectionInfo, statement);
-
+        for (final Plan<?, ?> plan : statements) {
             try {
                 ret.addAll(executeStatement(plan, null, null));
             } catch (@SuppressWarnings("java:S1166") final InternalException e) {
@@ -178,8 +173,11 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public void addBatch(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(sql);
-        this.statements.addAll(parser.parse());
+        if (connection == null || connection.get() == null) {
+            throw new ParadoxConnectionException(ParadoxConnectionException.Error.NOT_CONNECTED);
+        }
+
+        this.statements.add(Objects.requireNonNull(connection.get()).createPlan(sql));
     }
 
     /**
@@ -237,8 +235,11 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public boolean execute(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(sql);
-        statements.addAll(parser.parse());
+        if (connection == null || connection.get() == null) {
+            throw new ParadoxConnectionException(ParadoxConnectionException.Error.NOT_CONNECTED);
+        }
+
+        this.statements.add(Objects.requireNonNull(connection.get()).createPlan(sql));
 
         executeStatements();
 
@@ -282,9 +283,11 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public ResultSet executeQuery(final String sql) throws SQLException {
-        final SQLParser parser = new SQLParser(sql);
+        if (connection == null || connection.get() == null) {
+            throw new ParadoxConnectionException(ParadoxConnectionException.Error.NOT_CONNECTED);
+        }
 
-        statements.addAll(parser.parse());
+        this.statements.add(Objects.requireNonNull(connection.get()).createPlan(sql));
 
         executeStatements();
 

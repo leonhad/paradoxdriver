@@ -42,4 +42,11 @@ public interface Plan<T, C extends Context> {
      * @param parameterTypes the parameter type list.
      */
     C createContext(final ConnectionInfo connectionInfo, final Object[] parameters, final ParadoxType[] parameterTypes);
+
+    /**
+     * Gets the parameters count.
+     *
+     * @return the parameters count.
+     */
+    int getParameterCount();
 }
