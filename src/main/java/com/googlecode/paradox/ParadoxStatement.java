@@ -32,7 +32,7 @@ import java.util.Objects;
  * @version 1.8
  * @since 1.0
  */
-@SuppressWarnings("java:S1448")
+@SuppressWarnings({"java:S1448", "java:S1200"})
 class ParadoxStatement implements Statement {
 
     /**
@@ -141,6 +141,7 @@ class ParadoxStatement implements Statement {
         return ret.stream().mapToInt(Integer::intValue).toArray();
     }
 
+    @SuppressWarnings("java:S2093")
     protected List<Integer> executeStatement(final Plan<?, ?> plan, final Object[] params, final ParadoxType[] types)
             throws SQLException {
         ArrayList<Integer> ret = new ArrayList<>();
