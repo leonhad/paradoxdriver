@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Unit test for {@link Planner}.
  *
- * @version 1.11
+ * @version 1.12
  * @since 1.1
  */
 @SuppressWarnings({"java:S2115", "java:S1192", "java:S109"})
@@ -445,7 +445,29 @@ public class PlannerTest {
      */
     @Test
     public void testBoolean() throws SQLException {
-        try (Statement stmt = this.conn.createStatement()) {
+        try (final Statement stmt = this.conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
+                Assert.assertTrue("Invalid result set", rs.next());
+                Assert.assertTrue("Invalid ResultSet value", rs.getBoolean("BOOL"));
+            }
+        }
+    }
+
+    /**
+     * Test the planer execution cache.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testPlannerCache() throws SQLException {
+        try (final Statement stmt = this.conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
+                Assert.assertTrue("Invalid result set", rs.next());
+                Assert.assertTrue("Invalid ResultSet value", rs.getBoolean("BOOL"));
+            }
+        }
+
+        try (final Statement stmt = this.conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
                 Assert.assertTrue("Invalid result set", rs.next());
                 Assert.assertTrue("Invalid ResultSet value", rs.getBoolean("BOOL"));
