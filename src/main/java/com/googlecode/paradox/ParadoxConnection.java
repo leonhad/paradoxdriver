@@ -25,10 +25,7 @@ import com.googlecode.paradox.utils.Utils;
 import java.io.File;
 import java.lang.ref.SoftReference;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 
 /**
@@ -74,8 +71,8 @@ public final class ParadoxConnection implements Connection {
     /**
      * Statement cache.
      */
-    private final LinkedHashMap<String, SoftReference<Plan<?, ?>>> statementCache =
-            new LinkedHashMap<>(0x7f, 0.75f, true);
+    private static final HashMap<String, LinkedHashMap<String, SoftReference<Plan<?, ?>>>> STATEMENT_CACHE =
+            new HashMap<>();
 
     /**
      * Creates a new paradox connection.
@@ -83,7 +80,7 @@ public final class ParadoxConnection implements Connection {
      * @param dir  database directory.
      * @param url  connect URL.
      * @param info the connection properties.
-     * @throws SQLException in any connection fault.
+     * @throws SQLException in case of any connection fault.
      */
     @SuppressWarnings("i18n-java:V1019")
     public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
@@ -99,13 +96,18 @@ public final class ParadoxConnection implements Connection {
         this.connectionInfo.setCurrentCatalog(dir.getParentFile());
     }
 
+    @SuppressWarnings("java:S1452")
     Plan<?, ?> createPlan(final String sql) throws SQLException {
-        final SoftReference<Plan<?, ?>> cached = statementCache.get(sql);
+        final LinkedHashMap<String, SoftReference<Plan<?, ?>>> cache = STATEMENT_CACHE.computeIfAbsent(
+                this.connectionInfo.getUrl(),
+                k -> new LinkedHashMap<>(0x7f, 0.75F, true));
+
+        final SoftReference<Plan<?, ?>> cached = cache.get(sql);
         Plan<?, ?> plan;
         if (cached == null || cached.get() == null) {
             final SQLParser parser = new SQLParser(sql);
             plan = Planner.create(connectionInfo, parser.parse());
-            statementCache.put(sql, new SoftReference<>(plan));
+            cache.put(sql, new SoftReference<>(plan));
         } else {
             plan = cached.get();
         }
