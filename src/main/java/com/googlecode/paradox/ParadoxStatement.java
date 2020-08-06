@@ -22,6 +22,7 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 
+import java.lang.ref.WeakReference;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -63,7 +64,7 @@ class ParadoxStatement implements Statement {
     /**
      * The Paradox connection.
      */
-    private final ParadoxConnection connection;
+    private final WeakReference<ParadoxConnection> connection;
     /**
      * Auto generated keys.
      */
@@ -119,7 +120,7 @@ class ParadoxStatement implements Statement {
      */
     ParadoxStatement(final ParadoxConnection connection, final int resultSetType, final int resultSetConcurrency,
                      final int resultSetHoldability) {
-        this.connection = connection;
+        this.connection = new WeakReference<>(connection);
         this.connectionInfo = connection.getConnectionInfo();
         this.resultSetType = resultSetType;
         this.resultSetConcurrency = resultSetConcurrency;
@@ -331,7 +332,7 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public Connection getConnection() {
-        return this.connection;
+        return this.connection.get();
     }
 
     @Override

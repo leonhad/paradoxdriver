@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -52,7 +53,7 @@ public final class ParadoxResultSet implements ResultSet {
     /**
      * This {@link ResultSet} {@link Statement}.
      */
-    private final Statement statement;
+    private final WeakReference<Statement> statement;
     /**
      * Facade to navigate in data values.
      */
@@ -84,7 +85,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     public ParadoxResultSet(final ConnectionInfo connectionInfo, final Statement statement,
                             final List<? extends Object[]> values, final List<Column> columns) {
-        this.statement = statement;
+        this.statement = new WeakReference<>(statement);
         this.columns = columns;
         this.connectionInfo = connectionInfo;
 
@@ -765,7 +766,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Statement getStatement() {
-        return this.statement;
+        return this.statement.get();
     }
 
     /**
