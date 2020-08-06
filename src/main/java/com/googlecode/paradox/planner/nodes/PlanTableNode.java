@@ -16,9 +16,10 @@ import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
+import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Stores the execution plan table node.
@@ -46,6 +47,10 @@ public final class PlanTableNode {
      * The table join filters.
      */
     private AbstractConditionalNode conditionalJoin;
+    /**
+     * Columns to load.
+     */
+    private final Set<Column> columns = new HashSet<>();
 
     /**
      * Creates a new instance.
@@ -96,6 +101,38 @@ public final class PlanTableNode {
         return Arrays.stream(table.getFields())
                 .filter(f -> f.getName().equalsIgnoreCase(field.getName()))
                 .findFirst().orElse(null);
+    }
+
+    /**
+     * Adds a column list to be loaded in this table.
+     *
+     * @param columns the columns to add.
+     */
+    public void addColumns(final Collection<Column> columns) {
+        columns.stream().filter(c -> c.isThis(this.table)).forEach(this.columns::add);
+    }
+
+    /**
+     * Loads the table data.
+     *
+     * @return the table data.
+     * @throws SQLException in case of failures.
+     */
+    public List<Object[]> load() throws SQLException {
+        if (this.columns.isEmpty()) {
+            return Arrays.asList(new Object[this.table.getRowCount()][0]);
+        }
+
+        return TableData.loadData(table, this.columns.stream().map(Column::getField).toArray(ParadoxField[]::new));
+    }
+
+    /**
+     * Gets the columns to load.
+     *
+     * @return the columns to load.
+     */
+    public Set<Column> getColumns() {
+        return columns;
     }
 
     /**

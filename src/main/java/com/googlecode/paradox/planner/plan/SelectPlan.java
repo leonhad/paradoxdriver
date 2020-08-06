@@ -109,6 +109,29 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         if (this.columns.isEmpty()) {
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST);
         }
+
+        // Check for columns to load.
+        for (final PlanTableNode table : this.tables) {
+            // Columns in SELECT clause.
+            table.addColumns(this.columns);
+
+            // Columns in SELECT functions.
+            table.addColumns(this.columnsFromFunctions);
+
+            // Columns in GROUP BY clause.
+            table.addColumns(this.groupBy.getColumns());
+
+            // Columns in ORDER BY clause.
+            table.addColumns(this.orderBy.getColumns());
+
+            // Fields from WHERE clause.
+            table.addColumns(SelectUtils.getConditionalFields(table, this.condition));
+
+            // Get fields from other tables join.
+            for (final PlanTableNode tableToField : this.tables) {
+                table.addColumns(SelectUtils.getConditionalFields(table, tableToField.getConditionalJoin()));
+            }
+        }
     }
 
     @Override
@@ -321,40 +344,9 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             PlanTableNode table = this.tables.get(tableIndex);
             context.checkCancelState();
 
-            // Columns in SELECT clause.
-            final Set<Column> tableColumns = this.columns.stream()
-                    .filter(c -> c.isThis(table.getTable()))
-                    .collect(Collectors.toSet());
+            final List<Object[]> tableData = table.load();
+            columnsLoaded.addAll(table.getColumns());
 
-            // Columns in SELECT functions.
-            tableColumns.addAll(this.columnsFromFunctions.stream()
-                    .filter(c -> c.isThis(table.getTable()))
-                    .collect(Collectors.toSet()));
-
-            // Columns in GROUP BY clause.
-            tableColumns.addAll(this.groupBy.getColumns(table.getTable()));
-
-            // Columns in ORDER BY clause.
-            tableColumns.addAll(this.orderBy.getColumns(table.getTable()));
-
-            // Fields from WHERE clause.
-            tableColumns.addAll(SelectUtils.getConditionalFields(table, this.condition));
-
-            // Get fields from other tables join.
-            for (final PlanTableNode tableToField : this.tables) {
-                tableColumns.addAll(SelectUtils.getConditionalFields(table, tableToField.getConditionalJoin()));
-            }
-
-            // If there is a column to load.
-            if (tableColumns.isEmpty()) {
-                // Force the table loading (used in joins).
-                tableColumns.add(new Column(table.getTable().getFields()[0]));
-            }
-
-            columnsLoaded.addAll(tableColumns);
-
-            final List<Object[]> tableData = TableData.loadData(table.getTable(),
-                    tableColumns.stream().map(Column::getField).toArray(ParadoxField[]::new));
             if (table.getConditionalJoin() != null) {
                 table.getConditionalJoin().setFieldIndexes(columnsLoaded, this.tables);
             }
@@ -380,7 +372,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             }
         }
 
-        // Stop here if there is no value to process.
+        // There is a table in FROM clause?
         if (tables.isEmpty()) {
             final Object[] row = new Object[this.columns.size()];
             for (int i = 0; i < row.length; i++) {
