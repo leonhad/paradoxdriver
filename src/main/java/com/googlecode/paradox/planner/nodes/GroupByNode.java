@@ -172,9 +172,9 @@ public class GroupByNode {
         }
 
         // Is not possible to group in parallel.
-        return stream
+        return stream.sequential()
                 .filter(FunctionalUtils.groupingByKeys(functionColumns, groupColumns))
-                .collect(Collectors.toList()).stream().filter(context.getCancelPredicate())
+                .collect(Collectors.toList()).parallelStream().filter(context.getCancelPredicate())
                 .map(functionWrapper(FunctionalUtils.removeGrouping(context, functionColumns, columns)));
     }
 

@@ -481,7 +481,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     private List<Object[]> filter(final SelectContext context, final List<Object[]> rowValues, final int[] mapColumns,
                                   final List<Column> columnsLoaded) {
 
-        Stream<Object[]> stream = rowValues.stream()
+        Stream<Object[]> stream = rowValues.parallelStream()
                 .filter(context.getCancelPredicate());
 
         if (condition != null) {
@@ -502,7 +502,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
         // Distinct
         if (distinct) {
-            stream = stream.filter(FunctionalUtils.distinctByKey());
+            stream = stream.sequential().filter(FunctionalUtils.distinctByKey());
         }
 
         if (context.getMaxRows() != 0) {
