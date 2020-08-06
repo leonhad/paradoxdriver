@@ -332,7 +332,11 @@ class ParadoxStatement implements Statement {
      */
     @Override
     public Connection getConnection() {
-        return this.connection.get();
+        if (connection != null) {
+            return this.connection.get();
+        }
+
+        return null;
     }
 
     @Override

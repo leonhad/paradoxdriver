@@ -766,7 +766,11 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Statement getStatement() {
-        return this.statement.get();
+        if (statement != null) {
+            return this.statement.get();
+        }
+
+        return null;
     }
 
     /**
