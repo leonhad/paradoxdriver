@@ -15,11 +15,30 @@ import com.googlecode.paradox.rowset.ValuesComparator;
 import java.io.Serializable;
 import java.util.Comparator;
 
+/**
+ * Comparator for order by.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public class OrderByComparator implements Comparator<Object[]>, Serializable {
+
+    /**
+     * Row index.
+     */
     private final int index;
 
+    /**
+     * Order by (ASC or DESC).
+     */
     private final OrderType orderType;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param index     the row index.
+     * @param orderType the order by type.
+     */
     public OrderByComparator(final int index, final OrderType orderType) {
         this.index = index;
         this.orderType = orderType;
