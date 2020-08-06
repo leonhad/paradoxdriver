@@ -39,7 +39,7 @@ public final class ParadoxConnection implements Connection {
     /**
      * Stores the opened statements.
      */
-    private final ArrayList<Statement> statements = new ArrayList<>();
+    private final List<ParadoxStatement> statements = new ArrayList<>();
     /**
      * Auto Commit flag.
      */
@@ -119,9 +119,31 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public void abort(final Executor executor) throws SQLException {
-        // FIXME abort.
-        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
+    public void abort(final Executor executor) {
+        executor.execute(this::abort);
+    }
+
+    /**
+     * Abort the execution.
+     */
+    @SuppressWarnings("java:S1166")
+    private void abort() {
+        for (final ParadoxStatement stmt : statements) {
+            try {
+                stmt.cancel();
+            } catch (final SQLException e) {
+                // Do nothing.
+            }
+
+            try {
+                stmt.close();
+            } catch (final SQLException e) {
+                // Do nothing.
+            }
+        }
+
+        statements.clear();
+        closed = true;
     }
 
     /**
@@ -214,7 +236,7 @@ public final class ParadoxConnection implements Connection {
     @Override
     public Statement createStatement(final int resultSetType, final int resultSetConcurrency,
                                      final int resultSetHoldability) {
-        final Statement stmt = new ParadoxStatement(this, resultSetType, resultSetConcurrency,
+        final ParadoxStatement stmt = new ParadoxStatement(this, resultSetType, resultSetConcurrency,
                 resultSetHoldability);
         this.statements.add(stmt);
         return stmt;
