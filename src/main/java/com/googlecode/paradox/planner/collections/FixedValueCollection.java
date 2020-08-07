@@ -20,6 +20,8 @@ import java.util.NoSuchElementException;
  * A collection with fixed values.
  *
  * @param <T> the collection type.
+ * @version 1.0
+ * @since 1.6.0
  */
 public class FixedValueCollection<T> implements Collection<T> {
 
