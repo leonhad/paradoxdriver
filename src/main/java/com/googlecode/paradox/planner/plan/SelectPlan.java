@@ -11,7 +11,6 @@
 package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
@@ -338,13 +337,13 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         }
 
         final List<Column> columnsLoaded = new ArrayList<>();
-        final List<Object[]> rawData = new ArrayList<>(0xFF);
+        Collection<Object[]> rawData = Collections.emptyList();
 
         for (int tableIndex = 0; tableIndex < this.tables.size(); tableIndex++) {
             PlanTableNode table = this.tables.get(tableIndex);
             context.checkCancelState();
 
-            final List<Object[]> tableData = table.load();
+            final Collection<Object[]> tableData = table.load();
             columnsLoaded.addAll(table.getColumns());
 
             if (table.getConditionalJoin() != null) {
@@ -354,21 +353,18 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             // First table?
             if (tableIndex == 0) {
                 if (table.getConditionalJoin() != null) {
-                    rawData.addAll(tableData.stream()
+                    rawData = tableData.stream()
                             .filter(context.getCancelPredicate())
                             .filter(predicateWrapper(tableRow ->
                                     table.getConditionalJoin().evaluate(context, tableRow, columnsLoaded)))
-                            .collect(Collectors.toList()));
+                            .collect(Collectors.toList());
                 } else {
                     // No conditions to process. Just use it.
-                    rawData.addAll(tableData);
+                    rawData = tableData;
                 }
             } else {
-                final List<Object[]> ret = TableJoiner.processJoinByType(context, columnsLoaded, rawData, table,
+                rawData = TableJoiner.processJoinByType(context, columnsLoaded, rawData, table,
                         tableData);
-
-                rawData.clear();
-                rawData.addAll(ret);
             }
         }
 
@@ -380,7 +376,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
                 row[i] = this.columns.get(i).getValue();
             }
 
-            rawData.add(row);
+            rawData= Collections.singleton(row);
         } else if (rawData.isEmpty()) {
             // No result to process, just return.
             return Collections.emptyList();
@@ -470,8 +466,8 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         return finalRow;
     }
 
-    private List<Object[]> filter(final SelectContext context, final List<Object[]> rowValues, final int[] mapColumns,
-                                  final List<Column> columnsLoaded) {
+    private List<Object[]> filter(final SelectContext context, final Collection<Object[]> rowValues,
+                                  final int[] mapColumns, final List<Column> columnsLoaded) {
 
         Stream<Object[]> stream = rowValues.parallelStream()
                 .filter(context.getCancelPredicate());

@@ -16,6 +16,7 @@ import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.*;
+import com.googlecode.paradox.planner.collections.FixedValueCollection;
 import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
@@ -118,9 +119,10 @@ public final class PlanTableNode {
      * @return the table data.
      * @throws SQLException in case of failures.
      */
-    public List<Object[]> load() throws SQLException {
+    public Collection<Object[]> load() throws SQLException {
         if (this.columns.isEmpty()) {
-            return Arrays.asList(new Object[this.table.getRowCount()][0]);
+            return new FixedValueCollection<>(this.table.getRowCount(), new Object[0]);
+            //return Arrays.asList(new Object[this.table.getRowCount()][0]);
         }
 
         return TableData.loadData(table, this.columns.stream().map(Column::getField).toArray(ParadoxField[]::new));
@@ -193,6 +195,11 @@ public final class PlanTableNode {
         return conditionalJoin;
     }
 
+    /**
+     * Sets the table conditional join.
+     *
+     * @param conditionalJoin the table conditional join
+     */
     public void setConditionalJoin(AbstractConditionalNode conditionalJoin) {
         this.conditionalJoin = conditionalJoin;
     }

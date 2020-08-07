@@ -36,7 +36,6 @@ public class SelectPlanTest {
      * The connection string used in this tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
-    private static final String AREA_CODES = "areacodes";
 
     /**
      * The database connection.
@@ -100,11 +99,9 @@ public class SelectPlanTest {
 
     /**
      * Test for invalid column name.
-     *
-     * @throws SQLException in case of failures.
      */
     @Test
-    public void testInvalidColumnName() throws SQLException {
+    public void testInvalidColumnName() {
             Assert.assertThrows("Invalid column name", ParadoxException.class,
                     () -> this.conn.prepareStatement("select invalid from fields.date7"));
     }

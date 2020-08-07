@@ -71,28 +71,6 @@ public final class ValuesComparator {
             }
         }
 
-        // Try to compare with Integer values.
-        if (o1 instanceof Integer || o2 instanceof Integer) {
-            try {
-                final Integer n1 = ValuesConverter.getInteger(o1);
-                final Integer n2 = ValuesConverter.getInteger(o2);
-                return n1.equals(n2);
-            } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
-            }
-        }
-
-        // Try to compare with Long values.
-        if (o1 instanceof Long || o2 instanceof Long) {
-            try {
-                final Long n1 = ValuesConverter.getLong(o1);
-                final Long n2 = ValuesConverter.getLong(o2);
-                return n1.equals(n2);
-            } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
-            }
-        }
-
         // Try to compare with Double values.
         if (o1 instanceof Double || o2 instanceof Double) {
             try {
@@ -112,6 +90,28 @@ public final class ValuesComparator {
 
                 n1 = n1.setScale(Math.max(n1.scale(), n2.scale()), RoundingMode.UNNECESSARY);
                 n2 = n2.setScale(Math.max(n1.scale(), n2.scale()), RoundingMode.UNNECESSARY);
+                return n1.equals(n2);
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
+        }
+
+        // Try to compare with Integer values.
+        if (o1 instanceof Integer || o2 instanceof Integer) {
+            try {
+                final Integer n1 = ValuesConverter.getInteger(o1);
+                final Integer n2 = ValuesConverter.getInteger(o2);
+                return n1.equals(n2);
+            } catch (final NumberFormatException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+            }
+        }
+
+        // Try to compare with Long values.
+        if (o1 instanceof Long || o2 instanceof Long) {
+            try {
+                final Long n1 = ValuesConverter.getLong(o1);
+                final Long n2 = ValuesConverter.getLong(o2);
                 return n1.equals(n2);
             } catch (final NumberFormatException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);

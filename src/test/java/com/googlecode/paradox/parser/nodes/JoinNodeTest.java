@@ -12,10 +12,7 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;

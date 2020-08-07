@@ -33,8 +33,8 @@ final class TableJoiner {
     }
 
     public static List<Object[]> processJoinByType(final Context context, final List<Column> columnsLoaded,
-                                                   final List<Object[]> rawData, final PlanTableNode table,
-                                                   final List<Object[]> tableData) throws SQLException {
+                                                   final Collection<Object[]> rawData, final PlanTableNode table,
+                                                   final Collection<Object[]> tableData) throws SQLException {
         List<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
@@ -56,8 +56,8 @@ final class TableJoiner {
     }
 
     private static List<Object[]> processLeftJoin(final Context context, final List<Column> columnsLoaded,
-                                                  final List<Object[]> rawData, final PlanTableNode table,
-                                                  final List<Object[]> tableData) throws SQLException {
+                                                  final Collection<Object[]> rawData, final PlanTableNode table,
+                                                  final Collection<Object[]> tableData) throws SQLException {
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(0x7F);
 
@@ -89,8 +89,8 @@ final class TableJoiner {
     }
 
     private static List<Object[]> processRightJoin(final Context context, final List<Column> columnsLoaded,
-                                                   final List<Object[]> rawData, final PlanTableNode table,
-                                                   final List<Object[]> tableData) throws SQLException {
+                                                   final Collection<Object[]> rawData, final PlanTableNode table,
+                                                   final Collection<Object[]> tableData) throws SQLException {
 
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(0x7F);
@@ -123,8 +123,8 @@ final class TableJoiner {
     }
 
     private static List<Object[]> processFullJoin(final Context context, final List<Column> columnsLoaded,
-                                                  final List<Object[]> rawData, final PlanTableNode table,
-                                                  final List<Object[]> tableData) throws SQLException {
+                                                  final Collection<Object[]> rawData, final PlanTableNode table,
+                                                  final Collection<Object[]> tableData) throws SQLException {
 
         final Object[] column = new Object[columnsLoaded.size()];
         final List<Object[]> localValues = new ArrayList<>(0x7F);
@@ -134,10 +134,11 @@ final class TableJoiner {
             System.arraycopy(cols, 0, column, 0, cols.length);
 
             boolean changed = false;
-            for (int i = 0; i < tableData.size(); i++) {
+            int i = -1;
+            for (final Object[] newCols : tableData) {
                 context.checkCancelState();
+                i++;
 
-                final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, cols.length, newCols.length);
 
                 if (table.getConditionalJoin() != null && !table.getConditionalJoin()
@@ -158,22 +159,24 @@ final class TableJoiner {
 
         // Itens not used in left join.
         Arrays.fill(column, 0, column.length, null);
-        for (int i = 0; i < tableData.size(); i++) {
+        int i = 0;
+        for (final Object[] newCols : tableData) {
             context.checkCancelState();
 
             if (!inLeft.contains(i)) {
-                final Object[] newCols = tableData.get(i);
                 System.arraycopy(newCols, 0, column, column.length - newCols.length, newCols.length);
                 localValues.add(column.clone());
             }
+
+            i++;
         }
 
         return localValues;
     }
 
     private static List<Object[]> processInnerJoin(final Context context, final List<Column> columnsLoaded,
-                                                   final List<Object[]> rawData, final PlanTableNode table,
-                                                   final List<Object[]> tableData) throws SQLException {
+                                                   final Collection<Object[]> rawData, final PlanTableNode table,
+                                                   final Collection<Object[]> tableData) throws SQLException {
 
         final Object[] column = new Object[columnsLoaded.size()];
 
