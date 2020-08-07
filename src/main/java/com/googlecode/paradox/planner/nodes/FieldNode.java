@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 
@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Stores the field values.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public class FieldNode extends SQLNode {
@@ -39,7 +39,7 @@ public class FieldNode extends SQLNode {
     /**
      * The table associated to this field.
      */
-    private ParadoxTable table;
+    private Table table;
 
     /**
      * Stores field values (from select statements).
@@ -95,11 +95,11 @@ public class FieldNode extends SQLNode {
         this.index = index;
     }
 
-    public ParadoxTable getTable() {
+    public Table getTable() {
         return table;
     }
 
-    public void setTable(ParadoxTable table) {
+    public void setTable(final Table table) {
         this.table = table;
     }
 

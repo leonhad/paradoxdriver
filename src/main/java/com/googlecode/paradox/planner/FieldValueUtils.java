@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.context.Context;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Field processing utilities.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.6.0
  */
 public final class FieldValueUtils {
@@ -99,7 +99,7 @@ public final class FieldValueUtils {
 
         final String tableName = tables.stream()
                 .filter(t -> t.getAlias().equalsIgnoreCase(field.getTableName()))
-                .map(PlanTableNode::getTable).map(ParadoxTable::getName)
+                .map(PlanTableNode::getTable).map(Table::getName)
                 .findFirst().orElse(field.getTableName());
 
         int index = -1;

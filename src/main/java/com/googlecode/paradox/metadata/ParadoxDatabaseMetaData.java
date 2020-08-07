@@ -14,12 +14,12 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.data.IndexData;
-import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.FunctionType;
+import com.googlecode.paradox.metadata.paradox.ParadoxIndex;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
@@ -140,8 +140,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     private static void getPrimaryKeyIndex(final String catalog, final List<Object[]> values, final File currentSchema,
-                                           final ParadoxTable table) {
-        for (final ParadoxField pk : table.getPrimaryKeys()) {
+                                           final Table table) {
+        for (final Field pk : table.getPrimaryKeys()) {
             final Object[] row = new Object[]{
                     catalog,
                     currentSchema.getName(),
@@ -586,9 +586,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<Object[]> values = new ArrayList<>();
 
         for (final File currentSchema : this.connectionInfo.getSchemaFiles(catalog, schemaPattern)) {
-            final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableNamePattern,
-                    this.connectionInfo);
-            for (final ParadoxTable table : tables) {
+            final List<Table> tables = TableFactory.listTables(currentSchema, tableNamePattern, this.connectionInfo);
+            for (final Table table : tables) {
                 this.fieldMetadata(connectionInfo.getCatalog(), currentSchema.getName(), columnNamePattern, values,
                         table.getName(), table.getFields());
             }
@@ -626,7 +625,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         final List<Object[]> values = new ArrayList<>();
         for (final File currentSchema : this.connectionInfo.getSchemaFiles(catalog, schema)) {
-            for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern,
+            for (final Table table : TableFactory.listTables(currentSchema, tableNamePattern,
                     this.connectionInfo)) {
                 getPrimaryKeyIndex(catalog, values, currentSchema, table);
                 getSecondaryIndexInfo(catalog, table, values, currentSchema);
@@ -638,11 +637,11 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
 
-    private void getSecondaryIndexInfo(final String catalog, final ParadoxTable table, final List<Object[]> values,
+    private void getSecondaryIndexInfo(final String catalog, final Table table, final List<Object[]> values,
                                        final File currentSchema) throws SQLException {
         for (final ParadoxIndex index : IndexData.listIndexes(currentSchema, table.getName(), this.connectionInfo)) {
             for (int loop = 0; loop < index.getFieldCount() - index.getPrimaryFieldCount(); loop++) {
-                final ParadoxField field = index.getFields()[0];
+                final Field field = index.getFields()[0];
                 final Object[] row = new Object[]{
                         catalog,
                         currentSchema.getName(),
@@ -865,9 +864,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<Object[]> values = new ArrayList<>();
 
         for (final File currentSchema : this.connectionInfo.getSchemaFiles(catalog, schema)) {
-            for (final ParadoxTable table : TableData.listTables(currentSchema, tableNamePattern,
-                    this.connectionInfo)) {
-                for (final ParadoxField pk : table.getPrimaryKeys()) {
+            for (final Table table : TableFactory.listTables(currentSchema, tableNamePattern, this.connectionInfo)) {
+                for (final Field pk : table.getPrimaryKeys()) {
                     final Object[] row = {
                             connectionInfo.getCatalog(),
                             currentSchema.getName(),
@@ -1934,9 +1932,9 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
      * @param fields            the field list.
      */
     private void fieldMetadata(final String catalog, final String schema, final String columnNamePattern,
-                               final List<Object[]> values, final String tableName, final ParadoxField[] fields) {
+                               final List<Object[]> values, final String tableName, final Field[] fields) {
         int ordinal = 1;
-        for (final ParadoxField field : fields) {
+        for (final Field field : fields) {
             if ((columnNamePattern != null) && !Expressions.accept(connectionInfo.getLocale(), field.getName(),
                     columnNamePattern,
                     false, Constants.ESCAPE_CHAR)) {
@@ -2023,7 +2021,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     private void formatTable(final String catalog, final String schemaPattern, final String tableNamePattern,
                              final List<Object[]> values) throws SQLException {
         for (final File schema : this.connectionInfo.getSchemaFiles(catalog, schemaPattern)) {
-            for (final ParadoxTable table : TableData.listTables(schema, tableNamePattern, this.connectionInfo)) {
+            for (final Table table : TableFactory.listTables(schema, tableNamePattern, this.connectionInfo)) {
                 values.add(formatRow(table.getName(), TABLE, catalog, schema.getName()));
             }
         }

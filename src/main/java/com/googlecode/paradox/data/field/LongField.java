@@ -11,8 +11,8 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 /**
  * Parses long fields.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.3
  */
 public final class LongField implements FieldParser {
@@ -34,11 +34,10 @@ public final class LongField implements FieldParser {
     }
 
     /**
-     * Longs (4 bytes) fields are stored as two's complement with the high bit
-     * inverted.
+     * Longs (4 bytes) fields are stored as two's complement with the high bit inverted.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final long l = buffer.getInt() ^ 0x8000_0000;
         if (l == 0x8000_0000) {
             return null;

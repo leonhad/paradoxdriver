@@ -10,8 +10,8 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import java.sql.SQLException;
 /**
  * Parses a database field.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.3
  */
 public interface FieldParser {
@@ -36,12 +36,11 @@ public interface FieldParser {
     /**
      * Parses the field.
      *
-     * @param table  the paradox tables.
+     * @param table  the table.
      * @param buffer the buffer to read of.
-     * @param field  the paradox field.
+     * @param field  the  field.
      * @return the parsed value.
      * @throws SQLException in case of parse errors.
      */
-    Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
-            throws SQLException;
+    Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) throws SQLException;
 }

@@ -11,7 +11,7 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 

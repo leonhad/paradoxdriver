@@ -13,8 +13,10 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
@@ -31,7 +33,7 @@ import java.util.*;
 /**
  * Utility class for loading table files.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -51,8 +53,8 @@ public final class TableData extends ParadoxData {
      * @return all {@link ParadoxTable}.
      * @throws SQLException in case of failures.
      */
-    public static List<ParadoxTable> listTables(final String schema, final ConnectionInfo connectionInfo) throws
-            SQLException {
+    public static List<ParadoxTable> listTables(final String schema, final ConnectionInfo connectionInfo)
+            throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<>();
         final File currentSchema = new File(connectionInfo.getCurrentSchema().getParent(), schema);
 
@@ -75,9 +77,9 @@ public final class TableData extends ParadoxData {
      * @return the tables filtered.
      * @throws SQLException in case of failures.
      */
-    public static List<ParadoxTable> listTables(final File schema, final String pattern,
-                                                final ConnectionInfo connectionInfo) throws SQLException {
-        final List<ParadoxTable> tables = new ArrayList<>();
+    public static List<Table> listTables(final File schema, final String pattern,
+                                         final ConnectionInfo connectionInfo) throws SQLException {
+        final List<Table> tables = new ArrayList<>();
         final File[] fileList = schema.listFiles
                 (new TableFilter(connectionInfo.getLocale(), Utils.removeSuffix(pattern, "DB")));
 
@@ -88,6 +90,7 @@ public final class TableData extends ParadoxData {
                 tables.add(table);
             }
         }
+
         return tables;
     }
 
@@ -99,7 +102,7 @@ public final class TableData extends ParadoxData {
      * @return the row values.
      * @throws SQLException in case of failures.
      */
-    public static List<Object[]> loadData(final ParadoxTable table, final ParadoxField[] fields)
+    public static List<Object[]> loadData(final ParadoxTable table, final Field[] fields)
             throws SQLException {
 
         final int blockSize = table.getBlockSizeBytes();
@@ -313,15 +316,15 @@ public final class TableData extends ParadoxData {
      * @return the row.
      * @throws SQLException in case of parse errors.
      */
-    private static Object[] readRow(final ParadoxTable table, final ParadoxField[] fields,
-                                    final ByteBuffer buffer) throws SQLException {
+    private static Object[] readRow(final ParadoxTable table, final Field[] fields, final ByteBuffer buffer)
+            throws SQLException {
         final Object[] row = new Object[fields.length];
 
-        for (final ParadoxField field : table.getFields()) {
+        for (final Field field : table.getFields()) {
             // Field filter
             final int index = search(fields, field);
             if (index != -1) {
-                row[index] = FieldFactory.parse(table, buffer, field);
+                row[index] = ParadoxFieldFactory.parse(table, buffer, field);
             } else {
                 buffer.position(buffer.position() + field.getSize());
             }
@@ -330,7 +333,7 @@ public final class TableData extends ParadoxData {
         return row;
     }
 
-    private static int search(final Object[] values, Object find) {
+    private static int search(final Field[] values, Object find) {
         for (int i = 0; i < values.length; i++) {
             if (Objects.equals(values[i], find)) {
                 return i;

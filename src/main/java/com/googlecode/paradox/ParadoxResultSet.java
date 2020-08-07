@@ -12,7 +12,7 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.metadata.ParadoxResultSetMetaData;
+import com.googlecode.paradox.metadata.paradox.ParadoxResultSetMetaData;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.DataNavigation;
 import com.googlecode.paradox.rowset.ParadoxBlob;

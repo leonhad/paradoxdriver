@@ -11,10 +11,11 @@
 package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.TableFactory;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.collections.FixedValueCollection;
 import com.googlecode.paradox.results.Column;
@@ -28,7 +29,7 @@ import java.util.Set;
 /**
  * Stores the execution plan table node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.1
  */
 public final class PlanTableNode {
@@ -41,7 +42,7 @@ public final class PlanTableNode {
     /**
      * The plan table.
      */
-    private ParadoxTable table;
+    private final Table table;
 
     /**
      * The table join type.
@@ -71,13 +72,7 @@ public final class PlanTableNode {
         }
 
         final String tableName = table.getName();
-        for (final ParadoxTable paradoxTable : TableData.listTables(schemaName, connectionInfo)) {
-            if (schemaName.equalsIgnoreCase(paradoxTable.getSchemaName())
-                    && tableName.equalsIgnoreCase(paradoxTable.getName())) {
-                this.table = paradoxTable;
-                break;
-            }
-        }
+        this.table = TableFactory.findTable(connectionInfo.getCatalog(), schemaName, tableName, connectionInfo);
 
         if (this.table == null) {
             throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, table.getPosition(), tableName);
@@ -101,7 +96,7 @@ public final class PlanTableNode {
      * @param field the table field.
      * @return the table field or <code>null</code> if not found.
      */
-    public ParadoxField findField(final SQLNode field) {
+    public Field findField(final SQLNode field) {
         return Arrays.stream(table.getFields())
                 .filter(f -> f.getName().equalsIgnoreCase(field.getName()))
                 .findFirst().orElse(null);
@@ -127,7 +122,7 @@ public final class PlanTableNode {
             return new FixedValueCollection<>(this.table.getRowCount(), new Object[0]);
         }
 
-        return TableData.loadData(table, this.columns.stream().map(Column::getField).toArray(ParadoxField[]::new));
+        return table.load(this.columns.stream().map(Column::getField).toArray(Field[]::new));
     }
 
     /**
@@ -162,7 +157,7 @@ public final class PlanTableNode {
      *
      * @return the table plan.
      */
-    public ParadoxTable getTable() {
+    public Table getTable() {
         return this.table;
     }
 

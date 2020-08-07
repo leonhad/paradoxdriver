@@ -12,7 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.TestUtil;
 import org.junit.AfterClass;
@@ -24,7 +24,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * Unit test for {@link FieldFactory} class.
+ * Unit test for {@link ParadoxFieldFactory} class.
  *
  * @version 1.3
  * @since 1.3
@@ -62,7 +62,7 @@ public class FieldFactoryTest {
      */
     @Test
     public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(FieldFactory.class));
+        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(ParadoxFieldFactory.class));
     }
 
     /**
@@ -73,6 +73,6 @@ public class FieldFactoryTest {
     @Test(expected = SQLException.class)
     public void testUnsupportedType() throws SQLException {
         final ParadoxField field = new ParadoxField(ParadoxType.NULL);
-        FieldFactory.parse(null, null, field);
+        ParadoxFieldFactory.parse(null, null, field);
     }
 }

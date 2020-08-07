@@ -13,8 +13,9 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.data.EncryptedData;
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.io.FileInputStream;
@@ -28,7 +29,7 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
@@ -101,8 +102,9 @@ public abstract class AbstractLobField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field)
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field originalField)
             throws SQLException {
+        final ParadoxField field = (ParadoxField) originalField;
         final ByteBuffer value = ByteBuffer.allocate(field.getRealSize());
 
         System.arraycopy(buffer.array(), buffer.position(), value.array(), 0, field.getRealSize());

@@ -11,8 +11,8 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 /**
  * Parses integer fields.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.3
  */
 public final class IntegerField implements FieldParser {
@@ -42,7 +42,7 @@ public final class IntegerField implements FieldParser {
      * inverted.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final int v = (short) (buffer.getShort() ^ 0x8000);
 
         if (v == NULL_VALUE) {

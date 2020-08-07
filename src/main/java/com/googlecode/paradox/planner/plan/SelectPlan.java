@@ -15,8 +15,8 @@ import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.FieldValueUtils;
 import com.googlecode.paradox.planner.context.SelectContext;
@@ -193,7 +193,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     private List<Column> parseAsterisk(final AsteriskNode field) throws SQLException {
         if (field.getTableName() != null) {
             // Add all columns from one table.
-            final List<ParadoxTable> tablesFound = this.tables.stream()
+            final List<Table> tablesFound = this.tables.stream()
                     .filter(t -> t.isThis(field.getTableName()))
                     .map(PlanTableNode::getTable).collect(Collectors.toList());
 
@@ -210,14 +210,14 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             // Add all fields from all tables.
             return this.tables.stream()
                     .map(PlanTableNode::getTable)
-                    .map(ParadoxTable::getFields)
+                    .map(Table::getFields)
                     .flatMap(Arrays::stream)
                     .map(Column::new)
                     .collect(Collectors.toList());
         }
     }
 
-    private int getTableIndex(final ParadoxTable table) {
+    private int getTableIndex(final Table table) {
         int index = -1;
         for (int i = 0; i < this.tables.size(); i++) {
             if (this.tables.get(i).getTable().equals(table)) {
@@ -229,7 +229,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         return index;
     }
 
-    private PlanTableNode getPlanTable(final ParadoxTable table) {
+    private PlanTableNode getPlanTable(final Table table) {
         return tables.stream().filter(t -> table.equals(t.getTable())).findFirst().orElse(null);
     }
 
@@ -276,7 +276,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             ret = node.getClauseFields().isEmpty();
         } else if (node != null && !(node instanceof ORNode)) {
             // Don't process OR nodes.
-            final List<ParadoxField> conditionalFields = new ArrayList<>();
+            final List<Field> conditionalFields = new ArrayList<>();
 
             final Set<FieldNode> fields = node.getClauseFields();
             fields.forEach((FieldNode fn) -> {
@@ -292,7 +292,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             if (conditionalFields.size() == 1) {
                 // FIELD = VALUE
 
-                final ParadoxTable paradoxTable = conditionalFields.get(0).getTable();
+                final Table paradoxTable = conditionalFields.get(0).getTable();
                 final PlanTableNode planTableNode = getPlanTable(paradoxTable);
 
                 if (planTableNode != null && (planTableNode.getJoinType() == JoinType.CROSS
@@ -303,8 +303,8 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
                 }
             } else if (conditionalFields.size() > 1) {
                 // FIELD = FIELD
-                final ParadoxTable paradoxTable1 = conditionalFields.get(0).getTable();
-                final ParadoxTable paradoxTable2 = conditionalFields.get(1).getTable();
+                final Table paradoxTable1 = conditionalFields.get(0).getTable();
+                final Table paradoxTable2 = conditionalFields.get(1).getTable();
 
                 final int index1 = getTableIndex(paradoxTable1);
                 final int index2 = getTableIndex(paradoxTable2);
@@ -412,9 +412,18 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     private boolean canDoFastCount() {
         // If only count function in columns and conditions is processed by tables (condition is null).
         // Group by is not allowed too (no columns set).
-        return condition == null && this.groupBy.getColumns().isEmpty()
-                && this.columns.size() == 1 && this.columns.get(0).getFunction() != null
-                && this.columns.get(0).getFunction().isCount();
+        if (!this.groupBy.getColumns().isEmpty() || this.columns.size() != 1) {
+            return false;
+        }
+
+        final Column column = this.columns.get(0);
+        if (column.getFunction() == null || !column.getFunction().isCount()) {
+            return false;
+        }
+
+        final Set<FieldNode> fields = column.getFunction().getClauseFields();
+        final FieldNode field = fields.iterator().next();
+        return (field instanceof AsteriskNode || field instanceof ValueNode) && !"null".equals(field.getName());
     }
 
     private void processIndexes(final List<Column> columns) throws SQLException {

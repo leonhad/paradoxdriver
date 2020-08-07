@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.data;
 
-import com.googlecode.paradox.metadata.ParadoxDataFile;
+import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;

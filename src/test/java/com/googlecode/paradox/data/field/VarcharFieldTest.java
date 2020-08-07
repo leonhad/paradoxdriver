@@ -10,8 +10,8 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;

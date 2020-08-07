@@ -11,8 +11,8 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 /**
  * Parses a VARCHAR field.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.3
  */
 public final class BytesField implements FieldParser {
@@ -37,7 +37,7 @@ public final class BytesField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final ByteBuffer bytes = ByteBuffer.allocate(field.getSize());
 
         // Track for NULL values.
@@ -57,5 +57,4 @@ public final class BytesField implements FieldParser {
 
         return bytes.array();
     }
-
 }

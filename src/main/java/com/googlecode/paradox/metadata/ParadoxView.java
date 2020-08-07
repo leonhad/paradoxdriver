@@ -11,8 +11,11 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 
 import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Stores the paradox view data.
@@ -20,12 +23,12 @@ import java.io.File;
  * @version 1.3
  * @since 1.0
  */
-public final class ParadoxView extends ParadoxDataFile {
+public final class ParadoxView extends ParadoxDataFile implements Table {
 
     /**
      * Stores the field list sort.
      */
-    private ParadoxField[] fieldsSort;
+    private Field[] fieldsSort;
 
     /**
      * Creates a new instance.
@@ -43,7 +46,7 @@ public final class ParadoxView extends ParadoxDataFile {
      *
      * @return the fieldsSort the fields sort.
      */
-    public ParadoxField[] getFieldsSort() {
+    public Field[] getFieldsSort() {
         return this.fieldsSort;
     }
 
@@ -52,7 +55,22 @@ public final class ParadoxView extends ParadoxDataFile {
      *
      * @param fieldsSort the fields sort to set.
      */
-    public void setFieldsSort(final ParadoxField[] fieldsSort) {
+    public void setFieldsSort(final Field[] fieldsSort) {
         this.fieldsSort = fieldsSort;
+    }
+
+    @Override
+    public boolean isWriteProtected() {
+        return false;
+    }
+
+    @Override
+    public List<Object[]> load(Field[] fields) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public Field[] getPrimaryKeys() {
+        return new Field[0];
     }
 }

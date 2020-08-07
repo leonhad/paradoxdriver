@@ -11,8 +11,8 @@
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.ParadoxResultSet;
-import com.googlecode.paradox.metadata.ParadoxDataFile;
-import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.planner.nodes.FunctionNode;
 import com.googlecode.paradox.planner.nodes.ParameterNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.8
+ * @version 1.9
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -34,7 +34,7 @@ public final class Column {
     /**
      * The paradox field associated to this field.
      */
-    private ParadoxField field;
+    private Field field;
     /**
      * Column index.
      */
@@ -87,7 +87,7 @@ public final class Column {
      *
      * @param field the paradox field.
      */
-    public Column(final ParadoxField field) {
+    public Column(final Field field) {
         this(field.getAlias(), field.getType());
         this.field = field;
         this.precision = field.getPrecision();
@@ -165,7 +165,7 @@ public final class Column {
      * @param table the table .
      * @return <code>true</code> if this column is from this table.
      */
-    public boolean isThis(final ParadoxDataFile table) {
+    public boolean isThis(final Table table) {
         return this.field != null
                 && this.field.getTable().getName().equalsIgnoreCase(table.getName())
                 && this.field.getTable().getSchemaName().equalsIgnoreCase(table.getSchemaName());
@@ -176,7 +176,7 @@ public final class Column {
      *
      * @return the paradox field.
      */
-    public ParadoxField getField() {
+    public Field getField() {
         return this.field;
     }
 

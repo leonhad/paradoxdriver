@@ -13,8 +13,8 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.PrimaryKeyFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.ParadoxDataFile;
-import com.googlecode.paradox.metadata.ParadoxPK;
+import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
+import com.googlecode.paradox.metadata.paradox.ParadoxPK;
 import com.googlecode.paradox.utils.Constants;
 
 import java.io.File;

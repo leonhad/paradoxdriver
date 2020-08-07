@@ -13,10 +13,10 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.ViewFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.ParadoxDataFile;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
@@ -29,7 +29,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -111,13 +113,11 @@ public final class ViewData {
      * @param name     the field name.
      * @return the Paradox field.
      */
-    private static ParadoxField getField(final ParadoxDataFile dataFile, final String name) {
-        for (final ParadoxField f : dataFile.getFields()) {
-            if (f != null && f.getName().equalsIgnoreCase(name)) {
-                return f;
-            }
-        }
-        return null;
+    private static Field getField(final Table dataFile, final String name) {
+        return Arrays.stream(dataFile.getFields())
+                .filter(Objects::nonNull)
+                .filter(f -> f.getName().equalsIgnoreCase(name))
+                .findFirst().orElse(null);
     }
 
     /**
@@ -125,28 +125,29 @@ public final class ViewData {
      *
      * @param table the fields table.
      * @param name  the field name.
-     * @return the {@link ParadoxField}.
+     * @return the {@link Field}.
      */
-    private static ParadoxField getFieldByName(final ParadoxTable table, final String name) {
-        final ParadoxField originalField = ViewData.getField(table, name);
+    private static Field getFieldByName(final Table table, final String name) {
+        final Field originalField = ViewData.getField(table, name);
         if (originalField == null) {
             return new ParadoxField(ParadoxType.VARCHAR);
         }
+
         return originalField;
     }
 
     /**
-     * Get the {@link ParadoxTable} by name.
+     * Get the {@link Table} by name.
      *
      * @param tableName      the table name.
      * @param currentSchema  the current schema file.
      * @param connectionInfo the connection information.
-     * @return the {@link ParadoxTable}.
+     * @return the {@link Table}.
      * @throws SQLException if the table doesn't exist.
      */
-    private static ParadoxTable getTable(final String tableName, final File currentSchema,
-                                         final ConnectionInfo connectionInfo) throws SQLException {
-        final List<ParadoxTable> tables = TableData.listTables(currentSchema, tableName.trim(), connectionInfo);
+    private static Table getTable(final String tableName, final File currentSchema,
+                                  final ConnectionInfo connectionInfo) throws SQLException {
+        final List<Table> tables = TableData.listTables(currentSchema, tableName.trim(), connectionInfo);
         if (!tables.isEmpty()) {
             return tables.get(0);
         }
@@ -210,7 +211,7 @@ public final class ViewData {
      * @param field   the field associated.
      * @param builder the builder reader.
      */
-    private static void parseCheck(final ParadoxField field, final StringBuilder builder) {
+    private static void parseCheck(final Field field, final StringBuilder builder) {
         if (builder.indexOf("Check") == 0) {
             builder.delete(0, "Check".length() + 1);
             field.setChecked(true);
@@ -228,11 +229,11 @@ public final class ViewData {
      * @throws SQLException in case of parse errors.
      * @throws IOException  in case of I/O errors.
      */
-    private static ParadoxField[] parseFields(final BufferedReader reader, final String oldLine,
-                                              final File currentSchema, final ConnectionInfo connectionInfo)
+    private static Field[] parseFields(final BufferedReader reader, final String oldLine,
+                                       final File currentSchema, final ConnectionInfo connectionInfo)
             throws SQLException, IOException {
         String line = oldLine;
-        final ArrayList<ParadoxField> fieldList = new ArrayList<>();
+        final List<Field> fieldList = new ArrayList<>();
         while ((line != null) && !"EndQuery".equals(line)) {
             // Fields
             final String[] fields = line.split("\\|");
@@ -240,23 +241,25 @@ public final class ViewData {
 
             for (int loop = 1; loop < fields.length; loop++) {
                 final String name = fields[loop].trim();
-                final ParadoxTable table = ViewData.getTable(tableName, currentSchema, connectionInfo);
-                final ParadoxField original = ViewData.getFieldByName(table, name);
-                final ParadoxField field = new ParadoxField(original.getType());
+                final Table table = ViewData.getTable(tableName, currentSchema, connectionInfo);
+                final Field original = ViewData.getFieldByName(table, name);
+                final Field field = new ParadoxField(original.getType());
                 field.setTable(table);
                 field.setName(name);
                 field.setSize(original.getSize());
                 fieldList.add(field);
             }
+
             line = reader.readLine();
             if (line == null) {
                 break;
             }
+
             final String[] types = line.split("\\|");
             for (int loop = 1; loop < types.length; loop++) {
                 final String type = types[loop].trim();
                 if (type.length() > 0) {
-                    final ParadoxField field = fieldList.get(loop - 1);
+                    final Field field = fieldList.get(loop - 1);
                     ViewData.parseExpression(field, type, connectionInfo);
                 }
             }
@@ -264,7 +267,7 @@ public final class ViewData {
             // Extra Line
             line = ViewData.fixExtraLine(reader);
         }
-        return fieldList.toArray(new ParadoxField[0]);
+        return fieldList.toArray(new Field[0]);
     }
 
     /**
@@ -287,8 +290,8 @@ public final class ViewData {
             view.setFields(ViewData.readFields(reader, line, currentSchema, connectionInfo));
             final short[] fieldsOrder = new short[view.getFields().length];
             int index = 0;
-            for (final ParadoxField field : view.getFields()) {
-                ParadoxField fieldByName = ViewData.getField(view, field.getName());
+            for (final Field field : view.getFields()) {
+                Field fieldByName = ViewData.getField(view, field.getName());
                 if (fieldByName != null) {
                     fieldsOrder[index] = (short) fieldByName.getOrderNum();
                     index++;
@@ -308,7 +311,7 @@ public final class ViewData {
      * @param field   the field associated.
      * @param builder the build to read of.
      */
-    private static void parseJoinName(final ParadoxField field, final StringBuilder builder) {
+    private static void parseJoinName(final Field field, final StringBuilder builder) {
         if (builder.charAt(0) == '_') {
             final StringBuilder temp = new StringBuilder(builder.length());
 
@@ -320,7 +323,9 @@ public final class ViewData {
             }
             final String name = temp.toString();
             builder.delete(0, name.length());
-            field.setJoinName(name);
+
+            // Join name?
+            field.setAlias(name);
         }
     }
 
@@ -358,8 +363,8 @@ public final class ViewData {
      * @throws IOException  in case of I/O errors.
      * @throws SQLException in case of syntax errors.
      */
-    private static ParadoxField[] readFields(final BufferedReader reader, final String firstLine,
-                                             final File currentSchema, final ConnectionInfo connectionInfo)
+    private static Field[] readFields(final BufferedReader reader, final String firstLine,
+                                      final File currentSchema, final ConnectionInfo connectionInfo)
             throws IOException, SQLException {
 
         final StringBuilder line = new StringBuilder(firstLine.substring(firstLine.indexOf(':') + 1));
@@ -367,8 +372,8 @@ public final class ViewData {
             line.append(ViewData.readLine(reader));
         } while (line.toString().endsWith(","));
 
-        ParadoxTable lastTable = null;
-        final ArrayList<ParadoxField> fields = new ArrayList<>();
+        Table lastTable = null;
+        final List<Field> fields = new ArrayList<>();
         final String[] cols = line.toString().split(",");
         for (final String col : cols) {
             final String[] i = PATTERN_COL.split(col);
@@ -386,7 +391,7 @@ public final class ViewData {
             fields.add(ViewData.getFieldByName(lastTable, name));
         }
 
-        return fields.toArray(new ParadoxField[0]);
+        return fields.toArray(new Field[0]);
     }
 
     /**
@@ -412,8 +417,7 @@ public final class ViewData {
      * @param expression     the expression to parse.
      * @param connectionInfo the connection information.
      */
-    static void parseExpression(final ParadoxField field, final String expression,
-                                final ConnectionInfo connectionInfo) {
+    static void parseExpression(final Field field, final String expression, final ConnectionInfo connectionInfo) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
         ViewData.parseCheck(field, builder);

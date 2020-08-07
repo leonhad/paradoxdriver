@@ -11,8 +11,9 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ import java.nio.ByteBuffer;
 /**
  * Parses boolean fields.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public final class BCDField implements FieldParser {
@@ -48,7 +49,8 @@ public final class BCDField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field originalField) {
+        final ParadoxField field = (ParadoxField) originalField;
         final byte[] valueBuffer = new byte[BCD_SIZE];
 
         System.arraycopy(buffer.array(), buffer.position(), valueBuffer, 0, valueBuffer.length);

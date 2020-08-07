@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -13,7 +13,7 @@ package com.googlecode.paradox.planner.nodes;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.planner.plan.SelectUtils;
 import com.googlecode.paradox.planner.sorting.OrderByComparator;

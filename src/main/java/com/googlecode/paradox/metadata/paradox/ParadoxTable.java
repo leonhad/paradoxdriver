@@ -8,24 +8,28 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.metadata;
+package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Table;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Stores a table data file.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.0
  */
-public final class ParadoxTable extends ParadoxDataFile {
+public final class ParadoxTable extends ParadoxDataFile implements Table {
 
     /**
      * Creates a new instance.
@@ -50,15 +54,22 @@ public final class ParadoxTable extends ParadoxDataFile {
         if ((fileList == null) || (fileList.length == 0)) {
             throw new ParadoxDataException(ParadoxDataException.Error.BLOB_FILE_NOT_FOUND);
         }
+
         if (fileList.length > 1) {
             throw new ParadoxDataException(ParadoxDataException.Error.TOO_MANY_BLOB_FILES);
         }
+
         File blobFile = fileList[0];
         try {
             return new FileInputStream(blobFile);
         } catch (final FileNotFoundException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.ERROR_OPENING_BLOB_FILE, e);
         }
+    }
+
+    @Override
+    public List<Object[]> load(final Field[] fields) throws SQLException {
+        return TableData.loadData(this, fields);
     }
 
     /**
@@ -81,17 +92,18 @@ public final class ParadoxTable extends ParadoxDataFile {
         return this.getName();
     }
 
-    /**
-     * Gets the primary keys list.
-     *
-     * @return the primary keys list.
-     */
-    public ParadoxField[] getPrimaryKeys() {
+    @Override
+    public Field[] getPrimaryKeys() {
         final ParadoxField[] ret = new ParadoxField[this.getPrimaryFieldCount()];
         if (this.getPrimaryFieldCount() > 0) {
             System.arraycopy(this.getFields(), 0, ret, 0, this.getPrimaryFieldCount());
         }
 
         return ret;
+    }
+
+    @Override
+    public boolean isWriteProtected() {
+        return true;
     }
 }

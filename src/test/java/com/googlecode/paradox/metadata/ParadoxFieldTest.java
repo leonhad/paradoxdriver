@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -71,14 +72,12 @@ public class ParadoxFieldTest {
         field.setAlias("alias");
         field.setChecked(false);
         field.setExpression("expression");
-        field.setJoinName("joinName");
         field.setName("name");
         field.setTable(null);
 
         Assert.assertEquals("Invalid field alias.", "alias", field.getAlias());
         Assert.assertFalse("Field is not checked.", field.isChecked());
         Assert.assertEquals("Invalid field expression.", "expression", field.getExpression());
-        Assert.assertEquals("Invalid field join name.", "joinName", field.getJoinName());
         Assert.assertEquals("Invalid field name.", "name", field.getName());
         Assert.assertNull("Invalid table", field.getTable());
     }

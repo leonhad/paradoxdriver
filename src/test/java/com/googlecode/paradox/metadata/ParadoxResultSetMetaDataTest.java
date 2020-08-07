@@ -12,6 +12,9 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
+import com.googlecode.paradox.metadata.paradox.ParadoxResultSetMetaData;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;

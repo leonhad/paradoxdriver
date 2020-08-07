@@ -12,7 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxField;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxView;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.TestUtil;
@@ -94,8 +94,6 @@ public class ViewDataTest {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS TOTAL_COST", conn.getConnectionInfo());
         Assert.assertTrue("Field is not checked.", field.isChecked());
-        Assert.assertEquals("Invalid field name.", "_PC", field.getJoinName());
-        Assert.assertEquals("Invalid field name.", "CALC _PC*_QTD", field.getExpression());
         Assert.assertEquals("Invalid field name.", "TOTAL_COST", field.getAlias());
 
         Assert.assertTrue("Invalid checked status.", field.isChecked());

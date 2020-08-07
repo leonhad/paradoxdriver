@@ -11,8 +11,8 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
-import com.googlecode.paradox.metadata.ParadoxField;
-import com.googlecode.paradox.metadata.ParadoxTable;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 /**
  * Parses the numeric fields.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.3
  */
 public final class NumberField implements FieldParser {
@@ -37,7 +37,7 @@ public final class NumberField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public Double parse(final ParadoxTable table, final ByteBuffer buffer, final ParadoxField field) {
+    public Double parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         long value = buffer.getLong();
         if ((value & 0x8000_0000_0000_0000L) != 0) {
             value &= 0x7FFF_FFFF_FFFF_FFFFL;
