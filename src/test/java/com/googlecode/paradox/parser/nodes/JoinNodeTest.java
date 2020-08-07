@@ -12,7 +12,10 @@ package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -140,6 +143,22 @@ public class JoinNodeTest {
             Assert.assertEquals("Invalid date value.", 3, rs.getInt("Id"));
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid date value.", 3, rs.getInt("Id"));
+            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+        }
+    }
+
+    /**
+     * Test count for cross join.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testCrossJoinCount() throws SQLException {
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "select count(*) from fields.long cross join fields.bcd")) {
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid date value.", 9, rs.getInt(1));
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }
     }

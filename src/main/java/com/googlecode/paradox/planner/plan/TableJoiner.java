@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.planner.plan;
 
+import com.googlecode.paradox.planner.collections.FixedValueCollection;
 import com.googlecode.paradox.planner.context.Context;
 import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.results.Column;
@@ -32,10 +33,10 @@ final class TableJoiner {
         // Not used.
     }
 
-    public static List<Object[]> processJoinByType(final Context context, final List<Column> columnsLoaded,
+    public static Collection<Object[]> processJoinByType(final Context context, final List<Column> columnsLoaded,
                                                    final Collection<Object[]> rawData, final PlanTableNode table,
                                                    final Collection<Object[]> tableData) throws SQLException {
-        List<Object[]> localValues;
+        Collection<Object[]> localValues;
         switch (table.getJoinType()) {
             case RIGHT:
                 localValues = processRightJoin(context, columnsLoaded, rawData, table, tableData);
@@ -174,12 +175,9 @@ final class TableJoiner {
         return localValues;
     }
 
-    private static List<Object[]> processInnerJoin(final Context context, final List<Column> columnsLoaded,
-                                                   final Collection<Object[]> rawData, final PlanTableNode table,
-                                                   final Collection<Object[]> tableData) throws SQLException {
-
-        final Object[] column = new Object[columnsLoaded.size()];
-
+    private static Collection<Object[]> processInnerJoin(final Context context, final List<Column> columnsLoaded,
+                                                         final Collection<Object[]> rawData, final PlanTableNode table,
+                                                         final Collection<Object[]> tableData) throws SQLException {
         int initialCapacity;
 
         // Is this a cartesian merge?
@@ -191,8 +189,14 @@ final class TableJoiner {
             initialCapacity = 0x7F;
         }
 
+        // Joining two tables without columns loaded (grouping function only?).
+        if (columnsLoaded.isEmpty()) {
+            return new FixedValueCollection<>(rawData.size() * tableData.size(), new Object[0]);
+        }
+
         final ArrayList<Object[]> localValues = new ArrayList<>(initialCapacity);
 
+        final Object[] column = new Object[columnsLoaded.size()];
         for (final Object[] cols : rawData) {
             System.arraycopy(cols, 0, column, 0, cols.length);
 
