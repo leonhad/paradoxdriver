@@ -102,8 +102,8 @@ public class SelectPlanTest {
      */
     @Test
     public void testInvalidColumnName() {
-            Assert.assertThrows("Invalid column name", ParadoxException.class,
-                    () -> this.conn.prepareStatement("select invalid from fields.date7"));
+        Assert.assertThrows("Invalid column name", ParadoxException.class,
+                () -> this.conn.prepareStatement("select invalid from fields.date7"));
     }
 
     /**
@@ -145,6 +145,24 @@ public class SelectPlanTest {
 
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", 41061680, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
+     * Test for SELECT with count optimization and where.
+     *
+     * @throws SQLException if has errors.
+     */
+    @Test
+    public void testSelectCountWhereOptimization() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select count(*) from geog.tblAC ac cross join geog.tblsttes st cross join geog.County c " +
+                        " where st.State = ac.State and c.StateID = st.State");
+             final ResultSet rs = stmt.executeQuery()) {
+
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 14722, rs.getInt(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }

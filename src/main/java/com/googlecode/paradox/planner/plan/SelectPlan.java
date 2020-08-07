@@ -382,9 +382,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             return Collections.emptyList();
         }
 
-        // If only count function in columns and conditions is processed by tables (condition is null), return the size.
-        if (condition == null && columnsLoaded.isEmpty() &&
-                this.columns.size() == 1 && this.columns.get(0).getFunction() != null && this.columns.get(0).getFunction().isCount()) {
+        if (canDoFastCount()) {
             final Object[] row = new Object[1];
             row[0] = rawData.size();
             return Collections.singletonList(row);
@@ -402,6 +400,13 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
 
         return filter(context, rawData, mapColumns, columnsLoaded);
+    }
+
+    private boolean canDoFastCount() {
+        // If only count function in columns and conditions is processed by tables (condition is null).
+        // Group by is not allowed too (no columns set).
+        return condition == null && this.groupBy.getColumns().isEmpty() &&
+                this.columns.size() == 1 && this.columns.get(0).getFunction() != null && this.columns.get(0).getFunction().isCount();
     }
 
     private void processIndexes(final List<Column> columns) throws SQLException {
