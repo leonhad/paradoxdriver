@@ -376,10 +376,18 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
                 row[i] = this.columns.get(i).getValue();
             }
 
-            rawData= Collections.singleton(row);
+            rawData = Collections.singleton(row);
         } else if (rawData.isEmpty()) {
             // No result to process, just return.
             return Collections.emptyList();
+        }
+
+        // If only count function in columns and conditions is processed by tables (condition is null), return the size.
+        if (condition == null && columnsLoaded.isEmpty() &&
+                this.columns.size() == 1 && this.columns.get(0).getFunction() != null && this.columns.get(0).getFunction().isCount()) {
+            final Object[] row = new Object[1];
+            row[0] = rawData.size();
+            return Collections.singletonList(row);
         }
 
         processIndexes(columnsLoaded);
@@ -388,8 +396,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         // Process parameter types.
         columns.stream()
                 .filter(column -> column.getParameter() != null)
-                .forEach(column -> column.setType(context
-                        .getParameterTypes()[column.getParameter().getParameterIndex()]));
+                .forEach(column -> column.setType(context.getParameterTypes()[column.getParameter().getParameterIndex()]));
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
@@ -437,10 +444,9 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
     private Object[] mapRow(final SelectContext context, final Object[] tableRow, final int[] mapColumns,
                             final List<Column> columnsLoaded) throws SQLException {
+
         final Object[] finalRow = new Object[mapColumns.length];
         for (int i = 0; i < mapColumns.length; i++) {
-            context.checkCancelState();
-
             int index = mapColumns[i];
             if (index != -1) {
                 // A field mapped value.
@@ -469,7 +475,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     private List<Object[]> filter(final SelectContext context, final Collection<Object[]> rowValues,
                                   final int[] mapColumns, final List<Column> columnsLoaded) {
 
-        Stream<Object[]> stream = rowValues.parallelStream()
+        Stream<Object[]> stream = rowValues.stream()
                 .filter(context.getCancelPredicate());
 
         if (condition != null) {
@@ -490,7 +496,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
         // Distinct
         if (distinct) {
-            stream = stream.sequential().filter(FunctionalUtils.distinctByKey());
+            stream = stream.filter(FunctionalUtils.distinctByKey());
         }
 
         if (context.getMaxRows() != 0) {

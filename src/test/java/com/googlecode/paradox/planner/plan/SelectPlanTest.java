@@ -133,6 +133,23 @@ public class SelectPlanTest {
     }
 
     /**
+     * Test for SELECT with count optimization.
+     *
+     * @throws SQLException if has errors.
+     */
+    @Test
+    public void testSelectCountOptimization() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "select count(*) from geog.tblAC ac cross join geog.tblsttes st cross join geog.County c");
+             final ResultSet rs = stmt.executeQuery()) {
+
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", 41061680, rs.getInt(1));
+            Assert.assertFalse("Invalid result set state", rs.next());
+        }
+    }
+
+    /**
      * Test for SELECT plan performance optimizations with OR.
      *
      * @throws SQLException if has errors.

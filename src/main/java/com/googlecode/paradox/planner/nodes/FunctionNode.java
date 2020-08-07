@@ -14,6 +14,7 @@ import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionFactory;
+import com.googlecode.paradox.function.aggregate.CountFunction;
 import com.googlecode.paradox.parser.ScannerPosition;
 import com.googlecode.paradox.parser.nodes.AsteriskNode;
 import com.googlecode.paradox.parser.nodes.SQLNode;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 /**
  * Stores a function node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class FunctionNode extends FieldNode {
@@ -39,10 +40,12 @@ public class FunctionNode extends FieldNode {
      * The list of parameters of this function.
      */
     private final List<SQLNode> parameters = new ArrayList<>();
+
     /**
      * This function instance.
      */
     private final AbstractFunction function;
+
     /**
      * Field nodes.
      */
@@ -241,6 +244,14 @@ public class FunctionNode extends FieldNode {
         return function.execute(context.getConnectionInfo(), values, types, fields);
     }
 
+    /**
+     * Gets the function index.
+     *
+     * @param loadedColumns the loaded columns.
+     * @param functionNode  the function node to search.
+     * @return the function index.
+     * @throws ParadoxSyntaxErrorException in case of function not found.
+     */
     private static int getIndex(final List<Column> loadedColumns, final FunctionNode functionNode)
             throws ParadoxSyntaxErrorException {
         int index = -1;
@@ -255,7 +266,37 @@ public class FunctionNode extends FieldNode {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_AGGREGATE_FUNCTION,
                     functionNode.getName());
         }
+
         return index;
+    }
+
+    /**
+     * Gets the list of grouping node.
+     *
+     * @return the list of grouping node.
+     */
+    public List<FunctionNode> getGroupingNodes() {
+        final List<FunctionNode> ret = new ArrayList<>();
+        if (function.isGrouping()) {
+            ret.add(this);
+        }
+
+        for (final SQLNode node : parameters) {
+            if (node instanceof FunctionNode) {
+                ret.addAll(((FunctionNode) node).getGroupingNodes());
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * Check if this function is COUNT.
+     *
+     * @return <code>true</code> if this function is COUNT.
+     */
+    public boolean isCount() {
+        return function instanceof CountFunction;
     }
 
     @Override
@@ -275,20 +316,5 @@ public class FunctionNode extends FieldNode {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), parameters, function);
-    }
-
-    public List<FunctionNode> getGroupingNodes() {
-        final List<FunctionNode> ret = new ArrayList<>();
-        if (function.isGrouping()) {
-            ret.add(this);
-        }
-
-        for (final SQLNode node : parameters) {
-            if (node instanceof FunctionNode) {
-                ret.addAll(((FunctionNode) node).getGroupingNodes());
-            }
-        }
-
-        return ret;
     }
 }
