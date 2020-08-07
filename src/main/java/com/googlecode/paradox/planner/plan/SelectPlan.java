@@ -328,7 +328,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
      * {@inheritDoc}.
      */
     @Override
-    @SuppressWarnings({"java:S3776", "java:S1541"})
+    @SuppressWarnings({"java:S3776", "java:S1541", "java:S1142"})
     public List<Object[]> execute(final SelectContext context) throws SQLException {
 
         // Can't do anything without fields defined.
@@ -394,7 +394,8 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         // Process parameter types.
         columns.stream()
                 .filter(column -> column.getParameter() != null)
-                .forEach(column -> column.setType(context.getParameterTypes()[column.getParameter().getParameterIndex()]));
+                .forEach(column -> column.setType(
+                        context.getParameterTypes()[column.getParameter().getParameterIndex()]));
 
         // Find column indexes.
         final int[] mapColumns = mapColumnIndexes(columnsLoaded);
@@ -402,11 +403,18 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         return filter(context, rawData, mapColumns, columnsLoaded);
     }
 
+    /**
+     * Check if the SELECT statement is only counting rows.
+     *
+     * @return <code>true</code> if the SELECT statement is only counting rows.
+     */
+    @SuppressWarnings("java:S1067")
     private boolean canDoFastCount() {
         // If only count function in columns and conditions is processed by tables (condition is null).
         // Group by is not allowed too (no columns set).
-        return condition == null && this.groupBy.getColumns().isEmpty() &&
-                this.columns.size() == 1 && this.columns.get(0).getFunction() != null && this.columns.get(0).getFunction().isCount();
+        return condition == null && this.groupBy.getColumns().isEmpty()
+                && this.columns.size() == 1 && this.columns.get(0).getFunction() != null
+                && this.columns.get(0).getFunction().isCount();
     }
 
     private void processIndexes(final List<Column> columns) throws SQLException {
