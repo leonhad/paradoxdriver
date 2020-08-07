@@ -62,8 +62,17 @@ public class FixedValueCollection<T> implements Collection<T> {
         return new EmptyIterator();
     }
 
+    /**
+     * Iterator that uses same value for all rows.
+     *
+     * @version 1.0
+     * @since 1.6.0
+     */
     private class EmptyIterator implements Iterator<T> {
 
+        /**
+         * Current item in iterator.
+         */
         private int current = -1;
 
         @Override
@@ -82,15 +91,23 @@ public class FixedValueCollection<T> implements Collection<T> {
         }
     }
 
+    /**
+     * Do not use this.
+     *
+     * @return the values in array format.
+     */
     @Override
     public Object[] toArray() {
-        return new Object[size];
+        final Object[] ret = new Object[size];
+        Arrays.fill(ret, value);
+        return ret;
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        Arrays.fill(a, value);
-        return a;
+        final T1[] ret = Arrays.copyOf(a, size);
+        Arrays.fill(ret, value);
+        return ret;
     }
 
     @Override
