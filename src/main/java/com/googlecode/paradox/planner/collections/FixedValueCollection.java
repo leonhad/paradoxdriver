@@ -105,7 +105,11 @@ public class FixedValueCollection<T> implements Collection<T> {
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        final T1[] ret = Arrays.copyOf(a, size);
+        T1[] ret = a;
+        if (a.length != size) {
+            ret = Arrays.copyOf(a, size);
+        }
+
         Arrays.fill(ret, value);
         return ret;
     }
