@@ -20,7 +20,10 @@ import com.googlecode.paradox.planner.collections.FixedValueCollection;
 import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Stores the execution plan table node.
@@ -122,7 +125,6 @@ public final class PlanTableNode {
     public Collection<Object[]> load() throws SQLException {
         if (this.columns.isEmpty()) {
             return new FixedValueCollection<>(this.table.getRowCount(), new Object[0]);
-            //return Arrays.asList(new Object[this.table.getRowCount()][0]);
         }
 
         return TableData.loadData(table, this.columns.stream().map(Column::getField).toArray(ParadoxField[]::new));
