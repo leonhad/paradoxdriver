@@ -70,14 +70,10 @@ public class ParadoxFieldTest {
     public void testGettersAndSetters() {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         field.setAlias("alias");
-        field.setChecked(false);
-        field.setExpression("expression");
         field.setName("name");
         field.setTable(null);
 
         Assert.assertEquals("Invalid field alias.", "alias", field.getAlias());
-        Assert.assertFalse("Field is not checked.", field.isChecked());
-        Assert.assertEquals("Invalid field expression.", "expression", field.getExpression());
         Assert.assertEquals("Invalid field name.", "name", field.getName());
         Assert.assertNull("Invalid table", field.getTable());
     }

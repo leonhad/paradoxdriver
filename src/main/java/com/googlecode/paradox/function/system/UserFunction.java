@@ -53,6 +53,6 @@ public class UserFunction extends AbstractSystemFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        return connectionInfo.getCurrentSchema().getName();
+        return connectionInfo.getCurrentSchema().name();
     }
 }

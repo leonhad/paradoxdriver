@@ -37,6 +37,13 @@ public interface Table {
     int getRowCount();
 
     /**
+     * Gets the table type.
+     *
+     * @return the table type.
+     */
+    TableType type();
+
+    /**
      * Gets the write protected value.
      *
      * @return the write protected value.

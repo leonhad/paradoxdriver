@@ -144,7 +144,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public String getSchemaName(final int column) throws SQLException {
         this.getColumn(column);
-        return this.connectionInfo.getCurrentSchema().getName();
+        return this.connectionInfo.getCurrentSchema().name();
     }
 
     /**

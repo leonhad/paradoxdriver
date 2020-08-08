@@ -16,6 +16,7 @@ import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.TableType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,5 +105,10 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     @Override
     public boolean isWriteProtected() {
         return true;
+    }
+
+    @Override
+    public TableType type() {
+        return TableType.TABLE;
     }
 }

@@ -22,8 +22,8 @@ public class DirectorySchema implements Schema {
 
     private final File schemaFile;
 
-    public DirectorySchema(final File parent) {
-        this.schemaFile = parent;
+    public DirectorySchema(final File schemaFile) {
+        this.schemaFile = schemaFile;
     }
 
     @Override
@@ -32,7 +32,12 @@ public class DirectorySchema implements Schema {
     }
 
     @Override
-    public String getName() {
+    public String catalogName() {
+        return schemaFile.getParent();
+    }
+
+    @Override
+    public String name() {
         return schemaFile.getName();
     }
 

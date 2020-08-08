@@ -92,10 +92,7 @@ public class ViewDataTest {
     public void testParseExpression() {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS TOTAL_COST", conn.getConnectionInfo());
-        Assert.assertTrue("Field is not checked.", field.isChecked());
         Assert.assertEquals("Invalid field name.", "TOTAL_COST", field.getAlias());
-
-        Assert.assertTrue("Invalid checked status.", field.isChecked());
     }
 
     /**

@@ -206,19 +206,6 @@ public final class ViewData {
     }
 
     /**
-     * Parses check token.
-     *
-     * @param field   the field associated.
-     * @param builder the builder reader.
-     */
-    private static void parseCheck(final Field field, final StringBuilder builder) {
-        if (builder.indexOf("Check") == 0) {
-            builder.delete(0, "Check".length() + 1);
-            field.setChecked(true);
-        }
-    }
-
-    /**
      * Parses the view fields.
      *
      * @param reader         the reader to load fields.
@@ -420,7 +407,6 @@ public final class ViewData {
     static void parseExpression(final Field field, final String expression, final ConnectionInfo connectionInfo) {
         final StringBuilder builder = new StringBuilder(expression.trim());
 
-        ViewData.parseCheck(field, builder);
         if (builder.length() == 0) {
             return;
         }
@@ -435,13 +421,7 @@ public final class ViewData {
             }
             final int index = builder.toString().toUpperCase(connectionInfo.getLocale()).lastIndexOf("AS");
             if (index > -1) {
-                field.setExpression(builder.substring(0, index).trim());
                 field.setAlias(builder.substring(index + 3).trim());
-            } else {
-                field.setExpression(builder.toString().trim());
-            }
-            if (field.getExpression().toUpperCase(connectionInfo.getLocale()).startsWith("CALC")) {
-                field.setChecked(true);
             }
         }
     }

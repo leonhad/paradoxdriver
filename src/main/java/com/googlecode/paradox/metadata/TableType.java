@@ -10,18 +10,7 @@
  */
 package com.googlecode.paradox.metadata;
 
-import com.googlecode.paradox.ConnectionInfo;
-
-import java.sql.SQLException;
-import java.util.List;
-
-public interface Schema {
-
-    List<Table> list(final ConnectionInfo connectionInfo, final String tablePattern) throws SQLException;
-
-    String name();
-
-    String catalogName();
-
-    Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException;
+public enum TableType {
+    TABLE,
+    VIEW
 }

@@ -344,7 +344,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getSchema() {
-        return this.connectionInfo.getCurrentSchema().getName();
+        return this.connectionInfo.getCurrentSchema().name();
     }
 
     /**

@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 
 import java.io.File;
@@ -66,11 +67,16 @@ public final class ParadoxView extends ParadoxDataFile implements Table {
 
     @Override
     public List<Object[]> load(Field[] fields) throws SQLException {
-        return null;
+        throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
     @Override
     public Field[] getPrimaryKeys() {
         return new Field[0];
+    }
+
+    @Override
+    public TableType type() {
+        return TableType.VIEW;
     }
 }

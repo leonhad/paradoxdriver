@@ -19,7 +19,6 @@ import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,8 +78,7 @@ public final class TableData extends ParadoxData {
     public static List<Table> listTables(final File schema, final String pattern,
                                          final ConnectionInfo connectionInfo) throws SQLException {
         final List<Table> tables = new ArrayList<>();
-        final File[] fileList = schema.listFiles
-                (new TableFilter(connectionInfo.getLocale(), Utils.removeSuffix(pattern, "DB")));
+        final File[] fileList = schema.listFiles(new TableFilter(connectionInfo.getLocale(), pattern));
 
         if (fileList != null) {
             Arrays.sort(fileList);

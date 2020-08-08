@@ -52,16 +52,6 @@ public class Field {
     protected int orderNum;
 
     /**
-     * If this field is checked.
-     */
-    protected boolean checked;
-
-    /**
-     * This field expression.
-     */
-    protected String expression;
-
-    /**
      * Creates a new instance.
      */
     public Field() {
@@ -212,41 +202,4 @@ public class Field {
     public int getOrderNum() {
         return this.orderNum;
     }
-
-    /**
-     * Gets the field expression.
-     *
-     * @return the field expression.
-     */
-    public String getExpression() {
-        return this.expression;
-    }
-
-    /**
-     * Sets this field expression.
-     *
-     * @param expression the expression to set.
-     */
-    public void setExpression(final String expression) {
-        this.expression = expression;
-    }
-
-    /**
-     * Gets field checked status.
-     *
-     * @return true if this field is checked.
-     */
-    public boolean isChecked() {
-        return this.checked;
-    }
-
-    /**
-     * Sets the field checked status.
-     *
-     * @param checked the checked to set.
-     */
-    public void setChecked(final boolean checked) {
-        this.checked = checked;
-    }
-
 }

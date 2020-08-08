@@ -965,7 +965,7 @@ public class ParadoxDatabaseMetaDataTest {
     public void testPrimaryKey() throws SQLException {
         final DatabaseMetaData meta = this.conn.getMetaData();
 
-        try (ResultSet rs = meta.getPrimaryKeys(null, "db", "CUSTOMER.db")) {
+        try (ResultSet rs = meta.getPrimaryKeys(null, "db", "CUSTOMER")) {
             Assert.assertTrue("Invalid ResultSet state", rs.next());
             Assert.assertEquals("Invalid value.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));

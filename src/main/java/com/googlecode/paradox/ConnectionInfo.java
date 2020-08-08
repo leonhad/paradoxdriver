@@ -121,7 +121,7 @@ public final class ConnectionInfo {
                 };
             }
         } else {
-            File parent = currentCatalog.getParentFile();
+            final File parent = currentCatalog.getParentFile();
             if (!parent.isDirectory()) {
                 throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
             }
@@ -142,7 +142,7 @@ public final class ConnectionInfo {
             }
         }
 
-        ret.sort(Comparator.comparing(Schema::getName));
+        ret.sort(Comparator.comparing(Schema::name));
         return ret;
     }
 
