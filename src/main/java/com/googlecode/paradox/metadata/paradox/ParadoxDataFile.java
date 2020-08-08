@@ -125,11 +125,11 @@ public class ParadoxDataFile {
      * @param name           the file name.
      * @param connectionInfo the connection information
      */
-    protected ParadoxDataFile(final File file, final String name, ConnectionInfo connectionInfo) {
+    protected ParadoxDataFile(final File file, final String name, final ConnectionInfo connectionInfo) {
         this.file = file;
         this.name = Utils.removeSuffix(name, "DB");
         this.connectionInfo = connectionInfo;
-        if (charset != null) {
+        if (connectionInfo.getCharset() != null) {
             this.charset = connectionInfo.getCharset();
         }
     }
@@ -146,6 +146,7 @@ public class ParadoxDataFile {
                 return field;
             }
         }
+
         return null;
     }
 

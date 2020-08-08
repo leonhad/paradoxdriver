@@ -101,8 +101,7 @@ public final class TableData extends ParadoxData {
      * @return the row values.
      * @throws SQLException in case of failures.
      */
-    public static List<Object[]> loadData(final ParadoxTable table, final Field[] fields)
-            throws SQLException {
+    public static List<Object[]> loadData(final ParadoxTable table, final Field[] fields) throws SQLException {
 
         final int blockSize = table.getBlockSizeBytes();
         final int recordSize = table.getRecordSize();
