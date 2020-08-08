@@ -95,11 +95,4 @@ public interface Table {
      * @return the table indexes.
      */
     Index[] getIndexes() throws SQLException;
-
-    /**
-     * Gets the file total blocks.
-     *
-     * @return the file total blocks.
-     */
-    int getTotalBlocks();
 }

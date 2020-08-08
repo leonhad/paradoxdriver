@@ -18,7 +18,7 @@ import java.io.File;
 /**
  * Stores index data.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ParadoxIndex extends ParadoxDataFile implements Index {
@@ -44,6 +44,7 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
      *
      * @return the index order.
      */
+    @Override
     public String getOrder() {
         final int referential = this.getReferentialIntegrity();
         if ((referential == 0x10) || (referential == 0x11) || (referential == 0x30)) {
@@ -52,6 +53,7 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
         return "A";
     }
 
+    @Override
     public boolean isUnique() {
         final int referential = this.getReferentialIntegrity();
         return (referential == 0x20) || (referential == 0x21) || (referential == 0x30);

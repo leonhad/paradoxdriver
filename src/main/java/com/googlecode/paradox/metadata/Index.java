@@ -10,14 +10,40 @@
  */
 package com.googlecode.paradox.metadata;
 
+/**
+ * A generic index.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public interface Index {
 
+    /**
+     * Gets the index name.
+     *
+     * @return the index name.
+     */
     String getName();
 
+    /**
+     * Gets if this index is unique.
+     *
+     * @return <code>true</code> if this index is unique.
+     */
     boolean isUnique();
 
+    /**
+     * Gets the index order type.
+     *
+     * @return the index order type.
+     */
     String getOrder();
 
+    /**
+     * Gets the field list.
+     *
+     * @return the field list.
+     */
     Field[] getFields();
 
     /**
