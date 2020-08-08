@@ -17,16 +17,19 @@ import com.googlecode.paradox.ParadoxResultSet;
 import com.googlecode.paradox.utils.Constants;
 import org.junit.*;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 /**
- * Unit test for {@link ParadoxDatabaseMetaData} class.
+ * Unit test for {@link DatabaseMetaData} class.
  *
  * @version 1.1
  * @since 1.3
  */
-public class ParadoxDatabaseMetaDataTest {
+public class DatabaseMetaDataTest {
     /**
      * The connection string used in this tests.
      */
@@ -66,7 +69,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Before
     public void connect() throws Exception {
-        this.conn = DriverManager.getConnection(ParadoxDatabaseMetaDataTest.CONNECTION_STRING + "db");
+        this.conn = DriverManager.getConnection(DatabaseMetaDataTest.CONNECTION_STRING + "db");
     }
 
     /**
@@ -110,7 +113,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testCatalog() throws Exception {
-        final DatabaseMetaData meta = this.conn.getMetaData();
+        final java.sql.DatabaseMetaData meta = this.conn.getMetaData();
         try (ResultSet rs = meta.getCatalogs()) {
             if (rs.next()) {
                 Assert.assertEquals("Invalid value.", conn.getCatalog(), rs.getString("TABLE_CAT"));
@@ -487,7 +490,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testJDBCVersion() throws SQLException {
-        final DatabaseMetaData meta = this.conn.getMetaData();
+        final java.sql.DatabaseMetaData meta = this.conn.getMetaData();
         Assert.assertEquals("Test for major version", 4, meta.getJDBCMajorVersion());
         Assert.assertEquals("Test for minor version", 2, meta.getJDBCMinorVersion());
     }
@@ -796,6 +799,10 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "information_schema", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
 
@@ -821,6 +828,10 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "information_schema", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
@@ -834,6 +845,10 @@ public class ParadoxDatabaseMetaDataTest {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "geog", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "information_schema", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
@@ -861,6 +876,10 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "information_schema", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
@@ -874,6 +893,10 @@ public class ParadoxDatabaseMetaDataTest {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "geog", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "information_schema", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
@@ -973,7 +996,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testPrimaryKey() throws SQLException {
-        final DatabaseMetaData meta = this.conn.getMetaData();
+        final java.sql.DatabaseMetaData meta = this.conn.getMetaData();
 
         try (ResultSet rs = meta.getPrimaryKeys(null, "db", "CUSTOMER")) {
             Assert.assertTrue("Invalid ResultSet state", rs.next());
@@ -994,7 +1017,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testViewColumns() throws SQLException {
-        final DatabaseMetaData meta = this.conn.getMetaData();
+        final java.sql.DatabaseMetaData meta = this.conn.getMetaData();
 
         try (ResultSet rs = meta.getColumns(null, "db", "AREAS.QBE", "%")) {
             // Test for AC field.
@@ -1006,7 +1029,8 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
             Assert.assertEquals("Testing for column size.", 5, rs.getInt("COLUMN_SIZE"));
-            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
+            Assert.assertEquals("Testing for nullable.", java.sql.DatabaseMetaData.columnNullable, rs.getInt(
+                    "NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
@@ -1019,7 +1043,8 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
             Assert.assertEquals("Testing for column size.", 3, rs.getInt("COLUMN_SIZE"));
-            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
+            Assert.assertEquals("Testing for nullable.", java.sql.DatabaseMetaData.columnNullable, rs.getInt(
+                    "NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
@@ -1032,7 +1057,8 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
             Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
             Assert.assertEquals("Testing for column size.", 157, rs.getInt("COLUMN_SIZE"));
-            Assert.assertEquals("Testing for nullable.", DatabaseMetaData.columnNullable, rs.getInt("NULLABLE"));
+            Assert.assertEquals("Testing for nullable.", java.sql.DatabaseMetaData.columnNullable, rs.getInt(
+                    "NULLABLE"));
             Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
             Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
 
@@ -1048,7 +1074,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testPrimaryKeyTwoKeys() throws SQLException {
-        final DatabaseMetaData meta = this.conn.getMetaData();
+        final java.sql.DatabaseMetaData meta = this.conn.getMetaData();
 
         try (ResultSet rs = meta.getPrimaryKeys(null, "db", "SERVER")) {
             Assert.assertTrue("Invalid ResultSet state.", rs.next());

@@ -14,8 +14,10 @@ import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.metadata.DirectorySchema;
 import com.googlecode.paradox.metadata.Schema;
+import com.googlecode.paradox.metadata.schema.DirectorySchema;
+import com.googlecode.paradox.metadata.schema.SystemSchema;
+import com.googlecode.paradox.utils.Expressions;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -56,6 +58,7 @@ public final class ConnectionInfo {
     public static final TimeZone DEFAULT_TIMEZONE = TimeZone.getDefault();
 
     public static final boolean DEFAULT_ENABLE_CATALOG = false;
+    public static final String INFORMATION_SCHEMA = "information_schema";
 
     /**
      * Driver URL.
@@ -139,7 +142,13 @@ public final class ConnectionInfo {
                             .map(DirectorySchema::new)
                             .collect(Collectors.toList()));
                 }
+
+                if (schemaPattern == null ||
+                        Expressions.accept(locale, INFORMATION_SCHEMA, schemaPattern, false, '\\')) {
+                    ret.add(new SystemSchema(catalogFile));
+                }
             }
+
         }
 
         ret.sort(Comparator.comparing(Schema::name));
@@ -172,12 +181,18 @@ public final class ConnectionInfo {
             catalogs = parent.listFiles(new DirectoryFilter(locale, catalog));
         }
 
-        if (catalogs != null) {
-            for (final File catalogFile : catalogs) {
-                final File[] schemas = catalogFile.listFiles(new DirectoryFilter(this.locale, schemaName));
-                if (schemas != null && schemas.length == 1) {
-                    return new DirectorySchema(schemas[0]);
-                }
+        if (catalogs == null || catalogs.length != 1) {
+            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_NAME);
+        }
+
+        if (INFORMATION_SCHEMA.equalsIgnoreCase(schemaName)) {
+            return new SystemSchema(catalogs[0]);
+        }
+
+        for (final File catalogFile : catalogs) {
+            final File[] schemas = catalogFile.listFiles(new DirectoryFilter(this.locale, schemaName));
+            if (schemas != null && schemas.length == 1) {
+                return new DirectorySchema(schemas[0]);
             }
         }
 
@@ -342,15 +357,8 @@ public final class ConnectionInfo {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_NAME, name);
         }
 
-        final File[] schemas = newCatalog.listFiles(new DirectoryFilter(locale));
-        if (schemas != null && schemas.length > 0) {
-            // Default to the first schema.
-            currentSchema = new DirectorySchema(schemas[0]);
-        } else {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
-        }
-
         this.currentCatalog = newCatalog;
+        this.currentSchema = new SystemSchema(newCatalog);
     }
 
     public List<String> listCatalogs() throws ParadoxDataException {
@@ -461,14 +469,17 @@ public final class ConnectionInfo {
      * @throws SQLException in case of schema not found.
      */
     public void setCurrentSchema(final String schemaName) throws SQLException {
-        final File[] schemas = this.currentCatalog
-                .listFiles(new DirectoryFilter(locale, schemaName));
+        if (INFORMATION_SCHEMA.equalsIgnoreCase(schemaName)) {
+            this.currentSchema = new SystemSchema(currentCatalog);
+        } else {
+            final File[] schemas = this.currentCatalog.listFiles(new DirectoryFilter(locale, schemaName));
 
-        if (schemas == null || schemas.length != 1) {
-            throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
+            if (schemas == null || schemas.length != 1) {
+                throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
+            }
+
+            this.currentSchema = new DirectorySchema(schemas[0]);
         }
-
-        this.currentSchema = new DirectorySchema(schemas[0]);
     }
 
     /**

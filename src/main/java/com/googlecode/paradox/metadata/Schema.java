@@ -15,13 +15,45 @@ import com.googlecode.paradox.ConnectionInfo;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Generic schema.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public interface Schema {
 
+    /**
+     * List the schema tables.
+     *
+     * @param connectionInfo the connection information.
+     * @param tablePattern   the table pattern.
+     * @return the table list.
+     * @throws SQLException in case of failures.
+     */
     List<Table> list(final ConnectionInfo connectionInfo, final String tablePattern) throws SQLException;
 
+    /**
+     * Gets the schema name.
+     *
+     * @return the schema name
+     */
     String name();
 
+    /**
+     * Gets the catalog name.
+     *
+     * @return the catalog name.
+     */
     String catalogName();
 
+    /**
+     * Find a single table in schema.
+     *
+     * @param connectionInfo the connection information.
+     * @param tableName      the table name.
+     * @return the desired table or {@code null} if not found.
+     * @throws SQLException in case of failure.
+     */
     Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException;
 }

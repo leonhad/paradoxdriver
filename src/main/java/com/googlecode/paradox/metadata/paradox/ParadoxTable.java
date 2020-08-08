@@ -120,8 +120,13 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
 
     @Override
     public Index[] getIndexes() throws SQLException {
-        // FIXME redo the index loading.
-        return IndexData.listIndexes(file.getParentFile(), name, this.connectionInfo);
+        final List<Index> indexes = IndexData.listIndexes(file.getParentFile(), name, this.connectionInfo);
+        final Index index = getPrimaryKeyIndex();
+        if (index != null) {
+            indexes.add(index);
+        }
+
+        return indexes.toArray(new Index[0]);
     }
 
     @Override

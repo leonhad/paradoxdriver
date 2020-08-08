@@ -28,6 +28,7 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Reads index data files.
@@ -53,9 +54,9 @@ public final class IndexData extends ParadoxData {
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException in case of reading failures.
      */
-    public static Index[] listIndexes(final File currentSchema, final String tableName,
-                                      final ConnectionInfo connectionInfo) throws SQLException {
-        final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
+    public static List<Index> listIndexes(final File currentSchema, final String tableName,
+                                          final ConnectionInfo connectionInfo) throws SQLException {
+        final ArrayList<Index> indexes = new ArrayList<>();
         String indexNamePattern = tableName + ".X__";
         File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(),
                 indexNamePattern));
@@ -71,7 +72,7 @@ public final class IndexData extends ParadoxData {
             }
         }
 
-        return indexes.toArray(new Index[0]);
+        return indexes;
     }
 
     /**

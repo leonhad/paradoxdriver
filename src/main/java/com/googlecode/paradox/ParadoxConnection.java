@@ -13,8 +13,8 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.metadata.DirectorySchema;
-import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
+import com.googlecode.paradox.metadata.schema.DirectorySchema;
+import com.googlecode.paradox.metadata.DatabaseMetaData;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.Plan;
@@ -327,8 +327,8 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public DatabaseMetaData getMetaData() {
-        return new ParadoxDatabaseMetaData(this);
+    public java.sql.DatabaseMetaData getMetaData() {
+        return new DatabaseMetaData(this);
     }
 
     /**
