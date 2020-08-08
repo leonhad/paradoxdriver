@@ -12,16 +12,13 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.ParadoxView;
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
-import com.googlecode.paradox.results.ParadoxType;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.utils.TestUtil;
 import org.junit.*;
 
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.util.List;
 
 /**
  * Unit test for {@link ViewData}.
@@ -80,19 +77,9 @@ public class ViewDataTest {
      */
     @Test
     public void testListViews() throws Exception {
-        final List<ParadoxView> list = ViewData.listViews(null, this.conn.getConnectionInfo());
-        Assert.assertEquals("Invalid views", 1, list.size());
-        Assert.assertEquals("Invalid view name.", "AREAS", list.get(0).getName());
-    }
-
-    /**
-     * Test for parse view.
-     */
-    @Test
-    public void testParseExpression() {
-        final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
-        ViewData.parseExpression(field, "_PC, CALC _PC*_QTD AS TOTAL_COST", conn.getConnectionInfo());
-        Assert.assertEquals("Invalid field name.", "TOTAL_COST", field.getAlias());
+        final Table table = this.conn.getConnectionInfo().getCurrentSchema().findTable(this.conn.getConnectionInfo(),
+                "AREAS");
+        Assert.assertEquals("Invalid view name.", "AREAS", table.getName());
     }
 
     /**

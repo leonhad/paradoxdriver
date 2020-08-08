@@ -48,9 +48,15 @@ public class DirectorySchema implements Schema {
 
     @Override
     public Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException {
-        for (final ParadoxTable paradoxTable : TableData.listTables(schemaFile, connectionInfo)) {
-            if (tableName.equalsIgnoreCase(paradoxTable.getName())) {
-                return paradoxTable;
+        for (final Table table : TableData.listTables(schemaFile, connectionInfo)) {
+            if (tableName.equalsIgnoreCase(table.getName())) {
+                return table;
+            }
+        }
+
+        for (final Table table : ViewData.listViews(schemaFile, connectionInfo)) {
+            if (tableName.equalsIgnoreCase(table.getName())) {
+                return table;
             }
         }
 

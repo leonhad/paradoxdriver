@@ -8,10 +8,14 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.metadata;
+package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
+import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Index;
+import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.TableType;
 import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 
 import java.io.File;
