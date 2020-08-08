@@ -38,7 +38,7 @@ public class DirectorySchema implements Schema {
 
     @Override
     public String catalogName() {
-        return schemaFile.getParent();
+        return schemaFile.getParentFile().getName();
     }
 
     @Override

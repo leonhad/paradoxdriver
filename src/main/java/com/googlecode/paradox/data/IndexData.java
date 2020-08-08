@@ -71,21 +71,6 @@ public final class IndexData extends ParadoxData {
             }
         }
 
-        // FIXME review the filter and loading.
-        indexNamePattern = tableName + ".Y__";
-        fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(), indexNamePattern));
-
-        if (fileList != null) {
-            for (final File file : fileList) {
-                try {
-                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connectionInfo);
-                    indexes.add(index);
-                } catch (final IOException e) {
-                    throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
-                }
-            }
-        }
-
         return indexes.toArray(new Index[0]);
     }
 
@@ -100,8 +85,6 @@ public final class IndexData extends ParadoxData {
     private static ParadoxIndex loadIndexHeader(final File file, final ConnectionInfo connectionInfo)
             throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
-
-        // FIXME fix Y__ index metadata
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -142,6 +125,7 @@ public final class IndexData extends ParadoxData {
             IndexData.parseSortID(buffer, index);
             IndexData.parseIndexName(buffer, index);
         }
+
         return index;
     }
 

@@ -19,4 +19,18 @@ public interface Index {
     String getOrder();
 
     Field[] getFields();
+
+    /**
+     * Gets the row count.
+     *
+     * @return the row count.
+     */
+    int getRowCount();
+
+    /**
+     * Gets the file total blocks.
+     *
+     * @return the file total blocks.
+     */
+    int getTotalBlocks();
 }

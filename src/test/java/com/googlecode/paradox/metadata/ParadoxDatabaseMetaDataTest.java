@@ -23,8 +23,7 @@ import java.util.Properties;
 /**
  * Unit test for {@link ParadoxDatabaseMetaData} class.
  *
- * @author Leonardo Alves da Costa
- * @version 1.0
+ * @version 1.1
  * @since 1.3
  */
 public class ParadoxDatabaseMetaDataTest {
@@ -452,7 +451,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testImportedKeys() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getImportedKeys("db", null, "test.db")) {
+        try (ResultSet rs = this.conn.getMetaData().getImportedKeys("db", null, "test")) {
             Assert.assertTrue("Invalid instance.", rs instanceof ParadoxResultSet);
         }
     }
@@ -465,6 +464,18 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testIndexInfo() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getIndexInfo(conn.getCatalog(), "joins", "indexed", false, true)) {
+            Assert.assertTrue("Test for ResultSet.", rs.next());
+        }
+    }
+
+    /**
+     * Test for area codes index info.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testAreaCodesIndexInfo() throws SQLException {
+        try (ResultSet rs = this.conn.getMetaData().getIndexInfo(conn.getCatalog(), "db", "AREACODES", false, true)) {
             Assert.assertTrue("Test for ResultSet.", rs.next());
         }
     }
@@ -803,8 +814,7 @@ public class ParadoxDatabaseMetaDataTest {
         properties.put(ConnectionInfo.ENABLE_CATALOG_KEY, "true");
 
         try (final Connection connection = DriverManager.getConnection(CONNECTION_STRING + "db", properties);
-                final ResultSet rs = connection.getMetaData().getSchemas()) {
-
+             final ResultSet rs = connection.getMetaData().getSchemas()) {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "com", rs.getString("TABLE_SCHEM"));
@@ -971,7 +981,7 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid value.", "CUSTOMER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Invalid value.", "CustNo", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("Invalid value.", "0", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "1", rs.getString("KEY_SEQ"));
             Assert.assertEquals("Invalid value.", "CUSTOMER.PX", rs.getString("PK_NAME"));
             Assert.assertFalse("Invalid ResultSet State.", rs.next());
         }
@@ -1046,14 +1056,14 @@ public class ParadoxDatabaseMetaDataTest {
             Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Invalid value.", "REQTYPE", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("Invalid value.", "0", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "1", rs.getString("KEY_SEQ"));
             Assert.assertEquals("Invalid value.", "SERVER.PX", rs.getString("PK_NAME"));
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid value.", conn.getCatalog(), rs.getString("TABLE_CAT"));
             Assert.assertEquals("Invalid value.", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid value.", "SERVER", rs.getString("TABLE_NAME"));
             Assert.assertEquals("Invalid value.", "URI", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("Invalid value.", "1", rs.getString("KEY_SEQ"));
+            Assert.assertEquals("Invalid value.", "2", rs.getString("KEY_SEQ"));
             Assert.assertEquals("Invalid value.", "SERVER.PX", rs.getString("PK_NAME"));
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
         }

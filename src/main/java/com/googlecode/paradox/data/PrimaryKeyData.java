@@ -13,7 +13,7 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.PrimaryKeyFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxPK;
 import com.googlecode.paradox.utils.Constants;
 
@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 /**
  * Reads primary key data fields.
@@ -49,18 +50,19 @@ public final class PrimaryKeyData extends ParadoxData {
      * @return the primary keys.
      * @throws SQLException in case of load failures.
      */
-    public static ParadoxPK getPrimaryKey(final File currentSchema, final ParadoxDataFile table,
+    public static ParadoxPK getPrimaryKey(final File currentSchema, final Table table,
                                           final ConnectionInfo connectionInfo) throws SQLException {
         final String name = table.getName() + ".PX";
 
         final File[] fileList = currentSchema.listFiles(new PrimaryKeyFilter(connectionInfo.getLocale(), name));
         if ((fileList != null) && (fileList.length > 0)) {
             try {
-                return PrimaryKeyData.loadPKHeader(fileList[0], connectionInfo);
+                return PrimaryKeyData.loadPKHeader(fileList[0], table, connectionInfo);
             } catch (final IOException ex) {
                 throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, ex);
             }
         }
+
         return null;
     }
 
@@ -72,7 +74,8 @@ public final class PrimaryKeyData extends ParadoxData {
      * @return the {@link ParadoxPK}.
      * @throws IOException in case of I/O exceptions.
      */
-    private static ParadoxPK loadPKHeader(final File file, final ConnectionInfo connectionInfo) throws IOException {
+    private static ParadoxPK loadPKHeader(final File file, final Table table, final ConnectionInfo connectionInfo)
+            throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ParadoxPK pk = new ParadoxPK(connectionInfo);
@@ -85,6 +88,10 @@ public final class PrimaryKeyData extends ParadoxData {
             pk.setRecordSize(buffer.getShort());
             pk.setHeaderSize(buffer.getShort());
             pk.setType(buffer.get());
+            if (pk.getType() != 1) {
+                throw new IOException("Invalid index file.");
+            }
+
             pk.setBlockSize(buffer.get());
             pk.setRowCount(buffer.getInt());
             pk.setUsedBlocks(buffer.getShort());
@@ -102,6 +109,9 @@ public final class PrimaryKeyData extends ParadoxData {
             pk.setWriteProtected(buffer.get());
             pk.setVersionId(buffer.get());
         }
+
+        pk.setFields(Arrays.copyOf(table.getFields(), pk.getFieldCount()));
+
         return pk;
     }
 }

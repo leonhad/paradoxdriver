@@ -74,11 +74,6 @@ public final class ParadoxView extends ParadoxDataFile implements Table {
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
     }
 
-    @Override
-    public Field[] getPrimaryKeys() {
-        return new Field[0];
-    }
-
     /**
      * No indexes for views.
      *

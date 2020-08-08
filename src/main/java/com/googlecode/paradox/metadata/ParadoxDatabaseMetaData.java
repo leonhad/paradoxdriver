@@ -123,27 +123,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         this.connectionInfo = connection.getConnectionInfo();
     }
 
-    private static void getPrimaryKeyIndex(final String catalog, final List<Object[]> values, final Table table) {
-        for (final Field pk : table.getPrimaryKeys()) {
-            final Object[] row = new Object[]{
-                    catalog,
-                    table.getSchemaName(),
-                    table.getName(),
-                    Boolean.FALSE,
-                    catalog,
-                    table.getName() + ".px",
-                    DatabaseMetaData.tableIndexHashed, pk.getOrderNum(),
-                    pk.getName(),
-                    "A",
-                    table.getRowCount(),
-                    table.getTotalBlocks(),
-                    null
-            };
-
-            values.add(row);
-        }
-    }
-
     /**
      * {@inheritDoc}.
      */
@@ -601,38 +580,33 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
         final List<Object[]> values = new ArrayList<>();
         for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaName)) {
             for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
-                getPrimaryKeyIndex(catalog, values, table);
-                getSecondaryIndexInfo(catalog, table, values);
+                for (final Index index : table.getIndexes()) {
+                    for (final Field field : index.getFields()) {
+                        final Object[] row = new Object[]{
+                                catalog,
+                                table.getSchemaName(),
+                                table.getName(),
+                                !index.isUnique(),
+                                catalog,
+                                index.getName(),
+                                DatabaseMetaData.tableIndexHashed,
+                                field.getOrderNum(),
+                                field.getName(),
+                                index.getOrder(),
+                                index.getRowCount(),
+                                index.getTotalBlocks(),
+                                null
+                        };
+
+                        values.add(row);
+                    }
+                }
 
                 // FIXME load .VAL indexes (references).
             }
         }
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
-    }
-
-    private void getSecondaryIndexInfo(final String catalog, final Table table, final List<Object[]> values) throws SQLException {
-        for (final Index index : table.getIndexes()) {
-            for (Field field : index.getFields()) {
-                final Object[] row = new Object[]{
-                        catalog,
-                        table.getSchemaName(),
-                        table.getName(),
-                        !index.isUnique(),
-                        catalog,
-                        index.getName(),
-                        DatabaseMetaData.tableIndexHashed,
-                        field.getOrderNum(),
-                        field.getName(),
-                        index.getOrder(),
-                        0,
-                        0,
-                        null
-                };
-
-                values.add(row);
-            }
-        }
     }
 
     /**
@@ -837,20 +811,26 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
 
         for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaName)) {
             for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
-                for (final Field pk : table.getPrimaryKeys()) {
-                    final Object[] row = {
-                            connectionInfo.getCatalog(),
-                            schema.name(),
-                            table.getName(),
-                            pk.getName(),
-                            pk.getOrderNum() - 1,
-                            table.getName() + ".PX"
-                    };
+                final Index index = table.getPrimaryKeyIndex();
+                if (index != null) {
+                    for (final Field field : index.getFields()) {
+                        final Object[] row = new Object[]{
+                                schema.catalogName(),
+                                schema.name(),
+                                table.getName(),
+                                field.getName(),
+                                field.getOrderNum(),
+                                index.getName()
+                        };
 
-                    values.add(row);
+                        values.add(row);
+                    }
                 }
             }
         }
+
+        values.sort((o1, o2) -> ((String) o1[3]).compareToIgnoreCase((String) o2[3]));
+
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
 

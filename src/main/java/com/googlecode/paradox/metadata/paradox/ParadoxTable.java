@@ -12,6 +12,7 @@ package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.IndexData;
+import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
@@ -35,13 +36,18 @@ import java.util.List;
 public final class ParadoxTable extends ParadoxDataFile implements Table {
 
     /**
+     * Table primary key.
+     */
+    private ParadoxPK primaryKeyIndex;
+
+    /**
      * Creates a new instance.
      *
      * @param file           table references file.
      * @param name           table name.
      * @param connectionInfo the connection information.
      */
-    public ParadoxTable(final File file, final String name, final ConnectionInfo connectionInfo) {
+    public ParadoxTable(final File file, final String name, final ConnectionInfo connectionInfo) throws SQLException {
         super(file, name, connectionInfo);
     }
 
@@ -95,6 +101,14 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     }
 
     @Override
+    public Index getPrimaryKeyIndex() throws SQLException {
+        if (primaryKeyIndex == null) {
+            this.primaryKeyIndex = PrimaryKeyData.getPrimaryKey(file.getParentFile(), this, connectionInfo);
+        }
+
+        return primaryKeyIndex;
+    }
+
     public Field[] getPrimaryKeys() {
         final Field[] ret = new Field[this.getPrimaryFieldCount()];
         if (this.getPrimaryFieldCount() > 0) {

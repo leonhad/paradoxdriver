@@ -81,11 +81,13 @@ public interface Table {
     List<Object[]> load(final Field[] fields) throws SQLException;
 
     /**
-     * Gets the primary keys list.
+     * Gets the primary key index.
      *
-     * @return the primary keys list.
+     * @return the primary key index or {@code null} if there is no index.
      */
-    Field[] getPrimaryKeys();
+    default Index getPrimaryKeyIndex() throws SQLException {
+        return null;
+    }
 
     /**
      * Gets the table indexes.

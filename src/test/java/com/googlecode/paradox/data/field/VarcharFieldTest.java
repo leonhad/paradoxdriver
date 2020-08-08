@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 
 /**
  * Unit test for {@link VarcharField} class.
@@ -40,7 +41,7 @@ public class VarcharFieldTest {
      * Test for parse method.
      */
     @Test
-    public void testParse() {
+    public void testParse() throws SQLException {
         final ParadoxTable table = new ParadoxTable(null, null, null);
         table.setCharset(StandardCharsets.ISO_8859_1);
         final ParadoxField paradoxField = new ParadoxField(ParadoxType.VARCHAR);

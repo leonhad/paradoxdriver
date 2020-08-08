@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.metadata.Index;
 
 /**
  * Stores a primary key definition..
@@ -18,7 +19,7 @@ import com.googlecode.paradox.ConnectionInfo;
  * @version 1.2
  * @since 1.0
  */
-public final class ParadoxPK extends ParadoxDataFile {
+public final class ParadoxPK extends ParadoxDataFile implements Index {
 
     /**
      * The index field order.
@@ -67,5 +68,15 @@ public final class ParadoxPK extends ParadoxDataFile {
     @Override
     public int hashCode() {
         return this.getName().hashCode();
+    }
+
+    @Override
+    public boolean isUnique() {
+        return true;
+    }
+
+    @Override
+    public String getOrder() {
+        return "A";
     }
 }
