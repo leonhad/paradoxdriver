@@ -325,7 +325,7 @@ public final class ConnectionInfo {
 
     public void setCatalog(final String name) throws SQLException {
         if (!enableCatalogChange) {
-            if ("DB".equalsIgnoreCase(name)) {
+            if (getCatalog().equalsIgnoreCase(name)) {
                 return;
             }
 
@@ -486,11 +486,7 @@ public final class ConnectionInfo {
      * @return the current catalog.
      */
     public String getCatalog() {
-        if (enableCatalogChange && currentCatalog.getParent() != null) {
-            return currentCatalog.getName();
-        }
-
-        return "DB";
+        return currentCatalog.getName();
     }
 
     void setCurrentCatalog(final File currentCatalog) {
