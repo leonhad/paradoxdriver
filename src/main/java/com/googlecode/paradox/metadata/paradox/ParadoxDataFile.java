@@ -129,7 +129,7 @@ public class ParadoxDataFile {
         this.file = file;
         this.name = Utils.removeSuffix(name, "DB");
         this.connectionInfo = connectionInfo;
-        if (connectionInfo.getCharset() != null) {
+        if (connectionInfo != null && connectionInfo.getCharset() != null) {
             this.charset = connectionInfo.getCharset();
         }
     }
