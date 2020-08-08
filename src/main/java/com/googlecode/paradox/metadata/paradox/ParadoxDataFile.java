@@ -116,20 +116,20 @@ public class ParadoxDataFile {
     /**
      * Connection information.
      */
-    private final ConnectionInfo connectionInfo;
+    protected final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
      *
      * @param file           the database {@link File}.
      * @param name           the file name.
-     * @param connectionInfo the connection information.
+     * @param connectionInfo the connection information
      */
-    protected ParadoxDataFile(final File file, final String name, final ConnectionInfo connectionInfo) {
+    protected ParadoxDataFile(final File file, final String name, ConnectionInfo connectionInfo) {
         this.file = file;
         this.name = Utils.removeSuffix(name, "DB");
         this.connectionInfo = connectionInfo;
-        if (connectionInfo != null && connectionInfo.getCharset() != null) {
+        if (charset != null) {
             this.charset = connectionInfo.getCharset();
         }
     }

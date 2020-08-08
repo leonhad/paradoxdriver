@@ -8,7 +8,6 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
@@ -19,18 +18,28 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TableFactory {
+public class DirectorySchema implements Schema {
 
-    public static List<Table> listTables(final File schema, final String tablePattern,
-                                         final ConnectionInfo connectionInfo) throws SQLException {
-        return TableData.listTables(schema, tablePattern, connectionInfo);
+    private final File schemaFile;
+
+    public DirectorySchema(final File parent) {
+        this.schemaFile = parent;
     }
 
-    public static Table findTable(final String catalog, final String schema, final String tableName,
-                                  final ConnectionInfo connectionInfo) throws SQLException {
-        for (final ParadoxTable paradoxTable : TableData.listTables(schema, connectionInfo)) {
-            if (schema.equalsIgnoreCase(paradoxTable.getSchemaName())
-                    && tableName.equalsIgnoreCase(paradoxTable.getName())) {
+    @Override
+    public List<Table> list(final ConnectionInfo connectionInfo, final String tablePattern) throws SQLException {
+        return TableData.listTables(schemaFile, tablePattern, connectionInfo);
+    }
+
+    @Override
+    public String getName() {
+        return schemaFile.getName();
+    }
+
+    @Override
+    public Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException {
+        for (final ParadoxTable paradoxTable : TableData.listTables(schemaFile, connectionInfo)) {
+            if (tableName.equalsIgnoreCase(paradoxTable.getName())) {
                 return paradoxTable;
             }
         }

@@ -81,7 +81,7 @@ public class TableDataTest {
     @Test
     public void testInvalidTable() throws SQLException {
         Assert.assertEquals("Failed in count invalid tables.", 0,
-                TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "not found.db",
+                TableData.listTables(null, "not found.db",
                         this.conn.getConnectionInfo()).size());
     }
 
@@ -92,8 +92,7 @@ public class TableDataTest {
      */
     @Test
     public void testLoadAreaCodes() throws SQLException {
-        final List<Table> tables = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(),
-                "areacodes.db", this.conn.getConnectionInfo());
+        final List<Table> tables = TableData.listTables(null, "areacodes.db", this.conn.getConnectionInfo());
         Assert.assertNotNull("List tables is null", tables);
         Assert.assertFalse("List tables is empty", tables.isEmpty());
         final Table table = tables.get(0);
@@ -108,7 +107,7 @@ public class TableDataTest {
      */
     @Test
     public void testLoadContacts() throws SQLException {
-        final Table table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "contacts" +
+        final Table table = TableData.listTables(null, "contacts" +
                 ".db", this.conn.getConnectionInfo()).get(0);
         final Field[] fields = new Field[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading contacts.db table data.", table.load(fields));
@@ -121,7 +120,7 @@ public class TableDataTest {
      */
     @Test
     public void testLoadCustomer() throws SQLException {
-        final Table table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "customer" +
+        final Table table = TableData.listTables(null, "customer" +
                 ".db", this.conn.getConnectionInfo()).get(0);
         final Field[] fields = new Field[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading customer.db table data.", table.load(fields));
@@ -134,7 +133,7 @@ public class TableDataTest {
      */
     @Test
     public void testLoadHercules() throws SQLException {
-        final Table table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "hercules" +
+        final Table table = TableData.listTables(null, "hercules" +
                 ".db", this.conn.getConnectionInfo()).get(0);
         Assert.assertNotNull("Error loading hercules.db table data.", table.load(table.getFields()));
     }
@@ -146,7 +145,7 @@ public class TableDataTest {
      */
     @Test
     public void testLoadOrders() throws SQLException {
-        final Table table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "orders.db",
+        final Table table = TableData.listTables(null, "orders.db",
                 this.conn.getConnectionInfo()).get(0);
         final Field[] fields = new Field[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading table data.", table.load(fields));
@@ -159,8 +158,7 @@ public class TableDataTest {
      */
     @Test
     public void testLoadServer() throws SQLException {
-        final Table table = TableData.listTables(this.conn.getConnectionInfo().getCurrentSchema(), "server.db"
-                , this.conn.getConnectionInfo()).get(0);
+        final Table table = TableData.listTables(null, "server.db", this.conn.getConnectionInfo()).get(0);
         final Field[] fields = new Field[]{table.getFields()[0]};
         Assert.assertNotNull("Error loading table data.", table.load(fields));
     }

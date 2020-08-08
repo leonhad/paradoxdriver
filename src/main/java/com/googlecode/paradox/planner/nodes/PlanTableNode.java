@@ -13,9 +13,8 @@ package com.googlecode.paradox.planner.nodes;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableFactory;
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.collections.FixedValueCollection;
 import com.googlecode.paradox.results.Column;
@@ -66,13 +65,15 @@ public final class PlanTableNode {
      */
     public PlanTableNode(final ConnectionInfo connectionInfo, final TableNode table)
             throws SQLException {
-        String schemaName = table.getSchemaName();
-        if (schemaName == null) {
-            schemaName = connectionInfo.getSchema();
+        Schema schema;
+        if (table.getSchemaName() == null) {
+            schema = connectionInfo.getCurrentSchema();
+        } else {
+            schema = connectionInfo.getSchema(connectionInfo.getCatalog(), table.getSchemaName());
         }
 
         final String tableName = table.getName();
-        this.table = TableFactory.findTable(connectionInfo.getCatalog(), schemaName, tableName, connectionInfo);
+        this.table = schema.findTable(connectionInfo, tableName);
 
         if (this.table == null) {
             throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, table.getPosition(), tableName);

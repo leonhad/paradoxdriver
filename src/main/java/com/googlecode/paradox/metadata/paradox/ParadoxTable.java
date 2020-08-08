@@ -49,8 +49,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      * @throws SQLException in case of failures.
      */
     public FileInputStream openBlobs() throws SQLException {
-        final File[] fileList = file.getParentFile().listFiles(new TableFilter(getConnectionInfo().getLocale(), name,
-                "mb"));
+        final File[] fileList = file.getParentFile().listFiles(new TableFilter(connectionInfo.getLocale(), name, "mb"));
         if ((fileList == null) || (fileList.length == 0)) {
             throw new ParadoxDataException(ParadoxDataException.Error.BLOB_FILE_NOT_FOUND);
         }
@@ -94,7 +93,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
 
     @Override
     public Field[] getPrimaryKeys() {
-        final ParadoxField[] ret = new ParadoxField[this.getPrimaryFieldCount()];
+        final Field[] ret = new Field[this.getPrimaryFieldCount()];
         if (this.getPrimaryFieldCount() > 0) {
             System.arraycopy(this.getFields(), 0, ret, 0, this.getPrimaryFieldCount());
         }

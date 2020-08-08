@@ -79,8 +79,8 @@ public class ParadoxData {
             int cp = buffer.getShort();
 
             // Force charset if have one.
-            if (dataFile.getConnectionInfo().getCharset() != null) {
-                dataFile.setCharset(dataFile.getConnectionInfo().getCharset());
+            if (dataFile.getCharset() != null) {
+                dataFile.setCharset(dataFile.getCharset());
             } else {
                 dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
                 if (CHARSET_TABLE.get(cp) == null) {
@@ -91,8 +91,8 @@ public class ParadoxData {
         } else {
             buffer.position(0x58);
 
-            if (dataFile.getConnectionInfo().getCharset() != null) {
-                dataFile.setCharset(dataFile.getConnectionInfo().getCharset());
+            if (dataFile.getCharset() != null) {
+                dataFile.setCharset(dataFile.getCharset());
             } else {
                 dataFile.setCharset(CHARSET_TABLE.get(CHARSET_DEFAULT));
             }

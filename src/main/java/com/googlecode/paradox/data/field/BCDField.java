@@ -50,7 +50,6 @@ public final class BCDField implements FieldParser {
      */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field originalField) {
-        final ParadoxField field = (ParadoxField) originalField;
         final byte[] valueBuffer = new byte[BCD_SIZE];
 
         System.arraycopy(buffer.array(), buffer.position(), valueBuffer, 0, valueBuffer.length);
@@ -78,6 +77,7 @@ public final class BCDField implements FieldParser {
             sb.append(low);
         }
 
+        final ParadoxField field = (ParadoxField) originalField;
         int realSize = field.getRealSize();
         if (realSize == MAX_DIGITS) {
             sb.insert(0, "0.");

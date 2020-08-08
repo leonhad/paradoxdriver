@@ -12,7 +12,10 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
+import com.googlecode.paradox.metadata.DirectorySchema;
+import com.googlecode.paradox.metadata.Schema;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -77,7 +80,7 @@ public final class ConnectionInfo {
     /**
      * The current connection schema.
      */
-    private File currentSchema;
+    private Schema currentSchema;
     /**
      * The current catalog.
      */
@@ -106,30 +109,9 @@ public final class ConnectionInfo {
      * @param catalog       the database catalog.
      * @param schemaPattern the schema pattern.
      * @return the schema directories.
-     */
-    public List<File> getSchemaFiles(final String catalog, final String schemaPattern) {
-        if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
-            final File[] schemas = this.currentCatalog.listFiles(new DirectoryFilter(this.locale, schemaPattern));
-            if (schemas != null) {
-                return Stream.of(schemas)
-                        .filter(Objects::nonNull)
-                        .sorted(Comparator.comparing(a -> a))
-                        .collect(Collectors.toList());
-            }
-        }
-
-        return Collections.emptyList();
-    }
-
-    /**
-     * List the connections schema in selected catalog.
-     *
-     * @param catalog       the database catalog.
-     * @param schemaPattern the schema pattern.
-     * @return the schema directories.
      * @throws ParadoxDataException in case of failures.
      */
-    public List<String> getSchemas(final String catalog, final String schemaPattern) throws ParadoxDataException {
+    public List<Schema> getSchemas(final String catalog, final String schemaPattern) throws ParadoxDataException {
         File[] catalogs = null;
 
         if (!enableCatalogChange) {
@@ -147,21 +129,59 @@ public final class ConnectionInfo {
             catalogs = parent.listFiles(new DirectoryFilter(locale, catalog));
         }
 
-        final List<String> ret = new ArrayList<>();
+        final List<Schema> ret = new ArrayList<>();
         if (catalogs != null) {
             for (final File catalogFile : catalogs) {
                 final File[] schemas = catalogFile.listFiles(new DirectoryFilter(this.locale, schemaPattern));
                 if (schemas != null) {
                     ret.addAll(Stream.of(schemas)
                             .filter(Objects::nonNull)
-                            .map(File::getName)
+                            .map(DirectorySchema::new)
                             .collect(Collectors.toList()));
                 }
             }
         }
 
-        ret.sort(String::compareTo);
+        ret.sort(Comparator.comparing(Schema::getName));
         return ret;
+    }
+
+    /**
+     * List the connections schema in selected catalog.
+     *
+     * @param catalog    the database catalog.
+     * @param schemaName the schema name.
+     * @return the schema directories.
+     * @throws SQLException in case of failures.
+     */
+    public Schema getSchema(final String catalog, final String schemaName) throws SQLException {
+        File[] catalogs = null;
+
+        if (!enableCatalogChange) {
+            if (catalog == null || getCatalog().equalsIgnoreCase(catalog)) {
+                catalogs = new File[]{
+                        currentCatalog
+                };
+            }
+        } else {
+            File parent = currentCatalog.getParentFile();
+            if (!parent.isDirectory()) {
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+            }
+
+            catalogs = parent.listFiles(new DirectoryFilter(locale, catalog));
+        }
+
+        if (catalogs != null) {
+            for (final File catalogFile : catalogs) {
+                final File[] schemas = catalogFile.listFiles(new DirectoryFilter(this.locale, schemaName));
+                if (schemas != null && schemas.length == 1) {
+                    return new DirectorySchema(schemas[0]);
+                }
+            }
+        }
+
+        throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
     }
 
     private static String getPropertyValue(final String key, final String defaultValue, final Properties info) {
@@ -325,7 +345,7 @@ public final class ConnectionInfo {
         final File[] schemas = newCatalog.listFiles(new DirectoryFilter(locale));
         if (schemas != null && schemas.length > 0) {
             // Default to the first schema.
-            currentSchema = schemas[0];
+            currentSchema = new DirectorySchema(schemas[0]);
         } else {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
         }
@@ -380,6 +400,11 @@ public final class ConnectionInfo {
         return charset;
     }
 
+    /**
+     * Sets the default charset.
+     *
+     * @param charset the default charset.
+     */
     public void setCharset(Charset charset) {
         this.charset = charset;
     }
@@ -393,6 +418,11 @@ public final class ConnectionInfo {
         return locale;
     }
 
+    /**
+     * Sets the connection locale.
+     *
+     * @param locale the connection locale.
+     */
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
@@ -420,8 +450,25 @@ public final class ConnectionInfo {
      *
      * @return the current schema directory.
      */
-    public File getCurrentSchema() {
+    public Schema getCurrentSchema() {
         return this.currentSchema;
+    }
+
+    /**
+     * Sets the current connection schema.
+     *
+     * @param schemaName the current connection schema.
+     * @throws SQLException in case of schema not found.
+     */
+    public void setCurrentSchema(final String schemaName) throws SQLException {
+        final File[] schemas = this.currentCatalog
+                .listFiles(new DirectoryFilter(locale, schemaName));
+
+        if (schemas == null || schemas.length != 1) {
+            throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
+        }
+
+        this.currentSchema = new DirectorySchema(schemas[0]);
     }
 
     /**
@@ -429,24 +476,21 @@ public final class ConnectionInfo {
      *
      * @param currentSchema the current connection schema.
      */
-    public void setCurrentSchema(final File currentSchema) {
+    public void setCurrentSchema(final Schema currentSchema) {
         this.currentSchema = currentSchema;
     }
 
-    public String getSchema() {
-        return this.currentSchema.getName();
-    }
-
+    /**
+     * Gets the current catalog.
+     *
+     * @return the current catalog.
+     */
     public String getCatalog() {
         if (enableCatalogChange && currentCatalog.getParent() != null) {
             return currentCatalog.getName();
         }
 
         return "DB";
-    }
-
-    File getCurrentCatalog() {
-        return currentCatalog;
     }
 
     void setCurrentCatalog(final File currentCatalog) {

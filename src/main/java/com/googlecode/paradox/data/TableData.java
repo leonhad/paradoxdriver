@@ -48,15 +48,14 @@ public final class TableData extends ParadoxData {
     /**
      * List all database tables.
      *
-     * @param schema         the current schema name.
-     * @param connectionInfo the connection information.
-     * @return all {@link ParadoxTable}.
+     * @param currentSchema  the current schema name.
+     * @param connectionInfo the connection info.
+     * @return all {@link ParadoxTable} in schema.
      * @throws SQLException in case of failures.
      */
-    public static List<ParadoxTable> listTables(final String schema, final ConnectionInfo connectionInfo)
+    public static List<ParadoxTable> listTables(final File currentSchema, final ConnectionInfo connectionInfo)
             throws SQLException {
         final ArrayList<ParadoxTable> tables = new ArrayList<>();
-        final File currentSchema = new File(connectionInfo.getCurrentSchema().getParent(), schema);
 
         final File[] fileList = currentSchema.listFiles(new TableFilter(connectionInfo.getLocale()));
         if (fileList != null) {

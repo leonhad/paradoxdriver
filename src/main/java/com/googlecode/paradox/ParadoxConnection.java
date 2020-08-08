@@ -10,10 +10,10 @@
  */
 package com.googlecode.paradox;
 
-import com.googlecode.paradox.data.filefilters.DirectoryFilter;
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
+import com.googlecode.paradox.metadata.DirectorySchema;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.planner.Planner;
@@ -92,8 +92,8 @@ public final class ParadoxConnection implements Connection {
 
         this.connectionInfo = new ConnectionInfo(url);
         this.connectionInfo.setProperties(info);
-        this.connectionInfo.setCurrentSchema(dir);
         this.connectionInfo.setCurrentCatalog(dir.getParentFile());
+        this.connectionInfo.setCurrentSchema(new DirectorySchema(dir));
     }
 
     @SuppressWarnings("java:S1452")
@@ -162,6 +162,7 @@ public final class ParadoxConnection implements Connection {
         for (final Statement stmt : this.statements) {
             stmt.close();
         }
+
         this.statements.clear();
         this.closed = true;
     }
@@ -343,7 +344,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public String getSchema() {
-        return this.connectionInfo.getSchema();
+        return this.connectionInfo.getCurrentSchema().getName();
     }
 
     /**
@@ -351,14 +352,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public void setSchema(final String schema) throws SQLException {
-        final File[] schemas = this.connectionInfo.getCurrentCatalog()
-                .listFiles(new DirectoryFilter(connectionInfo.getLocale(), schema));
-
-        if (schemas == null || schemas.length != 1) {
-            throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
-        }
-
-        this.connectionInfo.setCurrentSchema(schemas[0]);
+        this.connectionInfo.setCurrentSchema(schema);
     }
 
     /**

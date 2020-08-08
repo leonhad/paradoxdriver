@@ -12,8 +12,8 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.metadata.ParadoxView;
+import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.TestUtil;
 import org.junit.*;
@@ -80,8 +80,7 @@ public class ViewDataTest {
      */
     @Test
     public void testListViews() throws Exception {
-        final List<ParadoxView> list = ViewData.listViews(this.conn.getConnectionInfo().getCurrentSchema(),
-                this.conn.getConnectionInfo());
+        final List<ParadoxView> list = ViewData.listViews(null, this.conn.getConnectionInfo());
         Assert.assertEquals("Invalid views", 1, list.size());
         Assert.assertEquals("Invalid view name.", "AREAS", list.get(0).getName());
     }
