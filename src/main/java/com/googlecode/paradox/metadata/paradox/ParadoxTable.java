@@ -11,10 +11,12 @@
 package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.TableType;
 
@@ -100,6 +102,12 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         }
 
         return ret;
+    }
+
+    @Override
+    public Index[] getIndexes() throws SQLException {
+        // FIXME redo the index loading.
+        return IndexData.listIndexes(file.getParentFile(), name, this.connectionInfo);
     }
 
     @Override

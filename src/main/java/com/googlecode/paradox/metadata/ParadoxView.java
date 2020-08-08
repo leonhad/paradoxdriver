@@ -75,6 +75,16 @@ public final class ParadoxView extends ParadoxDataFile implements Table {
         return new Field[0];
     }
 
+    /**
+     * No indexes for views.
+     *
+     * @return a empty array.
+     */
+    @Override
+    public Index[] getIndexes() {
+        return new Index[0];
+    }
+
     @Override
     public TableType type() {
         return TableType.VIEW;

@@ -13,12 +13,12 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.SecondaryIndexFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.metadata.paradox.ParadoxIndex;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
-import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Reads index data files.
@@ -54,10 +53,10 @@ public final class IndexData extends ParadoxData {
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException in case of reading failures.
      */
-    public static List<ParadoxIndex> listIndexes(final File currentSchema, final String tableName,
-                                                 final ConnectionInfo connectionInfo) throws SQLException {
+    public static Index[] listIndexes(final File currentSchema, final String tableName,
+                                      final ConnectionInfo connectionInfo) throws SQLException {
         final ArrayList<ParadoxIndex> indexes = new ArrayList<>();
-        String indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".X__";
+        String indexNamePattern = tableName + ".X__";
         File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(),
                 indexNamePattern));
 
@@ -73,7 +72,7 @@ public final class IndexData extends ParadoxData {
         }
 
         // FIXME review the filter and loading.
-        indexNamePattern = Utils.removeSuffix(tableName, "DB") + ".Y__";
+        indexNamePattern = tableName + ".Y__";
         fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(), indexNamePattern));
 
         if (fileList != null) {
@@ -87,7 +86,7 @@ public final class IndexData extends ParadoxData {
             }
         }
 
-        return indexes;
+        return indexes.toArray(new Index[0]);
     }
 
     /**

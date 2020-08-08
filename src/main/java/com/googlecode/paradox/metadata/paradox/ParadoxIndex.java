@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.metadata.Index;
 
 import java.io.File;
 
@@ -20,7 +21,7 @@ import java.io.File;
  * @version 1.2
  * @since 1.0
  */
-public final class ParadoxIndex extends ParadoxDataFile {
+public final class ParadoxIndex extends ParadoxDataFile implements Index {
 
     /**
      * Field order ID.

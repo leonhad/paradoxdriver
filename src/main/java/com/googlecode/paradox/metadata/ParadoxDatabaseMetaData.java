@@ -135,10 +135,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                     DatabaseMetaData.tableIndexHashed, pk.getOrderNum(),
                     pk.getName(),
                     "A",
-                    // FIXME total of rows
-                    0,
-                    // FIXME total pages
-                    0,
+                    table.getRowCount(),
+                    table.getTotalBlocks(),
                     null
             };
 
@@ -614,11 +612,8 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
     }
 
     private void getSecondaryIndexInfo(final String catalog, final Table table, final List<Object[]> values) throws SQLException {
-        // FIXME list index.
-        /*
-        for (final ParadoxIndex index : IndexData.listIndexes(null, table.getName(), this.connectionInfo)) {
-            for (int loop = 0; loop < index.getFieldCount() - index.getPrimaryFieldCount(); loop++) {
-                final Field field = index.getFields()[0];
+        for (final Index index : table.getIndexes()) {
+            for (Field field : index.getFields()) {
                 final Object[] row = new Object[]{
                         catalog,
                         table.getSchemaName(),
@@ -638,7 +633,6 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
                 values.add(row);
             }
         }
-         */
     }
 
     /**
@@ -1103,10 +1097,7 @@ public final class ParadoxDatabaseMetaData implements DatabaseMetaData {
             }
         }
 
-        return new
-
-                ParadoxResultSet(this.connectionInfo, null, values, columns);
-
+        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
 
     /**
