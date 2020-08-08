@@ -12,10 +12,12 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
+import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DirectorySchema implements Schema {
@@ -28,7 +30,10 @@ public class DirectorySchema implements Schema {
 
     @Override
     public List<Table> list(final ConnectionInfo connectionInfo, final String tablePattern) throws SQLException {
-        return TableData.listTables(schemaFile, tablePattern, connectionInfo);
+        final List<Table> ret = new ArrayList<>();
+        ret.addAll(TableData.listTables(schemaFile, tablePattern, connectionInfo));
+        ret.addAll(ViewData.listViews(schemaFile, tablePattern, connectionInfo));
+        return ret;
     }
 
     @Override

@@ -147,12 +147,13 @@ public final class ViewData {
      */
     private static Table getTable(final String tableName, final File currentSchema,
                                   final ConnectionInfo connectionInfo) throws SQLException {
-        final List<Table> tables = TableData.listTables(currentSchema, tableName.trim(), connectionInfo);
+        final List<Table> tables = TableData.listTables(currentSchema, Utils.removeSuffix(tableName.trim(), "DB"),
+                connectionInfo);
         if (!tables.isEmpty()) {
             return tables.get(0);
         }
 
-        throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, tableName);
+        throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, tableName.trim());
     }
 
     /**
