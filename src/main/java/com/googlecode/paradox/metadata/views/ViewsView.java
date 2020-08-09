@@ -24,27 +24,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Schemata view.
+ * Views view.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class SchemataView implements Table {
+public class ViewsView implements Table {
 
     /**
      * The current catalog.
      */
     private final String catalogName;
 
-    private final Field catalog = new Field("catalog_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
+    private final Field catalog = new Field("table_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
-    private final Field schema = new Field("schema_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field owner = new Field("schema_owner", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field characterCatalog = new Field("default_character_set_catalog", 0, 6, ParadoxType.VARCHAR,
-            this, 1);
-    private final Field characterSchema = new Field("default_character_set_schema", 0, 3, ParadoxType.VARCHAR,
-            this, 1);
-    private final Field characterName = new Field("default_character_set_name", 0, 6, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("table_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field name = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field definition = new Field("view_definition", 0, 0, ParadoxType.VARCHAR, this, 1);
+    private final Field check = new Field("check_option", 0, 0x07, ParadoxType.VARCHAR, this, 1);
+    private final Field updatable = new Field("is_updatable", 0, 0x02, ParadoxType.VARCHAR, this, 1);
 
     /**
      * The connection information.
@@ -57,14 +55,14 @@ public class SchemataView implements Table {
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
      */
-    public SchemataView(final ConnectionInfo connectionInfo, final String catalogName) {
+    public ViewsView(final ConnectionInfo connectionInfo, final String catalogName) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
-        return "schemata";
+        return "views";
     }
 
     @Override
@@ -82,10 +80,10 @@ public class SchemataView implements Table {
         return new Field[]{
                 catalog,
                 schema,
-                owner,
-                characterCatalog,
-                characterSchema,
-                characterName
+                name,
+                definition,
+                check,
+                updatable
         };
     }
 
@@ -98,23 +96,35 @@ public class SchemataView implements Table {
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema currentSchema : connectionInfo.getSchemas(catalogName, null)) {
-            final Object[] row = new Object[fields.length];
-            for (int i = 0; i < fields.length; i++) {
-                final Field field = fields[i];
-                Object value = null;
-                if (catalog.equals(field)) {
-                    value = currentSchema.catalogName();
-                } else if (this.schema.equals(field)) {
-                    value = currentSchema.name();
-                } else if (owner.equals(field)) {
-                    value = currentSchema.name();
+        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table table : schema.list(connectionInfo, null)) {
+                if (table.type() != TableType.VIEW) {
+                    continue;
                 }
 
-                row[i] = value;
-            }
+                final Object[] row = new Object[fields.length];
+                for (int i = 0; i < fields.length; i++) {
+                    final Field field = fields[i];
+                    Object value = null;
+                    if (catalog.equals(field)) {
+                        value = schema.catalogName();
+                    } else if (this.schema.equals(field)) {
+                        value = schema.name();
+                    } else if (name.equals(field)) {
+                        value = table.getName();
+                    } else if (this.definition.equals(field)) {
+                        value = table.definition();
+                    } else if (this.check.equals(field)) {
+                        value = "NONE";
+                    } else if (this.updatable.equals(field)) {
+                        value = "NO";
+                    }
 
-            ret.add(row);
+                    row[i] = value;
+                }
+
+                ret.add(row);
+            }
         }
 
         return ret;

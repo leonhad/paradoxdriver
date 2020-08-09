@@ -102,4 +102,8 @@ public interface Table {
     default Index[] getIndexes() throws SQLException {
         return new Index[0];
     }
+
+    default String definition() {
+        return "internal";
+    }
 }

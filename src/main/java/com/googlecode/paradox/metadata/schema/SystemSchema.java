@@ -16,6 +16,7 @@ import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.views.SchemataView;
 import com.googlecode.paradox.metadata.views.TablesView;
+import com.googlecode.paradox.metadata.views.ViewsView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class SystemSchema implements Schema {
 
         tables.add(new SchemataView(connectionInfo, catalog));
         tables.add(new TablesView(connectionInfo, catalog));
+        tables.add(new ViewsView(connectionInfo, catalog));
     }
 
     @Override
