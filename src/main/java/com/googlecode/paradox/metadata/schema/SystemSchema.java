@@ -14,8 +14,8 @@ package com.googlecode.paradox.metadata.schema;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.views.TablesView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,17 +33,19 @@ public class SystemSchema implements Schema {
     private final List<Table> tables = new ArrayList<>();
 
     /**
-     * The current catalog.
+     * The catalog name.
      */
-    private final File catalog;
+    private final String catalog;
 
     /**
      * Creates a new instance.
      *
-     * @param catalog the current catalog.
+     * @param catalog the catalog name.
      */
-    public SystemSchema(final File catalog) {
+    public SystemSchema(final ConnectionInfo connectionInfo, final String catalog) {
         this.catalog = catalog;
+
+        tables.add(new TablesView(connectionInfo, catalog));
     }
 
     @Override
@@ -53,16 +55,18 @@ public class SystemSchema implements Schema {
 
     @Override
     public String name() {
-        return "information_schema";
+        return ConnectionInfo.INFORMATION_SCHEMA;
     }
 
     @Override
     public String catalogName() {
-        return catalog.getName();
+        return catalog;
     }
 
     @Override
-    public Table findTable(ConnectionInfo connectionInfo, String tableName) {
-        return null;
+    public Table findTable(final ConnectionInfo connectionInfo, final String tableName) {
+        return tables.stream()
+                .filter(t -> t.getName().equalsIgnoreCase(tableName))
+                .findFirst().orElse(null);
     }
 }

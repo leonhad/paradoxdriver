@@ -33,6 +33,7 @@ import java.util.Collections;
  * @since 1.3
  */
 public class ParadoxResultSetMetaDataTest {
+
     /**
      * The connection string used in this tests.
      */

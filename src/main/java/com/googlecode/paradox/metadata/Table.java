@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * A generic table.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public interface Table {
@@ -48,7 +48,9 @@ public interface Table {
      *
      * @return the write protected value.
      */
-    boolean isWriteProtected();
+    default boolean isWriteProtected() {
+        return true;
+    }
 
     /**
      * Gets the field list.
@@ -94,5 +96,7 @@ public interface Table {
      *
      * @return the table indexes.
      */
-    Index[] getIndexes() throws SQLException;
+    default Index[] getIndexes() throws SQLException {
+        return new Index[0];
+    }
 }

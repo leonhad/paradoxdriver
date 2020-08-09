@@ -58,6 +58,15 @@ public class Field {
         super();
     }
 
+    public Field(String name, int precision, int size, ParadoxType type, Table table, int orderNum) {
+        this.name = name;
+        this.precision = precision;
+        this.size = size;
+        this.type = type;
+        this.table = table;
+        this.orderNum = orderNum;
+    }
+
     /**
      * Gets the field alias.
      *
@@ -152,30 +161,6 @@ public class Field {
         return precision;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Field field = (Field) o;
-        return precision == field.precision &&
-                size == field.size &&
-                Objects.equals(name, field.name) &&
-                type == field.type &&
-                Objects.equals(table, field.table) &&
-                Objects.equals(alias, field.alias);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, precision, size, type, table, alias);
-    }
-
     /**
      * Gets the field auto increment status.
      *
@@ -201,5 +186,31 @@ public class Field {
      */
     public int getOrderNum() {
         return this.orderNum;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Field field = (Field) o;
+        return Objects.equals(name, field.name) &&
+                Objects.equals(table, field.table) &&
+                Objects.equals(alias, field.alias);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, table, alias);
     }
 }

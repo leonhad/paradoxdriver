@@ -145,7 +145,7 @@ public final class ConnectionInfo {
 
                 if (schemaPattern == null ||
                         Expressions.accept(locale, INFORMATION_SCHEMA, schemaPattern, false, '\\')) {
-                    ret.add(new SystemSchema(catalogFile));
+                    ret.add(new SystemSchema(this, catalogFile.getName()));
                 }
             }
 
@@ -186,7 +186,7 @@ public final class ConnectionInfo {
         }
 
         if (INFORMATION_SCHEMA.equalsIgnoreCase(schemaName)) {
-            return new SystemSchema(catalogs[0]);
+            return new SystemSchema(this, catalogs[0].getName());
         }
 
         for (final File catalogFile : catalogs) {
@@ -358,7 +358,7 @@ public final class ConnectionInfo {
         }
 
         this.currentCatalog = newCatalog;
-        this.currentSchema = new SystemSchema(newCatalog);
+        this.currentSchema = new SystemSchema(this, newCatalog.getName());
     }
 
     public List<String> listCatalogs() throws ParadoxDataException {
@@ -470,7 +470,7 @@ public final class ConnectionInfo {
      */
     public void setCurrentSchema(final String schemaName) throws SQLException {
         if (INFORMATION_SCHEMA.equalsIgnoreCase(schemaName)) {
-            this.currentSchema = new SystemSchema(currentCatalog);
+            this.currentSchema = new SystemSchema(this, currentCatalog.getName());
         } else {
             final File[] schemas = this.currentCatalog.listFiles(new DirectoryFilter(locale, schemaName));
 

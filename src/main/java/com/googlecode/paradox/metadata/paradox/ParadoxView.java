@@ -13,10 +13,8 @@ package com.googlecode.paradox.metadata.paradox;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.TableType;
-import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -25,7 +23,7 @@ import java.util.List;
 /**
  * Stores the paradox view data.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ParadoxView extends ParadoxDataFile implements Table {
@@ -65,23 +63,8 @@ public final class ParadoxView extends ParadoxDataFile implements Table {
     }
 
     @Override
-    public boolean isWriteProtected() {
-        return false;
-    }
-
-    @Override
     public List<Object[]> load(Field[] fields) throws SQLException {
         throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.OPERATION_NOT_SUPPORTED);
-    }
-
-    /**
-     * No indexes for views.
-     *
-     * @return a empty array.
-     */
-    @Override
-    public Index[] getIndexes() {
-        return new Index[0];
     }
 
     @Override
