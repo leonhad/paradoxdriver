@@ -48,7 +48,7 @@ public class ParadoxDataFile {
     /**
      * File charset.
      */
-    private Charset charset;
+    protected Charset charset;
     /**
      * File count in this file.
      */

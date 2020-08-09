@@ -109,6 +109,8 @@ public class SchemataView implements Table {
                     value = currentSchema.name();
                 } else if (owner.equals(field)) {
                     value = currentSchema.name();
+                } else if (characterName.equals(field) && connectionInfo.getCharset() != null) {
+                    value = connectionInfo.getCharset().displayName();
                 }
 
                 row[i] = value;

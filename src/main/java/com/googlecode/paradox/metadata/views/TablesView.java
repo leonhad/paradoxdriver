@@ -41,6 +41,7 @@ public class TablesView implements Table {
     private final Field schema = new Field("table_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field name = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field type = new Field("table_type", 0, 0x0A, ParadoxType.VARCHAR, this, 1);
+    private final Field charset = new Field("table_charset", 0, 0, ParadoxType.VARCHAR, this, 1);
 
     /**
      * The connection information.
@@ -79,7 +80,8 @@ public class TablesView implements Table {
                 catalog,
                 schema,
                 name,
-                type
+                type,
+                charset
         };
     }
 
@@ -111,6 +113,8 @@ public class TablesView implements Table {
                         value = table.getName();
                     } else if (this.type.equals(field)) {
                         value = type;
+                    } else if (this.charset.equals(field) && table.getCharset() != null) {
+                        value = table.getCharset().displayName();
                     }
 
                     row[i] = value;

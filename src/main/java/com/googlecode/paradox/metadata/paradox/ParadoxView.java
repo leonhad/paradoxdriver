@@ -17,6 +17,7 @@ import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.TableType;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public final class ParadoxView extends ParadoxDataFile implements Table {
      */
     public ParadoxView(final File file, final String name, final ConnectionInfo connectionInfo) {
         super(file, name, connectionInfo);
+        this.charset = StandardCharsets.UTF_8;
     }
 
     /**
