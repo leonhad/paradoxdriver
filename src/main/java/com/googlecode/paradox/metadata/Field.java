@@ -14,6 +14,12 @@ import com.googlecode.paradox.results.ParadoxType;
 
 import java.util.Objects;
 
+/**
+ * Generic field definition.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public class Field {
 
     /**

@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -71,7 +72,9 @@ public interface Table {
      *
      * @return the charset.
      */
-    Charset getCharset();
+    default Charset getCharset() {
+        return StandardCharsets.UTF_8;
+    }
 
     /**
      * Loads the all table rows.

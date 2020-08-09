@@ -19,8 +19,6 @@ import com.googlecode.paradox.metadata.TableType;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,21 +34,27 @@ public class TablesView implements Table {
     /**
      * The current catalog.
      */
-    private final String catalog;
+    private final String catalogName;
 
-    private final Field CATALOG = new Field("table_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
+    private final Field catalog = new Field("table_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
-    private final Field SCHEMA = new Field("table_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field NAME = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field TYPE = new Field("table_type", 0, 0x0A, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("table_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field name = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field type = new Field("table_type", 0, 0x0A, ParadoxType.VARCHAR, this, 1);
 
     /**
      * The connection information.
      */
     private final ConnectionInfo connectionInfo;
 
-    public TablesView(final ConnectionInfo connectionInfo, final String catalog) {
-        this.catalog = catalog;
+    /**
+     * Creates a new instance.
+     *
+     * @param connectionInfo the connection information.
+     * @param catalogName    the catalog name.
+     */
+    public TablesView(final ConnectionInfo connectionInfo, final String catalogName) {
+        this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
@@ -72,10 +76,10 @@ public class TablesView implements Table {
     @Override
     public Field[] getFields() {
         return new Field[]{
-                CATALOG,
-                SCHEMA,
-                NAME,
-                TYPE
+                catalog,
+                schema,
+                name,
+                type
         };
     }
 
@@ -85,15 +89,10 @@ public class TablesView implements Table {
     }
 
     @Override
-    public Charset getCharset() {
-        return StandardCharsets.UTF_8;
-    }
-
-    @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalog, null)) {
+        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : schema.list(connectionInfo, null)) {
                 String type = table.type().name();
                 if (table.type() == TableType.TABLE) {
@@ -104,13 +103,13 @@ public class TablesView implements Table {
                 for (int i = 0; i < fields.length; i++) {
                     final Field field = fields[i];
                     Object value = null;
-                    if (CATALOG.equals(field)) {
+                    if (catalog.equals(field)) {
                         value = schema.catalogName();
-                    } else if (SCHEMA.equals(field)) {
+                    } else if (this.schema.equals(field)) {
                         value = schema.name();
-                    } else if (NAME.equals(field)) {
+                    } else if (name.equals(field)) {
                         value = table.getName();
-                    } else if (TYPE.equals(field)) {
+                    } else if (this.type.equals(field)) {
                         value = type;
                     }
 
