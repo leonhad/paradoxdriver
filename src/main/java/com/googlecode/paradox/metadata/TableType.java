@@ -10,7 +10,69 @@
  */
 package com.googlecode.paradox.metadata;
 
+/**
+ * Table type.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
+@SuppressWarnings("java:S1192")
 public enum TableType {
-    TABLE,
-    VIEW
+
+    /**
+     * Memory table.
+     */
+    MEMORY_TABLE("TABLE"),
+
+    /**
+     * System table.
+     */
+    SYSTEM_TABLE("TABLE"),
+
+    /**
+     * Table.
+     */
+    TABLE("TABLE"),
+
+    /**
+     * Temporary table.
+     */
+    TEMPORARY_TABLE("TABLE"),
+
+    /**
+     * View.
+     */
+    VIEW("VIEW");
+
+    /**
+     * The type name.
+     */
+    private final String typeName;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param typeName the type name.
+     */
+    TableType(String typeName) {
+        this.typeName = typeName;
+    }
+
+    /**
+     * Gets the type description.
+     *
+     * @return the type description.
+     */
+    public String description() {
+        return name().replace('_', ' ');
+    }
+
+    /**
+     * Gets the type name.
+     *
+     * @return the type name.
+     */
+    public String typeName() {
+        return typeName;
+    }
 }

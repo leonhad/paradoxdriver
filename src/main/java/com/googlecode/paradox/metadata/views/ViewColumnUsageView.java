@@ -12,10 +12,7 @@
 package com.googlecode.paradox.metadata.views;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Schema;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -100,11 +97,11 @@ public class ViewColumnUsageView implements Table {
 
         for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : schema.list(connectionInfo, null)) {
-                if (table.type() != TableType.VIEW) {
+                if (!(table instanceof View)) {
                     continue;
                 }
 
-                for (final Field usageField : table.usages()) {
+                for (final Field usageField : ((View) table).usages()) {
                     final Object[] row = new Object[fields.length];
                     for (int i = 0; i < fields.length; i++) {
                         final Field field = fields[i];

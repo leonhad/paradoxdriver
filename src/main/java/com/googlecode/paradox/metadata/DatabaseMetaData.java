@@ -23,7 +23,10 @@ import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Expressions;
 import com.googlecode.paradox.utils.Utils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.RowIdLifetime;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -921,7 +924,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getSchemas(final String catalog, final String schemaPattern) throws ParadoxDataException {
+    public ResultSet getSchemas(final String catalog, final String schemaPattern) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
         columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
@@ -1017,7 +1020,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getSchemas() throws ParadoxDataException {
+    public ResultSet getSchemas() throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
         columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
@@ -1060,12 +1063,12 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
         for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaPattern)) {
             for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
-                if (types == null || typeList.contains(table.type().name())) {
+                if (types == null || typeList.contains(table.type().typeName())) {
                     values.add(new Object[]{
                             schema.catalogName(),
                             schema.name(),
                             table.getName(),
-                            table.type().name(),
+                            table.type().description(),
                             null,
                             null,
                             null,

@@ -73,6 +73,16 @@ public class Field {
         this.orderNum = orderNum;
     }
 
+    public Field(final Field field) {
+        this.name = field.name;
+        this.alias = field.alias;
+        this.precision = field.precision;
+        this.size = field.size;
+        this.type = field.type;
+        this.table = field.table;
+        this.orderNum = field.orderNum;
+    }
+
     /**
      * Gets the field alias.
      *

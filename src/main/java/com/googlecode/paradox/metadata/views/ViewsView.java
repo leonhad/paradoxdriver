@@ -12,10 +12,7 @@
 package com.googlecode.paradox.metadata.views;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Schema;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -98,7 +95,7 @@ public class ViewsView implements Table {
 
         for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : schema.list(connectionInfo, null)) {
-                if (table.type() != TableType.VIEW) {
+                if (!(table instanceof View)) {
                     continue;
                 }
 
@@ -113,7 +110,7 @@ public class ViewsView implements Table {
                     } else if (name.equals(field)) {
                         value = table.getName();
                     } else if (this.definition.equals(field)) {
-                        value = table.definition();
+                        value = ((View) table).definition();
                     } else if (this.check.equals(field)) {
                         value = "NONE";
                     } else if (this.updatable.equals(field)) {

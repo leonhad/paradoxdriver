@@ -103,11 +103,12 @@ public interface Table {
         return new Index[0];
     }
 
-    default String definition() {
-        return "internal";
-    }
-
-    default Field[] usages() {
-        return new Field[0];
+    /**
+     * Gets if this table is encrypted.
+     *
+     * @return {@code true} if this table is encrypted.
+     */
+    default boolean isEncrypted() {
+        return false;
     }
 }

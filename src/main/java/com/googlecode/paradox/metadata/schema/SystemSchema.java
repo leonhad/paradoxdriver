@@ -14,6 +14,8 @@ package com.googlecode.paradox.metadata.schema;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.View;
+import com.googlecode.paradox.metadata.tables.Tables;
 import com.googlecode.paradox.metadata.views.*;
 
 import java.util.ArrayList;
@@ -45,10 +47,21 @@ public class SystemSchema implements Schema {
     public SystemSchema(final ConnectionInfo connectionInfo, final String catalog) {
         this.catalog = catalog;
 
+        // Tables
+        tables.add(new Tables(connectionInfo, catalog));
+
+        // Views
         tables.add(new CheckConstraintsView());
         tables.add(new ColumnDomainUsageView());
         tables.add(new SchemataView(connectionInfo, catalog));
-        tables.add(new TablesView(connectionInfo, catalog));
+
+        // FIXME use case for BASE TABLE instead of TABLE.
+        tables.add(new View(connectionInfo, catalog,
+                "select catalog as table_catalog, schema as table_schema, name as table_name," +
+                        " type_name as table_type\n" +
+                        "from information_schema.pdx_tables\n" +
+                        "order by catalog, schema, name, type_name",
+                "tables", ConnectionInfo.INFORMATION_SCHEMA));
         tables.add(new ViewColumnUsageView(connectionInfo, catalog));
         tables.add(new ViewsView(connectionInfo, catalog));
     }

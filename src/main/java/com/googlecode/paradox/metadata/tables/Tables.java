@@ -9,7 +9,7 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.metadata.views;
+package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Field;
@@ -29,19 +29,22 @@ import java.util.List;
  * @version 1.0
  * @since 1.6.0
  */
-public class TablesView implements Table {
+public class Tables implements Table {
 
     /**
      * The current catalog.
      */
     private final String catalogName;
 
-    private final Field catalog = new Field("table_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
-            1);
-    private final Field schema = new Field("table_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field name = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field type = new Field("table_type", 0, 0x0A, ParadoxType.VARCHAR, this, 1);
-    private final Field charset = new Field("table_charset", 0, 0, ParadoxType.VARCHAR, this, 1);
+    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field type = new Field("type", 0, 0x0A, ParadoxType.VARCHAR, this, 4);
+    private final Field typeName = new Field("type_name", 0, 0x0A, ParadoxType.VARCHAR, this, 5);
+    private final Field charset = new Field("charset", 0, 0, ParadoxType.VARCHAR, this, 6);
+    private final Field encrypted = new Field("encrypted", 0, 3, ParadoxType.VARCHAR, this, 7);
+    private final Field writeProtected = new Field("write_protected", 0, 3, ParadoxType.VARCHAR, this, 8);
+    private final Field count = new Field("count", 0, 0, ParadoxType.VARCHAR, this, 9);
 
     /**
      * The connection information.
@@ -54,14 +57,14 @@ public class TablesView implements Table {
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
      */
-    public TablesView(final ConnectionInfo connectionInfo, final String catalogName) {
+    public Tables(final ConnectionInfo connectionInfo, final String catalogName) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
-        return "tables";
+        return "pdx_tables";
     }
 
     @Override
@@ -71,7 +74,7 @@ public class TablesView implements Table {
 
     @Override
     public TableType type() {
-        return TableType.VIEW;
+        return TableType.SYSTEM_TABLE;
     }
 
     @Override
@@ -81,7 +84,11 @@ public class TablesView implements Table {
                 schema,
                 name,
                 type,
-                charset
+                typeName,
+                charset,
+                encrypted,
+                writeProtected,
+                count
         };
     }
 
@@ -96,11 +103,6 @@ public class TablesView implements Table {
 
         for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : schema.list(connectionInfo, null)) {
-                String type = table.type().name();
-                if (table.type() == TableType.TABLE) {
-                    type = "BASE TABLE";
-                }
-
                 final Object[] row = new Object[fields.length];
                 for (int i = 0; i < fields.length; i++) {
                     final Field field = fields[i];
@@ -112,9 +114,25 @@ public class TablesView implements Table {
                     } else if (name.equals(field)) {
                         value = table.getName();
                     } else if (this.type.equals(field)) {
-                        value = type;
+                        value = table.type().description();
+                    } else if (this.typeName.equals(field)) {
+                        value = table.type().typeName();
                     } else if (this.charset.equals(field) && table.getCharset() != null) {
                         value = table.getCharset().displayName();
+                    } else if (this.encrypted.equals(field)) {
+                        if (table.isEncrypted()) {
+                            value = "YES";
+                        } else {
+                            value = "NO";
+                        }
+                    } else if (this.writeProtected.equals(field)) {
+                        if (table.isWriteProtected()) {
+                            value = "YES";
+                        } else {
+                            value = "NO";
+                        }
+                    } else if (this.count.equals(field) && table.getCharset() != null) {
+                        value = table.getRowCount();
                     }
 
                     row[i] = value;

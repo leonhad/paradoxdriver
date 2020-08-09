@@ -112,9 +112,9 @@ public final class ConnectionInfo {
      * @param catalog       the database catalog.
      * @param schemaPattern the schema pattern.
      * @return the schema directories.
-     * @throws ParadoxDataException in case of failures.
+     * @throws SQLException in case of failures.
      */
-    public List<Schema> getSchemas(final String catalog, final String schemaPattern) throws ParadoxDataException {
+    public List<Schema> getSchemas(final String catalog, final String schemaPattern) throws SQLException {
         File[] catalogs = null;
 
         if (!enableCatalogChange) {
