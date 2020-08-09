@@ -106,4 +106,8 @@ public interface Table {
     default String definition() {
         return "internal";
     }
+
+    default Field[] usages() {
+        return new Field[0];
+    }
 }

@@ -49,6 +49,7 @@ public class SystemSchema implements Schema {
         tables.add(new ColumnDomainUsageView());
         tables.add(new SchemataView(connectionInfo, catalog));
         tables.add(new TablesView(connectionInfo, catalog));
+        tables.add(new ViewColumnUsageView(connectionInfo, catalog));
         tables.add(new ViewsView(connectionInfo, catalog));
     }
 
