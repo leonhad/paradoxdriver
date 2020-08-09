@@ -14,6 +14,7 @@ package com.googlecode.paradox.metadata.schema;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.views.SchemataView;
 import com.googlecode.paradox.metadata.views.TablesView;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class SystemSchema implements Schema {
     public SystemSchema(final ConnectionInfo connectionInfo, final String catalog) {
         this.catalog = catalog;
 
+        tables.add(new SchemataView(connectionInfo, catalog));
         tables.add(new TablesView(connectionInfo, catalog));
     }
 

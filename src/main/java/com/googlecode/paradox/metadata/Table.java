@@ -35,7 +35,7 @@ public interface Table {
      *
      * @return the row count.
      */
-    int getRowCount();
+    int getRowCount() throws SQLException;
 
     /**
      * Gets the table type.

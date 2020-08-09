@@ -24,23 +24,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tables view.
+ * Schemata view.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class TablesView implements Table {
+public class SchemataView implements Table {
 
     /**
      * The current catalog.
      */
     private final String catalogName;
 
-    private final Field catalog = new Field("table_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
+    private final Field catalog = new Field("catalog_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
-    private final Field schema = new Field("table_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field name = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field type = new Field("table_type", 0, 0x0A, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field owner = new Field("schema_owner", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field characterCatalog = new Field("default_character_set_catalog", 0, 0x0A, ParadoxType.VARCHAR,
+            this, 1);
+    private final Field characterSchema = new Field("default_character_set_schema", 0, 0x0A, ParadoxType.VARCHAR,
+            this, 1);
+    private final Field characterName = new Field("default_character_set_name", 0, 0x0A, ParadoxType.VARCHAR, this, 1);
 
     /**
      * The connection information.
@@ -53,14 +57,14 @@ public class TablesView implements Table {
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
      */
-    public TablesView(final ConnectionInfo connectionInfo, final String catalogName) {
+    public SchemataView(final ConnectionInfo connectionInfo, final String catalogName) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
-        return "tables";
+        return "schemata";
     }
 
     @Override
@@ -78,8 +82,10 @@ public class TablesView implements Table {
         return new Field[]{
                 catalog,
                 schema,
-                name,
-                type
+                owner,
+                characterCatalog,
+                characterSchema,
+                characterName
         };
     }
 
@@ -92,32 +98,23 @@ public class TablesView implements Table {
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-            for (final Table table : schema.list(connectionInfo, null)) {
-                String type = table.type().name();
-                if (table.type() == TableType.TABLE) {
-                    type = "BASE TABLE";
+        for (final Schema currentSchema : connectionInfo.getSchemas(catalogName, null)) {
+            final Object[] row = new Object[fields.length];
+            for (int i = 0; i < fields.length; i++) {
+                final Field field = fields[i];
+                Object value = null;
+                if (catalog.equals(field)) {
+                    value = currentSchema.catalogName();
+                } else if (this.schema.equals(field)) {
+                    value = currentSchema.name();
+                } else if (owner.equals(field)) {
+                    value = currentSchema.name();
                 }
 
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    Object value = null;
-                    if (catalog.equals(field)) {
-                        value = schema.catalogName();
-                    } else if (this.schema.equals(field)) {
-                        value = schema.name();
-                    } else if (name.equals(field)) {
-                        value = table.getName();
-                    } else if (this.type.equals(field)) {
-                        value = type;
-                    }
-
-                    row[i] = value;
-                }
-
-                ret.add(row);
+                row[i] = value;
             }
+
+            ret.add(row);
         }
 
         return ret;
