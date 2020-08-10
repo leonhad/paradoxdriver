@@ -74,7 +74,7 @@ public class ColumnsTest {
         try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.columns");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNull("Invalid null value", rs.getString("column_default"));
+            Assert.assertNull("Invalid null value", rs.getObject("column_default"));
         }
     }
 }

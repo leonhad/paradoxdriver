@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -127,13 +126,11 @@ public class View implements Table {
         if (fields == null) {
             try {
                 fields = getSelectPlan().getColumns().stream()
-                        .map((Column c) -> {
-                            final Field field = new Field(c.getField());
-                            field.setName(c.getName());
+                        .map((Column column) -> {
+                            final Field field = new Field(column);
                             field.setTable(this);
                             return field;
-                        })
-                        .toArray(Field[]::new);
+                        }).toArray(Field[]::new);
             } catch (final SQLException e) {
                 LOGGER.log(Level.FINEST, e.getMessage(), e);
                 fields = new Field[0];

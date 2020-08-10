@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
 import java.util.Objects;
@@ -17,7 +18,7 @@ import java.util.Objects;
 /**
  * Generic field definition.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Field {
@@ -73,16 +74,13 @@ public class Field {
         this.orderNum = orderNum;
     }
 
-    public Field(final Field field) {
-        if (field != null) {
-            this.name = field.name;
-            this.alias = field.alias;
-            this.precision = field.precision;
-            this.size = field.size;
-            this.type = field.type;
-            this.table = field.table;
-            this.orderNum = field.orderNum;
-        }
+    public Field(final Column column) {
+        this.name = column.getName();
+        this.alias = column.getName();
+        this.precision = column.getPrecision();
+        this.size = column.getSize();
+        this.type = column.getType();
+        this.orderNum = column.getIndex();
     }
 
     /**
@@ -204,6 +202,15 @@ public class Field {
      */
     public int getOrderNum() {
         return this.orderNum;
+    }
+
+    /**
+     * Sets the field type.
+     *
+     * @param type the field type.
+     */
+    public void setType(ParadoxType type) {
+        this.type = type;
     }
 
     @Override

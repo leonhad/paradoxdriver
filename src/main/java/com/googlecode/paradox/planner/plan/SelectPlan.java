@@ -207,6 +207,8 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
             return Arrays.stream(tablesFound.get(0).getFields()).map(Column::new).collect(Collectors.toList());
         } else {
+            Field[] fields = this.tables.get(0).getTable().getFields();
+
             // Add all fields from all tables.
             return this.tables.stream()
                     .map(PlanTableNode::getTable)
