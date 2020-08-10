@@ -81,6 +81,12 @@ public class Field {
         this.size = column.getSize();
         this.type = column.getType();
         this.orderNum = column.getIndex();
+
+        if (column.getField() != null) {
+            this.precision = column.getField().getPrecision();
+            this.size = column.getField().getSize();
+            this.type = column.getField().getType();
+        }
     }
 
     /**
