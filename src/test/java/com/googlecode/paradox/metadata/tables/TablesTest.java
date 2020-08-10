@@ -9,7 +9,7 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.metadata.views;
+package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.Driver;
 import org.junit.*;
@@ -22,7 +22,7 @@ import java.sql.*;
  * @version 1.0
  * @since 1.6.0
  */
-public class TablesViewTest {
+public class TablesTest {
 
     /**
      * The connection string used in this tests.

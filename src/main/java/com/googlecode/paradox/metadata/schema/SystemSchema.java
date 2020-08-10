@@ -56,6 +56,7 @@ public class SystemSchema implements Schema {
         this.catalog = catalog;
 
         tables.add(new CheckConstraints());
+        tables.add(new Columns(connectionInfo, catalog));
         tables.add(new ColumnDomainUsage());
         tables.add(new Schemata(connectionInfo, catalog));
         tables.add(new Tables(connectionInfo, catalog));
@@ -65,6 +66,7 @@ public class SystemSchema implements Schema {
         try {
             tables.add(load(connectionInfo, "check_constraints"));
             tables.add(load(connectionInfo, "column_domain_usage"));
+           // tables.add(load(connectionInfo, "columns"));
             tables.add(load(connectionInfo, "schemata"));
             tables.add(load(connectionInfo, "tables"));
             tables.add(load(connectionInfo, "view_column_usage"));
