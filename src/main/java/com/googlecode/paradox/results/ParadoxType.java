@@ -62,6 +62,11 @@ public enum ParadoxType implements SQLType {
     /**
      * The numeric type.
      */
+    NUMERIC(6, Types.NUMERIC, true, Double.class, 6, 0x04, true),
+
+    /**
+     * The numeric type.
+     */
     DECIMAL(6, Types.DECIMAL, false, Double.class, 6, 0x04, true),
 
     /**
@@ -136,6 +141,9 @@ public enum ParadoxType implements SQLType {
      */
     NULL(0x0, Types.NULL, false, Object.class, 0, 4, false);
 
+    /**
+     * Current values cache.
+     */
     private static final ParadoxType[] VALUES = ParadoxType.values();
 
     /**

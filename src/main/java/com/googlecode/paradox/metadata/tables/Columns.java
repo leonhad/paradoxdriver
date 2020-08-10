@@ -38,13 +38,14 @@ public class Columns implements Table {
     private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
     private final Field ordinal = new Field("ordinal", 0, 1, ParadoxType.INTEGER, this, 5);
     private final Field nullable = new Field("is_nullable", 0, 3, ParadoxType.VARCHAR, this, 6);
-    private final Field maximumLength = new Field("maximum_length", 0, 4, ParadoxType.INTEGER, this, 7);
-    private final Field octetLength = new Field("octet_length", 0, 4, ParadoxType.INTEGER, this, 8);
-    private final Field precision = new Field("precision", 0, 4, ParadoxType.INTEGER, this, 9);
-    private final Field scale = new Field("scale", 0, 4, ParadoxType.INTEGER, this, 10);
-    private final Field type = new Field("type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 11);
+    private final Field autoincrement = new Field("is_autoincrement", 0, 3, ParadoxType.VARCHAR, this, 7);
+    private final Field maximumLength = new Field("maximum_length", 0, 4, ParadoxType.INTEGER, this, 8);
+    private final Field octetLength = new Field("octet_length", 0, 4, ParadoxType.INTEGER, this, 9);
+    private final Field precision = new Field("precision", 0, 4, ParadoxType.INTEGER, this, 10);
+    private final Field scale = new Field("scale", 0, 4, ParadoxType.INTEGER, this, 11);
+    private final Field type = new Field("type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 12);
     private final Field javaClass = new Field("java_class", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
-            12);
+            13);
 
     /**
      * The connection information.
@@ -104,6 +105,7 @@ public class Columns implements Table {
                 name,
                 ordinal,
                 nullable,
+                autoincrement,
                 maximumLength,
                 octetLength,
                 precision,
@@ -148,6 +150,12 @@ public class Columns implements Table {
                                 value = "NO";
                             } else {
                                 value = "YES";
+                            }
+                        } else if (this.autoincrement.equals(field)) {
+                            if (fieldLocal.isAutoIncrement()) {
+                                value = "YES";
+                            } else {
+                                value = "NO";
                             }
                         } else if (this.maximumLength.equals(field)) {
                             value = fieldLocal.getSize();

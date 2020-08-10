@@ -123,7 +123,7 @@ public class Schemata implements Table {
                 } else if (this.schema.equals(field)) {
                     value = currentSchema.name();
                 } else if (owner.equals(field)) {
-                    value = currentSchema.name();
+                    value = connectionInfo.getUser();
                 } else if (characterName.equals(field) && connectionInfo.getCharset() != null) {
                     value = connectionInfo.getCharset().displayName();
                 }
