@@ -11,10 +11,7 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Schema;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -67,13 +64,31 @@ public class Tables implements Table {
     }
 
     @Override
-    public int getRowCount() throws SQLException {
-        return load(new Field[0]).size();
+    public int getRowCount() {
+        try {
+            return load(new Field[0]).size();
+        } catch (final SQLException e) {
+            return 0;
+        }
     }
 
     @Override
     public TableType type() {
         return TableType.SYSTEM_TABLE;
+    }
+
+    @Override
+    public Index getPrimaryKeyIndex() {
+        return new SoftIndex("views.pk", true,
+                new Field[]{catalog, schema, name, type}, this::getRowCount);
+    }
+
+    @Override
+    public Index[] getIndexes() {
+        return new Index[]{
+                new SoftIndex("views.pk", true,
+                        new Field[]{catalog, schema, name, type}, this::getRowCount)
+        };
     }
 
     @Override

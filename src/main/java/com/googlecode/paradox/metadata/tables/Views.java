@@ -35,11 +35,11 @@ public class Views implements Table {
 
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
-    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field definition = new Field("definition", 0, 0, ParadoxType.VARCHAR, this, 1);
-    private final Field check = new Field("check_option", 0, 0x07, ParadoxType.VARCHAR, this, 1);
-    private final Field updatable = new Field("is_updatable", 0, 0x02, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field definition = new Field("definition", 0, 0, ParadoxType.VARCHAR, this, 4);
+    private final Field check = new Field("check_option", 0, 0x07, ParadoxType.VARCHAR, this, 5);
+    private final Field updatable = new Field("is_updatable", 0, 0x02, ParadoxType.VARCHAR, this, 6);
 
     /**
      * The connection information.
@@ -63,13 +63,31 @@ public class Views implements Table {
     }
 
     @Override
-    public int getRowCount() throws SQLException {
-        return load(new Field[0]).size();
+    public int getRowCount() {
+        try {
+            return load(new Field[0]).size();
+        } catch (final SQLException e) {
+            return 0;
+        }
     }
 
     @Override
     public TableType type() {
         return TableType.SYSTEM_TABLE;
+    }
+
+    @Override
+    public Index getPrimaryKeyIndex() {
+        return new SoftIndex("views.pk", true,
+                new Field[]{catalog, schema, name}, this::getRowCount);
+    }
+
+    @Override
+    public Index[] getIndexes() {
+        return new Index[]{
+                new SoftIndex("views.pk", true,
+                        new Field[]{catalog, schema, name}, this::getRowCount)
+        };
     }
 
     @Override

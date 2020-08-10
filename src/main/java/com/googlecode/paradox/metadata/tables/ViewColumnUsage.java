@@ -35,12 +35,12 @@ public class ViewColumnUsage implements Table {
 
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
-    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field tableCatalog = new Field("table_catalog", 0, 0, ParadoxType.VARCHAR, this, 1);
-    private final Field tableSchema = new Field("table_schema", 0, 0x07, ParadoxType.VARCHAR, this, 1);
-    private final Field tableName = new Field("table_name", 0, 0x02, ParadoxType.VARCHAR, this, 1);
-    private final Field columnName = new Field("column_name", 0, 0x02, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field tableCatalog = new Field("table_catalog", 0, 0, ParadoxType.VARCHAR, this, 4);
+    private final Field tableSchema = new Field("table_schema", 0, 0x07, ParadoxType.VARCHAR, this, 5);
+    private final Field tableName = new Field("table_name", 0, 0x02, ParadoxType.VARCHAR, this, 6);
+    private final Field columnName = new Field("column_name", 0, 0x02, ParadoxType.VARCHAR, this, 7);
 
     /**
      * The connection information.
