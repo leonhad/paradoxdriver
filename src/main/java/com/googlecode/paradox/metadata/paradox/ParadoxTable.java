@@ -47,7 +47,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      * @param name           table name.
      * @param connectionInfo the connection information.
      */
-    public ParadoxTable(final File file, final String name, final ConnectionInfo connectionInfo) throws SQLException {
+    public ParadoxTable(final File file, final String name, final ConnectionInfo connectionInfo) {
         super(file, name, connectionInfo);
     }
 

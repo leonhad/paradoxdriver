@@ -40,6 +40,7 @@ public interface Plan<T, C extends Context> {
      * @param connectionInfo the connection information.
      * @param parameters     the parameter list.
      * @param parameterTypes the parameter type list.
+     * @return a new instance for execution context.
      */
     C createContext(final ConnectionInfo connectionInfo, final Object[] parameters, final ParadoxType[] parameterTypes);
 

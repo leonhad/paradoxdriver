@@ -9,7 +9,7 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.metadata.views;
+package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Field;
@@ -22,12 +22,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Column domain usage view.
+ * Column domain usage table.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class ColumnDomainUsageView implements Table {
+public class ColumnDomainUsage implements Table {
 
     private final Field catalog = new Field("domain_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
             this, 1);
@@ -45,13 +45,13 @@ public class ColumnDomainUsageView implements Table {
     /**
      * Creates a new instance.
      */
-    public ColumnDomainUsageView() {
+    public ColumnDomainUsage() {
         super();
     }
 
     @Override
     public String getName() {
-        return "column_domain_usage";
+        return "pdx_column_domain_usage";
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ColumnDomainUsageView implements Table {
 
     @Override
     public TableType type() {
-        return TableType.VIEW;
+        return TableType.SYSTEM_TABLE;
     }
 
     @Override

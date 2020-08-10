@@ -34,6 +34,7 @@ public interface Table {
      * Gets the row count.
      *
      * @return the row count.
+     * @throws SQLException in case of failures.
      */
     int getRowCount() throws SQLException;
 
@@ -89,6 +90,7 @@ public interface Table {
      * Gets the primary key index.
      *
      * @return the primary key index or {@code null} if there is no index.
+     * @throws SQLException in case of failures.
      */
     default Index getPrimaryKeyIndex() throws SQLException {
         return null;
@@ -98,6 +100,7 @@ public interface Table {
      * Gets the table indexes.
      *
      * @return the table indexes.
+     * @throws SQLException in case of failures.
      */
     default Index[] getIndexes() throws SQLException {
         return new Index[0];

@@ -9,7 +9,7 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.metadata.views;
+package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Field;
@@ -29,7 +29,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.6.0
  */
-public class SchemataView implements Table {
+public class Schemata implements Table {
 
     /**
      * The current catalog.
@@ -57,14 +57,14 @@ public class SchemataView implements Table {
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
      */
-    public SchemataView(final ConnectionInfo connectionInfo, final String catalogName) {
+    public Schemata(final ConnectionInfo connectionInfo, final String catalogName) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
-        return "schemata";
+        return "pdx_schemata";
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SchemataView implements Table {
 
     @Override
     public TableType type() {
-        return TableType.VIEW;
+        return TableType.SYSTEM_TABLE;
     }
 
     @Override

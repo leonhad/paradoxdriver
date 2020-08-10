@@ -37,7 +37,8 @@ public class FixedValueCollection<T> implements Collection<T> {
     /**
      * Creates a new instance.
      *
-     * @param size the size.
+     * @param size  the size.
+     * @param value the fixed value.
      */
     public FixedValueCollection(final int size, final T value) {
         this.size = size;

@@ -21,10 +21,12 @@ import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.results.Column;
 
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * View support.
@@ -67,16 +69,21 @@ public class View implements Table {
     private SelectPlan selectPlan;
 
     /**
+     * View fields.
+     */
+    private Field[] fields;
+
+    /**
      * Creates a new instance.
      *
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
-     * @param definition     the view definition.
-     * @param name           the view name.
      * @param schemaName     the schema name.
+     * @param name           the view name.
+     * @param definition     the view definition.
      */
-    public View(final ConnectionInfo connectionInfo, final String catalogName, final String definition,
-                final String name, final String schemaName) {
+    public View(final ConnectionInfo connectionInfo, final String catalogName, final String schemaName,
+                final String name, final String definition) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
         this.definition = definition;
@@ -116,19 +123,23 @@ public class View implements Table {
 
     @Override
     public Field[] getFields() {
-        try {
-            return getSelectPlan().getColumns().stream()
-                    .map((Column c) -> {
-                        final Field field = new Field(c.getField());
-                        field.setName(c.getName());
-                        field.setTable(this);
-                        return field;
-                    })
-                    .toArray(Field[]::new);
-        } catch (final SQLException e) {
-            LOGGER.log(Level.FINEST, e.getMessage(), e);
-            return new Field[0];
+        if (fields == null) {
+            try {
+                fields = getSelectPlan().getColumns().stream()
+                        .map((Column c) -> {
+                            final Field field = new Field(c.getField());
+                            field.setName(c.getName());
+                            field.setTable(this);
+                            return field;
+                        })
+                        .toArray(Field[]::new);
+            } catch (final SQLException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                fields = new Field[0];
+            }
         }
+
+        return fields;
     }
 
     @Override
@@ -137,9 +148,30 @@ public class View implements Table {
     }
 
     @Override
-    public List<Object[]> load(final Field[] fields) throws SQLException {
+    public List<Object[]> load(final Field[] fieldsToLoad) throws SQLException {
+        final Field[] fieldsLoaded = getFields();
+        final int[] mapColumns = new int[fieldsToLoad.length];
+        Arrays.fill(mapColumns, -1);
+        for (int i = 0; i < fieldsToLoad.length; i++) {
+            final Field field = fieldsToLoad[i];
+            for (int loop = 0; loop < fieldsLoaded.length; loop++) {
+                if (fieldsLoaded[loop].equals(field)) {
+                    mapColumns[i] = loop;
+                    break;
+                }
+            }
+        }
+
         final SelectContext context = getSelectPlan().createContext(connectionInfo, null, null);
-        return getSelectPlan().execute(context);
+        return getSelectPlan().execute(context).stream()
+                .map((Object[] row) -> {
+                    final Object[] newRow = new Object[mapColumns.length];
+                    for (int i = 0; i < mapColumns.length; i++) {
+                        newRow[i] = row[mapColumns[i]];
+                    }
+                    return newRow;
+                })
+                .collect(Collectors.toList());
     }
 
     public String definition() {

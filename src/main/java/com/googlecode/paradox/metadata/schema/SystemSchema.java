@@ -12,14 +12,18 @@
 package com.googlecode.paradox.metadata.schema;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.filefilters.SQLFilter;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.View;
-import com.googlecode.paradox.metadata.tables.Tables;
-import com.googlecode.paradox.metadata.views.*;
+import com.googlecode.paradox.metadata.tables.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The information schema.
@@ -28,6 +32,8 @@ import java.util.List;
  * @since 1.6.0
  */
 public class SystemSchema implements Schema {
+
+    private static final Logger LOGGER = Logger.getLogger(SystemSchema.class.getName());
 
     /**
      * The current tables.
@@ -42,28 +48,86 @@ public class SystemSchema implements Schema {
     /**
      * Creates a new instance.
      *
-     * @param catalog the catalog name.
+     * @param connectionInfo the connection information.
+     * @param catalog        the catalog name.
+     * @throws SQLException in case of failures.
      */
-    public SystemSchema(final ConnectionInfo connectionInfo, final String catalog) {
+    public SystemSchema(final ConnectionInfo connectionInfo, final String catalog) throws SQLException {
         this.catalog = catalog;
 
-        // Tables
+        tables.add(new CheckConstraints());
+        tables.add(new ColumnDomainUsage());
+        tables.add(new Schemata(connectionInfo, catalog));
         tables.add(new Tables(connectionInfo, catalog));
+        tables.add(new ViewColumnUsage(connectionInfo, catalog));
+        tables.add(new Views(connectionInfo, catalog));
 
-        // Views
-        tables.add(new CheckConstraintsView());
-        tables.add(new ColumnDomainUsageView());
-        tables.add(new SchemataView(connectionInfo, catalog));
+        try {
+            tables.add(load(connectionInfo, "check_constraints"));
+            tables.add(load(connectionInfo, "column_domain_usage"));
+            tables.add(load(connectionInfo, "schemata"));
+            tables.add(load(connectionInfo, "tables"));
+            tables.add(load(connectionInfo, "view_column_usage"));
+            tables.add(load(connectionInfo, "views"));
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        }
+    }
 
-        // FIXME use case for BASE TABLE instead of TABLE.
-        tables.add(new View(connectionInfo, catalog,
-                "select catalog as table_catalog, schema as table_schema, name as table_name," +
-                        " type_name as table_type\n" +
-                        "from information_schema.pdx_tables\n" +
-                        "order by catalog, schema, name, type_name",
-                "tables", ConnectionInfo.INFORMATION_SCHEMA));
-        tables.add(new ViewColumnUsageView(connectionInfo, catalog));
-        tables.add(new ViewsView(connectionInfo, catalog));
+    /**
+     * Loads a file view from the driver files.
+     *
+     * @param connectionInfo the connection information.
+     * @param name           the view name.
+     * @return the view.
+     * @throws IOException in case of I/O exception.
+     */
+    private View load(final ConnectionInfo connectionInfo, final String name) throws IOException {
+        try (final InputStream is = getClass().
+                getResourceAsStream("/com/googlecode/paradox/information_schema/" + name + ".sql")) {
+            return load(connectionInfo, catalog, ConnectionInfo.INFORMATION_SCHEMA, name, is);
+        }
+    }
+
+    public static List<View> search(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+                                    final String name, final File directory, final Locale locale) {
+        final List<View> views = new ArrayList<>();
+
+        if (directory.isDirectory()) {
+            final File[] files = directory.listFiles(new SQLFilter(locale));
+            if (files != null) {
+                Arrays.stream(files).filter(Objects::nonNull).forEach((File file) -> {
+                    try {
+                        views.add(load(connectionInfo, catalog, schemaName, name, file));
+                    } catch (final IOException e) {
+                        LOGGER.log(Level.FINEST, e.getMessage(), e);
+                    }
+                });
+            }
+        }
+
+        return views;
+    }
+
+    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+                            final String name, final InputStream inputStream) throws IOException {
+        final char[] buffer = new char[0x800];
+        final StringBuilder out = new StringBuilder();
+        try (final InputStreamReader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            int rsz;
+            while ((rsz = in.read(buffer, 0, buffer.length)) > 0) {
+                out.append(buffer, 0, rsz);
+            }
+        }
+
+        return new View(connectionInfo, catalog, schemaName, name, out.toString());
+    }
+
+    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+                            final String name, final File file) throws IOException {
+        try (final FileInputStream fis = new FileInputStream(file)) {
+            return load(connectionInfo, catalog, schemaName, name, fis);
+        }
     }
 
     @Override

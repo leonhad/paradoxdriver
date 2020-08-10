@@ -161,8 +161,9 @@ public class GroupByNode {
     /**
      * Process the group by stream.
      *
-     * @param stream         the load stream.
-     * @param columns        the current columns.
+     * @param context the execution context.
+     * @param stream  the load stream.
+     * @param columns the current columns.
      * @return the stream with group by filter.
      */
     public Stream<Object[]> processStream(final SelectContext context, final Stream<Object[]> stream,
