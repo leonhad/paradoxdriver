@@ -12,10 +12,7 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Schema;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -38,13 +35,13 @@ public class Schemata implements Table {
 
     private final Field catalog = new Field("catalog_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
-    private final Field schema = new Field("schema_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field owner = new Field("schema_owner", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field owner = new Field("schema_owner", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
     private final Field characterCatalog = new Field("default_character_set_catalog", 0, 6, ParadoxType.VARCHAR,
-            this, 1);
+            this, 4);
     private final Field characterSchema = new Field("default_character_set_schema", 0, 3, ParadoxType.VARCHAR,
-            this, 1);
-    private final Field characterName = new Field("default_character_set_name", 0, 6, ParadoxType.VARCHAR, this, 1);
+            this, 5);
+    private final Field characterName = new Field("default_character_set_name", 0, 6, ParadoxType.VARCHAR, this, 6);
 
     /**
      * The connection information.
@@ -68,13 +65,31 @@ public class Schemata implements Table {
     }
 
     @Override
-    public int getRowCount() throws SQLException {
-        return load(new Field[0]).size();
+    public int getRowCount() {
+        try {
+            return load(new Field[0]).size();
+        } catch (final SQLException e) {
+            return 0;
+        }
     }
 
     @Override
     public TableType type() {
         return TableType.SYSTEM_TABLE;
+    }
+
+    @Override
+    public Index getPrimaryKeyIndex() {
+        return new SoftIndex("schemata.pk", true,
+                new Field[]{catalog, schema}, this::getRowCount);
+    }
+
+    @Override
+    public Index[] getIndexes() {
+        return new Index[]{
+                new SoftIndex("schemata.pk", true,
+                        new Field[]{catalog, schema}, this::getRowCount)
+        };
     }
 
     @Override
