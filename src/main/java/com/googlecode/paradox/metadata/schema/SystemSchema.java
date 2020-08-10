@@ -68,6 +68,7 @@ public class SystemSchema implements Schema {
             tables.add(load(connectionInfo, "schemata"));
             tables.add(load(connectionInfo, "tables"));
             tables.add(load(connectionInfo, "view_column_usage"));
+            tables.add(load(connectionInfo, "view_table_usage"));
             tables.add(load(connectionInfo, "views"));
         } catch (final IOException e) {
             throw new SQLException(e);
