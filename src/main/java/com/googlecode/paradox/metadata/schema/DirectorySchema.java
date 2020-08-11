@@ -15,17 +15,31 @@ import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.paradox.ParadoxTable;
+import com.googlecode.paradox.metadata.View;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A directory schema.
+ *
+ * @version 1.1
+ * @since 1.6.0
+ */
 public class DirectorySchema implements Schema {
 
+    /**
+     * The schema directory file.
+     */
     private final File schemaFile;
 
+    /**
+     * Create a directory schema.
+     *
+     * @param schemaFile the schema directory file.
+     */
     public DirectorySchema(final File schemaFile) {
         this.schemaFile = schemaFile;
     }
@@ -35,6 +49,7 @@ public class DirectorySchema implements Schema {
         final List<Table> ret = new ArrayList<>();
         ret.addAll(TableData.listTables(schemaFile, tablePattern, connectionInfo));
         ret.addAll(ViewData.listViews(schemaFile, tablePattern, connectionInfo));
+        ret.addAll(View.listViews(schemaFile, tablePattern, connectionInfo));
         return ret;
     }
 
@@ -50,18 +65,10 @@ public class DirectorySchema implements Schema {
 
     @Override
     public Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException {
-        for (final Table table : TableData.listTables(schemaFile, connectionInfo)) {
-            if (tableName.equalsIgnoreCase(table.getName())) {
-                return table;
-            }
-        }
-
-        for (final Table table : ViewData.listViews(schemaFile, connectionInfo)) {
-            if (tableName.equalsIgnoreCase(table.getName())) {
-                return table;
-            }
-        }
-
-        return null;
+        final List<Table> tables = new ArrayList<>();
+        tables.addAll(TableData.listTables(schemaFile, connectionInfo));
+        tables.addAll(ViewData.listViews(schemaFile, connectionInfo));
+        tables.addAll(View.search(connectionInfo, catalogName(), name(), schemaFile));
+        return tables.stream().filter(table -> tableName.equalsIgnoreCase(table.getName())).findFirst().orElse(null);
     }
 }

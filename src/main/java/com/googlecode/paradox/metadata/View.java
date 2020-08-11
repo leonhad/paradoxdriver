@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.filefilters.SQLFilter;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.planner.Planner;
@@ -19,11 +20,13 @@ import com.googlecode.paradox.planner.nodes.PlanTableNode;
 import com.googlecode.paradox.planner.plan.Plan;
 import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.results.Column;
+import com.googlecode.paradox.utils.Expressions;
+import com.googlecode.paradox.utils.Utils;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -31,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * View support.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class View implements Table {
@@ -92,6 +95,12 @@ public class View implements Table {
 
     }
 
+    /**
+     * Gets the select execution plan.
+     *
+     * @return the select execution plan.
+     * @throws SQLException in case of parse failures.
+     */
     private SelectPlan getSelectPlan() throws SQLException {
         if (selectPlan == null) {
             final SQLParser parser = new SQLParser(definition);
@@ -172,12 +181,102 @@ public class View implements Table {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets the view definition.
+     *
+     * @return the view definition.
+     */
     public String definition() {
         return definition;
     }
 
+    /**
+     * Gets the view definition list.
+     *
+     * @return the view definition list.
+     * @throws SQLException in case of failures.
+     */
     public Field[] usages() throws SQLException {
         return getSelectPlan().getTables().stream().map(PlanTableNode::getColumns).flatMap(Collection::stream)
                 .map(Column::getField).toArray(Field[]::new);
+    }
+
+    public static List<View> listViews(final File currentSchema, final String viewNamePattern,
+                                       final ConnectionInfo connectionInfo) {
+        return search(connectionInfo, currentSchema.getParentFile().getName(), currentSchema.getName(), currentSchema)
+                .stream().filter(view -> viewNamePattern == null ||
+                        Expressions.accept(connectionInfo.getLocale(), view.getName(), viewNamePattern, false, '\\'))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Search for views in schema.
+     *
+     * @param connectionInfo the connection information.
+     * @param catalog        the catalog name.
+     * @param schemaName     the schema name.
+     * @param directory      the directory to search.
+     * @return the view list.
+     */
+    public static List<View> search(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+                                    final File directory) {
+        final List<View> views = new ArrayList<>();
+
+        if (directory.isDirectory()) {
+            final File[] files = directory.listFiles(new SQLFilter(connectionInfo.getLocale()));
+            if (files != null) {
+                Arrays.stream(files).filter(Objects::nonNull).forEach((File file) -> {
+                    try {
+                        views.add(load(connectionInfo, catalog, schemaName, file));
+                    } catch (final IOException e) {
+                        LOGGER.log(Level.FINEST, e.getMessage(), e);
+                    }
+                });
+            }
+        }
+
+        return views;
+    }
+
+    /**
+     * Loads a view from a stream.
+     *
+     * @param connectionInfo the connection information.
+     * @param catalog        the catalog name.
+     * @param schemaName     the schema name.
+     * @param name           the view name.
+     * @param inputStream    the {@link InputStream to load}.
+     * @return the loaded view.
+     * @throws IOException in case of load failures.
+     */
+    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+                            final String name, final InputStream inputStream) throws IOException {
+        final char[] buffer = new char[0x800];
+        final StringBuilder out = new StringBuilder();
+        try (final InputStreamReader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+            int rsz;
+            while ((rsz = in.read(buffer, 0, buffer.length)) > 0) {
+                out.append(buffer, 0, rsz);
+            }
+        }
+
+        return new View(connectionInfo, catalog, schemaName, name, out.toString());
+    }
+
+    /**
+     * Loads a view from a file.
+     *
+     * @param connectionInfo the connection information.
+     * @param catalog        the catalog name.
+     * @param schemaName     the schema name.
+     * @param file           the view file.
+     * @return the loaded view.
+     * @throws IOException in case of load failures.
+     */
+    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+                            final File file) throws IOException {
+        try (final FileInputStream fis = new FileInputStream(file)) {
+            return load(connectionInfo, catalog, schemaName, Utils.removeSuffix(file.getName()), fis);
+        }
     }
 }

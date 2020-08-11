@@ -83,6 +83,23 @@ public final class Utils {
     }
 
     /**
+     * Remove a given suffix from {@link String}.
+     *
+     * @param name the {@link String} to format.
+     * @return the formatted {@link String}.
+     */
+    public static String removeSuffix(final String name) {
+        if (name != null) {
+            int index = name.lastIndexOf('.');
+            if (index != -1) {
+                return name.substring(0, index);
+            }
+        }
+
+        return name;
+    }
+
+    /**
      * Searchs a value in enum with insensitive case.
      *
      * @param enumeration the enumeration to search.

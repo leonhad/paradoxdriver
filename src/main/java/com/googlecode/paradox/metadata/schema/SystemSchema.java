@@ -8,32 +8,27 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.metadata.schema;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.data.filefilters.SQLFilter;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.View;
 import com.googlecode.paradox.metadata.tables.*;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The information schema.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class SystemSchema implements Schema {
-
-    private static final Logger LOGGER = Logger.getLogger(SystemSchema.class.getName());
 
     /**
      * The current tables.
@@ -88,48 +83,7 @@ public class SystemSchema implements Schema {
     private View load(final ConnectionInfo connectionInfo, final String name) throws IOException {
         try (final InputStream is = getClass().
                 getResourceAsStream("/com/googlecode/paradox/information_schema/" + name + ".sql")) {
-            return load(connectionInfo, catalog, ConnectionInfo.INFORMATION_SCHEMA, name, is);
-        }
-    }
-
-    public static List<View> search(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
-                                    final String name, final File directory, final Locale locale) {
-        final List<View> views = new ArrayList<>();
-
-        if (directory.isDirectory()) {
-            final File[] files = directory.listFiles(new SQLFilter(locale));
-            if (files != null) {
-                Arrays.stream(files).filter(Objects::nonNull).forEach((File file) -> {
-                    try {
-                        views.add(load(connectionInfo, catalog, schemaName, name, file));
-                    } catch (final IOException e) {
-                        LOGGER.log(Level.FINEST, e.getMessage(), e);
-                    }
-                });
-            }
-        }
-
-        return views;
-    }
-
-    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
-                            final String name, final InputStream inputStream) throws IOException {
-        final char[] buffer = new char[0x800];
-        final StringBuilder out = new StringBuilder();
-        try (final InputStreamReader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-            int rsz;
-            while ((rsz = in.read(buffer, 0, buffer.length)) > 0) {
-                out.append(buffer, 0, rsz);
-            }
-        }
-
-        return new View(connectionInfo, catalog, schemaName, name, out.toString());
-    }
-
-    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
-                            final String name, final File file) throws IOException {
-        try (final FileInputStream fis = new FileInputStream(file)) {
-            return load(connectionInfo, catalog, schemaName, name, fis);
+            return View.load(connectionInfo, catalog, ConnectionInfo.INFORMATION_SCHEMA, name, is);
         }
     }
 

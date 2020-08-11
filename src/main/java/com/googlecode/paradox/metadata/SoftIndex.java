@@ -12,16 +12,42 @@ package com.googlecode.paradox.metadata;
 
 import java.util.function.Supplier;
 
+/**
+ * A virtual index for system tables.
+ *
+ * @version 1.0
+ * @since 1.6.0
+ */
 public class SoftIndex implements Index {
 
+    /**
+     * The index name.
+     */
     private final String name;
 
+    /**
+     * The index uniqueness.
+     */
     private final boolean unique;
 
+    /**
+     * The fields list.
+     */
     private final Field[] fields;
 
+    /**
+     * Total rows supplier.
+     */
     private final Supplier<Integer> total;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param name   the index name.
+     * @param unique the index uniqueness.
+     * @param fields the field list.
+     * @param total  the total rows supplier.
+     */
     public SoftIndex(final String name, final boolean unique, final Field[] fields, final Supplier<Integer> total) {
         this.name = name;
         this.unique = unique;
@@ -54,6 +80,11 @@ public class SoftIndex implements Index {
         return total.get();
     }
 
+    /**
+     * Returns always zero.
+     *
+     * @return zero.
+     */
     @Override
     public int getTotalBlocks() {
         return 0;

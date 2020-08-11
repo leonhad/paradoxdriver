@@ -39,68 +39,116 @@ public final class ConnectionInfo {
 
     private static final Logger LOGGER = Logger.getLogger(ConnectionInfo.class.getName());
 
+    /**
+     * Charset property key.
+     */
     public static final String CHARSET_KEY = "charset";
 
+    /**
+     * Locale property key.
+     */
     public static final String LOCALE_KEY = "locale";
 
+    /**
+     * BCD rounding property key.
+     */
     public static final String BCD_ROUNDING_KEY = "bcd_rounding";
 
+    /**
+     * User property key.
+     */
     public static final String USER_KEY = "user";
 
-    public static final String TIME_ZONE_KEY = "timezone";
+    /**
+     * Timezone property key.
+     */
+    public static final String TIMEZONE_KEY = "timezone";
 
+    /**
+     * Enable catalog property key.
+     */
     public static final String ENABLE_CATALOG_KEY = "enable_catalogs";
 
+    /**
+     * Default charset value.
+     */
     public static final Charset DEFAULT_CHARSET = null;
 
+    /**
+     * Default locale value.
+     */
     public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
+    /**
+     * Default BCD rounding value.
+     */
     public static final boolean DEFAULT_BCD_ROUND = true;
 
+    /**
+     * Default timezone.
+     */
     public static final TimeZone DEFAULT_TIMEZONE = TimeZone.getDefault();
 
+    /**
+     * Default enable catalog.
+     */
     public static final boolean DEFAULT_ENABLE_CATALOG = false;
 
+    /**
+     * Default user.
+     */
     public static final String DEFAULT_USER = "sys";
 
+    /**
+     * Information schema name.
+     */
     public static final String INFORMATION_SCHEMA = "information_schema";
 
     /**
      * Driver URL.
      */
     private final String url;
+
     /**
      * Default charset.
      */
     private Charset charset = DEFAULT_CHARSET;
+
     /**
      * Connection locale.
      */
     private Locale locale = DEFAULT_LOCALE;
+
     /**
      * Time zone.
      */
     private TimeZone timeZone = DEFAULT_TIMEZONE;
+
     /**
      * BCD field precision.
      */
     private boolean bcdRounding = DEFAULT_BCD_ROUND;
+
     /**
      * The current connection schema.
      */
     private Schema currentSchema;
+
     /**
      * The current catalog.
      */
     private File currentCatalog;
+
     /**
      * This connection holdability.
      */
     private int holdability = ResultSet.CLOSE_CURSORS_AT_COMMIT;
+
     /**
      * Enable catalog change.
      */
     private boolean enableCatalogChange = DEFAULT_ENABLE_CATALOG;
+
     /**
      * Connection user.
      */
@@ -208,6 +256,14 @@ public final class ConnectionInfo {
         throw new ParadoxException(ParadoxException.Error.SCHEMA_NOT_FOUND);
     }
 
+    /**
+     * Gets a property value.
+     *
+     * @param key          the property key.
+     * @param defaultValue the default value in case of property not set.
+     * @param info         the property information.
+     * @return the property value or {@code defaultValue} in case of property not set.
+     */
     private static String getPropertyValue(final String key, final String defaultValue, final Properties info) {
         String ret = null;
         if (info != null) {
@@ -221,12 +277,18 @@ public final class ConnectionInfo {
         return ret;
     }
 
+    /**
+     * Gets the property metadata.
+     *
+     * @param info the property information.
+     * @return the list of driver property information.
+     */
     @SuppressWarnings("i18n-java:V1017")
     public static DriverPropertyInfo[] getMetaData(final Properties info) {
         final String charsetValue = getPropertyValue(CHARSET_KEY, null, info);
         final String localeValue = getPropertyValue(LOCALE_KEY, DEFAULT_LOCALE.toLanguageTag(), info);
         final String bcdRounding = getPropertyValue(BCD_ROUNDING_KEY, String.valueOf(DEFAULT_BCD_ROUND), info);
-        final String timeZoneId = getPropertyValue(TIME_ZONE_KEY, DEFAULT_TIMEZONE.getID(), info);
+        final String timeZoneId = getPropertyValue(TIMEZONE_KEY, DEFAULT_TIMEZONE.getID(), info);
         final String enableCatalog = getPropertyValue(ENABLE_CATALOG_KEY, String.valueOf(DEFAULT_ENABLE_CATALOG), info);
         final String user = getPropertyValue(USER_KEY, DEFAULT_USER, info);
 
@@ -253,7 +315,7 @@ public final class ConnectionInfo {
         localeProp.description = "The locale to use internally by the driver.";
         Arrays.sort(localeProp.choices);
 
-        final DriverPropertyInfo timeZoneProp = new DriverPropertyInfo(TIME_ZONE_KEY, timeZoneId);
+        final DriverPropertyInfo timeZoneProp = new DriverPropertyInfo(TIMEZONE_KEY, timeZoneId);
         timeZoneProp.choices = TimeZone.getAvailableIDs();
         timeZoneProp.required = false;
         timeZoneProp.description = "Time zone ID for use in date and time functions.";
@@ -272,12 +334,18 @@ public final class ConnectionInfo {
                 charset,
                 enableCatalogProp,
                 localeProp,
+                passwordProp,
                 timeZoneProp,
-                userProp,
-                passwordProp
+                userProp
         };
     }
 
+    /**
+     * Gets a property by its name.
+     *
+     * @param name the property name.
+     * @return the property value.
+     */
     public String getProperty(final String name) {
         return getProperties().getProperty(name);
     }
@@ -299,6 +367,11 @@ public final class ConnectionInfo {
         return defaultValue;
     }
 
+    /**
+     * Gets the all properties.
+     *
+     * @return the all properties.
+     */
     public Properties getProperties() {
         final Properties properties = new Properties();
 
@@ -315,6 +388,12 @@ public final class ConnectionInfo {
         return properties;
     }
 
+    /**
+     * Sets the connection properties.
+     *
+     * @param info the connection property information.
+     * @throws SQLClientInfoException in case of invalid property.
+     */
     public void setProperties(final Properties info) throws SQLClientInfoException {
         for (Map.Entry<Object, Object> entry : info.entrySet()) {
             final String key = String.valueOf(entry.getKey());
@@ -327,6 +406,13 @@ public final class ConnectionInfo {
         }
     }
 
+    /**
+     * Update a property by its name and value.
+     *
+     * @param name  the property name.
+     * @param value the property value.
+     * @throws SQLClientInfoException in case of failures.
+     */
     public void put(final String name, final String value) throws SQLClientInfoException {
         final Map<String, ClientInfoStatus> errors = new HashMap<>();
         if (name == null) {
@@ -346,7 +432,7 @@ public final class ConnectionInfo {
                 case LOCALE_KEY:
                     locale = getProperty(name, value, errors, DEFAULT_LOCALE, Locale::forLanguageTag);
                     break;
-                case TIME_ZONE_KEY:
+                case TIMEZONE_KEY:
                     timeZone = getProperty(name, value, errors, DEFAULT_TIMEZONE, TimeZone::getTimeZone);
                     break;
                 case USER_KEY:
@@ -362,6 +448,12 @@ public final class ConnectionInfo {
         }
     }
 
+    /**
+     * Change the current catalog.
+     *
+     * @param name the catalog name.
+     * @throws SQLException in case of invalid catalog.
+     */
     public void setCatalog(final String name) throws SQLException {
         if (!enableCatalogChange) {
             if (getCatalog().equalsIgnoreCase(name)) {
@@ -385,6 +477,12 @@ public final class ConnectionInfo {
         this.currentSchema = new SystemSchema(this, newCatalog.getName());
     }
 
+    /**
+     * Gets the available catalogs.
+     *
+     * @return the catalog list.
+     * @throws ParadoxDataException in case of failures.
+     */
     public List<String> listCatalogs() throws ParadoxDataException {
         final List<String> catalogs = new ArrayList<>();
         if (enableCatalogChange && currentCatalog.getParent() != null) {
@@ -524,22 +622,47 @@ public final class ConnectionInfo {
         return currentCatalog.getName();
     }
 
+    /**
+     * Change the current catalog.
+     *
+     * @param currentCatalog the current catalog.
+     */
     void setCurrentCatalog(final File currentCatalog) {
         this.currentCatalog = currentCatalog;
     }
 
+    /**
+     * Gets the default ResultSet holdability.
+     *
+     * @return the default ResultSet holdability.
+     */
     public int getHoldability() {
         return holdability;
     }
 
+    /**
+     * Sets the default ResultSet holdability.
+     *
+     * @param holdability the default ResultSet holdability.
+     */
     public void setHoldability(final int holdability) {
         this.holdability = holdability;
     }
 
+    /**
+     * Gets the connection user.
+     *
+     * @return the connection user.
+     */
     public String getUser() {
         return user;
     }
 
+    /**
+     * Sets the connection user.
+     *
+     * @param user the connection user.
+     */
     public void setUser(String user) {
         this.user = user;
     }
