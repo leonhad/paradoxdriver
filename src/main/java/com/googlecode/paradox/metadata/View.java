@@ -180,7 +180,7 @@ public class View implements Table {
      * @return the view definition.
      */
     public String definition() {
-        return String.format("create view \"%s\".\"%s\" as %s\n", schemaName, name, definition);
+        return String.format("create view \"%s\".\"%s\" as %s%n", schemaName, name, definition);
     }
 
     /**
