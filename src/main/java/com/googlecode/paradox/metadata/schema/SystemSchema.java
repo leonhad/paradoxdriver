@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * The information schema.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class SystemSchema implements Schema {
@@ -83,7 +83,7 @@ public class SystemSchema implements Schema {
     private View load(final ConnectionInfo connectionInfo, final String name) throws IOException {
         try (final InputStream is = getClass().
                 getResourceAsStream("/com/googlecode/paradox/information_schema/" + name + ".sql")) {
-            return View.load(connectionInfo, catalog, ConnectionInfo.INFORMATION_SCHEMA, name, is);
+            return View.load(connectionInfo, ConnectionInfo.INFORMATION_SCHEMA, name, is);
         }
     }
 

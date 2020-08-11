@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * View support.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class View implements Table {
@@ -42,24 +42,19 @@ public class View implements Table {
     private static final Logger LOGGER = Logger.getLogger(View.class.getName());
 
     /**
-     * The current catalog.
-     */
-    protected final String catalogName;
-
-    /**
      * The connection information.
      */
-    protected final ConnectionInfo connectionInfo;
+    private final ConnectionInfo connectionInfo;
 
     /**
      * View definition.
      */
-    protected final String definition;
+    private final String definition;
 
     /**
      * View name.
      */
-    protected final String name;
+    private final String name;
 
     /**
      * The schema name.
@@ -80,14 +75,12 @@ public class View implements Table {
      * Creates a new instance.
      *
      * @param connectionInfo the connection information.
-     * @param catalogName    the catalog name.
      * @param schemaName     the schema name.
      * @param name           the view name.
      * @param definition     the view definition.
      */
-    public View(final ConnectionInfo connectionInfo, final String catalogName, final String schemaName,
-                final String name, final String definition) {
-        this.catalogName = catalogName;
+    public View(final ConnectionInfo connectionInfo, final String schemaName, final String name,
+                final String definition) {
         this.connectionInfo = connectionInfo;
         this.definition = definition;
         this.name = name;
@@ -201,9 +194,17 @@ public class View implements Table {
                 .map(Column::getField).toArray(Field[]::new);
     }
 
+    /**
+     * List views in schema with pattern.
+     *
+     * @param currentSchema   the current schema.
+     * @param viewNamePattern the view name pattern.
+     * @param connectionInfo  the connection information.
+     * @return the views list.
+     */
     public static List<View> listViews(final File currentSchema, final String viewNamePattern,
                                        final ConnectionInfo connectionInfo) {
-        return search(connectionInfo, currentSchema.getParentFile().getName(), currentSchema.getName(), currentSchema)
+        return search(connectionInfo, currentSchema.getName(), currentSchema)
                 .stream().filter(view -> viewNamePattern == null ||
                         Expressions.accept(connectionInfo.getLocale(), view.getName(), viewNamePattern, false, '\\'))
                 .collect(Collectors.toList());
@@ -213,12 +214,11 @@ public class View implements Table {
      * Search for views in schema.
      *
      * @param connectionInfo the connection information.
-     * @param catalog        the catalog name.
      * @param schemaName     the schema name.
      * @param directory      the directory to search.
      * @return the view list.
      */
-    public static List<View> search(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+    public static List<View> search(final ConnectionInfo connectionInfo, final String schemaName,
                                     final File directory) {
         final List<View> views = new ArrayList<>();
 
@@ -227,7 +227,7 @@ public class View implements Table {
             if (files != null) {
                 Arrays.stream(files).filter(Objects::nonNull).forEach((File file) -> {
                     try {
-                        views.add(load(connectionInfo, catalog, schemaName, file));
+                        views.add(load(connectionInfo, schemaName, file));
                     } catch (final IOException e) {
                         LOGGER.log(Level.FINEST, e.getMessage(), e);
                     }
@@ -242,14 +242,13 @@ public class View implements Table {
      * Loads a view from a stream.
      *
      * @param connectionInfo the connection information.
-     * @param catalog        the catalog name.
      * @param schemaName     the schema name.
      * @param name           the view name.
      * @param inputStream    the {@link InputStream to load}.
      * @return the loaded view.
      * @throws IOException in case of load failures.
      */
-    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
+    public static View load(final ConnectionInfo connectionInfo, final String schemaName,
                             final String name, final InputStream inputStream) throws IOException {
         final char[] buffer = new char[0x800];
         final StringBuilder out = new StringBuilder();
@@ -260,23 +259,22 @@ public class View implements Table {
             }
         }
 
-        return new View(connectionInfo, catalog, schemaName, name, out.toString());
+        return new View(connectionInfo, schemaName, name, out.toString());
     }
 
     /**
      * Loads a view from a file.
      *
      * @param connectionInfo the connection information.
-     * @param catalog        the catalog name.
      * @param schemaName     the schema name.
      * @param file           the view file.
      * @return the loaded view.
      * @throws IOException in case of load failures.
      */
-    public static View load(final ConnectionInfo connectionInfo, final String catalog, final String schemaName,
-                            final File file) throws IOException {
+    public static View load(final ConnectionInfo connectionInfo, final String schemaName, final File file)
+            throws IOException {
         try (final FileInputStream fis = new FileInputStream(file)) {
-            return load(connectionInfo, catalog, schemaName, Utils.removeSuffix(file.getName()), fis);
+            return load(connectionInfo, schemaName, Utils.removeSuffix(file.getName()), fis);
         }
     }
 }

@@ -68,7 +68,7 @@ public class DirectorySchema implements Schema {
         final List<Table> tables = new ArrayList<>();
         tables.addAll(TableData.listTables(schemaFile, connectionInfo));
         tables.addAll(ViewData.listViews(schemaFile, connectionInfo));
-        tables.addAll(View.search(connectionInfo, catalogName(), name(), schemaFile));
+        tables.addAll(View.search(connectionInfo, name(), schemaFile));
         return tables.stream().filter(table -> tableName.equalsIgnoreCase(table.getName())).findFirst().orElse(null);
     }
 }
