@@ -520,7 +520,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
         // Distinct
         if (distinct) {
-            stream = stream.filter(FunctionalUtils.distinctByKey());
+            stream = stream.filter(FunctionalUtils.distinctByKey(this.columns));
         }
 
         if (context.getMaxRows() != 0) {

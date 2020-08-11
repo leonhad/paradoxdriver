@@ -528,4 +528,22 @@ public class SelectPlanTest {
             Assert.assertTrue("Invalid result set state", rs.next());
         }
     }
+
+    /**
+     * Test distinct with hidden columns.
+     *
+     * @throws SQLException in case of errors.
+     */
+    @Test
+    public void testDistinctWithHiddenColumns() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement(
+                "SELECT distinct State FROM AREACODES ORDER BY State, AC");
+             final ResultSet rs = stmt.executeQuery()) {
+
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertEquals("Invalid value", "--", rs.getString(1));
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNotEquals("Invalid value", "--", rs.getString(1));
+        }
+    }
 }

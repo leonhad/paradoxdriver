@@ -181,8 +181,16 @@ public final class FunctionalUtils {
      *
      * @return the predicate to simulate the distinct on Object array.
      */
-    public static Predicate<Object[]> distinctByKey() {
-        final Set<Object[]> seen = new TreeSet<>(new CompareArray());
+    public static Predicate<Object[]> distinctByKey(final List<Column> columnsLoaded) {
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < columnsLoaded.size(); i++) {
+            if (!columnsLoaded.get(i).isHidden()) {
+                indexes.add(i);
+            }
+        }
+
+        final Set<Object[]> seen = new TreeSet<>(
+                new CompareArray(indexes.stream().mapToInt(Integer::intValue).toArray()));
         return seen::add;
     }
 
@@ -190,6 +198,11 @@ public final class FunctionalUtils {
      * A distinct comparator to use with Object array.
      */
     private static class CompareArray implements Comparator<Object[]>, Serializable {
+        private final int[] columns;
+
+        public CompareArray(int[] columns) {
+            this.columns = columns;
+        }
 
         @Override
         @SuppressWarnings("java:S1142")
@@ -202,7 +215,7 @@ public final class FunctionalUtils {
                 return 1;
             }
 
-            for (int i = 0; i < o1.length; i++) {
+            for (int i : columns) {
                 int ret = ValuesComparator.compare(o1[i], o2[i]);
                 if (ret != 0) {
                     return ret;
