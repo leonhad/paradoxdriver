@@ -11,6 +11,7 @@
 package com.googlecode.paradox.results;
 
 import com.googlecode.paradox.ParadoxResultSet;
+import com.googlecode.paradox.data.field.BCDField;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.planner.nodes.FunctionNode;
@@ -347,13 +348,11 @@ public final class Column {
      * @return the column octets size.
      */
     public Integer getOctets() {
-        if (value instanceof byte[]) {
-            return ((byte[]) value).length;
-        } else if (value instanceof String) {
-            return ((String) value).length();
+        if (type == ParadoxType.BCD) {
+            return BCDField.BCD_SIZE;
         }
 
-        return null;
+        return size;
     }
 
     /**
