@@ -175,7 +175,7 @@ public final class FunctionFactory {
     }
 
     @SuppressWarnings("java:S1452")
-    public static Map<String, Supplier<? extends AbstractFunction>> getFunctionAlias() {
+    public static Map<String, Supplier<? extends AbstractFunction>> getFunctions() {
         return Collections.unmodifiableMap(FUNCTIONS);
     }
 

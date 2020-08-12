@@ -17,12 +17,12 @@ import org.junit.*;
 import java.sql.*;
 
 /**
- * Unit test for pdx_tables.
+ * Unit test for routines.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class TablesTest {
+public class RoutinesTest {
 
     /**
      * The connection string used in this tests.
@@ -67,28 +67,13 @@ public class TablesTest {
     }
 
     /**
-     * Test for pdx_tables.
+     * Test for pdx_routines.
      */
     @Test
-    public void testPdxTables() throws SQLException {
-        try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.pdx_tables");
+    public void testPdxRoutines() throws SQLException {
+        try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.pdx_routines");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-        }
-    }
-
-    /**
-     * Test for tables.
-     */
-    @Test
-    public void testTables() throws SQLException {
-        try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.tables");
-             final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-
-            while (rs.next()) {
-                Assert.assertEquals("Invalid catalog", "test-classes", rs.getString("table_catalog"));
-            }
         }
     }
 }

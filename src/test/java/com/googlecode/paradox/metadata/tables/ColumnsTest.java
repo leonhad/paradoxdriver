@@ -17,7 +17,7 @@ import org.junit.*;
 import java.sql.*;
 
 /**
- * Unit test for columns view.
+ * Unit test for pdx_columns.
  *
  * @version 1.0
  * @since 1.6.0

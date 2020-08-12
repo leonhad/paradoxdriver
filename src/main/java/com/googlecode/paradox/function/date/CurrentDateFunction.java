@@ -22,7 +22,7 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_DATE function.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.6.0
  */
 public class CurrentDateFunction extends AbstractDateFunction {
@@ -52,6 +52,11 @@ public class CurrentDateFunction extends AbstractDateFunction {
     @Override
     public boolean isAllowAlias() {
         return true;
+    }
+
+    @Override
+    public boolean isDeterministic() {
+        return false;
     }
 
     @Override

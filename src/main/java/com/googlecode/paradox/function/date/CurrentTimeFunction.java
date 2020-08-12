@@ -25,7 +25,7 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.6.0
  */
 public class CurrentTimeFunction extends AbstractDateFunction {
@@ -61,6 +61,11 @@ public class CurrentTimeFunction extends AbstractDateFunction {
     @Override
     public boolean isVariableParameters() {
         return true;
+    }
+
+    @Override
+    public boolean isDeterministic() {
+        return false;
     }
 
     /**

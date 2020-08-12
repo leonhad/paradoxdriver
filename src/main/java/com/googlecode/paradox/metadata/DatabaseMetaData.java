@@ -48,7 +48,6 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     public static final String TABLE_SCHEMA = "TABLE_SCHEM";
     public static final String TABLE_CATALOG = "TABLE_CATALOG";
-    public static final int DEFAULT_NUMBER_RADIX = 10;
     public static final String SPECIFIC_NAME = "SPECIFIC_NAME";
     public static final String DATA_TYPE = "DATA_TYPE";
     public static final String NULLABLE = "NULLABLE";
@@ -376,7 +375,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
         final List<Object[]> values = new ArrayList<>();
 
         for (final Map.Entry<String, Supplier<? extends AbstractFunction>> function :
-                FunctionFactory.getFunctionAlias().entrySet()) {
+                FunctionFactory.getFunctions().entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(connectionInfo.getCatalog()))
                     && (schemaPattern != null
                     && !Expressions.accept(connectionInfo.getLocale(), connectionInfo.getCurrentSchema().name(),
@@ -417,7 +416,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
                         // Scale.
                         column.getPrecision(),
                         // Radix.
-                        DEFAULT_NUMBER_RADIX,
+                        column.getRadix(),
                         // Nullable
                         column.isNullable() ? functionNullable : functionNoNulls,
                         // Remarks.
@@ -453,7 +452,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
         final List<Object[]> values = new ArrayList<>();
         for (final Map.Entry<String, Supplier<? extends AbstractFunction>> function :
-                FunctionFactory.getFunctionAlias().entrySet()) {
+                FunctionFactory.getFunctions().entrySet()) {
             if ((catalog != null && !catalog.equalsIgnoreCase(connectionInfo.getCatalog())) && (schemaPattern != null
                     && !Expressions.accept(connectionInfo.getLocale(), connectionInfo.getCurrentSchema().name(),
                     schemaPattern, false, '\\'))) {
@@ -1937,7 +1936,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
             // Decimal digits.
             row.add(field.getPrecision());
             // Number precision radix.
-            row.add(DEFAULT_NUMBER_RADIX);
+            row.add(field.getType().getRadix());
             // Nullable.
             if (field.isAutoIncrement()) {
                 row.add(java.sql.DatabaseMetaData.columnNoNulls);

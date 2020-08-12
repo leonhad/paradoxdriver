@@ -18,7 +18,7 @@ import java.sql.*;
 /**
  * Stores the Paradox field types and SQL Types.
  *
- * @version 2.2
+ * @version 2.3
  * @see SQLType
  * @since 1.3
  */
@@ -330,5 +330,25 @@ public enum ParadoxType implements SQLType {
      */
     public boolean isSearchable() {
         return searchable;
+    }
+
+    /**
+     * Gets the type radix.
+     *
+     * @return the type radix.
+     */
+    public Integer getRadix() {
+        switch (this) {
+            case INTEGER:
+            case LONG:
+            case CURRENCY:
+            case DECIMAL:
+            case NUMBER:
+            case NUMERIC:
+            case BCD:
+                return 10;
+            default:
+                return null;
+        }
     }
 }

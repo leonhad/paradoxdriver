@@ -41,7 +41,7 @@ public abstract class AbstractFunction {
     /**
      * Function returns parameter.
      */
-    protected static final int RESULT = DatabaseMetaData.functionColumnResult;
+    public static final int RESULT = DatabaseMetaData.functionColumnResult;
 
     /**
      * Gets the function type.
@@ -165,5 +165,13 @@ public abstract class AbstractFunction {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.getClass());
+    }
+
+    public boolean isDeterministic() {
+        return true;
+    }
+
+    public String definition() {
+        return null;
     }
 }

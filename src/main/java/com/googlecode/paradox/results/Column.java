@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Column values from a ResultSet.
  *
- * @version 1.9
+ * @version 1.10
  * @see ParadoxResultSet
  * @since 1.0
  */
@@ -458,6 +458,15 @@ public final class Column {
         }
 
         return false;
+    }
+
+    /**
+     * Gets the column radix.
+     *
+     * @return the column radix.
+     */
+    public Integer getRadix() {
+        return type.getRadix();
     }
 
     @Override
