@@ -54,7 +54,7 @@ public class SystemSchema implements Schema {
         tables.add(new ColumnPrivileges());
         tables.add(new Columns(connectionInfo, catalog));
         tables.add(new ColumnDomainUsage());
-        tables.add(new Routines());
+        tables.add(new Routines(catalog));
         tables.add(new Schemata(connectionInfo, catalog));
         tables.add(new Tables(connectionInfo, catalog));
         tables.add(new ViewColumnUsage(connectionInfo, catalog));
