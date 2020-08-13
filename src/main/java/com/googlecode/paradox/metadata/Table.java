@@ -114,4 +114,13 @@ public interface Table {
     default boolean isEncrypted() {
         return false;
     }
+
+    /**
+     * Gets the autoincrement value.
+     *
+     * @return the autoincrement value.
+     */
+    default int getAutoIncrementValue() {
+        return 0;
+    }
 }

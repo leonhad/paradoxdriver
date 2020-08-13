@@ -67,6 +67,18 @@ public class ColumnsTest {
     }
 
     /**
+     * Test for pdx_columns.
+     */
+    @Test
+    public void testPdxColumns() throws SQLException {
+        try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.pdx_columns");
+             final ResultSet rs = stmt.executeQuery()) {
+            Assert.assertTrue("Invalid result set state", rs.next());
+            Assert.assertNull("Invalid null value", rs.getObject(1));
+        }
+    }
+
+    /**
      * Test for columns.
      */
     @Test

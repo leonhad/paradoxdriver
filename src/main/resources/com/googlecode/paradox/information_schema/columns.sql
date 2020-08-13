@@ -9,7 +9,7 @@ select c."catalog"                     as table_catalog,
        maximum_length                  as character_maximum_length,
        "octet_length"                  as character_octet_length,
        "precision"                     as numeric_precision,
-       10                              as numeric_precision_radix,
+       radix                           as numeric_precision_radix,
        scale                           as numeric_scale,
        cast(null as NUMERIC)           as datetime_precision,
        cast(null as NUMERIC)           as interval_type,
@@ -22,7 +22,12 @@ select c."catalog"                     as table_catalog,
        cast(null as VARCHAR)           as collation_name,
        cast(null as VARCHAR)           as domain_catalog,
        cast(null as VARCHAR)           as domain_schema,
-       cast(null as VARCHAR)           as domain_name
+       cast(null as VARCHAR)           as domain_name,
+       is_autoincrement                as is_identity,
+       cast(null as VARCHAR)           as identity_generation,
+       cast(null as numeric)           as identity_start,
+       autoincrement_step              as identity_increment,
+       autoincrement_value             as identity_value
 from information_schema.pdx_columns c
          inner join information_schema.pdx_tables t
                     on c.catalog = t.catalog

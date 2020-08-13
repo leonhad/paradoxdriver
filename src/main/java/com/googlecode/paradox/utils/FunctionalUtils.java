@@ -179,6 +179,7 @@ public final class FunctionalUtils {
     /**
      * Predicate to simulate the distinct on Object array.
      *
+     * @param columnsLoaded the loaded columns. Used to ignore hidden columns.
      * @return the predicate to simulate the distinct on Object array.
      */
     public static Predicate<Object[]> distinctByKey(final List<Column> columnsLoaded) {
