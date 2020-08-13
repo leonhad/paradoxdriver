@@ -29,6 +29,11 @@ import java.util.function.Supplier;
  */
 public class Routines implements Table {
 
+    /**
+     * The current catalog.
+     */
+    private final String catalogName;
+
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
     private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
@@ -48,9 +53,11 @@ public class Routines implements Table {
 
     /**
      * Creates a new instance.
+     *
+     * @param catalogName the catalog name.
      */
-    public Routines() {
-        super();
+    public Routines(final String catalogName) {
+        this.catalogName = catalogName;
     }
 
     @Override
@@ -120,7 +127,9 @@ public class Routines implements Table {
             for (int i = 0; i < fields.length; i++) {
                 final Field field = fields[i];
                 Object value = null;
-                if (name.equals(field)) {
+                if (this.catalog.equals(field)) {
+                    value = catalogName;
+                } else if (this.name.equals(field)) {
                     value = entry.getKey();
                 } else if (this.type.equals(field)) {
                     value = "FUNCTION";
