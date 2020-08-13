@@ -77,14 +77,14 @@ public class Routines implements Table {
 
     @Override
     public Index getPrimaryKeyIndex() {
-        return new SoftIndex("views.pk", true,
+        return new SoftIndex("routines.pk", true,
                 new Field[]{catalog, schema, name, type}, this::getRowCount);
     }
 
     @Override
     public Index[] getIndexes() {
         return new Index[]{
-                new SoftIndex("views.pk", true,
+                new SoftIndex("routines.pk", true,
                         new Field[]{catalog, schema, name, type}, this::getRowCount)
         };
     }

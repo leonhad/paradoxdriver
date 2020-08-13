@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tables.
+ * Key columns.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class Tables implements Table {
+public class KeyColumns implements Table {
 
     /**
      * The current catalog.
@@ -34,13 +34,11 @@ public class Tables implements Table {
 
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field type = new Field("type", 0, 0x0A, ParadoxType.VARCHAR, this, 4);
-    private final Field typeName = new Field("type_name", 0, 0x0A, ParadoxType.VARCHAR, this, 5);
-    private final Field charset = new Field("charset", 0, 0, ParadoxType.VARCHAR, this, 6);
-    private final Field encrypted = new Field("encrypted", 0, 3, ParadoxType.VARCHAR, this, 7);
-    private final Field writeProtected = new Field("write_protected", 0, 3, ParadoxType.VARCHAR, this, 8);
-    private final Field count = new Field("count", 0, 0, ParadoxType.VARCHAR, this, 9);
+    private final Field table = new Field("table", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field constraintName = new Field("constraint_name", 0, Constants.MAX_STRING_SIZE,
+            ParadoxType.VARCHAR, this, 4);
+    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 5);
+    private final Field ordinal = new Field("ordinal", 0, 4, ParadoxType.INTEGER, this, 6);
 
     /**
      * The connection information.
@@ -53,14 +51,14 @@ public class Tables implements Table {
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
      */
-    public Tables(final ConnectionInfo connectionInfo, final String catalogName) {
+    public KeyColumns(final ConnectionInfo connectionInfo, final String catalogName) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
-        return "pdx_tables";
+        return "pdx_key_columns";
     }
 
     @Override
@@ -79,15 +77,15 @@ public class Tables implements Table {
 
     @Override
     public Index getPrimaryKeyIndex() {
-        return new SoftIndex("tables.pk", true,
-                new Field[]{catalog, schema, name, type}, this::getRowCount);
+        return new SoftIndex("key_columns.pk", true,
+                new Field[]{catalog, schema, table, constraintName, name}, this::getRowCount);
     }
 
     @Override
     public Index[] getIndexes() {
         return new Index[]{
-                new SoftIndex("tables.pk", true,
-                        new Field[]{catalog, schema, name, type}, this::getRowCount)
+                new SoftIndex("key_columns.pk", true,
+                        new Field[]{catalog, schema, table, constraintName, name}, this::getRowCount)
         };
     }
 
@@ -96,13 +94,10 @@ public class Tables implements Table {
         return new Field[]{
                 catalog,
                 schema,
+                table,
+                constraintName,
                 name,
-                type,
-                typeName,
-                charset,
-                encrypted,
-                writeProtected,
-                count
+                ordinal
         };
     }
 
@@ -117,42 +112,39 @@ public class Tables implements Table {
 
         for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : schema.list(connectionInfo, null)) {
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    Object value = null;
-                    if (catalog.equals(field)) {
-                        value = schema.catalogName();
-                    } else if (this.schema.equals(field)) {
-                        value = schema.name();
-                    } else if (name.equals(field)) {
-                        value = table.getName();
-                    } else if (this.type.equals(field)) {
-                        value = table.type().description();
-                    } else if (this.typeName.equals(field)) {
-                        value = table.type().typeName();
-                    } else if (this.charset.equals(field) && table.getCharset() != null) {
-                        value = table.getCharset().displayName();
-                    } else if (this.encrypted.equals(field)) {
-                        if (table.isEncrypted()) {
-                            value = "YES";
-                        } else {
-                            value = "NO";
-                        }
-                    } else if (this.writeProtected.equals(field)) {
-                        if (table.isWriteProtected()) {
-                            value = "YES";
-                        } else {
-                            value = "NO";
-                        }
-                    } else if (this.count.equals(field) && table.getCharset() != null) {
-                        value = table.getRowCount();
-                    }
-
-                    row[i] = value;
+                Index index = table.getPrimaryKeyIndex();
+                if (index == null) {
+                    continue;
                 }
 
-                ret.add(row);
+                for (final Field fieldLocal : index.getFields()) {
+                    final Object[] row = new Object[fields.length];
+                    for (int i = 0; i < fields.length; i++) {
+                        final Field field = fields[i];
+                        if (fieldLocal == null) {
+                            continue;
+                        }
+
+                        Object value = null;
+                        if (catalog.equals(field)) {
+                            value = schema.catalogName();
+                        } else if (this.schema.equals(field)) {
+                            value = schema.name();
+                        } else if (this.table.equals(field)) {
+                            value = table.getName();
+                        } else if (this.constraintName.equals(field)) {
+                            value = index.getName();
+                        } else if (this.name.equals(field)) {
+                            value = fieldLocal.getName();
+                        } else if (this.ordinal.equals(field)) {
+                            value = fieldLocal.getOrderNum();
+                        }
+
+                        row[i] = value;
+                    }
+
+                    ret.add(row);
+                }
             }
         }
 

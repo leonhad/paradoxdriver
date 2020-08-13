@@ -87,14 +87,14 @@ public class Columns implements Table {
 
     @Override
     public Index getPrimaryKeyIndex() {
-        return new SoftIndex("views.pk", true,
+        return new SoftIndex("columns.pk", true,
                 new Field[]{catalog, schema, table, name}, this::getRowCount);
     }
 
     @Override
     public Index[] getIndexes() {
         return new Index[]{
-                new SoftIndex("views.pk", true,
+                new SoftIndex("columns.pk", true,
                         new Field[]{catalog, schema, table, name}, this::getRowCount)
         };
     }
