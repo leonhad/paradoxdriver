@@ -12,6 +12,7 @@ package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Index;
+import com.googlecode.paradox.metadata.IndexType;
 
 /**
  * Stores a primary key definition..
@@ -78,5 +79,10 @@ public final class ParadoxPK extends ParadoxDataFile implements Index {
     @Override
     public String getOrder() {
         return "A";
+    }
+
+    @Override
+    public IndexType type() {
+        return IndexType.PRIMARY_KEY;
     }
 }

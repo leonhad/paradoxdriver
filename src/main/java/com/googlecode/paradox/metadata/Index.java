@@ -59,4 +59,11 @@ public interface Index {
      * @return the file total blocks.
      */
     int getTotalBlocks();
+
+    /**
+     * Gets the index type.
+     *
+     * @return the index type.
+     */
+    IndexType type();
 }

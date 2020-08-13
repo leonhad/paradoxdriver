@@ -41,17 +41,25 @@ public class SoftIndex implements Index {
     private final Supplier<Integer> total;
 
     /**
+     * Index type.
+     */
+    private final IndexType type;
+
+    /**
      * Creates a new instance.
      *
      * @param name   the index name.
      * @param unique the index uniqueness.
      * @param fields the field list.
      * @param total  the total rows supplier.
+     * @param type   the index type.
      */
-    public SoftIndex(final String name, final boolean unique, final Field[] fields, final Supplier<Integer> total) {
+    public SoftIndex(final String name, final boolean unique, final Field[] fields, final IndexType type,
+                     final Supplier<Integer> total) {
         this.name = name;
         this.unique = unique;
         this.fields = fields;
+        this.type = type;
         this.total = total;
     }
 
@@ -88,5 +96,10 @@ public class SoftIndex implements Index {
     @Override
     public int getTotalBlocks() {
         return 0;
+    }
+
+    @Override
+    public IndexType type() {
+        return type;
     }
 }

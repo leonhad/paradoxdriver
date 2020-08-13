@@ -8,7 +8,6 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
@@ -21,25 +20,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Views.
+ * Table constraints table.
  *
  * @version 1.0
  * @since 1.6.0
  */
-public class Views implements Table {
+public class TableConstraints implements Table {
 
     /**
      * The current catalog.
      */
     private final String catalogName;
 
-    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
-            1);
+    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field definition = new Field("definition", 0, 0, ParadoxType.VARCHAR, this, 4);
-    private final Field check = new Field("check_option", 0, 0x07, ParadoxType.VARCHAR, this, 5);
-    private final Field updatable = new Field("is_updatable", 0, 0x02, ParadoxType.VARCHAR, this, 6);
+    private final Field table = new Field("table", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
+    private final Field type = new Field("type", 0, 0x0B, ParadoxType.VARCHAR, this, 5);
+    private final Field isDeferrable = new Field("is_deferrable", 0, 2, ParadoxType.VARCHAR, this, 6);
+    private final Field initiallyDeferred = new Field("initially_deferred", 0, 2, ParadoxType.VARCHAR, this, 7);
 
     /**
      * The connection information.
@@ -52,14 +51,14 @@ public class Views implements Table {
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
      */
-    public Views(final ConnectionInfo connectionInfo, final String catalogName) {
+    public TableConstraints(final ConnectionInfo connectionInfo, final String catalogName) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
-        return "pdx_views";
+        return "pdx_table_constraints";
     }
 
     @Override
@@ -77,28 +76,15 @@ public class Views implements Table {
     }
 
     @Override
-    public Index getPrimaryKeyIndex() {
-        return new SoftIndex("views.pk", true,
-                new Field[]{catalog, schema, name}, IndexType.PRIMARY_KEY, this::getRowCount);
-    }
-
-    @Override
-    public Index[] getIndexes() {
-        return new Index[]{
-                new SoftIndex("views.pk", true,
-                        new Field[]{catalog, schema, name}, IndexType.UNIQUE, this::getRowCount)
-        };
-    }
-
-    @Override
     public Field[] getFields() {
         return new Field[]{
                 catalog,
                 schema,
+                table,
                 name,
-                definition,
-                check,
-                updatable
+                type,
+                isDeferrable,
+                initiallyDeferred
         };
     }
 
@@ -113,32 +99,32 @@ public class Views implements Table {
 
         for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : schema.list(connectionInfo, null)) {
-                if (!(table instanceof View)) {
-                    continue;
-                }
+                for (final Index index : table.getIndexes()) {
+                    final Object[] row = new Object[fields.length];
+                    for (int i = 0; i < fields.length; i++) {
+                        final Field field = fields[i];
+                        Object value = null;
+                        if (catalog.equals(field)) {
+                            value = schema.catalogName();
+                        } else if (this.schema.equals(field)) {
+                            value = schema.name();
+                        } else if (this.table.equals(field)) {
+                            value = table.getName();
+                        } else if (name.equals(field)) {
+                            value = index.getName();
+                        } else if (this.type.equals(field)) {
+                            value = index.type().description();
+                        } else if (this.isDeferrable.equals(field)) {
+                            value = "NO";
+                        } else if (this.initiallyDeferred.equals(field)) {
+                            value = "NO";
+                        }
 
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    Object value = null;
-                    if (catalog.equals(field)) {
-                        value = schema.catalogName();
-                    } else if (this.schema.equals(field)) {
-                        value = schema.name();
-                    } else if (name.equals(field)) {
-                        value = table.getName();
-                    } else if (this.definition.equals(field)) {
-                        value = ((View) table).definition();
-                    } else if (this.check.equals(field)) {
-                        value = "NONE";
-                    } else if (this.updatable.equals(field)) {
-                        value = "NO";
+                        row[i] = value;
                     }
 
-                    row[i] = value;
+                    ret.add(row);
                 }
-
-                ret.add(row);
             }
         }
 

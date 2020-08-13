@@ -81,14 +81,14 @@ public class Schemata implements Table {
     @Override
     public Index getPrimaryKeyIndex() {
         return new SoftIndex("schemata.pk", true,
-                new Field[]{catalog, schema}, this::getRowCount);
+                new Field[]{catalog, schema}, IndexType.PRIMARY_KEY, this::getRowCount);
     }
 
     @Override
     public Index[] getIndexes() {
         return new Index[]{
                 new SoftIndex("schemata.pk", true,
-                        new Field[]{catalog, schema}, this::getRowCount)
+                        new Field[]{catalog, schema}, IndexType.UNIQUE, this::getRowCount)
         };
     }
 

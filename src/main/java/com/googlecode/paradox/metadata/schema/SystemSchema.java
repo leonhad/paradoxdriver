@@ -59,6 +59,7 @@ public class SystemSchema implements Schema {
         tables.add(new ReferentialConstraints());
         tables.add(new Routines(catalog));
         tables.add(new Schemata(connectionInfo, catalog));
+        tables.add(new TableConstraints(connectionInfo, catalog));
         tables.add(new Tables(connectionInfo, catalog));
         tables.add(new ViewColumnUsage(connectionInfo, catalog));
         tables.add(new Views(connectionInfo, catalog));
@@ -73,6 +74,7 @@ public class SystemSchema implements Schema {
             tables.add(load(connectionInfo, "referential_constraints"));
             tables.add(load(connectionInfo, "routines"));
             tables.add(load(connectionInfo, "schemata"));
+            tables.add(load(connectionInfo, "table_constraints"));
             tables.add(load(connectionInfo, "tables"));
             tables.add(load(connectionInfo, "view_column_usage"));
             tables.add(load(connectionInfo, "view_table_usage"));
