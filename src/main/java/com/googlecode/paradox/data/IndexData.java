@@ -14,6 +14,7 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.SecondaryIndexFilter;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Index;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.metadata.paradox.ParadoxIndex;
@@ -49,22 +50,22 @@ public final class IndexData extends ParadoxData {
      * List the indexes in a database file.
      *
      * @param currentSchema  the current schema file.
-     * @param tableName      the table name.
+     * @param table          the index original table.
      * @param connectionInfo the connection information.
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException in case of reading failures.
      */
-    public static List<Index> listIndexes(final File currentSchema, final String tableName,
+    public static List<Index> listIndexes(final File currentSchema, final Table table,
                                           final ConnectionInfo connectionInfo) throws SQLException {
         final ArrayList<Index> indexes = new ArrayList<>();
-        String indexNamePattern = tableName + ".X__";
+        String indexNamePattern = table.getName() + ".X__";
         File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(),
                 indexNamePattern));
 
         if (fileList != null) {
             for (final File file : fileList) {
                 try {
-                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connectionInfo);
+                    final ParadoxIndex index = IndexData.loadIndexHeader(file, connectionInfo, table);
                     indexes.add(index);
                 } catch (final IOException e) {
                     throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
@@ -83,13 +84,13 @@ public final class IndexData extends ParadoxData {
      * @return the {@link ParadoxIndex} reference.
      * @throws IOException if case of I/O exceptions.
      */
-    private static ParadoxIndex loadIndexHeader(final File file, final ConnectionInfo connectionInfo)
-            throws IOException {
+    private static ParadoxIndex loadIndexHeader(final File file, final ConnectionInfo connectionInfo,
+                                                final Table table) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connectionInfo);
+        final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connectionInfo, table);
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
@@ -121,7 +122,7 @@ public final class IndexData extends ParadoxData {
             index.setReferentialIntegrity(buffer.get());
 
             parseVersionID(buffer, index);
-            parseFields(buffer, index);
+            parseFields(buffer, index, table);
 
             IndexData.parseSortID(buffer, index);
             IndexData.parseIndexName(buffer, index);
@@ -158,12 +159,14 @@ public final class IndexData extends ParadoxData {
      *
      * @param buffer the buffer to parse.
      * @param index  the paradox index.
+     * @param table  the index original table.
      */
-    private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index) {
+    private static void parseFields(final ByteBuffer buffer, final ParadoxDataFile index, final Table table) {
         final ParadoxField[] fields = new ParadoxField[index.getFieldCount()];
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
             final ParadoxField field = new ParadoxField(ParadoxType.valueOfVendor(buffer.get()), loop + 1);
             field.setSize(buffer.get());
+            field.setTable(table);
             fields[loop] = field;
         }
 
@@ -190,6 +193,7 @@ public final class IndexData extends ParadoxData {
             name.flip();
             fields[loop].setName(index.getCharset().decode(name).toString());
         }
+
         index.setFields(fields);
 
         final short[] fieldsOrder = new short[index.getFieldCount()];

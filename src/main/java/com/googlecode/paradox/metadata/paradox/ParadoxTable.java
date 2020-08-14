@@ -76,7 +76,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     }
 
     public void loadIndexes() throws SQLException {
-        final List<Index> loadedIndexes = IndexData.listIndexes(file.getParentFile(), name, this.connectionInfo);
+        final List<Index> loadedIndexes = IndexData.listIndexes(file.getParentFile(), this, this.connectionInfo);
         final Index index = PrimaryKeyData.getPrimaryKey(file.getParentFile(), this, connectionInfo);
         if (index != null) {
             loadedIndexes.add(index);

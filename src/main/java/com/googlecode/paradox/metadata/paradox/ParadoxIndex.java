@@ -11,9 +11,14 @@
 package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Index;
+import com.googlecode.paradox.metadata.Table;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Stores index data.
@@ -29,14 +34,23 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
     private String sortOrderID;
 
     /**
+     * Paradox table.
+     */
+    private final Table table;
+
+    /**
      * Creates a new instance.
      *
      * @param file           the file to read of.
      * @param name           index name.
      * @param connectionInfo the connection information.
+     * @param table          the index original table.
      */
-    public ParadoxIndex(final File file, final String name, final ConnectionInfo connectionInfo) {
+    public ParadoxIndex(final File file, final String name, final ConnectionInfo connectionInfo,
+                        final Table table) {
         super(file, name, connectionInfo);
+
+        this.table = table;
     }
 
     /**
@@ -50,6 +64,7 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
         if ((referential == 0x10) || (referential == 0x11) || (referential == 0x30)) {
             return "D";
         }
+
         return "A";
     }
 
@@ -57,6 +72,12 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
     public boolean isUnique() {
         final int referential = this.getReferentialIntegrity();
         return (referential == 0x20) || (referential == 0x21) || (referential == 0x30);
+    }
+
+    @Override
+    public Field[] getFields() {
+        final Set<Field> tableFields = new HashSet<>(Arrays.asList(table.getFields()));
+        return Arrays.stream(fields).filter(tableFields::remove).toArray(Field[]::new);
     }
 
     /**
