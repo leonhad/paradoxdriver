@@ -68,14 +68,10 @@ public class Views implements Table {
     }
 
     @Override
-    public Index getPrimaryKeyIndex() {
-        return new SoftIndex("views.pk", true,
-                new Field[]{catalog, schema, name}, IndexType.PRIMARY_KEY, this::getRowCount);
-    }
-
-    @Override
     public Index[] getIndexes() {
         return new Index[]{
+                new SoftIndex("views.pk", true,
+                        new Field[]{catalog, schema, name}, IndexType.PRIMARY_KEY, this::getRowCount),
                 new SoftIndex("views.pk", true,
                         new Field[]{catalog, schema, name}, IndexType.UNIQUE, this::getRowCount)
         };

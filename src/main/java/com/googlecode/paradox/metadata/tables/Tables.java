@@ -69,14 +69,10 @@ public class Tables implements Table {
     }
 
     @Override
-    public Index getPrimaryKeyIndex() {
-        return new SoftIndex("tables.pk", true,
-                new Field[]{catalog, schema, name, type}, IndexType.PRIMARY_KEY, this::getRowCount);
-    }
-
-    @Override
     public Index[] getIndexes() {
         return new Index[]{
+                new SoftIndex("tables.pk", true,
+                        new Field[]{catalog, schema, name, type}, IndexType.PRIMARY_KEY, this::getRowCount),
                 new SoftIndex("tables.pk", true,
                         new Field[]{catalog, schema, name, type}, IndexType.UNIQUE, this::getRowCount)
         };

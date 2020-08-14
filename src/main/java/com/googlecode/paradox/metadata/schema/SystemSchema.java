@@ -69,6 +69,7 @@ public class SystemSchema implements Schema {
             tables.add(load(connectionInfo, "column_domain_usage"));
             tables.add(load(connectionInfo, "column_privileges"));
             tables.add(load(connectionInfo, "columns"));
+            tables.add(load(connectionInfo, "constraint_table_usage"));
             tables.add(load(connectionInfo, "key_column_usage"));
             tables.add(load(connectionInfo, "parameters"));
             tables.add(load(connectionInfo, "referential_constraints"));

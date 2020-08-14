@@ -12,7 +12,6 @@ package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Index;
-import com.googlecode.paradox.metadata.IndexType;
 
 import java.io.File;
 
