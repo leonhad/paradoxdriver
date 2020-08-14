@@ -65,5 +65,18 @@ public interface Index {
      *
      * @return the index type.
      */
-    IndexType type();
+    default IndexType type() {
+        if (isUnique()) {
+            return IndexType.UNIQUE;
+        }
+
+        return IndexType.INDEX;
+    }
+
+    /**
+     * Gets definition.
+     */
+    default String definition() {
+        return "";
+    }
 }

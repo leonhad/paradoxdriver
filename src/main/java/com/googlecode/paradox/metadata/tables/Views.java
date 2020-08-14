@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Views.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Views implements Table {
@@ -33,6 +33,11 @@ public class Views implements Table {
      */
     private final String catalogName;
 
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
+
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
@@ -40,11 +45,6 @@ public class Views implements Table {
     private final Field definition = new Field("definition", 0, 0, ParadoxType.VARCHAR, this, 4);
     private final Field check = new Field("check_option", 0, 0x07, ParadoxType.VARCHAR, this, 5);
     private final Field updatable = new Field("is_updatable", 0, 0x02, ParadoxType.VARCHAR, this, 6);
-
-    /**
-     * The connection information.
-     */
-    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
@@ -60,15 +60,6 @@ public class Views implements Table {
     @Override
     public String getName() {
         return "pdx_views";
-    }
-
-    @Override
-    public int getRowCount() {
-        try {
-            return load(new Field[0]).size();
-        } catch (final SQLException e) {
-            return 0;
-        }
     }
 
     @Override

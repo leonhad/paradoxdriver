@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * Routines parameters.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Parameters implements Table {
@@ -35,6 +35,15 @@ public class Parameters implements Table {
      * The current catalog.
      */
     private final String catalogName;
+
+    /**
+     * Creates a new instance.
+     *
+     * @param catalogName the catalog name.
+     */
+    public Parameters(final String catalogName) {
+        this.catalogName = catalogName;
+    }
 
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
@@ -50,23 +59,9 @@ public class Parameters implements Table {
     private final Field scale = new Field("scale", 0, 4, ParadoxType.INTEGER, this, 12);
     private final Field radix = new Field("numeric_precision_radix", 0, 4, ParadoxType.INTEGER, this, 13);
 
-    /**
-     * Creates a new instance.
-     *
-     * @param catalogName the catalog name.
-     */
-    public Parameters(final String catalogName) {
-        this.catalogName = catalogName;
-    }
-
     @Override
     public String getName() {
         return "pdx_routine_parameters";
-    }
-
-    @Override
-    public int getRowCount() {
-        return load(new Field[0]).size();
     }
 
     @Override

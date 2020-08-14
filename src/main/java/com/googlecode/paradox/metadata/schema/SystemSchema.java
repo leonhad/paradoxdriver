@@ -50,7 +50,7 @@ public class SystemSchema implements Schema {
     public SystemSchema(final ConnectionInfo connectionInfo, final String catalog) throws SQLException {
         this.catalog = catalog;
 
-        tables.add(new CheckConstraints());
+        tables.add(new CheckConstraints(connectionInfo, catalog));
         tables.add(new ColumnPrivileges());
         tables.add(new Columns(connectionInfo, catalog));
         tables.add(new ColumnDomainUsage());

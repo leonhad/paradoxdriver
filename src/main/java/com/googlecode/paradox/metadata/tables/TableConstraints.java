@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Table constraints table.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class TableConstraints implements Table {
@@ -32,6 +32,11 @@ public class TableConstraints implements Table {
      */
     private final String catalogName;
 
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
+
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
     private final Field table = new Field("table", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
@@ -39,11 +44,6 @@ public class TableConstraints implements Table {
     private final Field type = new Field("type", 0, 0x0B, ParadoxType.VARCHAR, this, 5);
     private final Field isDeferrable = new Field("is_deferrable", 0, 2, ParadoxType.VARCHAR, this, 6);
     private final Field initiallyDeferred = new Field("initially_deferred", 0, 2, ParadoxType.VARCHAR, this, 7);
-
-    /**
-     * The connection information.
-     */
-    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
@@ -59,15 +59,6 @@ public class TableConstraints implements Table {
     @Override
     public String getName() {
         return "pdx_table_constraints";
-    }
-
-    @Override
-    public int getRowCount() {
-        try {
-            return load(new Field[0]).size();
-        } catch (final SQLException e) {
-            return 0;
-        }
     }
 
     @Override
@@ -99,7 +90,7 @@ public class TableConstraints implements Table {
 
         for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : schema.list(connectionInfo, null)) {
-                for (final Index index : table.getIndexes()) {
+                for (final Index index : table.getConstraints()) {
                     final Object[] row = new Object[fields.length];
                     for (int i = 0; i < fields.length; i++) {
                         final Field field = fields[i];

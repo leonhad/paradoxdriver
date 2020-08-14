@@ -77,13 +77,4 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
     public void setSortOrderID(final String sortOrderID) {
         this.sortOrderID = sortOrderID;
     }
-
-    @Override
-    public IndexType type() {
-        if (isUnique()) {
-            return IndexType.UNIQUE;
-        }
-
-        return IndexType.CHECK;
-    }
 }

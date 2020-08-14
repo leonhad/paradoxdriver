@@ -11,22 +11,31 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
-import java.util.Collections;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Check constraints table.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class CheckConstraints implements Table {
+
+    /**
+     * The current catalog.
+     */
+    private final String catalogName;
+
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
 
     private final Field catalog = new Field("constraint_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
             this, 1);
@@ -37,19 +46,18 @@ public class CheckConstraints implements Table {
 
     /**
      * Creates a new instance.
+     *
+     * @param connectionInfo the connection information.
+     * @param catalogName    the catalog name.
      */
-    public CheckConstraints() {
-        super();
+    public CheckConstraints(final ConnectionInfo connectionInfo, final String catalogName) {
+        this.catalogName = catalogName;
+        this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
         return "pdx_check_constraints";
-    }
-
-    @Override
-    public int getRowCount() {
-        return load(new Field[0]).size();
     }
 
     @Override
@@ -73,7 +81,34 @@ public class CheckConstraints implements Table {
     }
 
     @Override
-    public List<Object[]> load(final Field[] fields) {
-        return Collections.emptyList();
+    public List<Object[]> load(final Field[] fields) throws SQLException {
+        final List<Object[]> ret = new ArrayList<>();
+
+        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table table : schema.list(connectionInfo, null)) {
+                for (final Index index : table.getCheckConstraints()) {
+                    final Object[] row = new Object[fields.length];
+                    for (int i = 0; i < fields.length; i++) {
+                        final Field field = fields[i];
+                        Object value = null;
+                        if (catalog.equals(field)) {
+                            value = schema.catalogName();
+                        } else if (this.schema.equals(field)) {
+                            value = schema.name();
+                        } else if (name.equals(field)) {
+                            value = index.getName();
+                        } else if (this.check.equals(field)) {
+                            value = index.definition();
+                        }
+
+                        row[i] = value;
+                    }
+
+                    ret.add(row);
+                }
+            }
+        }
+
+        return ret;
     }
 }

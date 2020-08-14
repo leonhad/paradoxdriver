@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 /**
  * Routines.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Routines implements Table {
@@ -63,11 +63,6 @@ public class Routines implements Table {
     @Override
     public String getName() {
         return "pdx_routines";
-    }
-
-    @Override
-    public int getRowCount() {
-        return load(new Field[0]).size();
     }
 
     @Override

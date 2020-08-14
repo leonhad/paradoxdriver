@@ -13,12 +13,13 @@ package com.googlecode.paradox.metadata;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * A generic table.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public interface Table {
@@ -34,9 +35,14 @@ public interface Table {
      * Gets the row count.
      *
      * @return the row count.
-     * @throws SQLException in case of failures.
      */
-    int getRowCount() throws SQLException;
+    default int getRowCount() {
+        try {
+            return load(new Field[0]).size();
+        } catch (final SQLException e) {
+            return 0;
+        }
+    }
 
     /**
      * Gets the table type.
@@ -93,7 +99,9 @@ public interface Table {
      * @throws SQLException in case of failures.
      */
     default Index getPrimaryKeyIndex() throws SQLException {
-        return null;
+        return Arrays.stream(getIndexes())
+                .filter(index -> index.type() == IndexType.PRIMARY_KEY)
+                .findFirst().orElse(null);
     }
 
     /**
@@ -104,6 +112,30 @@ public interface Table {
      */
     default Index[] getIndexes() throws SQLException {
         return new Index[0];
+    }
+
+    /**
+     * Gets the table indexes.
+     *
+     * @return the table indexes.
+     * @throws SQLException in case of failures.
+     */
+    default Index[] getCheckConstraints() throws SQLException {
+        return Arrays.stream(getIndexes())
+                .filter(index -> index.type() == IndexType.CHECK)
+                .toArray(Index[]::new);
+    }
+
+    /**
+     * Gets the table constraints.
+     *
+     * @return the table indexes.
+     * @throws SQLException in case of failures.
+     */
+    default Index[] getConstraints() throws SQLException {
+        return Arrays.stream(getIndexes())
+                .filter(index -> index.type() != IndexType.INDEX)
+                .toArray(Index[]::new);
     }
 
     /**

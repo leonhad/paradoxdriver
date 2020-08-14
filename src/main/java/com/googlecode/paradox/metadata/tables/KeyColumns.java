@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Key columns.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class KeyColumns implements Table {
@@ -32,6 +32,11 @@ public class KeyColumns implements Table {
      */
     private final String catalogName;
 
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
+
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
     private final Field table = new Field("table", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
@@ -39,11 +44,6 @@ public class KeyColumns implements Table {
             ParadoxType.VARCHAR, this, 4);
     private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 5);
     private final Field ordinal = new Field("ordinal", 0, 4, ParadoxType.INTEGER, this, 6);
-
-    /**
-     * The connection information.
-     */
-    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
@@ -59,15 +59,6 @@ public class KeyColumns implements Table {
     @Override
     public String getName() {
         return "pdx_key_columns";
-    }
-
-    @Override
-    public int getRowCount() {
-        try {
-            return load(new Field[0]).size();
-        } catch (final SQLException e) {
-            return 0;
-        }
     }
 
     @Override

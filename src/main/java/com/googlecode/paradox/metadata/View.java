@@ -114,11 +114,6 @@ public class View implements Table {
     }
 
     @Override
-    public int getRowCount() throws SQLException {
-        return load(new Field[0]).size();
-    }
-
-    @Override
     public TableType type() {
         return TableType.VIEW;
     }

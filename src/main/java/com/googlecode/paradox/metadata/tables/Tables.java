@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Tables.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Tables implements Table {
@@ -31,6 +31,11 @@ public class Tables implements Table {
      * The current catalog.
      */
     private final String catalogName;
+
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
 
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
@@ -41,11 +46,6 @@ public class Tables implements Table {
     private final Field encrypted = new Field("encrypted", 0, 3, ParadoxType.VARCHAR, this, 7);
     private final Field writeProtected = new Field("write_protected", 0, 3, ParadoxType.VARCHAR, this, 8);
     private final Field count = new Field("count", 0, 0, ParadoxType.VARCHAR, this, 9);
-
-    /**
-     * The connection information.
-     */
-    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
@@ -61,15 +61,6 @@ public class Tables implements Table {
     @Override
     public String getName() {
         return "pdx_tables";
-    }
-
-    @Override
-    public int getRowCount() {
-        try {
-            return load(new Field[0]).size();
-        } catch (final SQLException e) {
-            return 0;
-        }
     }
 
     @Override

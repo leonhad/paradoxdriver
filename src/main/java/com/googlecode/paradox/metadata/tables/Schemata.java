@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Schemata view.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Schemata implements Table {
@@ -32,6 +32,11 @@ public class Schemata implements Table {
      * The current catalog.
      */
     private final String catalogName;
+
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
 
     private final Field catalog = new Field("catalog_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
@@ -42,11 +47,6 @@ public class Schemata implements Table {
     private final Field characterSchema = new Field("default_character_set_schema", 0, 3, ParadoxType.VARCHAR,
             this, 5);
     private final Field characterName = new Field("default_character_set_name", 0, 6, ParadoxType.VARCHAR, this, 6);
-
-    /**
-     * The connection information.
-     */
-    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
@@ -62,15 +62,6 @@ public class Schemata implements Table {
     @Override
     public String getName() {
         return "pdx_schemata";
-    }
-
-    @Override
-    public int getRowCount() {
-        try {
-            return load(new Field[0]).size();
-        } catch (final SQLException e) {
-            return 0;
-        }
     }
 
     @Override

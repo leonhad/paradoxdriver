@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Column privileges.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class ColumnPrivileges implements Table {
@@ -47,11 +47,6 @@ public class ColumnPrivileges implements Table {
     @Override
     public String getName() {
         return "pdx_column_privileges";
-    }
-
-    @Override
-    public int getRowCount() {
-        return load(new Field[0]).size();
     }
 
     @Override

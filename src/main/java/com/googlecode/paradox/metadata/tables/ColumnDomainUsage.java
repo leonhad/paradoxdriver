@@ -54,11 +54,6 @@ public class ColumnDomainUsage implements Table {
     }
 
     @Override
-    public int getRowCount() {
-        return load(new Field[0]).size();
-    }
-
-    @Override
     public TableType type() {
         return TableType.SYSTEM_TABLE;
     }

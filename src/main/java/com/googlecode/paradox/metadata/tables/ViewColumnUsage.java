@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Views tables and columns usage.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class ViewColumnUsage implements Table {
@@ -33,6 +33,11 @@ public class ViewColumnUsage implements Table {
      */
     private final String catalogName;
 
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
+
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
@@ -41,11 +46,6 @@ public class ViewColumnUsage implements Table {
     private final Field tableSchema = new Field("table_schema", 0, 0x07, ParadoxType.VARCHAR, this, 5);
     private final Field tableName = new Field("table_name", 0, 0x02, ParadoxType.VARCHAR, this, 6);
     private final Field columnName = new Field("column_name", 0, 0x02, ParadoxType.VARCHAR, this, 7);
-
-    /**
-     * The connection information.
-     */
-    private final ConnectionInfo connectionInfo;
 
     /**
      * Creates a new instance.
@@ -61,11 +61,6 @@ public class ViewColumnUsage implements Table {
     @Override
     public String getName() {
         return "pdx_view_column_usage";
-    }
-
-    @Override
-    public int getRowCount() throws SQLException {
-        return load(new Field[0]).size();
     }
 
     @Override

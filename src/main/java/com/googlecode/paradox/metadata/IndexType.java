@@ -17,14 +17,37 @@ package com.googlecode.paradox.metadata;
  * @since 1.6.0
  */
 public enum IndexType {
+
+    /**
+     * Primary key.
+     */
     PRIMARY_KEY,
 
+    /**
+     * Foreign key.
+     */
     FOREIGN_KEY,
 
+    /**
+     * Check constraints.
+     */
     CHECK,
 
-    UNIQUE;
+    /**
+     * Unique key.
+     */
+    UNIQUE,
 
+    /**
+     * Column index.
+     */
+    INDEX;
+
+    /**
+     * Gets the type description.
+     *
+     * @return the type description.
+     */
     public String description() {
         return name().replace('_', ' ');
     }

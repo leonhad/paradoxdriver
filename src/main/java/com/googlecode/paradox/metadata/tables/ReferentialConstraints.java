@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Referential constraints table.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class ReferentialConstraints implements Table {
@@ -47,11 +47,6 @@ public class ReferentialConstraints implements Table {
     @Override
     public String getName() {
         return "pdx_referential_constraints";
-    }
-
-    @Override
-    public int getRowCount() {
-        return load(new Field[0]).size();
     }
 
     @Override
