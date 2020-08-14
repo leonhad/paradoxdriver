@@ -36,9 +36,9 @@ import java.util.List;
 public final class ParadoxTable extends ParadoxDataFile implements Table {
 
     /**
-     * Table primary key.
+     * Table indexes.
      */
-    private ParadoxPK primaryKeyIndex;
+    private Index[] indexes = new Index[0];
 
     /**
      * Creates a new instance.
@@ -75,6 +75,16 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         }
     }
 
+    public void loadIndexes() throws SQLException {
+        final List<Index> loadedIndexes = IndexData.listIndexes(file.getParentFile(), name, this.connectionInfo);
+        final Index index = PrimaryKeyData.getPrimaryKey(file.getParentFile(), this, connectionInfo);
+        if (index != null) {
+            loadedIndexes.add(index);
+        }
+
+        indexes = loadedIndexes.toArray(new Index[0]);
+    }
+
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
         return TableData.loadData(this, fields);
@@ -101,32 +111,8 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     }
 
     @Override
-    public Index getPrimaryKeyIndex() throws SQLException {
-        if (primaryKeyIndex == null) {
-            this.primaryKeyIndex = PrimaryKeyData.getPrimaryKey(file.getParentFile(), this, connectionInfo);
-        }
-
-        return primaryKeyIndex;
-    }
-
-    public Field[] getPrimaryKeys() {
-        final Field[] ret = new Field[this.getPrimaryFieldCount()];
-        if (this.getPrimaryFieldCount() > 0) {
-            System.arraycopy(this.getFields(), 0, ret, 0, this.getPrimaryFieldCount());
-        }
-
-        return ret;
-    }
-
-    @Override
-    public Index[] getIndexes() throws SQLException {
-        final List<Index> indexes = IndexData.listIndexes(file.getParentFile(), name, this.connectionInfo);
-        final Index index = getPrimaryKeyIndex();
-        if (index != null) {
-            indexes.add(index);
-        }
-
-        return indexes.toArray(new Index[0]);
+    public Index[] getIndexes() {
+        return indexes;
     }
 
     @Override

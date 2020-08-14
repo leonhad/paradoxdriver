@@ -71,9 +71,7 @@ public class Views implements Table {
     public Index[] getIndexes() {
         return new Index[]{
                 new SoftIndex("views.pk", true,
-                        new Field[]{catalog, schema, name}, IndexType.PRIMARY_KEY, this::getRowCount),
-                new SoftIndex("views.pk", true,
-                        new Field[]{catalog, schema, name}, IndexType.UNIQUE, this::getRowCount)
+                        new Field[]{catalog, schema, name}, IndexType.PRIMARY_KEY, this::getRowCount)
         };
     }
 

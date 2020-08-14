@@ -238,6 +238,7 @@ public final class TableData extends ParadoxData {
             throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
         }
 
+        table.loadIndexes();
         return table;
     }
 

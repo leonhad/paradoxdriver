@@ -70,9 +70,7 @@ public class KeyColumns implements Table {
     public Index[] getIndexes() {
         return new Index[]{
                 new SoftIndex("key_columns.pk", true, new Field[]{catalog, schema, table, constraintName, name},
-                        IndexType.PRIMARY_KEY, this::getRowCount),
-                new SoftIndex("key_columns.pk", true,
-                        new Field[]{catalog, schema, table, constraintName, name}, IndexType.UNIQUE, this::getRowCount)
+                        IndexType.PRIMARY_KEY, this::getRowCount)
         };
     }
 

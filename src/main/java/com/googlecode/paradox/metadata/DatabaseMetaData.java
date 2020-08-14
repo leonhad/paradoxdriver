@@ -603,8 +603,6 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
                         values.add(row);
                     }
                 }
-
-                // FIXME load .VAL indexes (references).
             }
         }
 
@@ -814,19 +812,21 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
         for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaName)) {
             for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
                 final Index index = table.getPrimaryKeyIndex();
-                if (index != null) {
-                    for (final Field field : index.getFields()) {
-                        final Object[] row = new Object[]{
-                                schema.catalogName(),
-                                schema.name(),
-                                table.getName(),
-                                field.getName(),
-                                field.getOrderNum(),
-                                index.getName()
-                        };
+                if (index == null) {
+                    continue;
+                }
 
-                        values.add(row);
-                    }
+                for (final Field field : index.getFields()) {
+                    final Object[] row = new Object[]{
+                            schema.catalogName(),
+                            schema.name(),
+                            table.getName(),
+                            field.getName(),
+                            field.getOrderNum(),
+                            index.getName()
+                    };
+
+                    values.add(row);
                 }
             }
         }
