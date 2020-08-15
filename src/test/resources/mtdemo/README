@@ -1,0 +1,176 @@
+                PAL PROGRAMMING WITH MULTI-TABLE FORMS
+                --------------------------------------
+
+
+COPYRIGHT NOTICE
+
+This material is Copyright 1990 by Brian J. Smith and Associates,
+Inc.  Please observe the restrictions stated in the paragraph at the
+end of this document.
+
+
+INTRODUCTION
+
+These files are a demonstration of PAL programming techniques using
+multi-table forms.  Multi-table forms are easy to design using
+interactive Paradox.  However, when you try to incorporate them into
+a PAL application, the programming can be very complex.
+   I have attempted in this package to address many common
+multi-table form functional requirements, and illustrate how to
+implement those functions in PAL.
+
+   This material is excerpted from the "Advanced PAL" class which is
+part of my Paradox/PAL training series.  This series is conducted on
+a regular basis in Southern California.  If you would like more
+information about this series, please contact:
+
+                Brian J. Smith and Associates, Inc.
+                901-A North Pacific Coast Highway
+                Suite 200
+                Redondo Beach, California 90277
+                (213) 374-0151
+
+   These programs were also presented (with a different presentation
+document) at the International Paradox Users Conference on May 1,
+1990.
+   I hope you find this package informative!
+
+                                -- Brian J. Smith
+                                   May 30, 1990
+
+=====================================================================
+
+DIRECTORY CONTENTS:
+
+   90 files:
+
+        - This "ReadMe" file
+
+        - Multitab.Doc, presentation materials explaining
+                        the sample programs
+
+        - 9 script files:
+                Common.SC       Form3.SC        Form5.SC   
+                Compile.SC      Form3i.SC       Main.SC    
+                Form2.SC        Form4.SC        Start.SC   
+
+        - 10 Paradox tables and their families (79 files in all):
+                Amount.*        Krental.*       Store.*
+                Customer.*      Payment.*       Taxrate.*
+                Employee.*      Rental.*        Vidorder.*
+                Films.*
+
+
+HOW TO PRINT THE PRESENTATION MATERIAL:
+
+The presentation material is contained in the file MULTITAB.DOC.
+It is a 45-page document illustrating the key features of the
+sample programs.  You can print it on your printer with from the
+DOS prompt with the command:
+
+        COPY MULTITAB.DOC PRN
+
+However, it will probably look pretty ugly.
+   The document is meant to be printed in a mixture of 10-pitch and
+compressed type, using a font supporting the IBM graphic character
+set.  If you have a Hewlett Packard LaserJet II, that will do the
+job.
+   Before you print the document, edit it and replace all occurrences
+of the following three phrases with control codes for your printer:
+
+        <INITIAL SETUP>      
+        
+                Replace this line with the control codes
+                to initialize your printer, if any.  On the
+                HP LaserJet II, I use the following:
+
+                <esc>E
+                <esc>(10U<esc>(s10H<esc>&l6D<esc>&a12L
+                <esc>&l6E<esc>&a0R
+
+        <BEGIN COMPRESS>
+
+                Replace all occurrences of this line with a
+                line to switch to 8-line per inch compressed
+                type.  On the HP LaserJet II, I use the following:
+
+                <esc>(10U<esc>(s16.66H<esc>&l8D<esc>&a27L
+
+        <END COMPRESS>
+
+                Replace all occurrences of this line with a
+                line to switch to 6-line per inch 10-pitch
+                type.  On the HP LaserJet II, I use the following:
+
+                <esc>(10U<esc>(s10H<esc>&l6D<esc>&a12L
+
+
+
+CONFIGURATION REQUIREMENTS:
+
+1.  Paradox version 3.01a.
+
+2.  Set the "Blanks=Zero" setting in the Custom Configuration Program
+    (the "custom script") to "Yes."
+
+3.  640K of RAM.
+
+
+GETTING STARTED:
+
+1.  Create a subdirectory and copy all the files into it.
+
+2.  Start up Paradox in the subdirectory.
+
+3.  Play the script called "Compile."
+    This creates the procedure library, MTDEMO.LIB.
+
+
+RUNNING THE APPLICATION:
+
+1.  Play the script called "Start."
+
+2.  The main menu will appear:
+
+        2   3   3-I   4   5/6   Quit
+
+3.  Each menu choice (except "Quit") performs a different data
+    entry program.  All the programs illustrate multi-table form
+    PAL programming techniques.  All of the forms resemble one
+    another, but each program illustrates a different set of
+    techniques:
+
+    2:    Basic Video Store Rental Entry (form Vidorder.F2)
+    3:    Automatic Assignment of Line Numbers (form Vidorder.F3)
+    3-I:  Automatic Assignment of Line Numbers, with the ability
+             to Insert New Lines Between Two Others (form Vidorder.F3)
+    4:    Unlinked Forms for Films & Tax Rates (form Vidorder.F4)
+    5/6:  Two Forms Using Shadow Table Technique (form Vidorder.F5&6)
+
+4.  Select any menu choice.  As the forms appear, fill them out in
+    the normal manner.  The top two lines of the screen will tell you
+    what function keys to press.
+
+5.  After you exit back to Paradox, you can press the [Ctrl-F10]
+    key to start up the application.  This is the same as playing
+    the "Start" script again.
+
+
+COPYRIGHT RESTRICTIONS
+
+All of the documentation, programs, forms, and sample data included
+in this package are Copyright 1990 by Brian J. Smith and Associates,
+Inc.  You may use them freely to help you learn Paradox and PAL
+programming techniques, and you may use them as a source of PAL code
+in applications you develop, with the following exception:  Without
+the express written permission of the author, Brian J. Smith and
+Associates, you may not use this material or any part of it as part
+of any training class, book, article, or other published work, nor as
+part of any commercially marketed or commercially sold programming
+work.
+
+
+=====================================================================
+END OF DOCUMENT
+=====================================================================
+

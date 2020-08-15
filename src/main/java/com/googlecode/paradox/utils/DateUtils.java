@@ -10,13 +10,13 @@
  */
 package com.googlecode.paradox.utils;
 
+import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Utility class for date formats.
@@ -40,11 +40,6 @@ public final class DateUtils {
      * Amount of days in 5 months.
      */
     private static final int DAYS_PER_5_MONTHS = 153;
-
-    /**
-     * Used for debug purposes.
-     */
-    private static final Logger LOGGER = Logger.getLogger(DateUtils.class.getName());
 
     /**
      * Days offset in Paradox format.
@@ -71,7 +66,7 @@ public final class DateUtils {
             DateUtils.checkForDateBoundaries(inputYear, inputMonth, inputDay);
             DateUtils.checkYearBounds(inputYear, inputMonth, inputDay);
         } catch (final ParadoxDataException e) {
-            DateUtils.LOGGER.log(Level.FINER, e.getMessage(), e);
+            Driver.LOGGER.log(Level.FINER, e.getMessage(), e);
             return 0;
         }
 

@@ -23,6 +23,7 @@ import com.googlecode.paradox.utils.Constants;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -63,6 +64,7 @@ public final class TableData extends ParadoxData {
                 tables.add(table);
             }
         }
+
         return tables;
     }
 
@@ -83,8 +85,12 @@ public final class TableData extends ParadoxData {
         if (fileList != null) {
             Arrays.sort(fileList);
             for (final File file : fileList) {
-                final ParadoxTable table = TableData.loadTableHeader(file, connectionInfo);
-                tables.add(table);
+                try {
+                    final ParadoxTable table = TableData.loadTableHeader(file, connectionInfo);
+                    tables.add(table);
+                } catch (final SQLException e) {
+                    connectionInfo.addWarning(e);
+                }
             }
         }
 
@@ -204,7 +210,7 @@ public final class TableData extends ParadoxData {
             long value = buffer.getInt();
 
             buffer.position(0x38);
-            table.setWriteProtected(buffer.get());
+            table.setWriteProtected(buffer.get() != 0);
             table.setVersionId(buffer.get());
 
             // Paradox version 4.x and up.
@@ -234,7 +240,7 @@ public final class TableData extends ParadoxData {
             TableData.fixTablePositionByVersion(table, buffer, fields.length);
             TableData.parseTableFieldsName(table, buffer, fields);
             TableData.parseTableFieldsOrder(table, buffer);
-        } catch (final IOException e) {
+        } catch (final BufferUnderflowException | IOException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
         }
 

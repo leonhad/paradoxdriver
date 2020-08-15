@@ -33,7 +33,7 @@ public final class Driver implements java.sql.Driver {
     /**
      * Logger instance for this class.
      */
-    private static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
+    public static final Logger LOGGER = Logger.getLogger(Driver.class.getName());
 
     // Register the drive into JDBC API.
     static {

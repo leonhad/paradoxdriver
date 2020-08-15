@@ -24,8 +24,6 @@ import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,8 +34,6 @@ import java.util.stream.Stream;
  * @since 1.6.0
  */
 public final class ConnectionInfo {
-
-    private static final Logger LOGGER = Logger.getLogger(ConnectionInfo.class.getName());
 
     /**
      * Charset property key.
@@ -162,6 +158,11 @@ public final class ConnectionInfo {
     public ConnectionInfo(final String url) {
         this.url = url;
     }
+
+    /**
+     * Current warnings.
+     */
+    private SQLWarning warning;
 
     /**
      * List the connections schema in selected catalog.
@@ -351,8 +352,8 @@ public final class ConnectionInfo {
     }
 
     @SuppressWarnings("java:S2221")
-    private static <T> T getProperty(final String name, final String value, final Map<String, ClientInfoStatus> errors,
-                                     final T defaultValue, final Function<String, T> converter) {
+    private <T> T getProperty(final String name, final String value, final Map<String, ClientInfoStatus> errors,
+                              final T defaultValue, final Function<String, T> converter) {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 return converter.apply(value);
@@ -360,7 +361,7 @@ public final class ConnectionInfo {
                 return defaultValue;
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.FINEST, e.getMessage(), e);
+            addWarning(e);
             errors.put(name, ClientInfoStatus.REASON_VALUE_INVALID);
         }
 
@@ -665,5 +666,42 @@ public final class ConnectionInfo {
      */
     public void setUser(String user) {
         this.user = user;
+    }
+
+    /**
+     * Gets the SQL warning.
+     *
+     * @return the SQL warning.
+     */
+    public SQLWarning getWarning() {
+        return this.warning;
+    }
+
+    /**
+     * Add a SQL warning.
+     *
+     * @param exception the exception to add.
+     */
+    public void addWarning(final Exception exception) {
+        SQLWarning warningToAdd;
+        if (exception instanceof SQLException) {
+            SQLException sql = (SQLException) exception;
+            warningToAdd = new SQLWarning(sql.getMessage(), sql.getSQLState(), sql.getErrorCode(), sql);
+        } else {
+            warningToAdd = new SQLWarning(exception);
+        }
+
+        if (this.warning == null) {
+            this.warning = warningToAdd;
+        } else {
+            this.warning.setNextWarning(warningToAdd);
+        }
+    }
+
+    /**
+     * Clear warnings.
+     */
+    public void clearWarnings() {
+        this.warning = null;
     }
 }

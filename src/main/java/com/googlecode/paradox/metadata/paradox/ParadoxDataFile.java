@@ -29,90 +29,112 @@ public class ParadoxDataFile {
      * Java file used to read the database.
      */
     protected final File file;
+
     /**
      * Fields in this file.
      */
     protected Field[] fields;
+
     /**
      * Block file size.
      */
     protected byte blockSize;
+
     /**
      * The file name.
      */
     protected String name;
+
     /**
      * The field with auto increment value.
      */
     private int autoIncrementValue;
+
     /**
      * File charset.
      */
     protected Charset charset;
+
     /**
      * File count in this file.
      */
     private int fieldCount;
+
     /**
      * Fields index order.
      */
     private short[] fieldsOrder;
+
     /**
      * The first block in the file.
      */
     private int firstBlock;
+
     /**
      * The first free block in the file.
      */
     private int firstFreeBlock;
+
     /**
      * Size of file header.
      */
     private int headerSize;
+
     /**
      * The last block in the file.
      */
     private int lastBlock;
+
     /**
      * Primary key field count.
      */
     private int primaryFieldCount;
+
     /**
      * Size of one record.
      */
     private int recordSize;
+
     /**
      * Referential integrity used in index files.
      */
     private byte referentialIntegrity;
+
     /**
      * Total rows in this file.
      */
     private int rowCount;
+
     /**
      * Total blocks in this file.
      */
     private int totalBlocks;
+
     /**
      * The file type.
      */
     private byte type = -1;
+
     /**
      * Used blocks in this file.
      */
     private int usedBlocks;
+
     /**
      * Version ID of this file.
      */
     private byte versionId;
+
     /**
      * If this file has an write protected lock.
      */
-    private byte writeProtected;
+    private boolean writeProtected;
+
     /**
      * Encrypted data.
      */
     private long encryptedData;
+
     /**
      * Connection information.
      */
@@ -501,7 +523,7 @@ public class ParadoxDataFile {
      *
      * @return the write protected value.
      */
-    public byte getWriteProtected() {
+    public boolean isWriteProtected() {
         return this.writeProtected;
     }
 
@@ -510,7 +532,7 @@ public class ParadoxDataFile {
      *
      * @param writeProtected the write protected value.
      */
-    public void setWriteProtected(final byte writeProtected) {
+    public void setWriteProtected(final boolean writeProtected) {
         this.writeProtected = writeProtected;
     }
 

@@ -116,11 +116,6 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     }
 
     @Override
-    public boolean isWriteProtected() {
-        return true;
-    }
-
-    @Override
     public TableType type() {
         return TableType.TABLE;
     }

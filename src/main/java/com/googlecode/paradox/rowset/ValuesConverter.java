@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.rowset;
 
+import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
@@ -28,7 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Custom values conversion utility class.
@@ -37,8 +37,6 @@ import java.util.logging.Logger;
  * @since 1.6.0
  */
 public final class ValuesConverter {
-
-    private static final Logger LOGGER = Logger.getLogger(ValuesConverter.class.getName());
 
     /**
      * Default class mapping.
@@ -157,7 +155,7 @@ public final class ValuesConverter {
             try {
                 ret = Byte.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -180,7 +178,7 @@ public final class ValuesConverter {
             try {
                 ret = Short.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -220,13 +218,13 @@ public final class ValuesConverter {
             try {
                 ret = Integer.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
 
                 try {
                     // Try to convert with BigDecimal.
                     ret = new BigDecimal(value.toString()).intValue();
                 } catch (final NumberFormatException e1) {
-                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
                 }
             }
         }
@@ -249,13 +247,13 @@ public final class ValuesConverter {
             try {
                 ret = Long.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
 
                 try {
                     // Try to convert with BigDecimal.
                     ret = new BigDecimal(value.toString()).longValue();
                 } catch (final NumberFormatException e1) {
-                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
                 }
             }
         }
@@ -279,7 +277,7 @@ public final class ValuesConverter {
             try {
                 ret = new BigDecimal(value.toString());
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -302,7 +300,7 @@ public final class ValuesConverter {
             try {
                 ret = Float.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -325,7 +323,7 @@ public final class ValuesConverter {
             try {
                 ret = Double.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -362,21 +360,21 @@ public final class ValuesConverter {
             try {
                 ret = Time.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
 
                 try {
                     // Trying with Date instead.
                     final Date date = Date.valueOf(value.toString());
                     ret = removeDate(date);
                 } catch (final IllegalArgumentException e1) {
-                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
 
                     try {
                         // Trying with Timestamp instead.
                         final Timestamp timestamp = Timestamp.valueOf(value.toString());
                         ret = removeDate(timestamp);
                     } catch (final IllegalArgumentException e2) {
-                        LOGGER.log(Level.FINEST, e2.getMessage(), e2);
+                        Driver.LOGGER.log(Level.FINEST, e2.getMessage(), e2);
                     }
                 }
             }
@@ -401,21 +399,21 @@ public final class ValuesConverter {
             try {
                 ret = Timestamp.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
 
                 try {
                     // Trying with Date instead.
                     final Date date = Date.valueOf(value.toString());
                     ret = new Timestamp(date.getTime());
                 } catch (final IllegalArgumentException e1) {
-                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
 
                     try {
                         // Trying with Time instead.
                         final Time time = Time.valueOf(value.toString());
                         ret = new Timestamp(time.getTime());
                     } catch (final IllegalArgumentException e2) {
-                        LOGGER.log(Level.FINEST, e2.getMessage(), e2);
+                        Driver.LOGGER.log(Level.FINEST, e2.getMessage(), e2);
                     }
                 }
             }
@@ -455,14 +453,14 @@ public final class ValuesConverter {
             try {
                 ret = Date.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
 
                 try {
                     // Trying with timestamp instead.
                     final Timestamp timestamp = Timestamp.valueOf(value.toString());
                     ret = removeTime(timestamp);
                 } catch (final IllegalArgumentException e1) {
-                    LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
                 }
             }
         }

@@ -10,13 +10,13 @@
  */
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Handles the paradox files (structure).
@@ -84,7 +84,7 @@ public class ParadoxData {
             } else {
                 dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
                 if (CHARSET_TABLE.get(cp) == null) {
-                    Logger.getLogger(ParadoxData.class.getName()).finest(() -> "Charset " + cp + " not found.");
+                    Driver.LOGGER.finest(() -> "Charset " + cp + " not found.");
                 }
             }
             buffer.position(0x78);

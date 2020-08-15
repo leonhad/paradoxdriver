@@ -395,7 +395,7 @@ public final class ParadoxConnection implements Connection {
      */
     @Override
     public SQLWarning getWarnings() {
-        return null;
+        return connectionInfo.getWarning();
     }
 
     /**

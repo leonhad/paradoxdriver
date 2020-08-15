@@ -106,7 +106,7 @@ public final class PrimaryKeyData extends ParadoxData {
             pk.setFieldCount(buffer.get());
 
             buffer.position(0x38);
-            pk.setWriteProtected(buffer.get());
+            pk.setWriteProtected(buffer.get() != 0);
             pk.setVersionId(buffer.get());
         }
 

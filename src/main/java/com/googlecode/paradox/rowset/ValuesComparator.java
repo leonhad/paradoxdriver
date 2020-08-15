@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.rowset;
 
+import com.googlecode.paradox.Driver;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
@@ -18,7 +20,6 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.function.IntPredicate;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Compare Paradox values.
@@ -28,8 +29,6 @@ import java.util.logging.Logger;
  */
 @SuppressWarnings({"java:S1142", "java:S3776", "java:S1541"})
 public final class ValuesComparator {
-
-    private static final Logger LOGGER = Logger.getLogger(ValuesComparator.class.getName());
 
     private static final double EPSILON = Double.MIN_VALUE * 8;
 
@@ -67,7 +66,7 @@ public final class ValuesComparator {
                 final Byte n2 = ValuesConverter.getByte(o2);
                 return n1.equals(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -78,7 +77,7 @@ public final class ValuesComparator {
                 final double n2 = ValuesConverter.getDouble(o2);
                 return Math.abs(n1 - n2) < EPSILON;
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -92,7 +91,7 @@ public final class ValuesComparator {
                 n2 = n2.setScale(Math.max(n1.scale(), n2.scale()), RoundingMode.UNNECESSARY);
                 return n1.equals(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -103,7 +102,7 @@ public final class ValuesComparator {
                 final Integer n2 = ValuesConverter.getInteger(o2);
                 return n1.equals(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -114,7 +113,7 @@ public final class ValuesComparator {
                 final Long n2 = ValuesConverter.getLong(o2);
                 return n1.equals(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -125,7 +124,7 @@ public final class ValuesComparator {
                 final Time n2 = ValuesConverter.getTime(o2);
                 return n1.equals(n2);
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -136,7 +135,7 @@ public final class ValuesComparator {
                 final Timestamp n2 = ValuesConverter.getTimestamp(o2);
                 return n1.equals(n2);
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -147,7 +146,7 @@ public final class ValuesComparator {
                 final Date n2 = ValuesConverter.getDate(o2);
                 return n1.equals(n2);
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -192,7 +191,7 @@ public final class ValuesComparator {
                 final Double n2 = ValuesConverter.getDouble(o2);
                 return n1.compareTo(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -203,7 +202,7 @@ public final class ValuesComparator {
                 final BigDecimal n2 = ValuesConverter.getBigDecimal(o2);
                 return n1.compareTo(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -214,7 +213,7 @@ public final class ValuesComparator {
                 final Byte n2 = ValuesConverter.getByte(o2);
                 return n1.compareTo(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -225,7 +224,7 @@ public final class ValuesComparator {
                 final Integer n2 = ValuesConverter.getInteger(o2);
                 return n1.compareTo(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -236,7 +235,7 @@ public final class ValuesComparator {
                 final Long n2 = ValuesConverter.getLong(o2);
                 return n1.compareTo(n2);
             } catch (final NumberFormatException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -247,7 +246,7 @@ public final class ValuesComparator {
                 final Time n2 = ValuesConverter.getTime(o2);
                 return n1.compareTo(n2);
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -258,7 +257,7 @@ public final class ValuesComparator {
                 final Timestamp n2 = ValuesConverter.getTimestamp(o2);
                 return n1.compareTo(n2);
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 
@@ -269,7 +268,7 @@ public final class ValuesComparator {
                 final Date n2 = ValuesConverter.getDate(o2);
                 return n1.compareTo(n2);
             } catch (final IllegalArgumentException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
             }
         }
 

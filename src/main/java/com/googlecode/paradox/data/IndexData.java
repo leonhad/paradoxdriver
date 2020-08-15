@@ -111,7 +111,7 @@ public final class IndexData extends ParadoxData {
             index.setPrimaryFieldCount(buffer.getShort());
 
             buffer.position(0x38);
-            index.setWriteProtected(buffer.get());
+            index.setWriteProtected(buffer.get() != 0);
             index.setVersionId(buffer.get());
 
             buffer.position(0x49);

@@ -11,6 +11,7 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.data.filefilters.SQLFilter;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.parser.SQLParser;
@@ -28,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -38,8 +38,6 @@ import java.util.stream.Collectors;
  * @since 1.6.0
  */
 public class View implements Table {
-
-    private static final Logger LOGGER = Logger.getLogger(View.class.getName());
 
     /**
      * The connection information.
@@ -129,7 +127,7 @@ public class View implements Table {
                             return field;
                         }).toArray(Field[]::new);
             } catch (final SQLException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
                 fields = new Field[0];
             }
         }
@@ -165,8 +163,7 @@ public class View implements Table {
                         newRow[i] = row[mapColumns[i]];
                     }
                     return newRow;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
     }
 
     /**
@@ -224,7 +221,7 @@ public class View implements Table {
                     try {
                         views.add(load(connectionInfo, schemaName, file));
                     } catch (final IOException e) {
-                        LOGGER.log(Level.FINEST, e.getMessage(), e);
+                        connectionInfo.addWarning(e);
                     }
                 });
             }
