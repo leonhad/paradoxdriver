@@ -15,7 +15,6 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.data.ViewData;
 import org.junit.*;
 
 import java.sql.Connection;
@@ -147,7 +146,6 @@ public class UtilsTest {
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Utils.class));
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(DateUtils.class));
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(TableData.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(ViewData.class));
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Expressions.class));
         Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(IndexData.class));
         Assert.assertTrue("Utility class in wrong format.",

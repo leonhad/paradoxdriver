@@ -12,7 +12,6 @@ package com.googlecode.paradox.metadata.schema;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.data.ViewData;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.View;
@@ -48,7 +47,6 @@ public class DirectorySchema implements Schema {
     public List<Table> list(final ConnectionInfo connectionInfo, final String tablePattern) throws SQLException {
         final List<Table> ret = new ArrayList<>();
         ret.addAll(TableData.listTables(schemaFile, tablePattern, connectionInfo));
-        ret.addAll(ViewData.listViews(schemaFile, tablePattern, connectionInfo));
         ret.addAll(View.listViews(schemaFile, tablePattern, connectionInfo));
         return ret;
     }
@@ -67,7 +65,6 @@ public class DirectorySchema implements Schema {
     public Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException {
         final List<Table> tables = new ArrayList<>();
         tables.addAll(TableData.listTables(schemaFile, connectionInfo));
-        tables.addAll(ViewData.listViews(schemaFile, connectionInfo));
         tables.addAll(View.search(connectionInfo, name(), schemaFile));
         return tables.stream().filter(table -> tableName.equalsIgnoreCase(table.getName())).findFirst().orElse(null);
     }
