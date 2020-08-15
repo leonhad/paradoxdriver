@@ -234,11 +234,14 @@ public final class TableData extends ParadoxData {
 
             // Restart the buffer with all table header
             channel.position(0);
-            buffer = ByteBuffer.allocate(table.getHeaderSize());
+            buffer = ByteBuffer.allocate(table.getHeaderSize() + fields.length);
             channel.read(buffer);
 
             TableData.fixTablePositionByVersion(table, buffer, fields.length);
             TableData.parseTableFieldsName(table, buffer, fields);
+
+            // Field numbers 4.x and up?
+
             TableData.parseTableFieldsOrder(table, buffer);
         } catch (final BufferUnderflowException | IOException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
@@ -301,10 +304,9 @@ public final class TableData extends ParadoxData {
      * @param buffer the buffer to read of.
      */
     private static void parseTableFieldsOrder(final ParadoxTable table, final ByteBuffer buffer) {
-        final short[] fieldsOrder = new short[table.getFieldCount()];
-
+        final byte[] fieldsOrder = new byte[table.getFieldCount()];
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            fieldsOrder[loop] = buffer.getShort();
+            fieldsOrder[loop] = buffer.get();
         }
 
         table.setFieldsOrder(fieldsOrder);

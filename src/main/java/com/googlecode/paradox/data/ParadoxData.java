@@ -79,21 +79,18 @@ public class ParadoxData {
             int cp = buffer.getShort();
 
             // Force charset if have one.
-            if (dataFile.getCharset() != null) {
-                dataFile.setCharset(dataFile.getCharset());
-            } else {
+            if (dataFile.getCharset() == null) {
                 dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
                 if (CHARSET_TABLE.get(cp) == null) {
                     Driver.LOGGER.finest(() -> "Charset " + cp + " not found.");
                 }
             }
+
             buffer.position(0x78);
         } else {
             buffer.position(0x58);
 
-            if (dataFile.getCharset() != null) {
-                dataFile.setCharset(dataFile.getCharset());
-            } else {
+            if (dataFile.getCharset() == null) {
                 dataFile.setCharset(CHARSET_TABLE.get(CHARSET_DEFAULT));
             }
         }
