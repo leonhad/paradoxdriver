@@ -1011,63 +1011,6 @@ public class DatabaseMetaDataTest {
     }
 
     /**
-     * Test for view columns metadata.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    public void testViewColumns() throws SQLException {
-        final java.sql.DatabaseMetaData meta = this.conn.getMetaData();
-
-        try (ResultSet rs = meta.getColumns(null, "db", "AREAS.QBE", "%")) {
-            // Test for AC field.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Testing for table catalog.", conn.getCatalog(), rs.getString("TABLE_CAT"));
-            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("Testing for column name.", "AC", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
-            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
-            Assert.assertEquals("Testing for column size.", 5, rs.getInt("COLUMN_SIZE"));
-            Assert.assertEquals("Testing for nullable.", java.sql.DatabaseMetaData.columnNullable, rs.getInt(
-                    "NULLABLE"));
-            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
-            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
-
-            // Test for State field.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Testing for table catalog.", conn.getCatalog(), rs.getString("TABLE_CAT"));
-            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("Testing for column name.", "State", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
-            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
-            Assert.assertEquals("Testing for column size.", 3, rs.getInt("COLUMN_SIZE"));
-            Assert.assertEquals("Testing for nullable.", java.sql.DatabaseMetaData.columnNullable, rs.getInt(
-                    "NULLABLE"));
-            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
-            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
-
-            // Test for Cities field.
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Testing for table catalog.", conn.getCatalog(), rs.getString("TABLE_CAT"));
-            Assert.assertEquals("Testing for table schema.", "db", rs.getString("TABLE_SCHEM"));
-            Assert.assertEquals("Testing for table name.", "AREAS", rs.getString("TABLE_NAME"));
-            Assert.assertEquals("Testing for column name.", "Cities", rs.getString("COLUMN_NAME"));
-            Assert.assertEquals("Testing for data type.", 12, rs.getInt("DATA_TYPE"));
-            Assert.assertEquals("Testing for type name.", "VARCHAR", rs.getString("TYPE_NAME"));
-            Assert.assertEquals("Testing for column size.", 157, rs.getInt("COLUMN_SIZE"));
-            Assert.assertEquals("Testing for nullable.", java.sql.DatabaseMetaData.columnNullable, rs.getInt(
-                    "NULLABLE"));
-            Assert.assertEquals("Testing for is nullable.", "YES", rs.getString("IS_NULLABLE"));
-            Assert.assertEquals("Testing for is auto increment field.", "NO", rs.getString("IS_AUTOINCREMENT"));
-
-            // No more results.
-            Assert.assertFalse("Invalid ResultSet state.", rs.next());
-        }
-    }
-
-    /**
      * Test for primary key metadata with two keys.
      *
      * @throws SQLException in case of failures.
