@@ -63,6 +63,7 @@ public class SystemSchema implements Schema {
         tables.add(new Tables(connectionInfo, catalog));
         tables.add(new ViewColumnUsage(connectionInfo, catalog));
         tables.add(new Views(connectionInfo, catalog));
+        tables.add(new Warnings(connectionInfo, catalog));
 
         try {
             tables.add(load(connectionInfo, "check_constraints"));
