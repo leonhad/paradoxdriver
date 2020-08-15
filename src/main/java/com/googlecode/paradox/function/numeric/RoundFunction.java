@@ -90,6 +90,7 @@ public class RoundFunction extends AbstractNumericFunction {
         if (rounding != null && rounding) {
             mode = RoundingMode.FLOOR;
         }
+
         return value.setScale(decimal, mode);
     }
 }

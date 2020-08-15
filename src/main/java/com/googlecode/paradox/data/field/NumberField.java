@@ -15,6 +15,8 @@ import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 
 /**
@@ -49,6 +51,11 @@ public final class NumberField implements FieldParser {
 
         if (Double.isNaN(v)) {
             return null;
+        }
+
+        if (field.getType() == ParadoxType.CURRENCY) {
+            final BigDecimal decimal = BigDecimal.valueOf(v);
+            v = decimal.setScale(field.getPrecision(), RoundingMode.HALF_UP).doubleValue();
         }
 
         return v;
