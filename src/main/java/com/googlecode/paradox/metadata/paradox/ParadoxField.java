@@ -82,7 +82,7 @@ public final class ParadoxField extends Field {
             this.size = size;
         } else if (type == ParadoxType.BCD) {
             this.precision = size;
-            this.size = BCDField.BCD_SIZE;
+            this.size = BCDField.MAX_DIGITS;
         } else if (sqlType == Types.NUMERIC) {
             this.precision = NUMBER_PRECISION;
             this.size = size;
