@@ -36,11 +36,6 @@ public final class ParadoxField extends Field {
     private static final int CURRENCY_PRECISION = 2;
 
     /**
-     * Default blob precision.
-     */
-    public static final int BLOB_SIZE_PADDING = 10;
-
-    /**
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.
      *
      * @param type the Paradox field type.
@@ -69,11 +64,7 @@ public final class ParadoxField extends Field {
     public void setSize(final int size) {
         this.realSize = size;
         int sqlType = this.getSqlType();
-        if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
-            // FIXME move to blob
-            this.realSize -= BLOB_SIZE_PADDING;
-            this.size = size;
-        } else if (type == ParadoxType.CURRENCY) {
+        if (type == ParadoxType.CURRENCY) {
             this.precision = CURRENCY_PRECISION;
             this.size = size;
         } else if (type == ParadoxType.BCD) {

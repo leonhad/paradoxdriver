@@ -14,7 +14,6 @@ import com.googlecode.paradox.data.EncryptedData;
 import com.googlecode.paradox.data.FieldParser;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
@@ -59,6 +58,11 @@ public abstract class AbstractLobField implements FieldParser {
      */
     private static final int GRAPH_HEADER_SIZE = 17;
 
+    /**
+     * Default blob precision.
+     */
+    public static final int LEADER_SIZE_PADDING = 10;
+
     private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table)
             throws IOException {
         // Calculate the block size.
@@ -102,16 +106,16 @@ public abstract class AbstractLobField implements FieldParser {
      * {@inheritDoc}.
      */
     @Override
-    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field originalField)
+    public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field)
             throws SQLException {
-        final ParadoxField field = (ParadoxField) originalField;
-        final ByteBuffer value = ByteBuffer.allocate(field.getRealSize());
+        int leader = field.getRealSize() - LEADER_SIZE_PADDING;
 
-        System.arraycopy(buffer.array(), buffer.position(), value.array(), 0, field.getRealSize());
-        buffer.position(buffer.position() + field.getRealSize());
+        final ByteBuffer value = ByteBuffer.allocate(leader);
+
+        System.arraycopy(buffer.array(), buffer.position(), value.array(), 0, leader);
+        buffer.position(buffer.position() + leader);
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
-        int leader = field.getRealSize();
         value.position(leader);
 
         // All fields are 9, only graphics is 17.
