@@ -10,18 +10,17 @@
  */
 package com.googlecode.paradox.utils;
 
-import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.logging.Level;
 
 /**
  * Utility class for date formats.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class DateUtils {
@@ -56,17 +55,19 @@ public final class DateUtils {
     /**
      * Convert the Gregorian date to Paradox format.
      *
-     * @param inputYear  the year to convert.
-     * @param inputMonth the month to convert.
-     * @param inputDay   the day to convert.
+     * @param inputYear      the year to convert.
+     * @param inputMonth     the month to convert.
+     * @param inputDay       the day to convert.
+     * @param connectionInfo the connection information.
      * @return the Paradox date.
      */
-    public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay) {
+    public static long gregorianToSdn(final long inputYear, final long inputMonth, final long inputDay,
+                                      final ConnectionInfo connectionInfo) {
         try {
             DateUtils.checkForDateBoundaries(inputYear, inputMonth, inputDay);
             DateUtils.checkYearBounds(inputYear, inputMonth, inputDay);
         } catch (final ParadoxDataException e) {
-            Driver.LOGGER.log(Level.FINER, e.getMessage(), e);
+            connectionInfo.addWarning(e);
             return 0;
         }
 

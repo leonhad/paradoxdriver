@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.function.aggregate.context;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
 
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ import java.math.RoundingMode;
 /**
  * AVG context.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class AvgContext implements IGroupingContext<BigDecimal> {
@@ -37,7 +38,7 @@ public class AvgContext implements IGroupingContext<BigDecimal> {
     }
 
     @Override
-    public void process(final IGroupingContext<BigDecimal> context) {
+    public void process(final IGroupingContext<BigDecimal> context, final ConnectionInfo connectionInfo) {
         final AvgContext current = (AvgContext) context;
         if (current != null) {
             this.total += current.total;

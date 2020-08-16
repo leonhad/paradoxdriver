@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * The SQL MIN function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -55,7 +55,7 @@ public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
     @Override
     public MinContext execute(final ConnectionInfo connectionInfo, final Object[] values,
                               final ParadoxType[] types, final FieldNode[] fields) {
-        final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
+        final BigDecimal value = ValuesConverter.getBigDecimal(values[0], connectionInfo);
         return new MinContext(value);
     }
 

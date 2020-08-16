@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 /**
  * The SQL BIN functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class BinFunction extends AbstractNumericFunction {
@@ -52,7 +52,7 @@ public class BinFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
+        final BigDecimal value = ValuesConverter.getBigDecimal(values[0], connectionInfo);
         if (value == null) {
             return null;
         }

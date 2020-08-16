@@ -25,7 +25,7 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.6.0
  */
 public class CurrentTimeFunction extends AbstractDateFunction {
@@ -89,7 +89,7 @@ public class CurrentTimeFunction extends AbstractDateFunction {
         if (types.length == 1) {
             // This method is keep to adere SQL92 standards. The standards have values between 0 and 6.
             // This value is not used here.
-            final int value = ValuesConverter.getPositiveInteger(values[0]);
+            final int value = ValuesConverter.getPositiveInteger(values[0], connectionInfo);
             if (value < 0x00 || value > 0x06) {
                 throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, value);
             }

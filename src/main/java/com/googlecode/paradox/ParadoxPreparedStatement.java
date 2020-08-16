@@ -29,7 +29,7 @@ import java.util.*;
 /**
  * {@link PreparedStatement} implementation class.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.6.0
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -294,12 +294,8 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        final ResultSet current = getResultSet();
-        if (current != null) {
-            return current.getMetaData();
-        }
-
-        return null;
+        @SuppressWarnings("java:S2095") final ResultSet current = getResultSet();
+        return current.getMetaData();
     }
 
     @Override
@@ -379,22 +375,20 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
         Object value = x;
 
-        if (x != null) {
-            if (x instanceof InputStream) {
-                value = ValuesConverter.getBytes((InputStream) x, scaleOrLength);
-            } else if (x instanceof Reader) {
-                try {
-                    final char[] chars = new char[scaleOrLength];
-                    if (((Reader) x).read(chars) != scaleOrLength) {
-                        throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, x);
-                    }
-                    value = new String(chars);
-                } catch (final IOException e) {
-                    throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, x);
+        if (x instanceof InputStream) {
+            value = ValuesConverter.getBytes((InputStream) x, scaleOrLength);
+        } else if (x instanceof Reader) {
+            try {
+                final char[] chars = new char[scaleOrLength];
+                if (((Reader) x).read(chars) != scaleOrLength) {
+                    throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, x);
                 }
-            } else if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL) {
-                value = ValuesConverter.getBigDecimal(x).setScale(scaleOrLength, RoundingMode.DOWN);
+                value = new String(chars);
+            } catch (final IOException e) {
+                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, x);
             }
+        } else if (sqlType == Types.NUMERIC || sqlType == Types.DECIMAL) {
+            value = ValuesConverter.getBigDecimal(x, connectionInfo).setScale(scaleOrLength, RoundingMode.DOWN);
         }
 
         currentParameterValues[parameterIndex - 1] = value;

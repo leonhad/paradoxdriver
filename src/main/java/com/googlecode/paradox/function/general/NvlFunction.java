@@ -17,6 +17,8 @@ import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 
+import java.util.Objects;
+
 /**
  * The SQL NVL function.
  *
@@ -39,6 +41,9 @@ public class NvlFunction extends AbstractGeneralFunction {
             new Column("replacement", ParadoxType.VARCHAR, "The replacement in case of null.", 2, true, IN)
     };
 
+    /**
+     * The current type.
+     */
     private ParadoxType type = ParadoxType.NULL;
 
     @Override
@@ -66,5 +71,24 @@ public class NvlFunction extends AbstractGeneralFunction {
         }
 
         return values[1];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+            return false;
+        }
+
+        NvlFunction that = (NvlFunction) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
     }
 }

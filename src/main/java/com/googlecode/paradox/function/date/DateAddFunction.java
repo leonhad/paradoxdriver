@@ -25,11 +25,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The SQL DATE ADD function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -55,6 +56,13 @@ public class DateAddFunction extends AbstractDateFunction {
             new Column("date", ParadoxType.TIMESTAMP, "The date to add.", 3, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public DateAddFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Adds a time/date interval to a date and then returns the date.";
@@ -66,11 +74,12 @@ public class DateAddFunction extends AbstractDateFunction {
     }
 
     @Override
+    @SuppressWarnings("java:S1541")
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final Integer number = ValuesConverter.getInteger(values[1]);
-        final Timestamp timestamp = ValuesConverter.getTimestamp(values[2]);
+        final Integer number = ValuesConverter.getInteger(values[1], connectionInfo);
+        final Timestamp timestamp = ValuesConverter.getTimestamp(values[2], connectionInfo);
         if (number == null || timestamp == null) {
             return null;
         }
@@ -130,5 +139,24 @@ public class DateAddFunction extends AbstractDateFunction {
         // Convert to a non fields do avoid Planner problems.
         parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(),
                 ParadoxType.VARCHAR));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+            return false;
+        }
+
+        DateAddFunction that = (DateAddFunction) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
     }
 }

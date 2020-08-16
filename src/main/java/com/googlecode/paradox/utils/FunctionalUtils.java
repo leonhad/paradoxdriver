@@ -10,13 +10,13 @@
  */
 package com.googlecode.paradox.utils;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.InternalException;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
 import com.googlecode.paradox.planner.context.SelectContext;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Function;
@@ -101,16 +101,18 @@ public final class FunctionalUtils {
     /**
      * Predicate to filter values for group by expressions.
      *
-     * @param indexes fields with grouping functions.
-     * @param columns the grouping columns.
+     * @param indexes        fields with grouping functions.
+     * @param columns        the grouping columns.
+     * @param connectionInfo the connection information.
      * @return the predicate to grouping fields.
      */
     @SuppressWarnings({"unchecked", "raw", "java:S5612"})
-    public static Predicate<Object[]> groupingByKeys(final int[] indexes, final int[] columns) {
+    public static Predicate<Object[]> groupingByKeys(final int[] indexes, final int[] columns,
+                                                     final ConnectionInfo connectionInfo) {
         final List<Object[]> seen = new ArrayList<>();
         return (Object[] value) -> {
             final Object[] current = seen.stream()
-                    .filter(o -> equalsAggregate(o, value, columns))
+                    .filter(o -> equalsAggregate(o, value, columns, connectionInfo))
                     .findAny().orElse(null);
 
             if (current == null) {
@@ -120,7 +122,8 @@ public final class FunctionalUtils {
             } else {
                 // Do grouping.
                 Arrays.stream(indexes).forEach((int index) ->
-                        ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index]));
+                        ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index],
+                                connectionInfo));
             }
 
             return false;
@@ -155,19 +158,21 @@ public final class FunctionalUtils {
     /**
      * Compute an equals in array ignores grouping values.
      *
-     * @param o1      the first array to compare.
-     * @param o2      the second array to compare.
-     * @param columns the columns to compare.
+     * @param o1             the first array to compare.
+     * @param o2             the second array to compare.
+     * @param columns        the columns to compare.
+     * @param connectionInfo the connection information.
      * @return <code>true</code> if the two arrays are equals.
      */
-    private static boolean equalsAggregate(final Object[] o1, final Object[] o2, final int[] columns) {
+    private static boolean equalsAggregate(final Object[] o1, final Object[] o2, final int[] columns,
+                                           final ConnectionInfo connectionInfo) {
         for (int i : columns) {
             // NULL are equals only in aggregation.
             if (o1[i] == o2[i]) {
                 return true;
             }
 
-            final boolean ret = ValuesComparator.equals(o1[i], o2[i]);
+            final boolean ret = ValuesComparator.equals(o1[i], o2[i], connectionInfo);
             if (!ret) {
                 return false;
             }
@@ -179,10 +184,12 @@ public final class FunctionalUtils {
     /**
      * Predicate to simulate the distinct on Object array.
      *
-     * @param columnsLoaded the loaded columns. Used to ignore hidden columns.
+     * @param columnsLoaded  the loaded columns. Used to ignore hidden columns.
+     * @param connectionInfo the connection information.
      * @return the predicate to simulate the distinct on Object array.
      */
-    public static Predicate<Object[]> distinctByKey(final List<Column> columnsLoaded) {
+    public static Predicate<Object[]> distinctByKey(final List<Column> columnsLoaded,
+                                                    final ConnectionInfo connectionInfo) {
         List<Integer> indexes = new ArrayList<>();
         for (int i = 0; i < columnsLoaded.size(); i++) {
             if (!columnsLoaded.get(i).isHidden()) {
@@ -191,39 +198,7 @@ public final class FunctionalUtils {
         }
 
         final Set<Object[]> seen = new TreeSet<>(
-                new CompareArray(indexes.stream().mapToInt(Integer::intValue).toArray()));
+                new CompareArray(indexes.stream().mapToInt(Integer::intValue).toArray(), connectionInfo));
         return seen::add;
-    }
-
-    /**
-     * A distinct comparator to use with Object array.
-     */
-    private static class CompareArray implements Comparator<Object[]>, Serializable {
-        private final int[] columns;
-
-        public CompareArray(int[] columns) {
-            this.columns = columns;
-        }
-
-        @Override
-        @SuppressWarnings("java:S1142")
-        public int compare(Object[] o1, Object[] o2) {
-            if (o1 == o2) {
-                return 0;
-            } else if (o1 == null) {
-                return -1;
-            } else if (o2 == null) {
-                return 1;
-            }
-
-            for (int i : columns) {
-                int ret = ValuesComparator.compare(o1[i], o2[i]);
-                if (ret != 0) {
-                    return ret;
-                }
-            }
-
-            return 0;
-        }
     }
 }

@@ -23,7 +23,7 @@ import java.util.Calendar;
 /**
  * The SQL DAY function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -56,7 +56,7 @@ public class DayFunction extends AbstractDateFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final Date date = ValuesConverter.getDate(values[0]);
+        final Date date = ValuesConverter.getDate(values[0], connectionInfo);
         if (date == null) {
             return null;
         }

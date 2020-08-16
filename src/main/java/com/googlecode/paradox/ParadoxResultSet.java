@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  * JDBC ResultSet implementation.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public final class ParadoxResultSet implements ResultSet {
@@ -201,7 +201,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public InputStream getAsciiStream(final int columnIndex) throws SQLException {
-        final String val = ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex));
+        final String val = ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (val != null) {
             new ByteArrayInputStream(val.getBytes(StandardCharsets.UTF_8));
         }
@@ -222,7 +222,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
-        return ValuesConverter.getBigDecimal(dataNavigation.getColumnValue(columnIndex));
+        return ValuesConverter.getBigDecimal(dataNavigation.getColumnValue(columnIndex), connectionInfo);
     }
 
     /**
@@ -263,7 +263,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public InputStream getBinaryStream(final int columnIndex) throws SQLException {
-        final byte[] val = ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex));
+        final byte[] val = ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (val != null) {
             return new ByteArrayInputStream(val);
         }
@@ -284,7 +284,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Blob getBlob(final int columnIndex) throws SQLException {
-        final byte[] val = ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex));
+        final byte[] val = ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (val != null) {
             return new ParadoxBlob(val);
         }
@@ -305,7 +305,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public boolean getBoolean(final int columnIndex) throws SQLException {
-        Boolean ret = ValuesConverter.getBoolean(dataNavigation.getColumnValue(columnIndex));
+        Boolean ret = ValuesConverter.getBoolean(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (ret != null) {
             return ret;
         }
@@ -326,7 +326,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public byte getByte(final int columnIndex) throws SQLException {
-        Byte ret = ValuesConverter.getByte(dataNavigation.getColumnValue(columnIndex));
+        Byte ret = ValuesConverter.getByte(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (ret != null) {
             return ret;
         }
@@ -347,7 +347,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public byte[] getBytes(final int columnIndex) throws SQLException {
-        return ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex));
+        return ValuesConverter.getByteArray(dataNavigation.getColumnValue(columnIndex), connectionInfo);
     }
 
     /**
@@ -363,7 +363,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Reader getCharacterStream(final int columnIndex) throws SQLException {
-        final String val = ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex));
+        final String val = ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (val != null) {
             return new StringReader(val);
         }
@@ -383,7 +383,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Clob getClob(final int columnIndex) throws SQLException {
-        final String val = ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex));
+        final String val = ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (val != null) {
             return new ParadoxClob(val);
         }
@@ -429,7 +429,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Date getDate(final int columnIndex) throws SQLException {
-        return ValuesConverter.getDate(dataNavigation.getColumnValue(columnIndex));
+        return ValuesConverter.getDate(dataNavigation.getColumnValue(columnIndex), connectionInfo);
     }
 
     /**
@@ -461,7 +461,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public double getDouble(final int columnIndex) throws SQLException {
-        Double ret = ValuesConverter.getDouble(dataNavigation.getColumnValue(columnIndex));
+        Double ret = ValuesConverter.getDouble(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (ret != null) {
             return ret;
         }
@@ -514,7 +514,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public float getFloat(final int columnIndex) throws SQLException {
-        Float ret = ValuesConverter.getFloat(dataNavigation.getColumnValue(columnIndex));
+        Float ret = ValuesConverter.getFloat(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (ret != null) {
             return ret;
         }
@@ -543,7 +543,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public int getInt(final int columnIndex) throws SQLException {
-        Integer ret = ValuesConverter.getInteger(dataNavigation.getColumnValue(columnIndex));
+        Integer ret = ValuesConverter.getInteger(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (ret != null) {
             return ret;
         }
@@ -564,7 +564,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public long getLong(final int columnIndex) throws SQLException {
-        Long ret = ValuesConverter.getLong(dataNavigation.getColumnValue(columnIndex));
+        Long ret = ValuesConverter.getLong(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (ret != null) {
             return ret;
         }
@@ -649,7 +649,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public <T> T getObject(final int columnIndex, final Class<T> type) throws SQLException {
-        return ValuesConverter.convert(getObject(columnIndex), type);
+        return ValuesConverter.convert(getObject(columnIndex), type, connectionInfo);
     }
 
     /**
@@ -729,7 +729,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public short getShort(final int columnIndex) throws SQLException {
-        Short ret = ValuesConverter.getShort(dataNavigation.getColumnValue(columnIndex));
+        Short ret = ValuesConverter.getShort(dataNavigation.getColumnValue(columnIndex), connectionInfo);
         if (ret != null) {
             return ret;
         }
@@ -778,7 +778,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public String getString(final int columnIndex) throws SQLException {
-        return ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex));
+        return ValuesConverter.getString(dataNavigation.getColumnValue(columnIndex), connectionInfo);
     }
 
     /**
@@ -794,7 +794,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Time getTime(final int columnIndex) throws SQLException {
-        return ValuesConverter.getTime(dataNavigation.getColumnValue(columnIndex));
+        return ValuesConverter.getTime(dataNavigation.getColumnValue(columnIndex), connectionInfo);
     }
 
     /**
@@ -826,7 +826,7 @@ public final class ParadoxResultSet implements ResultSet {
      */
     @Override
     public Timestamp getTimestamp(final int columnIndex) throws SQLException {
-        return ValuesConverter.getTimestamp(dataNavigation.getColumnValue(columnIndex));
+        return ValuesConverter.getTimestamp(dataNavigation.getColumnValue(columnIndex), connectionInfo);
     }
 
     /**

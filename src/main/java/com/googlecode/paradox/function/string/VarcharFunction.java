@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL VARCHAR function.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public class VarcharFunction extends AbstractStringFunction {
@@ -53,6 +53,6 @@ public class VarcharFunction extends AbstractStringFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        return ValuesConverter.getString(values[0]);
+        return ValuesConverter.getString(values[0], connectionInfo);
     }
 }

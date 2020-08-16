@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Stores the between node.
  *
- * @version 1.10
+ * @version 1.11
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
@@ -62,7 +62,7 @@ public final class BetweenNode extends AbstractComparableNode {
         final Object value2 = FieldValueUtils.getValue(context, row, first, columnsLoaded);
         final Object value3 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
 
-        return ValuesComparator.compare(value1, value2, i -> i >= 0) &&
-                ValuesComparator.compare(value1, value3, i -> i <= 0);
+        return ValuesComparator.compare(value1, value2, i -> i >= 0, context.getConnectionInfo()) &&
+                ValuesComparator.compare(value1, value3, i -> i <= 0, context.getConnectionInfo());
     }
 }

@@ -19,7 +19,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL DEGREES functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class DegreesFunction extends AbstractNumericFunction {
@@ -50,7 +50,7 @@ public class DegreesFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        final Double value = ValuesConverter.getDouble(values[0]);
+        final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         if (value == null) {
             return null;
         }

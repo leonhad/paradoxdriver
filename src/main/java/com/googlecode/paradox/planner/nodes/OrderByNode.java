@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.planner.nodes;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
@@ -29,7 +30,7 @@ import java.util.stream.Stream;
 /**
  * Stores one order by field information.
  *
- * @version 1.3
+ * @version 1.5
  * @since 1.6.0
  */
 public class OrderByNode {
@@ -47,21 +48,22 @@ public class OrderByNode {
     /**
      * Creates a new instance.
      *
-     * @param selectNode    the SELECT statement node.
-     * @param selectColumns the SELECT columns.
-     * @param tables        the tables.
-     * @param groupBy       if the SELECT statement has a group by.
+     * @param selectNode     the SELECT statement node.
+     * @param tables         the tables.
+     * @param selectColumns  the SELECT columns.
+     * @param connectionInfo the connection information.
+     * @param groupBy        if the SELECT statement has a group by.
      * @throws SQLException in case of failures.
      */
-    public OrderByNode(final SelectNode selectNode, final List<Column> selectColumns, final List<PlanTableNode> tables,
-                       final boolean groupBy)
+    public OrderByNode(final SelectNode selectNode, final List<PlanTableNode> tables,
+                       final List<Column> selectColumns, final ConnectionInfo connectionInfo, final boolean groupBy)
             throws SQLException {
 
         for (int i = 0; i < selectNode.getOrder().size(); i++) {
             final FieldNode field = selectNode.getOrder().get(i);
             final OrderType type = selectNode.getOrderTypes().get(i);
             if (field instanceof ValueNode) {
-                int index = ValuesConverter.getInteger(field.getName());
+                int index = ValuesConverter.getInteger(field.getName(), connectionInfo);
                 if (index > selectColumns.size()) {
                     throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, index);
                 }
@@ -104,11 +106,13 @@ public class OrderByNode {
     /**
      * Process the stream with the order by.
      *
-     * @param stream        the stream to process.
-     * @param selectColumns the SELECT columns.
+     * @param stream         the stream to process.
+     * @param selectColumns  the SELECT columns.
+     * @param connectionInfo the connection information.
      * @return the processes stream.
      */
-    public Stream<Object[]> processStream(final Stream<Object[]> stream, final List<Column> selectColumns) {
+    public Stream<Object[]> processStream(final Stream<Object[]> stream, final List<Column> selectColumns,
+                                          final ConnectionInfo connectionInfo) {
         if (this.columns.isEmpty()) {
             // Nothing to do here, there are no order by fields.
             return stream;
@@ -131,8 +135,7 @@ public class OrderByNode {
         Comparator<Object[]> comparator = null;
         for (int i = 0; i < mapColumns.length; i++) {
             final int index = mapColumns[i];
-            final OrderByComparator orderByComparator = new OrderByComparator(index,
-                    this.types.get(i));
+            final OrderByComparator orderByComparator = new OrderByComparator(index, this.types.get(i), connectionInfo);
             if (comparator == null) {
                 comparator = orderByComparator;
             } else {

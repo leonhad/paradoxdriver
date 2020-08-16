@@ -21,9 +21,9 @@ import java.sql.SQLException;
 import java.util.Calendar;
 
 /**
- * The SQL DAYOFYEAR function.
+ * The SQL DAY OF YEAR function.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -56,7 +56,7 @@ public class DayOfYearFunction extends AbstractDateFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final Date date = ValuesConverter.getDate(values[0]);
+        final Date date = ValuesConverter.getDate(values[0], connectionInfo);
         if (date == null) {
             return null;
         }

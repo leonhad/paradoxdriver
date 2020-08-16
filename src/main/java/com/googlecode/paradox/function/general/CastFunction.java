@@ -21,11 +21,12 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The SQL CAST function.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
@@ -47,6 +48,13 @@ public class CastFunction extends AbstractGeneralFunction {
 
     private ParadoxType type = ParadoxType.BYTES;
 
+    /**
+     * Creates a new instance.
+     */
+    public CastFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Converts a field type to another.";
@@ -66,7 +74,7 @@ public class CastFunction extends AbstractGeneralFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        return ValuesConverter.convert(values[0], type);
+        return ValuesConverter.convert(values[0], type, connectionInfo);
     }
 
     @Override
@@ -87,5 +95,24 @@ public class CastFunction extends AbstractGeneralFunction {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
                     typeNode.getName(), typeNode.getPosition());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+            return false;
+        }
+
+        CastFunction that = (CastFunction) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
     }
 }

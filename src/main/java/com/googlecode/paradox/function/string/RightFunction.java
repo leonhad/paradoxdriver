@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL RIGHT function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class RightFunction extends AbstractStringFunction {
@@ -54,7 +54,7 @@ public class RightFunction extends AbstractStringFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final int size = ValuesConverter.getPositiveInteger(values[1]);
+        final int size = ValuesConverter.getPositiveInteger(values[1], connectionInfo);
         final StringBuilder ret = new StringBuilder(values[0].toString());
         if (ret.length() > size) {
             ret.delete(0, ret.length() - size);

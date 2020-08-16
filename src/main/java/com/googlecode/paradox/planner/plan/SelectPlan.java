@@ -38,7 +38,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.16
+ * @version 1.17
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -103,7 +103,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
         this.columns = parseColumns(statement);
         this.groupBy = new GroupByNode(statement, this.tables, this.columns);
-        this.orderBy = new OrderByNode(statement, columns, this.tables, this.groupBy.isGroupBy());
+        this.orderBy = new OrderByNode(statement, this.tables, columns, connectionInfo, this.groupBy.isGroupBy());
 
         if (this.columns.isEmpty()) {
             throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_COLUMN_LIST);
@@ -514,11 +514,11 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         stream = this.groupBy.processStream(context, stream, this.columns);
 
         // Order by.
-        stream = this.orderBy.processStream(stream, this.columns);
+        stream = this.orderBy.processStream(stream, this.columns, context.getConnectionInfo());
 
         // Distinct
         if (distinct) {
-            stream = stream.filter(FunctionalUtils.distinctByKey(this.columns));
+            stream = stream.filter(FunctionalUtils.distinctByKey(this.columns, context.getConnectionInfo()));
         }
 
         if (context.getMaxRows() != 0) {

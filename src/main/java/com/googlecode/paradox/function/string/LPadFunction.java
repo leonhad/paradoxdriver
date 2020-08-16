@@ -19,9 +19,9 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 import java.sql.SQLException;
 
 /**
- * The SQL RPAD function.
+ * The SQL LEFT PAD function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class LPadFunction extends AbstractStringFunction {
@@ -56,7 +56,7 @@ public class LPadFunction extends AbstractStringFunction {
                           final FieldNode[] fields) throws SQLException {
 
         final String value = values[0].toString();
-        final int size = ValuesConverter.getPositiveInteger(values[1]);
+        final int size = ValuesConverter.getPositiveInteger(values[1], connectionInfo);
         if (value.length() > size) {
             return value.substring(0, size);
         }

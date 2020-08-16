@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL NUMERIC function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class NumericFunction extends AbstractNumericFunction {
@@ -52,6 +52,6 @@ public class NumericFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-        return ValuesConverter.getDouble(values[0]);
+        return ValuesConverter.getDouble(values[0], connectionInfo);
     }
 }

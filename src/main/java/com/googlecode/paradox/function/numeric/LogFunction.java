@@ -19,7 +19,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL LOG functions.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class LogFunction extends AbstractNumericFunction {
@@ -69,14 +69,14 @@ public class LogFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        final Double value = ValuesConverter.getDouble(values[0]);
+        final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         if (value == null) {
             return null;
         }
 
         // There is a base to process?
         if (values.length > 1) {
-            final Double base = ValuesConverter.getDouble(values[1]);
+            final Double base = ValuesConverter.getDouble(values[1], connectionInfo);
             if (base != null) {
                 return Math.log(value) / Math.log(base);
             }

@@ -29,11 +29,12 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * The SQL DATEDIFF function.
+ * The SQL DATE DIFF function.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -43,6 +44,7 @@ public class DateDiffFunction extends AbstractDateFunction {
      * The function name.
      */
     public static final String NAME = "DATEDIFF";
+
     /**
      * Column parameter list.
      */
@@ -52,10 +54,18 @@ public class DateDiffFunction extends AbstractDateFunction {
             new Column("start_date", ParadoxType.TIMESTAMP, "The start date.", 2, false, IN),
             new Column("end_date", ParadoxType.TIMESTAMP, "The end date.", 3, false, IN)
     };
+
     /**
      * Time interval type.
      */
     private TimeIntervalType type;
+
+    /**
+     * Creates a new instance.
+     */
+    public DateDiffFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -68,11 +78,12 @@ public class DateDiffFunction extends AbstractDateFunction {
     }
 
     @Override
+    @SuppressWarnings("java:S1541")
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final Timestamp beginDate = ValuesConverter.getTimestamp(values[1]);
-        final Timestamp endDate = ValuesConverter.getTimestamp(values[2]);
+        final Timestamp beginDate = ValuesConverter.getTimestamp(values[1], connectionInfo);
+        final Timestamp endDate = ValuesConverter.getTimestamp(values[2], connectionInfo);
         if (beginDate == null || endDate == null) {
             return null;
         }
@@ -137,5 +148,24 @@ public class DateDiffFunction extends AbstractDateFunction {
         // Convert to a non fields do avoid Planner problems.
         parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(),
                 ParadoxType.VARCHAR));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+            return false;
+        }
+
+        DateDiffFunction that = (DateDiffFunction) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
     }
 }

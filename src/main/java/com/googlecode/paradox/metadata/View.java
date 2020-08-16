@@ -11,7 +11,6 @@
 package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.data.filefilters.SQLFilter;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
 import com.googlecode.paradox.parser.SQLParser;
@@ -28,13 +27,12 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
  * View support.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class View implements Table {
@@ -127,7 +125,7 @@ public class View implements Table {
                             return field;
                         }).toArray(Field[]::new);
             } catch (final SQLException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
                 fields = new Field[0];
             }
         }

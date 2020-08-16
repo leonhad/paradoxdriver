@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Stores a field from a table.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ParadoxField extends Field {

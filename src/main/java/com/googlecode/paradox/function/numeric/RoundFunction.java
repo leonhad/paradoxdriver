@@ -22,7 +22,7 @@ import java.math.RoundingMode;
 /**
  * The SQL ROUND functions.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class RoundFunction extends AbstractNumericFunction {
@@ -58,7 +58,7 @@ public class RoundFunction extends AbstractNumericFunction {
 
     @Override
     public int getParameterCount() {
-        return 2;
+        return 0x02;
     }
 
     @Override
@@ -74,8 +74,8 @@ public class RoundFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        final BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
-        final Integer decimal = ValuesConverter.getInteger(values[1]);
+        final BigDecimal value = ValuesConverter.getBigDecimal(values[0], connectionInfo);
+        final Integer decimal = ValuesConverter.getInteger(values[1], connectionInfo);
 
         if (value == null || decimal == null) {
             return null;
@@ -83,7 +83,7 @@ public class RoundFunction extends AbstractNumericFunction {
 
         Boolean rounding = null;
         if (values.length == 0x03) {
-            rounding = ValuesConverter.getBoolean(values[0x02]);
+            rounding = ValuesConverter.getBoolean(values[0x02], connectionInfo);
         }
 
         RoundingMode mode = RoundingMode.HALF_UP;

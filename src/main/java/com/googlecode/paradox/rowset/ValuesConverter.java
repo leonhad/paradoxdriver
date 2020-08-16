@@ -10,7 +10,7 @@
  */
 package com.googlecode.paradox.rowset;
 
-import com.googlecode.paradox.Driver;
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
@@ -27,26 +27,26 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.logging.Level;
+import java.util.function.BiFunction;
 
 /**
  * Custom values conversion utility class.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
+@SuppressWarnings("java:S1200")
 public final class ValuesConverter {
 
     /**
      * Default class mapping.
      */
-    private static final Map<Class<?>, Function<Object, Object>> CLASS_MAPPING = new HashMap<>();
+    private static final Map<Class<?>, BiFunction<Object, ConnectionInfo, Object>> CLASS_MAPPING = new HashMap<>();
 
     /**
      * Default type mapping.
      */
-    private static final Map<Integer, Function<Object, Object>> TYPE_MAPPING = new HashMap<>();
+    private static final Map<Integer, BiFunction<Object, ConnectionInfo, Object>> TYPE_MAPPING = new HashMap<>();
 
     static {
         CLASS_MAPPING.put(BigDecimal.class, ValuesConverter::getBigDecimal);
@@ -88,31 +88,34 @@ public final class ValuesConverter {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T convert(final Object value, Class<T> type) throws SQLException {
+    public static <T> T convert(final Object value, Class<T> type, final ConnectionInfo connectionInfo)
+            throws SQLException {
         try {
-            return (T) CLASS_MAPPING.get(type).apply(value);
+            return (T) CLASS_MAPPING.get(type).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
         }
     }
 
-    public static Object convert(final Object value, int sqlType) throws SQLException {
+    public static Object convert(final Object value, int sqlType, final ConnectionInfo connectionInfo)
+            throws SQLException {
         try {
-            return TYPE_MAPPING.get(sqlType).apply(value);
+            return TYPE_MAPPING.get(sqlType).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
         }
     }
 
-    public static Object convert(final Object value, ParadoxType type) throws SQLException {
+    public static Object convert(final Object value, ParadoxType type, final ConnectionInfo connectionInfo)
+            throws SQLException {
         try {
-            return CLASS_MAPPING.get(type.getJavaClass()).apply(value);
+            return CLASS_MAPPING.get(type.getJavaClass()).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
             throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
         }
     }
 
-    public static Boolean getBoolean(final Object value) {
+    public static Boolean getBoolean(final Object value, final ConnectionInfo connectionInfo) {
         Boolean ret = null;
         if (value instanceof Boolean) {
             ret = (Boolean) value;
@@ -123,7 +126,7 @@ public final class ValuesConverter {
                 ret = Boolean.TRUE;
             }
         } else if (value != null) {
-            final Integer i = getInteger(value);
+            final Integer i = getInteger(value, connectionInfo);
             if (i != null) {
                 // Try to convert with integers.
                 if (i == 0) {
@@ -139,7 +142,7 @@ public final class ValuesConverter {
         return ret;
     }
 
-    public static Byte getByte(final Object value) {
+    public static Byte getByte(final Object value, final ConnectionInfo connectionInfo) {
         Byte ret = null;
         if (value instanceof Byte) {
             ret = (Byte) value;
@@ -155,14 +158,14 @@ public final class ValuesConverter {
             try {
                 ret = Byte.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
             }
         }
 
         return ret;
     }
 
-    public static Short getShort(final Object value) {
+    public static Short getShort(final Object value, final ConnectionInfo connectionInfo) {
         Short ret = null;
         if (value instanceof Short) {
             ret = (Short) value;
@@ -178,7 +181,7 @@ public final class ValuesConverter {
             try {
                 ret = Short.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
             }
         }
 
@@ -188,12 +191,14 @@ public final class ValuesConverter {
     /**
      * Convert to a valid positive integer.
      *
-     * @param value the value to convert.
+     * @param value          the value to convert.
+     * @param connectionInfo the connection information.
      * @return a positive integer value.
      * @throws ParadoxSyntaxErrorException if the value is not a valid integer value.
      */
-    public static int getPositiveInteger(final Object value) throws ParadoxSyntaxErrorException {
-        final Integer size = getInteger(value);
+    public static int getPositiveInteger(final Object value, final ConnectionInfo connectionInfo)
+            throws ParadoxSyntaxErrorException {
+        final Integer size = getInteger(value, connectionInfo);
         if (size == null || size < 0) {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, value);
         }
@@ -201,7 +206,7 @@ public final class ValuesConverter {
         return size;
     }
 
-    public static Integer getInteger(final Object value) {
+    public static Integer getInteger(final Object value, final ConnectionInfo connectionInfo) {
         Integer ret = null;
 
         if (value instanceof Integer) {
@@ -218,20 +223,20 @@ public final class ValuesConverter {
             try {
                 ret = Integer.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
 
                 try {
                     // Try to convert with BigDecimal.
                     ret = new BigDecimal(value.toString()).intValue();
                 } catch (final NumberFormatException e1) {
-                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    connectionInfo.addWarning(e1);
                 }
             }
         }
         return ret;
     }
 
-    public static Long getLong(final Object value) {
+    public static Long getLong(final Object value, final ConnectionInfo connectionInfo) {
         Long ret = null;
         if (value instanceof Long) {
             ret = (Long) value;
@@ -247,13 +252,13 @@ public final class ValuesConverter {
             try {
                 ret = Long.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
 
                 try {
                     // Try to convert with BigDecimal.
                     ret = new BigDecimal(value.toString()).longValue();
                 } catch (final NumberFormatException e1) {
-                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    connectionInfo.addWarning(e1);
                 }
             }
         }
@@ -261,7 +266,7 @@ public final class ValuesConverter {
         return ret;
     }
 
-    public static BigDecimal getBigDecimal(final Object value) {
+    public static BigDecimal getBigDecimal(final Object value, final ConnectionInfo connectionInfo) {
         BigDecimal ret = null;
         if (value instanceof BigDecimal) {
             return (BigDecimal) value;
@@ -277,14 +282,14 @@ public final class ValuesConverter {
             try {
                 ret = new BigDecimal(value.toString());
             } catch (final NumberFormatException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
             }
         }
 
         return ret;
     }
 
-    public static Float getFloat(final Object value) {
+    public static Float getFloat(final Object value, final ConnectionInfo connectionInfo) {
         Float ret = null;
         if (value instanceof Float) {
             ret = (Float) value;
@@ -300,14 +305,14 @@ public final class ValuesConverter {
             try {
                 ret = Float.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
             }
         }
 
         return ret;
     }
 
-    public static Double getDouble(final Object value) {
+    public static Double getDouble(final Object value, final ConnectionInfo connectionInfo) {
         Double ret = null;
         if (value instanceof Double) {
             ret = (Double) value;
@@ -323,7 +328,7 @@ public final class ValuesConverter {
             try {
                 ret = Double.valueOf(value.toString());
             } catch (final NumberFormatException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
             }
         }
 
@@ -350,7 +355,7 @@ public final class ValuesConverter {
      * @param value the value to convert.
      * @return the converted time value.
      */
-    public static Time getTime(final Object value) {
+    public static Time getTime(final Object value, final ConnectionInfo connectionInfo) {
         Time ret = null;
         if (value instanceof Time) {
             ret = (Time) value;
@@ -360,21 +365,21 @@ public final class ValuesConverter {
             try {
                 ret = Time.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
 
                 try {
                     // Trying with Date instead.
                     final Date date = Date.valueOf(value.toString());
                     ret = removeDate(date);
                 } catch (final IllegalArgumentException e1) {
-                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    connectionInfo.addWarning(e1);
 
                     try {
                         // Trying with Timestamp instead.
                         final Timestamp timestamp = Timestamp.valueOf(value.toString());
                         ret = removeDate(timestamp);
                     } catch (final IllegalArgumentException e2) {
-                        Driver.LOGGER.log(Level.FINEST, e2.getMessage(), e2);
+                        connectionInfo.addWarning(e2);
                     }
                 }
             }
@@ -386,10 +391,11 @@ public final class ValuesConverter {
     /**
      * Converts the value to timestamp.
      *
-     * @param value the value to convert.
+     * @param value          the value to convert.
+     * @param connectionInfo the connection information.
      * @return the converted timestamp value.
      */
-    public static Timestamp getTimestamp(final Object value) {
+    public static Timestamp getTimestamp(final Object value, final ConnectionInfo connectionInfo) {
         Timestamp ret = null;
         if (value instanceof Timestamp) {
             ret = (Timestamp) value;
@@ -399,21 +405,21 @@ public final class ValuesConverter {
             try {
                 ret = Timestamp.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
 
                 try {
                     // Trying with Date instead.
                     final Date date = Date.valueOf(value.toString());
                     ret = new Timestamp(date.getTime());
                 } catch (final IllegalArgumentException e1) {
-                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    connectionInfo.addWarning(e1);
 
                     try {
                         // Trying with Time instead.
                         final Time time = Time.valueOf(value.toString());
                         ret = new Timestamp(time.getTime());
                     } catch (final IllegalArgumentException e2) {
-                        Driver.LOGGER.log(Level.FINEST, e2.getMessage(), e2);
+                        connectionInfo.addWarning(e2);
                     }
                 }
             }
@@ -440,10 +446,11 @@ public final class ValuesConverter {
     /**
      * Converts the value to date.
      *
-     * @param value the value to convert.
+     * @param value          the value to convert.
+     * @param connectionInfo the connection information.
      * @return the converted date value.
      */
-    public static Date getDate(final Object value) {
+    public static Date getDate(final Object value, final ConnectionInfo connectionInfo) {
         Date ret = null;
         if (value instanceof Date) {
             ret = (Date) value;
@@ -453,14 +460,14 @@ public final class ValuesConverter {
             try {
                 ret = Date.valueOf(value.toString().trim());
             } catch (final IllegalArgumentException e) {
-                Driver.LOGGER.log(Level.FINEST, e.getMessage(), e);
+                connectionInfo.addWarning(e);
 
                 try {
                     // Trying with timestamp instead.
                     final Timestamp timestamp = Timestamp.valueOf(value.toString());
                     ret = removeTime(timestamp);
                 } catch (final IllegalArgumentException e1) {
-                    Driver.LOGGER.log(Level.FINEST, e1.getMessage(), e1);
+                    connectionInfo.addWarning(e1);
                 }
             }
         }
@@ -468,7 +475,7 @@ public final class ValuesConverter {
         return ret;
     }
 
-    public static byte[] getByteArray(final Object value) {
+    public static byte[] getByteArray(final Object value, final ConnectionInfo connectionInfo) {
         byte[] ret = null;
         if (value instanceof byte[]) {
             ret = (byte[]) value;
@@ -479,7 +486,7 @@ public final class ValuesConverter {
         return ret;
     }
 
-    public static String getString(final Object value) {
+    public static String getString(final Object value, final ConnectionInfo connectionInfo) {
         String ret = null;
         if (value instanceof String) {
             ret = (String) value;

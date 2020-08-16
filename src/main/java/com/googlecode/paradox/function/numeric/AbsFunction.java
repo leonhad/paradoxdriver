@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL ABS function.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.6.0
  */
 public class AbsFunction extends AbstractNumericFunction {
@@ -52,7 +52,7 @@ public class AbsFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
-        final Double value = ValuesConverter.getDouble(values[0]);
+        final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         if (value == null) {
             return null;
         }

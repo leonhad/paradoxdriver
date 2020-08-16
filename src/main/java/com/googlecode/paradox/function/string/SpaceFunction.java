@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL SPACE function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class SpaceFunction extends AbstractStringFunction {
@@ -53,7 +53,7 @@ public class SpaceFunction extends AbstractStringFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final int size = ValuesConverter.getPositiveInteger(values[0]);
+        final int size = ValuesConverter.getPositiveInteger(values[0], connectionInfo);
         final StringBuilder ret = new StringBuilder();
         for (int i = 0; i < size; i++) {
             ret.append(' ');

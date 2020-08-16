@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Insensitive like node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public class ILikeNode extends LikeNode {
@@ -52,7 +52,7 @@ public class ILikeNode extends LikeNode {
             return false;
         }
 
-        return Expressions.accept(context.getLocale(), ValuesConverter.getString(value1),
-                ValuesConverter.getString(value2), false, escape);
+        return Expressions.accept(context.getLocale(), ValuesConverter.getString(value1, context.getConnectionInfo()),
+                ValuesConverter.getString(value2, context.getConnectionInfo()), false, escape);
     }
 }

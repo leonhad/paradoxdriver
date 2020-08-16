@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.function.aggregate.context;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 /**
  * Min context.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class MinContext implements IGroupingContext<BigDecimal> {
@@ -35,11 +36,11 @@ public class MinContext implements IGroupingContext<BigDecimal> {
     }
 
     @Override
-    public void process(final IGroupingContext<BigDecimal> context) {
+    public void process(final IGroupingContext<BigDecimal> context, final ConnectionInfo connectionInfo) {
         if (context != null) {
             final BigDecimal other = ((MinContext) context).value;
 
-            if (ValuesComparator.compare(this.value, other) > 0) {
+            if (ValuesComparator.compare(this.value, other, connectionInfo) > 0) {
                 this.value = other;
             }
         }

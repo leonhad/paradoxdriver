@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.function.aggregate.context;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 /**
  * Sum context.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class SumContext implements IGroupingContext<BigDecimal> {
@@ -34,7 +35,7 @@ public class SumContext implements IGroupingContext<BigDecimal> {
     }
 
     @Override
-    public void process(final IGroupingContext<BigDecimal> context) {
+    public void process(final IGroupingContext<BigDecimal> context, final ConnectionInfo connectionInfo) {
         if (context != null) {
             this.value = value.add(((SumContext) context).value);
         }

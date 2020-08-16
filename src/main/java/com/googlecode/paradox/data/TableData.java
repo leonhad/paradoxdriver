@@ -228,7 +228,7 @@ public final class TableData extends ParadoxData {
             buffer.position(0x55);
             table.setReferentialIntegrity(buffer.get());
 
-            parseVersionID(buffer, table);
+            parseVersionID(buffer, table, connectionInfo);
 
             final ParadoxField[] fields = TableData.parseTableFields(table, buffer);
 

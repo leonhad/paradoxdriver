@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL CHAR function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class CharFunction extends AbstractStringFunction {
@@ -56,6 +56,6 @@ public class CharFunction extends AbstractStringFunction {
             return null;
         }
 
-        return ValuesConverter.getString(values[0]);
+        return ValuesConverter.getString(values[0], connectionInfo);
     }
 }

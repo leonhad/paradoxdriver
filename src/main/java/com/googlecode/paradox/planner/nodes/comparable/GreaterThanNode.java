@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Stores the greater than node.
  *
- * @version 1.11
+ * @version 1.12
  * @since 1.1
  */
 public final class GreaterThanNode extends AbstractComparableNode {
@@ -44,6 +44,6 @@ public final class GreaterThanNode extends AbstractComparableNode {
             throws SQLException {
         final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
         final Object value2 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
-        return ValuesComparator.compare(value1, value2, i -> i == 1);
+        return ValuesComparator.compare(value1, value2, i -> i == 1, context.getConnectionInfo());
     }
 }

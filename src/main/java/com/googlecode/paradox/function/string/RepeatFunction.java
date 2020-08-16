@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL REPEAT function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class RepeatFunction extends AbstractStringFunction {
@@ -54,7 +54,7 @@ public class RepeatFunction extends AbstractStringFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final int size = ValuesConverter.getPositiveInteger(values[1]);
+        final int size = ValuesConverter.getPositiveInteger(values[1], connectionInfo);
         final StringBuilder ret = new StringBuilder();
         for (int i = 0; i < size; i++) {
             ret.append(values[0]);

@@ -121,7 +121,7 @@ public final class IndexData extends ParadoxData {
             buffer.position(0x55);
             index.setReferentialIntegrity(buffer.get());
 
-            parseVersionID(buffer, index);
+            parseVersionID(buffer, index, connectionInfo);
             parseFields(buffer, index, table);
 
             IndexData.parseSortID(buffer, index);

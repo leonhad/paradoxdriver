@@ -25,11 +25,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The SQL CONVERT function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 @SuppressWarnings("java:S109")
@@ -52,6 +53,13 @@ public class ConvertFunction extends AbstractGeneralFunction {
             new Column("value", ParadoxType.VARCHAR, "The value to convert.", 1, true, IN),
             new Column("charset", ParadoxType.VARCHAR, "The charset name to convert.", 2, true, IN)
     };
+
+    /**
+     * Creates a instance.
+     */
+    public ConvertFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -79,6 +87,7 @@ public class ConvertFunction extends AbstractGeneralFunction {
     }
 
     @Override
+    @SuppressWarnings("java:S1142")
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
@@ -101,7 +110,7 @@ public class ConvertFunction extends AbstractGeneralFunction {
             }
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, value);
         } else {
-            return ValuesConverter.convert(values[0], type);
+            return ValuesConverter.convert(values[0], type, connectionInfo);
         }
     }
 
@@ -149,5 +158,26 @@ public class ConvertFunction extends AbstractGeneralFunction {
                         typeNode.getName(), typeNode.getPosition());
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+            return false;
+        }
+
+        ConvertFunction that = (ConvertFunction) o;
+        return convertCharset == that.convertCharset &&
+                Objects.equals(charset, that.charset) &&
+                type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), convertCharset, charset, type);
     }
 }

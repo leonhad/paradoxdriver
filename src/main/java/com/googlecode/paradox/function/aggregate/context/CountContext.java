@@ -10,12 +10,13 @@
  */
 package com.googlecode.paradox.function.aggregate.context;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
 
 /**
  * Count context.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class CountContext implements IGroupingContext<Integer> {
@@ -32,7 +33,7 @@ public class CountContext implements IGroupingContext<Integer> {
     }
 
     @Override
-    public void process(final IGroupingContext<Integer> context) {
+    public void process(final IGroupingContext<Integer> context, final ConnectionInfo connectionInfo) {
         if (context != null) {
             this.value += ((CountContext) context).value;
         }

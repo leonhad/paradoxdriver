@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.function.aggregate.context;
 
+import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.aggregate.IGroupingContext;
 import com.googlecode.paradox.rowset.ValuesComparator;
 
@@ -35,11 +36,11 @@ public class MaxContext implements IGroupingContext<BigDecimal> {
     }
 
     @Override
-    public void process(final IGroupingContext<BigDecimal> context) {
+    public void process(final IGroupingContext<BigDecimal> context, final ConnectionInfo connectionInfo) {
         if (context != null) {
             final BigDecimal other = ((MaxContext) context).value;
 
-            if (ValuesComparator.compare(this.value, other) < 0) {
+            if (ValuesComparator.compare(this.value, other, connectionInfo) < 0) {
                 this.value = other;
             }
         }

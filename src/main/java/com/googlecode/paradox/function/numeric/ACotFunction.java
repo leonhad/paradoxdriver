@@ -17,9 +17,9 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 /**
- * The SQL ACOT functions.
+ * The SQL ARC-COT functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class ACotFunction extends AbstractNumericFunction {
@@ -50,7 +50,7 @@ public class ACotFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        final Double value = ValuesConverter.getDouble(values[0]);
+        final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         if (value == null) {
             return null;
         }

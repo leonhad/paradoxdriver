@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Stores the not equals node.
  *
- * @version 1.12
+ * @version 1.13
  * @since 1.1
  */
 public final class NotEqualsNode extends AbstractComparableNode {
@@ -44,6 +44,6 @@ public final class NotEqualsNode extends AbstractComparableNode {
             throws SQLException {
         final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
         final Object value2 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
-        return !ValuesComparator.equals(value1, value2);
+        return !ValuesComparator.equals(value1, value2, context.getConnectionInfo());
     }
 }

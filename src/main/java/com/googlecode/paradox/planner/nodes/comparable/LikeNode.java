@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Like node.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.6.0
  */
 public class LikeNode extends AbstractComparableNode {
@@ -55,8 +55,8 @@ public class LikeNode extends AbstractComparableNode {
             return false;
         }
 
-        return Expressions.accept(context.getLocale(), ValuesConverter.getString(value1),
-                ValuesConverter.getString(value2), true, escape);
+        return Expressions.accept(context.getLocale(), ValuesConverter.getString(value1, context.getConnectionInfo()),
+                ValuesConverter.getString(value2, context.getConnectionInfo()), true, escape);
     }
 
     /**

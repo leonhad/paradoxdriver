@@ -17,9 +17,9 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 /**
- * The SQL ISDATE functions.
+ * The SQL IS DATE functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class IsDateFunction extends AbstractDateFunction {
@@ -50,7 +50,7 @@ public class IsDateFunction extends AbstractDateFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        if (ValuesConverter.getDate(values[0]) != null) {
+        if (ValuesConverter.getDate(values[0], connectionInfo) != null) {
             return Boolean.TRUE;
         }
 

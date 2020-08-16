@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * The SQL sum function.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -55,7 +55,7 @@ public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
     @Override
     public SumContext execute(final ConnectionInfo connectionInfo, final Object[] values,
                               final ParadoxType[] types, final FieldNode[] fields) {
-        BigDecimal value = ValuesConverter.getBigDecimal(values[0]);
+        BigDecimal value = ValuesConverter.getBigDecimal(values[0], connectionInfo);
         if (values[0] == null) {
             value = BigDecimal.ZERO;
         }

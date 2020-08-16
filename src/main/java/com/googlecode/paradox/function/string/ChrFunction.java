@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * The SQL CHR function.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.6.0
  */
 public class ChrFunction extends AbstractStringFunction {
@@ -58,7 +58,7 @@ public class ChrFunction extends AbstractStringFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final int value = ValuesConverter.getPositiveInteger(values[0]);
+        final int value = ValuesConverter.getPositiveInteger(values[0], connectionInfo);
         return (char) value;
     }
 }

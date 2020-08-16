@@ -23,7 +23,7 @@ import java.sql.SQLException;
 /**
  * The SQL SUBSTRING function.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public class SubstringFunction extends AbstractStringFunction {
@@ -57,7 +57,7 @@ public class SubstringFunction extends AbstractStringFunction {
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
-        final int index = ValuesConverter.getPositiveInteger(values[1]) - 1;
+        final int index = ValuesConverter.getPositiveInteger(values[1], connectionInfo) - 1;
         if (index == -1) {
             throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, values[1]);
         }
@@ -67,7 +67,7 @@ public class SubstringFunction extends AbstractStringFunction {
             return "";
         }
 
-        final int length = ValuesConverter.getPositiveInteger(values[2]);
+        final int length = ValuesConverter.getPositiveInteger(values[2], connectionInfo);
         if (index + length > value.length()) {
             return value.substring(index);
         }

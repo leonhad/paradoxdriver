@@ -27,6 +27,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The SQL EXTRACT function.
@@ -56,22 +57,29 @@ public class ExtractFunction extends AbstractDateFunction {
             new Column("date", ParadoxType.TIMESTAMP, "The date to extract.", 2, false, IN)
     };
 
-    private static Calendar getTime(final Object value) {
-        Time time = ValuesConverter.getTime(value);
+    /**
+     * Creates a new instance.
+     */
+    public ExtractFunction() {
+        super();
+    }
+
+    private static Calendar getTime(final Object value, final ConnectionInfo connectionInfo) {
+        Time time = ValuesConverter.getTime(value, connectionInfo);
         Calendar c = Calendar.getInstance();
         c.setTime(time);
         return c;
     }
 
-    private static Calendar getTimestamp(final Object value) {
-        Timestamp timestamp = ValuesConverter.getTimestamp(value);
+    private static Calendar getTimestamp(final Object value, final ConnectionInfo connectionInfo) {
+        Timestamp timestamp = ValuesConverter.getTimestamp(value, connectionInfo);
         Calendar c = Calendar.getInstance();
         c.setTime(timestamp);
         return c;
     }
 
-    private static Calendar getDate(final Object value) {
-        Date time = ValuesConverter.getDate(value);
+    private static Calendar getDate(final Object value, final ConnectionInfo connectionInfo) {
+        Date time = ValuesConverter.getDate(value, connectionInfo);
         Calendar c = Calendar.getInstance();
         c.setTime(time);
         return c;
@@ -88,6 +96,7 @@ public class ExtractFunction extends AbstractDateFunction {
     }
 
     @Override
+    @SuppressWarnings("java:S1541")
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
 
@@ -96,34 +105,34 @@ public class ExtractFunction extends AbstractDateFunction {
         int ret = 0;
         switch (type) {
             case MILLISECOND:
-                ret = getTimestamp(value).get(Calendar.MILLISECOND);
+                ret = getTimestamp(value, connectionInfo).get(Calendar.MILLISECOND);
                 break;
             case SECOND:
-                ret = getTime(value).get(Calendar.SECOND);
+                ret = getTime(value, connectionInfo).get(Calendar.SECOND);
                 break;
             case MINUTE:
-                ret = getTime(value).get(Calendar.MINUTE);
+                ret = getTime(value, connectionInfo).get(Calendar.MINUTE);
                 break;
             case HOUR:
-                ret = getTime(value).get(Calendar.HOUR_OF_DAY);
+                ret = getTime(value, connectionInfo).get(Calendar.HOUR_OF_DAY);
                 break;
             case DAY:
-                ret = getDate(value).get(Calendar.DAY_OF_MONTH);
+                ret = getDate(value, connectionInfo).get(Calendar.DAY_OF_MONTH);
                 break;
             case DAYOFYEAR:
-                ret = getDate(value).get(Calendar.DAY_OF_YEAR);
+                ret = getDate(value, connectionInfo).get(Calendar.DAY_OF_YEAR);
                 break;
             case MONTH:
-                ret = getDate(value).get(Calendar.MONTH) + 1;
+                ret = getDate(value, connectionInfo).get(Calendar.MONTH) + 1;
                 break;
             case YEAR:
-                ret = getDate(value).get(Calendar.YEAR);
+                ret = getDate(value, connectionInfo).get(Calendar.YEAR);
                 break;
             case WEEK:
-                ret = getDate(value).get(Calendar.WEEK_OF_YEAR);
+                ret = getDate(value, connectionInfo).get(Calendar.WEEK_OF_YEAR);
                 break;
             case QUARTER:
-                ret = (getDate(value).get(Calendar.MONTH) / 3) + 1;
+                ret = (getDate(value, connectionInfo).get(Calendar.MONTH) / 3) + 1;
                 break;
         }
 
@@ -146,5 +155,24 @@ public class ExtractFunction extends AbstractDateFunction {
         // Convert to a non fields do avoid Planner problems.
         parameters.set(0, new ValueNode(value.getName().toUpperCase(), value.getPosition(),
                 ParadoxType.VARCHAR));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+            return false;
+        }
+
+        ExtractFunction that = (ExtractFunction) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
     }
 }

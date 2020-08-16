@@ -30,7 +30,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.functionWrapper;
 /**
  * Group by node.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class GroupByNode {
@@ -173,7 +173,7 @@ public class GroupByNode {
         }
 
         // Is not possible to group in parallel.
-        return stream.filter(FunctionalUtils.groupingByKeys(functionColumns, groupColumns))
+        return stream.filter(FunctionalUtils.groupingByKeys(functionColumns, groupColumns, context.getConnectionInfo()))
                 .collect(Collectors.toList()).stream()
                 .filter(context.getCancelPredicate())
                 .map(functionWrapper(FunctionalUtils.removeGrouping(context, functionColumns, columns)));

@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Stores the IN node.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.6.0
  */
 public final class InNode extends AbstractComparableNode {
@@ -71,7 +71,7 @@ public final class InNode extends AbstractComparableNode {
 
         for (final ValueNode value : values) {
             final Object value2 = value.getName();
-            if (ValuesComparator.equals(value1, value2)) {
+            if (ValuesComparator.equals(value1, value2, context.getConnectionInfo())) {
                 return true;
             }
         }

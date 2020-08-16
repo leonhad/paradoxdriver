@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Stores the equals node.
  *
- * @version 1.12
+ * @version 1.13
  * @since 1.1
  */
 public final class EqualsNode extends AbstractComparableNode {
@@ -45,6 +45,6 @@ public final class EqualsNode extends AbstractComparableNode {
 
         final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
         final Object value2 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
-        return ValuesComparator.equals(value1, value2);
+        return ValuesComparator.equals(value1, value2, context.getConnectionInfo());
     }
 }

@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 /**
  * Stores the connection information properties.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public final class ConnectionInfo {
@@ -151,6 +151,11 @@ public final class ConnectionInfo {
     private String user = DEFAULT_USER;
 
     /**
+     * Current warnings.
+     */
+    private SQLWarning warning;
+
+    /**
      * Creates a new instance.
      *
      * @param url the connection url.
@@ -160,11 +165,6 @@ public final class ConnectionInfo {
     }
 
     /**
-     * Current warnings.
-     */
-    private SQLWarning warning;
-
-    /**
      * List the connections schema in selected catalog.
      *
      * @param catalog       the database catalog.
@@ -172,6 +172,7 @@ public final class ConnectionInfo {
      * @return the schema directories.
      * @throws SQLException in case of failures.
      */
+    @SuppressWarnings({"java:S3776", "java:S1541"})
     public List<Schema> getSchemas(final String catalog, final String schemaPattern) throws SQLException {
         File[] catalogs = null;
 
@@ -221,6 +222,7 @@ public final class ConnectionInfo {
      * @return the schema directories.
      * @throws SQLException in case of failures.
      */
+    @SuppressWarnings({"java:S3776", "java:S1541"})
     public Schema getSchema(final String catalog, final String schemaName) throws SQLException {
         File[] catalogs = null;
 
@@ -690,6 +692,21 @@ public final class ConnectionInfo {
         } else {
             warningToAdd = new SQLWarning(exception);
         }
+
+        if (this.warning == null) {
+            this.warning = warningToAdd;
+        } else {
+            this.warning.setNextWarning(warningToAdd);
+        }
+    }
+
+    /**
+     * Add a SQL warning.
+     *
+     * @param message the exception to add.
+     */
+    public void addWarning(final String message) {
+        SQLWarning warningToAdd = new SQLWarning(message);
 
         if (this.warning == null) {
             this.warning = warningToAdd;

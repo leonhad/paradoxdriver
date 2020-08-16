@@ -17,9 +17,9 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.rowset.ValuesConverter;
 
 /**
- * The SQL ISNUMERIC functions.
+ * The SQL IS NUMERIC functions.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.6.0
  */
 public class IsNumericFunction extends AbstractNumericFunction {
@@ -54,7 +54,7 @@ public class IsNumericFunction extends AbstractNumericFunction {
             return 0;
         }
 
-        if (ValuesConverter.getDouble(values[0]) != null) {
+        if (ValuesConverter.getDouble(values[0], connectionInfo) != null) {
             return Boolean.TRUE;
         }
 

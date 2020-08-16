@@ -19,7 +19,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL BINARY functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class BinaryFunction extends AbstractGeneralFunction {
@@ -50,6 +50,6 @@ public class BinaryFunction extends AbstractGeneralFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        return ValuesConverter.getByteArray(values[0]);
+        return ValuesConverter.getByteArray(values[0], connectionInfo);
     }
 }

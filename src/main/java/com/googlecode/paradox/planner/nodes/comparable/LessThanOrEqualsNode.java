@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Store the less than or equals node.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.6.0
  */
 public final class LessThanOrEqualsNode extends AbstractComparableNode {
@@ -45,6 +45,6 @@ public final class LessThanOrEqualsNode extends AbstractComparableNode {
             throws SQLException {
         final Object value1 = FieldValueUtils.getValue(context, row, field, columnsLoaded);
         final Object value2 = FieldValueUtils.getValue(context, row, last, columnsLoaded);
-        return ValuesComparator.compare(value1, value2, i -> i <= 0);
+        return ValuesComparator.compare(value1, value2, i -> i <= 0, context.getConnectionInfo());
     }
 }

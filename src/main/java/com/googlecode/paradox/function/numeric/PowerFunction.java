@@ -19,7 +19,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL POWER functions.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class PowerFunction extends AbstractNumericFunction {
@@ -51,8 +51,8 @@ public class PowerFunction extends AbstractNumericFunction {
     @Override
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) {
-        final Double value = ValuesConverter.getDouble(values[0]);
-        final Double exponent = ValuesConverter.getDouble(values[1]);
+        final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
+        final Double exponent = ValuesConverter.getDouble(values[1], connectionInfo);
         if (value == null || exponent == null) {
             return null;
         }
