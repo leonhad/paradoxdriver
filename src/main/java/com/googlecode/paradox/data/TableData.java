@@ -60,6 +60,7 @@ public final class TableData extends ParadoxData {
             for (final File file : fileList) {
                 try {
                     final ParadoxTable table = loadHeader(file, connectionInfo);
+                    Arrays.stream(table.getFields()).forEach(field -> field.setTable(table));
                     table.loadIndexes();
                     tables.add(table);
                 } catch (final SQLException e) {

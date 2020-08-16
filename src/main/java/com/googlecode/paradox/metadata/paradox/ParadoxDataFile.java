@@ -137,6 +137,11 @@ public class ParadoxDataFile {
     private long encryptedData;
 
     /**
+     * Field order ID.
+     */
+    private String sortOrderID;
+
+    /**
      * Connection information.
      */
     protected final ConnectionInfo connectionInfo;
@@ -170,6 +175,24 @@ public class ParadoxDataFile {
         }
 
         return null;
+    }
+
+    /**
+     * Gets the sorter order id.
+     *
+     * @return the sorter order id.
+     */
+    public String getSortOrderID() {
+        return this.sortOrderID;
+    }
+
+    /**
+     * Sets the sort order ID.
+     *
+     * @param sortOrderID the sort order ID to set.
+     */
+    public void setSortOrderID(final String sortOrderID) {
+        this.sortOrderID = sortOrderID;
     }
 
     public String getSchemaName() {

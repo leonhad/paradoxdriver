@@ -14,10 +14,7 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
-import com.googlecode.paradox.metadata.paradox.ParadoxPK;
-import com.googlecode.paradox.metadata.paradox.ParadoxTable;
+import com.googlecode.paradox.metadata.paradox.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -135,7 +132,7 @@ public class ParadoxData {
                 // Secondary index .YGn file (inc or non inc).
             case 0x08:
                 // Incrementing secondary index .XGn file.
-                return new ParadoxDataFile(file, connectionInfo);
+                return new ParadoxIndex(file, connectionInfo);
             default:
                 throw new ParadoxDataException(DataError.UNSUPPORTED_FILE_TYPE, type);
         }
@@ -210,12 +207,17 @@ public class ParadoxData {
             channel.read(buffer);
 
             // Only for DB files and Xnn files.
-            if (data instanceof ParadoxTable) {
+            if (data instanceof ParadoxTable || data instanceof ParadoxIndex) {
                 fixPositionByVersion(data, buffer, fields.length);
-                parseTableFieldsName(data, buffer, fields);
+                parseFieldsName(data, buffer, fields);
 
-                // TODO Field numbers 4.x and up?
+
                 parseTableFieldsOrder(data, buffer);
+            }
+
+            if (data instanceof ParadoxIndex) {
+                parseSortID(buffer, data);
+                parseIndexName(buffer, data);
             }
 
             return data;
@@ -275,8 +277,8 @@ public class ParadoxData {
      * @param buffer   the buffer to read of.
      * @param fields   the field list.
      */
-    private static void parseTableFieldsName(final ParadoxDataFile dataFile, final ByteBuffer buffer,
-                                             final ParadoxField[] fields) {
+    private static void parseFieldsName(final ParadoxDataFile dataFile, final ByteBuffer buffer,
+                                        final ParadoxField[] fields) {
         final ByteBuffer name = ByteBuffer.allocate(261);
         for (int loop = 0; loop < dataFile.getFieldCount(); loop++) {
             name.clear();
@@ -302,9 +304,52 @@ public class ParadoxData {
     private static void parseTableFieldsOrder(final ParadoxDataFile dataFile, final ByteBuffer buffer) {
         final short[] fieldsOrder = new short[dataFile.getFieldCount()];
         for (int loop = 0; loop < dataFile.getFieldCount(); loop++) {
-            fieldsOrder[loop] = buffer.get();
+            fieldsOrder[loop] = buffer.getShort();
         }
 
         dataFile.setFieldsOrder(fieldsOrder);
+    }
+
+    /**
+     * Parse the sort order ID.
+     *
+     * @param buffer the buffer to parse.
+     * @param index  the paradox index.
+     */
+    private static void parseSortID(final ByteBuffer buffer, final ParadoxDataFile index) {
+        final ByteBuffer sortOrderID = ByteBuffer.allocate(26);
+        while (true) {
+            final byte c = buffer.get();
+            if (c == 0) {
+                break;
+            }
+            sortOrderID.put(c);
+        }
+
+        sortOrderID.flip();
+        index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
+    }
+
+    /**
+     * Parse the data file name.
+     *
+     * @param buffer the buffer to parse.
+     * @param index  the paradox index.
+     */
+    private static void parseIndexName(final ByteBuffer buffer, final ParadoxDataFile index) {
+        final ByteBuffer name = ByteBuffer.allocate(26);
+        while (true) {
+            final byte c = buffer.get();
+            if (c == 0) {
+                break;
+            }
+            name.put(c);
+        }
+
+        name.flip();
+        final String tempName = index.getCharset().decode(name).toString();
+        if (tempName.length() != 0) {
+            index.setName(tempName);
+        }
     }
 }

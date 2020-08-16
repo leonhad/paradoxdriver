@@ -28,27 +28,20 @@ import java.util.Set;
  */
 public final class ParadoxIndex extends ParadoxDataFile implements Index {
 
-    /**
-     * Field order ID.
-     */
-    private String sortOrderID;
 
     /**
      * Paradox table.
      */
-    private final Table table;
+    private Table table;
 
     /**
      * Creates a new instance.
      *
      * @param file           the file to read of.
      * @param connectionInfo the connection information.
-     * @param table          the index original table.
      */
-    public ParadoxIndex(final File file, final ConnectionInfo connectionInfo, final Table table) {
+    public ParadoxIndex(final File file, final ConnectionInfo connectionInfo) {
         super(file, connectionInfo);
-
-        this.table = table;
     }
 
     /**
@@ -78,21 +71,8 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
         return Arrays.stream(fields).filter(tableFields::remove).toArray(Field[]::new);
     }
 
-    /**
-     * Gets the sorter order id.
-     *
-     * @return the sorter order id.
-     */
-    public String getSortOrderID() {
-        return this.sortOrderID;
-    }
-
-    /**
-     * Sets the sort order ID.
-     *
-     * @param sortOrderID the sort order ID to set.
-     */
-    public void setSortOrderID(final String sortOrderID) {
-        this.sortOrderID = sortOrderID;
+    public void setTable(Table table) {
+        this.table = table;
+        Arrays.stream(fields).forEach(field -> field.setTable(table));
     }
 }
