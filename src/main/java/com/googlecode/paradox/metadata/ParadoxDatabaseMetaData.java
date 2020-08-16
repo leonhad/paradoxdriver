@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * @version 1.7
  * @since 1.0
  */
-public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
+public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData {
 
     /**
      * The tables cat name field.
@@ -120,7 +120,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      *
      * @param connection the Paradox connection.
      */
-    public DatabaseMetaData(final ParadoxConnection connection) {
+    public ParadoxDatabaseMetaData(final ParadoxConnection connection) {
         this.connection = connection;
         this.connectionInfo = connection.getConnectionInfo();
     }
@@ -264,7 +264,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getDatabaseMajorVersion() {
-        return DatabaseMetaData.PARADOX_MAJOR_VERSION;
+        return ParadoxDatabaseMetaData.PARADOX_MAJOR_VERSION;
     }
 
     /**
@@ -272,7 +272,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getDatabaseMinorVersion() {
-        return DatabaseMetaData.PARADOX_MINOR_VERSION;
+        return ParadoxDatabaseMetaData.PARADOX_MINOR_VERSION;
     }
 
     /**
@@ -505,7 +505,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
     @Override
     public ResultSet getCatalogs() throws ParadoxDataException {
         final List<Column> columns = Collections
-                .singletonList(new Column(DatabaseMetaData.TABLE_CAT, ParadoxType.VARCHAR));
+                .singletonList(new Column(ParadoxDatabaseMetaData.TABLE_CAT, ParadoxType.VARCHAR));
 
         final List<Object[]> values = connectionInfo.listCatalogs().stream()
                 .map(name -> new Object[]{name})
@@ -618,7 +618,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getJDBCMajorVersion() {
-        return DatabaseMetaData.JDBC_MAJOR_VERSION;
+        return ParadoxDatabaseMetaData.JDBC_MAJOR_VERSION;
     }
 
     /**
@@ -626,7 +626,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getJDBCMinorVersion() {
-        return DatabaseMetaData.JDBC_MINOR_VERSION;
+        return ParadoxDatabaseMetaData.JDBC_MINOR_VERSION;
     }
 
     /**
@@ -634,7 +634,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxBinaryLiteralLength() {
-        return DatabaseMetaData.PARADOX_MAX_COLUMN_NAME;
+        return ParadoxDatabaseMetaData.PARADOX_MAX_COLUMN_NAME;
     }
 
     /**
@@ -642,7 +642,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxCatalogNameLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -650,7 +650,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxCharLiteralLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -658,7 +658,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxColumnNameLength() {
-        return DatabaseMetaData.PARADOX_MAX_COLUMN_NAME;
+        return ParadoxDatabaseMetaData.PARADOX_MAX_COLUMN_NAME;
     }
 
     /**
@@ -666,7 +666,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInGroupBy() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -674,7 +674,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInIndex() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -682,7 +682,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInOrderBy() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -690,7 +690,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInSelect() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -698,7 +698,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxColumnsInTable() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -714,7 +714,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxCursorNameLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -722,7 +722,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxIndexLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -730,7 +730,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxProcedureNameLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -738,7 +738,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxRowSize() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -746,7 +746,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxSchemaNameLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -770,7 +770,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxTableNameLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -778,7 +778,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxTablesInSelect() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -786,7 +786,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
      */
     @Override
     public int getMaxUserNameLength() {
-        return DatabaseMetaData.STRING_MAX_SIZE;
+        return ParadoxDatabaseMetaData.STRING_MAX_SIZE;
     }
 
     /**
@@ -1935,7 +1935,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
             // Column size.
             row.add(field.getSize());
             // Buffer length.
-            row.add(DatabaseMetaData.MAX_INT_SIZE);
+            row.add(ParadoxDatabaseMetaData.MAX_INT_SIZE);
             // Decimal digits.
             row.add(field.getPrecision());
             // Number precision radix.

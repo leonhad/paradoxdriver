@@ -151,4 +151,40 @@ public interface Table {
     default int getAutoIncrementValue() {
         return 0;
     }
+
+    /**
+     * Return the block size in bytes.
+     *
+     * @return the block size in bytes.
+     */
+    default int getBlockSizeBytes() {
+        return 0;
+    }
+
+    /**
+     * Gets the file total blocks.
+     *
+     * @return the file total blocks.
+     */
+    default int getTotalBlocks() {
+        return 0;
+    }
+
+    /**
+     * Gets the used blocks.
+     *
+     * @return the used blocks.
+     */
+    default int getUsedBlocks() {
+        return 0;
+    }
+
+    /**
+     * Gets the record size.
+     *
+     * @return the record size.
+     */
+    default int getRecordSize() {
+        return Arrays.stream(getFields()).mapToInt(Field::getRealSize).sum();
+    }
 }

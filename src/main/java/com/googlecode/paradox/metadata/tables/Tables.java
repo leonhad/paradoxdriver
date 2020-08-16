@@ -46,6 +46,11 @@ public class Tables implements Table {
     private final Field encrypted = new Field("encrypted", 0, 3, ParadoxType.VARCHAR, this, 7);
     private final Field writeProtected = new Field("write_protected", 0, 3, ParadoxType.VARCHAR, this, 8);
     private final Field count = new Field("count", 0, 0, ParadoxType.VARCHAR, this, 9);
+    private final Field blockSize = new Field("block_size", 0, 2, ParadoxType.INTEGER, this, 10);
+    private final Field totalBlocks = new Field("total_blocks", 0, 2, ParadoxType.INTEGER, this, 11);
+    private final Field usedBlocks = new Field("used_blocks", 0, 2, ParadoxType.INTEGER, this, 12);
+    private final Field freeBlocks = new Field("free_blocks", 0, 2, ParadoxType.INTEGER, this, 13);
+    private final Field recordSize = new Field("record_size", 0, 2, ParadoxType.INTEGER, this, 14);
 
     /**
      * Creates a new instance.
@@ -87,7 +92,12 @@ public class Tables implements Table {
                 charset,
                 encrypted,
                 writeProtected,
-                count
+                count,
+                blockSize,
+                totalBlocks,
+                usedBlocks,
+                freeBlocks,
+                recordSize
         };
     }
 
@@ -132,6 +142,16 @@ public class Tables implements Table {
                         }
                     } else if (this.count.equals(field) && table.getCharset() != null) {
                         value = table.getRowCount();
+                    } else if (this.blockSize.equals(field)) {
+                        value = table.getBlockSizeBytes();
+                    } else if (this.totalBlocks.equals(field)) {
+                        value = table.getTotalBlocks();
+                    } else if (this.usedBlocks.equals(field)) {
+                        value = table.getUsedBlocks();
+                    } else if (this.freeBlocks.equals(field)) {
+                        value = table.getTotalBlocks() - table.getUsedBlocks();
+                    } else if (this.recordSize.equals(field)) {
+                        value = table.getRecordSize();
                     }
 
                     row[i] = value;

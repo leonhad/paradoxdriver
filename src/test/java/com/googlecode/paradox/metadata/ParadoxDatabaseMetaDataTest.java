@@ -24,12 +24,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
- * Unit test for {@link DatabaseMetaData} class.
+ * Unit test for {@link ParadoxDatabaseMetaData} class.
  *
  * @version 1.1
  * @since 1.3
  */
-public class DatabaseMetaDataTest {
+public class ParadoxDatabaseMetaDataTest {
     /**
      * The connection string used in this tests.
      */
@@ -69,7 +69,7 @@ public class DatabaseMetaDataTest {
      */
     @Before
     public void connect() throws Exception {
-        this.conn = DriverManager.getConnection(DatabaseMetaDataTest.CONNECTION_STRING + "db");
+        this.conn = DriverManager.getConnection(ParadoxDatabaseMetaDataTest.CONNECTION_STRING + "db");
     }
 
     /**
