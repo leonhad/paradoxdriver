@@ -78,12 +78,12 @@ public final class BCDField implements FieldParser {
         }
 
         final ParadoxField field = (ParadoxField) originalField;
-        int realSize = field.getRealSize();
-        if (realSize == MAX_DIGITS) {
+        final int precision = field.getPrecision();
+        if (precision == MAX_DIGITS) {
             sb.insert(0, "0.");
         } else {
-            sb.insert(sb.length() - realSize, '.');
-            if (realSize == 0) {
+            sb.insert(sb.length() - precision, '.');
+            if (precision == 0) {
                 sb.append('0');
             }
             removeLeadingZeroes(sb);

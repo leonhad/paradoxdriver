@@ -38,7 +38,7 @@ public final class ParadoxField extends Field {
     /**
      * Default blob precision.
      */
-    private static final int BLOB_SIZE_PADDING = 10;
+    public static final int BLOB_SIZE_PADDING = 10;
 
     /**
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.

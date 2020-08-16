@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.*;
 
 /**
@@ -331,7 +332,12 @@ public final class TableData extends ParadoxData {
             if (index != -1) {
                 row[index] = ParadoxFieldFactory.parse(table, buffer, field);
             } else {
-                buffer.position(buffer.position() + field.getSize());
+                int size = field.getRealSize();
+                if ((field.getSqlType() == Types.CLOB) || (field.getSqlType() == Types.BLOB)) {
+                    size += ParadoxField.BLOB_SIZE_PADDING;
+                }
+
+                buffer.position(buffer.position() + size);
             }
         }
 
