@@ -45,11 +45,10 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      * Creates a new instance.
      *
      * @param file           table references file.
-     * @param name           table name.
      * @param connectionInfo the connection information.
      */
-    public ParadoxTable(final File file, final String name, final ConnectionInfo connectionInfo) {
-        super(file, name, connectionInfo);
+    public ParadoxTable(final File file, final ConnectionInfo connectionInfo) {
+        super(file, connectionInfo);
     }
 
     /**
@@ -96,6 +95,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      *
      * @return the block size in bytes.
      */
+    @Override
     public int getBlockSizeBytes() {
         // The blockSize is always in KiB.
         return this.blockSize * 1_024;

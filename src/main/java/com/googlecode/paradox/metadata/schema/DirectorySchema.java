@@ -64,7 +64,7 @@ public class DirectorySchema implements Schema {
     @Override
     public Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException {
         final List<Table> tables = new ArrayList<>();
-        tables.addAll(TableData.listTables(schemaFile, connectionInfo));
+        tables.addAll(TableData.listTables(schemaFile, null, connectionInfo));
         tables.addAll(View.search(connectionInfo, name(), schemaFile));
         return tables.stream().filter(table -> tableName.equalsIgnoreCase(table.getName())).findFirst().orElse(null);
     }

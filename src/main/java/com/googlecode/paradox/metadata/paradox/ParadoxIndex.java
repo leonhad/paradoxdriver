@@ -42,13 +42,11 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
      * Creates a new instance.
      *
      * @param file           the file to read of.
-     * @param name           index name.
      * @param connectionInfo the connection information.
      * @param table          the index original table.
      */
-    public ParadoxIndex(final File file, final String name, final ConnectionInfo connectionInfo,
-                        final Table table) {
-        super(file, name, connectionInfo);
+    public ParadoxIndex(final File file, final ConnectionInfo connectionInfo, final Table table) {
+        super(file, connectionInfo);
 
         this.table = table;
     }

@@ -12,11 +12,6 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
-import com.googlecode.paradox.metadata.paradox.ParadoxTable;
-import com.googlecode.paradox.results.Column;
-import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 import com.googlecode.paradox.utils.Utils;
 import org.junit.*;
 
@@ -73,49 +68,6 @@ public class ParadoxResultSetMetaDataTest {
     public void connect() throws Exception {
         this.conn = (ParadoxConnection) DriverManager
                 .getConnection(ParadoxResultSetMetaDataTest.CONNECTION_STRING + "db");
-    }
-
-    /**
-     * Test for column metadata.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testColumn() throws SQLException {
-        final Column column = new Column(new ParadoxField(ParadoxType.INTEGER));
-        column.getField().setTable(new ParadoxTable(null, "NAME", conn.getConnectionInfo()));
-        column.getField().setSize(255);
-        column.setName("name");
-        column.setIndex(1);
-        column.setPrecision(2);
-        column.getField().setTable(new ParadoxTable(null, "table", conn.getConnectionInfo()));
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
-                Collections.singletonList(column));
-        Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
-        Assert.assertEquals("Testing for class name.", ParadoxType.INTEGER.getJavaClass().getName(),
-                metaData.getColumnClassName(1));
-        Assert.assertEquals("Testing for catalog name.", conn.getCatalog(), metaData.getCatalogName(1));
-        Assert.assertEquals("Testing for schema name.", "db", metaData.getSchemaName(1));
-        Assert.assertEquals("Testing for column display size.", Constants.MAX_STRING_SIZE,
-                metaData.getColumnDisplaySize(1));
-        Assert.assertEquals("Testing for column label.", "name", metaData.getColumnLabel(1));
-        Assert.assertEquals("Testing for column name.", "name", metaData.getColumnName(1));
-        Assert.assertEquals("Testing for column type.", ParadoxType.INTEGER.getSQLType(), metaData.getColumnType(1));
-        Assert.assertEquals("Testing for column type name.", ParadoxType.INTEGER.name(),
-                metaData.getColumnTypeName(1));
-        Assert.assertEquals("Testing for column precision.", 2, metaData.getPrecision(1));
-        Assert.assertEquals("Testing for column scale.", 2, metaData.getScale(1));
-        Assert.assertEquals("Testing for table name.", "table", metaData.getTableName(1));
-        Assert.assertFalse("Testing for auto increment value.", metaData.isAutoIncrement(1));
-        Assert.assertFalse("Testing for case sensitivity.", metaData.isCaseSensitive(1));
-        Assert.assertFalse("Testing for currency.", metaData.isCurrency(1));
-        Assert.assertFalse("Testing for writable.", metaData.isWritable(1));
-        Assert.assertFalse("Testing for definitely writable.", metaData.isDefinitelyWritable(1));
-        Assert.assertTrue("Testing for read only.", metaData.isReadOnly(1));
-        Assert.assertTrue("Testing for searchable.", metaData.isSearchable(1));
-        Assert.assertTrue("Testing for sign.", metaData.isSigned(1));
-
-        Assert.assertEquals("Testing for nullable.", java.sql.ResultSetMetaData.columnNullable, metaData.isNullable(1));
     }
 
     /**

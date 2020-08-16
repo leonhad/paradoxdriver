@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Reads index data files.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.0
  */
 public final class IndexData extends ParadoxData {
@@ -91,7 +91,7 @@ public final class IndexData extends ParadoxData {
 
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        final ParadoxIndex index = new ParadoxIndex(file, file.getName(), connectionInfo, table);
+        final ParadoxIndex index = new ParadoxIndex(file, connectionInfo, table);
 
         try (final FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);

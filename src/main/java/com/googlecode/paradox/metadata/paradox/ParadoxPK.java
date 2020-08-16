@@ -14,10 +14,12 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.IndexType;
 
+import java.io.File;
+
 /**
  * Stores a primary key definition..
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ParadoxPK extends ParadoxDataFile implements Index {
@@ -32,8 +34,9 @@ public final class ParadoxPK extends ParadoxDataFile implements Index {
      *
      * @param connectionInfo the connection information.
      */
-    public ParadoxPK(final ConnectionInfo connectionInfo) {
-        super(null, null, connectionInfo);
+    public ParadoxPK(final File file, final ConnectionInfo connectionInfo) {
+        super(file, connectionInfo);
+        this.name = file.getName();
     }
 
     /**

@@ -16,15 +16,11 @@ import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
-import com.googlecode.paradox.results.ParadoxType;
-import com.googlecode.paradox.utils.Constants;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -34,7 +30,7 @@ import java.util.*;
 /**
  * Utility class for loading table files.
  *
- * @version 1.8
+ * @version 1.10
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -44,29 +40,6 @@ public final class TableData extends ParadoxData {
      */
     private TableData() {
         super();
-    }
-
-    /**
-     * List all database tables.
-     *
-     * @param currentSchema  the current schema name.
-     * @param connectionInfo the connection info.
-     * @return all {@link ParadoxTable} in schema.
-     * @throws SQLException in case of failures.
-     */
-    public static List<ParadoxTable> listTables(final File currentSchema, final ConnectionInfo connectionInfo)
-            throws SQLException {
-        final ArrayList<ParadoxTable> tables = new ArrayList<>();
-
-        final File[] fileList = currentSchema.listFiles(new TableFilter(connectionInfo.getLocale()));
-        if (fileList != null) {
-            for (final File file : fileList) {
-                final ParadoxTable table = TableData.loadTableHeader(file, connectionInfo);
-                tables.add(table);
-            }
-        }
-
-        return tables;
     }
 
     /**
@@ -86,7 +59,8 @@ public final class TableData extends ParadoxData {
             Arrays.sort(fileList);
             for (final File file : fileList) {
                 try {
-                    final ParadoxTable table = TableData.loadTableHeader(file, connectionInfo);
+                    final ParadoxTable table = loadHeader(file, connectionInfo);
+                    table.loadIndexes();
                     tables.add(table);
                 } catch (final SQLException e) {
                     connectionInfo.addWarning(e);
@@ -150,166 +124,6 @@ public final class TableData extends ParadoxData {
         } catch (final IOException e) {
             throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, e);
         }
-    }
-
-    /**
-     * Fix the buffer position based on file version ID.
-     *
-     * @param table      the Paradox table.
-     * @param buffer     the buffer to fix.
-     * @param fieldsSize the field list.
-     */
-    private static void fixTablePositionByVersion(final ParadoxTable table, final ByteBuffer buffer,
-                                                  final int fieldsSize) {
-        if (table.getVersionId() > Constants.PARADOX_VERSION_4) {
-            if (table.getVersionId() == 0xC) {
-                buffer.position(0x78 + 261 + 4 + (6 * fieldsSize));
-            } else {
-                buffer.position(0x78 + 83 + (6 * fieldsSize));
-            }
-        } else {
-            buffer.position(0x58 + 83 + (6 * fieldsSize));
-        }
-    }
-
-    /**
-     * Gets the table header from a file.
-     *
-     * @param file           the {@link File} to read.
-     * @param connectionInfo the connection information.
-     * @return the {@link ParadoxTable}.
-     * @throws SQLException in case of reading errors.
-     */
-    private static ParadoxTable loadTableHeader(final File file, final ConnectionInfo connectionInfo) throws
-            SQLException {
-        final ParadoxTable table = new ParadoxTable(file, file.getName(), connectionInfo);
-
-        ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-
-        try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
-            channel.read(buffer);
-            buffer.flip();
-
-            table.setRecordSize(buffer.getShort() & 0xFFFF);
-            table.setHeaderSize(buffer.getShort() & 0xFFFF);
-            table.setType(buffer.get());
-            table.setBlockSize(buffer.get());
-            table.setRowCount(buffer.getInt());
-            table.setUsedBlocks(buffer.getShort());
-            table.setTotalBlocks(buffer.getShort());
-            table.setFirstBlock(buffer.getShort());
-            table.setLastBlock(buffer.getShort());
-
-            buffer.position(0x21);
-            table.setFieldCount(buffer.getShort());
-            table.setPrimaryFieldCount(buffer.getShort());
-
-            // Check for encrypted file.
-            buffer.position(0x25);
-            long value = buffer.getInt();
-
-            buffer.position(0x38);
-            table.setWriteProtected(buffer.get() != 0);
-            table.setVersionId(buffer.get());
-
-            // Paradox version 4.x and up.
-            if (value == 0xFF00_FF00 && table.getVersionId() > Constants.PARADOX_VERSION_4) {
-                buffer.position(0x5c);
-                value = buffer.getInt();
-            }
-
-            table.setEncryptedData(value);
-
-            buffer.position(0x49);
-            table.setAutoIncrementValue(buffer.getInt());
-            table.setFirstFreeBlock(buffer.getShort());
-
-            buffer.position(0x55);
-            table.setReferentialIntegrity(buffer.get());
-
-            parseVersionID(buffer, table, connectionInfo);
-
-            final ParadoxField[] fields = TableData.parseTableFields(table, buffer);
-
-            // Restart the buffer with all table header
-            channel.position(0);
-            buffer = ByteBuffer.allocate(table.getHeaderSize() + fields.length);
-            channel.read(buffer);
-
-            TableData.fixTablePositionByVersion(table, buffer, fields.length);
-            TableData.parseTableFieldsName(table, buffer, fields);
-
-            // Field numbers 4.x and up?
-
-            TableData.parseTableFieldsOrder(table, buffer);
-        } catch (final BufferUnderflowException | IOException e) {
-            throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, e);
-        }
-
-        table.loadIndexes();
-        return table;
-    }
-
-    /**
-     * Read fields attributes.
-     *
-     * @param table  the Paradox table.
-     * @param buffer the buffer to read of.
-     * @return the Paradox field list.
-     */
-    private static ParadoxField[] parseTableFields(final ParadoxTable table, final ByteBuffer buffer) {
-        final ParadoxField[] fields = new ParadoxField[table.getFieldCount()];
-        for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            final ParadoxField field = new ParadoxField(ParadoxType.valueOfVendor(buffer.get()), loop + 1);
-            field.setSize(buffer.get() & 0xFF);
-            field.setTable(table);
-            fields[loop] = field;
-        }
-
-        return fields;
-    }
-
-    /**
-     * Parse the Paradox fields name.
-     *
-     * @param table  the Paradox table.
-     * @param buffer the buffer to read of.
-     * @param fields the field list.
-     */
-    private static void parseTableFieldsName(final ParadoxTable table, final ByteBuffer buffer,
-                                             final ParadoxField[] fields) {
-        final ByteBuffer name = ByteBuffer.allocate(261);
-        for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            name.clear();
-
-            while (true) {
-                final byte c = buffer.get();
-                if (c == 0) {
-                    break;
-                }
-                name.put(c);
-            }
-            name.flip();
-            fields[loop].setName(table.getCharset().decode(name).toString());
-        }
-
-        table.setFields(fields);
-    }
-
-    /**
-     * Parse the fields order.
-     *
-     * @param table  the Paradox table.
-     * @param buffer the buffer to read of.
-     */
-    private static void parseTableFieldsOrder(final ParadoxTable table, final ByteBuffer buffer) {
-        final short[] fieldsOrder = new short[table.getFieldCount()];
-        for (int loop = 0; loop < table.getFieldCount(); loop++) {
-            fieldsOrder[loop] = buffer.get();
-        }
-
-        table.setFieldsOrder(fieldsOrder);
     }
 
     /**

@@ -20,9 +20,10 @@ import java.nio.charset.Charset;
 /**
  * Defines the paradox default file structure.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
+@SuppressWarnings({"java:S1448", "java:S1820"})
 public class ParadoxDataFile {
 
     /**
@@ -144,12 +145,11 @@ public class ParadoxDataFile {
      * Creates a new instance.
      *
      * @param file           the database {@link File}.
-     * @param name           the file name.
      * @param connectionInfo the connection information
      */
-    protected ParadoxDataFile(final File file, final String name, final ConnectionInfo connectionInfo) {
+    public ParadoxDataFile(final File file, final ConnectionInfo connectionInfo) {
         this.file = file;
-        this.name = Utils.removeSuffix(name, "DB");
+        this.name = Utils.removeSuffix(file.getName());
         this.connectionInfo = connectionInfo;
         if (connectionInfo != null && connectionInfo.getCharset() != null) {
             this.charset = connectionInfo.getCharset();
@@ -537,9 +537,9 @@ public class ParadoxDataFile {
     }
 
     /**
-     * Gets if this table is encrypted.
+     * Gets if this file is encrypted.
      *
-     * @return <code>true</code> if this table is encrypted.
+     * @return <code>true</code> if this file is encrypted.
      */
     public boolean isEncrypted() {
         return encryptedData != 0;

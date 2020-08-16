@@ -10,20 +10,14 @@
  */
 package com.googlecode.paradox.data.field;
 
-import com.googlecode.paradox.metadata.paradox.ParadoxField;
-import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-
 /**
  * Unit test for {@link VarcharField} class.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.3
  */
 public class VarcharFieldTest {
@@ -35,21 +29,6 @@ public class VarcharFieldTest {
     public void testInvalidMatch() {
         final VarcharField field = new VarcharField();
         Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
-    }
-
-    /**
-     * Test for parse method.
-     */
-    @Test
-    public void testParse() throws SQLException {
-        final ParadoxTable table = new ParadoxTable(null, null, null);
-        table.setCharset(StandardCharsets.ISO_8859_1);
-        final ParadoxField paradoxField = new ParadoxField(ParadoxType.VARCHAR);
-        paradoxField.setSize("test".length());
-        final VarcharField field = new VarcharField();
-        final ByteBuffer buffer = ByteBuffer.wrap("test".getBytes(table.getCharset()));
-        final Object value = field.parse(table, buffer, paradoxField);
-        Assert.assertEquals("Value not equals.", "test", value);
     }
 
     /**

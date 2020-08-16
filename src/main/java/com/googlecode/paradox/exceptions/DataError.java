@@ -13,7 +13,7 @@ package com.googlecode.paradox.exceptions;
 /**
  * Error codes.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public enum DataError {
@@ -106,7 +106,12 @@ public enum DataError {
     /**
      * Invalid catalog name.
      */
-    INVALID_CATALOG_NAME("018", "Invalid catalog name: %s");
+    INVALID_CATALOG_NAME("018", "Invalid catalog name: %s"),
+
+    /**
+     * Unsupported file type.
+     */
+    UNSUPPORTED_FILE_TYPE("019", "Unsupported file type: %s");
 
     /**
      * SQL state code.
