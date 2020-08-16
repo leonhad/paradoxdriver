@@ -10,6 +10,7 @@
  */
 package com.googlecode.paradox.data.field;
 
+import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.results.ParadoxType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,9 +58,10 @@ public class NumberFieldTest {
      */
     @Test
     public void testParse() {
-        final NumberField field = new NumberField();
+        final NumberField fieldParser = new NumberField();
+        Field field = new Field();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0xC0, (byte) 0x59, (byte) 0x20, 0, 0, 0, 0, 0});
-        final Double value = field.parse(null, buffer, null);
+        final Double value = fieldParser.parse(null, buffer, field);
         Assert.assertNotNull("Invalid value.", value);
         Assert.assertEquals("Different values.", 100.5d, value, 0);
     }

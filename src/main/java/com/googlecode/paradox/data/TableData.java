@@ -304,7 +304,7 @@ public final class TableData extends ParadoxData {
      * @param buffer the buffer to read of.
      */
     private static void parseTableFieldsOrder(final ParadoxTable table, final ByteBuffer buffer) {
-        final byte[] fieldsOrder = new byte[table.getFieldCount()];
+        final short[] fieldsOrder = new short[table.getFieldCount()];
         for (int loop = 0; loop < table.getFieldCount(); loop++) {
             fieldsOrder[loop] = buffer.get();
         }

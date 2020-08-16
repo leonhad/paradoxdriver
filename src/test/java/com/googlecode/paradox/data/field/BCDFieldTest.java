@@ -14,10 +14,7 @@ import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import org.junit.*;
 
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Unit test for BCD field.
@@ -114,6 +111,28 @@ public class BCDFieldTest {
             Assert.assertEquals("Invalid value.", 0.9999D, rs.getDouble("C"), 0.001D);
 
             Assert.assertFalse("Invalid Result Set state.", rs.next());
+        }
+    }
+
+    /**
+     * Test for BCD metadata.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testBCDMetadata() throws SQLException {
+        try (final Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
+                "SELECT C FROM fields.bcd")) {
+
+            final ResultSetMetaData metaData = rs.getMetaData();
+            Assert.assertEquals("Invalid type name.", "BCD", metaData.getColumnTypeName(1));
+        }
+
+        DatabaseMetaData databaseMetaData = conn.getMetaData();
+        try (ResultSet rs = databaseMetaData.getColumns(null, "fields", "bcd", "%")) {
+            while (rs.next()) {
+                Assert.assertEquals("Invalid type name.", "BCD", rs.getString("TYPE_NAME"));
+            }
         }
     }
 

@@ -196,9 +196,9 @@ public final class IndexData extends ParadoxData {
 
         index.setFields(fields);
 
-        final byte[] fieldsOrder = new byte[index.getFieldCount()];
+        final short[] fieldsOrder = new short[index.getFieldCount()];
         for (int loop = 0; loop < index.getFieldCount(); loop++) {
-            fieldsOrder[loop] = buffer.get();
+            fieldsOrder[loop] = buffer.getShort();
         }
 
         index.setFieldsOrder(fieldsOrder);
@@ -223,5 +223,4 @@ public final class IndexData extends ParadoxData {
         sortOrderID.flip();
         index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
     }
-
 }

@@ -8,7 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.googlecode.paradox.metadata.paradox;
+package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxException;
@@ -17,18 +17,17 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Utils;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Paradox {@link ResultSetMetaData}.
+ * Paradox {@link java.sql.ResultSetMetaData}.
  *
  * @version 1.5
  * @since 1.0
  */
-public final class ParadoxResultSetMetaData implements ResultSetMetaData {
+public final class ResultSetMetaData implements java.sql.ResultSetMetaData {
 
     /**
      * {@link ResultSet} columns.
@@ -41,12 +40,12 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     private final ConnectionInfo connectionInfo;
 
     /**
-     * Creates a new {@link ResultSetMetaData}.
+     * Creates a new {@link java.sql.ResultSetMetaData}.
      *
      * @param connectionInfo the connection information.
      * @param columns        columns in {@link ResultSet}.
      */
-    public ParadoxResultSetMetaData(final ConnectionInfo connectionInfo, final List<Column> columns) {
+    public ResultSetMetaData(final ConnectionInfo connectionInfo, final List<Column> columns) {
         this.columns = Collections.unmodifiableList(columns);
         this.connectionInfo = connectionInfo;
     }
@@ -117,7 +116,7 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     @Override
     public String getColumnTypeName(final int column) throws SQLException {
         final Column dto = this.getColumn(column);
-        return dto.getType().getName();
+        return dto.getType().name();
     }
 
     /**
@@ -198,10 +197,10 @@ public final class ParadoxResultSetMetaData implements ResultSetMetaData {
     public int isNullable(final int column) throws SQLException {
         final Column dto = this.getColumn(column);
         if (dto.isNullable()) {
-            return ResultSetMetaData.columnNullable;
+            return java.sql.ResultSetMetaData.columnNullable;
         }
 
-        return ResultSetMetaData.columnNoNulls;
+        return java.sql.ResultSetMetaData.columnNoNulls;
     }
 
     /**

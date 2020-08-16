@@ -15,6 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import org.junit.*;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 
 /**
  * Unit test for {@link IndexData}.
@@ -76,5 +77,19 @@ public class IndexDataTest {
         Assert.assertEquals("Not empty index", 0, this.conn.getConnectionInfo().getCurrentSchema()
                 .findTable(this.conn.getConnectionInfo(), "contacts")
                 .getIndexes().length);
+    }
+
+    /**
+     * Test for index name.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testIndexName() throws Exception {
+        try (final ResultSet rs = this.conn.getMetaData().getIndexInfo(null, "joins", "indexed", false, true)) {
+            Assert.assertTrue("Invalid ResultSet state", rs.next());
+            Assert.assertEquals("Invalid index name", "Descending", rs.getString("INDEX_NAME"));
+            Assert.assertFalse("Invalid ResultSet state", rs.next());
+        }
     }
 }

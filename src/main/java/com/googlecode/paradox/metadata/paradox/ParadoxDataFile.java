@@ -63,7 +63,7 @@ public class ParadoxDataFile {
     /**
      * Fields index order.
      */
-    private byte[] fieldsOrder;
+    private short[] fieldsOrder;
 
     /**
      * The first block in the file.
@@ -262,7 +262,7 @@ public class ParadoxDataFile {
      *
      * @return the file orders.
      */
-    public byte[] getFieldsOrder() {
+    public short[] getFieldsOrder() {
         return this.fieldsOrder;
     }
 
@@ -271,7 +271,7 @@ public class ParadoxDataFile {
      *
      * @param fieldsOrder the fields order to set.
      */
-    public void setFieldsOrder(final byte[] fieldsOrder) {
+    public void setFieldsOrder(final short[] fieldsOrder) {
         this.fieldsOrder = fieldsOrder;
     }
 

@@ -13,7 +13,6 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.paradox.ParadoxField;
-import com.googlecode.paradox.metadata.paradox.ParadoxResultSetMetaData;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
@@ -22,12 +21,11 @@ import com.googlecode.paradox.utils.Utils;
 import org.junit.*;
 
 import java.sql.DriverManager;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Collections;
 
 /**
- * Unit test for {@link ParadoxResultSetMetaData} class.
+ * Unit test for {@link ResultSetMetaData} class.
  *
  * @version 1.1
  * @since 1.3
@@ -91,7 +89,7 @@ public class ParadoxResultSetMetaDataTest {
         column.setIndex(1);
         column.setPrecision(2);
         column.getField().setTable(new ParadoxTable(null, "table", conn.getConnectionInfo()));
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
+        final ResultSetMetaData metaData = new ResultSetMetaData(this.conn.getConnectionInfo(),
                 Collections.singletonList(column));
         Assert.assertEquals("Testing for column size.", 1, metaData.getColumnCount());
         Assert.assertEquals("Testing for class name.", ParadoxType.INTEGER.getJavaClass().getName(),
@@ -117,7 +115,7 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertTrue("Testing for searchable.", metaData.isSearchable(1));
         Assert.assertTrue("Testing for sign.", metaData.isSigned(1));
 
-        Assert.assertEquals("Testing for nullable.", ResultSetMetaData.columnNullable, metaData.isNullable(1));
+        Assert.assertEquals("Testing for nullable.", java.sql.ResultSetMetaData.columnNullable, metaData.isNullable(1));
     }
 
     /**
@@ -125,7 +123,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testInstance() {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
+        final ResultSetMetaData metaData = new ResultSetMetaData(this.conn.getConnectionInfo(),
                 Collections.emptyList());
         Assert.assertEquals("Testing for column size.", 0, metaData.getColumnCount());
     }
@@ -137,7 +135,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumnHighValue() throws SQLException {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
+        final ResultSetMetaData metaData = new ResultSetMetaData(this.conn.getConnectionInfo(),
                 Collections.emptyList());
         metaData.getColumnName(5);
     }
@@ -149,7 +147,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumnLowValue() throws SQLException {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
+        final ResultSetMetaData metaData = new ResultSetMetaData(this.conn.getConnectionInfo(),
                 Collections.emptyList());
         metaData.getColumnName(0);
     }
@@ -159,9 +157,9 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testIsWrapFor() {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
+        final ResultSetMetaData metaData = new ResultSetMetaData(this.conn.getConnectionInfo(),
                 Collections.emptyList());
-        Assert.assertTrue("Invalid value.", metaData.isWrapperFor(ParadoxResultSetMetaData.class));
+        Assert.assertTrue("Invalid value.", metaData.isWrapperFor(ResultSetMetaData.class));
     }
 
     /**
@@ -171,8 +169,8 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testUnwrap() throws Exception {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
+        final ResultSetMetaData metaData = new ResultSetMetaData(this.conn.getConnectionInfo(),
                 Collections.emptyList());
-        Assert.assertNotNull("Invalid value.", metaData.unwrap(ParadoxResultSetMetaData.class));
+        Assert.assertNotNull("Invalid value.", metaData.unwrap(ResultSetMetaData.class));
     }
 }

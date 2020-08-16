@@ -28,7 +28,7 @@ public class ParadoxViewTest {
      */
     @Test
     public void testFieldOrder() {
-        final byte[] list = new byte[0];
+        final short[] list = new short[0];
         final ParadoxView view = new ParadoxView(null, null, null);
         view.setFieldsOrder(list);
         Assert.assertArrayEquals("Invalid value.", list, view.getFieldsOrder());

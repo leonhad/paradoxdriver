@@ -583,6 +583,10 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
         for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaName)) {
             for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
                 for (final Index index : table.getIndexes()) {
+                    if (unique && !index.isUnique()) {
+                        continue;
+                    }
+                    
                     for (final Field field : index.getFields()) {
                         final Object[] row = new Object[]{
                                 catalog,
@@ -1916,7 +1920,6 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
 
             final List<Object> row = new ArrayList<>();
 
-            final int type = field.getSqlType();
             // Table catalog.
             row.add(catalog);
             // Table schema.
@@ -1926,9 +1929,9 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
             // Column name.
             row.add(field.getAlias());
             // Data type.
-            row.add(type);
+            row.add(field.getSqlType());
             // Type name.
-            row.add(ParadoxType.valueOf(type).getName());
+            row.add(field.getType().name());
             // Column size.
             row.add(field.getSize());
             // Buffer length.
@@ -1969,7 +1972,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
             // Scope table.
             row.add(null);
             // Source datatype.
-            row.add(type);
+            row.add(field.getSqlType());
 
             // Is autoincrement.
             if (field.isAutoIncrement()) {

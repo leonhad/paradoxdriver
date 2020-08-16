@@ -346,7 +346,7 @@ public enum ParadoxType implements SQLType {
             case NUMBER:
             case NUMERIC:
             case BCD:
-                return 10;
+                return 0x0A;
             default:
                 return null;
         }
