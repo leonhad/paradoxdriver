@@ -70,6 +70,7 @@ public final class ParadoxField extends Field {
         this.realSize = size;
         int sqlType = this.getSqlType();
         if ((sqlType == Types.CLOB) || (sqlType == Types.BLOB)) {
+            // FIXME move to blob
             this.realSize -= BLOB_SIZE_PADDING;
             this.size = size;
         } else if (type == ParadoxType.CURRENCY) {

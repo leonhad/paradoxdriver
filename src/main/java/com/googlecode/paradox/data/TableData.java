@@ -333,6 +333,8 @@ public final class TableData extends ParadoxData {
                 row[index] = ParadoxFieldFactory.parse(table, buffer, field);
             } else {
                 int size = field.getRealSize();
+
+                // FIXME move to blob
                 if ((field.getSqlType() == Types.CLOB) || (field.getSqlType() == Types.BLOB)) {
                     size += ParadoxField.BLOB_SIZE_PADDING;
                 }
