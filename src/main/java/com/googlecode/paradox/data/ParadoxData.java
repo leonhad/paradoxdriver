@@ -147,7 +147,7 @@ public class ParadoxData {
      */
     protected static <T extends ParadoxDataFile> T loadHeader(final File file, final ConnectionInfo connectionInfo)
             throws SQLException {
-        ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
+        final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
@@ -200,11 +200,6 @@ public class ParadoxData {
             parseVersionID(buffer, data, connectionInfo);
 
             final ParadoxField[] fields = parseTableFields(data, buffer);
-
-            // Restart the buffer with all table header
-            channel.position(0);
-            buffer = ByteBuffer.allocate(data.getHeaderSize() + fields.length);
-            channel.read(buffer);
 
             // Only for DB files and Xnn files.
             if (data instanceof ParadoxTable || data instanceof ParadoxIndex) {
