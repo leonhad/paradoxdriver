@@ -101,7 +101,7 @@ public class ParadoxResultSetMetaDataTest {
         Assert.assertEquals("Testing for column label.", "name", metaData.getColumnLabel(1));
         Assert.assertEquals("Testing for column name.", "name", metaData.getColumnName(1));
         Assert.assertEquals("Testing for column type.", ParadoxType.INTEGER.getSQLType(), metaData.getColumnType(1));
-        Assert.assertEquals("Testing for column type name.", ParadoxType.INTEGER.getName(),
+        Assert.assertEquals("Testing for column type name.", ParadoxType.INTEGER.name(),
                 metaData.getColumnTypeName(1));
         Assert.assertEquals("Testing for column precision.", 2, metaData.getPrecision(1));
         Assert.assertEquals("Testing for column scale.", 2, metaData.getScale(1));

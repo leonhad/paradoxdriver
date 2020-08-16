@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * Stores a field from a table.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class ParadoxField extends Field {
@@ -39,11 +39,6 @@ public final class ParadoxField extends Field {
      * Default blob precision.
      */
     private static final int BLOB_SIZE_PADDING = 10;
-
-    /**
-     * The the field order.
-     */
-    private int realSize;
 
     /**
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.
@@ -81,6 +76,7 @@ public final class ParadoxField extends Field {
             this.precision = CURRENCY_PRECISION;
             this.size = size;
         } else if (type == ParadoxType.BCD) {
+            this.realSize = BCDField.BCD_SIZE;
             this.precision = size;
             this.size = BCDField.MAX_DIGITS;
         } else if (sqlType == Types.NUMERIC) {
@@ -103,15 +99,6 @@ public final class ParadoxField extends Field {
         return this.table.getName() + "." + this.name;
     }
 
-    /**
-     * Gets the file size in file.
-     *
-     * @return the file size in file.
-     */
-    public int getRealSize() {
-        return this.realSize;
-    }
-
     @Override
     public ParadoxTable getTable() {
         return (ParadoxTable) table;
@@ -127,7 +114,6 @@ public final class ParadoxField extends Field {
         }
         ParadoxField that = (ParadoxField) o;
         return orderNum == that.orderNum &&
-                realSize == that.realSize &&
                 size == that.size &&
                 type == that.type &&
                 Objects.equals(alias, that.alias) &&
@@ -137,6 +123,6 @@ public final class ParadoxField extends Field {
 
     @Override
     public int hashCode() {
-        return Objects.hash(alias, name, orderNum, realSize, size, table, type);
+        return Objects.hash(alias, name, orderNum, size, table, type);
     }
 }

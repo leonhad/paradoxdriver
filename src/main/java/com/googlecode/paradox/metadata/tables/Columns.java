@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Columns.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class Columns implements Table {
@@ -155,7 +155,7 @@ public class Columns implements Table {
                         } else if (this.maximumLength.equals(field)) {
                             value = fieldLocal.getSize();
                         } else if (this.octetLength.equals(field)) {
-                            value = fieldLocal.getSize();
+                            value = fieldLocal.getRealSize();
                         } else if (this.precision.equals(field)) {
                             value = fieldLocal.getPrecision();
                         } else if (this.radix.equals(field) && fieldLocal.getType() != null) {
@@ -163,7 +163,7 @@ public class Columns implements Table {
                         } else if (this.scale.equals(field)) {
                             value = fieldLocal.getPrecision();
                         } else if (this.type.equals(field) && fieldLocal.getType() != null) {
-                            value = fieldLocal.getType().getName();
+                            value = fieldLocal.getType().name();
                         } else if (this.javaClass.equals(field) && fieldLocal.getType() != null) {
                             value = fieldLocal.getType().getJavaClass().getName();
                             if ("[B".equals(value)) {

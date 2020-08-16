@@ -126,7 +126,7 @@ public class Routines implements Table {
                     value = Arrays.stream(function.getColumns())
                             .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
                             .map(Column::getType)
-                            .map(ParadoxType::getName)
+                            .map(ParadoxType::name)
                             .findFirst().orElse(null);
                 } else if (this.maximumLength.equals(field)) {
                     value = Arrays.stream(function.getColumns())

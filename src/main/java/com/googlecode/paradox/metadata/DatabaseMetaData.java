@@ -408,7 +408,7 @@ public final class DatabaseMetaData implements java.sql.DatabaseMetaData {
                         // Data type.
                         column.getType().getSQLType(),
                         // Data type name.
-                        column.getType().getName(),
+                        column.getType().name(),
                         // Precision.
                         column.getSize(),
                         // Length,

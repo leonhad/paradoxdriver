@@ -18,7 +18,7 @@ import java.util.Objects;
 /**
  * Generic field definition.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class Field {
@@ -59,6 +59,11 @@ public class Field {
     protected int orderNum;
 
     /**
+     * The the field order.
+     */
+    protected int realSize;
+
+    /**
      * Creates a new instance.
      */
     public Field() {
@@ -69,6 +74,7 @@ public class Field {
         this.name = name;
         this.precision = precision;
         this.size = size;
+        this.realSize = size;
         this.type = type;
         this.table = table;
         this.orderNum = orderNum;
@@ -79,13 +85,15 @@ public class Field {
         this.alias = column.getName();
         this.precision = column.getPrecision();
         this.size = column.getSize();
+        this.realSize = column.getSize();
         this.type = column.getType();
         this.orderNum = column.getIndex();
 
         if (column.getField() != null) {
-            this.precision = column.getField().getPrecision();
-            this.size = column.getField().getSize();
-            this.type = column.getField().getType();
+            this.precision = column.getField().precision;
+            this.size = column.getField().size;
+            this.type = column.getField().type;
+            this.realSize = column.getField().realSize;
         }
     }
 
@@ -217,6 +225,15 @@ public class Field {
      */
     public void setType(ParadoxType type) {
         this.type = type;
+    }
+
+    /**
+     * Gets the file size in file.
+     *
+     * @return the file size in file.
+     */
+    public int getRealSize() {
+        return this.realSize;
     }
 
     @Override
