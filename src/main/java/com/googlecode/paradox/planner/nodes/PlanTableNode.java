@@ -11,6 +11,7 @@
 package com.googlecode.paradox.planner.nodes;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Schema;
@@ -28,7 +29,7 @@ import java.util.Set;
 /**
  * Stores the execution plan table node.
  *
- * @version 1.5
+ * @version 1.6
  * @since 1.1
  */
 public final class PlanTableNode {
@@ -76,7 +77,7 @@ public final class PlanTableNode {
         this.table = schema.findTable(connectionInfo, tableName);
 
         if (this.table == null) {
-            throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, table.getPosition(), tableName);
+            throw new ParadoxDataException(DataError.TABLE_NOT_FOUND, table.getPosition(), tableName);
         }
 
         this.alias = table.getAlias();

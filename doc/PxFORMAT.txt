@@ -115,7 +115,7 @@
 |      |                                                                     |
 |      |        You can change headerSize, and move the data blocks          |
 |      |        accordingly, to create larger or smaller table headers.      |
-|      |        Borland's TUTILITY program would flag an error, but          |
+|      |        Borland's TUTILITY program would flag an dataError, but          |
 |      |        Paradox, the Borland Database Engine and the Paradox         |
 |      |        Engine will all still work with these tables.                |
 |      |                                                                     |
@@ -550,7 +550,7 @@
 |      |                                                                     |
 |      |        NOTE:  It was previously listed here as 271 bytes but        |
 |      |               I received a heads-up from George Thackray that       |
-|      |               this was in error.  It may also be that there's       |
+|      |               this was in dataError.  It may also be that there's       |
 |      |               there are more variations.                            |
 |      |                                                                     |
 ==============================================================================

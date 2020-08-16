@@ -11,6 +11,7 @@
 package com.googlecode.paradox;
 
 import com.googlecode.paradox.data.filefilters.DirectoryFilter;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
 /**
  * Stores the connection information properties.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public final class ConnectionInfo {
@@ -185,7 +186,7 @@ public final class ConnectionInfo {
         } else {
             final File parent = currentCatalog.getParentFile();
             if (!parent.isDirectory()) {
-                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+                throw new ParadoxDataException(DataError.INVALID_CATALOG_PATH);
             }
 
             catalogs = parent.listFiles(new DirectoryFilter(locale, catalog));
@@ -235,14 +236,14 @@ public final class ConnectionInfo {
         } else {
             File parent = currentCatalog.getParentFile();
             if (!parent.isDirectory()) {
-                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+                throw new ParadoxDataException(DataError.INVALID_CATALOG_PATH);
             }
 
             catalogs = parent.listFiles(new DirectoryFilter(locale, catalog));
         }
 
         if (catalogs == null || catalogs.length != 1) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_NAME);
+            throw new ParadoxDataException(DataError.INVALID_CATALOG_NAME);
         }
 
         if (INFORMATION_SCHEMA.equalsIgnoreCase(schemaName)) {
@@ -468,12 +469,12 @@ public final class ConnectionInfo {
 
         final File parent = this.currentCatalog.getParentFile();
         if (!parent.isDirectory()) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+            throw new ParadoxDataException(DataError.INVALID_CATALOG_PATH);
         }
 
         final File newCatalog = new File(parent, name);
         if (!newCatalog.isDirectory()) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_NAME, name);
+            throw new ParadoxDataException(DataError.INVALID_CATALOG_NAME, name);
         }
 
         this.currentCatalog = newCatalog;
@@ -491,7 +492,7 @@ public final class ConnectionInfo {
         if (enableCatalogChange && currentCatalog.getParent() != null) {
             final File parent = this.currentCatalog.getParentFile();
             if (!parent.isDirectory()) {
-                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CATALOG_PATH);
+                throw new ParadoxDataException(DataError.INVALID_CATALOG_PATH);
             }
 
             final File[] catalogFiles = parent.listFiles(new DirectoryFilter(locale));

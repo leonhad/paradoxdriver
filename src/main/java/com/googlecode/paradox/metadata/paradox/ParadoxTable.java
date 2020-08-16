@@ -15,6 +15,7 @@ import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
 import com.googlecode.paradox.data.filefilters.TableFilter;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Index;
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * Stores a table data file.
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.0
  */
 public final class ParadoxTable extends ParadoxDataFile implements Table {
@@ -60,18 +61,18 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     public FileInputStream openBlobs() throws SQLException {
         final File[] fileList = file.getParentFile().listFiles(new TableFilter(connectionInfo.getLocale(), name, "mb"));
         if ((fileList == null) || (fileList.length == 0)) {
-            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_FILE_NOT_FOUND);
+            throw new ParadoxDataException(DataError.BLOB_FILE_NOT_FOUND);
         }
 
         if (fileList.length > 1) {
-            throw new ParadoxDataException(ParadoxDataException.Error.TOO_MANY_BLOB_FILES);
+            throw new ParadoxDataException(DataError.TOO_MANY_BLOB_FILES);
         }
 
         File blobFile = fileList[0];
         try {
             return new FileInputStream(blobFile);
         } catch (final FileNotFoundException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_OPENING_BLOB_FILE, e);
+            throw new ParadoxDataException(DataError.ERROR_OPENING_BLOB_FILE, e);
         }
     }
 

@@ -12,6 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.TableFilter;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
@@ -33,7 +34,7 @@ import java.util.*;
 /**
  * Utility class for loading table files.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -75,10 +76,9 @@ public final class TableData extends ParadoxData {
      * @param pattern        the pattern.
      * @param connectionInfo the connection information.
      * @return the tables filtered.
-     * @throws SQLException in case of failures.
      */
     public static List<Table> listTables(final File schema, final String pattern,
-                                         final ConnectionInfo connectionInfo) throws SQLException {
+                                         final ConnectionInfo connectionInfo) {
         final List<Table> tables = new ArrayList<>();
         final File[] fileList = schema.listFiles(new TableFilter(connectionInfo.getLocale(), pattern));
 
@@ -148,7 +148,7 @@ public final class TableData extends ParadoxData {
 
             return ret;
         } catch (final IOException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
+            throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, e);
         }
     }
 
@@ -244,7 +244,7 @@ public final class TableData extends ParadoxData {
 
             TableData.parseTableFieldsOrder(table, buffer);
         } catch (final BufferUnderflowException | IOException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
+            throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, e);
         }
 
         table.loadIndexes();

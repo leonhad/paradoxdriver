@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * JDBC statement implementation.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.0
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -414,7 +414,7 @@ class ParadoxStatement implements Statement {
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
         if (max > Constants.MAX_STRING_SIZE) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_FIELD_SIZE);
+            throw new ParadoxDataException(DataError.INVALID_FIELD_SIZE);
         }
 
         this.maxFieldSize = max;

@@ -12,6 +12,7 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.EncryptedData;
 import com.googlecode.paradox.data.FieldParser;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
@@ -28,7 +29,7 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
@@ -150,7 +151,7 @@ public abstract class AbstractLobField implements FieldParser {
             final int index = (int) beginIndex & 0xFF;
             return processBlobByBlockType(table, headerSize, size, channel, offset, type, index);
         } catch (final IOException ex) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, ex);
+            throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, ex);
         }
     }
 
@@ -159,17 +160,17 @@ public abstract class AbstractLobField implements FieldParser {
                                           final int index) throws SQLException, IOException {
         switch (type) {
             case 0x0:
-                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_READ_HEAD_BLOCK);
+                throw new ParadoxDataException(DataError.BLOB_READ_HEAD_BLOCK);
             case 0x1:
-                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_READ_FREE_BLOCK);
+                throw new ParadoxDataException(DataError.BLOB_READ_FREE_BLOCK);
             case FREE_BLOCK:
-                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_HEADER);
+                throw new ParadoxDataException(DataError.BLOB_INVALID_HEADER);
             case SINGLE_BLOCK:
                 return parseSingleBlock(table, index, size, headerSize, channel);
             case SUB_BLOCK:
                 return parseSubBlock(table, index, offset, size, headerSize, channel);
             default:
-                throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_HEADER_TYPE);
+                throw new ParadoxDataException(DataError.BLOB_INVALID_HEADER_TYPE);
         }
     }
 
@@ -191,7 +192,7 @@ public abstract class AbstractLobField implements FieldParser {
         final int modulo = head.get() & 0xFF;
 
         if (size != (dataLength - 1) * 0x10 + modulo) {
-            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_DECLARED_SIZE);
+            throw new ParadoxDataException(DataError.BLOB_INVALID_DECLARED_SIZE);
         }
 
         channel.position(offset + blockOffset * 0x10);
@@ -203,7 +204,7 @@ public abstract class AbstractLobField implements FieldParser {
     private Object parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, final FileChannel channel)
             throws SQLException, IOException {
         if (index != 0xFF) {
-            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_SINGLE_BLOCK_INVALID_INDEX);
+            throw new ParadoxDataException(DataError.BLOB_SINGLE_BLOCK_INVALID_INDEX);
         }
         // Read the remaining 6 bytes from the header.
         final ByteBuffer head = readBlock(channel, headerSize - HEAD_SIZE, table);
@@ -211,7 +212,7 @@ public abstract class AbstractLobField implements FieldParser {
 
         int internalSize = head.getInt();
         if (size != internalSize) {
-            throw new ParadoxDataException(ParadoxDataException.Error.BLOB_INVALID_DECLARED_SIZE);
+            throw new ParadoxDataException(DataError.BLOB_INVALID_DECLARED_SIZE);
         }
 
         final ByteBuffer blocks = readBlock(channel, size, table);

@@ -39,7 +39,7 @@ public interface Table {
     default int getRowCount() {
         try {
             return load(new Field[0]).size();
-        } catch (final SQLException e) {
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
             return 0;
         }
     }
@@ -96,9 +96,8 @@ public interface Table {
      * Gets the primary key index.
      *
      * @return the primary key index or {@code null} if there is no index.
-     * @throws SQLException in case of failures.
      */
-    default Index getPrimaryKeyIndex() throws SQLException {
+    default Index getPrimaryKeyIndex() {
         return Arrays.stream(getIndexes())
                 .filter(index -> index.type() == IndexType.PRIMARY_KEY)
                 .findFirst().orElse(null);
@@ -108,9 +107,8 @@ public interface Table {
      * Gets the table indexes.
      *
      * @return the table indexes.
-     * @throws SQLException in case of failures.
      */
-    default Index[] getIndexes() throws SQLException {
+    default Index[] getIndexes() {
         return new Index[0];
     }
 
@@ -118,9 +116,8 @@ public interface Table {
      * Gets the table indexes.
      *
      * @return the table indexes.
-     * @throws SQLException in case of failures.
      */
-    default Index[] getCheckConstraints() throws SQLException {
+    default Index[] getCheckConstraints() {
         return Arrays.stream(getIndexes())
                 .filter(index -> index.type() == IndexType.CHECK)
                 .toArray(Index[]::new);
@@ -130,9 +127,8 @@ public interface Table {
      * Gets the table constraints.
      *
      * @return the table indexes.
-     * @throws SQLException in case of failures.
      */
-    default Index[] getConstraints() throws SQLException {
+    default Index[] getConstraints() {
         return Arrays.stream(getIndexes())
                 .filter(index -> index.type() != IndexType.INDEX)
                 .toArray(Index[]::new);

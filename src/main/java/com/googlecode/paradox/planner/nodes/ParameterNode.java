@@ -45,7 +45,7 @@ public class ParameterNode extends FieldNode {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

@@ -217,7 +217,7 @@ While True
       Else                                ;we're updating a record
          LockRecord                       ;attempt to lock the record
          If not retval and errorcode()<>55 then   ;couldn't lock the record
-            wait_msg = errormessage()     ;show the user the error message
+            wait_msg = errormessage()     ;show the user the dataError message
             ImageRights ReadOnly          ;don't let them change the record
          Else                             ;we've successfully locked it
             is_locked_detail = True       ;it has been posted now
@@ -276,8 +276,8 @@ While True
       Endif
       If is_locked_detail then         ;we're inserting a new record
          Form4_Film_Count(-1)          ;so decrement the film count
-         If not isblank(wait_msg) then ;an error occurred
-            Loop                       ;so display the error message
+         If not isblank(wait_msg) then ;an dataError occurred
+            Loop                       ;so display the dataError message
          Endif
       Endif
    Endif
@@ -298,7 +298,7 @@ While True
 
       If is_locked_detail then         ;we're deleting an existing record
          Form4_Film_Count(1)           ;so increment film count inventory
-         wait_msg = ""                 ;ignore any error message
+         wait_msg = ""                 ;ignore any dataError message
       Endif
       is_ins_detail = is_ins_key or    ;we pressed [Ins] or
                (nimagerecords()<=1)    ;if we delete last record in table, 
@@ -377,7 +377,7 @@ Private
 ;  Initialization
 
 MoveTo "Films"          ;move to the form
-wait_msg = ""           ;no error message yet
+wait_msg = ""           ;no dataError message yet
 
 ;  Let the user view and edit the entire table
 
@@ -428,7 +428,7 @@ Proc Form4_Film_Count(n)
 
 ;  Note:  This procedure is pretty lenient about what happens
 ;  if it can't find the FILMS record or can't lock it.  I recommend
-;  that for real-world applications, you add error-handling code to
+;  that for real-world applications, you add dataError-handling code to
 ;  deal with those situations.
 
 Private
@@ -446,7 +446,7 @@ If retval then       ;we found it
    If retval then    ;we've successfully locked it
       [# in Stock] = [# in Stock] + n     ;adjust the inventory quantity
       If [# in Stock]<0 then              ;oops!  we've gone negative!
-         wait_msg = "Film # "+film_no+" is out of stock!"   ;error message
+         wait_msg = "Film # "+film_no+" is out of stock!"   ;dataError message
       Endif
       UnLockRecord   ;we're done with the record now, so unlock it
    Endif

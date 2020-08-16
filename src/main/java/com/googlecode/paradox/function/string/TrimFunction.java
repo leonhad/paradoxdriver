@@ -22,6 +22,7 @@ import com.googlecode.paradox.utils.Utils;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The SQL TRIM function.
@@ -78,7 +79,7 @@ public class TrimFunction extends AbstractStringFunction {
     }
 
     @Override
-    @SuppressWarnings("java:S3776")
+    @SuppressWarnings({"java:S3776", "java:S1541"})
     public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
                           final FieldNode[] fields) throws SQLException {
         if (values.length > 1 && values[1] == null) {
@@ -141,6 +142,25 @@ public class TrimFunction extends AbstractStringFunction {
      */
     public static boolean isValidType(final String value) {
         return Utils.searchEnum(TrimType.class, value) != null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TrimFunction that = (TrimFunction) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
     }
 
     /**

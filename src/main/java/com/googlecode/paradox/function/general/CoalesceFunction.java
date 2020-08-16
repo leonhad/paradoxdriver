@@ -73,4 +73,23 @@ public class CoalesceFunction extends AbstractGeneralFunction {
         this.type = FieldValueUtils.getSqlType(values, types);
         return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        CoalesceFunction that = (CoalesceFunction) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), type);
+    }
 }

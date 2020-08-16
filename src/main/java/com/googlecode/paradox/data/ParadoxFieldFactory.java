@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.data.field.*;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
@@ -21,7 +22,7 @@ import java.sql.SQLException;
 /**
  * Factory for Paradox field parsers.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.3
  */
 public final class ParadoxFieldFactory {
@@ -69,6 +70,6 @@ public final class ParadoxFieldFactory {
             }
         }
 
-        throw new ParadoxDataException(ParadoxDataException.Error.FIELD_TYPE_NOT_SUPPORTED);
+        throw new ParadoxDataException(DataError.FIELD_TYPE_NOT_SUPPORTED);
     }
 }

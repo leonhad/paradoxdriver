@@ -192,7 +192,7 @@ While True
       If is_first_arrival then            ;we don't yet think we're inserting
          is_ins_detail = Is_New_KRental() ;did we arrive at a new record?
          If not is_ins_detail and isblank([Line #]) then    ;it's a blank
-            Beep                          ;an error situation
+            Beep                          ;an dataError situation
             wait_msg = "There's a detail with a blank line #!"
             wait_key = ""
             QuitLoop                      ;get out of this table
@@ -206,7 +206,7 @@ While True
       Else                                ;we're updating a record
          LockRecord                       ;attempt to lock the record
          If not retval and errorcode()<>55 then   ;couldn't lock the record
-            wait_msg = errormessage()     ;show the user the error message
+            wait_msg = errormessage()     ;show the user the dataError message
             ImageRights ReadOnly          ;don't let them change the record
          Else                             ;we've successfully locked it
             is_locked_detail = True       ;it has been posted now

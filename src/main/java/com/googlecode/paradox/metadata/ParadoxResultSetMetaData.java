@@ -27,7 +27,7 @@ import java.util.List;
  * @version 1.5
  * @since 1.0
  */
-public final class ResultSetMetaData implements java.sql.ResultSetMetaData {
+public final class ParadoxResultSetMetaData implements java.sql.ResultSetMetaData {
 
     /**
      * {@link ResultSet} columns.
@@ -45,7 +45,7 @@ public final class ResultSetMetaData implements java.sql.ResultSetMetaData {
      * @param connectionInfo the connection information.
      * @param columns        columns in {@link ResultSet}.
      */
-    public ResultSetMetaData(final ConnectionInfo connectionInfo, final List<Column> columns) {
+    public ParadoxResultSetMetaData(final ConnectionInfo connectionInfo, final List<Column> columns) {
         this.columns = Collections.unmodifiableList(columns);
         this.connectionInfo = connectionInfo;
     }

@@ -148,7 +148,7 @@ While True
 ;  Test which function key the user pressed
 
    wait_key = retval    ;remember which key the user pressed
-   wait_msg = ""        ;no error message yet
+   wait_msg = ""        ;no dataError message yet
    @ 1,0 Clear Eol
    @ 0,0 Clear Eol ?? "One Moment Please" 
    Style Blink ?? "..." Style
@@ -167,7 +167,7 @@ While True
 
 ;  Initialize the selected record for editing
 
-   @ 2,0 Clear Eos ?? fill("Í",80)
+   @ 2,0 Clear Eos ?? fill("ï¿½",80)
    CoEditKey                  ;enter co-edit mode
    is_locked = False          ;the record is not locked yet
 
@@ -424,7 +424,7 @@ Endif
 
 If not keys_are_ok then             ;we found a changed key field
    Beep
-   wait_msg = "You may not change the "+field()    ;error message
+   wait_msg = "You may not change the "+field()    ;dataError message
 Endif
 
 Return keys_are_ok
@@ -487,7 +487,7 @@ While True
       Else                                ;we're updating a record
          LockRecord                       ;attempt to lock the record
          If not retval and errorcode()<>55 then   ;couldn't lock the record
-            wait_msg = errormessage()     ;show the user the error message
+            wait_msg = errormessage()     ;show the user the dataError message
             ImageRights ReadOnly          ;don't let them change the record
          Else                             ;we've successfully locked it
             is_locked_detail = True       ;it has been posted now
@@ -635,7 +635,7 @@ Private
 ;  Initialization
 
 MoveTo "Films"          ;move to the form
-wait_msg = ""           ;no error message yet
+wait_msg = ""           ;no dataError message yet
 
 ;  Let the user view and edit the entire table
 
@@ -744,7 +744,7 @@ MoveTo "Amount"                     ;move to the amount table
 [Total Order]      = total_amt + [Sales Tax Amount]
 [Amount Paid]      = total_pmt
 [Balance Due]      = [Total Order] - total_pmt
-If abs([Balance Due])<0.001 then [Balance Due]=0 Endif   ;rounding error
+If abs([Balance Due])<0.001 then [Balance Due]=0 Endif   ;rounding dataError
 
 ;  Initialize the payment record
 
@@ -779,7 +779,7 @@ While True
       Else                                ;we're updating a record
          LockRecord                       ;attempt to lock the record
          If not retval and errorcode()<>55 then   ;couldn't lock the record
-            wait_msg = errormessage()     ;show the user the error message
+            wait_msg = errormessage()     ;show the user the dataError message
             ImageRights ReadOnly          ;don't let them change the record
          Else                             ;we've successfully locked it
             is_locked_detail = True       ;it has been posted now
@@ -1084,7 +1084,7 @@ While True
       Else                                ;we're updating a record
          LockRecord                       ;attempt to lock the record
          If not retval and errorcode()<>55 then   ;couldn't lock the record
-            wait_msg = errormessage()     ;show the user the error message
+            wait_msg = errormessage()     ;show the user the dataError message
             ImageRights ReadOnly          ;don't let them change the record
          Else                             ;we've successfully locked it
             is_locked_detail = True       ;it has been posted now

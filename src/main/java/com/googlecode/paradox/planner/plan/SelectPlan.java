@@ -11,10 +11,7 @@
 package com.googlecode.paradox.planner.plan;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.exceptions.ParadoxException;
-import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import com.googlecode.paradox.exceptions.SyntaxError;
+import com.googlecode.paradox.exceptions.*;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.parser.nodes.*;
@@ -38,7 +35,7 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.17
+ * @version 1.18
  * @since 1.1
  */
 @SuppressWarnings({"java:S1448", "java:S1200"})
@@ -198,7 +195,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
                     .map(PlanTableNode::getTable).collect(Collectors.toList());
 
             if (tablesFound.isEmpty()) {
-                throw new ParadoxDataException(ParadoxDataException.Error.TABLE_NOT_FOUND, field.getPosition(),
+                throw new ParadoxDataException(DataError.TABLE_NOT_FOUND, field.getPosition(),
                         field.getTableName());
             } else if (tablesFound.size() > 1) {
                 throw new ParadoxException(ParadoxException.Error.TABLE_AMBIGUOUS_DEFINED, field.getPosition(),

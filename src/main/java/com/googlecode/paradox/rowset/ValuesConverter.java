@@ -11,6 +11,7 @@
 package com.googlecode.paradox.rowset;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
@@ -32,7 +33,7 @@ import java.util.function.BiFunction;
 /**
  * Custom values conversion utility class.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.6.0
  */
 @SuppressWarnings("java:S1200")
@@ -93,7 +94,7 @@ public final class ValuesConverter {
         try {
             return (T) CLASS_MAPPING.get(type).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
+            throw new ParadoxDataException(DataError.INVALID_CONVERSION, e, value);
         }
     }
 
@@ -102,7 +103,7 @@ public final class ValuesConverter {
         try {
             return TYPE_MAPPING.get(sqlType).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
+            throw new ParadoxDataException(DataError.INVALID_CONVERSION, e, value);
         }
     }
 
@@ -111,7 +112,7 @@ public final class ValuesConverter {
         try {
             return CLASS_MAPPING.get(type.getJavaClass()).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, value);
+            throw new ParadoxDataException(DataError.INVALID_CONVERSION, e, value);
         }
     }
 
@@ -506,7 +507,7 @@ public final class ValuesConverter {
                 ret = new byte[length];
                 dis.readFully(ret);
             } catch (final IOException e) {
-                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, inputStream);
+                throw new ParadoxDataException(DataError.INVALID_CONVERSION, e, inputStream);
             }
         }
 
@@ -519,12 +520,12 @@ public final class ValuesConverter {
             try {
                 final char[] buffer = new char[length];
                 if (reader.read(buffer) != length) {
-                    throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, reader);
+                    throw new ParadoxDataException(DataError.INVALID_CONVERSION, reader);
                 }
 
                 ret = new String(buffer);
             } catch (final IOException e) {
-                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_CONVERSION, e, reader);
+                throw new ParadoxDataException(DataError.INVALID_CONVERSION, e, reader);
             }
         }
 
@@ -548,7 +549,7 @@ public final class ValuesConverter {
         try {
             return decoder.decode(input).toString();
         } catch (CharacterCodingException e) {
-            throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, e);
+            throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, e);
         }
     }
 

@@ -79,7 +79,7 @@ public class NvlFunction extends AbstractGeneralFunction {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass() || !super.equals(o)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

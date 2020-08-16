@@ -11,6 +11,7 @@
 package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 
 import java.sql.Date;
@@ -20,7 +21,7 @@ import java.util.GregorianCalendar;
 /**
  * Utility class for date formats.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class DateUtils {
@@ -127,6 +128,7 @@ public final class DateUtils {
         if (year <= 0) {
             year--;
         }
+
         final Calendar calendar = new GregorianCalendar((int) year, (int) month - 1, (int) day);
         return new Date(calendar.getTime().getTime());
     }
@@ -143,15 +145,17 @@ public final class DateUtils {
             throws ParadoxDataException {
         // Check for invalid year.
         if ((inputYear == 0) || (inputYear < -4_714)) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
+            throw new ParadoxDataException(DataError.INVALID_DATE);
         }
+
         // Check for invalid month.
         if ((inputMonth <= 0) || (inputMonth > 12)) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
+            throw new ParadoxDataException(DataError.INVALID_DATE);
         }
+
         // Check for invalid day.
         if ((inputDay <= 0) || (inputDay > 31)) {
-            throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
+            throw new ParadoxDataException(DataError.INVALID_DATE);
         }
     }
 
@@ -167,10 +171,10 @@ public final class DateUtils {
             throws ParadoxDataException {
         if (inputYear == -4_714) {
             if (inputMonth < 11) {
-                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
+                throw new ParadoxDataException(DataError.INVALID_DATE);
             }
             if ((inputMonth == 11) && (inputDay < 25)) {
-                throw new ParadoxDataException(ParadoxDataException.Error.INVALID_DATE);
+                throw new ParadoxDataException(DataError.INVALID_DATE);
             }
         }
     }

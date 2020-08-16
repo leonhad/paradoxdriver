@@ -12,6 +12,7 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.PrimaryKeyFilter;
+import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxPK;
@@ -29,7 +30,7 @@ import java.util.Arrays;
 /**
  * Reads primary key data fields.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class PrimaryKeyData extends ParadoxData {
@@ -59,7 +60,7 @@ public final class PrimaryKeyData extends ParadoxData {
             try {
                 return PrimaryKeyData.loadPKHeader(fileList[0], table, connectionInfo);
             } catch (final IOException ex) {
-                throw new ParadoxDataException(ParadoxDataException.Error.ERROR_LOADING_DATA, ex);
+                throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, ex);
             }
         }
 

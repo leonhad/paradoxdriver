@@ -208,7 +208,7 @@ While True
       Else                                ;we're updating a record
          LockRecord                       ;attempt to lock the record
          If not retval and errorcode()<>55 then   ;couldn't lock the record
-            wait_msg = errormessage()     ;show the user the error message
+            wait_msg = errormessage()     ;show the user the dataError message
             ImageRights ReadOnly          ;don't let them change the record
          Else                             ;we've successfully locked it
             is_locked_detail = True       ;it has been posted now
