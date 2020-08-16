@@ -781,7 +781,10 @@ public class DatabaseMetaDataTest {
     public void testSchemas() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getSchemas()) {
 
-            // Classes schema.
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "areas", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
+
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
@@ -804,6 +807,10 @@ public class DatabaseMetaDataTest {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "mtdemo", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", this.conn.getCatalog(), rs.getString("TABLE_CATALOG"));
 
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
@@ -832,6 +839,10 @@ public class DatabaseMetaDataTest {
             Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "areas", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
@@ -853,6 +864,10 @@ public class DatabaseMetaDataTest {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "mtdemo", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
@@ -880,6 +895,10 @@ public class DatabaseMetaDataTest {
             Assert.assertEquals("Invalid catalog", "java", rs.getString("TABLE_CATALOG"));
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "areas", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "db", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
@@ -901,6 +920,10 @@ public class DatabaseMetaDataTest {
 
             Assert.assertTrue("Invalid ResultSet state.", rs.next());
             Assert.assertEquals("Invalid schema", "joins", rs.getString("TABLE_SCHEM"));
+            Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
+
+            Assert.assertTrue("Invalid ResultSet state.", rs.next());
+            Assert.assertEquals("Invalid schema", "mtdemo", rs.getString("TABLE_SCHEM"));
             Assert.assertEquals("Invalid catalog", "resources", rs.getString("TABLE_CATALOG"));
 
             Assert.assertFalse("Invalid ResultSet state.", rs.next());
