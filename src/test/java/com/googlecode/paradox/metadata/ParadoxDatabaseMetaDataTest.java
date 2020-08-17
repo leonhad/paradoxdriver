@@ -1002,13 +1002,10 @@ public class ParadoxDatabaseMetaDataTest {
     @Test
     public void testTableTypes() throws SQLException {
         try (ResultSet rs = this.conn.getMetaData().getTableTypes()) {
-            Assert.assertTrue("Get first result.", rs.next());
-            Assert.assertEquals("Testing for system table type.", "SYSTEM TABLE", rs.getString(1));
-            Assert.assertTrue("Get second result.", rs.next());
-            Assert.assertEquals("Testing for table type.", "TABLE", rs.getString(1));
-            Assert.assertTrue("Get third result.", rs.next());
-            Assert.assertEquals("Testing for view type.", "VIEW", rs.getString(1));
-            Assert.assertFalse("no more results.", rs.next());
+            while (rs.next()) {
+                Assert.assertNotNull("Testing for system table type.", TableType.valueOf(rs.getString(1)
+                        .replace(' ', '_')));
+            }
         }
     }
 
