@@ -97,7 +97,7 @@ public final class ParadoxConnection implements Connection {
     }
 
     @SuppressWarnings("java:S1452")
-    Plan<?, ?> createPlan(final String sql) throws SQLException {
+    public Plan<?, ?> createPlan(final String sql) throws SQLException {
         final LinkedHashMap<String, SoftReference<Plan<?, ?>>> cache = STATEMENT_CACHE.computeIfAbsent(
                 this.connectionInfo.getUrl(),
                 k -> new LinkedHashMap<>(0x7f, 0.75F, true));

@@ -17,6 +17,8 @@ import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.function.FunctionType;
+import com.googlecode.paradox.planner.context.SelectContext;
+import com.googlecode.paradox.planner.plan.SelectPlan;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
@@ -586,7 +588,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                     if (unique && !index.isUnique()) {
                         continue;
                     }
-                    
+
                     for (final Field field : index.getFields()) {
                         final Object[] row = new Object[]{
                                 catalog,
@@ -1046,44 +1048,33 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getTables(final String catalog, final String schemaPattern, final String tableNamePattern,
                                final String[] types) throws SQLException {
-        final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));// 2
-        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column("TABLE_TYPE", ParadoxType.VARCHAR));// 1
-        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
-        columns.add(new Column("TYPE_CAT", ParadoxType.VARCHAR));
-        columns.add(new Column(TYPE_SCHEM, ParadoxType.VARCHAR));// 3
-        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));// 4
-        columns.add(new Column("SELF_REFERENCING_COL_NAME", ParadoxType.VARCHAR));
-        columns.add(new Column("REF_GENERATION", ParadoxType.VARCHAR));
+        String sql = "select \"catalog\"             as TABLE_CAT,\n" +
+                "       \"schema\"            as TABLE_SCHEM,\n" +
+                "       name                  as TABLE_SCHEM,\n" +
+                "       type_name             as TABLE_TYPE,\n" +
+                "       cast(null as VARCHAR) as REMARKS,\n" +
+                "       cast(null as VARCHAR) as TYPE_CAT,\n" +
+                "       cast(null as VARCHAR) as TYPE_SCHEM,\n" +
+                "       cast(null as VARCHAR) as SELF_REFERENCING_COL_NAME,\n" +
+                "       cast(null as VARCHAR) as REF_GENERATION\n" +
+                "from information_schema.pdx_tables\n" +
+                "where (? is null or \"catalog\" like ?)\n" +
+                "    and (? is null or \"schema\" like ?)\n";
 
-        final List<Object[]> values = new ArrayList<>();
-        List<String> typeList = Collections.emptyList();
-        if (types != null) {
-            typeList = Arrays.asList(types);
+        if (types != null)  {
+            sql += " and type_name in (" + Arrays.stream(types)
+                    .map(type -> "'" + type + "'").collect(Collectors.joining(",")) + ") ";
         }
 
-        for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaPattern)) {
-            for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
-                if (types == null || typeList.contains(table.type().typeName())) {
-                    values.add(new Object[]{
-                            schema.catalogName(),
-                            schema.name(),
-                            table.getName(),
-                            table.type().description(),
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null
-                    });
-                }
-            }
-        }
+        sql += " order by \"catalog\", \"schema\", name ";
 
-        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
+        final SelectPlan selectPlan = (SelectPlan) connection.createPlan(sql);
+        final SelectContext context = selectPlan.createContext(connectionInfo,
+                new Object[]{catalog, catalog, schemaPattern, schemaPattern, types},
+                new ParadoxType[]{ParadoxType.VARCHAR, ParadoxType.VARCHAR, ParadoxType.VARCHAR, ParadoxType.VARCHAR});
+
+        final List<Object[]> values = selectPlan.execute(context);
+        return new ParadoxResultSet(this.connectionInfo, null, values, selectPlan.getColumns());
     }
 
     /**
@@ -1099,6 +1090,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      */
     @Override
     public ResultSet getTypeInfo() {
+        // FIXME type information.
         return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
     }
 
@@ -1888,12 +1880,10 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     public ResultSet getTableTypes() {
         final List<Column> columns = Collections.singletonList(new Column("TABLE_TYPE", ParadoxType.VARCHAR));
 
-        final List<String[]> values = new ArrayList<>(4);
-        values.add(new String[]{VIEW});
-        values.add(new String[]{TABLE});
-        values.add(new String[]{SYSTEM_TABLE});
-
-        values.sort(Comparator.comparing(o -> o[0]));
+        final List<String[]> values = Arrays.stream(TableType.values())
+                .map(TableType::description).sorted()
+                .map(type -> new String[]{type})
+                .collect(Collectors.toList());
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
