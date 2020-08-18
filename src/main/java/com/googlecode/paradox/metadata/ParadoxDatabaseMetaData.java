@@ -1137,7 +1137,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      */
     @Override
     public String getUserName() {
-        return "SYSTEM";
+        return connectionInfo.getUser();
     }
 
     /**
