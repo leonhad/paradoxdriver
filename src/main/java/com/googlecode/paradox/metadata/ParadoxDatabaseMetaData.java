@@ -355,6 +355,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getFunctionColumns(final String catalog, final String schemaPattern,
                                         final String functionNamePattern, final String columnNamePattern) {
+        // FIXME redo this method.
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("FUNCTION_CAT", ParadoxType.VARCHAR));
         columns.add(new Column("FUNCTION_SCHEM", ParadoxType.VARCHAR));
@@ -444,6 +445,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      */
     @Override
     public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern) {
+        // FIXME redo this method.
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("FUNCTION_CAT", ParadoxType.VARCHAR));
         columns.add(new Column("FUNCTION_SCHEM", ParadoxType.VARCHAR));
@@ -497,7 +499,6 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      */
     @Override
     public ResultSet getImportedKeys(final String catalog, final String schema, final String table) {
-        // FIXME redo this primary keys metadata.
         return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
     }
 
