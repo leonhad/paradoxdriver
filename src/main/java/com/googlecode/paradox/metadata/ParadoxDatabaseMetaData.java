@@ -532,7 +532,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                 "       cast(null as numeric) as BUFFER_LENGTH,\n" +
                 "       scale                 as DECIMAL_DIGITS,\n" +
                 "       radix                 as DECIMAL_DIGITS,\n" +
-                "       1                     as NULLABLE,\n" +
+                "       nullable              as NULLABLE,\n" +
                 "       cast(null as varchar) as REMARKS,\n" +
                 "       cast(null as varchar) as COLUMN_DEF,\n" +
                 "       java_type_id          as SQL_DATA_TYPE,\n" +

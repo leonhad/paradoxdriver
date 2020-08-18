@@ -15,6 +15,7 @@ import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
+import java.sql.DatabaseMetaData;
 import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class Columns implements Table {
     private final Field table = new Field("table", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
     private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
     private final Field ordinal = new Field("ordinal", 0, 1, ParadoxType.INTEGER, this, 5);
-    private final Field nullable = new Field("is_nullable", 0, 3, ParadoxType.VARCHAR, this, 6);
+    private final Field isNullable = new Field("is_nullable", 0, 3, ParadoxType.VARCHAR, this, 6);
     private final Field autoincrement = new Field("is_autoincrement", 0, 3, ParadoxType.VARCHAR, this, 7);
     private final Field incrementValue = new Field("autoincrement_value", 0, 0, ParadoxType.INTEGER, this, 8);
     private final Field incrementStep = new Field("autoincrement_step", 0, 0, ParadoxType.INTEGER, this, 9);
@@ -58,6 +59,7 @@ public class Columns implements Table {
     private final Field javaType = new Field("java_type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             17);
     private final Field javaTypeId = new Field("java_type_id", 0, 4, ParadoxType.INTEGER, this, 18);
+    private final Field nullable = new Field("nullable", 0, 4, ParadoxType.INTEGER, this, 19);
 
     /**
      * Creates a new instance.
@@ -96,7 +98,7 @@ public class Columns implements Table {
                 table,
                 name,
                 ordinal,
-                nullable,
+                isNullable,
                 autoincrement,
                 incrementValue,
                 incrementStep,
@@ -108,7 +110,8 @@ public class Columns implements Table {
                 type,
                 javaClass,
                 javaType,
-                javaTypeId
+                javaTypeId,
+                nullable
         };
     }
 
@@ -142,7 +145,7 @@ public class Columns implements Table {
                             value = fieldLocal.getName();
                         } else if (this.ordinal.equals(field)) {
                             value = fieldLocal.getOrderNum();
-                        } else if (this.nullable.equals(field)) {
+                        } else if (this.isNullable.equals(field)) {
                             if (fieldLocal.isAutoIncrement()) {
                                 value = "NO";
                             } else {
@@ -179,6 +182,12 @@ public class Columns implements Table {
                             value = JDBCType.valueOf(fieldLocal.getType().getSQLType()).getName();
                         } else if (this.javaTypeId.equals(field) && fieldLocal.getType() != null) {
                             value = fieldLocal.getType().getSQLType();
+                        } else if (this.nullable.equals(field) && fieldLocal.getType() != null) {
+                            if (fieldLocal.isAutoIncrement()) {
+                                value = DatabaseMetaData.columnNoNulls;
+                            } else {
+                                value = DatabaseMetaData.columnNullable;
+                            }
                         }
 
                         row[i] = value;
