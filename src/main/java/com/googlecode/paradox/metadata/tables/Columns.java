@@ -15,6 +15,7 @@ import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
+import java.sql.JDBCType;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,9 @@ public class Columns implements Table {
     private final Field type = new Field("type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 15);
     private final Field javaClass = new Field("java_class", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
             16);
+    private final Field javaType = new Field("java_type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
+            17);
+    private final Field javaTypeId = new Field("java_type_id", 0, 4, ParadoxType.INTEGER, this, 18);
 
     /**
      * Creates a new instance.
@@ -102,7 +106,9 @@ public class Columns implements Table {
                 radix,
                 scale,
                 type,
-                javaClass
+                javaClass,
+                javaType,
+                javaTypeId
         };
     }
 
@@ -169,6 +175,10 @@ public class Columns implements Table {
                             if ("[B".equals(value)) {
                                 value = "byte[]";
                             }
+                        } else if (this.javaType.equals(field) && fieldLocal.getType() != null) {
+                            value = JDBCType.valueOf(fieldLocal.getType().getSQLType()).getName();
+                        } else if (this.javaTypeId.equals(field) && fieldLocal.getType() != null) {
+                            value = fieldLocal.getType().getSQLType();
                         }
 
                         row[i] = value;

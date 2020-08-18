@@ -522,42 +522,61 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getColumns(final String catalog, final String schemaPattern, final String tableNamePattern,
                                 final String columnNamePattern) throws SQLException {
-        final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column(DATA_TYPE, ParadoxType.INTEGER));
-        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column("COLUMN_SIZE", ParadoxType.INTEGER));
-        columns.add(new Column("BUFFER_LENGTH", ParadoxType.INTEGER));
-        columns.add(new Column("DECIMAL_DIGITS", ParadoxType.INTEGER));
-        columns.add(new Column("NUM_PREC_RADIX", ParadoxType.INTEGER));
-        columns.add(new Column(NULLABLE, ParadoxType.INTEGER));
-        columns.add(new Column(REMARKS, ParadoxType.INTEGER));
-        columns.add(new Column("COLUMN_DEF", ParadoxType.VARCHAR));
-        columns.add(new Column("SQL_DATA_TYPE", ParadoxType.INTEGER));
-        columns.add(new Column("SQL_DATETIME_SUB", ParadoxType.INTEGER));
-        columns.add(new Column(CHAR_OCTET_LENGTH, ParadoxType.INTEGER));
-        columns.add(new Column(ORDINAL_POSITION, ParadoxType.INTEGER));
-        columns.add(new Column(IS_NULLABLE, ParadoxType.INTEGER));
-        columns.add(new Column("SCOPE_CATLOG", ParadoxType.VARCHAR));
-        columns.add(new Column("SCOPE_SCHEMA", ParadoxType.VARCHAR));
-        columns.add(new Column("SCOPE_TABLE", ParadoxType.VARCHAR));
-        columns.add(new Column("SOURCE_DATA_TYPE", ParadoxType.INTEGER));
-        columns.add(new Column("IS_AUTOINCREMENT", ParadoxType.VARCHAR));
+        final String sql = "select \"catalog\"             as TABLE_CAT,\n" +
+                "       \"schema\"              as TABLE_SCHEM,\n" +
+                "       \"table\"               as TABLE_NAME,\n" +
+                "       name                  as COLUMN_NAME,\n" +
+                "       java_type_id          as DATA_TYPE,\n" +
+                "       type                  as TYPE_NAME,\n" +
+                "       maximum_length        as COLUMN_SIZE,\n" +
+                "       cast(null as numeric) as BUFFER_LENGTH,\n" +
+                "       scale                 as DECIMAL_DIGITS,\n" +
+                "       radix                 as DECIMAL_DIGITS,\n" +
+                "       1                     as NULLABLE,\n" +
+                "       cast(null as varchar) as REMARKS,\n" +
+                "       cast(null as varchar) as COLUMN_DEF,\n" +
+                "       java_type_id          as SQL_DATA_TYPE,\n" +
+                "       0                     as SQL_DATETIME_SUB,\n" +
+                "       \"octet_length\"        as CHAR_OCTET_LENGTH,\n" +
+                "       ordinal               as ORDINAL_POSITION,\n" +
+                "       is_nullable           as IS_NULLABLE,\n" +
+                "       cast(null as varchar) as SCOPE_CATALOG,\n" +
+                "       cast(null as varchar) as SCOPE_SCHEMA,\n" +
+                "       java_type_id          as SOURCE_DATA_TYPE,\n" +
+                "       is_autoincrement      as IS_AUTOINCREMENT,\n" +
+                "       'NO'                  as IS_GENERATEDCOLUMN\n" +
+                "from information_schema.pdx_columns\n" +
+                "where (? is null or \"catalog\" = ?)\n" +
+                "  and (? is null or \"schema\" ilike ?)\n" +
+                "  and (? is null or \"table\" ilike ?)\n" +
+                "  and (? is null or name ilike ?)\n" +
+                "order by \"catalog\", \"schema\", name";
 
-        final List<Object[]> values = new ArrayList<>();
+        final SelectPlan selectPlan = (SelectPlan) connection.createPlan(sql);
+        final SelectContext context = selectPlan.createContext(connectionInfo,
+                new Object[]{
+                        catalog,
+                        catalog,
+                        schemaPattern,
+                        schemaPattern,
+                        tableNamePattern,
+                        tableNamePattern,
+                        columnNamePattern,
+                        columnNamePattern
+                },
+                new ParadoxType[]{
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR
+                });
 
-        for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaPattern)) {
-            final List<Table> tables = schema.list(this.connectionInfo, tableNamePattern);
-            for (final Table table : tables) {
-                this.fieldMetadata(connectionInfo.getCatalog(), schema.name(), columnNamePattern, values,
-                        table.getName(), table.getFields());
-            }
-        }
-
-        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
+        final List<Object[]> values = selectPlan.execute(context);
+        return new ParadoxResultSet(this.connectionInfo, null, values, selectPlan.getColumns());
     }
 
     /**
@@ -566,6 +585,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getIndexInfo(final String catalog, final String schemaName, final String tableNamePattern,
                                   final boolean unique, final boolean approximate) throws SQLException {
+        // FIXME create a index table.
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
         columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
@@ -805,7 +825,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getPrimaryKeys(final String catalog, final String schemaName, final String tableNamePattern)
             throws SQLException {
-        String sql = "select \"catalog\"       as TABLE_CAT,\n" +
+        final String sql = "select \"catalog\"       as TABLE_CAT,\n" +
                 "       \"schema\"        as TABLE_SCHEM,\n" +
                 "       \"table\"         as TABLE_NAME,\n" +
                 "       name            as COLUMN_NAME,\n" +
@@ -1056,7 +1076,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                 "       cast(null as VARCHAR) as SELF_REFERENCING_COL_NAME,\n" +
                 "       cast(null as VARCHAR) as REF_GENERATION\n" +
                 "from information_schema.pdx_tables\n" +
-                "where (? is null or \"catalog\" ilike ?)\n" +
+                "where (? is null or \"catalog\" = ?)\n" +
                 "    and (? is null or \"schema\" ilike ?)\n";
 
         if (types != null) {
