@@ -805,41 +805,39 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getPrimaryKeys(final String catalog, final String schemaName, final String tableNamePattern)
             throws SQLException {
-        final List<Column> columns = new ArrayList<>();
-        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column("KEY_SEQ", ParadoxType.INTEGER));
-        columns.add(new Column("PK_NAME", ParadoxType.VARCHAR));
+        String sql = "select \"catalog\"       as TABLE_CAT,\n" +
+                "       \"schema\"        as TABLE_SCHEM,\n" +
+                "       \"table\"         as TABLE_NAME,\n" +
+                "       name            as COLUMN_NAME,\n" +
+                "       ordinal         as KEY_SEQ,\n" +
+                "       constraint_name as PK_NAME\n" +
+                "from information_schema.pdx_key_columns\n" +
+                "where (? is null or \"catalog\" = ?)\n" +
+                "  and (? is null or \"schema\" = ?)\n" +
+                "  and (? is null or \"table\" ilike ?)\n" +
+                "order by name";
 
-        final List<Object[]> values = new ArrayList<>();
+        final SelectPlan selectPlan = (SelectPlan) connection.createPlan(sql);
+        final SelectContext context = selectPlan.createContext(connectionInfo,
+                new Object[]{
+                        catalog,
+                        catalog,
+                        schemaName,
+                        schemaName,
+                        tableNamePattern,
+                        tableNamePattern
+                },
+                new ParadoxType[]{
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR
+                });
 
-        for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaName)) {
-            for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
-                final Index index = table.getPrimaryKeyIndex();
-                if (index == null) {
-                    continue;
-                }
-
-                for (final Field field : index.getFields()) {
-                    final Object[] row = new Object[]{
-                            schema.catalogName(),
-                            schema.name(),
-                            table.getName(),
-                            field.getName(),
-                            field.getOrderNum(),
-                            index.getName()
-                    };
-
-                    values.add(row);
-                }
-            }
-        }
-
-        values.sort((o1, o2) -> ((String) o1[3]).compareToIgnoreCase((String) o2[3]));
-
-        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
+        final List<Object[]> values = selectPlan.execute(context);
+        return new ParadoxResultSet(this.connectionInfo, null, values, selectPlan.getColumns());
     }
 
     /**
@@ -1050,7 +1048,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                                final String[] types) throws SQLException {
         String sql = "select \"catalog\"             as TABLE_CAT,\n" +
                 "       \"schema\"            as TABLE_SCHEM,\n" +
-                "       name                  as TABLE_SCHEM,\n" +
+                "       name                  as TABLE_NAME,\n" +
                 "       type_name             as TABLE_TYPE,\n" +
                 "       cast(null as VARCHAR) as REMARKS,\n" +
                 "       cast(null as VARCHAR) as TYPE_CAT,\n" +
@@ -1058,19 +1056,21 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                 "       cast(null as VARCHAR) as SELF_REFERENCING_COL_NAME,\n" +
                 "       cast(null as VARCHAR) as REF_GENERATION\n" +
                 "from information_schema.pdx_tables\n" +
-                "where (? is null or \"catalog\" like ?)\n" +
-                "    and (? is null or \"schema\" like ?)\n";
+                "where (? is null or \"catalog\" ilike ?)\n" +
+                "    and (? is null or \"schema\" ilike ?)\n";
 
-        if (types != null)  {
-            sql += " and type_name in (" + Arrays.stream(types)
-                    .map(type -> "'" + type + "'").collect(Collectors.joining(",")) + ") ";
+        if (types != null) {
+            sql += " and upper(type_name) in (" + Arrays.stream(types)
+                    .map(type -> "'" + type + "'")
+                    .map(String::toUpperCase)
+                    .collect(Collectors.joining(",")) + ") ";
         }
 
         sql += " order by \"catalog\", \"schema\", name ";
 
         final SelectPlan selectPlan = (SelectPlan) connection.createPlan(sql);
         final SelectContext context = selectPlan.createContext(connectionInfo,
-                new Object[]{catalog, catalog, schemaPattern, schemaPattern, types},
+                new Object[]{catalog, catalog, schemaPattern, schemaPattern},
                 new ParadoxType[]{ParadoxType.VARCHAR, ParadoxType.VARCHAR, ParadoxType.VARCHAR, ParadoxType.VARCHAR});
 
         final List<Object[]> values = selectPlan.execute(context);

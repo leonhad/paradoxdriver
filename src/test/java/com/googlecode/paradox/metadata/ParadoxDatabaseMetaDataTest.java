@@ -721,7 +721,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testPrimaryKeys() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getPrimaryKeys("DB", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getPrimaryKeys(null, null, "%")) {
             Assert.assertTrue("Test for ResultSet.", rs instanceof ParadoxResultSet);
         }
     }
