@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2020-09-17 Finished information_schema support.
 2020-09-08 Added information_schema support.
 2020-09-07 Improved COUNT performance on large queries.
 2020-09-05 The execution planer is now stateless with cache in parser.
