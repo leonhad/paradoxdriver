@@ -18,65 +18,67 @@ package com.googlecode.paradox.metadata;
  */
 public interface Index {
 
-    /**
-     * Gets the index name.
-     *
-     * @return the index name.
-     */
-    String getName();
+	/**
+	 * Gets the index name.
+	 *
+	 * @return the index name.
+	 */
+	String getName();
 
-    /**
-     * Gets if this index is unique.
-     *
-     * @return <code>true</code> if this index is unique.
-     */
-    boolean isUnique();
+	/**
+	 * Gets if this index is unique.
+	 *
+	 * @return <code>true</code> if this index is unique.
+	 */
+	boolean isUnique();
 
-    /**
-     * Gets the index order type.
-     *
-     * @return the index order type.
-     */
-    String getOrder();
+	/**
+	 * Gets the index order type.
+	 *
+	 * @return the index order type.
+	 */
+	String getOrder();
 
-    /**
-     * Gets the field list.
-     *
-     * @return the field list.
-     */
-    Field[] getFields();
+	/**
+	 * Gets the field list.
+	 *
+	 * @return the field list.
+	 */
+	Field[] getFields();
 
-    /**
-     * Gets the row count.
-     *
-     * @return the row count.
-     */
-    int getRowCount();
+	/**
+	 * Gets the row count.
+	 *
+	 * @return the row count.
+	 */
+	int getRowCount();
 
-    /**
-     * Gets the file total blocks.
-     *
-     * @return the file total blocks.
-     */
-    int getTotalBlocks();
+	/**
+	 * Gets the file total blocks.
+	 *
+	 * @return the file total blocks.
+	 */
+	int getTotalBlocks();
 
-    /**
-     * Gets the index type.
-     *
-     * @return the index type.
-     */
-    default IndexType type() {
-        if (isUnique()) {
-            return IndexType.UNIQUE;
-        }
+	/**
+	 * Gets the index type.
+	 *
+	 * @return the index type.
+	 */
+	default IndexType type() {
+		if (isUnique()) {
+			return IndexType.UNIQUE;
+		}
 
-        return IndexType.INDEX;
-    }
+		return IndexType.INDEX;
+	}
 
-    /**
-     * Gets definition.
-     */
-    default String definition() {
-        return "";
-    }
+	/**
+	 * Gets the index definition.
+	 * 
+	 * @return the index definition.
+	 */
+	default String definition() {
+		return "";
+	}
 }

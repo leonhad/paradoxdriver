@@ -24,68 +24,69 @@ import java.io.File;
  */
 public final class ParadoxPK extends ParadoxDataFile implements Index {
 
-    /**
-     * The index field order.
-     */
-    private int indexFieldNumber;
+	/**
+	 * The index field order.
+	 */
+	private int indexFieldNumber;
 
-    /**
-     * Creates a new instance.
-     *
-     * @param connectionInfo the connection information.
-     */
-    public ParadoxPK(final File file, final ConnectionInfo connectionInfo) {
-        super(file, connectionInfo);
-        this.name = file.getName();
-    }
+	/**
+	 * Creates a new instance.
+	 *
+	 * @param file           the primary key file.
+	 * @param connectionInfo the connection information.
+	 */
+	public ParadoxPK(final File file, final ConnectionInfo connectionInfo) {
+		super(file, connectionInfo);
+		this.name = file.getName();
+	}
 
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass())
-                && this.getName().equals(((ParadoxPK) obj).getName()));
-    }
+	/**
+	 * {@inheritDoc}.
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass())
+				&& this.getName().equals(((ParadoxPK) obj).getName()));
+	}
 
-    /**
-     * Gets the index field number.
-     *
-     * @return the index field number.
-     */
-    public int getIndexFieldNumber() {
-        return this.indexFieldNumber;
-    }
+	/**
+	 * Gets the index field number.
+	 *
+	 * @return the index field number.
+	 */
+	public int getIndexFieldNumber() {
+		return this.indexFieldNumber;
+	}
 
-    /**
-     * Sets the index field number.
-     *
-     * @param indexFieldNumber the index field number.
-     */
-    public void setIndexFieldNumber(final int indexFieldNumber) {
-        this.indexFieldNumber = indexFieldNumber;
-    }
+	/**
+	 * Sets the index field number.
+	 *
+	 * @param indexFieldNumber the index field number.
+	 */
+	public void setIndexFieldNumber(final int indexFieldNumber) {
+		this.indexFieldNumber = indexFieldNumber;
+	}
 
-    /**
-     * {@inheritDoc}.
-     */
-    @Override
-    public int hashCode() {
-        return this.getName().hashCode();
-    }
+	/**
+	 * {@inheritDoc}.
+	 */
+	@Override
+	public int hashCode() {
+		return this.getName().hashCode();
+	}
 
-    @Override
-    public boolean isUnique() {
-        return true;
-    }
+	@Override
+	public boolean isUnique() {
+		return true;
+	}
 
-    @Override
-    public String getOrder() {
-        return "A";
-    }
+	@Override
+	public String getOrder() {
+		return "A";
+	}
 
-    @Override
-    public IndexType type() {
-        return IndexType.PRIMARY_KEY;
-    }
+	@Override
+	public IndexType type() {
+		return IndexType.PRIMARY_KEY;
+	}
 }
