@@ -45,6 +45,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      * The tables cat name field.
      */
     public static final String TABLE_CAT = "TABLE_CAT";
+    
     /**
      * The table names schema field.
      */
@@ -60,58 +61,62 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     public static final String TYPE_SCHEM = "TYPE_SCHEM";
     public static final String VIEW = "VIEW";
     public static final String SYSTEM_TABLE = "SYSTEM TABLE";
+    
     /**
      * The column name field.
      */
     private static final String COLUMN_NAME = "COLUMN_NAME";
+    
     /**
      * JDBC major version.
      */
     private static final int JDBC_MAJOR_VERSION = 4;
+    
     /**
      * JDBC minor version.
      */
     private static final int JDBC_MINOR_VERSION = 2;
-    /**
-     * Max field size.
-     */
-    private static final int MAX_INT_SIZE = 2_048;
+    
     /**
      * Paradox major version.
      */
     private static final int PARADOX_MAJOR_VERSION = 7;
+    
     /**
      * Paradox max column name.
      */
     private static final int PARADOX_MAX_COLUMN_NAME = 8;
+    
     /**
      * Paradox minor version.
      */
     private static final int PARADOX_MINOR_VERSION = 0;
+    
     /**
      * The remarks name field.
      */
     private static final String REMARKS = "REMARKS";
+    
     /**
      * String max size.
      */
     private static final int STRING_MAX_SIZE = 255;
-    /**
-     * The tables field.
-     */
-    private static final String TABLE = "TABLE";
+
     /**
      * The tables name field.
      */
     private static final String TABLE_NAME = "TABLE_NAME";
+    
     /**
      * The type name field.
      */
     private static final String TYPE_NAME = "TYPE_NAME";
+    
     /**
      * The connection information.
      */
     private final ConnectionInfo connectionInfo;
+    
     /**
      * The Paradox connection.
      */
@@ -1907,93 +1912,5 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                 .collect(Collectors.toList());
 
         return new ParadoxResultSet(this.connectionInfo, null, values, columns);
-    }
-
-    /**
-     * Gets fields metadata.
-     *
-     * @param catalog           the catalog name.
-     * @param schema            the schema name.
-     * @param columnNamePattern column pattern to search of.
-     * @param values            the table values.
-     * @param tableName         the table name.
-     * @param fields            the field list.
-     */
-    private void fieldMetadata(final String catalog, final String schema, final String columnNamePattern,
-                               final List<Object[]> values, final String tableName, final Field[] fields) {
-        int ordinal = 1;
-        for (final Field field : fields) {
-            if ((columnNamePattern != null) && !Expressions.accept(connectionInfo.getLocale(), field.getName(),
-                    columnNamePattern,
-                    false, Constants.ESCAPE_CHAR)) {
-                continue;
-            }
-
-            final List<Object> row = new ArrayList<>();
-
-            // Table catalog.
-            row.add(catalog);
-            // Table schema.
-            row.add(schema);
-            // Table name.
-            row.add(tableName);
-            // Column name.
-            row.add(field.getAlias());
-            // Data type.
-            row.add(field.getSqlType());
-            // Type name.
-            row.add(field.getType().name());
-            // Column size.
-            row.add(field.getSize());
-            // Buffer length.
-            row.add(ParadoxDatabaseMetaData.MAX_INT_SIZE);
-            // Decimal digits.
-            row.add(field.getPrecision());
-            // Number precision radix.
-            row.add(field.getType().getRadix());
-            // Nullable.
-            if (field.isAutoIncrement()) {
-                row.add(java.sql.DatabaseMetaData.columnNoNulls);
-            } else {
-                row.add(java.sql.DatabaseMetaData.columnNullable);
-            }
-            // Column remarks.
-            row.add(null);
-            // Column default value.
-            row.add(null);
-            // Column SQL data type.
-            row.add(field.getSqlType());
-            // Subtype code for datetime and SQL-92 interval data types. For other data
-            // types, this column returns NULL.
-            row.add(null);
-            // Column type in byte octets.
-            row.add(field.getSize());
-            // Ordinal position.
-            row.add(ordinal);
-            // Is field nullable.
-            if (field.isAutoIncrement()) {
-                row.add("NO");
-            } else {
-                row.add("YES");
-            }
-            // Scope catalog.
-            row.add(null);
-            // Scope schema.
-            row.add(null);
-            // Scope table.
-            row.add(null);
-            // Source datatype.
-            row.add(field.getSqlType());
-
-            // Is autoincrement.
-            if (field.isAutoIncrement()) {
-                row.add("YES");
-            } else {
-                row.add("NO");
-            }
-
-            ordinal++;
-            values.add(row.toArray(new Object[0]));
-        }
     }
 }

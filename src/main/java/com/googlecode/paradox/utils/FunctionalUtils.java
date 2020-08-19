@@ -106,7 +106,7 @@ public final class FunctionalUtils {
      * @param connectionInfo the connection information.
      * @return the predicate to grouping fields.
      */
-    @SuppressWarnings({"unchecked", "raw", "java:S5612"})
+    @SuppressWarnings({"unchecked", "java:S5612", "rawtypes"})
     public static Predicate<Object[]> groupingByKeys(final int[] indexes, final int[] columns,
                                                      final ConnectionInfo connectionInfo) {
         final List<Object[]> seen = new ArrayList<>();

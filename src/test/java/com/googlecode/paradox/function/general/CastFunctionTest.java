@@ -97,7 +97,7 @@ public class CastFunctionTest {
             Assert.assertEquals("Invalid column type", "BLOB", rs.getMetaData().getColumnTypeName(1));
             Assert.assertTrue("Invalid value", rs.getObject(1) instanceof byte[]);
 
-            Blob blob = rs.getBlob(1);
+            Assert.assertNotNull("Invalid blob value", rs.getBlob(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }
