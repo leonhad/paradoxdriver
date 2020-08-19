@@ -442,6 +442,9 @@ public final class ConnectionInfo {
                 case USER_KEY:
                     user = getProperty(name, value, errors, USER_KEY, String::valueOf);
                     break;
+                case "password":
+                	// Do nothing.
+                	break;
                 default:
                     errors.put(name, ClientInfoStatus.REASON_UNKNOWN_PROPERTY);
             }
