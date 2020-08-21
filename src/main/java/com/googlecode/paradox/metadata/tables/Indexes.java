@@ -49,6 +49,7 @@ public class Indexes implements Table {
     private final Field cardinality = new Field("cardinality", 0, 4, ParadoxType.INTEGER, this, 8);
     private final Field pages = new Field("pages", 0, 4, ParadoxType.INTEGER, this, 9);
     private final Field field = new Field("field", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 10);
+    private final Field type = new Field("type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 11);
 
     /**
      * Creates a new instance.
@@ -83,7 +84,8 @@ public class Indexes implements Table {
                 ascOrDesc,
                 cardinality,
                 pages,
-                field
+                field,
+                type
         };
     }
 
@@ -128,6 +130,8 @@ public class Indexes implements Table {
                                 value = index.getTotalBlocks();
                             } else if (this.field.equals(field)) {
                                 value = indexField.getName();
+                            } else if (this.type.equals(field)) {
+                                value = index.type().description();
                             }
 
                             row[i] = value;
@@ -163,6 +167,8 @@ public class Indexes implements Table {
                                 value = index.getRowCount();
                             } else if (this.pages.equals(field)) {
                                 value = index.getTotalBlocks();
+                            } else if (this.type.equals(field)) {
+                                value = index.type().description();
                             }
 
                             row[i] = value;
