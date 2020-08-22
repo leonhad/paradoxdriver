@@ -86,7 +86,7 @@ public class BitLengthFunctionTest {
                 "select bit_length('test') ");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "test".length() * 8, rs.getInt(1));
+            Assert.assertEquals("Invalid value", "test".length() * 8L, rs.getLong(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }

@@ -148,7 +148,7 @@ public abstract class AbstractLobField implements FieldParser {
             byte type = head.get();
             head.getShort();
 
-            final int index = (int) beginIndex & 0xFF;
+            final long index = beginIndex & 0xFF;
             return processBlobByBlockType(table, headerSize, size, channel, offset, type, index);
         } catch (final IOException ex) {
             throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, ex);
@@ -157,7 +157,7 @@ public abstract class AbstractLobField implements FieldParser {
 
     private Object processBlobByBlockType(final ParadoxTable table, final int headerSize, final int size,
                                           final FileChannel channel, final long offset, final byte type,
-                                          final int index) throws SQLException, IOException {
+                                          final long index) throws SQLException, IOException {
         switch (type) {
             case 0x0:
                 throw new ParadoxDataException(DataError.BLOB_READ_HEAD_BLOCK);
@@ -174,11 +174,11 @@ public abstract class AbstractLobField implements FieldParser {
         }
     }
 
-    private Object parseSubBlock(final ParadoxTable table, final int index, final long offset, final int size,
+    private Object parseSubBlock(final ParadoxTable table, final long index, final long offset, final int size,
                                  final int headerSize, final FileChannel channel) throws IOException, SQLException {
         channel.position(channel.position() + headerSize);
 
-        channel.position(offset + 0x0C + index * 0x05);
+        channel.position(offset + 0x0CL + index * 0x05L);
         final ByteBuffer head = readBlock(channel, 5, table);
         head.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -201,7 +201,7 @@ public abstract class AbstractLobField implements FieldParser {
         return getValue(table, blocks);
     }
 
-    private Object parseSingleBlock(ParadoxTable table, int index, int size, int headerSize, final FileChannel channel)
+    private Object parseSingleBlock(ParadoxTable table, long index, int size, int headerSize, final FileChannel channel)
             throws SQLException, IOException {
         if (index != 0xFF) {
             throw new ParadoxDataException(DataError.BLOB_SINGLE_BLOCK_INVALID_INDEX);
