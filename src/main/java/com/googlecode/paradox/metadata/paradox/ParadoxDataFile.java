@@ -195,6 +195,11 @@ public class ParadoxDataFile {
         this.sortOrderID = sortOrderID;
     }
 
+    /**
+     * Gets the schema name.
+     *
+     * @return the schema name.
+     */
     public String getSchemaName() {
         return file.getParentFile().getName();
     }

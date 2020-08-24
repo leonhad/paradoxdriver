@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Indexes table.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Indexes implements Table {
@@ -44,7 +44,7 @@ public class Indexes implements Table {
     private final Field table = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
     private final Field name = new Field("index_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
     private final Field nonUnique = new Field("non_unique", 0, 1, ParadoxType.BOOLEAN, this, 5);
-    private final Field ordinal = new Field("non_unique", 0, 4, ParadoxType.INTEGER, this, 6);
+    private final Field ordinal = new Field("ordinal", 0, 4, ParadoxType.INTEGER, this, 6);
     private final Field ascOrDesc = new Field("asc_or_desc", 0, 4, ParadoxType.VARCHAR, this, 7);
     private final Field cardinality = new Field("cardinality", 0, 4, ParadoxType.INTEGER, this, 8);
     private final Field pages = new Field("pages", 0, 4, ParadoxType.INTEGER, this, 9);
@@ -117,7 +117,7 @@ public class Indexes implements Table {
                             } else if (this.nonUnique.equals(field)) {
                                 value = !index.isUnique();
                             } else if (this.ordinal.equals(field)) {
-                                value = index.getOrder();
+                                value = field.getOrderNum();
                             } else if (this.ascOrDesc.equals(field)) {
                                 if ("A".equals(index.getOrder())) {
                                     value = "ASC";

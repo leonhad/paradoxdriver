@@ -17,22 +17,14 @@ import com.googlecode.paradox.metadata.Table;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Stores index data.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class ParadoxIndex extends ParadoxDataFile implements Index {
-
-
-    /**
-     * Paradox table.
-     */
-    private Table table;
 
     /**
      * Creates a new instance.
@@ -67,12 +59,10 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
 
     @Override
     public Field[] getFields() {
-        final Set<Field> tableFields = new HashSet<>(Arrays.asList(table.getFields()));
-        return Arrays.stream(fields).filter(tableFields::remove).toArray(Field[]::new);
+        return fields;
     }
 
     public void setTable(Table table) {
-        this.table = table;
         Arrays.stream(fields).forEach(field -> field.setTable(table));
     }
 }
