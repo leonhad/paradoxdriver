@@ -45,7 +45,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      * The tables cat name field.
      */
     public static final String TABLE_CAT = "TABLE_CAT";
-    
+
     /**
      * The table names schema field.
      */
@@ -61,42 +61,42 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     public static final String TYPE_SCHEM = "TYPE_SCHEM";
     public static final String VIEW = "VIEW";
     public static final String SYSTEM_TABLE = "SYSTEM TABLE";
-    
+
     /**
      * The column name field.
      */
     private static final String COLUMN_NAME = "COLUMN_NAME";
-    
+
     /**
      * JDBC major version.
      */
     private static final int JDBC_MAJOR_VERSION = 4;
-    
+
     /**
      * JDBC minor version.
      */
     private static final int JDBC_MINOR_VERSION = 2;
-    
+
     /**
      * Paradox major version.
      */
     private static final int PARADOX_MAJOR_VERSION = 7;
-    
+
     /**
      * Paradox max column name.
      */
     private static final int PARADOX_MAX_COLUMN_NAME = 8;
-    
+
     /**
      * Paradox minor version.
      */
     private static final int PARADOX_MINOR_VERSION = 0;
-    
+
     /**
      * The remarks name field.
      */
     private static final String REMARKS = "REMARKS";
-    
+
     /**
      * String max size.
      */
@@ -106,17 +106,17 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      * The tables name field.
      */
     private static final String TABLE_NAME = "TABLE_NAME";
-    
+
     /**
      * The type name field.
      */
     private static final String TYPE_NAME = "TYPE_NAME";
-    
+
     /**
      * The connection information.
      */
     private final ConnectionInfo connectionInfo;
-    
+
     /**
      * The Paradox connection.
      */
@@ -591,54 +591,52 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getIndexInfo(final String catalog, final String schemaName, final String tableNamePattern,
                                   final boolean unique, final boolean approximate) throws SQLException {
-        // FIXME create a index table.
-        final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(TABLE_CAT, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column("NON_UNIQUE", ParadoxType.BOOLEAN));
-        columns.add(new Column("INDEX_QUALIFIER", ParadoxType.VARCHAR));
-        columns.add(new Column("INDEX_NAME", ParadoxType.VARCHAR));
-        columns.add(new Column("TYPE", ParadoxType.INTEGER));
-        columns.add(new Column(ORDINAL_POSITION, ParadoxType.INTEGER));
-        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column("ASC_OR_DESC", ParadoxType.VARCHAR));
-        columns.add(new Column("CARDINALITY", ParadoxType.INTEGER));
-        columns.add(new Column("PAGES", ParadoxType.INTEGER));
-        columns.add(new Column("FILTER_CONDITION", ParadoxType.VARCHAR));
 
-        final List<Object[]> values = new ArrayList<>();
-        for (final Schema schema : this.connectionInfo.getSchemas(catalog, schemaName)) {
-            for (final Table table : schema.list(this.connectionInfo, tableNamePattern)) {
-                for (final Index index : table.getIndexes()) {
-                    if (unique && !index.isUnique()) {
-                        continue;
-                    }
+        final String sql = "select index_catalog as      TABLE_CAT,\n" +
+                "       index_schema  as      TABLE_SCHEM,\n" +
+                "       table_name    as      TABLE_NAME,\n" +
+                "       non_unique    as      NON_UNIQUE,\n" +
+                "       index_catalog as      INDEX_QUALIFIER,\n" +
+                "       index_name    as INDEX_NAME,\n" +
+                "       cast(2 as NUMERIC) as TYPE,\n" +
+                "       ordinal as ORDINAL_POSITION,\n" +
+                "       field as COLUMN_NAME,\n" +
+                "       substring(asc_or_desc, 1, 1) as ASC_OR_DESC,\n" +
+                "       cardinality as CARDINALITY,\n" +
+                "       pages as PAGES,\n" +
+                "       cast(null as VARCHAR) FILTER_CONDITION\n" +
+                "from information_schema.pdx_indexes\n" +
+                "where (? is null or upper(\"index_catalog\") ilike upper(?))\n" +
+                "  and (? is null or upper(\"index_schema\") ilike upper(?))\n" +
+                "  and (? is null or \"table_name\" ilike ?)\n" +
+                "  and (? = false or non_unique = false)\n" +
+                "order by non_unique, index_name, ordinal";
 
-                    for (final Field field : index.getFields()) {
-                        final Object[] row = new Object[]{
-                                catalog,
-                                table.getSchemaName(),
-                                table.getName(),
-                                !index.isUnique(),
-                                catalog,
-                                index.getName(),
-                                java.sql.DatabaseMetaData.tableIndexHashed,
-                                field.getOrderNum(),
-                                field.getName(),
-                                index.getOrder(),
-                                index.getRowCount(),
-                                index.getTotalBlocks(),
-                                null
-                        };
+        final SelectPlan selectPlan = (SelectPlan) connection.createPlan(sql);
+        final SelectContext context = selectPlan.createContext(connectionInfo,
+                new Object[]{
+                        catalog,
+                        catalog,
+                        schemaName,
+                        schemaName,
+                        tableNamePattern,
+                        tableNamePattern,
+                        unique,
+                        unique
+                },
+                new ParadoxType[]{
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.BOOLEAN,
+                        ParadoxType.BOOLEAN,
+                });
 
-                        values.add(row);
-                    }
-                }
-            }
-        }
-
-        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
+        final List<Object[]> values = selectPlan.execute(context);
+        return new ParadoxResultSet(this.connectionInfo, null, values, selectPlan.getColumns());
     }
 
     /**
