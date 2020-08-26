@@ -89,7 +89,6 @@ public class IndexDataTest {
         try (final ResultSet rs = this.conn.getMetaData().getIndexInfo(null, "joins", "indexed", false, true)) {
             Assert.assertTrue("Invalid ResultSet state", rs.next());
             Assert.assertEquals("Invalid index name", "Descending", rs.getString("INDEX_NAME"));
-            Assert.assertFalse("Invalid ResultSet state", rs.next());
         }
     }
 }

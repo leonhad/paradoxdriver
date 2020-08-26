@@ -117,7 +117,7 @@ public class Indexes implements Table {
                             } else if (this.nonUnique.equals(field)) {
                                 value = !index.isUnique();
                             } else if (this.ordinal.equals(field)) {
-                                value = field.getOrderNum();
+                                value = indexField.getOrderNum();
                             } else if (this.ascOrDesc.equals(field)) {
                                 if ("A".equals(index.getOrder())) {
                                     value = "ASC";
@@ -130,43 +130,6 @@ public class Indexes implements Table {
                                 value = index.getTotalBlocks();
                             } else if (this.field.equals(field)) {
                                 value = indexField.getName();
-                            } else if (this.type.equals(field)) {
-                                value = index.type().description();
-                            }
-
-                            row[i] = value;
-                        }
-
-                        ret.add(row);
-                    }
-
-                    if (index.getFields().length == 0) {
-                        final Object[] row = new Object[fields.length];
-                        for (int i = 0; i < fields.length; i++) {
-                            final Field field = fields[i];
-                            Object value = null;
-                            if (catalog.equals(field)) {
-                                value = schema.catalogName();
-                            } else if (this.schema.equals(field)) {
-                                value = schema.name();
-                            } else if (this.table.equals(field)) {
-                                value = table.getName();
-                            } else if (name.equals(field)) {
-                                value = index.getName();
-                            } else if (this.nonUnique.equals(field)) {
-                                value = !index.isUnique();
-                            } else if (this.ordinal.equals(field)) {
-                                value = index.getOrder();
-                            } else if (this.ascOrDesc.equals(field)) {
-                                if ("A".equals(index.getOrder())) {
-                                    value = "ASC";
-                                } else {
-                                    value = "DESC";
-                                }
-                            } else if (this.cardinality.equals(field)) {
-                                value = index.getRowCount();
-                            } else if (this.pages.equals(field)) {
-                                value = index.getTotalBlocks();
                             } else if (this.type.equals(field)) {
                                 value = index.type().description();
                             }
