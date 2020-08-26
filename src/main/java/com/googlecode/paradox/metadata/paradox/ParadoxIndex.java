@@ -16,15 +16,17 @@ import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.Table;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Stores index data.
  *
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public final class ParadoxIndex extends ParadoxDataFile implements Index {
+
+    private Table table;
 
     /**
      * Creates a new instance.
@@ -60,7 +62,21 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
 
     @Override
     public Field[] getFields() {
-        return fields;
+        final Set<Field> tableFields = new HashSet<>(Arrays.asList(table.getFields()));
+        return Arrays.stream(fields).filter((Field field) -> filterFields(field, tableFields)).toArray(Field[]::new);
+    }
+
+    private static boolean filterFields(final Field field, final Set<Field> tableFields) {
+        final Iterator<Field> i = tableFields.iterator();
+        while(i.hasNext()) {
+            Field f = i.next();
+            if (f.getName().equals(field.getName())) {
+                i.remove();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -68,7 +84,8 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
      *
      * @param table the table to set.
      */
-    public void setTable(Table table) {
+    public void setTable(final Table table) {
+        this.table = table;
         Arrays.stream(fields).forEach(field -> field.setTable(table));
     }
 }
