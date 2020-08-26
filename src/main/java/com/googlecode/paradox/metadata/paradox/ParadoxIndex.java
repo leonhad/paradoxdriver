@@ -43,6 +43,7 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
      */
     @Override
     public String getOrder() {
+        // FIXME use enum.
         final int referential = this.getReferentialIntegrity();
         if ((referential == 0x10) || (referential == 0x11) || (referential == 0x30)) {
             return "D";
@@ -62,6 +63,11 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
         return fields;
     }
 
+    /**
+     * Sets the index table.
+     *
+     * @param table the table to set.
+     */
     public void setTable(Table table) {
         Arrays.stream(fields).forEach(field -> field.setTable(table));
     }
