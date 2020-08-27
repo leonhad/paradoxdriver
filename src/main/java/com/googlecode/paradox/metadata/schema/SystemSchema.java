@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * The information schema.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class SystemSchema implements Schema {
@@ -58,7 +58,7 @@ public class SystemSchema implements Schema {
         tables.add(new KeyColumns(connectionInfo, catalog));
         tables.add(new Parameters(catalog));
         tables.add(new ReferentialConstraints());
-        tables.add(new Routines(catalog));
+        tables.add(new Routines(connectionInfo, catalog));
         tables.add(new Schemata(connectionInfo, catalog));
         tables.add(new TableConstraints(connectionInfo, catalog));
         tables.add(new Tables(connectionInfo, catalog));

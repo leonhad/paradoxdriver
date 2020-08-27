@@ -421,7 +421,7 @@ public class ParadoxDatabaseMetaDataTest {
      */
     @Test
     public void testFunctions() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getFunctions("DATABASE", "db", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getFunctions(null, "db", "%")) {
             Assert.assertTrue("Invalid value.", rs.next());
         }
     }

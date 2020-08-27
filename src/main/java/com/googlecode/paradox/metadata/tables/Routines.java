@@ -18,13 +18,14 @@ import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Supplier;
 
 /**
  * Routines.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class Routines implements Table {
@@ -33,6 +34,10 @@ public class Routines implements Table {
      * The current catalog.
      */
     private final String catalogName;
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
 
     private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
@@ -50,13 +55,16 @@ public class Routines implements Table {
     private final Field sqlDataAccess = new Field("sql_data_access", 0, 30, ParadoxType.VARCHAR, this, 13);
     private final Field isNullCall = new Field("is_null_call", 0, 3, ParadoxType.VARCHAR, this, 14);
     private final Field isImplicitly = new Field("is_implicitly_invocable", 0, 3, ParadoxType.VARCHAR, this, 14);
+    private final Field remarks = new Field("remarks", 0, 0, ParadoxType.MEMO, this, 15);
 
     /**
      * Creates a new instance.
      *
-     * @param catalogName the catalog name.
+     * @param connectionInfo the connection information.
+     * @param catalogName    the catalog name.
      */
-    public Routines(final String catalogName) {
+    public Routines(final ConnectionInfo connectionInfo, final String catalogName) {
+        this.connectionInfo = connectionInfo;
         this.catalogName = catalogName;
     }
 
@@ -96,7 +104,8 @@ public class Routines implements Table {
                 isDeterministic,
                 sqlDataAccess,
                 isNullCall,
-                isImplicitly
+                isImplicitly,
+                remarks
         };
     }
 
@@ -106,81 +115,87 @@ public class Routines implements Table {
     }
 
     @Override
-    public List<Object[]> load(final Field[] fields) {
+    public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry :
-                FunctionFactory.getFunctions().entrySet()) {
-            final AbstractFunction function = entry.getValue().get();
-            final Object[] row = new Object[fields.length];
-            for (int i = 0; i < fields.length; i++) {
-                final Field field = fields[i];
-                Object value = null;
-                if (this.catalog.equals(field)) {
-                    value = catalogName;
-                } else if (this.name.equals(field)) {
-                    value = entry.getKey();
-                } else if (this.type.equals(field)) {
-                    value = "FUNCTION";
-                } else if (this.dataType.equals(field)) {
-                    value = Arrays.stream(function.getColumns())
-                            .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                            .map(Column::getType)
-                            .map(ParadoxType::name)
-                            .findFirst().orElse(null);
-                } else if (this.maximumLength.equals(field)) {
-                    value = Arrays.stream(function.getColumns())
-                            .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                            .map(Column::getSize)
-                            .findFirst().orElse(null);
-                } else if (this.octetLength.equals(field)) {
-                    value = Arrays.stream(function.getColumns())
-                            .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                            .map(Column::getOctets)
-                            .findFirst().orElse(null);
-                } else if (this.scale.equals(field)) {
-                    value = Arrays.stream(function.getColumns())
-                            .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                            .map(Column::getScale)
-                            .findFirst().orElse(null);
-                } else if (this.precision.equals(field)) {
-                    value = Arrays.stream(function.getColumns())
-                            .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                            .map(Column::getPrecision)
-                            .findFirst().orElse(null);
-                } else if (this.radix.equals(field)) {
-                    value = Arrays.stream(function.getColumns())
-                            .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                            .map(Column::getRadix)
-                            .filter(Objects::nonNull)
-                            .findFirst().orElse(null);
-                } else if (this.body.equals(field)) {
-                    value = "EXTERNAL";
-                } else if (this.definition.equals(field)) {
-                    value = function.definition();
-                } else if (this.isDeterministic.equals(field)) {
-                    if (function.isDeterministic()) {
-                        value = "YES";
-                    } else {
+        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry :
+                    FunctionFactory.getFunctions().entrySet()) {
+                final AbstractFunction function = entry.getValue().get();
+                final Object[] row = new Object[fields.length];
+                for (int i = 0; i < fields.length; i++) {
+                    final Field field = fields[i];
+                    Object value = null;
+                    if (this.catalog.equals(field)) {
+                        value = catalogName;
+                    } else if (this.schema.equals(field)) {
+                        value = schema.name();
+                    } else if (this.name.equals(field)) {
+                        value = entry.getKey();
+                    } else if (this.type.equals(field)) {
+                        value = "FUNCTION";
+                    } else if (this.dataType.equals(field)) {
+                        value = Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                                .map(Column::getType)
+                                .map(ParadoxType::name)
+                                .findFirst().orElse(null);
+                    } else if (this.maximumLength.equals(field)) {
+                        value = Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                                .map(Column::getSize)
+                                .findFirst().orElse(null);
+                    } else if (this.octetLength.equals(field)) {
+                        value = Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                                .map(Column::getOctets)
+                                .findFirst().orElse(null);
+                    } else if (this.scale.equals(field)) {
+                        value = Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                                .map(Column::getScale)
+                                .findFirst().orElse(null);
+                    } else if (this.precision.equals(field)) {
+                        value = Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                                .map(Column::getPrecision)
+                                .findFirst().orElse(null);
+                    } else if (this.radix.equals(field)) {
+                        value = Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                                .map(Column::getRadix)
+                                .filter(Objects::nonNull)
+                                .findFirst().orElse(null);
+                    } else if (this.body.equals(field)) {
+                        value = "EXTERNAL";
+                    } else if (this.definition.equals(field)) {
+                        value = function.definition();
+                    } else if (this.isDeterministic.equals(field)) {
+                        if (function.isDeterministic()) {
+                            value = "YES";
+                        } else {
+                            value = "NO";
+                        }
+                    } else if (this.sqlDataAccess.equals(field)) {
+                        value = "READS";
+                    } else if (this.isNullCall.equals(field)) {
+                        if (Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() != AbstractFunction.RESULT)
+                                .anyMatch(Column::isNullable)) {
+                            value = "NO";
+                        } else {
+                            value = "YES";
+                        }
+                    } else if (this.isImplicitly.equals(field)) {
                         value = "NO";
+                    } else if (this.remarks.equals(field)) {
+                        value = function.getRemarks();
                     }
-                } else if (this.sqlDataAccess.equals(field)) {
-                    value = "READS";
-                } else if (this.isNullCall.equals(field)) {
-                    if (Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() != AbstractFunction.RESULT)
-                            .anyMatch(Column::isNullable)) {
-                        value = "NO";
-                    } else {
-                        value = "YES";
-                    }
-                } else if (this.isImplicitly.equals(field)) {
-                    value = "NO";
+
+                    row[i] = value;
                 }
 
-                row[i] = value;
+                ret.add(row);
             }
-
-            ret.add(row);
         }
 
         return ret;

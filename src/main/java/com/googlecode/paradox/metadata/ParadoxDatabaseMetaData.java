@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Creates an database metadata.
  *
- * @version 1.7
+ * @version 1.8
  * @since 1.0
  */
 public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData {
@@ -449,46 +449,42 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      * {@inheritDoc}.
      */
     @Override
-    public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern) {
-        // FIXME redo this method.
-        final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column("FUNCTION_CAT", ParadoxType.VARCHAR));
-        columns.add(new Column("FUNCTION_SCHEM", ParadoxType.VARCHAR));
-        columns.add(new Column("FUNCTION_NAME", ParadoxType.VARCHAR));
-        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
-        columns.add(new Column("FUNCTION_TYPE", ParadoxType.INTEGER));
-        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
+    public ResultSet getFunctions(final String catalog, final String schemaPattern, final String functionNamePattern)
+            throws SQLException {
+        final String sql = "select \"catalog\" as FUNCTION_CAT,\n" +
+                "       \"schema\" as FUNCTION_SCHEM,\n" +
+                "       name as FUNCTION_NAME,\n" +
+                "       remarks as REMARKS,\n" +
+                "       cast(1 as numeric) as FUNCTION_TYPE,\n" +
+                "       name as SPECIFIC_NAME\n" +
+                "from information_schema.pdx_routines\n" +
+                "where (? is null or \"catalog\" = ?)\n" +
+                "  and (? is null or \"schema\" ilike ?)\n" +
+                "  and (? is null or \"name\" ilike ?)\n" +
+                "  and type = 'FUNCTION'\n" +
+                "order by \"catalog\", \"schema\", name";
 
-        final List<Object[]> values = new ArrayList<>();
-        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> function :
-                FunctionFactory.getFunctions().entrySet()) {
-            if ((catalog != null && !catalog.equalsIgnoreCase(connectionInfo.getCatalog())) && (schemaPattern != null
-                    && !Expressions.accept(connectionInfo.getLocale(), connectionInfo.getCurrentSchema().name(),
-                    schemaPattern, false, '\\'))) {
-                continue;
-            }
+        final SelectPlan selectPlan = (SelectPlan) connection.createPlan(sql);
+        final SelectContext context = selectPlan.createContext(connectionInfo,
+                new Object[]{
+                        catalog,
+                        catalog,
+                        schemaPattern,
+                        schemaPattern,
+                        functionNamePattern,
+                        functionNamePattern
+                },
+                new ParadoxType[]{
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                        ParadoxType.VARCHAR,
+                });
 
-            final AbstractFunction instance = function.getValue().get();
-
-            final Object[] row = {
-                    // Catalog.
-                    connectionInfo.getCatalog(),
-                    // Schema.
-                    null,
-                    // Name.
-                    function.getKey(),
-                    // Remarks.
-                    instance.getRemarks(),
-                    // Type.
-                    functionResultUnknown,
-                    // Specific name.
-                    null
-            };
-
-            values.add(row);
-        }
-
-        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
+        final List<Object[]> values = selectPlan.execute(context);
+        return new ParadoxResultSet(this.connectionInfo, null, values, selectPlan.getColumns());
     }
 
     /**
