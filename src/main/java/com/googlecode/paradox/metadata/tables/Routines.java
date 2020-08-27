@@ -55,7 +55,7 @@ public class Routines implements Table {
     private final Field sqlDataAccess = new Field("sql_data_access", 0, 30, ParadoxType.VARCHAR, this, 13);
     private final Field isNullCall = new Field("is_null_call", 0, 3, ParadoxType.VARCHAR, this, 14);
     private final Field isImplicitly = new Field("is_implicitly_invocable", 0, 3, ParadoxType.VARCHAR, this, 14);
-    private final Field remarks = new Field("remarks", 0, 0, ParadoxType.MEMO, this, 15);
+    private final Field remarks = new Field("remarks", 0, 0, ParadoxType.VARCHAR, this, 15);
 
     /**
      * Creates a new instance.
