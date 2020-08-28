@@ -1110,8 +1110,72 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      */
     @Override
     public ResultSet getTypeInfo() {
-        // FIXME type information.
-        return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
+        final ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("TYPE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("DATA_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column("PRECISION", ParadoxType.INTEGER));
+        columns.add(new Column("LITERAL_PREFIX", ParadoxType.VARCHAR));
+        columns.add(new Column("LITERAL_SUFFIX", ParadoxType.VARCHAR));
+        columns.add(new Column("CREATE_PARAMS", ParadoxType.VARCHAR));
+        columns.add(new Column("NULLABLE", ParadoxType.INTEGER));
+        columns.add(new Column("CASE_SENSITIVE", ParadoxType.BOOLEAN));
+        columns.add(new Column("SEARCHABLE", ParadoxType.INTEGER));
+        columns.add(new Column("UNSIGNED_ATTRIBUTE", ParadoxType.BOOLEAN));
+        columns.add(new Column("FIXED_PREC_SCALE", ParadoxType.BOOLEAN));
+        columns.add(new Column("AUTO_INCREMENT", ParadoxType.BOOLEAN));
+        columns.add(new Column("LOCAL_TYPE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("MINIMUM_SCALE", ParadoxType.INTEGER));
+        columns.add(new Column("MAXIMUM_SCALE", ParadoxType.INTEGER));
+        columns.add(new Column("SQL_DATA_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column("SQL_DATETIME_SUB", ParadoxType.INTEGER));
+        columns.add(new Column("NUM_PREC_RADIX", ParadoxType.INTEGER));
+
+        final List<Object[]> values = new ArrayList<>();
+
+        for (final ParadoxType type : ParadoxType.values()) {
+            final Object[] row = {
+                    // Type name.
+                    type.getName(),
+                    // Data type.
+                    type.getSQLType(),
+                    // Precision.
+                    type.getPrecision(),
+                    // Literal prefix.
+                    null,
+                    // Literal suffix.
+                    null,
+                    // Create params.
+                    null,
+                    // Nullable.
+                    typeNullableUnknown,
+                    // Case sensitive.
+                    false,
+                    // Searchable,
+                    type.isSearchable() ? typeSearchable : typePredNone,
+                    // FIXME Unsigned attribute.
+                    false,
+                    // Fixed prec scale.
+                    type == ParadoxType.CURRENCY,
+                    // Autoincrement
+                    type == ParadoxType.AUTO_INCREMENT,
+                    // Local type name.
+                    null,
+                    // Minimum scale.
+                    0,
+                    // Maximum scale.
+                    type.getPrecision(),
+                    // SQL data type.
+                    type.getSQLType(),
+                    // SQL datetime sub.
+                    0,
+                    // Radix
+                    type.getRadix()
+            };
+
+            values.add(row);
+        }
+
+        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
 
     /**
