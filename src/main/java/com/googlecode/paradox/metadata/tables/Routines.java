@@ -179,7 +179,8 @@ public class Routines implements Table {
                     } else if (this.sqlDataAccess.equals(field)) {
                         value = "READS";
                     } else if (this.isNullCall.equals(field)) {
-                        if (Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() != AbstractFunction.RESULT)
+                        if (Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() != AbstractFunction.RESULT)
                                 .anyMatch(Column::isNullable)) {
                             value = "NO";
                         } else {

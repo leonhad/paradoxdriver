@@ -346,9 +346,17 @@ public enum ParadoxType implements SQLType {
             case NUMBER:
             case NUMERIC:
             case BCD:
+            case AUTO_INCREMENT:
                 return 0x0A;
             default:
                 return null;
         }
+    }
+
+    /**
+     * Gets if the type is a numeric.
+     */
+    public boolean isNumeric() {
+        return getRadix() != null;
     }
 }

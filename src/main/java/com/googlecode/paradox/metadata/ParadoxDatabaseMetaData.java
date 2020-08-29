@@ -1152,8 +1152,8 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                     false,
                     // Searchable,
                     type.isSearchable() ? typeSearchable : typePredNone,
-                    // FIXME Unsigned attribute.
-                    false,
+                    // Unsigned attribute.
+                    type.isNumeric(),
                     // Fixed prec scale.
                     type == ParadoxType.CURRENCY,
                     // Autoincrement
