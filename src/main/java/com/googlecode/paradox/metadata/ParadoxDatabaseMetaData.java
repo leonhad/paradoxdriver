@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Creates an database metadata.
  *
- * @version 1.8
+ * @version 1.9
  * @since 1.0
  */
 public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData {
@@ -45,22 +45,6 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
      * The tables cat name field.
      */
     public static final String TABLE_CAT = "TABLE_CAT";
-
-    /**
-     * The table names schema field.
-     */
-    public static final String TABLE_SCHEMA = "TABLE_SCHEM";
-    public static final String TABLE_CATALOG = "TABLE_CATALOG";
-    public static final String SPECIFIC_NAME = "SPECIFIC_NAME";
-    public static final String DATA_TYPE = "DATA_TYPE";
-    public static final String NULLABLE = "NULLABLE";
-    public static final String CHAR_OCTET_LENGTH = "CHAR_OCTET_LENGTH";
-    public static final String ORDINAL_POSITION = "ORDINAL_POSITION";
-    public static final String IS_NULLABLE = "IS_NULLABLE";
-    public static final String COLUMN_TYPE = "COLUMN_TYPE";
-    public static final String TYPE_SCHEM = "TYPE_SCHEM";
-    public static final String VIEW = "VIEW";
-    public static final String SYSTEM_TABLE = "SYSTEM TABLE";
 
     /**
      * The column name field.
@@ -360,25 +344,24 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getFunctionColumns(final String catalog, final String schemaPattern,
                                         final String functionNamePattern, final String columnNamePattern) {
-        // FIXME redo this method.
         final ArrayList<Column> columns = new ArrayList<>();
         columns.add(new Column("FUNCTION_CAT", ParadoxType.VARCHAR));
         columns.add(new Column("FUNCTION_SCHEM", ParadoxType.VARCHAR));
         columns.add(new Column("FUNCTION_NAME", ParadoxType.VARCHAR));
-        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column(COLUMN_TYPE, ParadoxType.INTEGER));
-        columns.add(new Column(DATA_TYPE, ParadoxType.INTEGER));
-        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("COLUMN_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("COLUMN_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column("DATA_TYPE", ParadoxType.INTEGER));
+        columns.add(new Column("TYPE_NAME", ParadoxType.VARCHAR));
         columns.add(new Column("PRECISION", ParadoxType.INTEGER));
         columns.add(new Column("LENGTH", ParadoxType.INTEGER));
         columns.add(new Column("SCALE", ParadoxType.INTEGER));
         columns.add(new Column("RADIX", ParadoxType.INTEGER));
-        columns.add(new Column(NULLABLE, ParadoxType.INTEGER));
-        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
-        columns.add(new Column(CHAR_OCTET_LENGTH, ParadoxType.INTEGER));
-        columns.add(new Column(ORDINAL_POSITION, ParadoxType.INTEGER));
-        columns.add(new Column(IS_NULLABLE, ParadoxType.VARCHAR));
-        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
+        columns.add(new Column("NULLABLE", ParadoxType.INTEGER));
+        columns.add(new Column("REMARKS", ParadoxType.VARCHAR));
+        columns.add(new Column("CHAR_OCTET_LENGTH", ParadoxType.INTEGER));
+        columns.add(new Column("ORDINAL_POSITION", ParadoxType.INTEGER));
+        columns.add(new Column("IS_NULLABLE", ParadoxType.VARCHAR));
+        columns.add(new Column("SPECIFIC_NAME", ParadoxType.VARCHAR));
 
         final List<Object[]> values = new ArrayList<>();
 
@@ -866,28 +849,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getProcedureColumns(final String catalog, final String schemaPattern,
                                          final String procedureNamePattern, final String columnNamePattern) {
-        final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column("PROCEDURE_CAT", ParadoxType.VARCHAR));
-        columns.add(new Column("PROCEDURE_SCHEM", ParadoxType.VARCHAR));
-        columns.add(new Column("PROCEDURE_NAME", ParadoxType.VARCHAR));
-        columns.add(new Column(COLUMN_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column(COLUMN_TYPE, ParadoxType.INTEGER));
-        columns.add(new Column(DATA_TYPE, ParadoxType.INTEGER));
-        columns.add(new Column(TYPE_NAME, ParadoxType.VARCHAR));
-        columns.add(new Column("PRECISION", ParadoxType.INTEGER));
-        columns.add(new Column("LENGTH", ParadoxType.INTEGER));
-        columns.add(new Column("SCALE", ParadoxType.INTEGER));
-        columns.add(new Column("RADIX", ParadoxType.INTEGER));
-        columns.add(new Column(NULLABLE, ParadoxType.INTEGER));
-        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
-        columns.add(new Column("COLUMN_DEF", ParadoxType.VARCHAR));
-        columns.add(new Column("SQL_DATA_TYPE", ParadoxType.VARCHAR));
-        columns.add(new Column("SQL_DATETIME_SUB", ParadoxType.VARCHAR));
-        columns.add(new Column(CHAR_OCTET_LENGTH, ParadoxType.VARCHAR));
-        columns.add(new Column(IS_NULLABLE, ParadoxType.VARCHAR));
-        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
-
-        return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), columns);
+        return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
     }
 
     /**
@@ -929,18 +891,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getProcedures(final String catalog, final String schemaPattern,
                                    final String procedureNamePattern) {
-        final ArrayList<Column> columns = new ArrayList<>(1);
-        columns.add(new Column("PROCEDURE_CAT", ParadoxType.VARCHAR));
-        columns.add(new Column("PROCEDURE_SCHEM", ParadoxType.VARCHAR));
-        columns.add(new Column("PROCEDURE_NAME", ParadoxType.VARCHAR));
-        columns.add(new Column("Reserved1", ParadoxType.VARCHAR));
-        columns.add(new Column("Reserved2", ParadoxType.VARCHAR));
-        columns.add(new Column("Reserved3", ParadoxType.VARCHAR));
-        columns.add(new Column(REMARKS, ParadoxType.VARCHAR));
-        columns.add(new Column("PROCEDURE_TYPE", ParadoxType.INTEGER));
-        columns.add(new Column(SPECIFIC_NAME, ParadoxType.VARCHAR));
-
-        return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), columns);
+        return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
     }
 
     /**
@@ -949,8 +900,8 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getSchemas(final String catalog, final String schemaPattern) throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
+        columns.add(new Column("TABLE_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("TABLE_CATALOG", ParadoxType.VARCHAR));
 
         final List<String[]> values = new ArrayList<>();
         for (final String catalogName : this.connectionInfo.listCatalogs()) {
@@ -1045,8 +996,8 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getSchemas() throws SQLException {
         final ArrayList<Column> columns = new ArrayList<>();
-        columns.add(new Column(TABLE_SCHEMA, ParadoxType.VARCHAR));
-        columns.add(new Column(TABLE_CATALOG, ParadoxType.VARCHAR));
+        columns.add(new Column("TABLE_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("TABLE_CATALOG", ParadoxType.VARCHAR));
 
         final List<String[]> values = new ArrayList<>();
         for (final String catalog : this.connectionInfo.listCatalogs()) {

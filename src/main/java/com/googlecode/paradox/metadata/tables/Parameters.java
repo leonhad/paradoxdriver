@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * Routines parameters.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class Parameters implements Table {
@@ -49,6 +49,7 @@ public class Parameters implements Table {
     private final Field precision = new Field("precision", 0, 4, ParadoxType.INTEGER, this, 11);
     private final Field scale = new Field("scale", 0, 4, ParadoxType.INTEGER, this, 12);
     private final Field radix = new Field("numeric_precision_radix", 0, 4, ParadoxType.INTEGER, this, 13);
+    private final Field remarks = new Field("remarks", 0, 4, ParadoxType.VARCHAR, this, 14);
 
     /**
      * Creates a new instance.
@@ -84,7 +85,8 @@ public class Parameters implements Table {
                 octetLength,
                 precision,
                 scale,
-                radix
+                radix,
+                remarks
         };
     }
 
@@ -157,6 +159,12 @@ public class Parameters implements Table {
                         value = Arrays.stream(function.getColumns())
                                 .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
                                 .map(Column::getRadix)
+                                .filter(Objects::nonNull)
+                                .findFirst().orElse(null);
+                    } else if (this.remarks.equals(field)) {
+                        value = Arrays.stream(function.getColumns())
+                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                                .map(Column::getRemarks)
                                 .filter(Objects::nonNull)
                                 .findFirst().orElse(null);
                     }
