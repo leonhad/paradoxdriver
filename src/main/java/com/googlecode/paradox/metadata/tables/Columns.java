@@ -27,6 +27,7 @@ import java.util.List;
  * @version 1.2
  * @since 1.6.0
  */
+@SuppressWarnings("java:S1820")
 public class Columns implements Table {
 
     /**
@@ -124,9 +125,9 @@ public class Columns implements Table {
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-            for (final Table table : schema.list(connectionInfo, null)) {
-                for (final Field fieldLocal : table.getFields()) {
+        for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                for (final Field fieldLocal : localTable.getFields()) {
                     final Object[] row = new Object[fields.length];
                     for (int i = 0; i < fields.length; i++) {
                         final Field field = fields[i];
@@ -136,11 +137,11 @@ public class Columns implements Table {
 
                         Object value = null;
                         if (catalog.equals(field)) {
-                            value = schema.catalogName();
+                            value = localSchema.catalogName();
                         } else if (this.schema.equals(field)) {
-                            value = schema.name();
+                            value = localSchema.name();
                         } else if (this.table.equals(field)) {
-                            value = table.getName();
+                            value = localTable.getName();
                         } else if (this.name.equals(field)) {
                             value = fieldLocal.getName();
                         } else if (this.ordinal.equals(field)) {
@@ -158,7 +159,7 @@ public class Columns implements Table {
                                 value = "NO";
                             }
                         } else if (this.incrementValue.equals(field) && fieldLocal.isAutoIncrement()) {
-                            value = table.getAutoIncrementValue();
+                            value = localTable.getAutoIncrementValue();
                         } else if (this.incrementStep.equals(field) && fieldLocal.isAutoIncrement()) {
                             value = 1;
                         } else if (this.maximumLength.equals(field)) {
