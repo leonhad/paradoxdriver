@@ -65,8 +65,6 @@ public class GroupByNode {
      */
     public GroupByNode(final SelectNode statement, final List<PlanTableNode> tables, final List<Column> columns)
             throws SQLException {
-        // FIXME review the group by construtor.
-
         // Create columns to use in SELECT statement.
         for (final FieldNode field : statement.getGroups()) {
             if (field instanceof ParameterNode) {
