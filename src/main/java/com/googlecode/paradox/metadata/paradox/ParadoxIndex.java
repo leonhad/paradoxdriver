@@ -14,9 +14,13 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.planner.sorting.OrderType;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Stores index data.
@@ -44,14 +48,13 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
      * @return the index order.
      */
     @Override
-    public String getOrder() {
-        // FIXME use enum.
+    public OrderType getOrder() {
         final int referential = this.getReferentialIntegrity();
         if ((referential == 0x10) || (referential == 0x11) || (referential == 0x30)) {
-            return "D";
+            return OrderType.DESC;
         }
 
-        return "A";
+        return OrderType.ASC;
     }
 
     @Override
@@ -68,7 +71,7 @@ public final class ParadoxIndex extends ParadoxDataFile implements Index {
 
     private static boolean filterFields(final Field field, final Set<Field> tableFields) {
         final Iterator<Field> i = tableFields.iterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             Field f = i.next();
             if (f.getName().equals(field.getName())) {
                 i.remove();

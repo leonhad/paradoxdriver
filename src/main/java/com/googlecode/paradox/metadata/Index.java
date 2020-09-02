@@ -10,10 +10,12 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.planner.sorting.OrderType;
+
 /**
  * A generic index.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public interface Index {
@@ -33,12 +35,11 @@ public interface Index {
     boolean isUnique();
 
     /**
-     * FIXME Add order type.
      * Gets the index order type.
      *
      * @return the index order type.
      */
-    String getOrder();
+    OrderType getOrder();
 
     /**
      * Gets the field list.

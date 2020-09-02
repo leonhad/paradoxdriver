@@ -10,6 +10,8 @@
  */
 package com.googlecode.paradox.metadata;
 
+import com.googlecode.paradox.planner.sorting.OrderType;
+
 import java.util.function.Supplier;
 
 /**
@@ -74,8 +76,8 @@ public class SoftIndex implements Index {
     }
 
     @Override
-    public String getOrder() {
-        return "A";
+    public OrderType getOrder() {
+        return OrderType.ASC;
     }
 
     @Override

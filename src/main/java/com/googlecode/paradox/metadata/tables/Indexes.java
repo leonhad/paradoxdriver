@@ -119,11 +119,7 @@ public class Indexes implements Table {
                             } else if (this.ordinal.equals(field)) {
                                 value = indexField.getOrderNum();
                             } else if (this.ascOrDesc.equals(field)) {
-                                if ("A".equals(index.getOrder())) {
-                                    value = "ASC";
-                                } else {
-                                    value = "DESC";
-                                }
+                                value = index.getOrder().name();
                             } else if (this.cardinality.equals(field)) {
                                 value = index.getRowCount();
                             } else if (this.pages.equals(field)) {
