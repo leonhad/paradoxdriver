@@ -303,7 +303,7 @@ public enum TokenType {
     /**
      * Stores the select break values.
      */
-    private static final TokenType[] SELECT_BREAKS = {WHERE, ORDER, GROUP};
+    private static final TokenType[] SELECT_BREAKS = {WHERE, ORDER, GROUP, LIMIT, OFFSET};
 
     /**
      * Token value.
