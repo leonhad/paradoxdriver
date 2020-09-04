@@ -29,7 +29,7 @@ import java.sql.SQLSyntaxErrorException;
 /**
  * Unit test for {@link SQLParser}.
  *
- * @version 1.6
+ * @version 1.7
  * @since 1.0
  */
 @SuppressWarnings({"java:S109", "java:S1192", "java:S1200", "java:S1448"})
@@ -1214,5 +1214,24 @@ public class SQLParserTest {
     public void testGroupingFunctionInWhere() throws SQLException {
         final SQLParser parser = new SQLParser("select * from table where count(Id) = 1");
         Assert.assertThrows("Invalid use of aggregate function", SQLSyntaxErrorException.class, parser::parse);
+    }
+
+    /**
+     * Test for offset and limit.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOffsetLimit() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from fields.date7 limit 10 offset 2");
+
+        final StatementNode tree = parser.parse();
+        final SelectNode select = (SelectNode) tree;
+
+        Assert.assertNotNull("Invalid limit value", select.getLimit());
+        Assert.assertNotNull("Invalid offset value", select.getOffset());
+
+        Assert.assertEquals("Invalid limit value", 10, select.getLimit().intValue());
+        Assert.assertEquals("Invalid offset value", 2, select.getOffset().intValue());
     }
 }

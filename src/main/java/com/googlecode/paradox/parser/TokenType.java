@@ -159,6 +159,11 @@ public enum TokenType {
     LIKE,
 
     /**
+     * Limit token.
+     */
+    LIMIT,
+
+    /**
      * I like token.
      */
     ILIKE,
@@ -202,6 +207,11 @@ public enum TokenType {
      * Numeric token.
      */
     NUMERIC(null),
+
+    /**
+     * Offset token.
+     */
+    OFFSET,
 
     /**
      * ON token.

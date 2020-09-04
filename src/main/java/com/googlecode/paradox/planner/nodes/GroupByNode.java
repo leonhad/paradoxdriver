@@ -63,6 +63,7 @@ public class GroupByNode {
      * @param columns   the current columns.
      * @throws SQLException in case of failures.
      */
+    @SuppressWarnings("java:S3776")
     public GroupByNode(final SelectNode statement, final List<PlanTableNode> tables, final List<Column> columns)
             throws SQLException {
         // Create columns to use in SELECT statement.

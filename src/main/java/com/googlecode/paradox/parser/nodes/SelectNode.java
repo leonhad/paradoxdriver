@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Stores a select node.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.0
  */
 public final class SelectNode extends StatementNode {
@@ -53,6 +53,14 @@ public final class SelectNode extends StatementNode {
      * If has a distinct token.
      */
     private boolean distinct;
+    /**
+     * Result set limit.
+     */
+    private Integer limit;
+    /**
+     * Result set offset.
+     */
+    private Integer offset;
 
     /**
      * Create a new instance.
@@ -289,5 +297,41 @@ public final class SelectNode extends StatementNode {
      */
     public List<OrderType> getOrderTypes() {
         return orderTypes;
+    }
+
+    /**
+     * Gets the result set limit.
+     *
+     * @return the result set limit.
+     */
+    public Integer getLimit() {
+        return limit;
+    }
+
+    /**
+     * Sets the result set limit.
+     *
+     * @param limit the result set limit.
+     */
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    /**
+     * Gets the result set offset.
+     *
+     * @return the result set offset.
+     */
+    public Integer getOffset() {
+        return offset;
+    }
+
+    /**
+     * Sets the result set offset.
+     *
+     * @param offset the result set offset.
+     */
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
 }
