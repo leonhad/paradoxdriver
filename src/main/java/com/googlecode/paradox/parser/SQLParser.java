@@ -1231,12 +1231,44 @@ public final class SQLParser {
             }
         }
 
+        if (isToken(TokenType.LIMIT)) {
+            this.parseLimit(select);
+        }
+
+        if (isToken(TokenType.OFFSET)) {
+            this.parseOffset(select);
+        }
+
         if (this.scanner.hasNext() || this.token != null) {
             throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
                     this.token.getPosition());
         }
 
         return select;
+    }
+
+    /**
+     * Parses the limit token.
+     *
+     * @param select the select node.
+     * @throws SQLException in case of failures.
+     */
+    private void parseLimit(final SelectNode select) throws SQLException {
+        this.expect(TokenType.LIMIT);
+        select.setLimit(Integer.valueOf(this.token.getValue()));
+        this.expect(TokenType.NUMERIC);
+    }
+
+    /**
+     * Parses the offset token.
+     *
+     * @param select the select node.
+     * @throws SQLException in case of failures.
+     */
+    private void parseOffset(final SelectNode select) throws SQLException {
+        this.expect(TokenType.OFFSET);
+        select.setOffset(Integer.valueOf(this.token.getValue()));
+        this.expect(TokenType.NUMERIC);
     }
 
     /**
