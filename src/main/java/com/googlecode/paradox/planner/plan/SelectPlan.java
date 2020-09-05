@@ -82,6 +82,16 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     private final int parameterCount;
 
     /**
+     * Result set limit.
+     */
+    private Integer limit;
+
+    /**
+     * Result set offset.
+     */
+    private Integer offset;
+
+    /**
      * Creates a SELECT plan.
      *
      * @param connectionInfo the connection info.
@@ -92,6 +102,8 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         this.condition = statement.getCondition();
         this.distinct = statement.isDistinct();
         this.parameterCount = statement.getParameterCount();
+        this.limit = statement.getLimit();
+        this.offset = statement.getOffset();
 
         // Load the table information.
         this.tables = statement.getTables().stream()
@@ -516,6 +528,15 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         // Distinct
         if (distinct) {
             stream = stream.filter(FunctionalUtils.distinctByKey(this.columns, context.getConnectionInfo()));
+        }
+
+        // Offset position.
+        if (offset != null) {
+            stream = stream.skip(offset);
+        }
+
+        if (limit != null) {
+            stream = stream.limit(limit);
         }
 
         if (context.getMaxRows() != 0) {
