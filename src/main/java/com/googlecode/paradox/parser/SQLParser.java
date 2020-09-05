@@ -1101,7 +1101,7 @@ public final class SQLParser {
         }
 
         boolean firstField = true;
-        while (this.token != null) {
+        while (this.token != null && !this.token.isSelectBreak()) {
             // Field Name
             expectComma(!firstField);
             firstField = false;

@@ -454,6 +454,24 @@ public class PlannerTest {
     }
 
     /**
+     * Test for limit and offset.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLimitOffset() throws SQLException {
+        try (final Statement stmt = this.conn.createStatement()) {
+            try (ResultSet rs = stmt.executeQuery("select Id from fields.long order by Id limit 2 offset 1")) {
+                Assert.assertTrue("Invalid result set state", rs.next());
+                Assert.assertEquals("Invalid value", 2, rs.getInt("Id"));
+                Assert.assertTrue("Invalid result set state", rs.next());
+                Assert.assertEquals("Invalid value", 3, rs.getInt("Id"));
+                Assert.assertFalse("Invalid result set state", rs.next());
+            }
+        }
+    }
+
+    /**
      * Test the planer execution cache.
      *
      * @throws SQLException in case of failures.
