@@ -1256,6 +1256,11 @@ public final class SQLParser {
     private void parseLimit(final SelectNode select) throws SQLException {
         this.expect(TokenType.LIMIT);
         select.setLimit(Integer.valueOf(this.token.getValue()));
+        if (select.getLimit() < 0) {
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
+                    this.token.getPosition(), this.token.getValue());
+        }
+
         this.expect(TokenType.NUMERIC);
     }
 
@@ -1268,6 +1273,11 @@ public final class SQLParser {
     private void parseOffset(final SelectNode select) throws SQLException {
         this.expect(TokenType.OFFSET);
         select.setOffset(Integer.valueOf(this.token.getValue()));
+        if (select.getOffset() < 0) {
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
+                    this.token.getPosition(), this.token.getValue());
+        }
+
         this.expect(TokenType.NUMERIC);
     }
 

@@ -1234,4 +1234,26 @@ public class SQLParserTest {
         Assert.assertEquals("Invalid limit value", 10, select.getLimit().intValue());
         Assert.assertEquals("Invalid offset value", 2, select.getOffset().intValue());
     }
+
+    /**
+     * Test for limit negative.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testLimitNegative() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from fields.date7 limit -10");
+        Assert.assertThrows("Invalid parse", SQLException.class, parser::parse);
+    }
+
+    /**
+     * Test for offset negative.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testOffsetNegative() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from fields.date7 offset -10");
+        Assert.assertThrows("Invalid parse", SQLException.class, parser::parse);
+    }
 }
