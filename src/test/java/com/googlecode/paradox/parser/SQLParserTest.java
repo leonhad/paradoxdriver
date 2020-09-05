@@ -1232,7 +1232,7 @@ public class SQLParserTest {
         Assert.assertNotNull("Invalid offset value", select.getOffset());
 
         Assert.assertEquals("Invalid limit value", 10, select.getLimit().intValue());
-        Assert.assertEquals("Invalid offset value", 2, select.getOffset().intValue());
+        Assert.assertEquals("Invalid offsetvalue", 2, select.getOffset().intValue());
     }
 
     /**
