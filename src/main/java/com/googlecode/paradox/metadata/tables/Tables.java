@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Tables.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class Tables implements Table {
@@ -129,17 +129,9 @@ public class Tables implements Table {
                     } else if (this.charset.equals(field) && table.getCharset() != null) {
                         value = table.getCharset().displayName();
                     } else if (this.encrypted.equals(field)) {
-                        if (table.isEncrypted()) {
-                            value = "YES";
-                        } else {
-                            value = "NO";
-                        }
+                        value = description(table.isEncrypted());
                     } else if (this.writeProtected.equals(field)) {
-                        if (table.isWriteProtected()) {
-                            value = "YES";
-                        } else {
-                            value = "NO";
-                        }
+                        value = description(table.isWriteProtected());
                     } else if (this.count.equals(field) && table.getCharset() != null) {
                         value = table.getRowCount();
                     } else if (this.blockSize.equals(field)) {

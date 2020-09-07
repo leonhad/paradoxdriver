@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * A generic table.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public interface Table {
@@ -186,5 +186,19 @@ public interface Table {
      */
     default int getRecordSize() {
         return Arrays.stream(getFields()).mapToInt(Field::getRealSize).sum();
+    }
+
+    /**
+     * Gets boolean description.
+     *
+     * @param value the boolean value to describe.
+     * @return YES if {@code value} is {@code true}, NO if not.
+     */
+    default String description(Boolean value) {
+        if (Boolean.TRUE.equals(value)) {
+            return "YES";
+        }
+
+        return "NO";
     }
 }
