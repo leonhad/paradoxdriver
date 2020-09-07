@@ -84,12 +84,12 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
     /**
      * Result set limit.
      */
-    private Integer limit;
+    private final Integer limit;
 
     /**
      * Result set offset.
      */
-    private Integer offset;
+    private final Integer offset;
 
     /**
      * Creates a SELECT plan.
