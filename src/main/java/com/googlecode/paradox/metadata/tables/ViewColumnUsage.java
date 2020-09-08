@@ -87,11 +87,31 @@ public class ViewColumnUsage implements Table {
     }
 
     @Override
+    public int getRowCount() {
+        try {
+            int sum = 0;
+            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+                for (final Table table : localSchema.list(connectionInfo, null)) {
+                    if (!(table instanceof View)) {
+                        continue;
+                    }
+
+                    sum += ((View) table).usages().length;
+                }
+            }
+
+            return sum;
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
+    }
+
+    @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-            for (final Table table : schema.list(connectionInfo, null)) {
+        for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table table : localSchema.list(connectionInfo, null)) {
                 if (!(table instanceof View)) {
                     continue;
                 }
@@ -102,13 +122,13 @@ public class ViewColumnUsage implements Table {
                         final Field field = fields[i];
                         Object value = null;
                         if (catalog.equals(field)) {
-                            value = schema.catalogName();
+                            value = localSchema.catalogName();
                         } else if (this.schema.equals(field)) {
-                            value = schema.name();
+                            value = localSchema.name();
                         } else if (name.equals(field)) {
                             value = table.getName();
                         } else if (this.tableCatalog.equals(field)) {
-                            value = schema.catalogName();
+                            value = localSchema.catalogName();
                         } else if (this.tableSchema.equals(field)) {
                             value = usageField.getTable().getSchemaName();
                         } else if (this.tableName.equals(field)) {
