@@ -90,14 +90,17 @@ public class ViewColumnUsage implements Table {
     public int getRowCount() {
         try {
             int sum = 0;
-            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
-                for (final Table table : localSchema.list(connectionInfo, null)) {
-                    if (!(table instanceof View)) {
-                        continue;
-                    }
 
-                    sum += ((View) table).usages().length;
-                }
+            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+                sum += localSchema.list(connectionInfo, null).stream()
+                        .filter(table -> (table instanceof View))
+                        .mapToInt((Table table) -> {
+                            try {
+                                return ((View) table).usages().length;
+                            } catch (final SQLException e) {
+                                return 0;
+                            }
+                        }).sum();
             }
 
             return sum;
