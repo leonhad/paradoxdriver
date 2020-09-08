@@ -95,38 +95,54 @@ public class Indexes implements Table {
     }
 
     @Override
+    public int getRowCount() {
+        try {
+            int sum = 0;
+            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+                for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                    sum += localTable.getIndexes().length;
+                }
+            }
+
+            return sum;
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
+    }
+
+    @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-            for (final Table table : schema.list(connectionInfo, null)) {
-                for (final Index index : table.getIndexes()) {
+        for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                for (final Index index : localTable.getIndexes()) {
                     for (final Field indexField : index.getFields()) {
                         final Object[] row = new Object[fields.length];
                         for (int i = 0; i < fields.length; i++) {
-                            final Field field = fields[i];
+                            final Field localField = fields[i];
                             Object value = null;
-                            if (catalog.equals(field)) {
-                                value = schema.catalogName();
-                            } else if (this.schema.equals(field)) {
-                                value = schema.name();
-                            } else if (this.table.equals(field)) {
-                                value = table.getName();
-                            } else if (name.equals(field)) {
+                            if (catalog.equals(localField)) {
+                                value = localSchema.catalogName();
+                            } else if (this.schema.equals(localField)) {
+                                value = localSchema.name();
+                            } else if (this.table.equals(localField)) {
+                                value = localTable.getName();
+                            } else if (name.equals(localField)) {
                                 value = index.getName();
-                            } else if (this.nonUnique.equals(field)) {
+                            } else if (this.nonUnique.equals(localField)) {
                                 value = !index.isUnique();
-                            } else if (this.ordinal.equals(field)) {
+                            } else if (this.ordinal.equals(localField)) {
                                 value = indexField.getOrderNum();
-                            } else if (this.ascOrDesc.equals(field)) {
+                            } else if (this.ascOrDesc.equals(localField)) {
                                 value = index.getOrder().name();
-                            } else if (this.cardinality.equals(field)) {
+                            } else if (this.cardinality.equals(localField)) {
                                 value = index.getRowCount();
-                            } else if (this.pages.equals(field)) {
+                            } else if (this.pages.equals(localField)) {
                                 value = index.getTotalBlocks();
-                            } else if (this.field.equals(field)) {
+                            } else if (this.field.equals(localField)) {
                                 value = indexField.getName();
-                            } else if (this.type.equals(field)) {
+                            } else if (this.type.equals(localField)) {
                                 value = index.type().description();
                             }
 

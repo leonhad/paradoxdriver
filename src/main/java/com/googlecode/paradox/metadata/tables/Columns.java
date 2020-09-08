@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Columns.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings("java:S1820")
@@ -119,6 +119,22 @@ public class Columns implements Table {
     @Override
     public String getSchemaName() {
         return ConnectionInfo.INFORMATION_SCHEMA;
+    }
+
+    @Override
+    public int getRowCount() {
+        try {
+            int sum = 0;
+            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+                for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                    sum += localTable.getFields().length;
+                }
+            }
+
+            return sum;
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
     }
 
     @Override

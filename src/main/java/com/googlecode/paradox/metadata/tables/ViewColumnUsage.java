@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Views tables and columns usage.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ViewColumnUsage implements Table {
