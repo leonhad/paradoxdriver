@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 /**
  * Routines.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class Routines implements Table {
@@ -115,10 +115,24 @@ public class Routines implements Table {
     }
 
     @Override
+    public int getRowCount() {
+        try {
+            int sum = 0;
+            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+                sum += FunctionFactory.getFunctions().size();
+            }
+
+            return sum;
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
+    }
+
+    @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
+        for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry :
                     FunctionFactory.getFunctions().entrySet()) {
                 final AbstractFunction function = entry.getValue().get();
@@ -129,7 +143,7 @@ public class Routines implements Table {
                     if (this.catalog.equals(field)) {
                         value = catalogName;
                     } else if (this.schema.equals(field)) {
-                        value = schema.name();
+                        value = localSchema.name();
                     } else if (this.name.equals(field)) {
                         value = entry.getKey();
                     } else if (this.type.equals(field)) {

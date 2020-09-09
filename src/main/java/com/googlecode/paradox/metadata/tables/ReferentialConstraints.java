@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Referential constraints table.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class ReferentialConstraints implements Table {
@@ -64,6 +64,11 @@ public class ReferentialConstraints implements Table {
                 updateRule,
                 deleteRule
         };
+    }
+
+    @Override
+    public int getRowCount() {
+        return 0;
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Table constraints table.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class TableConstraints implements Table {
@@ -82,6 +82,22 @@ public class TableConstraints implements Table {
     @Override
     public String getSchemaName() {
         return ConnectionInfo.INFORMATION_SCHEMA;
+    }
+
+    @Override
+    public int getRowCount() {
+        try {
+            int sum = 0;
+            for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
+                for (final Table table : schema.list(connectionInfo, null)) {
+                    sum += table.getConstraints().length;
+                }
+            }
+
+            return sum;
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
     }
 
     @Override

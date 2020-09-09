@@ -139,6 +139,15 @@ public class View implements Table {
     }
 
     @Override
+    public int getRowCount() {
+        try {
+            return load(new Field[0]).size();
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
+    }
+
+    @Override
     public List<Object[]> load(final Field[] fieldsToLoad) throws SQLException {
         final Field[] fieldsLoaded = getFields();
         final int[] mapColumns = new int[fieldsToLoad.length];

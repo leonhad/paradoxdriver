@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * Routines parameters.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class Parameters implements Table {
@@ -93,6 +93,18 @@ public class Parameters implements Table {
     @Override
     public String getSchemaName() {
         return ConnectionInfo.INFORMATION_SCHEMA;
+    }
+
+    @Override
+    public int getRowCount() {
+        int sum = 0;
+        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry :
+                FunctionFactory.getFunctions().entrySet()) {
+            final AbstractFunction function = entry.getValue().get();
+            sum += function.getColumns().length;
+        }
+
+        return sum;
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.googlecode.paradox.utils.Constants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.List;
 /**
  * Connection warnings.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class Warnings implements Table {
@@ -88,7 +87,17 @@ public class Warnings implements Table {
     }
 
     @Override
-    public List<Object[]> load(final Field[] fields) throws SQLException {
+    public int getRowCount() {
+        int sum = 0;
+        for (SQLWarning warning = connectionInfo.getWarning(); warning != null; warning = warning.getNextWarning()) {
+            sum++;
+        }
+
+        return sum;
+    }
+
+    @Override
+    public List<Object[]> load(final Field[] fields) {
         final List<Object[]> ret = new ArrayList<>();
 
         for (SQLWarning warning = connectionInfo.getWarning(); warning != null; warning = warning.getNextWarning()) {

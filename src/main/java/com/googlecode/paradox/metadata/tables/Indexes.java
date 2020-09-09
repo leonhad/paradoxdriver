@@ -100,7 +100,9 @@ public class Indexes implements Table {
             int sum = 0;
             for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
                 for (final Table localTable : localSchema.list(connectionInfo, null)) {
-                    sum += localTable.getIndexes().length;
+                    for (final Index index : localTable.getIndexes()) {
+                        sum += index.getFields().length;
+                    }
                 }
             }
 

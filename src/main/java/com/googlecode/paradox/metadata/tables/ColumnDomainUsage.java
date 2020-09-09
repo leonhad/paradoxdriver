@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Column domain usage table.
  *
- * @version 1.0
+ * @version 1.1
  * @since 1.6.0
  */
 public class ColumnDomainUsage implements Table {
@@ -69,6 +69,11 @@ public class ColumnDomainUsage implements Table {
                 tableName,
                 columnName
         };
+    }
+
+    @Override
+    public int getRowCount() {
+        return 0;
     }
 
     @Override

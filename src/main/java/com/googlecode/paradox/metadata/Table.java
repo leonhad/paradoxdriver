@@ -36,13 +36,7 @@ public interface Table {
      *
      * @return the row count.
      */
-    default int getRowCount() {
-        try {
-            return load(new Field[0]).size();
-        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
-            return 0;
-        }
-    }
+    int getRowCount();
 
     /**
      * Gets the table type.

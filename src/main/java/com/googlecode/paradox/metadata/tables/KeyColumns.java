@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Key columns.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class KeyColumns implements Table {
@@ -89,6 +89,27 @@ public class KeyColumns implements Table {
     @Override
     public String getSchemaName() {
         return ConnectionInfo.INFORMATION_SCHEMA;
+    }
+
+    @Override
+    public int getRowCount() {
+        try {
+            int sum = 0;
+            for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
+                for (final Table table : schema.list(connectionInfo, null)) {
+                    Index index = table.getPrimaryKeyIndex();
+                    if (index == null) {
+                        continue;
+                    }
+
+                    sum += index.getFields().length;
+                }
+            }
+
+            return sum;
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
     }
 
     @Override

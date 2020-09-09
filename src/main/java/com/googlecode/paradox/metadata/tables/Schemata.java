@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Schemata view.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class Schemata implements Table {
@@ -92,6 +92,15 @@ public class Schemata implements Table {
     @Override
     public String getSchemaName() {
         return ConnectionInfo.INFORMATION_SCHEMA;
+    }
+
+    @Override
+    public int getRowCount() {
+        try {
+            return connectionInfo.getSchemas(catalogName, null).size();
+        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return 0;
+        }
     }
 
     @Override
