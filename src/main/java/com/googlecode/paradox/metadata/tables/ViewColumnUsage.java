@@ -93,14 +93,7 @@ public class ViewColumnUsage implements Table {
 
             for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
                 sum += localSchema.list(connectionInfo, null).stream()
-                        .filter(table -> (table instanceof View))
-                        .mapToInt((Table table) -> {
-                            try {
-                                return ((View) table).usages().length;
-                            } catch (final SQLException e) {
-                                return 0;
-                            }
-                        }).sum();
+                        .filter(table -> (table instanceof View)).count();
             }
 
             return sum;
