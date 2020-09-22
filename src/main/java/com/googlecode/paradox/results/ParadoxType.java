@@ -355,6 +355,8 @@ public enum ParadoxType implements SQLType {
 
     /**
      * Gets if the type is a numeric.
+     *
+     * @return <code>true</code> if the type is a numeric.
      */
     public boolean isNumeric() {
         return getRadix() != null;
