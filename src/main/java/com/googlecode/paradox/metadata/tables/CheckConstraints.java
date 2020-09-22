@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Check constraints table.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class CheckConstraints implements Table {

@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Key columns.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class KeyColumns implements Table {
@@ -95,9 +95,9 @@ public class KeyColumns implements Table {
     public int getRowCount() {
         try {
             int sum = 0;
-            for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-                for (final Table table : schema.list(connectionInfo, null)) {
-                    Index index = table.getPrimaryKeyIndex();
+            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+                for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                    Index index = localTable.getPrimaryKeyIndex();
                     if (index == null) {
                         continue;
                     }
@@ -116,9 +116,9 @@ public class KeyColumns implements Table {
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-            for (final Table table : schema.list(connectionInfo, null)) {
-                Index index = table.getPrimaryKeyIndex();
+        for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                Index index = localTable.getPrimaryKeyIndex();
                 if (index == null) {
                     continue;
                 }
@@ -133,11 +133,11 @@ public class KeyColumns implements Table {
 
                         Object value = null;
                         if (catalog.equals(field)) {
-                            value = schema.catalogName();
+                            value = localSchema.catalogName();
                         } else if (this.schema.equals(field)) {
-                            value = schema.name();
+                            value = localSchema.name();
                         } else if (this.table.equals(field)) {
-                            value = table.getName();
+                            value = localTable.getName();
                         } else if (this.constraintName.equals(field)) {
                             value = index.getName();
                         } else if (this.name.equals(field)) {

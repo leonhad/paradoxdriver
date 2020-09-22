@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 /**
  * Stores the connection information properties.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public final class ConnectionInfo {
@@ -443,8 +443,8 @@ public final class ConnectionInfo {
                     user = getProperty(name, value, errors, USER_KEY, String::valueOf);
                     break;
                 case "password":
-                	// Do nothing.
-                	break;
+                    // Do nothing.
+                    break;
                 default:
                     errors.put(name, ClientInfoStatus.REASON_UNKNOWN_PROPERTY);
             }

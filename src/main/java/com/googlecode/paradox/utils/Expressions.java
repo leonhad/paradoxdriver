@@ -15,7 +15,7 @@ import java.util.Locale;
 /**
  * Utility class to parse SQL expressions.
  *
- * @version 1.3
+ * @version 1.4
  * @since 1.1
  */
 public final class Expressions {
@@ -39,7 +39,7 @@ public final class Expressions {
      */
     public static boolean accept(final Locale locale, final String expression, final String criteria,
                                  final boolean caseSensitive, final char escape) {
-        if ("%".equals(criteria)) {
+        if ("%".equals(criteria) || criteria == null) {
             return true;
         }
 

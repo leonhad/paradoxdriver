@@ -117,12 +117,9 @@ public class Routines implements Table {
     @Override
     public int getRowCount() {
         try {
-            int sum = 0;
-            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
-                sum += FunctionFactory.getFunctions().size();
-            }
-
-            return sum;
+            return connectionInfo.getSchemas(catalogName, null).stream()
+                    .mapToInt(localSchema -> FunctionFactory.getFunctions().size())
+                    .sum();
         } catch (@SuppressWarnings("java:S1166") final SQLException e) {
             return 0;
         }

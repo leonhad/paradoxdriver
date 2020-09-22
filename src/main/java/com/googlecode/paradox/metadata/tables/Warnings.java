@@ -23,14 +23,18 @@ import java.io.StringWriter;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Connection warnings.
  *
- * @version 1.1
+ * @version 1.2
  * @since 1.6.0
  */
 public class Warnings implements Table {
+
+    private static final Logger LOGGER = Logger.getLogger(Warnings.class.getName());
 
     /**
      * The current catalog.
@@ -114,13 +118,7 @@ public class Warnings implements Table {
                 } else if (this.vendorCode.equals(field)) {
                     value = warning.getErrorCode();
                 } else if (this.stackTrace.equals(field)) {
-                    try (StringWriter sw = new StringWriter();
-                         PrintWriter pw = new PrintWriter(sw)) {
-                        warning.printStackTrace(pw);
-                        value = sw.toString();
-                    } catch (final IOException e) {
-                        // Do nothing.
-                    }
+                    value = printStack(warning);
                 }
 
                 row[i] = value;
@@ -130,5 +128,16 @@ public class Warnings implements Table {
         }
 
         return ret;
+    }
+
+    private static String printStack(SQLWarning warning) {
+        try (StringWriter sw = new StringWriter();
+             PrintWriter pw = new PrintWriter(sw)) {
+            warning.printStackTrace(pw);
+            return sw.toString();
+        } catch (final IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return null;
+        }
     }
 }

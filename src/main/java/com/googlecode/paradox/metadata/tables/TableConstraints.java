@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Table constraints table.
  *
- * @version 1.2
+ * @version 1.3
  * @since 1.6.0
  */
 public class TableConstraints implements Table {
@@ -88,9 +88,9 @@ public class TableConstraints implements Table {
     public int getRowCount() {
         try {
             int sum = 0;
-            for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-                for (final Table table : schema.list(connectionInfo, null)) {
-                    sum += table.getConstraints().length;
+            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+                for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                    sum += localTable.getConstraints().length;
                 }
             }
 
@@ -104,19 +104,19 @@ public class TableConstraints implements Table {
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Schema schema : connectionInfo.getSchemas(catalogName, null)) {
-            for (final Table table : schema.list(connectionInfo, null)) {
-                for (final Index index : table.getConstraints()) {
+        for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                for (final Index index : localTable.getConstraints()) {
                     final Object[] row = new Object[fields.length];
                     for (int i = 0; i < fields.length; i++) {
                         final Field field = fields[i];
                         Object value = null;
                         if (catalog.equals(field)) {
-                            value = schema.catalogName();
+                            value = localSchema.catalogName();
                         } else if (this.schema.equals(field)) {
-                            value = schema.name();
+                            value = localSchema.name();
                         } else if (this.table.equals(field)) {
-                            value = table.getName();
+                            value = localTable.getName();
                         } else if (name.equals(field)) {
                             value = index.getName();
                         } else if (this.type.equals(field)) {

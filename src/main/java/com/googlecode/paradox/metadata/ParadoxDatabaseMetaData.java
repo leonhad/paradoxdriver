@@ -36,20 +36,11 @@ import java.util.stream.Collectors;
 /**
  * Creates an database metadata.
  *
- * @version 1.9
+ * @version 1.10
  * @since 1.0
  */
+@SuppressWarnings({"java:S1192", "java:S3776", "java:S1448"})
 public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData {
-
-    /**
-     * The tables cat name field.
-     */
-    public static final String TABLE_CAT = "TABLE_CAT";
-
-    /**
-     * The column name field.
-     */
-    private static final String COLUMN_NAME = "COLUMN_NAME";
 
     /**
      * JDBC major version.
@@ -77,24 +68,9 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     private static final int PARADOX_MINOR_VERSION = 0;
 
     /**
-     * The remarks name field.
-     */
-    private static final String REMARKS = "REMARKS";
-
-    /**
      * String max size.
      */
     private static final int STRING_MAX_SIZE = 255;
-
-    /**
-     * The tables name field.
-     */
-    private static final String TABLE_NAME = "TABLE_NAME";
-
-    /**
-     * The type name field.
-     */
-    private static final String TYPE_NAME = "TYPE_NAME";
 
     /**
      * The connection information.
@@ -367,22 +343,25 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
 
         for (final Map.Entry<String, Supplier<? extends AbstractFunction>> function :
                 FunctionFactory.getFunctions().entrySet()) {
-            if ((catalog != null && !catalog.equalsIgnoreCase(connectionInfo.getCatalog()))
-                    && (schemaPattern != null
+            if (!catalog.equalsIgnoreCase(connectionInfo.getCatalog())
                     && !Expressions.accept(connectionInfo.getLocale(), connectionInfo.getCurrentSchema().name(),
-                    schemaPattern, false, '\\'))
-                    && (functionNamePattern != null && !Expressions.accept(connectionInfo.getLocale(),
-                    function.getKey(),
-                    functionNamePattern, false, '\\'))) {
+                    schemaPattern, false, '\\')
+                    && !Expressions.accept(connectionInfo.getLocale(), function.getKey(), functionNamePattern, false,
+                    '\\')) {
                 continue;
             }
 
             final AbstractFunction instance = function.getValue().get();
             for (final Column column : instance.getColumns()) {
-                if (columnNamePattern != null
-                        && !Expressions.accept(connectionInfo.getLocale(), column.getName(), columnNamePattern, false
-                        , '\\')) {
+                if (!Expressions.accept(connectionInfo.getLocale(), column.getName(), columnNamePattern, false, '\\')) {
                     continue;
+                }
+
+                String nullableText = "NO";
+                int nullable = functionNoNulls;
+                if (column.isNullable()) {
+                    nullableText = "YES";
+                    nullable = functionNullable;
                 }
 
                 final Object[] row = {
@@ -409,7 +388,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                         // Radix.
                         column.getRadix(),
                         // Nullable
-                        column.isNullable() ? functionNullable : functionNoNulls,
+                        nullable,
                         // Remarks.
                         column.getRemarks(),
                         // Octets.
@@ -417,7 +396,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                         // Ordinal position.
                         column.getIndex(),
                         // Is nullable.
-                        column.isNullable() ? "YES" : "NO",
+                        nullableText,
                         // Specific name.
                         null};
 
@@ -492,7 +471,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getCatalogs() throws ParadoxDataException {
         final List<Column> columns = Collections
-                .singletonList(new Column(ParadoxDatabaseMetaData.TABLE_CAT, ParadoxType.VARCHAR));
+                .singletonList(new Column("TABLE_CAT", ParadoxType.VARCHAR));
 
         final List<Object[]> values = connectionInfo.listCatalogs().stream()
                 .map(name -> new Object[]{name})
@@ -1084,6 +1063,11 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
         final List<Object[]> values = new ArrayList<>();
 
         for (final ParadoxType type : ParadoxType.values()) {
+            int searchable = typePredNone;
+            if (type.isSearchable()) {
+                searchable = typeSearchable;
+            }
+
             final Object[] row = {
                     // Type name.
                     type.getName(),
@@ -1102,7 +1086,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                     // Case sensitive.
                     false,
                     // Searchable,
-                    type.isSearchable() ? typeSearchable : typePredNone,
+                    searchable,
                     // Unsigned attribute.
                     type.isNumeric(),
                     // Fixed prec scale.
