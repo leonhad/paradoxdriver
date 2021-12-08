@@ -21,6 +21,7 @@ import com.googlecode.paradox.utils.Constants;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -154,7 +155,7 @@ public class ParadoxData {
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            buffer.flip();
+            ((Buffer)buffer).flip();
 
             int recordSize = buffer.getShort() & 0xFFFF;
             int headerSize = buffer.getShort() & 0xFFFF;

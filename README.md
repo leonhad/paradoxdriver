@@ -28,13 +28,13 @@ If you're using Maven, you can use the dependencies below:
 <dependency>
     <groupId>com.googlecode.paradoxdriver</groupId>
     <artifactId>paradoxdriver</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
 </dependency>
 ```
 
 If you're using Gradle, add the following line to your dependencies section:
 
-    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.5.0'
+    compile 'com.googlecode.paradoxdriver:paradoxdriver:1.6.0'
 
 If you just want the files, you can grab the [latest release](https://github.com/leonhad/paradoxdriver/releases/latest).
 
