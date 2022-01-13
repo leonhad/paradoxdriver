@@ -46,7 +46,7 @@ public final class Constants {
     /**
      * Max buffer size.
      */
-    public static final int MAX_BUFFER_SIZE = 4_096;
+    public static final int MAX_BUFFER_SIZE = 2_048_0;
 
     /**
      * Paradox version 4 ID.

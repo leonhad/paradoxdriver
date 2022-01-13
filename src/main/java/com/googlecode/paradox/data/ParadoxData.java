@@ -276,11 +276,12 @@ public class ParadoxData {
      */
     private static void parseFieldsName(final ParadoxDataFile dataFile, final ByteBuffer buffer,
                                         final ParadoxField[] fields) {
-        final ByteBuffer name = ByteBuffer.allocate(4096);
+        final ByteBuffer name = ByteBuffer.allocate(261);
         for (int loop = 0; loop < dataFile.getFieldCount(); loop++) {
             name.clear();
 
-            while (buffer.hasRemaining()) {
+            byte c;
+            while ((c = buffer.get()) != 0) {
                 name.put(buffer.get());
             }
 
