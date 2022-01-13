@@ -155,7 +155,7 @@ public class ParadoxData {
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            ((Buffer)buffer).flip();
+            ((Buffer) buffer).flip();
 
             int recordSize = buffer.getShort() & 0xFFFF;
             int headerSize = buffer.getShort() & 0xFFFF;
@@ -280,9 +280,8 @@ public class ParadoxData {
         for (int loop = 0; loop < dataFile.getFieldCount(); loop++) {
             name.clear();
 
-            byte c;
-            while ((c = buffer.get()) != 0) {
-                name.put(c);
+            while (buffer.hasRemaining()) {
+                name.put(buffer.get());
             }
 
             name.flip();
