@@ -3,7 +3,7 @@ This project aims to create a pure Paradox Java Driver by using the JDBC 4 techn
 
 To use it, install the driver class `com.googlecode.paradox.Driver` and use the JDBC String `jdbc:paradox:/dir/to/files`.
 
-[![License](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](LICENSE) [![Build Status](https://travis-ci.org/leonhad/paradoxdriver.svg?branch=master)](https://travis-ci.org/leonhad/paradoxdriver)
+[![License](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](LICENSE)
 
 ## Example ##
 
