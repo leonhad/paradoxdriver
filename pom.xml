@@ -25,7 +25,7 @@
     <licenses>
         <license>
             <name>GNU GPL v3</name>
-            <url>http://www.gnu.org/licenses/gpl.html</url>
+            <url>https://www.gnu.org/licenses/gpl.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -39,11 +39,8 @@
     </developers>
     <mailingLists>
         <mailingList>
-            <name>Discussion List</name>
-            <subscribe>paradoxdriver-discuss+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>paradoxdriver-discuss+unsubscribe@googlegroups.com</unsubscribe>
-            <post>paradoxdriver-discuss@googlegroups.com</post>
-            <archive>https://groups.google.com/d/forum/paradoxdriver-discuss</archive>
+            <name>Discussions</name>
+            <archive>https://github.com/leonhad/paradoxdriver/discussions</archive>
         </mailingList>
     </mailingLists>
     <scm>
