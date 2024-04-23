@@ -37,20 +37,20 @@ public class Tables implements Table {
      */
     private final ConnectionInfo connectionInfo;
 
-    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field type = new Field("type", 0, 0x0A, ParadoxType.VARCHAR, this, 4);
-    private final Field typeName = new Field("type_name", 0, 0x0A, ParadoxType.VARCHAR, this, 5);
-    private final Field charset = new Field("charset", 0, 0, ParadoxType.VARCHAR, this, 6);
-    private final Field encrypted = new Field("encrypted", 0, 3, ParadoxType.VARCHAR, this, 7);
-    private final Field writeProtected = new Field("write_protected", 0, 3, ParadoxType.VARCHAR, this, 8);
-    private final Field count = new Field("count", 0, 0, ParadoxType.VARCHAR, this, 9);
-    private final Field blockSize = new Field("block_size", 0, 2, ParadoxType.INTEGER, this, 10);
-    private final Field totalBlocks = new Field("total_blocks", 0, 2, ParadoxType.INTEGER, this, 11);
-    private final Field usedBlocks = new Field("used_blocks", 0, 2, ParadoxType.INTEGER, this, 12);
-    private final Field freeBlocks = new Field("free_blocks", 0, 2, ParadoxType.INTEGER, this, 13);
-    private final Field recordSize = new Field("record_size", 0, 2, ParadoxType.INTEGER, this, 14);
+    private final Field catalog = new Field("catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field name = new Field("name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field type = new Field("type", 0, 0, 0x0A, ParadoxType.VARCHAR, this, 4);
+    private final Field typeName = new Field("type_name", 0, 0, 0x0A, ParadoxType.VARCHAR, this, 5);
+    private final Field charset = new Field("charset", 0, 0, 0, ParadoxType.VARCHAR, this, 6);
+    private final Field encrypted = new Field("encrypted", 0, 0, 3, ParadoxType.VARCHAR, this, 7);
+    private final Field writeProtected = new Field("write_protected", 0, 0, 3, ParadoxType.VARCHAR, this, 8);
+    private final Field count = new Field("count", 0, 0, 0, ParadoxType.VARCHAR, this, 9);
+    private final Field blockSize = new Field("block_size", 0, 0, 2, ParadoxType.INTEGER, this, 10);
+    private final Field totalBlocks = new Field("total_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 11);
+    private final Field usedBlocks = new Field("used_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 12);
+    private final Field freeBlocks = new Field("free_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 13);
+    private final Field recordSize = new Field("record_size", 0, 0, 2, ParadoxType.INTEGER, this, 14);
 
     /**
      * Creates a new instance.

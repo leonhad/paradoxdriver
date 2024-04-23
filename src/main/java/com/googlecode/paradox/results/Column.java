@@ -49,6 +49,10 @@ public final class Column {
      */
     private int precision;
     /**
+     * The field scale.
+     */
+    private int scale;
+    /**
      * Column size.
      */
     private int size;
@@ -92,6 +96,7 @@ public final class Column {
         this(field.getAlias(), field.getType());
         this.field = field;
         this.precision = field.getPrecision();
+        this.scale = field.getScale();
     }
 
     /**
@@ -141,6 +146,7 @@ public final class Column {
         this.name = name;
         this.type = type;
         this.precision = type.getPrecision();
+        this.scale = type.getScale();
         this.size = type.getSize();
         this.remarks = remarks;
         this.index = index;
@@ -246,7 +252,7 @@ public final class Column {
      */
     public int getScale() {
         if (isSigned()) {
-            return this.precision;
+            return this.scale;
         } else {
             return 0;
         }

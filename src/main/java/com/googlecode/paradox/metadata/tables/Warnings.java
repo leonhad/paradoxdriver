@@ -46,12 +46,11 @@ public class Warnings implements Table {
      */
     private final ConnectionInfo connectionInfo;
 
-    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
-            1);
-    private final Field reason = new Field("reason", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field sqlState = new Field("sql_state", 0, 10, ParadoxType.VARCHAR, this, 3);
-    private final Field vendorCode = new Field("vendor_code", 0, 0, ParadoxType.INTEGER, this, 4);
-    private final Field stackTrace = new Field("stackTrace", 0, 0, ParadoxType.MEMO, this, 5);
+    private final Field catalog = new Field("catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field reason = new Field("reason", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field sqlState = new Field("sql_state", 0, 0, 10, ParadoxType.VARCHAR, this, 3);
+    private final Field vendorCode = new Field("vendor_code", 0, 0, 0, ParadoxType.INTEGER, this, 4);
+    private final Field stackTrace = new Field("stackTrace", 0, 0, 0, ParadoxType.MEMO, this, 5);
 
     /**
      * Creates a new instance.

@@ -14,7 +14,8 @@ import com.googlecode.paradox.data.field.BCDField;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.results.ParadoxType;
 
-import java.sql.Types;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -25,15 +26,16 @@ import java.util.Objects;
  */
 public final class ParadoxField extends Field {
 
-    /**
-     * Default number precision.
-     */
-    private static final int NUMBER_PRECISION = 3;
-
-    /**
-     * Default currency precision.
-     */
-    private static final int CURRENCY_PRECISION = 2;
+    private static final List<ParadoxType> FIXED_PRECISION = Arrays.asList(
+            ParadoxType.VARCHAR,
+            ParadoxType.CHAR,
+            ParadoxType.OLE,
+            ParadoxType.BLOB,
+            ParadoxType.MEMO,
+            ParadoxType.FORMATTED_MEMO,
+            ParadoxType.GRAPHIC,
+            ParadoxType.BYTES
+    );
 
     /**
      * Creates a new instance. it starts with {@link #getOrderNum()} with one.
@@ -63,18 +65,17 @@ public final class ParadoxField extends Field {
     @Override
     public void setSize(final int size) {
         this.realSize = size;
-        int sqlType = this.getSqlType();
-        if (type == ParadoxType.CURRENCY) {
-            this.precision = CURRENCY_PRECISION;
-            this.size = size;
-        } else if (type == ParadoxType.BCD) {
-            this.realSize = BCDField.BCD_SIZE;
+        if (type == ParadoxType.BCD) {
             this.precision = size;
+            this.realSize = BCDField.BCD_SIZE;
             this.size = BCDField.MAX_DIGITS;
-        } else if (sqlType == Types.NUMERIC) {
-            this.precision = NUMBER_PRECISION;
+        } else if (FIXED_PRECISION.contains(type)) {
+            this.precision = size;
+            this.scale = 0;
             this.size = size;
         } else {
+            this.precision = this.type.getPrecision();
+            this.scale = this.type.getScale();
             this.size = size;
         }
     }

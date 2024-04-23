@@ -27,119 +27,119 @@ public enum ParadoxType implements SQLType {
     /**
      * The VARCHAR type.
      */
-    VARCHAR(1, Types.VARCHAR, true, String.class, 0, Constants.MAX_STRING_SIZE, true),
+    VARCHAR(1, Types.VARCHAR, true, String.class, 0, 0, Constants.MAX_STRING_SIZE, true),
 
     /**
      * The CHAR type.
      */
-    CHAR(1, Types.CHAR, false, String.class, 0, Constants.MAX_STRING_SIZE, true),
+    CHAR(1, Types.CHAR, false, String.class, 0, 0, Constants.MAX_STRING_SIZE, true),
 
     /**
      * The date type.
      */
-    DATE(2, Types.DATE, true, Date.class, 0, 0x04, true),
+    DATE(2, Types.DATE, true, Date.class, 0, 0, 0x04, true),
 
     /**
      * The integer type.
      */
-    INTEGER(3, Types.INTEGER, true, Integer.class, 0, 0x02, true),
+    INTEGER(3, Types.INTEGER, true, Integer.class, 0, 0, 0x02, true),
 
     /**
      * The integer type. Variant 2.
      */
-    LONG(4, Types.INTEGER, true, Integer.class, 0, 0x04, true),
+    LONG(4, Types.INTEGER, true, Integer.class, 9, 0, 0x04, true),
 
     /**
      * The double type.
      */
-    CURRENCY(5, Types.DOUBLE, true, Double.class, 10, 0x04, true),
+    CURRENCY(5, Types.DOUBLE, true, Double.class, 10, 2, 0x08, true),
 
     /**
      * The numeric type.
      */
-    NUMBER(6, Types.NUMERIC, true, Double.class, 6, 0x04, true),
+    NUMBER(6, Types.NUMERIC, true, Double.class, 15, 6,0x08, true),
 
     /**
      * The numeric type.
      */
-    NUMERIC(6, Types.NUMERIC, true, Double.class, 6, 0x04, true),
+    NUMERIC(6, Types.NUMERIC, true, Double.class, 15, 6, 0x04, true),
 
     /**
      * The numeric type.
      */
-    DECIMAL(6, Types.DECIMAL, false, Double.class, 6, 0x04, true),
+    DECIMAL(6, Types.DECIMAL, false, Double.class, 15, 6, 0x04, true),
 
     /**
      * The boolean type.
      */
-    BOOLEAN(9, Types.BOOLEAN, true, Boolean.class, 0, 1, true),
+    BOOLEAN(9, Types.BOOLEAN, true, Boolean.class, 0, 0, 1, true),
 
     /**
      * The CLOB type.
      */
-    MEMO(0xC, Types.CLOB, true, Clob.class, 0, 0, true),
+    MEMO(0xC, Types.CLOB, true, Clob.class, 0, 0, 0, true),
 
     /**
      * the BLOB type.
      */
-    BLOB(0xD, Types.BLOB, true, byte[].class, 0, 0, true),
+    BLOB(0xD, Types.BLOB, true, byte[].class, 0, 0, 0, true),
 
     /**
      * The VARCHAR type, variant 2.
      */
-    FORMATTED_MEMO(0xE, Types.CLOB, true, Clob.class, 0, 0, true),
+    FORMATTED_MEMO(0xE, Types.CLOB, true, Clob.class, 0, 0, 0, true),
 
     /**
      * the BLOB type, variant 2.
      */
-    OLE(0xF, Types.BLOB, true, byte[].class, 0, 0, true),
+    OLE(0xF, Types.BLOB, true, byte[].class, 0, 0, 0, true),
 
     /**
      * The graphics type.
      * <p>
      * It's really a BLOB that contains an image file.
      */
-    GRAPHIC(0x10, Types.BLOB, true, byte[].class, 0, 0, true),
+    GRAPHIC(0x10, Types.BLOB, true, byte[].class, 0, 0, 0, true),
 
     /**
      * The time type.
      */
-    TIME(0x14, Types.TIME, true, Time.class, 0, 0x04, true),
+    TIME(0x14, Types.TIME, true, Time.class, 0, 0, 0x04, true),
 
     /**
      * The time with timezone type.
      */
-    TIME_WITH_TIMEZONE(0x14, Types.TIME_WITH_TIMEZONE, false, Time.class, 0, 0x04, true),
+    TIME_WITH_TIMEZONE(0x14, Types.TIME_WITH_TIMEZONE, false, Time.class, 0, 0, 0x04, true),
 
     /**
      * The TIMESTAMP type.
      */
-    TIMESTAMP(0x15, Types.TIMESTAMP, true, Timestamp.class, 0, 0x08, true),
+    TIMESTAMP(0x15, Types.TIMESTAMP, true, Timestamp.class, 0, 0, 0x08, true),
 
     /**
      * The timestamp with timezone type.
      */
-    TIMESTAMP_WITH_TIMEZONE(0x15, Types.TIMESTAMP_WITH_TIMEZONE, false, Timestamp.class, 0, 0x08, true),
+    TIMESTAMP_WITH_TIMEZONE(0x15, Types.TIMESTAMP_WITH_TIMEZONE, false, Timestamp.class, 0, 0, 0x08, true),
 
     /**
      * The auto increment type.
      */
-    AUTO_INCREMENT(0x16, Types.INTEGER, true, Integer.class, 0, 0x04, true),
+    AUTO_INCREMENT(0x16, Types.INTEGER, true, Integer.class, 9, 0, 0x04, true),
 
     /**
      * The binary type.
      */
-    BCD(0x17, Types.NUMERIC, true, BigDecimal.class, 2, 32, true),
+    BCD(0x17, Types.NUMERIC, true, BigDecimal.class, 0, 0, 32, true),
 
     /**
      * The BLOB type, variant 3.
      */
-    BYTES(0x18, Types.BINARY, true, byte[].class, 0, 255, true),
+    BYTES(0x18, Types.BINARY, true, byte[].class, 0, 0, 255, true),
 
     /**
      * Null Type.
      */
-    NULL(0x0, Types.NULL, false, Object.class, 0, 4, false);
+    NULL(0x0, Types.NULL, false, Object.class, 0, 0, 4, false);
 
     /**
      * Current values cache.
@@ -172,6 +172,11 @@ public enum ParadoxType implements SQLType {
     private final int precision;
 
     /**
+     * Default field scale.
+     */
+    private final int scale;
+
+    /**
      * Default field size.
      */
     private final int size;
@@ -193,12 +198,13 @@ public enum ParadoxType implements SQLType {
      * @param searchable     if the field type is searchable.
      */
     ParadoxType(final int type, final int sqlType, final boolean vendorSpecific, final Class<?> javaClass,
-                final int precision, final int size, final boolean searchable) {
+                final int precision, final int scale, final int size, final boolean searchable) {
         this.type = (byte) type;
         this.sqlType = sqlType;
         this.vendorSpecific = vendorSpecific;
         this.javaClass = javaClass;
         this.precision = precision;
+        this.scale = scale;
         this.size = size;
         this.searchable = searchable;
     }
@@ -321,6 +327,15 @@ public enum ParadoxType implements SQLType {
      */
     public int getSize() {
         return size;
+    }
+
+    /**
+     * Gets the default field scale.
+     *
+     * @return the default field scale.
+     */
+    public int getScale() {
+        return scale;
     }
 
     /**

@@ -28,14 +28,12 @@ import java.util.List;
  */
 public class ReferentialConstraints implements Table {
 
-    private final Field catalog = new Field("constraint_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
-            this, 1);
-    private final Field schema = new Field("constraint_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
-            this, 2);
-    private final Field name = new Field("constraint_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field check = new Field("match_option", 0, 0x07, ParadoxType.VARCHAR, this, 4);
-    private final Field updateRule = new Field("update_rule", 0, 0x0B, ParadoxType.VARCHAR, this, 5);
-    private final Field deleteRule = new Field("delete_rule", 0, 0x0B, ParadoxType.VARCHAR, this, 6);
+    private final Field catalog = new Field("constraint_catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("constraint_schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field name = new Field("constraint_name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field check = new Field("match_option", 0, 0, 0x07, ParadoxType.VARCHAR, this, 4);
+    private final Field updateRule = new Field("update_rule", 0, 0, 0x0B, ParadoxType.VARCHAR, this, 5);
+    private final Field deleteRule = new Field("delete_rule", 0, 0, 0x0B, ParadoxType.VARCHAR, this, 6);
 
     /**
      * Creates a new instance.

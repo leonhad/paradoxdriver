@@ -37,13 +37,13 @@ public class TableConstraints implements Table {
      */
     private final ConnectionInfo connectionInfo;
 
-    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field table = new Field("table", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
-    private final Field type = new Field("type", 0, 0x0B, ParadoxType.VARCHAR, this, 5);
-    private final Field isDeferrable = new Field("is_deferrable", 0, 2, ParadoxType.VARCHAR, this, 6);
-    private final Field initiallyDeferred = new Field("initially_deferred", 0, 2, ParadoxType.VARCHAR, this, 7);
+    private final Field catalog = new Field("catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field table = new Field("table", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field name = new Field("name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
+    private final Field type = new Field("type", 0, 0, 0x0B, ParadoxType.VARCHAR, this, 5);
+    private final Field isDeferrable = new Field("is_deferrable", 0, 0, 2, ParadoxType.VARCHAR, this, 6);
+    private final Field initiallyDeferred = new Field("initially_deferred", 0, 0, 2, ParadoxType.VARCHAR, this, 7);
 
     /**
      * Creates a new instance.

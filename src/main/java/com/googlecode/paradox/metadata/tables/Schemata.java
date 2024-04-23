@@ -38,15 +38,12 @@ public class Schemata implements Table {
      */
     private final ConnectionInfo connectionInfo;
 
-    private final Field catalog = new Field("catalog_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
-            1);
-    private final Field schema = new Field("schema_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field owner = new Field("schema_owner", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field characterCatalog = new Field("default_character_set_catalog", 0, 6, ParadoxType.VARCHAR,
-            this, 4);
-    private final Field characterSchema = new Field("default_character_set_schema", 0, 3, ParadoxType.VARCHAR,
-            this, 5);
-    private final Field characterName = new Field("default_character_set_name", 0, 6, ParadoxType.VARCHAR, this, 6);
+    private final Field catalog = new Field("catalog_name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema_name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field owner = new Field("schema_owner", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field characterCatalog = new Field("default_character_set_catalog", 0, 0, 6, ParadoxType.VARCHAR, this, 4);
+    private final Field characterSchema = new Field("default_character_set_schema", 0, 0, 3, ParadoxType.VARCHAR, this, 5);
+    private final Field characterName = new Field("default_character_set_name", 0, 0, 6, ParadoxType.VARCHAR, this, 6);
 
     /**
      * Creates a new instance.

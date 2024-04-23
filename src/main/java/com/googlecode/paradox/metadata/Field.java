@@ -34,6 +34,11 @@ public class Field {
     protected int precision;
 
     /**
+     * The field scale.
+     */
+    protected int scale;
+
+    /**
      * The field size.
      */
     protected int size;
@@ -44,7 +49,7 @@ public class Field {
     protected ParadoxType type;
 
     /**
-     * The fields owner.
+     * The field owner.
      */
     protected Table table;
 
@@ -59,7 +64,7 @@ public class Field {
     protected int orderNum;
 
     /**
-     * The the field order.
+     * The field order.
      */
     protected int realSize;
 
@@ -70,9 +75,10 @@ public class Field {
         super();
     }
 
-    public Field(String name, int precision, int size, ParadoxType type, Table table, int orderNum) {
+    public Field(String name, int precision, int scale, int size, ParadoxType type, Table table, int orderNum) {
         this.name = name;
         this.precision = precision;
+        this.scale = scale;
         this.size = size;
         this.realSize = size;
         this.type = type;
@@ -84,6 +90,7 @@ public class Field {
         this.name = column.getName();
         this.alias = column.getName();
         this.precision = column.getPrecision();
+        this.scale = column.getScale();
         this.size = column.getSize();
         this.realSize = column.getSize();
         this.type = column.getType();
@@ -189,6 +196,15 @@ public class Field {
      */
     public int getPrecision() {
         return precision;
+    }
+
+    /**
+     * Gets the field scale.
+     *
+     * @return the field scale.
+     */
+    public int getScale() {
+        return scale;
     }
 
     /**

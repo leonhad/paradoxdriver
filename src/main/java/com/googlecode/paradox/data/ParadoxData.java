@@ -93,8 +93,8 @@ public class ParadoxData {
             buffer.position(0x6A);
             int cp = buffer.getShort();
 
-            // Force charset if have one.
-            if (dataFile.getCharset() == null) {
+            // Force charset if we have one.
+            if (dataFile.getCharset() == null && cp != 0) {
                 dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
                 if (CHARSET_TABLE.get(cp) == null) {
                     connectionInfo.addWarning("Charset " + cp + " not found.");

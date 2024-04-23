@@ -15,8 +15,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
 import org.junit.*;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Collections;
 
 /**
@@ -28,7 +27,7 @@ import java.util.Collections;
 public class ParadoxResultSetMetaDataTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used by tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -66,8 +65,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Before
     public void connect() throws Exception {
-        this.conn = (ParadoxConnection) DriverManager
-                .getConnection(ParadoxResultSetMetaDataTest.CONNECTION_STRING + "db");
+        this.conn = (ParadoxConnection) DriverManager.getConnection(ParadoxResultSetMetaDataTest.CONNECTION_STRING + "db");
     }
 
     /**
@@ -75,8 +73,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testInstance() {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
-                Collections.emptyList());
+        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
         Assert.assertEquals("Testing for column size.", 0, metaData.getColumnCount());
     }
 
@@ -87,8 +84,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumnHighValue() throws SQLException {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
-                Collections.emptyList());
+        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
         metaData.getColumnName(5);
     }
 
@@ -99,8 +95,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test(expected = SQLException.class)
     public void testInvalidColumnLowValue() throws SQLException {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
-                Collections.emptyList());
+        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
         metaData.getColumnName(0);
     }
 
@@ -109,8 +104,7 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testIsWrapFor() {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
-                Collections.emptyList());
+        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
         Assert.assertTrue("Invalid value.", metaData.isWrapperFor(ParadoxResultSetMetaData.class));
     }
 
@@ -121,8 +115,46 @@ public class ParadoxResultSetMetaDataTest {
      */
     @Test
     public void testUnwrap() throws Exception {
-        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(),
-                Collections.emptyList());
+        final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
         Assert.assertNotNull("Invalid value.", metaData.unwrap(ParadoxResultSetMetaData.class));
+    }
+
+    /**
+     * Test for the precision and scale for decimals.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testPrecisionScaleDecimal() throws Exception {
+        try (Statement statement = conn.createStatement();
+             ResultSet rs = statement.executeQuery("SELECT * FROM db.DECIMAL")) {
+            if (rs.next()) {
+                ResultSetMetaData metaData = rs.getMetaData();
+                Assert.assertEquals("Invalid precision.", 15, metaData.getPrecision(1));
+                Assert.assertEquals("Invalid scale.", 6, metaData.getScale(1));
+            } else {
+                Assert.fail("No catalog selected.");
+            }
+        }
+    }
+
+    /**
+     * Test for the precision and scale for BCD.
+     *
+     * @throws Exception in case of failures.
+     */
+    @Test
+    public void testPrecisionScaleBcd() throws Exception {
+        try (Statement statement = conn.createStatement();
+             ResultSet rs = statement.executeQuery("SELECT * FROM fields.bcd")) {
+            if (rs.next()) {
+                ResultSetMetaData metaData = rs.getMetaData();
+                Assert.assertEquals("Invalid precision.", 2, metaData.getPrecision(1));
+                Assert.assertEquals("Invalid scale.", 0, metaData.getScale(1));
+                Assert.assertEquals("Invalid column display size.", 2, metaData.getColumnDisplaySize(1));
+            } else {
+                Assert.fail("No catalog selected.");
+            }
+        }
     }
 }

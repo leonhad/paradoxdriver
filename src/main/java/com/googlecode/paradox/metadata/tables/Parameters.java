@@ -36,20 +36,20 @@ public class Parameters implements Table {
      */
     private final String catalogName;
 
-    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field routine = new Field("routine", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field ordinal = new Field("ordinal", 0, 0, ParadoxType.INTEGER, this, 4);
-    private final Field mode = new Field("mode", 0, 0x03, ParadoxType.VARCHAR, this, 5);
-    private final Field isResult = new Field("is_result", 0, 0x03, ParadoxType.VARCHAR, this, 6);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 7);
-    private final Field dataType = new Field("data_type", 0, 0, ParadoxType.VARCHAR, this, 8);
-    private final Field maximumLength = new Field("character_maximum_length", 0, 0x0A, ParadoxType.VARCHAR, this, 9);
-    private final Field octetLength = new Field("character_octet_length", 0, 0, ParadoxType.VARCHAR, this, 10);
-    private final Field precision = new Field("precision", 0, 4, ParadoxType.INTEGER, this, 11);
-    private final Field scale = new Field("scale", 0, 4, ParadoxType.INTEGER, this, 12);
-    private final Field radix = new Field("numeric_precision_radix", 0, 4, ParadoxType.INTEGER, this, 13);
-    private final Field remarks = new Field("remarks", 0, 4, ParadoxType.VARCHAR, this, 14);
+    private final Field catalog = new Field("catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field routine = new Field("routine", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field ordinal = new Field("ordinal", 0, 0, 0, ParadoxType.INTEGER, this, 4);
+    private final Field mode = new Field("mode", 0, 0, 0x03, ParadoxType.VARCHAR, this, 5);
+    private final Field isResult = new Field("is_result", 0, 0, 0x03, ParadoxType.VARCHAR, this, 6);
+    private final Field name = new Field("name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 7);
+    private final Field dataType = new Field("data_type", 0, 0, 0, ParadoxType.VARCHAR, this, 8);
+    private final Field maximumLength = new Field("character_maximum_length", 0, 0, 0x0A, ParadoxType.VARCHAR, this, 9);
+    private final Field octetLength = new Field("character_octet_length", 0, 0, 0, ParadoxType.VARCHAR, this, 10);
+    private final Field precision = new Field("precision", 0, 0, 4, ParadoxType.INTEGER, this, 11);
+    private final Field scale = new Field("scale", 0, 0, 4, ParadoxType.INTEGER, this, 12);
+    private final Field radix = new Field("numeric_precision_radix", 0, 0, 4, ParadoxType.INTEGER, this, 13);
+    private final Field remarks = new Field("remarks", 0, 0, 4, ParadoxType.VARCHAR, this, 14);
 
     /**
      * Creates a new instance.
