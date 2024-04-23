@@ -55,10 +55,6 @@
         <system>GitHub</system>
         <url>https://github.com/leonhad/paradoxdriver/issues</url>
     </issueManagement>
-    <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/github/leonhad/paradoxdriver</url>
-    </ciManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
