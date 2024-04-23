@@ -82,8 +82,7 @@ public class BitLengthFunctionTest {
      */
     @Test
     public void testStringSize() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select bit_length('test') ");
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select bit_length('test') ");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
             Assert.assertEquals("Invalid value", "test".length() * 8L, rs.getLong(1));
@@ -98,11 +97,10 @@ public class BitLengthFunctionTest {
      */
     @Test
     public void testIntSize() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select bit_length(1) ");
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select bit_length(1) ");
              final ResultSet rs = stmt.executeQuery()) {
             Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 32, rs.getInt(1));
+            Assert.assertEquals("Invalid value", 64, rs.getInt(1));
             Assert.assertFalse("Invalid result set state", rs.next());
         }
     }

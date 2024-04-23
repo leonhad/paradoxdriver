@@ -81,7 +81,7 @@ public final class ParadoxResultSetMetaData implements java.sql.ResultSetMetaDat
     @Override
     public int getColumnDisplaySize(final int column) throws SQLException {
         final Column dto = this.getColumn(column);
-        return dto.getField().getSize();
+        return dto.getField().getPrecision();
     }
 
     /**
@@ -256,7 +256,7 @@ public final class ParadoxResultSetMetaData implements java.sql.ResultSetMetaDat
     }
 
     /**
-     * Get an column.
+     * Get the column.
      *
      * @param column the column index.
      * @return the column.

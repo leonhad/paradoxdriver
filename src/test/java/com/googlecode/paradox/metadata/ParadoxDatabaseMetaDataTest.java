@@ -31,7 +31,7 @@ import java.util.Properties;
  */
 public class ParadoxDatabaseMetaDataTest {
     /**
-     * The connection string used in this tests.
+     * The connection string used by tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:src/test/resources/";
 

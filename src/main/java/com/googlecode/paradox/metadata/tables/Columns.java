@@ -40,27 +40,25 @@ public class Columns implements Table {
      */
     private final ConnectionInfo connectionInfo;
 
-    private final Field catalog = new Field("catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
-    private final Field schema = new Field("schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
-    private final Field table = new Field("table", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field name = new Field("name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
-    private final Field ordinal = new Field("ordinal", 0, 1, ParadoxType.INTEGER, this, 5);
-    private final Field isNullable = new Field("is_nullable", 0, 3, ParadoxType.VARCHAR, this, 6);
-    private final Field autoincrement = new Field("is_autoincrement", 0, 3, ParadoxType.VARCHAR, this, 7);
-    private final Field incrementValue = new Field("autoincrement_value", 0, 0, ParadoxType.INTEGER, this, 8);
-    private final Field incrementStep = new Field("autoincrement_step", 0, 0, ParadoxType.INTEGER, this, 9);
-    private final Field maximumLength = new Field("maximum_length", 0, 4, ParadoxType.INTEGER, this, 10);
-    private final Field octetLength = new Field("octet_length", 0, 4, ParadoxType.INTEGER, this, 11);
-    private final Field precision = new Field("precision", 0, 4, ParadoxType.INTEGER, this, 12);
-    private final Field radix = new Field("radix", 0, 4, ParadoxType.INTEGER, this, 13);
-    private final Field scale = new Field("scale", 0, 4, ParadoxType.INTEGER, this, 14);
-    private final Field type = new Field("type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 15);
-    private final Field javaClass = new Field("java_class", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
-            16);
-    private final Field javaType = new Field("java_type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this,
-            17);
-    private final Field javaTypeId = new Field("java_type_id", 0, 4, ParadoxType.INTEGER, this, 18);
-    private final Field nullable = new Field("nullable", 0, 4, ParadoxType.INTEGER, this, 19);
+    private final Field catalog = new Field("catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field table = new Field("table", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field name = new Field("name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
+    private final Field ordinal = new Field("ordinal", 0, 0, 1, ParadoxType.INTEGER, this, 5);
+    private final Field isNullable = new Field("is_nullable", 0, 0, 3, ParadoxType.VARCHAR, this, 6);
+    private final Field autoincrement = new Field("is_autoincrement", 0, 0, 3, ParadoxType.VARCHAR, this, 7);
+    private final Field incrementValue = new Field("autoincrement_value", 0, 0, 0, ParadoxType.INTEGER, this, 8);
+    private final Field incrementStep = new Field("autoincrement_step", 0, 0, 0, ParadoxType.INTEGER, this, 9);
+    private final Field maximumLength = new Field("maximum_length", 0, 0, 4, ParadoxType.INTEGER, this, 10);
+    private final Field octetLength = new Field("octet_length", 0, 0, 4, ParadoxType.INTEGER, this, 11);
+    private final Field precision = new Field("precision", 0, 0, 4, ParadoxType.INTEGER, this, 12);
+    private final Field radix = new Field("radix", 0, 0, 4, ParadoxType.INTEGER, this, 13);
+    private final Field scale = new Field("scale", 0, 0, 4, ParadoxType.INTEGER, this, 14);
+    private final Field type = new Field("type", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 15);
+    private final Field javaClass = new Field("java_class", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 16);
+    private final Field javaType = new Field("java_type", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 17);
+    private final Field javaTypeId = new Field("java_type_id", 0, 0, 4, ParadoxType.INTEGER, this, 18);
+    private final Field nullable = new Field("nullable", 0, 0, 4, ParadoxType.INTEGER, this, 19);
 
     /**
      * Creates a new instance.
@@ -179,7 +177,7 @@ public class Columns implements Table {
                         } else if (this.incrementStep.equals(field) && fieldLocal.isAutoIncrement()) {
                             value = 1;
                         } else if (this.maximumLength.equals(field)) {
-                            value = fieldLocal.getSize();
+                            value = fieldLocal.getPrecision();
                         } else if (this.octetLength.equals(field)) {
                             value = fieldLocal.getRealSize();
                         } else if (this.precision.equals(field)) {
@@ -187,7 +185,7 @@ public class Columns implements Table {
                         } else if (this.radix.equals(field) && fieldLocal.getType() != null) {
                             value = fieldLocal.getType().getRadix();
                         } else if (this.scale.equals(field)) {
-                            value = fieldLocal.getPrecision();
+                            value = fieldLocal.getScale();
                         } else if (this.type.equals(field) && fieldLocal.getType() != null) {
                             value = fieldLocal.getType().name();
                         } else if (this.javaClass.equals(field) && fieldLocal.getType() != null) {

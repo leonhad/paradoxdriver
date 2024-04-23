@@ -380,11 +380,11 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                         // Data type name.
                         column.getType().name(),
                         // Precision.
-                        column.getSize(),
+                        column.getPrecision(),
                         // Length,
                         column.getSize(),
                         // Scale.
-                        column.getPrecision(),
+                        column.getScale(),
                         // Radix.
                         column.getRadix(),
                         // Nullable
@@ -495,7 +495,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
                 "       maximum_length        as COLUMN_SIZE,\n" +
                 "       cast(null as numeric) as BUFFER_LENGTH,\n" +
                 "       scale                 as DECIMAL_DIGITS,\n" +
-                "       radix                 as DECIMAL_DIGITS,\n" +
+                "       radix                 as NUM_PREC_RADIX,\n" +
                 "       nullable              as NULLABLE,\n" +
                 "       cast(null as varchar) as REMARKS,\n" +
                 "       cast(null as varchar) as COLUMN_DEF,\n" +

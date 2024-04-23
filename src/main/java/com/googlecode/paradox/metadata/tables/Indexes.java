@@ -37,19 +37,17 @@ public class Indexes implements Table {
      */
     private final ConnectionInfo connectionInfo;
 
-    private final Field catalog = new Field("index_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
-            this, 1);
-    private final Field schema = new Field("index_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
-            this, 2);
-    private final Field table = new Field("table_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field name = new Field("index_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
-    private final Field nonUnique = new Field("non_unique", 0, 1, ParadoxType.BOOLEAN, this, 5);
-    private final Field ordinal = new Field("ordinal", 0, 4, ParadoxType.INTEGER, this, 6);
-    private final Field ascOrDesc = new Field("asc_or_desc", 0, 4, ParadoxType.VARCHAR, this, 7);
-    private final Field cardinality = new Field("cardinality", 0, 4, ParadoxType.INTEGER, this, 8);
-    private final Field pages = new Field("pages", 0, 4, ParadoxType.INTEGER, this, 9);
-    private final Field field = new Field("field", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 10);
-    private final Field type = new Field("type", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 11);
+    private final Field catalog = new Field("index_catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("index_schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field table = new Field("table_name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field name = new Field("index_name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
+    private final Field nonUnique = new Field("non_unique", 0, 0, 1, ParadoxType.BOOLEAN, this, 5);
+    private final Field ordinal = new Field("ordinal", 0, 0, 4, ParadoxType.INTEGER, this, 6);
+    private final Field ascOrDesc = new Field("asc_or_desc", 0, 0, 4, ParadoxType.VARCHAR, this, 7);
+    private final Field cardinality = new Field("cardinality", 0, 0, 4, ParadoxType.INTEGER, this, 8);
+    private final Field pages = new Field("pages", 0, 0, 4, ParadoxType.INTEGER, this, 9);
+    private final Field field = new Field("field", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 10);
+    private final Field type = new Field("type", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 11);
 
     /**
      * Creates a new instance.

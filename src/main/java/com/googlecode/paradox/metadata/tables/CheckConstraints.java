@@ -37,12 +37,10 @@ public class CheckConstraints implements Table {
      */
     private final ConnectionInfo connectionInfo;
 
-    private final Field catalog = new Field("constraint_catalog", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
-            this, 1);
-    private final Field schema = new Field("constraint_schema", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR,
-            this, 2);
-    private final Field name = new Field("constraint_name", 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
-    private final Field check = new Field("check_clause", 0, 0x0A, ParadoxType.VARCHAR, this, 4);
+    private final Field catalog = new Field("constraint_catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
+    private final Field schema = new Field("constraint_schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
+    private final Field name = new Field("constraint_name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
+    private final Field check = new Field("check_clause", 0, 0, 0x0A, ParadoxType.VARCHAR, this, 4);
 
     /**
      * Creates a new instance.
