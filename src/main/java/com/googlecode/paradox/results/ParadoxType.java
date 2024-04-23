@@ -362,7 +362,7 @@ public enum ParadoxType implements SQLType {
             case NUMERIC:
             case BCD:
             case AUTO_INCREMENT:
-                return 0x0A;
+                return 0xA;
             default:
                 return null;
         }

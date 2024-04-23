@@ -256,7 +256,7 @@ public final class ParadoxResultSetMetaData implements java.sql.ResultSetMetaDat
     }
 
     /**
-     * Get an column.
+     * Get the column.
      *
      * @param column the column index.
      * @return the column.
