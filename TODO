@@ -6,6 +6,7 @@
 
 * Later
 
+** Validation files support
 ** Add INSERT, DELETE and UPDATE support.
 ** IDE to create and use SQL commands.
 
