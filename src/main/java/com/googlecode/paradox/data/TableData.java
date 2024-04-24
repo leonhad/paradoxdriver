@@ -61,7 +61,7 @@ public final class TableData extends ParadoxData {
                     final ParadoxTable table = loadHeader(file, connectionInfo);
                     Arrays.stream(table.getFields()).forEach(field -> field.setTable(table));
                     table.loadIndexes();
-                    table.loadValidations();
+                 //   table.loadValidations();
                     tables.add(table);
                 } catch (final SQLException e) {
                     connectionInfo.addWarning(e);
