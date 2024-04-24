@@ -2,8 +2,6 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.ValidationFilter;
-import com.googlecode.paradox.exceptions.DataError;
-import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
 import com.googlecode.paradox.utils.Constants;
@@ -17,7 +15,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -35,25 +32,23 @@ public class ValidationData {
      * @param connectionInfo the connection information.
      * @return the tables filtered.
      */
-    public static List<ParadoxValidation> listValidations(final File schema, final Table table, final ConnectionInfo connectionInfo) {
-        final List<ParadoxValidation> tables = new ArrayList<>();
+    public static ParadoxValidation listValidation(final File schema, final Table table, final ConnectionInfo connectionInfo) {
         final File[] fileList = schema.listFiles(new ValidationFilter(connectionInfo.getLocale(), table.getName()));
 
         if (fileList != null) {
-            Arrays.sort(fileList);
-            for (final File file : fileList) {
-                try {
-                    final ParadoxValidation validation = loadHeader(file, connectionInfo, table);
-//                    Arrays.stream(validation.getFields()).forEach(field -> field.setTable(validation));
-//                    validation.loadIndexes();
-                    tables.add(validation);
-                } catch (final SQLException e) {
-                    connectionInfo.addWarning(e);
-                }
+            if (fileList.length > 1) {
+                connectionInfo.addWarning("Invalid validation list in table " + table.getName());
+                return null;
+            }
+
+            try {
+                return loadHeader(fileList[0], connectionInfo, table);
+            } catch (final SQLException e) {
+                connectionInfo.addWarning(e);
             }
         }
 
-        return tables;
+        return null;
     }
 
     /**
@@ -74,6 +69,7 @@ public class ValidationData {
             buffer.flip();
 
             ParadoxValidation data = new ParadoxValidation();
+            List<ValidationField> fields = new ArrayList<>();
 
             // Unknown
             byte unknown1 = buffer.get();
@@ -85,12 +81,11 @@ public class ValidationData {
             int offset = buffer.getShort() & 0xFFFF;
 
             // Validations
-            buffer.position(0x34);
+            buffer.position(0x35);
             for (int i = 0; i < data.getCount(); i++) {
-                buffer.order(ByteOrder.BIG_ENDIAN);
-                int fieldPos = buffer.getShort() & 0xFFFF;
-                buffer.order(ByteOrder.LITTLE_ENDIAN);
+                ValidationField field = new ValidationField();
 
+                field.setPosition(buffer.get() & 0xFF);
                 int maskSize = buffer.get() & 0x0F;
 
                 // Is a mask validation?
@@ -100,15 +95,18 @@ public class ValidationData {
                     int unknown2 = buffer.getInt();
 
                     final ByteBuffer maskBuffer = ByteBuffer.allocate(maskSize);
-                    for (int s = 1; s < maskSize; s++) {
+                    for (int s = 0; s < maskSize; s++) {
                         maskBuffer.put(buffer.get());
                     }
+                    // string ending with zero
                     maskBuffer.flip();
+                    maskBuffer.limit(maskSize - 1);
 
-                    String mask = table.getCharset().decode(maskBuffer).toString();
-                    System.out.println(String.format("pos %d mask size %d mask %s", fieldPos, maskSize, mask));
+                    field.setMask(table.getCharset().decode(maskBuffer).toString());
+                    fields.add(field);
+
+                    System.out.printf("pos %d mask size %d mask %s%n", field.getPosition(), maskSize, field.getMask());
                 }
-
             }
 
             buffer.position(offset);
@@ -138,7 +136,7 @@ public class ValidationData {
             data.setOriginalTableName(table.getCharset().decode(originalTableName).toString());
             buffer.position(position + 0x4F);
 
-            String[] fields = new String[data.getFieldCount()];
+            String[] fieldNames = new String[data.getFieldCount()];
             final ByteBuffer name = ByteBuffer.allocate(261);
             for (int i = 0; i < data.getFieldCount(); i++) {
                 name.clear();
@@ -149,16 +147,20 @@ public class ValidationData {
                 }
 
                 name.flip();
-                fields[fieldOrder[i] - 1] = table.getCharset().decode(name).toString();
+                String fieldName = table.getCharset().decode(name).toString();
+                final int order = fieldOrder[i] - 1;
+                fields.stream().filter(f -> f.getPosition() == order).findFirst().ifPresent(f -> f.setName(fieldName));
             }
 
-            data.setFieldNames(fields);
+            data.setFields(fields.toArray(new ValidationField[0]));
 
             return data;
-        } catch (final BufferUnderflowException | IOException e) {
-            throw new ParadoxDataException(DataError.ERROR_LOADING_DATA, e);
+        } catch (final IllegalArgumentException | BufferUnderflowException | IOException e) {
+            // Don't break in validation erros.
+            connectionInfo.addWarning(e);
         }
 
+        return null;
     }
 
 }

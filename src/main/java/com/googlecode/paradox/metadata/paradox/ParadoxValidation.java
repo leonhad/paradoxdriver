@@ -1,5 +1,7 @@
 package com.googlecode.paradox.metadata.paradox;
 
+import com.googlecode.paradox.data.ValidationField;
+
 /**
  * Stores a validation data file.
  *
@@ -22,7 +24,7 @@ public class ParadoxValidation {
      */
     private int fieldCount;
 
-    private String[] fieldNames;
+    private ValidationField[] fields;
 
     private String originalTableName;
 
@@ -50,19 +52,19 @@ public class ParadoxValidation {
         this.fieldCount = fieldCount;
     }
 
-    public String[] getFieldNames() {
-        return fieldNames;
-    }
-
-    public void setFieldNames(String[] fieldNames) {
-        this.fieldNames = fieldNames;
-    }
-
     public String getOriginalTableName() {
         return originalTableName;
     }
 
     public void setOriginalTableName(String originalTableName) {
         this.originalTableName = originalTableName;
+    }
+
+    public ValidationField[] getFields() {
+        return fields;
+    }
+
+    public void setFields(ValidationField[] fields) {
+        this.fields = fields;
     }
 }

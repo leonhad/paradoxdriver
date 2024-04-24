@@ -45,7 +45,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     /**
      * Validations.
      */
-    private ParadoxValidation[] validations = new ParadoxValidation[0];
+    private ParadoxValidation validation;
 
     /**
      * Creates a new instance.
@@ -92,8 +92,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     }
 
     public void loadValidations() throws SQLException {
-        final List<ParadoxValidation> loadedValidations = ValidationData.listValidations(file.getParentFile(), this, this.connectionInfo);
-        validations = loadedValidations.toArray(new ParadoxValidation[0]);
+        validation = ValidationData.listValidation(file.getParentFile(), this, this.connectionInfo);
     }
 
     @Override
@@ -132,7 +131,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         return TableType.TABLE;
     }
 
-    public ParadoxValidation[] getValidations() {
-        return validations;
+    public ParadoxValidation getValidation() {
+        return validation;
     }
 }
