@@ -18,7 +18,6 @@ import java.util.List;
 /**
  * Generic schema.
  *
- * @version 1.0
  * @since 1.6.0
  */
 public interface Schema {

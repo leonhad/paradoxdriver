@@ -18,38 +18,37 @@ import java.io.FileFilter;
 import java.util.Locale;
 
 /**
- * Paradox secondary key file filter (Index Key).
+ * Validation file filter.
  *
- * @version 1.1
- * @since 1.0
+ * @since 1.6.1
  */
-public final class SecondaryIndexFilter implements FileFilter {
+public final class ValidationFilter implements FileFilter {
 
     /**
-     * The index name.
+     * The file extension.
      */
-    private final String indexName;
+    private final String extension;
 
+    /**
+     * Locale to search.
+     */
     private final Locale locale;
+
+    /**
+     * The table name.
+     */
+    private final String tableName;
 
     /**
      * Create a new instance.
      *
      * @param locale    the locale to use.
-     * @param indexName the index name.
+     * @param tableName the table name.
      */
-    public SecondaryIndexFilter(final Locale locale, final String indexName) {
+    public ValidationFilter(final Locale locale, final String tableName) {
         this.locale = locale;
-        this.indexName = indexName;
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param locale the locale to use.
-     */
-    public SecondaryIndexFilter(final Locale locale) {
-        this(locale, null);
+        this.extension = "val";
+        this.tableName = tableName;
     }
 
     /**
@@ -59,7 +58,11 @@ public final class SecondaryIndexFilter implements FileFilter {
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
 
-        return (this.indexName == null) || Expressions.accept(locale, name, this.indexName, false, Constants.ESCAPE_CHAR);
+        if (this.tableName != null) {
+            return Expressions.accept(locale, name, this.tableName + "." + this.extension, false, Constants.ESCAPE_CHAR) && pathname.isFile();
+        }
+
+        return Expressions.accept(locale, name, "%." + this.extension, false, Constants.ESCAPE_CHAR) && pathname.isFile();
     }
 
 }

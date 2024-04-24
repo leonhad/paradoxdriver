@@ -20,7 +20,6 @@ import java.util.Locale;
 /**
  * SQL file filter.
  *
- * @version 1.0
  * @since 1.6.0
  */
 public final class SQLFilter implements FileFilter {
@@ -29,11 +28,6 @@ public final class SQLFilter implements FileFilter {
      * The file extension.
      */
     private final String extension;
-
-    /**
-     * The table name.
-     */
-    private final String tableName;
 
     /**
      * Locale to search.
@@ -46,30 +40,8 @@ public final class SQLFilter implements FileFilter {
      * @param locale the locale to use.
      */
     public SQLFilter(final Locale locale) {
-        this(locale, null, "sql");
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param locale    the locale to use.
-     * @param tableName the table name.
-     */
-    public SQLFilter(final Locale locale, final String tableName) {
-        this(locale, tableName, "sql");
-    }
-
-    /**
-     * Create a new instance.
-     *
-     * @param locale    the locale to use.
-     * @param tableName the table name.
-     * @param extension the table extension.
-     */
-    public SQLFilter(final Locale locale, final String tableName, final String extension) {
         this.locale = locale;
-        this.tableName = tableName;
-        this.extension = extension;
+        this.extension = "sql";
     }
 
     /**
@@ -78,14 +50,7 @@ public final class SQLFilter implements FileFilter {
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();
-
-        if (this.tableName != null) {
-            return Expressions.accept(locale, name,
-                    this.tableName + "." + this.extension, false, Constants.ESCAPE_CHAR) && pathname.isFile();
-        }
-
-        return Expressions.accept(locale, name, "%." + this.extension, false, Constants.ESCAPE_CHAR)
-                && pathname.isFile();
+        return Expressions.accept(locale, name, "%." + this.extension, false, Constants.ESCAPE_CHAR) && pathname.isFile();
     }
 
 }

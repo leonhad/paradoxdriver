@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * Unit test for {@link TableData}.
  *
- * @version 1.6
  * @since 1.0
  */
 public class TableDataTest {

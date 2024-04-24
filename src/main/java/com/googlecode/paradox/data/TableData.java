@@ -30,7 +30,6 @@ import java.util.*;
 /**
  * Utility class for loading table files.
  *
- * @version 1.10
  * @since 1.0
  */
 public final class TableData extends ParadoxData {
@@ -62,6 +61,7 @@ public final class TableData extends ParadoxData {
                     final ParadoxTable table = loadHeader(file, connectionInfo);
                     Arrays.stream(table.getFields()).forEach(field -> field.setTable(table));
                     table.loadIndexes();
+                    table.loadValidations();
                     tables.add(table);
                 } catch (final SQLException e) {
                     connectionInfo.addWarning(e);

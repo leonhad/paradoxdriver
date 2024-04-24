@@ -14,6 +14,7 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
+import com.googlecode.paradox.data.ValidationData;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
@@ -40,6 +41,11 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      * Table indexes.
      */
     private Index[] indexes = new Index[0];
+
+    /**
+     * Validations.
+     */
+    private ParadoxValidation[] validations = new ParadoxValidation[0];
 
     /**
      * Creates a new instance.
@@ -85,6 +91,11 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         indexes = loadedIndexes.toArray(new Index[0]);
     }
 
+    public void loadValidations() throws SQLException {
+        final List<ParadoxValidation> loadedValidations = ValidationData.listValidations(file.getParentFile(), this, this.connectionInfo);
+        validations = loadedValidations.toArray(new ParadoxValidation[0]);
+    }
+
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
         return TableData.loadData(this, fields);
@@ -119,5 +130,9 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     @Override
     public TableType type() {
         return TableType.TABLE;
+    }
+
+    public ParadoxValidation[] getValidations() {
+        return validations;
     }
 }

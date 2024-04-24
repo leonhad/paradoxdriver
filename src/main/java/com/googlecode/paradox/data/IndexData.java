@@ -45,12 +45,10 @@ public final class IndexData extends ParadoxData {
      * @return a list of {@link ParadoxIndex}.
      * @throws SQLException in case of reading failures.
      */
-    public static List<Index> listIndexes(final File currentSchema, final Table table,
-                                          final ConnectionInfo connectionInfo) throws SQLException {
+    public static List<Index> listIndexes(final File currentSchema, final Table table, final ConnectionInfo connectionInfo) throws SQLException {
         final ArrayList<Index> indexes = new ArrayList<>();
         String indexNamePattern = table.getName() + ".X__";
-        File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(),
-                indexNamePattern));
+        File[] fileList = currentSchema.listFiles(new SecondaryIndexFilter(connectionInfo.getLocale(), indexNamePattern));
 
         if (fileList != null) {
             for (final File file : fileList) {
