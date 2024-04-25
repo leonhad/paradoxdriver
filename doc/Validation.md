@@ -50,12 +50,12 @@ default, the sequence has the maximum and default only in that order.
 
 ### Foreign key value
 
-| position | size (bytes) | type   | description        |
-|:--------:|:------------:|--------|--------------------|
-|   0x00   |      1A      | string | destination table? |
-|   0x1B   |      4       | ?      | ?                  |
-|   0x1C   |      ?       | ?      | zero?              |
-|   0x1D   |      ?       | ?      | zero?              |
+| position | size (bytes) | type   | description                     |
+|:--------:|:------------:|--------|---------------------------------|
+|   0x00   |      1A      | string | destination table?              |
+|   0x1B   |      4       | ?      | ? From here 36 bytes to the end |
+|   0x1C   |      ?       | ?      | zero?                           |
+|   0x1D   |      ?       | ?      | zero?                           |
 
 **Note:** Unfinished...
 
