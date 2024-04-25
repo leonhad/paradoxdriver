@@ -56,19 +56,19 @@ This section repeats by field count
 
 This section repeats by field count
 
-|  position  | size (bytes) | type | description                          |
-|:----------:|:------------:|------|--------------------------------------|
-|    XXX     |      1       | byte | Field type (Same as the field table) |
-| XXX + 0x01 |      1       | byte | Field size in bytes                  |
+|       position       | size (bytes) | type | description                          |
+|:--------------------:|:------------:|------|--------------------------------------|
+|    last position     |      1       | byte | Field type (Same as the field table) |
+| last position + 0x01 |      1       | byte | Field size in bytes                  |
 
 Here return to be fixed.
 
-| position | size (bytes) | type   | description                                          |
-|:--------:|:------------:|--------|------------------------------------------------------|
-|   XXX    |     0x4F     | string | Original table name (can be different from VAL file) |
+|   position    | size (bytes) | type   | description                                          |
+|:-------------:|:------------:|--------|------------------------------------------------------|
+| last position |     0x4F     | string | Original table name (can be different from VAL file) |
 
 This section repeats by field count
 
-|  position  |      size (bytes)       | type   | description |
-|:----------:|:-----------------------:|--------|-------------|
-| XXX + 0x4F | Variable ending in zero | string | Field name  |
+|       position       |      size (bytes)       | type   | description |
+|:--------------------:|:-----------------------:|--------|-------------|
+| last position + 0x4F | Variable ending in zero | string | Field name  |
