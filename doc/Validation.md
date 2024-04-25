@@ -21,7 +21,7 @@ All field values is little endian by default.
 |    0x02     |      1       | byte    | Validation count |
 | 0x03 ~ 0x07 |      ?       | ?       | ?                |
 |    0x08     |      1       | byte    | Always zero?     |
-|    0x09     |      4       | integer | Footer position  | 
+|    0x09     |      4       | integer | Footer position  |
 | 0x0A ~ 0x34 |      ?       | ?       | Always zero?     |
 
 ## Body
@@ -31,15 +31,16 @@ The body start at position 0x35, and it repeats for all field. The field count a
 |  position   | size (bytes) | type    | description                                                           |
 |:-----------:|:------------:|---------|-----------------------------------------------------------------------|
 |    0x00     |      1       | byte    | Field order, start with 1                                             |
-|    0x01     |      1       | byte    | Mask size                                                             | 
+|    0x01     |      1       | byte    | Mask size                                                             |
 | 0x02 ~ 0x0B |      ?       | ?       | ?                                                                     |
-|    0x0C     |      4       | integer | Minimum value indicator. Seams to finish always in 6B. No value here. |
-|    0x10     |      4       | integer | Maximum value indicator. Seams to finish always in 6B. No value here. |
-|    0x14     |      4       | integer | Default value indicator. Seams to finish always in 6B. No value here. |
-|    0x18     |      4       | integer | Mask indicator. Seams to finish always in 6B. No value here.          |
+|    0x0C     |      4       | integer | Minimum value indicator. Seams to finish always in 6B. No value here? |
+|    0x10     |      4       | integer | Maximum value indicator. Seams to finish always in 6B. No value here? |
+|    0x14     |      4       | integer | Default value indicator. Seams to finish always in 6B. No value here? |
+|    0x18     |      4       | integer | Mask indicator. No value here?                                        |
 |    0x1D     | field size*  | any     | Field value by type. Mask definition is an ending zero string.        |
 
-\* Values are presented here based on indicators in sequence of indicated presence. For example, if it has a maximum and
+**\*** Values are presented here based on indicators in sequence of indicated presence. For example, if it has a maximum
+and
 default, the sequence has the maximum and default only in that order.
 
 **Note:** Foreign Key is presented here, but the rules seams to be a different...
@@ -49,7 +50,7 @@ default, the sequence has the maximum and default only in that order.
 | position | size (bytes) | type  | description |
 |:--------:|:------------:|-------|-------------|
 |   0x00   |      2       | short | Field count |
-|   0x02   |      4       | ?     | ?           | 
+|   0x02   |      4       | ?     | ?           |
 
 This section repeats by field count
 

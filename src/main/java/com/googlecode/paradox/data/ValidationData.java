@@ -2,7 +2,10 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.ValidationFilter;
+import com.googlecode.paradox.exceptions.ParadoxException;
+import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
 import com.googlecode.paradox.results.ParadoxType;
 
@@ -14,6 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 /**
  * Utility class for loading validation files.
@@ -30,7 +34,7 @@ public class ValidationData {
      * @param connectionInfo the connection information.
      * @return the tables filtered.
      */
-    public static ParadoxValidation listValidation(final File schema, final Table table, final ConnectionInfo connectionInfo) {
+    public static ParadoxValidation listValidation(final File schema, final ParadoxTable table, final ConnectionInfo connectionInfo) {
         final File[] fileList = schema.listFiles(new ValidationFilter(connectionInfo.getLocale(), table.getName()));
 
         if (fileList != null) {
@@ -57,7 +61,7 @@ public class ValidationData {
      * @return the data file.
      * @throws SQLException in case of reading errors.
      */
-    private static ParadoxValidation load(final File file, final ConnectionInfo connectionInfo, final Table table) throws SQLException {
+    private static ParadoxValidation load(final File file, final ConnectionInfo connectionInfo, final ParadoxTable table) throws SQLException {
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             final ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
             buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -71,15 +75,38 @@ public class ValidationData {
             // Validations
             buffer.position(0x35);
             for (int i = 0; i < data.getCount(); i++) {
-                ValidationField field = data.getFields()[buffer.get() & 0xFF];
+                int start = buffer.position();
+
+                ValidationField validationField = data.getFields()[buffer.get() & 0xFF];
                 int maskSize = buffer.get() & 0x0F;
 
+                Field field = Arrays.stream(table.getFields())
+                        .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
+                        .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
+
+                buffer.position(start + 0x0C);
+                int minimumHint = buffer.getInt();
+                int maximumHint = buffer.getInt();
+                int defaultHint = buffer.getInt();
+                int maskHint = buffer.getInt();
+
+                if (minimumHint > 0) {
+                    Object value = ParadoxFieldFactory.parse(table, buffer, field);
+                    validationField.setMinimumValue(value);
+                }
+
+                if (maximumHint > 0) {
+                    Object value = ParadoxFieldFactory.parse(table, buffer, field);
+                    validationField.setMaximumValue(value);
+                }
+
+                if (defaultHint > 0) {
+                    Object value = ParadoxFieldFactory.parse(table, buffer, field);
+                    validationField.setDefaultValue(value);
+                }
+
                 // Is a mask validation?
-                if (maskSize != 0) {
-                    buffer.position(buffer.position() + 0x16);
-
-                    int unknown2 = buffer.getInt();
-
+                if (maskSize != 0 && maskHint != 0) {
                     final ByteBuffer maskBuffer = ByteBuffer.allocate(maskSize);
                     for (int s = 0; s < maskSize; s++) {
                         maskBuffer.put(buffer.get());
@@ -89,9 +116,7 @@ public class ValidationData {
                     maskBuffer.flip();
                     maskBuffer.limit(maskSize - 1);
 
-                    field.setMask(table.getCharset().decode(maskBuffer).toString());
-                } else {
-                    // int unknown = buffer.getShort() & 0xFFFF;
+                    validationField.setMask(table.getCharset().decode(maskBuffer).toString());
                 }
             }
 

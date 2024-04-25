@@ -12,6 +12,10 @@ public class ValidationField {
 
     private Object defaultValue;
 
+    private Object minimumValue;
+
+    private Object maximumValue;
+
     private ParadoxType type;
 
     private int fieldSize;
@@ -62,5 +66,21 @@ public class ValidationField {
 
     public void setFieldSize(int fieldSize) {
         this.fieldSize = fieldSize;
+    }
+
+    public Object getMinimumValue() {
+        return minimumValue;
+    }
+
+    public void setMinimumValue(Object minimumValue) {
+        this.minimumValue = minimumValue;
+    }
+
+    public Object getMaximumValue() {
+        return maximumValue;
+    }
+
+    public void setMaximumValue(Object maximumValue) {
+        this.maximumValue = maximumValue;
     }
 }
