@@ -14,15 +14,15 @@ All field values is little endian by default.
 
 ## Header
 
-|  position   | size (bytes) | type    | description                 |
-|:-----------:|:------------:|---------|-----------------------------|
-|    0x00     |      1       | byte    | ?                           |
-|    0x01     |      1       | byte    | fileVersionID               |
-|    0x02     |      1       | byte    | Validation count            |
-| 0x03 ~ 0x07 |      ?       | ?       | ?                           |
-|    0x08     |      1       | byte    | Always zero?                |
-|    0x09     |      4       | integer | Footer position             | 
-| 0x0A ~ 0x34 |      ?       | ?       | ? - seams to be always zero |
+|  position   | size (bytes) | type    | description      |
+|:-----------:|:------------:|---------|------------------|
+|    0x00     |      1       | byte    | ?                |
+|    0x01     |      1       | byte    | fileVersionID    |
+|    0x02     |      1       | byte    | Validation count |
+| 0x03 ~ 0x07 |      ?       | ?       | ?                |
+|    0x08     |      1       | byte    | Always zero?     |
+|    0x09     |      4       | integer | Footer position  | 
+| 0x0A ~ 0x34 |      ?       | ?       | Always zero?     |
 
 ## Body
 
