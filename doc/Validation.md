@@ -26,7 +26,7 @@ All field values is little endian by default.
 
 ## Body
 
-The body start at position 0x35, and it repeats for all field. The field count and information is in the tail part.
+The body start at position 0x35, and it repeats for all field. The field count and information is in the footer part.
 
 |  position   | size (bytes) | type    | description                                                           |
 |:-----------:|:------------:|---------|-----------------------------------------------------------------------|
@@ -53,9 +53,9 @@ default, the sequence has the maximum and default only in that order.
 
 This section repeats by field count
 
-| position | size (bytes) | type  | description |
-|:--------:|:------------:|-------|-------------|
-|   0x04   |      2       | short | Field order |
+|   position    | size (bytes) | type  | description |
+|:-------------:|:------------:|-------|-------------|
+| last position |      2       | short | Field order |
 
 This section repeats by field count
 
@@ -72,6 +72,6 @@ Here return to be fixed.
 
 This section repeats by field count
 
-|       position       |      size (bytes)       | type   | description |
-|:--------------------:|:-----------------------:|--------|-------------|
-| last position + 0x4F | Variable ending in zero | string | Field name  |
+|   position    |      size (bytes)       | type   | description |
+|:-------------:|:-----------------------:|--------|-------------|
+| last position | Variable ending in zero | string | Field name  |
