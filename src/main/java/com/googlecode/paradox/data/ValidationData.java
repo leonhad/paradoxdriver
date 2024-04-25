@@ -72,6 +72,11 @@ public class ValidationData {
             ParadoxValidation data = loadHeader(buffer, connectionInfo, table);
             loadFooter(buffer, data, connectionInfo, table);
 
+            if (data.getVersionId() < 0x09) {
+                // Unsupported file version.
+                return null;
+            }
+
             // Validations
             buffer.position(0x35);
             for (int i = 0; i < data.getCount(); i++) {

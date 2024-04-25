@@ -24,6 +24,8 @@ All field values is little endian by default.
 |    0x09     |      4       | integer | Footer position  |
 | 0x0A ~ 0x34 |      ?       | ?       | Always zero?     |
 
+This file is valid only for fileVersionID 0x09 to 0x0B.
+
 ## Body
 
 The body start at position 0x35, and it repeats for all field. The field count and information is in the footer part.
@@ -32,7 +34,10 @@ The body start at position 0x35, and it repeats for all field. The field count a
 |:-----------:|:------------:|---------|-----------------------------------------------------------------------|
 |    0x00     |      1       | byte    | Field order, start with 1                                             |
 |    0x01     |      1       | byte    | Mask size                                                             |
-| 0x02 ~ 0x0B |      ?       | ?       | ?                                                                     |
+|    0x02     |      ?       | ?       | value?                                                                |
+|    0x03     |      ?       | ?       | value?                                                                |
+|    0x04     |      4       | integer | Foreign key indicator. Seams to finish always in 6B. No value here?   |
+| 0x08 ~ 0x0B |      ?       | ?       | ?                                                                     |
 |    0x0C     |      4       | integer | Minimum value indicator. Seams to finish always in 6B. No value here? |
 |    0x10     |      4       | integer | Maximum value indicator. Seams to finish always in 6B. No value here? |
 |    0x14     |      4       | integer | Default value indicator. Seams to finish always in 6B. No value here? |
@@ -43,7 +48,16 @@ The body start at position 0x35, and it repeats for all field. The field count a
 and
 default, the sequence has the maximum and default only in that order.
 
-**Note:** Foreign Key is presented here, but the rules seams to be a different...
+### Foreign key value
+
+| position | size (bytes) | type   | description        |
+|:--------:|:------------:|--------|--------------------|
+|   0x00   |      1A      | string | destination table? |
+|   0x1B   |      4       | ?      | ?                  |
+|   0x1C   |      ?       | ?      | zero?              |
+|   0x1D   |      ?       | ?      | zero?              |
+
+**Note:** Unfinished...
 
 ## Footer
 
