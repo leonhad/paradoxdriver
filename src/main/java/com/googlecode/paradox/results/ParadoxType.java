@@ -62,12 +62,12 @@ public enum ParadoxType implements SQLType {
     /**
      * The numeric type.
      */
-    NUMERIC(6, Types.NUMERIC, true, Double.class, 15, 6, 0x04, true),
+    NUMERIC(6, Types.NUMERIC, true, Double.class, 15, 6, 0x08, true),
 
     /**
      * The numeric type.
      */
-    DECIMAL(6, Types.DECIMAL, false, Double.class, 15, 6, 0x04, true),
+    DECIMAL(6, Types.DECIMAL, false, Double.class, 15, 6, 0x08, true),
 
     /**
      * The boolean type.

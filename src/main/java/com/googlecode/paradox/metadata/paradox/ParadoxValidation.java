@@ -24,6 +24,8 @@ public class ParadoxValidation {
      */
     private int fieldCount;
 
+    private int footerOffset;
+
     private ValidationField[] fields;
 
     private String originalTableName;
@@ -66,5 +68,13 @@ public class ParadoxValidation {
 
     public void setFields(ValidationField[] fields) {
         this.fields = fields;
+    }
+
+    public int getFooterOffset() {
+        return footerOffset;
+    }
+
+    public void setFooterOffset(int footerOffset) {
+        this.footerOffset = footerOffset;
     }
 }

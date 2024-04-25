@@ -5,6 +5,7 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
+import com.googlecode.paradox.results.ParadoxType;
 import org.junit.*;
 
 import java.sql.DriverManager;
@@ -62,12 +63,12 @@ public class ValidationDataTest {
     }
 
     /**
-     * Test for invalid table
+     * Test for mask validation
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testInvalidTable() throws SQLException {
+    public void testMaskValidation() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getCurrentSchema().list(this.conn.getConnectionInfo(), "AREACODE");
         Assert.assertFalse(validations.isEmpty());
         Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
@@ -75,9 +76,46 @@ public class ValidationDataTest {
         Assert.assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
+        Assert.assertEquals(4, validation.getFields().length);
         Assert.assertEquals("###", validation.getFields()[0].getMask());
         Assert.assertEquals("Area Code", validation.getFields()[0].getName());
+        Assert.assertNull(validation.getFields()[1].getMask());
+        Assert.assertEquals("Country", validation.getFields()[1].getName());
+        Assert.assertNull(validation.getFields()[2].getMask());
+        Assert.assertEquals("Full State", validation.getFields()[2].getName());
+        Assert.assertEquals("&&", validation.getFields()[3].getMask());
+        Assert.assertEquals("State", validation.getFields()[3].getName());
+
+        validations = this.conn.getConnectionInfo().getSchema(null, "areas").list(this.conn.getConnectionInfo(), "ZIPCODES");
+        Assert.assertFalse(validations.isEmpty());
+        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        table = (ParadoxTable) validations.get(0);
+        Assert.assertNotNull(table.getValidation());
+
+        validation = table.getValidation();
+        Assert.assertEquals("#####", validation.getFields()[0].getMask());
+        Assert.assertEquals("Zip", validation.getFields()[0].getName());
         Assert.assertEquals("&&", validation.getFields()[1].getMask());
         Assert.assertEquals("State", validation.getFields()[1].getName());
+    }
+
+    /**
+     * Test for default validation.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testDefaultValue() throws SQLException {
+        List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "fields").list(this.conn.getConnectionInfo(), "logical");
+        Assert.assertFalse(validations.isEmpty());
+        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        ParadoxTable table = (ParadoxTable) validations.get(0);
+        Assert.assertNotNull(table.getValidation());
+
+        ParadoxValidation validation = table.getValidation();
+        Assert.assertEquals("BOOL", validation.getFields()[0].getName());
+        Assert.assertEquals(ParadoxType.BOOLEAN, validation.getFields()[0].getType());
+        Assert.assertNotNull(validation.getFields()[0].getDefaultValue());
+        Assert.assertTrue((Boolean) validation.getFields()[0].getDefaultValue());
     }
 }

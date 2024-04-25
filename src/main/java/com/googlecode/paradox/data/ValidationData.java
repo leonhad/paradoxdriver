@@ -4,7 +4,7 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.filefilters.ValidationFilter;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
-import com.googlecode.paradox.utils.Constants;
+import com.googlecode.paradox.results.ParadoxType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Utility class for loading validation files.
@@ -36,15 +34,15 @@ public class ValidationData {
         final File[] fileList = schema.listFiles(new ValidationFilter(connectionInfo.getLocale(), table.getName()));
 
         if (fileList != null) {
-            if (fileList.length > 1) {
+            if (fileList.length == 1) {
+                try {
+                    return load(fileList[0], connectionInfo, table);
+                } catch (final SQLException e) {
+                    connectionInfo.addWarning(e);
+                }
+            } else if (fileList.length > 1) {
                 connectionInfo.addWarning("Invalid validation list in table " + table.getName());
                 return null;
-            }
-
-            try {
-                return loadHeader(fileList[0], connectionInfo, table);
-            } catch (final SQLException e) {
-                connectionInfo.addWarning(e);
             }
         }
 
@@ -59,33 +57,21 @@ public class ValidationData {
      * @return the data file.
      * @throws SQLException in case of reading errors.
      */
-    private static ParadoxValidation loadHeader(final File file, final ConnectionInfo connectionInfo, final Table table)
-            throws SQLException {
-        final ByteBuffer buffer = ByteBuffer.allocate(Constants.MAX_BUFFER_SIZE);
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-
+    private static ParadoxValidation load(final File file, final ConnectionInfo connectionInfo, final Table table) throws SQLException {
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
+            final ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
+            buffer.order(ByteOrder.LITTLE_ENDIAN);
+
             channel.read(buffer);
             buffer.flip();
 
-            ParadoxValidation data = new ParadoxValidation();
-            List<ValidationField> fields = new ArrayList<>();
-
-            // Unknown
-            byte unknown1 = buffer.get();
-
-            data.setVersionId(buffer.get());
-            data.setCount(buffer.get());
-
-            buffer.position(0x09);
-            int offset = buffer.getShort() & 0xFFFF;
+            ParadoxValidation data = loadHeader(buffer, connectionInfo, table);
+            loadFooter(buffer, data, connectionInfo, table);
 
             // Validations
             buffer.position(0x35);
             for (int i = 0; i < data.getCount(); i++) {
-                ValidationField field = new ValidationField();
-
-                field.setPosition(buffer.get() & 0xFF);
+                ValidationField field = data.getFields()[buffer.get() & 0xFF];
                 int maskSize = buffer.get() & 0x0F;
 
                 // Is a mask validation?
@@ -98,61 +84,16 @@ public class ValidationData {
                     for (int s = 0; s < maskSize; s++) {
                         maskBuffer.put(buffer.get());
                     }
+
                     // string ending with zero
                     maskBuffer.flip();
                     maskBuffer.limit(maskSize - 1);
 
                     field.setMask(table.getCharset().decode(maskBuffer).toString());
-                    fields.add(field);
-
-                    System.out.printf("pos %d mask size %d mask %s%n", field.getPosition(), maskSize, field.getMask());
+                } else {
+                    // int unknown = buffer.getShort() & 0xFFFF;
                 }
             }
-
-            buffer.position(offset);
-            data.setFieldCount(buffer.getShort());
-
-            int unknown2 = buffer.getInt();
-
-            int[] fieldOrder = new int[data.getFieldCount()];
-            for (int i = 0; i < data.getFieldCount(); i++) {
-                int campo = buffer.getShort() & 0xFFFF;
-                fieldOrder[i] = campo;
-            }
-
-            // Unknown field data
-            for (int i = 0; i < data.getFieldCount(); i++) {
-                int campo = buffer.getShort() & 0xFFFF;
-            }
-
-            int position = buffer.position();
-            final ByteBuffer originalTableName = ByteBuffer.allocate(0x4F);
-            byte c;
-            while ((c = buffer.get()) != 0 && buffer.position() < position + originalTableName.capacity()) {
-                originalTableName.put(c);
-            }
-            originalTableName.flip();
-
-            data.setOriginalTableName(table.getCharset().decode(originalTableName).toString());
-            buffer.position(position + 0x4F);
-
-            String[] fieldNames = new String[data.getFieldCount()];
-            final ByteBuffer name = ByteBuffer.allocate(261);
-            for (int i = 0; i < data.getFieldCount(); i++) {
-                name.clear();
-
-                //       byte c;
-                while ((c = buffer.get()) != 0) {
-                    name.put(c);
-                }
-
-                name.flip();
-                String fieldName = table.getCharset().decode(name).toString();
-                final int order = fieldOrder[i] - 1;
-                fields.stream().filter(f -> f.getPosition() == order).findFirst().ifPresent(f -> f.setName(fieldName));
-            }
-
-            data.setFields(fields.toArray(new ValidationField[0]));
 
             return data;
         } catch (final IllegalArgumentException | BufferUnderflowException | IOException e) {
@@ -161,6 +102,82 @@ public class ValidationData {
         }
 
         return null;
+    }
+
+    private static ParadoxValidation loadHeader(final ByteBuffer buffer, final ConnectionInfo connectionInfo, final Table table) throws SQLException {
+        ParadoxValidation data = new ParadoxValidation();
+
+        // Unknown
+        byte unknown1 = buffer.get();
+
+        data.setVersionId(buffer.get());
+        data.setCount(buffer.get());
+
+        buffer.position(0x09);
+        data.setFooterOffset(buffer.getInt());
+
+        return data;
+    }
+
+    private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final ConnectionInfo connectionInfo, final Table table) throws SQLException {
+        buffer.position(data.getFooterOffset());
+        data.setFieldCount(buffer.getShort());
+
+        int unknown2 = buffer.getInt();
+
+        int[] fieldOrder = new int[data.getFieldCount()];
+        for (int i = 0; i < data.getFieldCount(); i++) {
+            int campo = buffer.getShort() & 0xFFFF;
+            fieldOrder[i] = campo;
+        }
+
+        int fieldTypePos = buffer.position();
+        // Two bytes per field.
+        buffer.position(buffer.position() + data.getFieldCount() * 2);
+
+        // Original table name
+        int position = buffer.position();
+        final ByteBuffer originalTableName = ByteBuffer.allocate(0x4F);
+        byte c;
+        while ((c = buffer.get()) != 0 && buffer.position() < position + originalTableName.capacity()) {
+            originalTableName.put(c);
+        }
+        originalTableName.flip();
+
+        data.setOriginalTableName(table.getCharset().decode(originalTableName).toString());
+        buffer.position(position + 0x4F);
+
+        // Field name and position
+        ValidationField[] fields = new ValidationField[data.getFieldCount()];
+        final ByteBuffer name = ByteBuffer.allocate(261);
+        for (int i = 0; i < data.getFieldCount(); i++) {
+            name.clear();
+
+            while ((c = buffer.get()) != 0) {
+                name.put(c);
+            }
+
+            name.flip();
+            String fieldName = table.getCharset().decode(name).toString();
+            final int order = fieldOrder[i] - 1;
+
+            ValidationField field = new ValidationField();
+            field.setName(fieldName);
+            field.setPosition(order);
+            fields[order] = field;
+        }
+        data.setFields(fields);
+
+        // Field Type
+        buffer.position(fieldTypePos);
+        for (int i = 0; i < data.getFieldCount(); i++) {
+            int fieldType = buffer.get() & 0xFF;
+            int valueCount = buffer.get() & 0xFF;
+
+            ValidationField field = data.getFields()[i];
+            field.setType(ParadoxType.valueOfVendor(fieldType));
+            field.setFieldSize(valueCount);
+        }
     }
 
 }
