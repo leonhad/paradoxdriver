@@ -40,10 +40,10 @@ The body start at position 0x35, and it repeats for all field. The field count a
 |    0x18     |      4       | integer | Mask indicator. Seams to finish always in 6B. No value here.          |
 |    0x1D     | field size*  | any     | Field value by type. Mask definition is an ending zero string.        |
 
-\* Values are presented here based on indicators in sequence of value present. For example, if it has a maximum and
+\* Values are presented here based on indicators in sequence of indicated presence. For example, if it has a maximum and
 default, the sequence has the maximum and default only in that order.
 
-Note 2: Foreign Key is presented here, but the rules seams to be a different...
+**Note:** Foreign Key is presented here, but the rules seams to be a different...
 
 ## Footer
 
