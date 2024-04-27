@@ -69,8 +69,8 @@ public class ValidationData {
             channel.read(buffer);
             buffer.flip();
 
-            ParadoxValidation data = loadHeader(buffer, connectionInfo, table);
-            loadFooter(buffer, data, connectionInfo, table);
+            ParadoxValidation data = loadHeader(buffer);
+            loadFooter(buffer, data, table);
 
             if (data.getVersionId() < 0x09) {
                 // Unsupported file version.
@@ -88,6 +88,9 @@ public class ValidationData {
                         .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
 
                 int pictureSize = buffer.get() & 0x0F;
+
+                int referentialIntegrityAttribute = buffer.get() & 0x0F;
+
                 int tableLookupAttribute = buffer.get() & 0x0F;
 
                 int tableLookupHint = buffer.getInt();
@@ -108,18 +111,11 @@ public class ValidationData {
                         }
                         destinationBuffer.put(read);
                     }
-
-                    System.out.println();
-
-                    // string ending with zero
                     destinationBuffer.flip();
-                   // tableLookupBuffer.limit(pictureSize - 1);
 
                     validationField.setDestinationTable(table.getCharset().decode(destinationBuffer).toString());
                     validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
                     validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
-                    System.out.println();
-                    System.out.println(tableLookupAttribute);
 
                     buffer.position(pos + 0x1A + 0x36);
                 }
@@ -163,11 +159,11 @@ public class ValidationData {
         return null;
     }
 
-    private static ParadoxValidation loadHeader(final ByteBuffer buffer, final ConnectionInfo connectionInfo, final Table table) throws SQLException {
+    private static ParadoxValidation loadHeader(final ByteBuffer buffer)  {
         ParadoxValidation data = new ParadoxValidation();
 
         // Unknown
-        byte unknown1 = buffer.get();
+        buffer.get();
 
         data.setVersionId(buffer.get());
         data.setCount(buffer.get());
@@ -178,11 +174,12 @@ public class ValidationData {
         return data;
     }
 
-    private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final ConnectionInfo connectionInfo, final Table table) throws SQLException {
+    private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final Table table)  {
         buffer.position(data.getFooterOffset());
         data.setFieldCount(buffer.getShort());
 
-        int unknown2 = buffer.getInt();
+        // Unknown
+        buffer.getInt();
 
         int[] fieldOrder = new int[data.getFieldCount()];
         for (int i = 0; i < data.getFieldCount(); i++) {

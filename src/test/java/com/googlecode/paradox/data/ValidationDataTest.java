@@ -153,9 +153,10 @@ public class ValidationDataTest {
         Assert.assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals("ID", validation.getFields()[0].getName());
-        Assert.assertEquals(ParadoxType.AUTO_INCREMENT, validation.getFields()[0].getType());
-        Assert.assertNotNull(validation.getFields()[0].getDefaultValue());
-        Assert.assertTrue((Boolean) validation.getFields()[0].getDefaultValue());
+        Assert.assertEquals("FK", validation.getFields()[1].getName());
+        Assert.assertEquals(ParadoxType.LONG, validation.getFields()[1].getType());
+        Assert.assertEquals("destination.db", validation.getFields()[1].getDestinationTable());
+        Assert.assertFalse(validation.getFields()[1].isLookupAllFields());
+        Assert.assertTrue(validation.getFields()[1].isLookupHelp());
     }
 }
