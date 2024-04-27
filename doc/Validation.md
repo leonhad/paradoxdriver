@@ -104,7 +104,7 @@ The body start at position 0x35, and it repeats for all field. The field count a
     - 01b - **All corresponding fields:** All fields of the current table that correspond to fields in the lookup table
       take their values from the lookup table. Corresponding fields must have identical field names and compatible field
       types in both tables. Only the first field of the lookup table is used as part of the validity check.
-- **Lookup access:** (only guide in Paradox application use, not for data constraints)
+- **Lookup access:** (only guide in Paradox application use, not for data validation)
     - 00b - **Fill no help:** You cannot view the lookup table from the table you are entering. You can view the lookup
       table by opening it in its own window.
     - 10b - **Help and fill:** You can view the lookup table from the table you are editing.

@@ -83,7 +83,8 @@ public class ValidationData {
                 int start = buffer.position();
 
                 ValidationField validationField = data.getFields()[buffer.get() & 0xFF];
-                int maskSize = buffer.get() & 0x0F;
+                int pictureSize = buffer.get() & 0x0F;
+                int tableLookupAttribute = buffer.get() & 0x0F;
 
                 Field field = Arrays.stream(table.getFields())
                         .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
@@ -93,7 +94,7 @@ public class ValidationData {
                 int minimumHint = buffer.getInt();
                 int maximumHint = buffer.getInt();
                 int defaultHint = buffer.getInt();
-                int maskHint = buffer.getInt();
+                int pictureHint = buffer.getInt();
 
                 if (minimumHint > 0) {
                     Object value = ParadoxFieldFactory.parse(table, buffer, field);
@@ -111,17 +112,17 @@ public class ValidationData {
                 }
 
                 // Is a mask validation?
-                if (maskSize != 0 && maskHint != 0) {
-                    final ByteBuffer maskBuffer = ByteBuffer.allocate(maskSize);
-                    for (int s = 0; s < maskSize; s++) {
-                        maskBuffer.put(buffer.get());
+                if (pictureSize != 0 && pictureHint != 0) {
+                    final ByteBuffer pictureBuffer = ByteBuffer.allocate(pictureSize);
+                    for (int s = 0; s < pictureSize; s++) {
+                        pictureBuffer.put(buffer.get());
                     }
 
                     // string ending with zero
-                    maskBuffer.flip();
-                    maskBuffer.limit(maskSize - 1);
+                    pictureBuffer.flip();
+                    pictureBuffer.limit(pictureSize - 1);
 
-                    validationField.setMask(table.getCharset().decode(maskBuffer).toString());
+                    validationField.setPicture(table.getCharset().decode(pictureBuffer).toString());
                 }
             }
 

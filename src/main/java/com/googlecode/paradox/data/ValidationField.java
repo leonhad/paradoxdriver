@@ -8,7 +8,7 @@ public class ValidationField {
 
     private String name;
 
-    private String mask;
+    private String picture;
 
     private Object defaultValue;
 
@@ -36,12 +36,12 @@ public class ValidationField {
         this.name = name;
     }
 
-    public String getMask() {
-        return mask;
+    public String getPicture() {
+        return picture;
     }
 
-    public void setMask(String mask) {
-        this.mask = mask;
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public Object getDefaultValue() {

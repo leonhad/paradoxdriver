@@ -63,12 +63,12 @@ public class ValidationDataTest {
     }
 
     /**
-     * Test for mask validation
+     * Test for picture validation
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMaskValidationAreaCode() throws SQLException {
+    public void testPictureValidationAreaCode() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getCurrentSchema().list(this.conn.getConnectionInfo(), "AREACODE");
         Assert.assertFalse(validations.isEmpty());
         Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
@@ -77,13 +77,13 @@ public class ValidationDataTest {
 
         ParadoxValidation validation = table.getValidation();
         Assert.assertEquals(4, validation.getFields().length);
-        Assert.assertEquals("###", validation.getFields()[0].getMask());
+        Assert.assertEquals("###", validation.getFields()[0].getPicture());
         Assert.assertEquals("Area Code", validation.getFields()[0].getName());
-        Assert.assertNull(validation.getFields()[1].getMask());
+        Assert.assertNull(validation.getFields()[1].getPicture());
         Assert.assertEquals("Country", validation.getFields()[1].getName());
-        Assert.assertNull(validation.getFields()[2].getMask());
+        Assert.assertNull(validation.getFields()[2].getPicture());
         Assert.assertEquals("Full State", validation.getFields()[2].getName());
-        Assert.assertEquals("&&", validation.getFields()[3].getMask());
+        Assert.assertEquals("&&", validation.getFields()[3].getPicture());
         Assert.assertEquals("State", validation.getFields()[3].getName());
 
         validations = this.conn.getConnectionInfo().getSchema(null, "areas").list(this.conn.getConnectionInfo(), "ZIPCODES");
@@ -93,19 +93,19 @@ public class ValidationDataTest {
         Assert.assertNotNull(table.getValidation());
 
         validation = table.getValidation();
-        Assert.assertEquals("#####", validation.getFields()[0].getMask());
+        Assert.assertEquals("#####", validation.getFields()[0].getPicture());
         Assert.assertEquals("Zip", validation.getFields()[0].getName());
-        Assert.assertEquals("&&", validation.getFields()[1].getMask());
+        Assert.assertEquals("&&", validation.getFields()[1].getPicture());
         Assert.assertEquals("State", validation.getFields()[1].getName());
     }
 
     /**
-     * Test for mask validation
+     * Test for picture validation
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMaskValidationZipCode() throws SQLException {
+    public void testPictureValidationZipCode() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "areas").list(this.conn.getConnectionInfo(), "ZIPCODES");
         Assert.assertFalse(validations.isEmpty());
         Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
@@ -113,9 +113,9 @@ public class ValidationDataTest {
         Assert.assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals("#####", validation.getFields()[0].getMask());
+        Assert.assertEquals("#####", validation.getFields()[0].getPicture());
         Assert.assertEquals("Zip", validation.getFields()[0].getName());
-        Assert.assertEquals("&&", validation.getFields()[1].getMask());
+        Assert.assertEquals("&&", validation.getFields()[1].getPicture());
         Assert.assertEquals("State", validation.getFields()[1].getName());
     }
 
