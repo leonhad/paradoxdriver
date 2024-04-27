@@ -99,19 +99,18 @@ The body start at position 0x35, and it repeats for all field. The field count a
 **\*** Integrity status (bit status in one byte):
 
 - **Lookup table:**
-    - 00b - Just current field: Only the current field gets its value from the lookup table, even if the current table
-      and the lookup table have other fields in common.
-    - 01b - All corresponding fields: All fields of the current table that correspond to fields in the lookup table take
-      their values from the lookup table. Corresponding fields must have identical field names and compatible field
+    - 00b - **Just current field:** Only the current field gets its value from the lookup table, even if the current
+      table and the lookup table have other fields in common.
+    - 01b - **All corresponding fields:** All fields of the current table that correspond to fields in the lookup table
+      take their values from the lookup table. Corresponding fields must have identical field names and compatible field
       types in both tables. Only the first field of the lookup table is used as part of the validity check.
 - **Lookup access:** (only guide in Paradox application use, not for data constraints)
-    - 00b - Fill no help: You cannot view the lookup table from the table you are entering. You can view the lookup
+    - 00b - **Fill no help:** You cannot view the lookup table from the table you are entering. You can view the lookup
       table by opening it in its own window.
-    - 10b - Help and fill: You can view the lookup table from the table you are editing.
+    - 10b - **Help and fill:** You can view the lookup table from the table you are editing.
 
-**\*\*** Values are presented here based on indicators in sequence of indicated presence. For example, if it has a
-maximum
-and default, the sequence has the maximum and default only in that order.
+**\*\*** Values are presented here based on indicators in sequence by presence. For example, if it has a maximum and
+default, the sequence has the maximum and default only in that order.
 
 **Note:** Referential integrity seems to be a table lookup with some additional attributes...
 
