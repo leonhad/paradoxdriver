@@ -398,7 +398,7 @@ public class ParadoxResultSetTest {
     public void testJoinAndWhere() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("select ac.AreaCode as a, st.State, st.Capital "
-                     + " from geog.tblAC ac, geog.tblsttes st" + " where st.State = ac.State")) {
+                     + " from geog.tblAC ac, geog.tblsttes st where st.State = ac.State")) {
             Assert.assertTrue("No First row", rs.next());
         }
     }

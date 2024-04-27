@@ -83,12 +83,14 @@ public class ValidationData {
                 int start = buffer.position();
 
                 ValidationField validationField = data.getFields()[buffer.get() & 0xFF];
-                int pictureSize = buffer.get() & 0x0F;
-                int tableLookupAttribute = buffer.get() & 0x0F;
-
                 Field field = Arrays.stream(table.getFields())
                         .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
                         .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
+
+                int pictureSize = buffer.get() & 0x0F;
+                int tableLookupAttribute = buffer.get() & 0x0F;
+
+                int tableLookupHint = buffer.getInt();
 
                 buffer.position(start + 0x0C);
                 int minimumHint = buffer.getInt();
@@ -96,17 +98,43 @@ public class ValidationData {
                 int defaultHint = buffer.getInt();
                 int pictureHint = buffer.getInt();
 
-                if (minimumHint > 0) {
+                if (tableLookupHint != 0) {
+                    int pos = buffer.position();
+                    final ByteBuffer destinationBuffer = ByteBuffer.allocate(0x1A);
+                    for (int s = 0; s < 0x1A ; s++) {
+                        byte read = buffer.get();
+                        if (read == 0) {
+                            break;
+                        }
+                        destinationBuffer.put(read);
+                    }
+
+                    System.out.println();
+
+                    // string ending with zero
+                    destinationBuffer.flip();
+                   // tableLookupBuffer.limit(pictureSize - 1);
+
+                    validationField.setDestinationTable(table.getCharset().decode(destinationBuffer).toString());
+                    validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
+                    validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
+                    System.out.println();
+                    System.out.println(tableLookupAttribute);
+
+                    buffer.position(pos + 0x1A + 0x36);
+                }
+
+                if (minimumHint != 0) {
                     Object value = ParadoxFieldFactory.parse(table, buffer, field);
                     validationField.setMinimumValue(value);
                 }
 
-                if (maximumHint > 0) {
+                if (maximumHint != 0) {
                     Object value = ParadoxFieldFactory.parse(table, buffer, field);
                     validationField.setMaximumValue(value);
                 }
 
-                if (defaultHint > 0) {
+                if (defaultHint != 0) {
                     Object value = ParadoxFieldFactory.parse(table, buffer, field);
                     validationField.setDefaultValue(value);
                 }

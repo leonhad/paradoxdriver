@@ -138,4 +138,24 @@ public class ValidationDataTest {
         Assert.assertNotNull(validation.getFields()[0].getDefaultValue());
         Assert.assertTrue((Boolean) validation.getFields()[0].getDefaultValue());
     }
+
+    /**
+     * Test for table lookup.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testTableLookup() throws SQLException {
+        List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "joins").list(this.conn.getConnectionInfo(), "origin");
+        Assert.assertFalse(validations.isEmpty());
+        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        ParadoxTable table = (ParadoxTable) validations.get(0);
+        Assert.assertNotNull(table.getValidation());
+
+        ParadoxValidation validation = table.getValidation();
+        Assert.assertEquals("ID", validation.getFields()[0].getName());
+        Assert.assertEquals(ParadoxType.AUTO_INCREMENT, validation.getFields()[0].getType());
+        Assert.assertNotNull(validation.getFields()[0].getDefaultValue());
+        Assert.assertTrue((Boolean) validation.getFields()[0].getDefaultValue());
+    }
 }

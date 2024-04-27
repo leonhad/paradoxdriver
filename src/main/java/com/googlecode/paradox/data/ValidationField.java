@@ -20,6 +20,12 @@ public class ValidationField {
 
     private int fieldSize;
 
+    private String destinationTable;
+
+    private boolean lookupAllFields;
+
+    private boolean lookupHelp;
+
     public int getPosition() {
         return position;
     }
@@ -82,5 +88,29 @@ public class ValidationField {
 
     public void setMaximumValue(Object maximumValue) {
         this.maximumValue = maximumValue;
+    }
+
+    public String getDestinationTable() {
+        return destinationTable;
+    }
+
+    public void setDestinationTable(String destinationTable) {
+        this.destinationTable = destinationTable;
+    }
+
+    public boolean isLookupAllFields() {
+        return lookupAllFields;
+    }
+
+    public void setLookupAllFields(boolean lookupAllFields) {
+        this.lookupAllFields = lookupAllFields;
+    }
+
+    public boolean isLookupHelp() {
+        return lookupHelp;
+    }
+
+    public void setLookupHelp(boolean lookupHelp) {
+        this.lookupHelp = lookupHelp;
     }
 }
