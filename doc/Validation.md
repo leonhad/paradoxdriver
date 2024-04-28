@@ -126,9 +126,9 @@ in destination table.
 |   0x00   |     0x1A     | string | Destination table                                                                  |
 |   0x1A   |     0x36     | ?      | ? These bytes seems to be internal pointers. The same file works with zeros or not |
 
-**Note:** Unfinished...
-
 ### Dependency table
+
+**Note:** Unfinished...
 
 ### Referential integrity
 
@@ -144,8 +144,8 @@ referential integrity.
 |   0x00   |     0x02     | word    | Field order, starts with 1                                                |
 |   0x02   |     0x40     | string  | Referential integrity name                                                |
 |   0x42   |     0x40     | string  | Origin field name (referential integrity name if has more than one field) |
-|   0xB4   |     0x01     | byte    | Field name size (zero if have more than one field)                        |
-|   0xB5   |     0x01     | byte    | 1 if there are more than one field, zero otherwise                        |
+|   0xB4   |     0x01     | byte    | Field name size (zero if have more than one field) - Ignored by Paradox   |
+|   0xB5   |     0x01     | byte    | 1 if there are more than one field, zero otherwise - Ignored by Paradox   |
 |   0xB6   |     0x20     | ?       | Zeros?                                                                    |
 |   0xD6   |     0x72     | string  | Destination table name                                                    |
 |  0x148   |     0x54     | ?       | Zeros?                                                                    |
