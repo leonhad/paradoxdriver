@@ -126,10 +126,6 @@ in destination table.
 |   0x00   |     0x1A     | string | Destination table                                                                  |
 |   0x1A   |     0x36     | ?      | ? These bytes seems to be internal pointers. The same file works with zeros or not |
 
-### Dependency table
-
-**Note:** Unfinished...
-
 ### Referential integrity
 
 Create a referential integrity implies to create a secondary index to the same field on source table. On destination
@@ -149,11 +145,44 @@ referential integrity.
 |   0xB6   |     0x20     | ?       | Zeros?                                                                    |
 |   0xD6   |     0x72     | string  | Destination table name                                                    |
 |  0x148   |     0x54     | ?       | Zeros?                                                                    |
-|  0x19C   |     0x04     | integer | Update Rule: 1 - Cascade, 0 - Prohibit                                    |
+|  0x19C   |     0x04     | integer | Update Rule: 1 - Cascade, 0 - Prohibit*                                   |
 |  0x1A0   |      2       | word    | Field count                                                               |
 |  0x1A2   |    2 x 10    | word    | Field position in origin table (2 bytes per field)                        |
 |  0x1C2   |    2 x 10    | byte    | Field position in destination table (2 bytes per field)                   |
 |  0x1E2   |     0x02     | ?       | Zeros?                                                                    |
+
+**\* Update rule:**
+
+- 1 - **Cascade:** Cascade specifies that any change you make to the value in the key of the parent table is
+  automatically made in the child table. If you delete a value in the key of the parent table, dependent records in the
+  child table are also deleted. Cascade is the default update rule for Paradox.
+- 0 - **Prohibit:** Prohibit specifies that you cannot change or delete a value in the parent's key if there are records
+  that match the value in the child table.
+
+### Dependency table
+
+If the referential integrity field 0x00 is zero, is because it is a dependency table list, not a foreign key (this is
+the destination table, not source)
+**Note:** Unfinished...
+
+| position | size (bytes) | type | description                              |
+|:--------:|:------------:|------|------------------------------------------|
+|   0x00   |     0x02     | word | Zero (identify a dependency table)       |
+|   0x02   |     0x01     | byte | 01 (identify a dependency table)         |
+|   0x98   |     0x02     | word | ID field count in origin table           |
+|   0x9A   |     0x20     | word | Field list used in referential integrity |
+|   0xBA   |     0x02     | word | Dependency table count                   |
+
+This section repeats by dependency table count (total count 0x12A)
+
+| position | size (bytes) | type   | description                                                             |
+|:--------:|:------------:|--------|-------------------------------------------------------------------------|
+|   0x00   |     0x40     | string | Referential integrity name                                              |
+|   0x40   |     0x52     | string | Origin table name                                                       |
+|   0x92   |     0x72     | string | Destination field name, reference name if there are more than one field |
+|  0x104   |     0x01     | byte   | Dependency table order                                                  |
+|  0x105   |     0x05     | ?      | ? (ignored by Paradox)                                                  |
+|  0x10A   |     0x20     | word   | Field list used in referential, starts with 1                           |
 
 ## Footer
 
