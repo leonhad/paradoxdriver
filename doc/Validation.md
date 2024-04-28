@@ -66,17 +66,18 @@ For example
 
 ## Header
 
-|  position   | size (bytes) | type    | description      |
-|:-----------:|:------------:|---------|------------------|
-|    0x00     |      1       | byte    | ?                |
-|    0x01     |      1       | byte    | fileVersionID    |
-|    0x02     |      1       | byte    | Validation count |
-| 0x03 ~ 0x07 |      ?       | ?       | ?                |
-|    0x08     |      1       | byte    | Always zero?     |
-|    0x09     |      4       | integer | Footer position  |
-| 0x0A ~ 0x34 |      ?       | ?       | Always zero?     |
+|  position   | size (bytes) | type    | description                                          |
+|:-----------:|:------------:|---------|------------------------------------------------------|
+|    0x00     |      1       | byte    | Table change count (must match with the table value) |
+|    0x01     |      1       | byte    | fileVersionID                                        |
+|    0x02     |      1       | byte    | Validation count                                     |
+|    0x03     |      4       | int     | Internal pointer, can be ignored                     |
+|    0x08     |      1       | byte    | Always zero?                                         |
+|    0x09     |      4       | integer | Footer position                                      |
+|    0x0D     |      4       | integer | Referential integrity position                       |
+| 0x11 ~ 0x34 |      ?       | ?       | Always zero?                                         |
 
-This file is valid only for fileVersionID 0x09 to 0x0B.
+**Note:** This file documentation is valid only for fileVersionID 0x09 to 0x0B.
 
 ## Body
 
@@ -84,9 +85,9 @@ The body start at position 0x35, and it repeats for all field. The field count a
 
 |  position   |  size (bytes)  | type    | description                                                              |
 |:-----------:|:--------------:|---------|--------------------------------------------------------------------------|
-|    0x00     |       1        | byte    | Field order, start with 1                                                |
+|    0x00     |       1        | byte    | Field order, starts with 1                                               |
 |    0x01     |       1        | byte    | Picture size                                                             |
-|    0x02     |       1        | byte    | Referential integrity indicator?                                         |
+|    0x02     |       1        | byte    | Dependency table order (starts with 1)                                   |
 |    0x03     |       1        | byte    | Integrity status*                                                        |
 |    0x04     |       4        | integer | Table lookup key indicator. Seems to finish always in 6B. No value here? |
 | 0x08 ~ 0x0B |       ?        | ?       | ?                                                                        |
@@ -95,6 +96,7 @@ The body start at position 0x35, and it repeats for all field. The field count a
 |    0x14     |       4        | integer | Default value indicator. Seems to finish always in 6B. No value here?    |
 |    0x18     |       4        | integer | Picture indicator. No value here?                                        |
 |    0x1D     | field size\*\* | any     | Field value by type. Picture definition is an ending zero string.        |
+|     XXX     |       X        | any     | Referential integrity.                                                   |
 
 **\*** Integrity status (bit status in one byte):
 
@@ -126,18 +128,45 @@ in destination table.
 
 **Note:** Unfinished...
 
+### Dependency table
+
+### Referential integrity
+
+Create a referential integrity implies to create a secondary index to the same field on source table. On destination
+table, it creates a validation files with dependent table relation.
+
+The referential integrity starts when field validation stops. So, to find one, use remaining bytes after validation
+counts stops and the footer sections don't start yet. If the validation count is zero, is because there is only
+referential integrity.
+
+| position | size (bytes) | type    | description                                                               |
+|:--------:|:------------:|---------|---------------------------------------------------------------------------|
+|   0x00   |     0x02     | word    | Field order, starts with 1                                                |
+|   0x02   |     0x40     | string  | Referential integrity name                                                |
+|   0x42   |     0x40     | string  | Origin field name (referential integrity name if has more than one field) |
+|   0xB4   |     0x01     | byte    | Field name size (zero if have more than one field)                        |
+|   0xB5   |     0x01     | byte    | 1 if there are more than one field, zero otherwise                        |
+|   0xB6   |     0x20     | ?       | Zeros?                                                                    |
+|   0xD6   |     0x72     | string  | Destination table name                                                    |
+|  0x148   |     0x54     | ?       | Zeros?                                                                    |
+|  0x19C   |     0x04     | integer | Update Rule: 1 - Cascade, 0 - Prohibit                                    |
+|  0x1A0   |      2       | word    | Field count                                                               |
+|  0x1A2   |    2 x 10    | word    | Field position in origin table (2 bytes per field)                        |
+|  0x1C2   |    2 x 10    | byte    | Field position in destination table (2 bytes per field)                   |
+|  0x1E2   |     0x02     | ?       | Zeros?                                                                    |
+
 ## Footer
 
-| position | size (bytes) | type  | description |
-|:--------:|:------------:|-------|-------------|
-|   0x00   |      2       | short | Field count |
-|   0x02   |      4       | ?     | ?           |
+| position | size (bytes) | type | description |
+|:--------:|:------------:|------|-------------|
+|   0x00   |      2       | word | Field count |
+|   0x02   |      4       | ?    | ?           |
 
 This section repeats by field count
 
-|   position    | size (bytes) | type  | description |
-|:-------------:|:------------:|-------|-------------|
-| last position |      2       | short | Field order |
+|   position    | size (bytes) | type | description |
+|:-------------:|:------------:|------|-------------|
+| last position |      2       | word | Field order |
 
 This section repeats by field count
 

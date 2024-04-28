@@ -159,4 +159,25 @@ public class ValidationDataTest {
         Assert.assertFalse(validation.getFields()[1].isLookupAllFields());
         Assert.assertTrue(validation.getFields()[1].isLookupHelp());
     }
+
+    /**
+     * Test for referential integrity.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testFk1() throws SQLException {
+        List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "joins").list(this.conn.getConnectionInfo(), "fk1");
+        Assert.assertFalse(validations.isEmpty());
+        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        ParadoxTable table = (ParadoxTable) validations.get(0);
+        Assert.assertNotNull(table.getValidation());
+
+        ParadoxValidation validation = table.getValidation();
+        Assert.assertEquals("FK", validation.getFields()[1].getName());
+        Assert.assertEquals(ParadoxType.LONG, validation.getFields()[1].getType());
+        Assert.assertEquals("destination.db", validation.getFields()[1].getDestinationTable());
+        Assert.assertFalse(validation.getFields()[1].isLookupAllFields());
+        Assert.assertTrue(validation.getFields()[1].isLookupHelp());
+    }
 }
