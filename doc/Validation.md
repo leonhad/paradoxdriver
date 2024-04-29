@@ -135,21 +135,26 @@ The referential integrity starts when field validation stops. So, to find one, u
 counts stops and the footer sections don't start yet. If the validation count is zero, is because there is only
 referential integrity.
 
-| position | size (bytes) | type    | description                                                               |
-|:--------:|:------------:|---------|---------------------------------------------------------------------------|
-|   0x00   |     0x02     | word    | Field order, starts with 1                                                |
-|   0x02   |     0x40     | string  | Referential integrity name                                                |
-|   0x42   |     0x40     | string  | Origin field name (referential integrity name if has more than one field) |
-|   0xB4   |     0x01     | byte    | Field name size (zero if have more than one field) - Ignored by Paradox   |
-|   0xB5   |     0x01     | byte    | 1 if there are more than one field, zero otherwise - Ignored by Paradox   |
-|   0xB6   |     0x20     | ?       | Zeros?                                                                    |
-|   0xD6   |     0x72     | string  | Destination table name                                                    |
-|  0x148   |     0x54     | ?       | Zeros?                                                                    |
-|  0x19C   |     0x04     | integer | Update Rule: 1 - Cascade, 0 - Prohibit*                                   |
-|  0x1A0   |      2       | word    | Field count                                                               |
-|  0x1A2   |    2 x 10    | word    | Field position in origin table (2 bytes per field)                        |
-|  0x1C2   |    2 x 10    | byte    | Field position in destination table (2 bytes per field)                   |
-|  0x1E2   |     0x02     | ?       | Zeros?                                                                    |
+| position | size (bytes) | type | description                                                 |
+|:--------:|:------------:|------|-------------------------------------------------------------|
+|   0x00   |     0x02     | word | Referential integrity count. 0 identify a dependency table. |
+
+This section repeats by referential integrity count (total count 0x1DE)
+
+| position | size (bytes) | type   | description                                                                  |
+|:--------:|:------------:|--------|------------------------------------------------------------------------------|
+|   0x00   |     0x40     | string | Referential integrity name                                                   |
+|   0x40   |     0x40     | string | Origin field name (referential integrity name if it has more than one field) |
+|   0xB2   |     0x01     | byte   | Field name size (zero if we have more than one field) - Ignored by Paradox   |
+|   0xB3   |     0x01     | byte   | 1 if there are more than one field, zero otherwise - Ignored by Paradox      |
+|   0xB4   |     0x20     | ?      | Zeros?                                                                       |
+|   0xD4   |     0x72     | string | Destination table name                                                       |
+|  0x146   |      ?       | ?      | Zeros?                                                                       |
+|  0x19E   |     0x01     | byte   | Update Rule: 1 - Cascade, 0 - Prohibit*                                      |
+|  0x19F   |      2       | word   | Field count                                                                  |
+|  0x1A0   |    2 x 9     | word   | Field position in origin table (2 bytes per field)                           |
+|  0x1BE   |      2       | word   | Zeros?                                                                       |
+|  0x1C0   |    2 x 9     | byte   | Field position in destination table (2 bytes per field)                      |
 
 **\* Update rule:**
 
@@ -161,13 +166,14 @@ referential integrity.
 
 ### Dependency table
 
+This section occurs after the referential integrity node if exists one.
+
 If the referential integrity field 0x00 is zero, is because it is a dependency table list, not a foreign key (this is
 the destination table, not source)
-**Note:** Unfinished...
 
 | position | size (bytes) | type | description                              |
 |:--------:|:------------:|------|------------------------------------------|
-|   0x00   |     0x02     | word | Zero (identify a dependency table)       |
+|   0x00   |     0x01     | byte | Zero (identify a dependency table)       |
 |   0x02   |     0x01     | byte | 01 (identify a dependency table)         |
 |   0x98   |     0x02     | word | ID field count in origin table           |
 |   0x9A   |     0x20     | word | Field list used in referential integrity |
