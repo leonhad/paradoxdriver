@@ -42,7 +42,7 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
      * @param last     the last field node.
      * @param position the current Scanner position.
      */
-    public AbstractComparableNode(final String name, final FieldNode field, final FieldNode last,
+    protected AbstractComparableNode(final String name, final FieldNode field, final FieldNode last,
                                   final ScannerPosition position) {
         super(name, field, position);
         this.last = last;

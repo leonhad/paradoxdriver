@@ -47,7 +47,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
      * @param field    the field node to compare.
      * @param position the current Scanner position.
      */
-    public AbstractConditionalNode(final String name, final FieldNode field, final ScannerPosition position) {
+    protected AbstractConditionalNode(final String name, final FieldNode field, final ScannerPosition position) {
         super(name, position);
         this.field = field;
     }
@@ -58,7 +58,7 @@ public abstract class AbstractConditionalNode extends SQLNode {
      * @param name     the condition name.
      * @param position the current Scanner position.
      */
-    public AbstractConditionalNode(final String name, ScannerPosition position) {
+    protected AbstractConditionalNode(final String name, ScannerPosition position) {
         this(name, null, position);
     }
 

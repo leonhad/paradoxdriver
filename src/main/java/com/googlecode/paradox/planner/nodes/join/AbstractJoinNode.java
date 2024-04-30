@@ -36,7 +36,7 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
      * @param child     the child node.
      * @param position  the current scanner position.
      */
-    public AbstractJoinNode(final String fieldName, final SQLNode child, final ScannerPosition position) {
+    protected AbstractJoinNode(final String fieldName, final SQLNode child, final ScannerPosition position) {
         super(fieldName, position);
         if (child != null) {
             this.children.add(child);

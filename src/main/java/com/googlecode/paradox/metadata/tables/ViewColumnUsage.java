@@ -91,8 +91,7 @@ public class ViewColumnUsage implements Table {
             int sum = 0;
 
             for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
-                sum += (int) localSchema.list(connectionInfo, null).stream()
-                        .filter(table -> (table instanceof View)).count();
+                sum += (int) localSchema.list(connectionInfo, null).stream().filter(View.class::isInstance).count();
             }
 
             return sum;
