@@ -13,8 +13,8 @@ package com.googlecode.paradox;
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import com.googlecode.paradox.metadata.schema.DirectorySchema;
 import com.googlecode.paradox.metadata.ParadoxDatabaseMetaData;
+import com.googlecode.paradox.metadata.schema.DirectorySchema;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.plan.Plan;
@@ -96,6 +96,13 @@ public final class ParadoxConnection implements Connection {
         this.connectionInfo.setCurrentSchema(new DirectorySchema(dir));
     }
 
+    /**
+     * Creates an execution plan.
+     *
+     * @param sql the SQL to analyze.
+     * @return the execution plan.
+     * @throws SQLException in case of failures.
+     */
     @SuppressWarnings("java:S1452")
     public Plan<?, ?> createPlan(final String sql) throws SQLException {
         final LinkedHashMap<String, SoftReference<Plan<?, ?>>> cache = STATEMENT_CACHE.computeIfAbsent(

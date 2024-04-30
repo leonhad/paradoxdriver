@@ -131,6 +131,11 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         return TableType.TABLE;
     }
 
+    /**
+     * Gets the table validation.
+     *
+     * @return the table validation.
+     */
     public ParadoxValidation getValidation() {
         return validation;
     }

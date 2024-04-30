@@ -71,8 +71,15 @@ public class ParadoxData {
         // Unused.
     }
 
-    protected static void checkDBEncryption(final ByteBuffer buffer, final ParadoxDataFile dataFile, int blockSize,
-                                            long blockNumber) {
+    /**
+     * Checks for encryption in table file.
+     *
+     * @param buffer      the table buffer
+     * @param dataFile    the file definition.
+     * @param blockSize   the block size.
+     * @param blockNumber the block number.
+     */
+    protected static void checkDBEncryption(final ByteBuffer buffer, final ParadoxDataFile dataFile, int blockSize, long blockNumber) {
         if (dataFile.isEncrypted()) {
             byte[] b = buffer.array();
             EncryptedData.decryptDBBlock(b, dataFile.getEncryptedData(), blockSize, blockNumber);
@@ -155,7 +162,7 @@ public class ParadoxData {
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            ((Buffer)buffer).flip();
+            ((Buffer) buffer).flip();
 
             int recordSize = buffer.getShort() & 0xFFFF;
             int headerSize = buffer.getShort() & 0xFFFF;
@@ -179,7 +186,7 @@ public class ParadoxData {
 
             // Check for encrypted file.
             buffer.position(0x25);
-            long value = buffer.getInt();
+            int value = buffer.getInt();
 
             buffer.position(0x38);
             data.setWriteProtected(buffer.get() != 0);
@@ -345,7 +352,7 @@ public class ParadoxData {
 
         name.flip();
         final String tempName = index.getCharset().decode(name).toString();
-        if (tempName.length() != 0) {
+        if (!tempName.isEmpty()) {
             index.setName(tempName);
         }
     }
