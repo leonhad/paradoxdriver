@@ -20,7 +20,6 @@ import com.googlecode.paradox.results.ParadoxType;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.charset.*;
@@ -85,7 +84,7 @@ public final class ValuesConverter {
      * Utility class, not for use.
      */
     private ValuesConverter() {
-        // Not used..
+        super();
     }
 
     @SuppressWarnings("unchecked")
@@ -344,9 +343,9 @@ public final class ValuesConverter {
 
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        c.set(Calendar.YEAR, 0);
-        c.set(Calendar.MONTH, 0);
-        c.set(Calendar.DAY_OF_MONTH, 0);
+        c.set(Calendar.YEAR, 1970);
+        c.set(Calendar.MONTH, Calendar.JANUARY);
+        c.set(Calendar.DAY_OF_MONTH, 1);
 
         return new Time(c.getTimeInMillis());
     }
@@ -510,24 +509,6 @@ public final class ValuesConverter {
                 dis.readFully(ret);
             } catch (final IOException e) {
                 throw new ParadoxDataException(DataError.INVALID_CONVERSION, e, inputStream);
-            }
-        }
-
-        return ret;
-    }
-
-    public static String getChars(final Reader reader, final int length) throws ParadoxDataException {
-        String ret = null;
-        if (reader != null) {
-            try {
-                final char[] buffer = new char[length];
-                if (reader.read(buffer) != length) {
-                    throw new ParadoxDataException(DataError.INVALID_CONVERSION, reader);
-                }
-
-                ret = new String(buffer);
-            } catch (final IOException e) {
-                throw new ParadoxDataException(DataError.INVALID_CONVERSION, e, reader);
             }
         }
 

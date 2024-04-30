@@ -123,22 +123,7 @@ public class Views implements Table {
                 final Object[] row = new Object[fields.length];
                 for (int i = 0; i < fields.length; i++) {
                     final Field field = fields[i];
-                    Object value = null;
-                    if (catalog.equals(field)) {
-                        value = localSchema.catalogName();
-                    } else if (this.schema.equals(field)) {
-                        value = localSchema.name();
-                    } else if (name.equals(field)) {
-                        value = table.getName();
-                    } else if (this.definition.equals(field)) {
-                        value = ((View) table).definition();
-                    } else if (this.check.equals(field)) {
-                        value = "NONE";
-                    } else if (this.updatable.equals(field)) {
-                        value = "NO";
-                    }
-
-                    row[i] = value;
+                    row[i] = parseValue(localSchema, table, field);
                 }
 
                 ret.add(row);
@@ -146,5 +131,24 @@ public class Views implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Schema localSchema, Table table, Field field) {
+        Object value = null;
+        if (catalog.equals(field)) {
+            value = localSchema.catalogName();
+        } else if (this.schema.equals(field)) {
+            value = localSchema.name();
+        } else if (name.equals(field)) {
+            value = table.getName();
+        } else if (this.definition.equals(field)) {
+            value = ((View) table).definition();
+        } else if (this.check.equals(field)) {
+            value = "NONE";
+        } else if (this.updatable.equals(field)) {
+            value = "NO";
+        }
+
+        return value;
     }
 }

@@ -44,7 +44,7 @@ public final class TimeField implements FieldParser {
         final long timeInMillis = buffer.getInt() & 0x0FFF_FFFFL;
 
         if (timeInMillis != 0) {
-            final Calendar calendar = new GregorianCalendar(1, Calendar.JANUARY, 0);
+            final Calendar calendar = new GregorianCalendar(1970, Calendar.JANUARY, 1);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
             return new Time(calendar.getTimeInMillis());
         }

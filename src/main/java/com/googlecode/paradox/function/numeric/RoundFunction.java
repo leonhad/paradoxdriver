@@ -18,6 +18,7 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Optional;
 
 /**
  * The SQL ROUND functions.
@@ -87,7 +88,7 @@ public class RoundFunction extends AbstractNumericFunction {
         }
 
         RoundingMode mode = RoundingMode.HALF_UP;
-        if (rounding != null && rounding) {
+        if (Optional.ofNullable(rounding).orElse(false)) {
             mode = RoundingMode.FLOOR;
         }
 
