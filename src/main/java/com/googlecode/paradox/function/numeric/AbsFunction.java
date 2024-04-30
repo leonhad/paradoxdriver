@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL ABS function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class AbsFunction extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class AbsFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.NUMBER, "A absolute value.", 0, true, RESULT),
             new Column("number", ParadoxType.NUMBER, "A numeric value.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public AbsFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

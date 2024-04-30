@@ -93,11 +93,24 @@ public class DataNavigation implements AutoCloseable {
         this.fetchDirection = fetchDirection;
     }
 
+    /**
+     * Gets the last returned value.
+     *
+     * @return last returned value.
+     * @throws SQLException in case of failures.
+     */
     public Object getLastValue() throws SQLException {
         verifyStatus();
         return lastValue;
     }
 
+    /**
+     * Sets the absolute position.
+     *
+     * @param row the absolute row position.
+     * @return <code>true</code> if success.
+     * @throws SQLException in case of failures.
+     */
     public boolean absolute(final int row) throws SQLException {
         verifyStatus();
 

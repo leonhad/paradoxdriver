@@ -16,7 +16,6 @@ import com.googlecode.paradox.function.FunctionType;
 /**
  * Base class for numeric functions.
  *
- * @version 1.0
  * @since 1.6.0
  */
 public abstract class AbstractNumericFunction extends AbstractFunction {

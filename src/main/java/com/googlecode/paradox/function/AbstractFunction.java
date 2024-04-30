@@ -44,6 +44,13 @@ public abstract class AbstractFunction {
     public static final int RESULT = DatabaseMetaData.functionColumnResult;
 
     /**
+     * Creates a new instance.
+     */
+    protected AbstractFunction() {
+        super();
+    }
+
+    /**
      * Gets the function type.
      *
      * @return the function type.
@@ -53,7 +60,7 @@ public abstract class AbstractFunction {
     /**
      * Gets the functions remarks.
      *
-     * @return the functions remarks.
+     * @return the function remarks.
      */
     public abstract String getRemarks();
 

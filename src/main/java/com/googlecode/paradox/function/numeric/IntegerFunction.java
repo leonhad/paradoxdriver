@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL INTEGER function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class IntegerFunction extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class IntegerFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.INTEGER, "A integer value.", 0, true, RESULT),
             new Column("integer", ParadoxType.VARCHAR, "A value to convert.", 1, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public IntegerFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

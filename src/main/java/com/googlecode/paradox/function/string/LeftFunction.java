@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL LEFT function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class LeftFunction extends AbstractStringFunction {
@@ -39,6 +38,13 @@ public class LeftFunction extends AbstractStringFunction {
             new Column("string", ParadoxType.VARCHAR, "The string to extract", 1, false, IN),
             new Column("number_of_chars", ParadoxType.INTEGER, "The number of chars to extract", 2, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public LeftFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

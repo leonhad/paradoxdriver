@@ -31,7 +31,6 @@ import java.util.stream.Stream;
 /**
  * Stores a function node.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class FunctionNode extends FieldNode {
@@ -132,6 +131,11 @@ public class FunctionNode extends FieldNode {
         return function.isGrouping() || !functionNodes.isEmpty();
     }
 
+    /**
+     * Gets the second pass status.
+     *
+     * @return the second pass status.
+     */
     public boolean isSecondPass() {
         final List<FunctionNode> functionNodes = this.getGroupingNodes();
         return !function.isGrouping() && !functionNodes.isEmpty();

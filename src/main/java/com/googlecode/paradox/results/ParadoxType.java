@@ -22,6 +22,7 @@ import java.sql.*;
  * @see SQLType
  * @since 1.3
  */
+@SuppressWarnings("java:S107")
 public enum ParadoxType implements SQLType {
 
     /**

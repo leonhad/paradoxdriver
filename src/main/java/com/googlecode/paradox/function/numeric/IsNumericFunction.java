@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL IS NUMERIC functions.
  *
- * @version 1.6
  * @since 1.6.0
  */
 public class IsNumericFunction extends AbstractNumericFunction {
@@ -36,6 +35,13 @@ public class IsNumericFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.BOOLEAN, "True if the value is numeric.", 0, false, RESULT),
             new Column("number", ParadoxType.NUMBER, "The value to check.", 1, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public IsNumericFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

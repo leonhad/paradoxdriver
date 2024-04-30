@@ -85,12 +85,10 @@ public final class FieldValueUtils {
      * @throws SQLException in case of column ambiguous defined or field not found.
      */
     @SuppressWarnings("java:S1541")
-    public static void setFieldIndex(final FieldNode field, final List<Column> columns,
-                                     final Collection<PlanTableNode> tables) throws SQLException {
+    public static void setFieldIndex(final FieldNode field, final List<Column> columns, final Collection<PlanTableNode> tables) throws SQLException {
 
         // Do not set indexes in value or parameter nodes.
-        if (field == null || field instanceof ValueNode || field instanceof ParameterNode
-                || field instanceof AsteriskNode) {
+        if (field == null || field instanceof ValueNode || field instanceof ParameterNode || field instanceof AsteriskNode) {
             return;
         } else if (field instanceof FunctionNode) {
             setFunctionIndexes(field, columns, tables);

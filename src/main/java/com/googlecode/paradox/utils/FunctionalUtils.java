@@ -52,6 +52,7 @@ public final class FunctionalUtils {
      * Functional interface to allow the use of exceptions .
      *
      * @param <T> the predicate type.
+     * @param <R> the function return type.
      * @param <E> the exception type.
      */
     @FunctionalInterface

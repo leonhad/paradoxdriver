@@ -20,12 +20,18 @@ import java.nio.ByteBuffer;
 /**
  * Parses integer fields.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class IntegerField implements FieldParser {
 
     private static final int NULL_VALUE = -32768;
+
+    /**
+     * Creates a new instance.
+     */
+    public IntegerField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}

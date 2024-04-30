@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL LOG10 functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class Log10Function extends AbstractNumericFunction {
@@ -36,6 +35,13 @@ public class Log10Function extends AbstractNumericFunction {
             new Column(null, ParadoxType.NUMBER, "The the log of a number.", 0, false, RESULT),
             new Column("number", ParadoxType.NUMBER, "A number to calculate the log.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public Log10Function() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

@@ -42,6 +42,13 @@ public class HourFunction extends AbstractDateFunction {
             new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the hour from.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public HourFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Extract the hour from a timestamp value.";

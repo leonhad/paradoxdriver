@@ -20,7 +20,7 @@ import java.sql.SQLException;
  * Used to creates and execute SQL plans.
  *
  * @param <T> the return type.
- * @version 1.8
+ * @param <C> the plan context type.
  * @since 1.1
  */
 public interface Plan<T, C extends Context> {

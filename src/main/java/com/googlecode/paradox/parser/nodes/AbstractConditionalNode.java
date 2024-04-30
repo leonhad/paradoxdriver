@@ -52,6 +52,12 @@ public abstract class AbstractConditionalNode extends SQLNode {
         this.field = field;
     }
 
+    /**
+     * Creates a new instance.
+     *
+     * @param name     the condition name.
+     * @param position the current Scanner position.
+     */
     public AbstractConditionalNode(final String name, ScannerPosition position) {
         this(name, null, position);
     }
@@ -59,6 +65,13 @@ public abstract class AbstractConditionalNode extends SQLNode {
     public abstract boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
             throws SQLException;
 
+    /**
+     * Sets the field indexes.
+     *
+     * @param columns The column list.
+     * @param tables  the table to set.
+     * @throws SQLException in case of failures.
+     */
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
         FieldValueUtils.setFieldIndex(field, columns, tables);
     }

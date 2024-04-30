@@ -26,6 +26,10 @@ import java.util.Arrays;
  */
 public class ValidationData {
 
+    private ValidationData() {
+        super();
+    }
+
     /**
      * Gets all tables within a pattern.
      *

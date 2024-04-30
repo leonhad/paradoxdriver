@@ -27,9 +27,18 @@ import java.nio.ByteBuffer;
  */
 public final class BCDField implements FieldParser {
 
+    /**
+     * BCD real size.
+     */
     public static final int BCD_SIZE = 17;
+    /**
+     * Max digits a BCD can have.
+     */
     public static final int MAX_DIGITS = 32;
-    public static final byte SECOND_BYTE = 4;
+    /**
+     * Second position in byte.
+     */
+    private static final byte SECOND_BYTE = 4;
 
     private static void removeLeadingZeroes(final StringBuilder builder) {
         while (builder.length() > 1 && builder.charAt(0) == '0') {
@@ -62,7 +71,7 @@ public final class BCDField implements FieldParser {
         boolean negative = (valueBuffer[0] & 0x80) == 0;
         if (negative) {
             for (int i = 1; i < valueBuffer.length; i++) {
-                valueBuffer[i] ^= 0xFF;
+                valueBuffer[i] ^= (byte) 0xFF;
             }
         }
 

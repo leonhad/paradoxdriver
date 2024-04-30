@@ -129,7 +129,7 @@ public class ParadoxConnectionTest {
      */
     @Test
     public void testLocaleChanging() throws SQLException {
-        Locale locale = new Locale("pt", "BR");
+        Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
 
         final Properties info = new Properties();
         info.put("locale", locale.toLanguageTag());

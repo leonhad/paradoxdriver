@@ -20,7 +20,6 @@ import java.sql.SQLException;
 /**
  * The SQL INITCAP function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class InitCapFunction extends AbstractStringFunction {
@@ -37,6 +36,13 @@ public class InitCapFunction extends AbstractStringFunction {
             new Column(null, ParadoxType.VARCHAR, "The capitalized string.", 0, true, RESULT),
             new Column("string", ParadoxType.VARCHAR, "The string to capitalize", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public InitCapFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

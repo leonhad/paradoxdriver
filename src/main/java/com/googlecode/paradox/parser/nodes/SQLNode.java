@@ -49,6 +49,10 @@ public class SQLNode {
         this.position = position;
     }
 
+    /**
+     * Gets the clause fields.
+     * @return the clause fields set.
+     */
     public Set<FieldNode> getClauseFields() {
         return new HashSet<>();
     }

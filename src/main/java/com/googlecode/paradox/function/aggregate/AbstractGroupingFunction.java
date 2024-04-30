@@ -21,7 +21,7 @@ import java.sql.SQLException;
 /**
  * Base class for general functions.
  *
- * @version 1.0
+ * @param <T> the function return type.
  * @since 1.6.0
  */
 public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
@@ -38,5 +38,5 @@ public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
 
     @Override
     public abstract IGroupingContext<T> execute(final ConnectionInfo connectionInfo, final Object[] values,
-                                             final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
+                                                final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
 }
