@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * Tables.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class Tables implements Table {
@@ -129,38 +128,7 @@ public class Tables implements Table {
                 final Object[] row = new Object[fields.length];
                 for (int i = 0; i < fields.length; i++) {
                     final Field field = fields[i];
-                    Object value = null;
-                    if (catalog.equals(field)) {
-                        value = localSchema.catalogName();
-                    } else if (this.schema.equals(field)) {
-                        value = localSchema.name();
-                    } else if (name.equals(field)) {
-                        value = table.getName();
-                    } else if (this.type.equals(field)) {
-                        value = table.type().description();
-                    } else if (this.typeName.equals(field)) {
-                        value = table.type().typeName();
-                    } else if (this.charset.equals(field) && table.getCharset() != null) {
-                        value = table.getCharset().displayName();
-                    } else if (this.encrypted.equals(field)) {
-                        value = description(table.isEncrypted());
-                    } else if (this.writeProtected.equals(field)) {
-                        value = description(table.isWriteProtected());
-                    } else if (this.count.equals(field) && table.getCharset() != null) {
-                        value = table.getRowCount();
-                    } else if (this.blockSize.equals(field)) {
-                        value = table.getBlockSizeBytes();
-                    } else if (this.totalBlocks.equals(field)) {
-                        value = table.getTotalBlocks();
-                    } else if (this.usedBlocks.equals(field)) {
-                        value = table.getUsedBlocks();
-                    } else if (this.freeBlocks.equals(field)) {
-                        value = table.getTotalBlocks() - table.getUsedBlocks();
-                    } else if (this.recordSize.equals(field)) {
-                        value = table.getRecordSize();
-                    }
-
-                    row[i] = value;
+                    row[i] = parseValue(localSchema, table, field);
                 }
 
                 ret.add(row);
@@ -168,5 +136,39 @@ public class Tables implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Schema localSchema, Table table, Field field) {
+        Object value = null;
+        if (catalog.equals(field)) {
+            value = localSchema.catalogName();
+        } else if (this.schema.equals(field)) {
+            value = localSchema.name();
+        } else if (name.equals(field)) {
+            value = table.getName();
+        } else if (this.type.equals(field)) {
+            value = table.type().description();
+        } else if (this.typeName.equals(field)) {
+            value = table.type().typeName();
+        } else if (this.charset.equals(field) && table.getCharset() != null) {
+            value = table.getCharset().displayName();
+        } else if (this.encrypted.equals(field)) {
+            value = description(table.isEncrypted());
+        } else if (this.writeProtected.equals(field)) {
+            value = description(table.isWriteProtected());
+        } else if (this.count.equals(field) && table.getCharset() != null) {
+            value = table.getRowCount();
+        } else if (this.blockSize.equals(field)) {
+            value = table.getBlockSizeBytes();
+        } else if (this.totalBlocks.equals(field)) {
+            value = table.getTotalBlocks();
+        } else if (this.usedBlocks.equals(field)) {
+            value = table.getUsedBlocks();
+        } else if (this.freeBlocks.equals(field)) {
+            value = table.getTotalBlocks() - table.getUsedBlocks();
+        } else if (this.recordSize.equals(field)) {
+            value = table.getRecordSize();
+        }
+        return value;
     }
 }

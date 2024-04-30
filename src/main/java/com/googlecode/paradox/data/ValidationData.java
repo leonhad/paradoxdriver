@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2009 Leonardo Alves da Costa
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+ * later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+ * License for more details. You should have received a copy of the GNU General Public License along with this
+ * program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
@@ -108,7 +118,7 @@ public class ValidationData {
                 if (tableLookupHint != 0) {
                     int pos = buffer.position();
                     final ByteBuffer destinationBuffer = ByteBuffer.allocate(0x1A);
-                    for (int s = 0; s < 0x1A ; s++) {
+                    for (int s = 0; s < 0x1A; s++) {
                         byte read = buffer.get();
                         if (read == 0) {
                             break;
@@ -163,7 +173,7 @@ public class ValidationData {
         return null;
     }
 
-    private static ParadoxValidation loadHeader(final ByteBuffer buffer)  {
+    private static ParadoxValidation loadHeader(final ByteBuffer buffer) {
         ParadoxValidation data = new ParadoxValidation();
 
         // Unknown
@@ -178,7 +188,7 @@ public class ValidationData {
         return data;
     }
 
-    private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final Table table)  {
+    private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final Table table) {
         buffer.position(data.getFooterOffset());
         data.setFieldCount(buffer.getShort());
 

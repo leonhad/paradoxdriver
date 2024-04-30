@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 /**
  * Routines.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class Routines implements Table {
@@ -136,74 +135,7 @@ public class Routines implements Table {
                 final Object[] row = new Object[fields.length];
                 for (int i = 0; i < fields.length; i++) {
                     final Field field = fields[i];
-                    Object value = null;
-                    if (this.catalog.equals(field)) {
-                        value = catalogName;
-                    } else if (this.schema.equals(field)) {
-                        value = localSchema.name();
-                    } else if (this.name.equals(field)) {
-                        value = entry.getKey();
-                    } else if (this.type.equals(field)) {
-                        value = "FUNCTION";
-                    } else if (this.dataType.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getType)
-                                .map(ParadoxType::name)
-                                .findFirst().orElse(null);
-                    } else if (this.maximumLength.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getSize)
-                                .findFirst().orElse(null);
-                    } else if (this.octetLength.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getOctets)
-                                .findFirst().orElse(null);
-                    } else if (this.scale.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getScale)
-                                .findFirst().orElse(null);
-                    } else if (this.precision.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getPrecision)
-                                .findFirst().orElse(null);
-                    } else if (this.radix.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getRadix)
-                                .filter(Objects::nonNull)
-                                .findFirst().orElse(null);
-                    } else if (this.body.equals(field)) {
-                        value = "EXTERNAL";
-                    } else if (this.definition.equals(field)) {
-                        value = function.definition();
-                    } else if (this.isDeterministic.equals(field)) {
-                        if (function.isDeterministic()) {
-                            value = "YES";
-                        } else {
-                            value = "NO";
-                        }
-                    } else if (this.sqlDataAccess.equals(field)) {
-                        value = "READS";
-                    } else if (this.isNullCall.equals(field)) {
-                        if (Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() != AbstractFunction.RESULT)
-                                .anyMatch(Column::isNullable)) {
-                            value = "NO";
-                        } else {
-                            value = "YES";
-                        }
-                    } else if (this.isImplicitly.equals(field)) {
-                        value = "NO";
-                    } else if (this.remarks.equals(field)) {
-                        value = function.getRemarks();
-                    }
-
-                    row[i] = value;
+                    row[i] = parseValue(localSchema, entry, field, function);
                 }
 
                 ret.add(row);
@@ -211,5 +143,75 @@ public class Routines implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Schema localSchema, Map.Entry<String, Supplier<? extends AbstractFunction>> entry, Field field, AbstractFunction function) {
+        Object value = null;
+        if (this.catalog.equals(field)) {
+            value = catalogName;
+        } else if (this.schema.equals(field)) {
+            value = localSchema.name();
+        } else if (this.name.equals(field)) {
+            value = entry.getKey();
+        } else if (this.type.equals(field)) {
+            value = "FUNCTION";
+        } else if (this.dataType.equals(field)) {
+            value = Arrays.stream(function.getColumns())
+                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                    .map(Column::getType)
+                    .map(ParadoxType::name)
+                    .findFirst().orElse(null);
+        } else if (this.maximumLength.equals(field)) {
+            value = Arrays.stream(function.getColumns())
+                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                    .map(Column::getSize)
+                    .findFirst().orElse(null);
+        } else if (this.octetLength.equals(field)) {
+            value = Arrays.stream(function.getColumns())
+                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                    .map(Column::getOctets)
+                    .findFirst().orElse(null);
+        } else if (this.scale.equals(field)) {
+            value = Arrays.stream(function.getColumns())
+                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                    .map(Column::getScale)
+                    .findFirst().orElse(null);
+        } else if (this.precision.equals(field)) {
+            value = Arrays.stream(function.getColumns())
+                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                    .map(Column::getPrecision)
+                    .findFirst().orElse(null);
+        } else if (this.radix.equals(field)) {
+            value = Arrays.stream(function.getColumns())
+                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
+                    .map(Column::getRadix)
+                    .filter(Objects::nonNull)
+                    .findFirst().orElse(null);
+        } else if (this.body.equals(field)) {
+            value = "EXTERNAL";
+        } else if (this.definition.equals(field)) {
+            value = function.definition();
+        } else if (this.isDeterministic.equals(field)) {
+            if (function.isDeterministic()) {
+                value = "YES";
+            } else {
+                value = "NO";
+            }
+        } else if (this.sqlDataAccess.equals(field)) {
+            value = "READS";
+        } else if (this.isNullCall.equals(field)) {
+            if (Arrays.stream(function.getColumns())
+                    .filter(c -> c.getColumnType() != AbstractFunction.RESULT)
+                    .anyMatch(Column::isNullable)) {
+                value = "NO";
+            } else {
+                value = "YES";
+            }
+        } else if (this.isImplicitly.equals(field)) {
+            value = "NO";
+        } else if (this.remarks.equals(field)) {
+            value = function.getRemarks();
+        }
+        return value;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * Key columns.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class KeyColumns implements Table {
@@ -130,22 +129,7 @@ public class KeyColumns implements Table {
                             continue;
                         }
 
-                        Object value = null;
-                        if (catalog.equals(field)) {
-                            value = localSchema.catalogName();
-                        } else if (this.schema.equals(field)) {
-                            value = localSchema.name();
-                        } else if (this.table.equals(field)) {
-                            value = localTable.getName();
-                        } else if (this.constraintName.equals(field)) {
-                            value = index.getName();
-                        } else if (this.name.equals(field)) {
-                            value = fieldLocal.getName();
-                        } else if (this.ordinal.equals(field)) {
-                            value = fieldLocal.getOrderNum();
-                        }
-
-                        row[i] = value;
+                        row[i] = parseValue(localSchema, localTable, fieldLocal, field, index);
                     }
 
                     ret.add(row);
@@ -154,5 +138,23 @@ public class KeyColumns implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Schema localSchema, Table localTable, Field fieldLocal, Field field, Index index) {
+        Object value = null;
+        if (catalog.equals(field)) {
+            value = localSchema.catalogName();
+        } else if (this.schema.equals(field)) {
+            value = localSchema.name();
+        } else if (this.table.equals(field)) {
+            value = localTable.getName();
+        } else if (this.constraintName.equals(field)) {
+            value = index.getName();
+        } else if (this.name.equals(field)) {
+            value = fieldLocal.getName();
+        } else if (this.ordinal.equals(field)) {
+            value = fieldLocal.getOrderNum();
+        }
+        return value;
     }
 }

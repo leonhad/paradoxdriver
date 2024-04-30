@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * Columns.
  *
- * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings("java:S1820")
@@ -149,63 +148,7 @@ public class Columns implements Table {
                             continue;
                         }
 
-                        Object value = null;
-                        if (catalog.equals(field)) {
-                            value = localSchema.catalogName();
-                        } else if (this.schema.equals(field)) {
-                            value = localSchema.name();
-                        } else if (this.table.equals(field)) {
-                            value = localTable.getName();
-                        } else if (this.name.equals(field)) {
-                            value = fieldLocal.getName();
-                        } else if (this.ordinal.equals(field)) {
-                            value = fieldLocal.getOrderNum();
-                        } else if (this.isNullable.equals(field)) {
-                            if (fieldLocal.isAutoIncrement()) {
-                                value = "NO";
-                            } else {
-                                value = "YES";
-                            }
-                        } else if (this.autoincrement.equals(field)) {
-                            if (fieldLocal.isAutoIncrement()) {
-                                value = "YES";
-                            } else {
-                                value = "NO";
-                            }
-                        } else if (this.incrementValue.equals(field) && fieldLocal.isAutoIncrement()) {
-                            value = localTable.getAutoIncrementValue();
-                        } else if (this.incrementStep.equals(field) && fieldLocal.isAutoIncrement()) {
-                            value = 1;
-                        } else if (this.maximumLength.equals(field)) {
-                            value = fieldLocal.getPrecision();
-                        } else if (this.octetLength.equals(field)) {
-                            value = fieldLocal.getRealSize();
-                        } else if (this.precision.equals(field)) {
-                            value = fieldLocal.getPrecision();
-                        } else if (this.radix.equals(field) && fieldLocal.getType() != null) {
-                            value = fieldLocal.getType().getRadix();
-                        } else if (this.scale.equals(field)) {
-                            value = fieldLocal.getScale();
-                        } else if (this.type.equals(field) && fieldLocal.getType() != null) {
-                            value = fieldLocal.getType().name();
-                        } else if (this.javaClass.equals(field) && fieldLocal.getType() != null) {
-                            value = fieldLocal.getType().getJavaClass().getName();
-                            if ("[B".equals(value)) {
-                                value = "byte[]";
-                            }
-                        } else if (this.javaType.equals(field) && fieldLocal.getType() != null) {
-                            value = JDBCType.valueOf(fieldLocal.getType().getSQLType()).getName();
-                        } else if (this.javaTypeId.equals(field) && fieldLocal.getType() != null) {
-                            value = fieldLocal.getType().getSQLType();
-                        } else if (this.nullable.equals(field) && fieldLocal.getType() != null) {
-                            if (fieldLocal.isAutoIncrement()) {
-                                value = DatabaseMetaData.columnNoNulls;
-                            } else {
-                                value = DatabaseMetaData.columnNullable;
-                            }
-                        }
-
-                        row[i] = value;
+                        row[i] = parseValue(localSchema, localTable, fieldLocal, field);
                     }
 
                     ret.add(row);
@@ -214,5 +157,65 @@ public class Columns implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Schema localSchema, Table localTable, Field fieldLocal, Field field) {
+        Object value = null;
+        if (catalog.equals(field)) {
+            value = localSchema.catalogName();
+        } else if (this.schema.equals(field)) {
+            value = localSchema.name();
+        } else if (this.table.equals(field)) {
+            value = localTable.getName();
+        } else if (this.name.equals(field)) {
+            value = fieldLocal.getName();
+        } else if (this.ordinal.equals(field)) {
+            value = fieldLocal.getOrderNum();
+        } else if (this.isNullable.equals(field)) {
+            if (fieldLocal.isAutoIncrement()) {
+                value = "NO";
+            } else {
+                value = "YES";
+            }
+        } else if (this.autoincrement.equals(field)) {
+            if (fieldLocal.isAutoIncrement()) {
+                value = "YES";
+            } else {
+                value = "NO";
+            }
+        } else if (this.incrementValue.equals(field) && fieldLocal.isAutoIncrement()) {
+            value = localTable.getAutoIncrementValue();
+        } else if (this.incrementStep.equals(field) && fieldLocal.isAutoIncrement()) {
+            value = 1;
+        } else if (this.maximumLength.equals(field)) {
+            value = fieldLocal.getPrecision();
+        } else if (this.octetLength.equals(field)) {
+            value = fieldLocal.getRealSize();
+        } else if (this.precision.equals(field)) {
+            value = fieldLocal.getPrecision();
+        } else if (this.radix.equals(field) && fieldLocal.getType() != null) {
+            value = fieldLocal.getType().getRadix();
+        } else if (this.scale.equals(field)) {
+            value = fieldLocal.getScale();
+        } else if (this.type.equals(field) && fieldLocal.getType() != null) {
+            value = fieldLocal.getType().name();
+        } else if (this.javaClass.equals(field) && fieldLocal.getType() != null) {
+            value = fieldLocal.getType().getJavaClass().getName();
+            if ("[B".equals(value)) {
+                value = "byte[]";
+            }
+        } else if (this.javaType.equals(field) && fieldLocal.getType() != null) {
+            value = JDBCType.valueOf(fieldLocal.getType().getSQLType()).getName();
+        } else if (this.javaTypeId.equals(field) && fieldLocal.getType() != null) {
+            value = fieldLocal.getType().getSQLType();
+        } else if (this.nullable.equals(field) && fieldLocal.getType() != null) {
+            if (fieldLocal.isAutoIncrement()) {
+                value = DatabaseMetaData.columnNoNulls;
+            } else {
+                value = DatabaseMetaData.columnNullable;
+            }
+        }
+
+        return value;
     }
 }

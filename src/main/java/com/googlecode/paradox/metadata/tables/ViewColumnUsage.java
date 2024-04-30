@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -23,7 +23,6 @@ import java.util.List;
 /**
  * Views tables and columns usage.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class ViewColumnUsage implements Table {
@@ -114,24 +113,7 @@ public class ViewColumnUsage implements Table {
                     final Object[] row = new Object[fields.length];
                     for (int i = 0; i < fields.length; i++) {
                         final Field field = fields[i];
-                        Object value = null;
-                        if (catalog.equals(field)) {
-                            value = localSchema.catalogName();
-                        } else if (this.schema.equals(field)) {
-                            value = localSchema.name();
-                        } else if (name.equals(field)) {
-                            value = table.getName();
-                        } else if (this.tableCatalog.equals(field)) {
-                            value = localSchema.catalogName();
-                        } else if (this.tableSchema.equals(field)) {
-                            value = usageField.getTable().getSchemaName();
-                        } else if (this.tableName.equals(field)) {
-                            value = usageField.getTable().getName();
-                        } else if (this.columnName.equals(field)) {
-                            value = usageField.getName();
-                        }
-
-                        row[i] = value;
+                        row[i] = parseValue(localSchema, table, usageField, field);
                     }
 
                     ret.add(row);
@@ -140,5 +122,25 @@ public class ViewColumnUsage implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Schema localSchema, Table table, Field usageField, Field field) {
+        Object value = null;
+        if (catalog.equals(field)) {
+            value = localSchema.catalogName();
+        } else if (this.schema.equals(field)) {
+            value = localSchema.name();
+        } else if (name.equals(field)) {
+            value = table.getName();
+        } else if (this.tableCatalog.equals(field)) {
+            value = localSchema.catalogName();
+        } else if (this.tableSchema.equals(field)) {
+            value = usageField.getTable().getSchemaName();
+        } else if (this.tableName.equals(field)) {
+            value = usageField.getTable().getName();
+        } else if (this.columnName.equals(field)) {
+            value = usageField.getName();
+        }
+        return value;
     }
 }

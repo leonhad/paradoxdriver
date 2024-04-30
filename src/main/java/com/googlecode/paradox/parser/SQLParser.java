@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -35,7 +35,6 @@ import java.sql.SQLException;
 /**
  * Parses a SQL statement.
  *
- * @version 1.13
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")

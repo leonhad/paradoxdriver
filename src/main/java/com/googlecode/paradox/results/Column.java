@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -331,9 +331,9 @@ public final class Column {
     }
 
     /**
-     * Gets if this field can be search.
+     * Gets if this field can be searched.
      *
-     * @return true if this field can be search.
+     * @return true if this field can be searched.
      */
     public boolean isSearchable() {
         return type.isSearchable();
@@ -428,7 +428,7 @@ public final class Column {
     /**
      * Gets the columns remarks.
      *
-     * @return the columns remarks.
+     * @return the column remarks.
      */
     public String getRemarks() {
         return remarks;

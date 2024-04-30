@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * Indexes table.
  *
- * @version 1.1
  * @since 1.6.0
  */
 public class Indexes implements Table {
@@ -121,32 +120,7 @@ public class Indexes implements Table {
                         final Object[] row = new Object[fields.length];
                         for (int i = 0; i < fields.length; i++) {
                             final Field localField = fields[i];
-                            Object value = null;
-                            if (catalog.equals(localField)) {
-                                value = localSchema.catalogName();
-                            } else if (this.schema.equals(localField)) {
-                                value = localSchema.name();
-                            } else if (this.table.equals(localField)) {
-                                value = localTable.getName();
-                            } else if (name.equals(localField)) {
-                                value = index.getName();
-                            } else if (this.nonUnique.equals(localField)) {
-                                value = !index.isUnique();
-                            } else if (this.ordinal.equals(localField)) {
-                                value = indexField.getOrderNum();
-                            } else if (this.ascOrDesc.equals(localField)) {
-                                value = index.getOrder().name();
-                            } else if (this.cardinality.equals(localField)) {
-                                value = index.getRowCount();
-                            } else if (this.pages.equals(localField)) {
-                                value = index.getTotalBlocks();
-                            } else if (this.field.equals(localField)) {
-                                value = indexField.getName();
-                            } else if (this.type.equals(localField)) {
-                                value = index.type().description();
-                            }
-
-                            row[i] = value;
+                            row[i] = parseValue(localSchema, localTable, index, indexField, localField);
                         }
 
                         ret.add(row);
@@ -156,5 +130,33 @@ public class Indexes implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Schema localSchema, Table localTable, Index index, Field indexField, Field localField) {
+        Object value = null;
+        if (catalog.equals(localField)) {
+            value = localSchema.catalogName();
+        } else if (this.schema.equals(localField)) {
+            value = localSchema.name();
+        } else if (this.table.equals(localField)) {
+            value = localTable.getName();
+        } else if (name.equals(localField)) {
+            value = index.getName();
+        } else if (this.nonUnique.equals(localField)) {
+            value = !index.isUnique();
+        } else if (this.ordinal.equals(localField)) {
+            value = indexField.getOrderNum();
+        } else if (this.ascOrDesc.equals(localField)) {
+            value = index.getOrder().name();
+        } else if (this.cardinality.equals(localField)) {
+            value = index.getRowCount();
+        } else if (this.pages.equals(localField)) {
+            value = index.getTotalBlocks();
+        } else if (this.field.equals(localField)) {
+            value = indexField.getName();
+        } else if (this.type.equals(localField)) {
+            value = index.type().description();
+        }
+        return value;
     }
 }

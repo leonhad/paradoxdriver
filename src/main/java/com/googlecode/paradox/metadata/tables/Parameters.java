@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 /**
  * Routines parameters.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class Parameters implements Table {
@@ -72,22 +71,7 @@ public class Parameters implements Table {
 
     @Override
     public Field[] getFields() {
-        return new Field[]{
-                catalog,
-                schema,
-                routine,
-                ordinal,
-                mode,
-                isResult,
-                name,
-                dataType,
-                maximumLength,
-                octetLength,
-                precision,
-                scale,
-                radix,
-                remarks
-        };
+        return new Field[]{catalog, schema, routine, ordinal, mode, isResult, name, dataType, maximumLength, octetLength, precision, scale, radix, remarks};
     }
 
     @Override
@@ -98,8 +82,7 @@ public class Parameters implements Table {
     @Override
     public int getRowCount() {
         int sum = 0;
-        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry :
-                FunctionFactory.getFunctions().entrySet()) {
+        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry : FunctionFactory.getFunctions().entrySet()) {
             final AbstractFunction function = entry.getValue().get();
             sum += function.getColumns().length;
         }
@@ -111,77 +94,13 @@ public class Parameters implements Table {
     public List<Object[]> load(final Field[] fields) {
         final List<Object[]> ret = new ArrayList<>();
 
-        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry :
-                FunctionFactory.getFunctions().entrySet()) {
+        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry : FunctionFactory.getFunctions().entrySet()) {
             final AbstractFunction function = entry.getValue().get();
             for (final Column column : function.getColumns()) {
                 final Object[] row = new Object[fields.length];
                 for (int i = 0; i < fields.length; i++) {
                     final Field field = fields[i];
-                    Object value = null;
-                    if (this.catalog.equals(field)) {
-                        value = catalogName;
-                    } else if (this.schema.equals(field)) {
-                        value = getSchemaName();
-                    } else if (this.routine.equals(field)) {
-                        value = entry.getKey();
-                    } else if (this.ordinal.equals(field)) {
-                        value = column.getIndex();
-                    } else if (this.mode.equals(field)) {
-                        if (column.getColumnType() == AbstractFunction.IN) {
-                            value = "IN";
-                        } else if (column.getColumnType() == AbstractFunction.RESULT) {
-                            value = "OUT";
-                        }
-                    } else if (this.isResult.equals(field)) {
-                        if (AbstractFunction.RESULT == column.getColumnType()) {
-                            value = "YES";
-                        } else {
-                            value = "NO";
-                        }
-                    } else if (this.name.equals(field)) {
-                        value = column.getName();
-                    } else if (this.dataType.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getType)
-                                .map(ParadoxType::name)
-                                .findFirst().orElse(null);
-                    } else if (this.maximumLength.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getSize)
-                                .findFirst().orElse(null);
-                    } else if (this.octetLength.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getOctets)
-                                .findFirst().orElse(null);
-                    } else if (this.scale.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getScale)
-                                .findFirst().orElse(null);
-                    } else if (this.precision.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getPrecision)
-                                .findFirst().orElse(null);
-                    } else if (this.radix.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getRadix)
-                                .filter(Objects::nonNull)
-                                .findFirst().orElse(null);
-                    } else if (this.remarks.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getRemarks)
-                                .filter(Objects::nonNull)
-                                .findFirst().orElse(null);
-                    }
-
-                    row[i] = value;
+                    row[i] = parseValue(entry, column, field, function);
                 }
 
                 ret.add(row);
@@ -190,5 +109,47 @@ public class Parameters implements Table {
         }
 
         return ret;
+    }
+
+    private Object parseValue(Map.Entry<String, Supplier<? extends AbstractFunction>> entry, Column column, Field field, AbstractFunction function) {
+        Object value = null;
+        if (this.catalog.equals(field)) {
+            value = catalogName;
+        } else if (this.schema.equals(field)) {
+            value = getSchemaName();
+        } else if (this.routine.equals(field)) {
+            value = entry.getKey();
+        } else if (this.ordinal.equals(field)) {
+            value = column.getIndex();
+        } else if (this.mode.equals(field)) {
+            if (column.getColumnType() == AbstractFunction.IN) {
+                value = "IN";
+            } else if (column.getColumnType() == AbstractFunction.RESULT) {
+                value = "OUT";
+            }
+        } else if (this.isResult.equals(field)) {
+            if (AbstractFunction.RESULT == column.getColumnType()) {
+                value = "YES";
+            } else {
+                value = "NO";
+            }
+        } else if (this.name.equals(field)) {
+            value = column.getName();
+        } else if (this.dataType.equals(field)) {
+            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getType).map(ParadoxType::name).findFirst().orElse(null);
+        } else if (this.maximumLength.equals(field)) {
+            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getSize).findFirst().orElse(null);
+        } else if (this.octetLength.equals(field)) {
+            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getOctets).findFirst().orElse(null);
+        } else if (this.scale.equals(field)) {
+            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getScale).findFirst().orElse(null);
+        } else if (this.precision.equals(field)) {
+            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getPrecision).findFirst().orElse(null);
+        } else if (this.radix.equals(field)) {
+            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getRadix).filter(Objects::nonNull).findFirst().orElse(null);
+        } else if (this.remarks.equals(field)) {
+            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getRemarks).filter(Objects::nonNull).findFirst().orElse(null);
+        }
+        return value;
     }
 }
