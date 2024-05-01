@@ -1,6 +1,6 @@
 # The Validation File Format (.VAL files)
 
-**Note:** This file documentation is valid only for fileVersionID 0x09 to 0x0B.
+**Note:** This file documentation is valid only for fileVersionID from 0x09 to 0x0B.
 
 ## Structure
 
