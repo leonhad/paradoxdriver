@@ -83,86 +83,16 @@ public class ValidationData {
             channel.read(buffer);
             buffer.flip();
 
-            ParadoxValidation data = loadHeader(buffer);
-            loadFooter(buffer, data, table);
+            ParadoxValidation data = new ParadoxValidation();
+            loadHeader(buffer, data);
 
             if (data.getVersionId() < 0x09) {
                 // Unsupported file version.
                 return null;
             }
 
-            // Validations
-            buffer.position(0x35);
-            for (int i = 0; i < data.getCount(); i++) {
-                int start = buffer.position();
-
-                ValidationField validationField = data.getFields()[buffer.get() & 0xFF];
-                Field field = Arrays.stream(table.getFields())
-                        .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
-                        .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
-
-                int pictureSize = buffer.get() & 0x0F;
-
-                int referentialIntegrityAttribute = buffer.get() & 0x0F;
-
-                int tableLookupAttribute = buffer.get() & 0x0F;
-
-                int tableLookupHint = buffer.getInt();
-
-                buffer.position(start + 0x0C);
-                int minimumHint = buffer.getInt();
-                int maximumHint = buffer.getInt();
-                int defaultHint = buffer.getInt();
-                int pictureHint = buffer.getInt();
-
-                if (tableLookupHint != 0) {
-                    int pos = buffer.position();
-                    final ByteBuffer destinationBuffer = ByteBuffer.allocate(0x1A);
-                    for (int s = 0; s < 0x1A; s++) {
-                        byte read = buffer.get();
-                        if (read == 0) {
-                            break;
-                        }
-                        destinationBuffer.put(read);
-                    }
-                    destinationBuffer.flip();
-
-                    validationField.setDestinationTable(table.getCharset().decode(destinationBuffer).toString());
-                    validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
-                    validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
-
-                    buffer.position(pos + 0x1A + 0x36);
-                }
-
-                if (minimumHint != 0) {
-                    Object value = ParadoxFieldFactory.parse(table, buffer, field);
-                    validationField.setMinimumValue(value);
-                }
-
-                if (maximumHint != 0) {
-                    Object value = ParadoxFieldFactory.parse(table, buffer, field);
-                    validationField.setMaximumValue(value);
-                }
-
-                if (defaultHint != 0) {
-                    Object value = ParadoxFieldFactory.parse(table, buffer, field);
-                    validationField.setDefaultValue(value);
-                }
-
-                // Is a mask validation?
-                if (pictureSize != 0 && pictureHint != 0) {
-                    final ByteBuffer pictureBuffer = ByteBuffer.allocate(pictureSize);
-                    for (int s = 0; s < pictureSize; s++) {
-                        pictureBuffer.put(buffer.get());
-                    }
-
-                    // string ending with zero
-                    pictureBuffer.flip();
-                    pictureBuffer.limit(pictureSize - 1);
-
-                    validationField.setPicture(table.getCharset().decode(pictureBuffer).toString());
-                }
-            }
+            loadFooter(buffer, data, table);
+            loadValidations(buffer, data, table);
 
             return data;
         } catch (final IllegalArgumentException | BufferUnderflowException | IOException e) {
@@ -173,19 +103,97 @@ public class ValidationData {
         return null;
     }
 
-    private static ParadoxValidation loadHeader(final ByteBuffer buffer) {
-        ParadoxValidation data = new ParadoxValidation();
+    private static void loadValidations(ByteBuffer buffer, ParadoxValidation data, ParadoxTable table) throws SQLException {
+        if (data.getCount() == 0) {
+            return;
+        }
 
-        // Unknown
-        buffer.get();
+        buffer.position(0x35);
+        for (int i = 0; i < data.getCount(); i++) {
+            int start = buffer.position();
 
+            ValidationField validationField = data.getFields()[buffer.get() & 0xFF];
+            Field field = Arrays.stream(table.getFields())
+                    .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
+                    .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
+
+            int pictureSize = buffer.get() & 0x0F;
+
+            // Referential integrity attribute in foreign key only.
+            buffer.get();
+
+            int tableLookupAttribute = buffer.get() & 0x0F;
+
+            int tableLookupHint = buffer.getInt();
+
+            buffer.position(start + 0x0C);
+            int minimumHint = buffer.getInt();
+            int maximumHint = buffer.getInt();
+            int defaultHint = buffer.getInt();
+            int pictureHint = buffer.getInt();
+
+            loadTableLookup(buffer, table, tableLookupHint, validationField, tableLookupAttribute);
+
+            validationField.setMinimumValue(loadValue(buffer, table, field, minimumHint));
+            validationField.setMaximumValue(loadValue(buffer, table, field, maximumHint));
+            validationField.setDefaultValue(loadValue(buffer, table, field, defaultHint));
+
+            loadPicture(buffer, table, pictureSize, pictureHint, validationField);
+        }
+    }
+
+    private static void loadTableLookup(ByteBuffer buffer, ParadoxTable table, int tableLookupHint, ValidationField validationField, int tableLookupAttribute) {
+        if (tableLookupHint != 0) {
+            int originalPosition = buffer.position();
+            final ByteBuffer destinationBuffer = ByteBuffer.allocate(0x1A);
+            for (int stringPosition = 0; stringPosition < 0x1A; stringPosition++) {
+                byte read = buffer.get();
+                if (read == 0) {
+                    break;
+                }
+                destinationBuffer.put(read);
+            }
+            destinationBuffer.flip();
+
+            validationField.setDestinationTable(table.getCharset().decode(destinationBuffer).toString());
+            validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
+            validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
+
+            buffer.position(originalPosition + 0x1A + 0x36);
+        }
+    }
+
+    private static Object loadValue(ByteBuffer buffer, ParadoxTable table, Field field, int hint) throws SQLException {
+        if (hint != 0) {
+            return ParadoxFieldFactory.parse(table, buffer, field);
+        }
+
+        return null;
+    }
+
+    private static void loadPicture(ByteBuffer buffer, ParadoxTable table, int pictureSize, int pictureHint, ValidationField validationField) {
+        if (pictureSize != 0 && pictureHint != 0) {
+            final ByteBuffer pictureBuffer = ByteBuffer.allocate(pictureSize);
+            for (int s = 0; s < pictureSize; s++) {
+                pictureBuffer.put(buffer.get());
+            }
+
+            // string ending with zero
+            pictureBuffer.flip();
+            pictureBuffer.limit(pictureSize - 1);
+
+            validationField.setPicture(table.getCharset().decode(pictureBuffer).toString());
+        }
+    }
+
+    private static void loadHeader(final ByteBuffer buffer, ParadoxValidation data) {
+        data.setTableChangeCount(buffer.get());
         data.setVersionId(buffer.get());
         data.setCount(buffer.get());
 
         buffer.position(0x09);
         data.setFooterOffset(buffer.getInt());
-
-        return data;
+        data.setReferentialIntegrityOffset(buffer.getInt());
     }
 
     private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final Table table) {

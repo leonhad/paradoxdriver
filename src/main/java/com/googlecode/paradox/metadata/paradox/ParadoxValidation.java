@@ -30,12 +30,16 @@ public class ParadoxValidation {
      */
     private byte count;
 
+    private byte tableChangeCount;
+
     /**
      * File count in this file.
      */
     private int fieldCount;
 
     private int footerOffset;
+
+    private int referentialIntegrityOffset;
 
     private ValidationField[] fields;
 
@@ -87,5 +91,21 @@ public class ParadoxValidation {
 
     public void setFooterOffset(int footerOffset) {
         this.footerOffset = footerOffset;
+    }
+
+    public byte getTableChangeCount() {
+        return tableChangeCount;
+    }
+
+    public void setTableChangeCount(byte tableChangeCount) {
+        this.tableChangeCount = tableChangeCount;
+    }
+
+    public int getReferentialIntegrityOffset() {
+        return referentialIntegrityOffset;
+    }
+
+    public void setReferentialIntegrityOffset(int referentialIntegrityOffset) {
+        this.referentialIntegrityOffset = referentialIntegrityOffset;
     }
 }

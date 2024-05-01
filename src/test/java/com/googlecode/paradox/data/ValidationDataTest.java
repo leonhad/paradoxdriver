@@ -187,8 +187,7 @@ public class ValidationDataTest {
         ParadoxValidation validation = table.getValidation();
         Assert.assertEquals("FK", validation.getFields()[1].getName());
         Assert.assertEquals(ParadoxType.LONG, validation.getFields()[1].getType());
-        Assert.assertEquals("destination.db", validation.getFields()[1].getDestinationTable());
-        Assert.assertFalse(validation.getFields()[1].isLookupAllFields());
-        Assert.assertTrue(validation.getFields()[1].isLookupHelp());
+        Assert.assertEquals("primary.db", validation.getFields()[1].getDestinationTable());
+        //Assert.assertTrue(validation.getFields()[1].isCascade());
     }
 }
