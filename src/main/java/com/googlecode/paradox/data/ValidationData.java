@@ -176,6 +176,9 @@ public class ValidationData {
             buffer.position(startPosition + 0x1C0);
             reference.setDestinationFields(parseFields(buffer, fieldCount));
 
+            // Skip to the end position for next reference.
+            buffer.position(startPosition + 0x1E0);
+
             references.add(reference);
         }
 
