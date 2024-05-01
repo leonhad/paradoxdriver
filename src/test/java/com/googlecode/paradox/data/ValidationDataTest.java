@@ -192,4 +192,37 @@ public class ValidationDataTest {
         Assert.assertEquals("primary.db", references[0].getDestinationTable());
         Assert.assertTrue(references[0].isCascade());
     }
+
+    /**
+     * Test for table with multiple options.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    public void testMultiple() throws SQLException {
+        List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "joins").list(this.conn.getConnectionInfo(), "multiple");
+        Assert.assertFalse(validations.isEmpty());
+        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        ParadoxTable table = (ParadoxTable) validations.get(0);
+        Assert.assertNotNull(table.getValidation());
+
+        ParadoxValidation validation = table.getValidation();
+        Assert.assertEquals(2, validation.getCount());
+
+        Assert.assertEquals(4, validation.getFieldCount());
+        Assert.assertEquals("ID", validation.getFields()[0].getName());
+        Assert.assertEquals("FK", validation.getFields()[1].getName());
+        Assert.assertEquals("A", validation.getFields()[2].getName());
+        Assert.assertEquals("FK2", validation.getFields()[3].getName());
+
+        Assert.assertNull( validation.getFields()[0].getPicture());
+        Assert.assertNull( validation.getFields()[1].getPicture());
+        Assert.assertEquals("[(*3{#}) ]*3{#}-*4{#}", validation.getFields()[2].getPicture());
+        Assert.assertNull( validation.getFields()[3].getPicture());
+
+        ParadoxReferentialIntegrity[] references = validation.getReferentialIntegrity();
+        Assert.assertEquals("reference", references[0].getName());
+        Assert.assertEquals("primary.db", references[0].getDestinationTable());
+        Assert.assertTrue(references[0].isCascade());
+    }
 }

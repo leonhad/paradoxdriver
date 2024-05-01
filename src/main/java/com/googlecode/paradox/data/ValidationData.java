@@ -126,7 +126,7 @@ public class ValidationData {
             // Referential integrity attribute in foreign key only.
             buffer.get();
 
-            int tableLookupAttribute = buffer.get() & 0x0F;
+            int tableLookupAttribute = buffer.get() & 0xFF;
 
             int tableLookupHint = buffer.getInt();
 
@@ -196,7 +196,6 @@ public class ValidationData {
             validationField.setDestinationTable(loadString(buffer, table, 0x1A));
             validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
             validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
-
         }
     }
 
