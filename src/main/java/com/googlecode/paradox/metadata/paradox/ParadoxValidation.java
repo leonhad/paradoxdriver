@@ -43,6 +43,8 @@ public class ParadoxValidation {
 
     private ValidationField[] fields;
 
+    private ParadoxReferentialIntegrity[] referentialIntegrity;
+
     private String originalTableName;
 
     public byte getVersionId() {
@@ -107,5 +109,13 @@ public class ParadoxValidation {
 
     public void setReferentialIntegrityOffset(int referentialIntegrityOffset) {
         this.referentialIntegrityOffset = referentialIntegrityOffset;
+    }
+
+    public ParadoxReferentialIntegrity[] getReferentialIntegrity() {
+        return referentialIntegrity;
+    }
+
+    public void setReferentialIntegrity(ParadoxReferentialIntegrity[] referentialIntegrity) {
+        this.referentialIntegrity = referentialIntegrity;
     }
 }

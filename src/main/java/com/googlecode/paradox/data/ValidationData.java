@@ -15,6 +15,7 @@ import com.googlecode.paradox.data.filefilters.ValidationFilter;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.paradox.ParadoxReferentialIntegrity;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
 import com.googlecode.paradox.results.ParadoxType;
@@ -27,7 +28,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utility class for loading validation files.
@@ -93,6 +96,7 @@ public class ValidationData {
 
             loadFooter(buffer, data, table);
             loadValidations(buffer, data, table);
+            loadReferentialIntegrity(buffer, data, table);
 
             return data;
         } catch (final IllegalArgumentException | BufferUnderflowException | IOException e) {
@@ -142,25 +146,64 @@ public class ValidationData {
         }
     }
 
+    private static void loadReferentialIntegrity(ByteBuffer buffer, ParadoxValidation data, ParadoxTable table) {
+        if (data.getReferentialIntegrityOffset() == 0) {
+            return;
+        }
+
+        buffer.position(data.getReferentialIntegrityOffset());
+        int count = buffer.getShort() & 0xFFFF;
+
+        List<ParadoxReferentialIntegrity> references = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ParadoxReferentialIntegrity reference = new ParadoxReferentialIntegrity();
+            int startPosition = buffer.position();
+
+            reference.setName(loadString(buffer, table, 0x40));
+
+            // Ignoring non used fields.
+            buffer.position(startPosition + 0xD4);
+
+            reference.setDestinationTable(loadString(buffer, table, 0x72));
+
+            // Ignoring non used fields.
+            buffer.position(startPosition + 0x19E);
+            reference.setCascade(buffer.get() == 1);
+
+            references.add(reference);
+        }
+
+        data.setReferentialIntegrity(references.toArray(new ParadoxReferentialIntegrity[0]));
+    }
+
     private static void loadTableLookup(ByteBuffer buffer, ParadoxTable table, int tableLookupHint, ValidationField validationField, int tableLookupAttribute) {
         if (tableLookupHint != 0) {
-            int originalPosition = buffer.position();
-            final ByteBuffer destinationBuffer = ByteBuffer.allocate(0x1A);
-            for (int stringPosition = 0; stringPosition < 0x1A; stringPosition++) {
-                byte read = buffer.get();
-                if (read == 0) {
-                    break;
-                }
-                destinationBuffer.put(read);
-            }
-            destinationBuffer.flip();
-
-            validationField.setDestinationTable(table.getCharset().decode(destinationBuffer).toString());
+            validationField.setDestinationTable(loadString(buffer, table, 0x1A));
             validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
             validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
 
-            buffer.position(originalPosition + 0x1A + 0x36);
         }
+    }
+
+    private static String loadString(ByteBuffer buffer,  ParadoxTable table, int size) {
+        int originalPosition = buffer.position();
+
+        final ByteBuffer stringBuffer = ByteBuffer.allocate(size);
+        for (int s = 0; s < size; s++) {
+            byte value = buffer.get();
+            if (value == 0) {
+                break;
+            }
+
+            stringBuffer.put(value);
+        }
+
+        stringBuffer.limit(size);
+        stringBuffer.flip();
+
+        String ret = table.getCharset().decode(stringBuffer).toString();
+        buffer.position(originalPosition + size);
+        return ret;
     }
 
     private static Object loadValue(ByteBuffer buffer, ParadoxTable table, Field field, int hint) throws SQLException {

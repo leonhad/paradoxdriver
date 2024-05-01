@@ -14,6 +14,7 @@ package com.googlecode.paradox.data;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.paradox.ParadoxReferentialIntegrity;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
 import com.googlecode.paradox.results.ParadoxType;
@@ -185,9 +186,10 @@ public class ValidationDataTest {
         Assert.assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals("FK", validation.getFields()[1].getName());
-        Assert.assertEquals(ParadoxType.LONG, validation.getFields()[1].getType());
-        Assert.assertEquals("primary.db", validation.getFields()[1].getDestinationTable());
-        //Assert.assertTrue(validation.getFields()[1].isCascade());
+        ParadoxReferentialIntegrity[] references = validation.getReferentialIntegrity();
+        Assert.assertEquals(1, references.length);
+        Assert.assertEquals("reference", references[0].getName());
+        Assert.assertEquals("primary.db", references[0].getDestinationTable());
+        Assert.assertTrue(references[0].isCascade());
     }
 }
