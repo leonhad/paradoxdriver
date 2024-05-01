@@ -18,6 +18,10 @@ public class ParadoxReferentialIntegrity {
 
     private boolean cascade;
 
+    private int[] fields;
+
+    private int[] destinationFields;
+
     public String getName() {
         return name;
     }
@@ -40,5 +44,21 @@ public class ParadoxReferentialIntegrity {
 
     public void setCascade(boolean cascade) {
         this.cascade = cascade;
+    }
+
+    public int[] getFields() {
+        return fields;
+    }
+
+    public void setFields(int[] fields) {
+        this.fields = fields;
+    }
+
+    public int[] getDestinationFields() {
+        return destinationFields;
+    }
+
+    public void setDestinationFields(int[] destinationFields) {
+        this.destinationFields = destinationFields;
     }
 }

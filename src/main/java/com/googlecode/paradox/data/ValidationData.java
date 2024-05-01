@@ -167,13 +167,28 @@ public class ValidationData {
             reference.setDestinationTable(loadString(buffer, table, 0x72));
 
             // Ignoring non used fields.
-            buffer.position(startPosition + 0x19E);
-            reference.setCascade(buffer.get() == 1);
+            buffer.position(startPosition + 0x19A);
+            reference.setCascade((buffer.getInt() & 0xFFFFFF) == 1);
+
+            int fieldCount = buffer.getShort() & 0xFFFF;
+            reference.setFields(parseFields(buffer, fieldCount));
+
+            buffer.position(startPosition + 0x1E2);
+            reference.setDestinationFields(parseFields(buffer, fieldCount));
 
             references.add(reference);
         }
 
         data.setReferentialIntegrity(references.toArray(new ParadoxReferentialIntegrity[0]));
+    }
+
+    private static int[] parseFields(ByteBuffer buffer, int fieldCount) {
+        int[] fields = new int[fieldCount];
+        for (int loop = 0; loop < fieldCount; loop++) {
+            fields[loop] = buffer.getShort() & 0xFFFF;
+        }
+
+        return fields;
     }
 
     private static void loadTableLookup(ByteBuffer buffer, ParadoxTable table, int tableLookupHint, ValidationField validationField, int tableLookupAttribute) {
@@ -185,7 +200,7 @@ public class ValidationData {
         }
     }
 
-    private static String loadString(ByteBuffer buffer,  ParadoxTable table, int size) {
+    private static String loadString(ByteBuffer buffer, ParadoxTable table, int size) {
         int originalPosition = buffer.position();
 
         final ByteBuffer stringBuffer = ByteBuffer.allocate(size);
