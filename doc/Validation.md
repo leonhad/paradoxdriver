@@ -165,8 +165,7 @@ This section repeats by referential integrity count (total count 0x1E0)
 
 ### Dependent table
 
-This section occurs after the referential integrity node if exists one or if there space before the footer. In sequence,
-this is come after the referential integrity.
+This section occurs after the referential integrity node if exists one and if there space before the footer.
 
 If the referential integrity field 0x00 is zero, is because it is a dependency table list, not a foreign key (this is
 the destination table, not source)
