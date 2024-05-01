@@ -126,43 +126,6 @@ in destination table.
 | 0x00     | 0x1A         | string | Destination table                                                                  |
 | 0x1A     | 0x36         | ?      | ? These bytes seems to be internal pointers. The same file works with zeros or not |
 
-### Referential integrity
-
-Create a referential integrity implies to create a secondary index to the same field on source table. On destination
-table, it creates a validation files with dependent table relation.
-
-The referential integrity starts when field validation stops. So, to find one, use remaining bytes after validation
-counts stops and the footer sections don't start yet. If the validation count is zero, is because there is only
-referential integrity.
-
-| position | size (bytes) | type | description                                                 |
-|:--------:|:------------:| ---- | ----------------------------------------------------------- |
-| 0x00     | 0x02         | word | Referential integrity count. 0 identify a dependency table. |
-
-This section repeats by referential integrity count (total count 0x1DE)
-
-| position | size (bytes)                          | type    | description                                                                  |
-|:--------:|:-------------------------------------:| ------- | ---------------------------------------------------------------------------- |
-| 0x00     | 0x40                                  | string  | Referential integrity name                                                   |
-| 0x40     | 0x40                                  | string  | Origin field name (referential integrity name if it has more than one field) |
-| 0xB2     | 0x01                                  | byte    | Field name size (zero if we have more than one field) - Ignored by Paradox   |
-| 0xB3     | 0x01                                  | byte    | 1 if there are more than one field, zero otherwise - Ignored by Paradox      |
-| 0xB4     | 0x20                                  | ?       | Zeros?                                                                       |
-| 0xD4     | 0x72                                  | string  | Destination table name                                                       |
-| 0x146    | ?                                     | ?       | Zeros?                                                                       |
-| 0x19A    | 0x04                                  | integer | Update Rule: 1 - Cascade, 0 - Prohibit*                                      |
-| 0x19E    | 0x02                                  | byte    | Field count                                                                  |
-| 0x1A0    | 0x02 x 10                             | word    | Field position in origin table (2 bytes per field)                           |
-| 0x1C0    | 0x02 x 10 | byte    | Field position in destination table (2 bytes per field)                      |
-
-**\* Update rule:**
-
-- 1 - **Cascade:** Cascade specifies that any change you make to the value in the key of the parent table is
-  automatically made in the child table. If you delete a value in the key of the parent table, dependent records in the
-  child table are also deleted. Cascade is the default update rule for Paradox.
-- 0 - **Prohibit:** Prohibit specifies that you cannot change or delete a value in the parent's key if there are records
-  that match the value in the child table.
-
 ### Dependency table
 
 This section occurs after the referential integrity node if exists one.
@@ -188,6 +151,37 @@ This section repeats by dependency table count (total count 0x12A)
 | 0x104    | 0x01         | byte   | Dependency table order                                                  |
 | 0x105    | 0x05         | ?      | ? (ignored by Paradox)                                                  |
 | 0x10A    | 0x20         | word   | Field list used in referential, starts with 1                           |
+
+### Referential integrity
+
+Create a referential integrity implies to create a secondary index to the same field on source table. On destinationtable, it creates a validation files with dependent table relation.
+
+The referential integrity starts when field validation stops. So, to find one, use remaining bytes after validationcounts stops and the footer sections don't start yet. If the validation count is zero, is because there is onlyreferential integrity.
+
+| position | size (bytes) | type | description                                                 |
+| -------- | ------------ | ---- | ----------------------------------------------------------- |
+| 0x00     | 0x02         | word | Referential integrity count. 0 identify a dependency table. |
+
+This section repeats by referential integrity count (total count 0x1E0)
+
+| position | size (bytes) | type    | description                                                                  |
+| -------- | ------------ | ------- | ---------------------------------------------------------------------------- |
+| 0x00     | 0x40         | string  | Referential integrity name                                                   |
+| 0x40     | 0x40         | string  | Origin field name (referential integrity name if it has more than one field) |
+| 0xB2     | 0x01         | byte    | Field name size (zero if we have more than one field) - Ignored by Paradox   |
+| 0xB3     | 0x01         | byte    | 1 if there are more than one field, zero otherwise - Ignored by Paradox      |
+| 0xB4     | 0x20         | ?       | Zeros?                                                                       |
+| 0xD4     | 0x72         | string  | Destination table name                                                       |
+| 0x146    | ?            | ?       | Zeros?                                                                       |
+| 0x19A    | 0x04         | integer | Update Rule: 1 - Cascade, 0 - Prohibit*                                      |
+| 0x19E    | 0x02         | byte    | Field count                                                                  |
+| 0x1A0    | 0x02 x 10    | word    | Field position in origin table (2 bytes per field)                           |
+| 0x1C0    | 0x02 x 10    | byte    | Field position in destination table (2 bytes per field)                      |
+
+**\* Update rule:**
+
+* 1 - **Cascade:** Cascade specifies that any change you make to the value in the key of the parent table isautomatically made in the child table. If you delete a value in the key of the parent table, dependent records in thechild table are also deleted. Cascade is the default update rule for Paradox.
+* 0 - **Prohibit:** Prohibit specifies that you cannot change or delete a value in the parent's key if there are recordsthat match the value in the child table.
 
 ## Footer
 
