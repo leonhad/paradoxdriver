@@ -1,6 +1,6 @@
-# The Validation File Format (VAL)
+# The Validation File Format (.VAL files)
 
-This file is under work in progress, do not take for granted.
+This file is under test and validation...
 
 ## Structure
 

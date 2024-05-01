@@ -121,7 +121,7 @@ public class ValidationData {
                     .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
                     .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
 
-            int pictureSize = buffer.get() & 0x0F;
+            int pictureSize = buffer.get() & 0xFF;
 
             // Referential integrity attribute in foreign key only.
             buffer.get();
