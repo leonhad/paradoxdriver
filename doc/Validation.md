@@ -1,6 +1,6 @@
 # The Validation File Format (.VAL files)
 
-This file is under test and validation...
+**Note:** This file documentation is valid only for fileVersionID 0x09 to 0x0B.
 
 ## Structure
 
@@ -76,8 +76,6 @@ For example
 |    0x09     |      4       | integer | Footer position                                      |
 |    0x0D     |      4       | integer | Referential integrity position                       |
 | 0x11 ~ 0x34 |      ?       | ?       | Always zero?                                         |
-
-**Note:** This file documentation is valid only for fileVersionID 0x09 to 0x0B.
 
 ## Body
 
