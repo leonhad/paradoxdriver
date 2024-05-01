@@ -141,20 +141,19 @@ referential integrity.
 
 This section repeats by referential integrity count (total count 0x1DE)
 
-| position | size (bytes) | type                                | description                                                                  |
-|:--------:|:------------:| ----------------------------------- | ---------------------------------------------------------------------------- |
-| 0x00     | 0x40         | string                              | Referential integrity name                                                   |
-| 0x40     | 0x40         | string                              | Origin field name (referential integrity name if it has more than one field) |
-| 0xB2     | 0x01         | byte                                | Field name size (zero if we have more than one field) - Ignored by Paradox   |
-| 0xB3     | 0x01         | byte                                | 1 if there are more than one field, zero otherwise - Ignored by Paradox      |
-| 0xB4     | 0x20         | ?                                   | Zeros?                                                                       |
-| 0xD4     | 0x72         | string                              | Destination table name                                                       |
-| 0x146    | ?            | ?                                   | Zeros?                                                                       |
-| 0x19A    | 0x04         | integer | Update Rule: 1 - Cascade, 0 - Prohibit*                                      |
-| 0x19E    | 0x02         | byte                                | Field count                                                                  |
-| 0x1A0    | 0x02 x 9     | word                                | Field position in origin table (2 bytes per field)                           |
-| 0x1BE    | 0x02         | word                                | Zeros?                                                                       |
-| 0x1E2    | 0x02 x 9     | byte                                | Field position in destination table (2 bytes per field)                      |
+| position | size (bytes)                          | type    | description                                                                  |
+|:--------:|:-------------------------------------:| ------- | ---------------------------------------------------------------------------- |
+| 0x00     | 0x40                                  | string  | Referential integrity name                                                   |
+| 0x40     | 0x40                                  | string  | Origin field name (referential integrity name if it has more than one field) |
+| 0xB2     | 0x01                                  | byte    | Field name size (zero if we have more than one field) - Ignored by Paradox   |
+| 0xB3     | 0x01                                  | byte    | 1 if there are more than one field, zero otherwise - Ignored by Paradox      |
+| 0xB4     | 0x20                                  | ?       | Zeros?                                                                       |
+| 0xD4     | 0x72                                  | string  | Destination table name                                                       |
+| 0x146    | ?                                     | ?       | Zeros?                                                                       |
+| 0x19A    | 0x04                                  | integer | Update Rule: 1 - Cascade, 0 - Prohibit*                                      |
+| 0x19E    | 0x02                                  | byte    | Field count                                                                  |
+| 0x1A0    | 0x02 x 10                             | word    | Field position in origin table (2 bytes per field)                           |
+| 0x1C0    | 0x02 x 10 | byte    | Field position in destination table (2 bytes per field)                      |
 
 **\* Update rule:**
 

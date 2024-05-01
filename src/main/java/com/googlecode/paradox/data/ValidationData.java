@@ -173,7 +173,7 @@ public class ValidationData {
             int fieldCount = buffer.getShort() & 0xFFFF;
             reference.setFields(parseFields(buffer, fieldCount));
 
-            buffer.position(startPosition + 0x1E2);
+            buffer.position(startPosition + 0x1C0);
             reference.setDestinationFields(parseFields(buffer, fieldCount));
 
             references.add(reference);
