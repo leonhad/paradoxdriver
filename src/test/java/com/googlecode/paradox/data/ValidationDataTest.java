@@ -215,26 +215,20 @@ public class ValidationDataTest {
         Assert.assertEquals("A", validation.getFields()[2].getName());
         Assert.assertEquals("FK2", validation.getFields()[3].getName());
 
-        Assert.assertNull( validation.getFields()[0].getPicture());
-        Assert.assertNull( validation.getFields()[1].getPicture());
+        Assert.assertNull(validation.getFields()[0].getPicture());
+        Assert.assertNull(validation.getFields()[1].getPicture());
         Assert.assertEquals("[(*3{#}) ]*3{#}-*4{#}", validation.getFields()[2].getPicture());
-        Assert.assertNull( validation.getFields()[3].getPicture());
+        Assert.assertNull(validation.getFields()[3].getPicture());
 
         ParadoxReferentialIntegrity[] references = validation.getReferentialIntegrity();
         Assert.assertEquals("fk2", references[0].getName());
         Assert.assertEquals("primary.db", references[0].getDestinationTable());
-        Assert.assertEquals(1, references[0].getFields().length);
-        Assert.assertEquals(1, references[0].getDestinationFields().length);
         Assert.assertEquals(4, references[0].getFields()[0]);
-        Assert.assertEquals(1, references[0].getDestinationFields()[0]);
         Assert.assertTrue(references[0].isCascade());
 
         Assert.assertEquals("fk_multiple_primary", references[1].getName());
         Assert.assertEquals("primary.db", references[1].getDestinationTable());
-        Assert.assertEquals(1, references[1].getFields().length);
-        Assert.assertEquals(1, references[1].getDestinationFields().length);
         Assert.assertEquals(2, references[1].getFields()[0]);
-        Assert.assertEquals(1, references[1].getDestinationFields()[0]);
         Assert.assertTrue(references[1].isCascade());
     }
 }

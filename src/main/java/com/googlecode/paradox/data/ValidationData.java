@@ -22,8 +22,6 @@ import com.googlecode.paradox.results.ParadoxType;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -99,7 +97,7 @@ public class ValidationData {
             loadReferentialIntegrity(buffer, data, table);
 
             return data;
-        } catch (final IllegalArgumentException | BufferUnderflowException | IOException e) {
+        } catch (final Exception e) {
             // Don't break in validation erros.
             connectionInfo.addWarning(e);
         }
@@ -116,7 +114,11 @@ public class ValidationData {
         for (int i = 0; i < data.getCount(); i++) {
             int start = buffer.position();
 
-            ValidationField validationField = data.getFields()[buffer.get() & 0xFF];
+            int fieldPosition = buffer.get() & 0xFF;
+            ValidationField validationField = Arrays.stream(data.getFields())
+                    .filter(f -> f.getPosition() == fieldPosition).findFirst()
+                    .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, fieldPosition));
+
             Field field = Arrays.stream(table.getFields())
                     .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
                     .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
@@ -302,7 +304,7 @@ public class ValidationData {
             ValidationField field = new ValidationField();
             field.setName(fieldName);
             field.setPosition(order);
-            fields[order] = field;
+            fields[i] = field;
         }
         data.setFields(fields);
 

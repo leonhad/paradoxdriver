@@ -196,9 +196,11 @@ This section repeats by dependency table count (total count 0x12A)
 
 This section repeats by field count
 
-|   position    | size (bytes) | type | description |
-|:-------------:|:------------:|------|-------------|
-| last position |      2       | word | Field order |
+|   position    | size (bytes) | type | description                                    |
+|:-------------:|:------------:|------|------------------------------------------------|
+| last position |      2       | word | Field order. These values are not sequential.* |
+
+**\*** Example, if a table has 3 fields and se second is removed, in val file is stored 01 03, not 01 02 as expected.
 
 This section repeats by field count
 
