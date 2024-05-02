@@ -23,7 +23,6 @@ import java.util.List;
 /**
  * Column privileges.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class ColumnPrivileges implements Table {
