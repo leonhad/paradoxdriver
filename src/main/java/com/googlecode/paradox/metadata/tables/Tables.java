@@ -18,7 +18,6 @@ import com.googlecode.paradox.utils.Constants;
 
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.util.*;
 import java.util.function.Function;
 
