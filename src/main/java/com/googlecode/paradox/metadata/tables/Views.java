@@ -17,7 +17,6 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
-import java.sql.SQLWarning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.function.Function;
 /**
  * Views.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class Views implements Table {
@@ -123,7 +121,7 @@ public class Views implements Table {
         map.put(catalog, details -> details.getSchema().catalogName());
         map.put(schema, details -> details.getSchema().name());
         map.put(name, details -> details.getTable().getName());
-        map.put(definition, details -> ((View)details.getTable()).definition());
+        map.put(definition, details -> ((View) details.getTable()).definition());
         map.put(check, details -> "NONE");
         map.put(updatable, details -> "NO");
 
