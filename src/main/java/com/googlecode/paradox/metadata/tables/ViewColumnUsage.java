@@ -13,12 +13,17 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.tables.details.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Views tables and columns usage.
@@ -103,6 +108,15 @@ public class ViewColumnUsage implements Table {
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
+        Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, details -> details.getTable().getName());
+        map.put(tableCatalog, details -> details.getSchema().catalogName());
+        map.put(tableSchema, details -> details.getTable().getSchemaName());
+        map.put(tableName, details -> details.getUsageField().getTable().getName());
+        map.put(columnName, details -> details.getUsageField().getName());
+
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
                 if (!(table instanceof View)) {
@@ -110,37 +124,17 @@ public class ViewColumnUsage implements Table {
                 }
 
                 for (final Field usageField : ((View) table).usages()) {
-                    final Object[] row = new Object[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        final Field field = fields[i];
-                        row[i] = parseValue(localSchema, table, usageField, field);
-                    }
+                    TableDetails details = new TableDetails();
+                    details.setSchema(localSchema);
+                    details.setTable(table);
+                    details.setUsageField(usageField);
 
+                    final Object[] row = Table.getFieldValues(fields, map, details);
                     ret.add(row);
                 }
             }
         }
 
         return ret;
-    }
-
-    private Object parseValue(Schema localSchema, Table table, Field usageField, Field field) {
-        Object value = null;
-        if (catalog.equals(field)) {
-            value = localSchema.catalogName();
-        } else if (this.schema.equals(field)) {
-            value = localSchema.name();
-        } else if (name.equals(field)) {
-            value = table.getName();
-        } else if (this.tableCatalog.equals(field)) {
-            value = localSchema.catalogName();
-        } else if (this.tableSchema.equals(field)) {
-            value = usageField.getTable().getSchemaName();
-        } else if (this.tableName.equals(field)) {
-            value = usageField.getTable().getName();
-        } else if (this.columnName.equals(field)) {
-            value = usageField.getName();
-        }
-        return value;
     }
 }

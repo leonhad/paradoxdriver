@@ -115,8 +115,6 @@ public class Views implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
-
         Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
         map.put(catalog, details -> details.getSchema().catalogName());
         map.put(schema, details -> details.getSchema().name());
@@ -125,6 +123,7 @@ public class Views implements Table {
         map.put(check, details -> "NONE");
         map.put(updatable, details -> "NO");
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
                 if (!(table instanceof View)) {

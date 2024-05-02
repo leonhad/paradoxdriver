@@ -11,6 +11,7 @@
 
 package com.googlecode.paradox.metadata.tables.details;
 
+import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
 
@@ -18,6 +19,7 @@ public class TableDetails {
 
     private Schema schema;
     private Table table;
+    private Field usageField;
 
     public Schema getSchema() {
         return schema;
@@ -33,5 +35,13 @@ public class TableDetails {
 
     public void setTable(Table table) {
         this.table = table;
+    }
+
+    public Field getUsageField() {
+        return usageField;
+    }
+
+    public void setUsageField(Field usageField) {
+        this.usageField = usageField;
     }
 }

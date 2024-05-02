@@ -12,12 +12,15 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.tables.details.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
+import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.SQLWarning;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Tables.
@@ -121,55 +124,34 @@ public class Tables implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, details -> details.getTable().getName());
+        map.put(type, details -> details.getTable().type().description());
+        map.put(typeName, details -> details.getTable().type().typeName());
+        map.put(charset, details -> Optional.ofNullable(details.getTable().getCharset()).map(Charset::displayName).orElse(null));
+        map.put(encrypted, details -> description(details.getTable().isEncrypted()));
+        map.put(writeProtected, details -> description(details.getTable().isWriteProtected()));
+        map.put(count, details -> details.getTable().getRowCount());
+        map.put(blockSize, details -> details.getTable().getBlockSizeBytes());
+        map.put(totalBlocks, details -> details.getTable().getTotalBlocks());
+        map.put(usedBlocks, details -> details.getTable().getUsedBlocks());
+        map.put(freeBlocks, details -> details.getTable().getTotalBlocks() - details.getTable().getUsedBlocks());
+        map.put(recordSize, details -> details.getTable().getRecordSize());
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    row[i] = parseValue(localSchema, table, field);
-                }
+                TableDetails details = new TableDetails();
+                details.setSchema(localSchema);
+                details.setTable(table);
 
+                final Object[] row = Table.getFieldValues(fields, map, details);
                 ret.add(row);
             }
         }
 
         return ret;
-    }
-
-    private Object parseValue(Schema localSchema, Table table, Field field) {
-        Object value = null;
-        if (catalog.equals(field)) {
-            value = localSchema.catalogName();
-        } else if (this.schema.equals(field)) {
-            value = localSchema.name();
-        } else if (name.equals(field)) {
-            value = table.getName();
-        } else if (this.type.equals(field)) {
-            value = table.type().description();
-        } else if (this.typeName.equals(field)) {
-            value = table.type().typeName();
-        } else if (this.charset.equals(field) && table.getCharset() != null) {
-            value = table.getCharset().displayName();
-        } else if (this.encrypted.equals(field)) {
-            value = description(table.isEncrypted());
-        } else if (this.writeProtected.equals(field)) {
-            value = description(table.isWriteProtected());
-        } else if (this.count.equals(field)) {
-            value = table.getRowCount();
-        } else if (this.blockSize.equals(field)) {
-            value = table.getBlockSizeBytes();
-        } else if (this.totalBlocks.equals(field)) {
-            value = table.getTotalBlocks();
-        } else if (this.usedBlocks.equals(field)) {
-            value = table.getUsedBlocks();
-        } else if (this.freeBlocks.equals(field)) {
-            value = table.getTotalBlocks() - table.getUsedBlocks();
-        } else if (this.recordSize.equals(field)) {
-            value = table.getRecordSize();
-        }
-
-        return value;
     }
 }

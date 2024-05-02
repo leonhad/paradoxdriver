@@ -105,7 +105,6 @@ public class Warnings implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) {
-        final List<Object[]> ret = new ArrayList<>();
 
         Map<Field, Function<SQLWarning, Object>> map = new HashMap<>();
         map.put(catalog, warning -> catalogName);
@@ -114,6 +113,7 @@ public class Warnings implements Table {
         map.put(vendorCode, SQLException::getErrorCode);
         map.put(stackTrace, Warnings::printStack);
 
+        final List<Object[]> ret = new ArrayList<>();
         for (SQLWarning warning = connectionInfo.getWarning(); warning != null; warning = warning.getNextWarning()) {
             final Object[] row = Table.getFieldValues(fields, map, warning);
             ret.add(row);
