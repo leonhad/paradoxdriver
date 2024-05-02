@@ -15,11 +15,12 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * A generic table.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public interface Table {
@@ -194,5 +195,15 @@ public interface Table {
         }
 
         return "NO";
+    }
+
+    static <T> Object[] getFieldValues(Field[] fields, Map<Field, Function<T, Object>> mapper, T context) {
+        final Object[] row = new Object[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            final Field field = fields[i];
+            row[i] = mapper.get(field).apply(context);
+        }
+
+        return row;
     }
 }

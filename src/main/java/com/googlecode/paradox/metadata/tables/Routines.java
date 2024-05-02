@@ -145,6 +145,10 @@ public class Routines implements Table {
         return ret;
     }
 
+    private boolean isResultType(Column column) {
+        return column.getColumnType() == AbstractFunction.RESULT;
+    }
+
     private Object parseValue(Schema localSchema, Map.Entry<String, Supplier<? extends AbstractFunction>> entry, Field field, AbstractFunction function) {
         Object value = null;
         if (this.catalog.equals(field)) {
@@ -156,57 +160,27 @@ public class Routines implements Table {
         } else if (this.type.equals(field)) {
             value = "FUNCTION";
         } else if (this.dataType.equals(field)) {
-            value = Arrays.stream(function.getColumns())
-                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                    .map(Column::getType)
-                    .map(ParadoxType::name)
-                    .findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getType).map(ParadoxType::name).findFirst().orElse(null);
         } else if (this.maximumLength.equals(field)) {
-            value = Arrays.stream(function.getColumns())
-                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                    .map(Column::getSize)
-                    .findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getSize).findFirst().orElse(null);
         } else if (this.octetLength.equals(field)) {
-            value = Arrays.stream(function.getColumns())
-                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                    .map(Column::getOctets)
-                    .findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getOctets).findFirst().orElse(null);
         } else if (this.scale.equals(field)) {
-            value = Arrays.stream(function.getColumns())
-                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                    .map(Column::getScale)
-                    .findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getScale).findFirst().orElse(null);
         } else if (this.precision.equals(field)) {
-            value = Arrays.stream(function.getColumns())
-                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                    .map(Column::getPrecision)
-                    .findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getPrecision).findFirst().orElse(null);
         } else if (this.radix.equals(field)) {
-            value = Arrays.stream(function.getColumns())
-                    .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                    .map(Column::getRadix)
-                    .filter(Objects::nonNull)
-                    .findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getRadix).filter(Objects::nonNull).findFirst().orElse(null);
         } else if (this.body.equals(field)) {
             value = "EXTERNAL";
         } else if (this.definition.equals(field)) {
             value = function.definition();
         } else if (this.isDeterministic.equals(field)) {
-            if (function.isDeterministic()) {
-                value = "YES";
-            } else {
-                value = "NO";
-            }
+            value = description(function.isDeterministic());
         } else if (this.sqlDataAccess.equals(field)) {
             value = "READS";
         } else if (this.isNullCall.equals(field)) {
-            if (Arrays.stream(function.getColumns())
-                    .filter(c -> c.getColumnType() != AbstractFunction.RESULT)
-                    .anyMatch(Column::isNullable)) {
-                value = "NO";
-            } else {
-                value = "YES";
-            }
+            value = description(Arrays.stream(function.getColumns()).filter(this::isResultType).noneMatch(Column::isNullable));
         } else if (this.isImplicitly.equals(field)) {
             value = "NO";
         } else if (this.remarks.equals(field)) {

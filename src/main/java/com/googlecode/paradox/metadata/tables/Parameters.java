@@ -100,7 +100,7 @@ public class Parameters implements Table {
                 final Object[] row = new Object[fields.length];
                 for (int i = 0; i < fields.length; i++) {
                     final Field field = fields[i];
-                    row[i] = parseValue(entry, column, field, function);
+                    row[i] = parseValue(entry.getKey(), column, field, function);
                 }
 
                 ret.add(row);
@@ -111,45 +111,53 @@ public class Parameters implements Table {
         return ret;
     }
 
-    private Object parseValue(Map.Entry<String, Supplier<? extends AbstractFunction>> entry, Column column, Field field, AbstractFunction function) {
+    private String getColumnType( int type) {
+        String value = null;
+        if (type == AbstractFunction.IN) {
+            value = "IN";
+        } else if (type == AbstractFunction.RESULT) {
+            value = "OUT";
+        }
+
+        return value;
+    }
+
+    private boolean isResultType(Column column) {
+        return column.getColumnType() == AbstractFunction.RESULT;
+    }
+
+    private Object parseValue(String key, Column column, Field field, AbstractFunction function) {
         Object value = null;
         if (this.catalog.equals(field)) {
             value = catalogName;
         } else if (this.schema.equals(field)) {
             value = getSchemaName();
         } else if (this.routine.equals(field)) {
-            value = entry.getKey();
+            value = key;
         } else if (this.ordinal.equals(field)) {
             value = column.getIndex();
         } else if (this.mode.equals(field)) {
-            if (column.getColumnType() == AbstractFunction.IN) {
-                value = "IN";
-            } else if (column.getColumnType() == AbstractFunction.RESULT) {
-                value = "OUT";
-            }
+            value = getColumnType(column.getColumnType());
         } else if (this.isResult.equals(field)) {
-            if (AbstractFunction.RESULT == column.getColumnType()) {
-                value = "YES";
-            } else {
-                value = "NO";
-            }
+            value = description(this.isResultType(column));
         } else if (this.name.equals(field)) {
             value = column.getName();
         } else if (this.dataType.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getType).map(ParadoxType::name).findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getType).map(ParadoxType::name).findFirst().orElse(null);
         } else if (this.maximumLength.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getSize).findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getSize).findFirst().orElse(null);
         } else if (this.octetLength.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getOctets).findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getOctets).findFirst().orElse(null);
         } else if (this.scale.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getScale).findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getScale).findFirst().orElse(null);
         } else if (this.precision.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getPrecision).findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getPrecision).findFirst().orElse(null);
         } else if (this.radix.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getRadix).filter(Objects::nonNull).findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getRadix).filter(Objects::nonNull).findFirst().orElse(null);
         } else if (this.remarks.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(c -> c.getColumnType() == AbstractFunction.RESULT).map(Column::getRemarks).filter(Objects::nonNull).findFirst().orElse(null);
+            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getRemarks).filter(Objects::nonNull).findFirst().orElse(null);
         }
+
         return value;
     }
 }

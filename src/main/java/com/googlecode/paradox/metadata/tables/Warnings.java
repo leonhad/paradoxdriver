@@ -20,9 +20,13 @@ import com.googlecode.paradox.utils.Constants;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -103,26 +107,15 @@ public class Warnings implements Table {
     public List<Object[]> load(final Field[] fields) {
         final List<Object[]> ret = new ArrayList<>();
 
+        Map<Field, Function<SQLWarning, Object>> map = new HashMap<>();
+        map.put(catalog, warning -> catalogName);
+        map.put(reason, Throwable::getMessage);
+        map.put(sqlState, SQLException::getSQLState);
+        map.put(vendorCode, SQLException::getErrorCode);
+        map.put(stackTrace, Warnings::printStack);
+
         for (SQLWarning warning = connectionInfo.getWarning(); warning != null; warning = warning.getNextWarning()) {
-            final Object[] row = new Object[fields.length];
-            for (int i = 0; i < fields.length; i++) {
-                final Field field = fields[i];
-                Object value = null;
-                if (catalog.equals(field)) {
-                    value = catalogName;
-                } else if (this.reason.equals(field)) {
-                    value = warning.getMessage();
-                } else if (this.sqlState.equals(field)) {
-                    value = warning.getSQLState();
-                } else if (this.vendorCode.equals(field)) {
-                    value = warning.getErrorCode();
-                } else if (this.stackTrace.equals(field)) {
-                    value = printStack(warning);
-                }
-
-                row[i] = value;
-            }
-
+            final Object[] row = Table.getFieldValues(fields, map, warning);
             ret.add(row);
         }
 

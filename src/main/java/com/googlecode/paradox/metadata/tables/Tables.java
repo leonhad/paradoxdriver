@@ -156,7 +156,7 @@ public class Tables implements Table {
             value = description(table.isEncrypted());
         } else if (this.writeProtected.equals(field)) {
             value = description(table.isWriteProtected());
-        } else if (this.count.equals(field) && table.getCharset() != null) {
+        } else if (this.count.equals(field)) {
             value = table.getRowCount();
         } else if (this.blockSize.equals(field)) {
             value = table.getBlockSizeBytes();
@@ -169,6 +169,7 @@ public class Tables implements Table {
         } else if (this.recordSize.equals(field)) {
             value = table.getRecordSize();
         }
+
         return value;
     }
 }

@@ -172,17 +172,9 @@ public class Columns implements Table {
         } else if (this.ordinal.equals(field)) {
             value = fieldLocal.getOrderNum();
         } else if (this.isNullable.equals(field)) {
-            if (fieldLocal.isAutoIncrement()) {
-                value = "NO";
-            } else {
-                value = "YES";
-            }
+            value = description(!fieldLocal.isAutoIncrement());
         } else if (this.autoincrement.equals(field)) {
-            if (fieldLocal.isAutoIncrement()) {
-                value = "YES";
-            } else {
-                value = "NO";
-            }
+            value = description(fieldLocal.isAutoIncrement());
         } else if (this.incrementValue.equals(field) && fieldLocal.isAutoIncrement()) {
             value = localTable.getAutoIncrementValue();
         } else if (this.incrementStep.equals(field) && fieldLocal.isAutoIncrement()) {
@@ -201,6 +193,7 @@ public class Columns implements Table {
             value = fieldLocal.getType().name();
         } else if (this.javaClass.equals(field) && fieldLocal.getType() != null) {
             value = fieldLocal.getType().getJavaClass().getName();
+
             if ("[B".equals(value)) {
                 value = "byte[]";
             }
@@ -209,10 +202,10 @@ public class Columns implements Table {
         } else if (this.javaTypeId.equals(field) && fieldLocal.getType() != null) {
             value = fieldLocal.getType().getSQLType();
         } else if (this.nullable.equals(field) && fieldLocal.getType() != null) {
+            value = DatabaseMetaData.columnNullable;
+
             if (fieldLocal.isAutoIncrement()) {
                 value = DatabaseMetaData.columnNoNulls;
-            } else {
-                value = DatabaseMetaData.columnNullable;
             }
         }
 

@@ -12,12 +12,17 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.tables.details.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Views.
@@ -114,41 +119,29 @@ public class Views implements Table {
     public List<Object[]> load(final Field[] fields) throws SQLException {
         final List<Object[]> ret = new ArrayList<>();
 
+        Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, details -> details.getTable().getName());
+        map.put(definition, details -> ((View)details.getTable()).definition());
+        map.put(check, details -> "NONE");
+        map.put(updatable, details -> "NO");
+
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
                 if (!(table instanceof View)) {
                     continue;
                 }
 
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    row[i] = parseValue(localSchema, table, field);
-                }
+                TableDetails details = new TableDetails();
+                details.setSchema(localSchema);
+                details.setTable(table);
 
+                final Object[] row = Table.getFieldValues(fields, map, details);
                 ret.add(row);
             }
         }
 
         return ret;
-    }
-
-    private Object parseValue(Schema localSchema, Table table, Field field) {
-        Object value = null;
-        if (catalog.equals(field)) {
-            value = localSchema.catalogName();
-        } else if (this.schema.equals(field)) {
-            value = localSchema.name();
-        } else if (name.equals(field)) {
-            value = table.getName();
-        } else if (this.definition.equals(field)) {
-            value = ((View) table).definition();
-        } else if (this.check.equals(field)) {
-            value = "NONE";
-        } else if (this.updatable.equals(field)) {
-            value = "NO";
-        }
-
-        return value;
     }
 }
