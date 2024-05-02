@@ -18,8 +18,8 @@ import com.googlecode.paradox.utils.Constants;
 import java.sql.DatabaseMetaData;
 import java.sql.JDBCType;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Columns.
@@ -136,79 +136,69 @@ public class Columns implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(table, details -> details.getTable().getName());
+        map.put(name, details -> details.getCurrentField().getName());
+        map.put(ordinal, details -> details.getCurrentField().getOrderNum());
+        map.put(isNullable, details -> description(!details.getCurrentField().isAutoIncrement()));
+        map.put(autoincrement, details -> description(details.getCurrentField().isAutoIncrement()));
+        map.put(incrementValue, details -> {
+            if (details.getCurrentField().isAutoIncrement()) {
+                return details.getTable().getAutoIncrementValue();
+            }
 
+            return null;
+        });
+        map.put(incrementStep, details -> {
+            if (details.getCurrentField().isAutoIncrement()) {
+                return 1;
+            }
+
+            return null;
+        });
+        map.put(maximumLength, details -> details.getCurrentField().getPrecision());
+        map.put(octetLength, details -> details.getCurrentField().getRealSize());
+        map.put(precision, details -> details.getCurrentField().getPrecision());
+        map.put(radix, details -> Optional.ofNullable(details.getCurrentField()).map(Field::getType).map(ParadoxType::getRadix).orElse(null));
+        map.put(scale, details -> details.getCurrentField().getScale());
+        map.put(type, details -> Optional.ofNullable(details.getCurrentField()).map(Field::getType).map(ParadoxType::name).orElse(null));
+        map.put(javaClass, details -> {
+            String typeValue = Optional.ofNullable(details.getCurrentField()).map(Field::getType).map(ParadoxType::name).orElse(null);
+            if ("[B".equals(typeValue)) {
+                typeValue = "byte[]";
+            }
+
+            return typeValue;
+        });
+        map.put(javaType, details -> Optional.ofNullable(details.getCurrentField()).map(Field::getType).map(ParadoxType::getSQLType).map(JDBCType::valueOf).map(JDBCType::getName).orElse(null));
+        map.put(javaTypeId, details -> Optional.ofNullable(details.getCurrentField()).map(Field::getType).map(ParadoxType::getSQLType).orElse(null));
+        map.put(nullable, details -> {
+            int nullValue = DatabaseMetaData.columnNullable;
+
+            if (details.getCurrentField().isAutoIncrement()) {
+                nullValue = DatabaseMetaData.columnNoNulls;
+            }
+
+            return nullValue;
+        });
+
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table localTable : localSchema.list(connectionInfo, null)) {
-                for (final Field fieldLocal : localTable.getFields()) {
-                    final Object[] row = new Object[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        final Field field = fields[i];
-                        if (fieldLocal == null) {
-                            continue;
-                        }
+                for (final Field currentField : localTable.getFields()) {
+                    final TableDetails details = new TableDetails();
+                    details.setSchema(localSchema);
+                    details.setTable(localTable);
+                    details.setCurrentField(currentField);
 
-                        row[i] = parseValue(localSchema, localTable, fieldLocal, field);
-                    }
-
+                    final Object[] row = Table.getFieldValues(fields, map, details);
                     ret.add(row);
                 }
             }
         }
 
         return ret;
-    }
-
-    private Object parseValue(Schema localSchema, Table localTable, Field fieldLocal, Field field) {
-        Object value = null;
-        if (catalog.equals(field)) {
-            value = localSchema.catalogName();
-        } else if (this.schema.equals(field)) {
-            value = localSchema.name();
-        } else if (this.table.equals(field)) {
-            value = localTable.getName();
-        } else if (this.name.equals(field)) {
-            value = fieldLocal.getName();
-        } else if (this.ordinal.equals(field)) {
-            value = fieldLocal.getOrderNum();
-        } else if (this.isNullable.equals(field)) {
-            value = description(!fieldLocal.isAutoIncrement());
-        } else if (this.autoincrement.equals(field)) {
-            value = description(fieldLocal.isAutoIncrement());
-        } else if (this.incrementValue.equals(field) && fieldLocal.isAutoIncrement()) {
-            value = localTable.getAutoIncrementValue();
-        } else if (this.incrementStep.equals(field) && fieldLocal.isAutoIncrement()) {
-            value = 1;
-        } else if (this.maximumLength.equals(field)) {
-            value = fieldLocal.getPrecision();
-        } else if (this.octetLength.equals(field)) {
-            value = fieldLocal.getRealSize();
-        } else if (this.precision.equals(field)) {
-            value = fieldLocal.getPrecision();
-        } else if (this.radix.equals(field) && fieldLocal.getType() != null) {
-            value = fieldLocal.getType().getRadix();
-        } else if (this.scale.equals(field)) {
-            value = fieldLocal.getScale();
-        } else if (this.type.equals(field) && fieldLocal.getType() != null) {
-            value = fieldLocal.getType().name();
-        } else if (this.javaClass.equals(field) && fieldLocal.getType() != null) {
-            value = fieldLocal.getType().getJavaClass().getName();
-
-            if ("[B".equals(value)) {
-                value = "byte[]";
-            }
-        } else if (this.javaType.equals(field) && fieldLocal.getType() != null) {
-            value = JDBCType.valueOf(fieldLocal.getType().getSQLType()).getName();
-        } else if (this.javaTypeId.equals(field) && fieldLocal.getType() != null) {
-            value = fieldLocal.getType().getSQLType();
-        } else if (this.nullable.equals(field) && fieldLocal.getType() != null) {
-            value = DatabaseMetaData.columnNullable;
-
-            if (fieldLocal.isAutoIncrement()) {
-                value = DatabaseMetaData.columnNoNulls;
-            }
-        }
-
-        return value;
     }
 }

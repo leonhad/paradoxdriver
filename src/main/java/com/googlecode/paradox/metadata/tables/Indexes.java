@@ -17,7 +17,10 @@ import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Indexes table.
@@ -111,18 +114,32 @@ public class Indexes implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(table, details -> details.getTable().getName());
+        map.put(name, details -> details.getIndex().getName());
+        map.put(nonUnique, details -> !details.getIndex().isUnique());
+        map.put(ordinal, details -> details.getCurrentField().getOrderNum());
+        map.put(ascOrDesc, details -> details.getIndex().getOrder().name());
+        map.put(cardinality, details -> details.getIndex().getRowCount());
+        map.put(pages, details -> details.getIndex().getTotalBlocks());
+        map.put(field, details -> details.getIndex().getName());
+        map.put(type, details -> details.getIndex().type().description());
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table localTable : localSchema.list(connectionInfo, null)) {
                 for (final Index index : localTable.getIndexes()) {
                     for (final Field indexField : index.getFields()) {
-                        final Object[] row = new Object[fields.length];
-                        for (int i = 0; i < fields.length; i++) {
-                            final Field localField = fields[i];
-                            row[i] = parseValue(localSchema, localTable, index, indexField, localField);
-                        }
+                        final TableDetails details = new TableDetails();
+                        details.setSchema(localSchema);
+                        details.setSchema(localSchema);
+                        details.setTable(localTable);
+                        details.setIndex(index);
+                        details.setCurrentField(indexField);
 
+                        final Object[] row = Table.getFieldValues(fields, map, details);
                         ret.add(row);
                     }
                 }
@@ -130,33 +147,5 @@ public class Indexes implements Table {
         }
 
         return ret;
-    }
-
-    private Object parseValue(Schema localSchema, Table localTable, Index index, Field indexField, Field localField) {
-        Object value = null;
-        if (catalog.equals(localField)) {
-            value = localSchema.catalogName();
-        } else if (this.schema.equals(localField)) {
-            value = localSchema.name();
-        } else if (this.table.equals(localField)) {
-            value = localTable.getName();
-        } else if (name.equals(localField)) {
-            value = index.getName();
-        } else if (this.nonUnique.equals(localField)) {
-            value = !index.isUnique();
-        } else if (this.ordinal.equals(localField)) {
-            value = indexField.getOrderNum();
-        } else if (this.ascOrDesc.equals(localField)) {
-            value = index.getOrder().name();
-        } else if (this.cardinality.equals(localField)) {
-            value = index.getRowCount();
-        } else if (this.pages.equals(localField)) {
-            value = index.getTotalBlocks();
-        } else if (this.field.equals(localField)) {
-            value = indexField.getName();
-        } else if (this.type.equals(localField)) {
-            value = index.type().description();
-        }
-        return value;
     }
 }
