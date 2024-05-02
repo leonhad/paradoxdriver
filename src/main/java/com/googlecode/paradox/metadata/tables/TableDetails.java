@@ -9,17 +9,24 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.metadata.tables.details;
+package com.googlecode.paradox.metadata.tables;
 
+import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.metadata.Field;
+import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.results.Column;
 
 public class TableDetails {
 
     private Schema schema;
     private Table table;
-    private Field usageField;
+    private Field currentField;
+    private Index index;
+    private AbstractFunction function;
+    private String functionName;
+    private Column column;
 
     public Schema getSchema() {
         return schema;
@@ -37,11 +44,43 @@ public class TableDetails {
         this.table = table;
     }
 
-    public Field getUsageField() {
-        return usageField;
+    public Field getCurrentField() {
+        return currentField;
     }
 
-    public void setUsageField(Field usageField) {
-        this.usageField = usageField;
+    public void setCurrentField(Field currentField) {
+        this.currentField = currentField;
+    }
+
+    public Index getIndex() {
+        return index;
+    }
+
+    public void setIndex(Index index) {
+        this.index = index;
+    }
+
+    public AbstractFunction getFunction() {
+        return function;
+    }
+
+    public void setFunction(AbstractFunction function) {
+        this.function = function;
+    }
+
+    public String getFunctionName() {
+        return functionName;
+    }
+
+    public void setFunctionName(String functionName) {
+        this.functionName = functionName;
+    }
+
+    public Column getColumn() {
+        return column;
+    }
+
+    public void setColumn(Column column) {
+        this.column = column;
     }
 }

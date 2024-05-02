@@ -12,7 +12,6 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
-import com.googlecode.paradox.metadata.tables.details.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -115,7 +114,7 @@ public class Views implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
         map.put(catalog, details -> details.getSchema().catalogName());
         map.put(schema, details -> details.getSchema().name());
         map.put(name, details -> details.getTable().getName());
@@ -130,7 +129,7 @@ public class Views implements Table {
                     continue;
                 }
 
-                TableDetails details = new TableDetails();
+                final TableDetails details = new TableDetails();
                 details.setSchema(localSchema);
                 details.setTable(table);
 

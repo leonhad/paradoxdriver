@@ -17,7 +17,10 @@ import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Table constraints table.
@@ -101,42 +104,30 @@ public class TableConstraints implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(table, details -> details.getTable().getName());
+        map.put(name, details -> details.getIndex().getName());
+        map.put(type, details -> details.getIndex().type().description());
+        map.put(isDeferrable, details -> "NO");
+        map.put(initiallyDeferred, details -> "NO");
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table localTable : localSchema.list(connectionInfo, null)) {
                 for (final Index index : localTable.getConstraints()) {
-                    final Object[] row = new Object[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        final Field field = fields[i];
-                        row[i] = parseValue(localSchema, localTable, index, field);
-                    }
+                    final TableDetails details = new TableDetails();
+                    details.setSchema(localSchema);
+                    details.setTable(localTable);
+                    details.setIndex(index);
 
+                    final Object[] row = Table.getFieldValues(fields, map, details);
                     ret.add(row);
                 }
             }
         }
 
         return ret;
-    }
-
-    private Object parseValue(Schema localSchema, Table localTable, Index index, Field field) {
-        Object value = null;
-        if (catalog.equals(field)) {
-            value = localSchema.catalogName();
-        } else if (this.schema.equals(field)) {
-            value = localSchema.name();
-        } else if (this.table.equals(field)) {
-            value = localTable.getName();
-        } else if (name.equals(field)) {
-            value = index.getName();
-        } else if (this.type.equals(field)) {
-            value = index.type().description();
-        } else if (this.isDeferrable.equals(field)) {
-            value = "NO";
-        } else if (this.initiallyDeferred.equals(field)) {
-            value = "NO";
-        }
-        return value;
     }
 }

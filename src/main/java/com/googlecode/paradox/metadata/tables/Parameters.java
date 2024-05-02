@@ -21,6 +21,7 @@ import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -90,28 +91,7 @@ public class Parameters implements Table {
         return sum;
     }
 
-    @Override
-    public List<Object[]> load(final Field[] fields) {
-        final List<Object[]> ret = new ArrayList<>();
-
-        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry : FunctionFactory.getFunctions().entrySet()) {
-            final AbstractFunction function = entry.getValue().get();
-            for (final Column column : function.getColumns()) {
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    row[i] = parseValue(entry.getKey(), column, field, function);
-                }
-
-                ret.add(row);
-            }
-
-        }
-
-        return ret;
-    }
-
-    private String getColumnType( int type) {
+    private String getColumnType(int type) {
         String value = null;
         if (type == AbstractFunction.IN) {
             value = "IN";
@@ -126,38 +106,39 @@ public class Parameters implements Table {
         return column.getColumnType() == AbstractFunction.RESULT;
     }
 
-    private Object parseValue(String key, Column column, Field field, AbstractFunction function) {
-        Object value = null;
-        if (this.catalog.equals(field)) {
-            value = catalogName;
-        } else if (this.schema.equals(field)) {
-            value = getSchemaName();
-        } else if (this.routine.equals(field)) {
-            value = key;
-        } else if (this.ordinal.equals(field)) {
-            value = column.getIndex();
-        } else if (this.mode.equals(field)) {
-            value = getColumnType(column.getColumnType());
-        } else if (this.isResult.equals(field)) {
-            value = description(this.isResultType(column));
-        } else if (this.name.equals(field)) {
-            value = column.getName();
-        } else if (this.dataType.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getType).map(ParadoxType::name).findFirst().orElse(null);
-        } else if (this.maximumLength.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getSize).findFirst().orElse(null);
-        } else if (this.octetLength.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getOctets).findFirst().orElse(null);
-        } else if (this.scale.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getScale).findFirst().orElse(null);
-        } else if (this.precision.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getPrecision).findFirst().orElse(null);
-        } else if (this.radix.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getRadix).filter(Objects::nonNull).findFirst().orElse(null);
-        } else if (this.remarks.equals(field)) {
-            value = Arrays.stream(function.getColumns()).filter(this::isResultType).map(Column::getRemarks).filter(Objects::nonNull).findFirst().orElse(null);
+    @Override
+    public List<Object[]> load(final Field[] fields) {
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> catalogName);
+        map.put(schema, details -> getSchemaName());
+        map.put(routine, TableDetails::getFunctionName);
+        map.put(ordinal, details -> details.getColumn().getIndex());
+        map.put(mode, details -> getColumnType(details.getColumn().getColumnType()));
+        map.put(isResult, details -> description(this.isResultType(details.getColumn())));
+        map.put(name, details -> details.getColumn().getName());
+        map.put(dataType, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getType).map(ParadoxType::name).findFirst().orElse(null));
+        map.put(maximumLength, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getSize).findFirst().orElse(null));
+        map.put(octetLength, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getOctets).findFirst().orElse(null));
+        map.put(scale, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getScale).findFirst().orElse(null));
+        map.put(precision, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getPrecision).findFirst().orElse(null));
+        map.put(radix, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getRadix).filter(Objects::nonNull).findFirst().orElse(null));
+        map.put(remarks, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getRemarks).filter(Objects::nonNull).findFirst().orElse(null));
+
+        final List<Object[]> ret = new ArrayList<>();
+        for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry : FunctionFactory.getFunctions().entrySet()) {
+            final AbstractFunction function = entry.getValue().get();
+            for (final Column column : function.getColumns()) {
+                final TableDetails details = new TableDetails();
+                details.setFunction(entry.getValue().get());
+                details.setFunctionName(entry.getKey());
+                details.setColumn(column);
+
+                final Object[] row = Table.getFieldValues(fields, map, details);
+                ret.add(row);
+            }
+
         }
 
-        return value;
+        return ret;
     }
 }

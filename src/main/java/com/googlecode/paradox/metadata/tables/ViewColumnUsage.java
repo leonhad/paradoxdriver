@@ -13,7 +13,6 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
-import com.googlecode.paradox.metadata.tables.details.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -105,28 +104,27 @@ public class ViewColumnUsage implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
-
-        Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
         map.put(catalog, details -> details.getSchema().catalogName());
         map.put(schema, details -> details.getSchema().name());
         map.put(name, details -> details.getTable().getName());
         map.put(tableCatalog, details -> details.getSchema().catalogName());
         map.put(tableSchema, details -> details.getTable().getSchemaName());
-        map.put(tableName, details -> details.getUsageField().getTable().getName());
-        map.put(columnName, details -> details.getUsageField().getName());
+        map.put(tableName, details -> details.getCurrentField().getTable().getName());
+        map.put(columnName, details -> details.getCurrentField().getName());
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
                 if (!(table instanceof View)) {
                     continue;
                 }
 
-                for (final Field usageField : ((View) table).usages()) {
-                    TableDetails details = new TableDetails();
+                for (final Field currentField : ((View) table).usages()) {
+                    final TableDetails details = new TableDetails();
                     details.setSchema(localSchema);
                     details.setTable(table);
-                    details.setUsageField(usageField);
+                    details.setCurrentField(currentField);
 
                     final Object[] row = Table.getFieldValues(fields, map, details);
                     ret.add(row);

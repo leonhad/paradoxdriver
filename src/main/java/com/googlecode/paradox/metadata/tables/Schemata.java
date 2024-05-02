@@ -16,9 +16,10 @@ import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
+import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Schemata view.
@@ -102,26 +103,15 @@ public class Schemata implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
+        final Map<Field, Function<Schema, Object>> map = new HashMap<>();
+        map.put(catalog, Schema::catalogName);
+        map.put(schema, Schema::name);
+        map.put(owner, s -> connectionInfo.getUser());
+        map.put(characterName, s -> Optional.ofNullable(connectionInfo.getCharset()).map(Charset::displayName).orElse(null));
+
         final List<Object[]> ret = new ArrayList<>();
-
         for (final Schema currentSchema : connectionInfo.getSchemas(catalogName, null)) {
-            final Object[] row = new Object[fields.length];
-            for (int i = 0; i < fields.length; i++) {
-                final Field field = fields[i];
-                Object value = null;
-                if (catalog.equals(field)) {
-                    value = currentSchema.catalogName();
-                } else if (this.schema.equals(field)) {
-                    value = currentSchema.name();
-                } else if (owner.equals(field)) {
-                    value = connectionInfo.getUser();
-                } else if (characterName.equals(field) && connectionInfo.getCharset() != null) {
-                    value = connectionInfo.getCharset().displayName();
-                }
-
-                row[i] = value;
-            }
-
+            final Object[] row = Table.getFieldValues(fields, map, currentSchema);
             ret.add(row);
         }
 

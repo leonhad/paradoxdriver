@@ -201,7 +201,10 @@ public interface Table {
         final Object[] row = new Object[fields.length];
         for (int i = 0; i < fields.length; i++) {
             final Field field = fields[i];
-            row[i] = mapper.get(field).apply(context);
+            final Function<T, Object> function = mapper.get(field);
+            if (function != null) {
+                row[i] = mapper.get(field).apply(context);
+            }
         }
 
         return row;
