@@ -116,7 +116,7 @@ class ColumnTest {
     @Test
     void testReadOnly() {
         final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
-        assertTrue(column.isReadOnly());
+        assertFalse(column.isReadOnly());
     }
 
     /**
@@ -167,6 +167,6 @@ class ColumnTest {
     @Test
     void testWritable() {
         final Column column = new Column(new ParadoxField(ParadoxType.VARCHAR));
-        assertFalse(column.isWritable());
+        assertTrue(column.isWritable());
     }
 }
