@@ -25,7 +25,7 @@ class TokenTypeTest {
      * Test for null conditional break.
      */
     @Test
-    public void testNullConditional() {
+    void testNullConditional() {
         assertFalse(TokenType.isConditionalBreak(null));
     }
 

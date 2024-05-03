@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @since 1.6.0
  */
-public class CurrentTimeFunctionTest {
+class CurrentTimeFunctionTest {
 
     /**
      * The connection string used in  tests.

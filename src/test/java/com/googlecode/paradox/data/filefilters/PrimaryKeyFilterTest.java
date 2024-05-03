@@ -29,7 +29,7 @@ class PrimaryKeyFilterTest {
      * Test for acceptance.
      */
     @Test
-    public void testAccept() {
+    void testAccept() {
         final File file = new File("test.px");
         final PrimaryKeyFilter filter = new PrimaryKeyFilter(Locale.ENGLISH);
         assertTrue(filter.accept(file));

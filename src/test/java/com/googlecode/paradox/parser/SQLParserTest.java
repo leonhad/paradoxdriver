@@ -21,6 +21,8 @@ import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
@@ -265,7 +267,7 @@ class SQLParserTest {
         final SelectNode select = (SelectNode) tree;
 
         assertEquals(1, select.getFields().size());
-        assertEquals( TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
         assertEquals(1, select.getTables().size());
         assertEquals("client", select.getTables().get(0).getName());
@@ -276,31 +278,19 @@ class SQLParserTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test
-    void testNoTableAfterFrom() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT * FROM");
-        assertThrows(SQLException.class, parser::parse);
-    }
-
-    /**
-     * Test for no fields in order by.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testNoOrderByFields() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT * FROM a ORDER BY");
-        assertThrows(SQLException.class, parser::parse);
-    }
-
-    /**
-     * Test for empty where.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testEmptyWhere() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT * FROM a WHERE");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "select",
+            "SELECT * FROM",
+            "SELECT * FROM a ORDER BY",
+            "SELECT * FROM a WHERE",
+            "select a. FROM AREACODES a",
+            "SELECT count(*) FROM AREACODES group by ?",
+            "select * from fields.date7 offset -10",
+            "select * from fields.date7 limit -10"
+    })
+    void testSyntaxErrors(String sql) throws SQLException {
+        final SQLParser parser = new SQLParser(sql);
         assertThrows(SQLException.class, parser::parse);
     }
 
@@ -564,17 +554,6 @@ class SQLParserTest {
     }
 
     /**
-     * Test for SQL exceptions.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testException() throws SQLException {
-        final SQLParser parser = new SQLParser("select a. FROM AREACODES a");
-        assertThrows(SQLException.class, parser::parse);
-    }
-
-    /**
      * Test for SELECT without FROM (two arguments).
      *
      * @throws SQLException in case of failures.
@@ -609,17 +588,6 @@ class SQLParserTest {
 
         assertEquals(1, select.getFields().size());
         assertEquals("1", select.getFields().get(0).getName());
-    }
-
-    /**
-     * Test for only SELECT token.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testSelectToken() throws SQLException {
-        final SQLParser parser = new SQLParser("select");
-        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -1179,17 +1147,6 @@ class SQLParserTest {
     }
 
     /**
-     * Test for parameter in group by.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    void testParameterInGroupBy() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by ?");
-        assertThrows(SQLException.class, parser::parse);
-    }
-
-    /**
      * Test for grouping function in group by.
      *
      * @throws SQLException in case of failures.
@@ -1228,27 +1185,5 @@ class SQLParserTest {
 
         assertEquals(10, select.getLimit().intValue());
         assertEquals(2, select.getOffset().intValue());
-    }
-
-    /**
-     * Test for limit negative.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testLimitNegative() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from fields.date7 limit -10");
-        assertThrows(SQLException.class, parser::parse);
-    }
-
-    /**
-     * Test for offset negative.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testOffsetNegative() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from fields.date7 offset -10");
-        assertThrows(SQLException.class, parser::parse);
     }
 }

@@ -100,7 +100,7 @@ class DateFromPartsFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testInvalid() throws SQLException {
+    void testInvalid() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEFROMPARTS(2018, 2, 31)");
              final ResultSet rs = stmt.executeQuery()) {
             assertTrue(rs.next());

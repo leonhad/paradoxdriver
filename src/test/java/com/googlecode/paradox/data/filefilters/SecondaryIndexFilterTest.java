@@ -28,7 +28,7 @@ class SecondaryIndexFilterTest {
      * Test for acceptance.
      */
     @Test
-    public void testAccept() {
+    void testAccept() {
         final File file = new File("test.xn2");
         final SecondaryIndexFilter filter = new SecondaryIndexFilter(Locale.ENGLISH);
         assertTrue(filter.accept(file));

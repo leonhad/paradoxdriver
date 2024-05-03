@@ -809,7 +809,7 @@ class ParadoxDatabaseMetaDataTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testSchemasWithCatalogEnabled() throws SQLException {
+    void testSchemasWithCatalogEnabled() throws SQLException {
         final Properties properties = new Properties();
         properties.put(ConnectionInfo.ENABLE_CATALOG_KEY, "true");
 

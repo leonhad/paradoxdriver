@@ -100,7 +100,7 @@ class DateFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDate() throws SQLException {
+    void testDate() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select DATE('2020-01-01') ");
              final ResultSet rs = stmt.executeQuery()) {
             assertTrue(rs.next());
