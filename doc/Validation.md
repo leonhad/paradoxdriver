@@ -81,20 +81,19 @@ For example
 
 The body start at position 0x35, and it repeats for all field. The field count and information is in the footer part.
 
-|  position   |  size (bytes)  | type    | description                                                              |
-|:-----------:|:--------------:|---------|--------------------------------------------------------------------------|
-|    0x00     |       1        | byte    | Field order, starts with 1                                               |
-|    0x01     |       1        | byte    | Picture size                                                             |
-|    0x02     |       1        | byte    | Dependency table order (starts with 1)                                   |
-|    0x03     |       1        | byte    | Integrity status*                                                        |
-|    0x04     |       4        | integer | Table lookup key indicator. Seems to finish always in 6B. No value here? |
-| 0x08 ~ 0x0B |       ?        | ?       | ?                                                                        |
-|    0x0C     |       4        | integer | Minimum value indicator. Seems to finish always in 6B. No value here?    |
-|    0x10     |       4        | integer | Maximum value indicator. Seems to finish always in 6B. No value here?    |
-|    0x14     |       4        | integer | Default value indicator. Seems to finish always in 6B. No value here?    |
-|    0x18     |       4        | integer | Picture indicator. No value here?                                        |
-|    0x1D     | field size\*\* | any     | Field value by type. Picture definition is an ending zero string.        |
-|     XXX     |       X        | any     | Referential integrity.                                                   |
+| position |  size (bytes)  | type    | description                                                       |
+|:--------:|:--------------:|---------|-------------------------------------------------------------------|
+|   0x00   |       1        | byte    | Field order, starts with zero                                     |
+|   0x01   |       1        | byte    | Picture size                                                      |
+|   0x02   |       1        | byte    | Dependency table order (starts with 1)                            |
+|   0x03   |       1        | byte    | Integrity status*                                                 |
+|   0x04   |       4        | integer | Table lookup key pointer. Seems to finish always in 6B.           |
+|   0x08   |       4        | integer | Internal pointer                                                  |
+|   0x0C   |       4        | integer | Minimum value pointer. Seems to finish always in 6B.              |
+|   0x10   |       4        | integer | Maximum value pointer. Seems to finish always in 6B.              |
+|   0x14   |       4        | integer | Default value pointer. Seems to finish always in 6B.              |
+|   0x18   |       4        | integer | Picture pointer. No value here?                                   |
+|   0x1C   | field size\*\* | any     | Field value by type. Picture definition is an ending zero string. |
 
 **\*** Integrity status (bit status in one byte):
 
@@ -109,8 +108,8 @@ The body start at position 0x35, and it repeats for all field. The field count a
       table by opening it in its own window.
     - 10b - **Help and fill:** You can view the lookup table from the table you are editing.
 
-**\*\*** Values are presented here based on indicators in sequence by presence. For example, if it has a maximum and
-default, the sequence has the maximum and default only in that order.
+**\*\*** Values are presented here based on pointers existence in sequence by presence. For example, if it has a maximum
+and default, the sequence has the maximum and default only in that order.
 
 **Note:** Referential integrity seems to be a table lookup with some additional attributes...
 
@@ -119,10 +118,10 @@ default, the sequence has the maximum and default only in that order.
 The table lookup field uses any field on the original table by its index, but the destination is always the first field
 in destination table.
 
-| position | size (bytes) | type   | description                                                                        |
-|:--------:|:------------:|--------|------------------------------------------------------------------------------------|
-|   0x00   |     0x1A     | string | Destination table                                                                  |
-|   0x1A   |     0x36     | ?      | ? These bytes seems to be internal pointers. The same file works with zeros or not |
+| position | size (bytes) | type   | description       |
+|:--------:|:------------:|--------|-------------------|
+|   0x00   |     0x1A     | string | Destination table |
+|   0x1A   |     0x36     | ?      | Internal pointers |
 
 ### Referential integrity
 
@@ -196,9 +195,9 @@ This section repeats by dependency table count (total count 0x12A)
 
 This section repeats by field count
 
-|   position    | size (bytes) | type | description                                    |
-|:-------------:|:------------:|------|------------------------------------------------|
-| last position |      2       | word | Field order. These values are not sequential.* |
+|   position    | size (bytes) | type | description                                                                                                                                           |
+|:-------------:|:------------:|------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| last position |      2       | word | Field number order. These values are not sequential and follow the table file (fieldNumbers before sortOrderID). Not used for reference in this file* |
 
 **\*** Example, if a table has 3 fields and se second is removed, in val file is stored 01 03, not 01 02 as expected.
 

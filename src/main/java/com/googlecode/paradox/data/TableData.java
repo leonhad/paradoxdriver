@@ -64,6 +64,7 @@ public final class TableData extends ParadoxData {
                     table.loadValidations();
                     tables.add(table);
                 } catch (final SQLException e) {
+                    e.printStackTrace();
                     connectionInfo.addWarning(e);
                 }
             }

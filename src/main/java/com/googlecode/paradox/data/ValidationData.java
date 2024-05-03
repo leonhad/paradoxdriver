@@ -93,11 +93,13 @@ public class ValidationData {
             }
 
             loadFooter(buffer, data, table);
-            loadValidations(buffer, data, table);
+            loadValidations(buffer, data, table, file.getName());
             loadReferentialIntegrity(buffer, data, table);
 
             return data;
         } catch (final Exception e) {
+            e.printStackTrace();
+
             // Don't break in validation erros.
             connectionInfo.addWarning(e);
         }
@@ -105,7 +107,7 @@ public class ValidationData {
         return null;
     }
 
-    private static void loadValidations(ByteBuffer buffer, ParadoxValidation data, ParadoxTable table) throws SQLException {
+    private static void loadValidations(ByteBuffer buffer, ParadoxValidation data, ParadoxTable table, String fileName) throws SQLException {
         if (data.getCount() == 0) {
             return;
         }
@@ -115,13 +117,15 @@ public class ValidationData {
             int start = buffer.position();
 
             int fieldPosition = buffer.get() & 0xFF;
-            ValidationField validationField = Arrays.stream(data.getFields())
-                    .filter(f -> f.getPosition() == fieldPosition).findFirst()
-                    .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX, fieldPosition));
+
+            if (fieldPosition > data.getFieldCount()) {
+                throw new ParadoxException(ParadoxException.Error.INVALID_COLUMN_INDEX_FILE, fieldPosition, fileName);
+            }
+            ValidationField validationField = data.getFields()[fieldPosition];
 
             Field field = Arrays.stream(table.getFields())
                     .filter(x -> x.getName().equalsIgnoreCase(validationField.getName())).findFirst()
-                    .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN, validationField.getName()));
+                    .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN_FILE, validationField.getName(), fileName));
 
             int pictureSize = buffer.get() & 0xFF;
 
@@ -201,6 +205,9 @@ public class ValidationData {
             validationField.setDestinationTable(loadString(buffer, table, 0x1A));
             validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
             validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
+
+            // Skip next pointer values
+            buffer.position(buffer.position() + 0x36);
         }
     }
 
@@ -299,11 +306,10 @@ public class ValidationData {
 
             name.flip();
             String fieldName = table.getCharset().decode(name).toString();
-            final int order = fieldOrder[i] - 1;
 
             ValidationField field = new ValidationField();
             field.setName(fieldName);
-            field.setPosition(order);
+            field.setPosition(fieldOrder[i]);
             fields[i] = field;
         }
         data.setFields(fields);

@@ -206,7 +206,10 @@ public class ParadoxData {
             buffer.position(0x55);
             data.setReferentialIntegrity(buffer.get());
 
-            parseVersionID(buffer, data, connectionInfo);
+            // Only for DB files and Xnn files.
+            if (data instanceof ParadoxTable || data instanceof ParadoxIndex) {
+                parseVersionID(buffer, data, connectionInfo);
+            }
 
             final ParadoxField[] fields = parseTableFields(data, buffer);
 
