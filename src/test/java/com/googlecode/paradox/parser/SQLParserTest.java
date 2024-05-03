@@ -287,7 +287,14 @@ class SQLParserTest {
             "select a. FROM AREACODES a",
             "SELECT count(*) FROM AREACODES group by ?",
             "select * from fields.date7 offset -10",
-            "select * from fields.date7 limit -10"
+            "select * from fields.date7 limit -10",
+            "select * from a where ab = 1 aaa ba = 2",
+            "select * from fields.DATE4 a a",
+            "select * from fields.DATE4 a order by 1 a",
+            "select lower(1, null, a.b) from a",
+            "select upper('2'",
+            "select * from table group by count(Id)",
+            "select * from table where count(Id) = 1"
     })
     void testSyntaxErrors(String sql) throws SQLException {
         final SQLParser parser = new SQLParser(sql);
@@ -690,16 +697,6 @@ class SQLParserTest {
         assertEquals("test", select.getFields().get(0).getAlias());
     }
 
-    /**
-     * Test for invalid join node.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testInvalidJoinNode() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from a where ab = 1 aaa ba = 2");
-        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
-    }
 
     /**
      * Test for parenthesis.
@@ -786,28 +783,6 @@ class SQLParserTest {
         assertNull(field.getTableName());
         assertEquals("TIME", field.getName());
         assertEquals(OrderType.ASC, select.getOrderTypes().get(1));
-    }
-
-    /**
-     * Test for extra token.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testExtraToken() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from fields.DATE4 a a");
-        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
-    }
-
-    /**
-     * Test for extra token in order by.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testExtraTokenInOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from fields.DATE4 a order by 1 a");
-        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -910,17 +885,6 @@ class SQLParserTest {
     }
 
     /**
-     * Test for function with three fields.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testFunctionThreeFields() throws SQLException {
-        final SQLParser parser = new SQLParser("select lower(1, null, a.b) from a");
-        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
-    }
-
-    /**
      * Test for function alias.
      *
      * @throws SQLException in case of failures.
@@ -987,17 +951,6 @@ class SQLParserTest {
         assertEquals(0, equalsNode.getChildren().size());
         assertNotNull(equalsNode.getField());
         assertInstanceOf(FunctionNode.class, equalsNode.getLast());
-    }
-
-    /**
-     * Test for unterminated function.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testUnterminatedFunction() throws SQLException {
-        final SQLParser parser = new SQLParser("select upper('2'");
-        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -1144,28 +1097,6 @@ class SQLParserTest {
 
         assertEquals(1, node.getGroupingNodes().size());
         assertSame(function, node.getGroupingNodes().get(0));
-    }
-
-    /**
-     * Test for grouping function in group by.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testGroupingFunctionInGroupBy() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from table group by count(Id)");
-        assertThrows(SQLSyntaxErrorException.class, parser::parse);
-    }
-
-    /**
-     * Test for grouping function in where.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testGroupingFunctionInWhere() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from table where count(Id) = 1");
-        assertThrows(SQLSyntaxErrorException.class, parser::parse);
     }
 
     /**
