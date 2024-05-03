@@ -318,7 +318,7 @@ public final class Column {
      * @return true if this field is read only.
      */
     public boolean isReadOnly() {
-        return true;
+        return isAutoIncrement();
     }
 
     /**
@@ -345,7 +345,7 @@ public final class Column {
      * @return true if this field is writable.
      */
     public boolean isWritable() {
-        return false;
+        return !isAutoIncrement();
     }
 
     /**
@@ -412,8 +412,7 @@ public final class Column {
      * @return true if this field have sign.
      */
     public boolean isSigned() {
-        return type == ParadoxType.DECIMAL || type == ParadoxType.NUMBER || type == ParadoxType.CURRENCY
-                || type == ParadoxType.INTEGER;
+        return type == ParadoxType.DECIMAL || type == ParadoxType.NUMBER || type == ParadoxType.CURRENCY || type == ParadoxType.INTEGER;
     }
 
     /**
