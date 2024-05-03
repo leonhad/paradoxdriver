@@ -12,6 +12,8 @@ package com.googlecode.paradox.parser;
 
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
 
@@ -92,35 +94,14 @@ class ScannerTest {
      *
      * @throws Exception in case of failures.
      */
-    @Test
-    void testNull() throws Exception {
-        final Scanner scanner = new Scanner(" NULL");
-        final Token token = scanner.nextToken();
-        assertEquals(TokenType.NULL, token.getType());
-        assertFalse(scanner.hasNext());
-    }
-
-    /**
-     * Test for comments.
-     *
-     * @throws Exception in case of failures.
-     */
-    @Test
-    void testComments() throws Exception {
-        final Scanner scanner = new Scanner(" -- Commented line\nNULL");
-        final Token token = scanner.nextToken();
-        assertEquals(TokenType.NULL, token.getType());
-        assertFalse(scanner.hasNext());
-    }
-
-    /**
-     * Test for multiline comments.
-     *
-     * @throws Exception in case of failures.
-     */
-    @Test
-    void testMultilineComments() throws Exception {
-        final Scanner scanner = new Scanner(" /* Commented\n\nline */\nNULL");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            " NULL",
+            " -- Commented line\nNULL",
+            " /* Commented\n\nline */\nNULL"
+    })
+    void testNull(String sql) throws Exception {
+        final Scanner scanner = new Scanner(sql);
         final Token token = scanner.nextToken();
         assertEquals(TokenType.NULL, token.getType());
         assertFalse(scanner.hasNext());
