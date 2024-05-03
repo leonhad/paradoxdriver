@@ -123,16 +123,14 @@ public class ConvertFunction extends AbstractGeneralFunction {
             // If three parameters, the second needs to be a valid type.
 
             if (!parameters.get(1).getName().equalsIgnoreCase(TokenType.USING.name())) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
-                        parameters.get(1).getPosition());
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, parameters.get(1).getPosition());
             }
 
             SQLNode charsetNode = parameters.get(2);
             try {
                 charset = Charset.forName(charsetNode.getName());
             } catch (final UnsupportedCharsetException e) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
-                        charsetNode.getPosition(), charsetNode.getName(), e);
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, charsetNode.getPosition(), charsetNode.getName(), e);
             }
 
             // Charset conversion.

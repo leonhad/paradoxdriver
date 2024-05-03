@@ -93,8 +93,7 @@ public class ParadoxData {
      * @param dataFile       the paradox index.
      * @param connectionInfo the connection information.
      */
-    protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile,
-                                         final ConnectionInfo connectionInfo) {
+    protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile, final ConnectionInfo connectionInfo) {
         if (dataFile.getVersionId() > ParadoxData.MINIMUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
@@ -104,7 +103,7 @@ public class ParadoxData {
             if (dataFile.getCharset() == null && cp != 0) {
                 dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
                 if (CHARSET_TABLE.get(cp) == null) {
-                    connectionInfo.addWarning("Charset " + cp + " not found.");
+                    connectionInfo.addWarning(String.format("Charset %d not found for file %s", cp, dataFile.getName()));
                 }
             }
 

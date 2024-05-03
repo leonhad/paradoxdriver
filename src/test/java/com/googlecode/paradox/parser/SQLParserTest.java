@@ -21,6 +21,7 @@ import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
@@ -209,20 +210,24 @@ class SQLParserTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test
-    void testJoin() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
+    @ParameterizedTest
+    @CsvSource({
+            "SELECT * FROM client, 1, 1",
+            "SELECT * FROM \"client.db\", 1, 1",
+            "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b, 1, 3"
+    })
+    void testClientSelects(String sql, int fields, int tables) throws SQLException {
+        final SQLParser parser = new SQLParser(sql);
         final SQLNode tree = parser.parse();
 
         assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        assertEquals(1, select.getFields().size());
+        assertEquals(fields, select.getFields().size());
         assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        assertEquals(3, select.getTables().size());
+        assertEquals(tables, select.getTables().size());
         assertEquals("client", select.getTables().get(0).getName());
     }
 
@@ -251,27 +256,6 @@ class SQLParserTest {
     }
 
     /**
-     * Test for SELECT token.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testSelect() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT * FROM client");
-        final SQLNode tree = parser.parse();
-
-        assertInstanceOf(SelectNode.class, tree);
-
-        final SelectNode select = (SelectNode) tree;
-
-        assertEquals(1, select.getFields().size());
-        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
-        assertEquals(1, select.getTables().size());
-        assertEquals("client", select.getTables().get(0).getName());
-    }
-
-    /**
      * Test for no table after FROM.
      *
      * @throws SQLException in case of failures.
@@ -297,27 +281,6 @@ class SQLParserTest {
     void testSyntaxErrors(String sql) throws SQLException {
         final SQLParser parser = new SQLParser(sql);
         assertThrows(SQLException.class, parser::parse);
-    }
-
-    /**
-     * Test for tables.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testTable() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
-        final SQLNode tree = parser.parse();
-
-        assertInstanceOf(SelectNode.class, tree);
-
-        final SelectNode select = (SelectNode) tree;
-
-        assertEquals(1, select.getFields().size());
-        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
-
-        assertEquals(1, select.getTables().size());
-        assertEquals("client", select.getTables().get(0).getName());
     }
 
     /**
