@@ -816,45 +816,24 @@ class ParadoxDatabaseMetaDataTest {
         try (final Connection connection = DriverManager.getConnection(CONNECTION_STRING + "db", properties);
              final ResultSet rs = connection.getMetaData().getSchemas()) {
 
-            assertTrue(rs.next());
-            assertEquals("com", rs.getString("TABLE_SCHEM"));
-            assertEquals("java", rs.getString("TABLE_CATALOG"));
+            String[][] values = new String[][]{
+                    {"com", "java"},
+                    {"information_schema", "java"},
+                    {"areas", "resources"},
+                    {"db", "resources"},
+                    {"encrypt", "resources"},
+                    {"fields", "resources"},
+                    {"geog", "resources"},
+                    {"information_schema", "resources"},
+                    {"joins", "resources"},
+                    {"mtdemo", "resources"}
+            };
 
-            assertTrue(rs.next());
-            assertEquals("information_schema", rs.getString("TABLE_SCHEM"));
-            assertEquals("java", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("areas", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("db", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("encrypt", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("fields", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("geog", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("information_schema", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("joins", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
-
-            assertTrue(rs.next());
-            assertEquals("mtdemo", rs.getString("TABLE_SCHEM"));
-            assertEquals("resources", rs.getString("TABLE_CATALOG"));
+            for (String[] pair : values) {
+                assertTrue(rs.next());
+                assertEquals(pair[0], rs.getString("TABLE_SCHEM"));
+                assertEquals(pair[1], rs.getString("TABLE_CATALOG"));
+            }
 
             assertFalse(rs.next());
         }
