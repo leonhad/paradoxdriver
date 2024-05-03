@@ -12,15 +12,20 @@ package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Unit test for {@link IndexData}.
  *
- * @version 1.4
  * @since 1.0
  */
 public class IndexDataTest {
@@ -40,8 +45,8 @@ public class IndexDataTest {
      *
      * @throws ClassNotFoundException in case of connection errors.
      */
-    @BeforeClass
-    public static void setUp() throws ClassNotFoundException {
+    @BeforeAll
+    static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
 
@@ -50,8 +55,8 @@ public class IndexDataTest {
      *
      * @throws Exception in case closing of errors.
      */
-    @After
-    public void closeConnection() throws Exception {
+    @AfterEach
+    void closeConnection() throws Exception {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -62,8 +67,8 @@ public class IndexDataTest {
      *
      * @throws Exception in case of connection errors.
      */
-    @Before
-    public void connect() throws Exception {
+    @BeforeEach
+    void connect() throws Exception {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -73,8 +78,8 @@ public class IndexDataTest {
      * @throws Exception in case of failures.
      */
     @Test
-    public void testListIndexes() throws Exception {
-        Assert.assertEquals("Not empty index", 0, this.conn.getConnectionInfo().getCurrentSchema()
+    void testListIndexes() throws Exception {
+        assertEquals(0, this.conn.getConnectionInfo().getCurrentSchema()
                 .findTable(this.conn.getConnectionInfo(), "contacts")
                 .getIndexes().length);
     }
@@ -85,10 +90,10 @@ public class IndexDataTest {
      * @throws Exception in case of failures.
      */
     @Test
-    public void testIndexName() throws Exception {
+    void testIndexName() throws Exception {
         try (final ResultSet rs = this.conn.getMetaData().getIndexInfo(null, "joins", "Indexed", false, true)) {
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertEquals("Invalid index name", "Descending", rs.getString("INDEX_NAME"));
+            assertTrue(rs.next());
+            assertEquals("Descending", rs.getString("INDEX_NAME"));
         }
     }
 }

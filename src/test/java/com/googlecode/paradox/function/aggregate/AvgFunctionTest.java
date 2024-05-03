@@ -13,23 +13,27 @@ package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link AvgFunction}.
  *
- * @version 1.1
  * @since 1.6.0
  */
-public class AvgFunctionTest {
+class AvgFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -48,8 +52,8 @@ public class AvgFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -58,8 +62,8 @@ public class AvgFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -70,9 +74,8 @@ public class AvgFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -82,12 +85,13 @@ public class AvgFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCount() throws SQLException {
+    void testCount() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select avg(id) from fields.long");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 2.0, rs.getDouble(1), 0.00001D);
-            Assert.assertFalse("Invalid result set state", rs.next());
+
+            assertTrue(rs.next());
+            assertEquals(2.0, rs.getDouble(1), 0.00001D);
+            assertFalse(rs.next());
         }
     }
 }

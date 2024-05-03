@@ -12,30 +12,28 @@
 package com.googlecode.paradox.function.system;
 
 import com.googlecode.paradox.utils.Constants;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link VersionFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class VersionFunctionTest {
+class VersionFunctionTest {
 
     /**
      * Test for version function.
      */
     @Test
-    public void testVersion() {
+    void testVersion() {
         final String system = String.format("%s %s (%s), %s %s (%s)",
                 System.getProperty("java.vm.name"), System.getProperty("java.runtime.version"),
                 System.getProperty("java.vendor.version"), System.getProperty("os.name"),
                 System.getProperty("os.version"), System.getProperty("os.arch"));
 
         final VersionFunction versionFunction = new VersionFunction();
-        Assert.assertEquals("Invalid version", Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION
-                + " on " + system,
-                versionFunction.execute(null, null, null, null));
+        assertEquals(Constants.DRIVER_NAME + " " + Constants.DRIVER_VERSION + " on " + system, versionFunction.execute(null, null, null, null));
     }
 }

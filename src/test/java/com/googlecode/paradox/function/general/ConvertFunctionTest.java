@@ -13,23 +13,27 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.string.RightFunction;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link RightFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class ConvertFunctionTest {
+class ConvertFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -48,8 +52,8 @@ public class ConvertFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -58,8 +62,8 @@ public class ConvertFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -70,9 +74,8 @@ public class ConvertFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -82,13 +85,13 @@ public class ConvertFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testRight() throws SQLException {
+    void testRight() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select CONVERT('1234', INTEGER) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 1234, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(1234, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -98,15 +101,14 @@ public class ConvertFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharset() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select CONVERT(Note using cp1251) from db.NOTE1251 where Id = 2");
+    void testCharset() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select CONVERT(Note using cp1251) from db.NOTE1251 where Id = 2");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "Удивительное устройство USB-флешки Kingston DataTraveler",
+            assertEquals("Удивительное устройство USB-флешки Kingston DataTraveler",
                     rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -116,14 +118,13 @@ public class ConvertFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharsetBytes() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select convert(BYTES using \"UTF-16LE\") from fields.bytes");
+    void testCharsetBytes() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select convert(BYTES using \"UTF-16LE\") from fields.bytes");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "123", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("123", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 }

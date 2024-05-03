@@ -11,25 +11,25 @@
 package com.googlecode.paradox.planner.nodes.comparable;
 
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link LessThanNode} class.
  *
- * @version 1.3
  * @since 1.3
  */
-public class LessThanNodeTest {
+class LessThanNodeTest {
 
     /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         final FieldNode first = new FieldNode("table", "first", null);
         final FieldNode last = new FieldNode("table", "last", null);
         final LessThanNode node = new LessThanNode(first, last, null);
-        Assert.assertEquals("Invalid node value.", "table.first < table.last", node.toString());
+        assertEquals("table.first < table.last", node.toString());
     }
 }

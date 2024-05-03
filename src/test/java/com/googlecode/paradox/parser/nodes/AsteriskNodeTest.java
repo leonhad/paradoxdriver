@@ -10,35 +10,35 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link AsteriskNode}.
  *
- * @version 1.2
  * @since 1.5.0
  */
-public class AsteriskNodeTest {
+class AsteriskNodeTest {
 
     /**
      * Test for instance.
      */
     @Test
-    public void testInstance() {
+    void testInstance() {
         final AsteriskNode node = new AsteriskNode(null, null);
-        Assert.assertEquals("Test for node name", "ASTERISK", node.getName());
+        assertEquals("ASTERISK", node.getName());
     }
 
     /**
      * Test toString method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         AsteriskNode node = new AsteriskNode(null, null);
-        Assert.assertEquals("Invalid value", "*", node.toString());
+        assertEquals("*", node.toString());
 
         node = new AsteriskNode("t", null);
-        Assert.assertEquals("Invalid value", "t.*", node.toString());
+        assertEquals("t.*", node.toString());
     }
 }

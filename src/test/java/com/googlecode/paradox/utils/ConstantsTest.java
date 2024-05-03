@@ -11,22 +11,22 @@
 
 package com.googlecode.paradox.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link Constants} class.
  *
- * @version 1.1
  * @since 1.3
  */
-public class ConstantsTest {
+class ConstantsTest {
 
     /**
      * Test for sanity.
      */
     @Test
-    public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Constants.class));
+    void testSanity() {
+        assertTrue(TestUtil.assertSanity(Constants.class));
     }
 }

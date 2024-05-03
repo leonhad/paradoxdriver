@@ -14,18 +14,18 @@ import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link LikeNode} class.
  *
- * @version 1.0
  * @since 1.3
  */
-public class LikeNodeTest {
+class LikeNodeTest {
 
     /**
      * Test for not as a value.
@@ -33,18 +33,18 @@ public class LikeNodeTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNullAsValue() throws SQLException {
+    void testNullAsValue() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A LIKE 't&%' escape '&'");
         final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof LikeNode);
+        assertInstanceOf(LikeNode.class, select.getCondition());
         final LikeNode node = (LikeNode) select.getCondition();
-        Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
-        Assert.assertTrue("Invalid field value.", node.getLast() instanceof ValueNode);
+        assertEquals("A", node.getField().getName());
+        assertInstanceOf(ValueNode.class, node.getLast());
 
-        Assert.assertEquals("Invalid field value.", "t&%", node.getLast().getName());
-        Assert.assertEquals("Invalid escape char", '&', node.getEscape());
+        assertEquals("t&%", node.getLast().getName());
+        assertEquals('&', node.getEscape());
     }
 }

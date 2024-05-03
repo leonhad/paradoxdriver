@@ -10,24 +10,24 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link SQLNode} class.
  *
- * @version 1.4
  * @since 1.3
  */
-public class SQLNodeTest {
+class SQLNodeTest {
 
     /**
      * Test for alias.
      */
     @Test
-    public void testAlias() {
+    void testAlias() {
         final JoinNode node = new JoinNode(null, null, null, JoinType.INNER, null);
         node.setAlias("alias");
-        Assert.assertEquals("Invalid node alias.", "alias", node.getAlias());
+        assertEquals("alias", node.getAlias());
     }
 }

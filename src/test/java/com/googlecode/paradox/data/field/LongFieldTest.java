@@ -13,7 +13,10 @@ package com.googlecode.paradox.data.field;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.sql.DriverManager;
@@ -21,18 +24,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link LongField} class.
  *
- * @version 1.4
  * @since 1.3
  */
-public class LongFieldTest {
+class LongFieldTest {
 
     /**
      * Connection string used in tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.
@@ -42,8 +46,8 @@ public class LongFieldTest {
     /**
      * Register the driver.
      */
-    @BeforeClass
-    public static void setUp() {
+    @BeforeAll
+    static void setUp() {
         new Driver();
     }
 
@@ -52,8 +56,8 @@ public class LongFieldTest {
      *
      * @throws SQLException in case closing of errors.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -64,8 +68,8 @@ public class LongFieldTest {
      *
      * @throws SQLException in case of connection errors.
      */
-    @Before
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
@@ -73,36 +77,36 @@ public class LongFieldTest {
      * Test for invalid match.
      */
     @Test
-    public void testInvalidMatch() {
+    void testInvalidMatch() {
         final LongField field = new LongField();
-        Assert.assertFalse("Invalid field type.", field.match(ParadoxType.NULL));
+        assertFalse(field.match(ParadoxType.NULL));
     }
 
     /**
      * Test for parse method.
      */
     @Test
-    public void testParse() {
+    void testParse() {
         final LongField field = new LongField();
 
         // Test positive values
         ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x01, (byte) 0x00});
         Object value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", 256L, value);
+        assertEquals(256L, value);
 
         // Test negative values
         buffer = ByteBuffer.wrap(new byte[]{(byte) 0x7F, (byte) 0xFF, (byte) 0xFF, (byte) 0x00});
         value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", -256L, value);
+        assertEquals(-256L, value);
     }
 
     /**
      * Test for valid match.
      */
     @Test
-    public void testValidMatch() {
+    void testValidMatch() {
         final LongField field = new LongField();
-        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.LONG));
+        assertTrue(field.match(ParadoxType.LONG));
     }
 
     /**
@@ -111,19 +115,19 @@ public class LongFieldTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadLong() throws SQLException {
+    void testReadLong() throws SQLException {
         try (Statement stmt = this.conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT \"Time\" FROM fields.time")) {
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", "01:00:01", rs.getTime("Time").toString());
+            assertTrue(rs.next());
+            assertEquals("01:00:01", rs.getTime("Time").toString());
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertNull("Invalid value.", rs.getTime("Time"));
+            assertTrue(rs.next());
+            assertNull(rs.getTime("Time"));
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", "03:00:03", rs.getTime("Time").toString());
+            assertTrue(rs.next());
+            assertEquals("03:00:03", rs.getTime("Time").toString());
 
-            Assert.assertFalse("Invalid Result Set state.", rs.next());
+            assertFalse(rs.next());
         }
     }
 }

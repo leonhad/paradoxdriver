@@ -10,28 +10,28 @@
  */
 package com.googlecode.paradox.data.filefilters;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Unit test for {@link TableFilter}.
  *
- * @version 1.1
  * @since 1.0
  */
-public class TableFilterTest {
+class TableFilterTest {
 
     /**
      * Test for acceptance.
      */
     @Test
-    public void testAccept() {
+    void testAccept() {
         final File file = new File(this.getClass().getResource("/fields/DATE4.db").getFile());
         final TableFilter filter = new TableFilter(Locale.ENGLISH);
-        Assert.assertTrue("Invalid file filter.", filter.accept(file));
+        assertTrue(filter.accept(file));
     }
 
 }

@@ -15,24 +15,28 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.data.IndexData;
 import com.googlecode.paradox.data.PrimaryKeyData;
 import com.googlecode.paradox.data.TableData;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link Utils}.
  *
- * @version 1.3
  * @since 1.2
  */
-public class UtilsTest {
+class UtilsTest {
 
     /**
      * Connection string used in tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * Database connection.
@@ -44,8 +48,8 @@ public class UtilsTest {
      *
      * @throws Exception in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
@@ -54,8 +58,8 @@ public class UtilsTest {
      *
      * @throws Exception in case of failures.
      */
-    @After
-    public void closeConnection() throws Exception {
+    @AfterEach
+    void closeConnection() throws Exception {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -66,8 +70,8 @@ public class UtilsTest {
      *
      * @throws Exception in case of failures.
      */
-    @Before
-    public void connect() throws Exception {
+    @BeforeEach
+    void connect() throws Exception {
         this.conn = DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -75,8 +79,8 @@ public class UtilsTest {
      * Test if the constructor is private.
      */
     @Test
-    public void testConstructorIsPrivate() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Utils.class));
+    void testConstructorIsPrivate() {
+        assertTrue(TestUtil.assertSanity(Utils.class));
     }
 
     /**
@@ -84,16 +88,16 @@ public class UtilsTest {
      * with invalid value.
      */
     @Test
-    public void testIsNotWrapFor() {
-        Assert.assertFalse("Invalid wrapper value.", Utils.isWrapperFor(this.conn, Connection.class));
+    void testIsNotWrapFor() {
+        assertFalse(Utils.isWrapperFor(this.conn, Connection.class));
     }
 
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
      */
     @Test
-    public void testIsWrapFor() {
-        Assert.assertTrue("Invalid wrapper value.", Utils.isWrapperFor(this.conn, ParadoxConnection.class));
+    void testIsWrapFor() {
+        assertTrue(Utils.isWrapperFor(this.conn, ParadoxConnection.class));
     }
 
     /**
@@ -102,8 +106,8 @@ public class UtilsTest {
      * @throws Exception in case of failures.
      */
     @Test
-    public void testUnwrap() throws Exception {
-        Assert.assertNotNull("Invalid class instance.", Utils.unwrap(this.conn, ParadoxConnection.class));
+    void testUnwrap() throws Exception {
+        assertNotNull(Utils.unwrap(this.conn, ParadoxConnection.class));
     }
 
     /**
@@ -111,9 +115,9 @@ public class UtilsTest {
      *
      * @throws Exception in case of failures.
      */
-    @Test(expected = SQLException.class)
-    public void testUnwrapImpossible() throws Exception {
-        Utils.unwrap(this.conn, Integer.class);
+    @Test
+    void testUnwrapImpossible() throws Exception {
+        assertThrows(SQLException.class, () -> Utils.unwrap(this.conn, Integer.class));
     }
 
     /**
@@ -122,34 +126,33 @@ public class UtilsTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testValidConnection() throws SQLException {
-        Assert.assertTrue("Wrapper invalid.", this.conn.isWrapperFor(ParadoxConnection.class));
-        Assert.assertNotNull("Can't unwrap.", this.conn.unwrap(ParadoxConnection.class));
+    void testValidConnection() throws SQLException {
+        assertTrue(this.conn.isWrapperFor(ParadoxConnection.class));
+        assertNotNull(this.conn.unwrap(ParadoxConnection.class));
     }
 
     /**
      * Test for remove suffix extension.
      */
     @Test
-    public void testRemoveSuffix() {
-        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeSuffix("FILE.DB", "DB"));
-        Assert.assertEquals("Invalid file name.", "FILE", Utils.removeSuffix("FILE", "DB"));
-        Assert.assertEquals("Invalid file name.", "FILE.TXT", Utils.removeSuffix("FILE.TXT", "DB"));
-        Assert.assertNull("Invalid file name.", Utils.removeSuffix(null, null));
+    void testRemoveSuffix() {
+        assertEquals("FILE", Utils.removeSuffix("FILE.DB", "DB"));
+        assertEquals("FILE", Utils.removeSuffix("FILE", "DB"));
+        assertEquals("FILE.TXT", Utils.removeSuffix("FILE.TXT", "DB"));
+        assertNull(Utils.removeSuffix(null, null));
     }
 
     /**
      * Test for utilities classes.
      */
     @Test
-    public void testClassesIntegrity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Utils.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(DateUtils.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(TableData.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Expressions.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(IndexData.class));
-        Assert.assertTrue("Utility class in wrong format.",
-                TestUtil.assertSanity(PrimaryKeyData.class));
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Constants.class));
+    void testClassesIntegrity() {
+        assertTrue(TestUtil.assertSanity(Utils.class));
+        assertTrue(TestUtil.assertSanity(DateUtils.class));
+        assertTrue(TestUtil.assertSanity(TableData.class));
+        assertTrue(TestUtil.assertSanity(Expressions.class));
+        assertTrue(TestUtil.assertSanity(IndexData.class));
+        assertTrue(TestUtil.assertSanity(PrimaryKeyData.class));
+        assertTrue(TestUtil.assertSanity(Constants.class));
     }
 }

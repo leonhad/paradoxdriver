@@ -15,18 +15,23 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.utils.TestUtil;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link TableData}.
  *
  * @since 1.0
  */
-public class TableDataTest {
+class TableDataTest {
 
     /**
      * Connection string used in tests.
@@ -45,8 +50,8 @@ public class TableDataTest {
     /**
      * Register the driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -55,8 +60,8 @@ public class TableDataTest {
      *
      * @throws SQLException in case closing of errors.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -67,8 +72,8 @@ public class TableDataTest {
      *
      * @throws SQLException in case of connection errors.
      */
-    @Before
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -78,9 +83,8 @@ public class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testInvalidTable() throws SQLException {
-        Assert.assertEquals("Failed in count invalid tables.", 0,
-                this.conn.getConnectionInfo().getCurrentSchema().list(this.conn.getConnectionInfo(), "not found").size());
+    void testInvalidTable() throws SQLException {
+        assertEquals(0, this.conn.getConnectionInfo().getCurrentSchema().list(this.conn.getConnectionInfo(), "not found").size());
     }
 
     /**
@@ -89,15 +93,15 @@ public class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLoadAreaCodes() throws SQLException {
+    void testLoadAreaCodes() throws SQLException {
 
         final List<Table> tables = this.conn.getConnectionInfo().getCurrentSchema()
                 .list(this.conn.getConnectionInfo(), "areacodes");
-        Assert.assertNotNull("List tables is null", tables);
-        Assert.assertFalse("List tables is empty", tables.isEmpty());
+        assertNotNull(tables);
+        assertFalse(tables.isEmpty());
         final Table table = tables.get(0);
         final List<Object[]> data = table.load(table.getFields());
-        Assert.assertEquals("Error in load areacodes.db table.", table.getRowCount(), data.size());
+        assertEquals(table.getRowCount(), data.size());
     }
 
     /**
@@ -106,11 +110,11 @@ public class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLoadContacts() throws SQLException {
+    void testLoadContacts() throws SQLException {
         final Table table = this.conn.getConnectionInfo().getCurrentSchema()
                 .findTable(this.conn.getConnectionInfo(), "contacts");
         final Field[] fields = new Field[]{table.getFields()[0]};
-        Assert.assertNotNull("Error loading contacts.db table data.", table.load(fields));
+        assertNotNull(table.load(fields));
     }
 
     /**
@@ -119,11 +123,11 @@ public class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLoadCustomer() throws SQLException {
+    void testLoadCustomer() throws SQLException {
         final Table table = this.conn.getConnectionInfo().getCurrentSchema()
                 .findTable(this.conn.getConnectionInfo(), "customer");
         final Field[] fields = new Field[]{table.getFields()[0]};
-        Assert.assertNotNull("Error loading customer.db table data.", table.load(fields));
+        assertNotNull(table.load(fields));
     }
 
     /**
@@ -132,10 +136,10 @@ public class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLoadHercules() throws SQLException {
+    void testLoadHercules() throws SQLException {
         final Table table = this.conn.getConnectionInfo().getCurrentSchema()
                 .findTable(this.conn.getConnectionInfo(), "hercules");
-        Assert.assertNotNull("Error loading hercules.db table data.", table.load(table.getFields()));
+        assertNotNull(table.load(table.getFields()));
     }
 
     /**
@@ -144,11 +148,11 @@ public class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLoadOrders() throws SQLException {
+    void testLoadOrders() throws SQLException {
         final Table table = this.conn.getConnectionInfo().getCurrentSchema()
                 .findTable(this.conn.getConnectionInfo(), "orders");
         final Field[] fields = new Field[]{table.getFields()[0]};
-        Assert.assertNotNull("Error loading table data.", table.load(fields));
+        assertNotNull(table.load(fields));
     }
 
     /**
@@ -157,18 +161,18 @@ public class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLoadServer() throws SQLException {
+    void testLoadServer() throws SQLException {
         final Table table = this.conn.getConnectionInfo().getCurrentSchema()
                 .findTable(this.conn.getConnectionInfo(), "server");
         final Field[] fields = new Field[]{table.getFields()[0]};
-        Assert.assertNotNull("Error loading table data.", table.load(fields));
+        assertNotNull(table.load(fields));
     }
 
     /**
      * Test for class sanity.
      */
     @Test
-    public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(TableData.class));
+    void testSanity() {
+        assertTrue(TestUtil.assertSanity(TableData.class));
     }
 }

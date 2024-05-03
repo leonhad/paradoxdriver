@@ -12,27 +12,27 @@ package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link DateUtils}.
  *
- * @version 1.0
  * @since 1.3
  */
-public class DateUtilsTest {
+class DateUtilsTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The connection.
@@ -44,14 +44,14 @@ public class DateUtilsTest {
      *
      * @throws SQLException in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws SQLException {
+    @BeforeAll
+    static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
-    @AfterClass
-    public static void tearDown() throws SQLException {
+    @AfterAll
+    static void tearDown() throws SQLException {
         conn.close();
     }
 
@@ -59,81 +59,81 @@ public class DateUtilsTest {
      * Test the Gregorian do SDN conversion.
      */
     @Test
-    public void testGregorianToSdn() {
-        Assert.assertEquals("Invalid date.", 2457566, DateUtils.gregorianToSdn(2016, 6, 26, conn.getConnectionInfo()));
+    void testGregorianToSdn() {
+        assertEquals(2457566, DateUtils.gregorianToSdn(2016, 6, 26, conn.getConnectionInfo()));
     }
 
     /**
      * Check for invalid date.
      */
     @Test
-    public void testGregorianToSdnDateInvalid() {
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(2016, 6, 0, conn.getConnectionInfo()));
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(2016, 6, 32, conn.getConnectionInfo()));
+    void testGregorianToSdnDateInvalid() {
+        assertEquals(0, DateUtils.gregorianToSdn(2016, 6, 0, conn.getConnectionInfo()));
+        assertEquals(0, DateUtils.gregorianToSdn(2016, 6, 32, conn.getConnectionInfo()));
     }
 
     /**
      * Check for invalid month.
      */
     @Test
-    public void testGregorianToSdnMonthInvalid() {
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(2016, 0, 26, conn.getConnectionInfo()));
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(2016, 13, 26, conn.getConnectionInfo()));
+    void testGregorianToSdnMonthInvalid() {
+        assertEquals(0, DateUtils.gregorianToSdn(2016, 0, 26, conn.getConnectionInfo()));
+        assertEquals(0, DateUtils.gregorianToSdn(2016, 13, 26, conn.getConnectionInfo()));
     }
 
     /**
      * Test negative year.
      */
     @Test
-    public void testGregorianToSdnNegativeYearLimit() {
-        Assert.assertEquals("Invalid date.", 1721060, DateUtils.gregorianToSdn(-1, 1, 1, conn.getConnectionInfo()));
-        Assert.assertEquals("Invalid date.", 1721426, DateUtils.gregorianToSdn(1, 1, 1, conn.getConnectionInfo()));
+    void testGregorianToSdnNegativeYearLimit() {
+        assertEquals(1721060, DateUtils.gregorianToSdn(-1, 1, 1, conn.getConnectionInfo()));
+        assertEquals(1721426, DateUtils.gregorianToSdn(1, 1, 1, conn.getConnectionInfo()));
     }
 
     /**
      * Check for invalid year.
      */
     @Test
-    public void testGregorianToSdnYearInvalid() {
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(0, 6, 26, conn.getConnectionInfo()));
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(-5000, 6, 26, conn.getConnectionInfo()));
+    void testGregorianToSdnYearInvalid() {
+        assertEquals(0, DateUtils.gregorianToSdn(0, 6, 26, conn.getConnectionInfo()));
+        assertEquals(0, DateUtils.gregorianToSdn(-5000, 6, 26, conn.getConnectionInfo()));
     }
 
     /**
      * Test for year limits.
      */
     @Test
-    public void testGregorianToSdnYearLimit() {
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(-4714, 11, 24, conn.getConnectionInfo()));
-        Assert.assertEquals("Invalid date.", 0, DateUtils.gregorianToSdn(-4714, 10, 25, conn.getConnectionInfo()));
-        Assert.assertEquals("Invalid date.", 1, DateUtils.gregorianToSdn(-4714, 11, 25, conn.getConnectionInfo()));
-        Assert.assertEquals("Invalid date.", 30, DateUtils.gregorianToSdn(-4714, 12, 24, conn.getConnectionInfo()));
+    void testGregorianToSdnYearLimit() {
+        assertEquals(0, DateUtils.gregorianToSdn(-4714, 11, 24, conn.getConnectionInfo()));
+        assertEquals(0, DateUtils.gregorianToSdn(-4714, 10, 25, conn.getConnectionInfo()));
+        assertEquals(1, DateUtils.gregorianToSdn(-4714, 11, 25, conn.getConnectionInfo()));
+        assertEquals(30, DateUtils.gregorianToSdn(-4714, 12, 24, conn.getConnectionInfo()));
     }
 
     /**
      * Test utility class.
      */
     @Test
-    public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(DateUtils.class));
+    void testSanity() {
+        assertTrue(TestUtil.assertSanity(DateUtils.class));
     }
 
     /**
      * Test low SDN.
      */
     @Test
-    public void testSdnToGregorian() {
+    void testSdnToGregorian() {
         final Date date = DateUtils.sdnToGregorian(1);
-        Assert.assertNotNull("Null date.", date);
-        Assert.assertEquals("Invalid date.", "4715-11-25", date.toString());
+        assertNotNull(date);
+        assertEquals("4715-11-25", date.toString());
     }
 
     /**
      * Test invalid SDN.
      */
     @Test
-    public void testSdnToGregorianInvalid() {
-        Assert.assertNull("Date is not null.", DateUtils.sdnToGregorian(0));
-        Assert.assertNull("Date is not null.", DateUtils.sdnToGregorian(-1));
+    void testSdnToGregorianInvalid() {
+        assertNull(DateUtils.sdnToGregorian(0));
+        assertNull(DateUtils.sdnToGregorian(-1));
     }
 }

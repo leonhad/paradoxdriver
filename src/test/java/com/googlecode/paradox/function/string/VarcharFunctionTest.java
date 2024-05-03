@@ -13,7 +13,10 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -21,16 +24,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link VarcharFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class VarcharFunctionTest {
+class VarcharFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -49,8 +53,8 @@ public class VarcharFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -59,8 +63,8 @@ public class VarcharFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -71,9 +75,8 @@ public class VarcharFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         Properties properties = new Properties();
         properties.put("locale", "pt-BR");
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db", properties);
@@ -85,13 +88,13 @@ public class VarcharFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNumber() throws SQLException {
+    void testNumber() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select varchar(1.2) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "1.2", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("1.2", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 }

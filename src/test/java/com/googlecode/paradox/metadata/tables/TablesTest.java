@@ -11,20 +11,25 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.Driver;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for pdx_tables.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class TablesTest {
+class TablesTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
 
@@ -38,8 +43,8 @@ public class TablesTest {
      *
      * @throws Exception in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
@@ -48,7 +53,7 @@ public class TablesTest {
      *
      * @throws Exception in case of failures.
      */
-    @After
+    @AfterEach
     public void closeConnection() throws Exception {
         if (this.conn != null) {
             this.conn.close();
@@ -60,8 +65,8 @@ public class TablesTest {
      *
      * @throws Exception in case of failures.
      */
-    @Before
-    public void connect() throws Exception {
+    @BeforeEach
+    void connect() throws Exception {
         this.conn = DriverManager.getConnection(CONNECTION_STRING);
     }
 
@@ -69,10 +74,10 @@ public class TablesTest {
      * Test for pdx_tables.
      */
     @Test
-    public void testPdxTables() throws SQLException {
+    void testPdxTables() throws SQLException {
         try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.pdx_tables");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 
@@ -80,13 +85,13 @@ public class TablesTest {
      * Test for tables.
      */
     @Test
-    public void testTables() throws SQLException {
+    void testTables() throws SQLException {
         try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.tables");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
             while (rs.next()) {
-                Assert.assertEquals("Invalid catalog", "test-classes", rs.getString("table_catalog"));
+                assertEquals("test-classes", rs.getString("table_catalog"));
             }
         }
     }

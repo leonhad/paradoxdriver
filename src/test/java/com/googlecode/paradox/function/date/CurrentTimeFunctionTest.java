@@ -12,23 +12,27 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Unit test for {@link CurrentTimeFunctionTest}.
  *
- * @version 1.1
  * @since 1.6.0
  */
 public class CurrentTimeFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -47,8 +51,8 @@ public class CurrentTimeFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -57,8 +61,8 @@ public class CurrentTimeFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -69,9 +73,8 @@ public class CurrentTimeFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -81,13 +84,11 @@ public class CurrentTimeFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTimeInSQL() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select current_time(), ac.AreaCode from geog.tblAC ac, geog.tblsttes st, " +
-                        "geog.County c where c.StateID = st.State and st.State = ac.State " +
-                        "and c.CountyID = 201 order by 1, 2 ");
+    void testTimeInSQL() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select current_time(), ac.AreaCode from geog.tblAC ac, geog.tblsttes st, " +
+                "geog.County c where c.StateID = st.State and st.State = ac.State and c.CountyID = 201 order by 1, 2 ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 }

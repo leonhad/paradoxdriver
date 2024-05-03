@@ -10,19 +10,24 @@
  */
 package com.googlecode.paradox;
 
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for Paradox Statement.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class ParadoxStatementTest {
+class ParadoxStatementTest {
+
     /**
-     * The connection string used in this tests.
+     * The connection string used in tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
 
@@ -36,8 +41,8 @@ public class ParadoxStatementTest {
      *
      * @throws Exception in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
@@ -46,8 +51,8 @@ public class ParadoxStatementTest {
      *
      * @throws Exception in case of failures.
      */
-    @After
-    public void closeConnection() throws Exception {
+    @AfterEach
+    void closeConnection() throws Exception {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -58,8 +63,8 @@ public class ParadoxStatementTest {
      *
      * @throws Exception in case of failures.
      */
-    @Before
-    public void connect() throws Exception {
+    @BeforeEach
+    void connect() throws Exception {
         this.conn = DriverManager.getConnection(CONNECTION_STRING);
     }
 
@@ -67,7 +72,7 @@ public class ParadoxStatementTest {
      * Test for max rows statement.
      */
     @Test
-    public void testAbsoluteEmpty() throws SQLException {
+    void testAbsoluteEmpty() throws SQLException {
         final int totalRows = 10;
         try (final Statement statement = conn.createStatement()) {
             statement.setMaxRows(totalRows);
@@ -78,7 +83,7 @@ public class ParadoxStatementTest {
                     total++;
                 }
 
-                Assert.assertEquals("Invalid number of registers", totalRows, total);
+                assertEquals(totalRows, total);
             }
         }
     }

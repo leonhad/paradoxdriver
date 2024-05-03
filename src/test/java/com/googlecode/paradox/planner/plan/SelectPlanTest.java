@@ -19,21 +19,24 @@ import com.googlecode.paradox.planner.Planner;
 import com.googlecode.paradox.planner.nodes.comparable.EqualsNode;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link SelectPlan} class.
  *
- * @version 1.9
  * @since 1.3
  */
-@SuppressWarnings({"java:S109", "java:S1192"})
-public class SelectPlanTest {
+class SelectPlanTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -52,8 +55,8 @@ public class SelectPlanTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -62,8 +65,8 @@ public class SelectPlanTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -74,9 +77,8 @@ public class SelectPlanTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(SelectPlanTest.CONNECTION_STRING + "db");
     }
 
@@ -86,14 +88,14 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDistinct() throws SQLException {
+    void testDistinct() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select distinct REQTYPE from server");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "G", rs.getString("REQTYPE"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "P", rs.getString("REQTYPE"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("G", rs.getString("REQTYPE"));
+            assertTrue(rs.next());
+            assertEquals("P", rs.getString("REQTYPE"));
+            assertFalse(rs.next());
         }
     }
 
@@ -101,9 +103,8 @@ public class SelectPlanTest {
      * Test for invalid column name.
      */
     @Test
-    public void testInvalidColumnName() {
-        Assert.assertThrows("Invalid column name", ParadoxException.class,
-                () -> this.conn.prepareStatement("select invalid from fields.date7"));
+    void testInvalidColumnName() {
+        assertThrows(ParadoxException.class, () -> this.conn.prepareStatement("select invalid from fields.date7"));
     }
 
     /**
@@ -112,58 +113,56 @@ public class SelectPlanTest {
      * @throws SQLException if has errors.
      */
     @Test
-    public void testSelectJoinOptimization() throws SQLException {
+    void testSelectJoinOptimization() throws SQLException {
         final SQLParser parser = new SQLParser("select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c" +
                 " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
         final StatementNode tree = parser.parse();
 
         final Plan<?, ?> plan = Planner.create(conn.getConnectionInfo(), tree);
-        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
+        assertInstanceOf(SelectPlan.class, plan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;
 
         // Remove the conditionals.
-        Assert.assertNull("Invalid join clause", selectPlan.getCondition());
+        assertNull(selectPlan.getCondition());
 
-        Assert.assertEquals("Invalid table count", 3, selectPlan.getTables().size());
-        Assert.assertTrue("Invalid table condition",
-                selectPlan.getTables().get(1).getConditionalJoin() instanceof EqualsNode);
-        Assert.assertTrue("Invalid table condition",
-                selectPlan.getTables().get(2).getConditionalJoin() instanceof ANDNode);
+        assertEquals(3, selectPlan.getTables().size());
+        assertInstanceOf(EqualsNode.class, selectPlan.getTables().get(1).getConditionalJoin());
+        assertInstanceOf(ANDNode.class, selectPlan.getTables().get(2).getConditionalJoin());
     }
 
     /**
      * Test for SELECT with count optimization.
      *
-     * @throws SQLException if has errors.
+     * @throws SQLException if it has errors.
      */
     @Test
-    public void testSelectCountOptimization() throws SQLException {
+    void testSelectCountOptimization() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select count(*) from geog.tblAC ac cross join geog.tblsttes st cross join geog.County c");
              final ResultSet rs = stmt.executeQuery()) {
 
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 41061680, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(41061680, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
     /**
      * Test for SELECT with count optimization and where.
      *
-     * @throws SQLException if has errors.
+     * @throws SQLException if it has errors.
      */
     @Test
-    public void testSelectCountWhereOptimization() throws SQLException {
+    void testSelectCountWhereOptimization() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select count(*) from geog.tblAC ac cross join geog.tblsttes st cross join geog.County c " +
                         " where st.State = ac.State and c.StateID = st.State");
              final ResultSet rs = stmt.executeQuery()) {
 
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 14722, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(14722, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -173,24 +172,24 @@ public class SelectPlanTest {
      * @throws SQLException if has errors.
      */
     @Test
-    public void testSelectJoinOptimizationOr() throws SQLException {
+    void testSelectJoinOptimizationOr() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         "where c.StateID = st.State and st.State = ac.State or c.CountyID = 201");
         final StatementNode tree = parser.parse();
 
         final Plan<?, ?> plan = Planner.create(conn.getConnectionInfo(), tree);
-        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
+        assertInstanceOf(SelectPlan.class, plan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;
 
         // Remove the conditionals.
-        Assert.assertNotNull("Invalid join clause", selectPlan.getCondition());
+        assertNotNull(selectPlan.getCondition());
 
-        Assert.assertEquals("Invalid table count", 3, selectPlan.getTables().size());
-        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(0).getConditionalJoin());
-        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(1).getConditionalJoin());
-        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(2).getConditionalJoin());
+        assertEquals(3, selectPlan.getTables().size());
+        assertNull(selectPlan.getTables().get(0).getConditionalJoin());
+        assertNull(selectPlan.getTables().get(1).getConditionalJoin());
+        assertNull(selectPlan.getTables().get(2).getConditionalJoin());
     }
 
     /**
@@ -199,25 +198,24 @@ public class SelectPlanTest {
      * @throws SQLException if has errors.
      */
     @Test
-    public void testSelectJoinOptimizationParenthesis() throws SQLException {
+    void testSelectJoinOptimizationParenthesis() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select distinct 1 from geog.tblAC ac, geog.tblsttes st, geog.County c " +
                         "where c.StateID = st.State and (st.State = ac.State or c.CountyID = 201)");
         final StatementNode tree = parser.parse();
 
         final Plan<?, ?> plan = Planner.create(conn.getConnectionInfo(), tree);
-        Assert.assertTrue("Invalid select plan instance", plan instanceof SelectPlan);
+        assertInstanceOf(SelectPlan.class, plan);
 
         final SelectPlan selectPlan = (SelectPlan) plan;
 
         // Remove the conditionals.
-        Assert.assertTrue("Invalid join clause", selectPlan.getCondition() instanceof ORNode);
+        assertInstanceOf(ORNode.class, selectPlan.getCondition());
 
-        Assert.assertEquals("Invalid table count", 3, selectPlan.getTables().size());
-        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(0).getConditionalJoin());
-        Assert.assertNull("Invalid table condition", selectPlan.getTables().get(1).getConditionalJoin());
-        Assert.assertTrue("Invalid table condition",
-                selectPlan.getTables().get(2).getConditionalJoin() instanceof EqualsNode);
+        assertEquals(3, selectPlan.getTables().size());
+        assertNull(selectPlan.getTables().get(0).getConditionalJoin());
+        assertNull(selectPlan.getTables().get(1).getConditionalJoin());
+        assertInstanceOf(EqualsNode.class, selectPlan.getTables().get(2).getConditionalJoin());
     }
 
     /**
@@ -226,26 +224,26 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrderBy() throws SQLException {
+    void testOrderBy() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select \"DATE\", \"TIME\" from fields.date7 order by \"DATE\", \"TIME\"");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString("DATE"));
-            Assert.assertEquals("Invalid value", "10:00:00", rs.getString("TIME"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString("DATE"));
-            Assert.assertNull("Invalid value", rs.getTime("TIME"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-02", rs.getString("DATE"));
-            Assert.assertEquals("Invalid value", "09:25:25", rs.getString("TIME"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-02-01", rs.getString("DATE"));
-            Assert.assertEquals("Invalid value", "10:30:00", rs.getString("TIME"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNull("Invalid value", rs.getString("DATE"));
-            Assert.assertEquals("Invalid value", "10:00:00", rs.getString("TIME"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("2018-01-01", rs.getString("DATE"));
+            assertEquals("10:00:00", rs.getString("TIME"));
+            assertTrue(rs.next());
+            assertEquals("2018-01-01", rs.getString("DATE"));
+            assertNull(rs.getTime("TIME"));
+            assertTrue(rs.next());
+            assertEquals("2018-01-02", rs.getString("DATE"));
+            assertEquals("09:25:25", rs.getString("TIME"));
+            assertTrue(rs.next());
+            assertEquals("2018-02-01", rs.getString("DATE"));
+            assertEquals("10:30:00", rs.getString("TIME"));
+            assertTrue(rs.next());
+            assertNull(rs.getString("DATE"));
+            assertEquals("10:00:00", rs.getString("TIME"));
+            assertFalse(rs.next());
         }
     }
 
@@ -255,24 +253,24 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrderByNotInSelect() throws SQLException {
+    void testOrderByNotInSelect() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select \"DATE\" from fields.date7 order by \"TIME\"");
              final ResultSet rs = stmt.executeQuery()) {
 
             // Test for hidden columns.
-            Assert.assertEquals("Invalid column list", 1, rs.getMetaData().getColumnCount());
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-02", rs.getString(1));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNull("Invalid value", rs.getString("DATE"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-02-01", rs.getString(1));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-01", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(1, rs.getMetaData().getColumnCount());
+            assertTrue(rs.next());
+            assertEquals("2018-01-02", rs.getString(1));
+            assertTrue(rs.next());
+            assertEquals("2018-01-01", rs.getString(1));
+            assertTrue(rs.next());
+            assertNull(rs.getString("DATE"));
+            assertTrue(rs.next());
+            assertEquals("2018-02-01", rs.getString(1));
+            assertTrue(rs.next());
+            assertEquals("2018-01-01", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -282,15 +280,15 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNotExpression() throws SQLException {
+    void testNotExpression() throws SQLException {
         try (final Statement stmt = this.conn.createStatement();
              final ResultSet rs = stmt.executeQuery("select * from joins.joinb where not Id = 2 order by Id")) {
 
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 3, rs.getInt("Id"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 4, rs.getInt("Id"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(3, rs.getInt("Id"));
+            assertTrue(rs.next());
+            assertEquals(4, rs.getInt("Id"));
+            assertFalse(rs.next());
         }
     }
 
@@ -300,14 +298,13 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNotWithParenthesis() throws SQLException {
+    void testNotWithParenthesis() throws SQLException {
         try (final Statement stmt = this.conn.createStatement();
-             final ResultSet rs = stmt.executeQuery(
-                     "select * from joins.joinb where not (Id = 2 or Id = 3) order by Id")) {
+             final ResultSet rs = stmt.executeQuery("select * from joins.joinb where not (Id = 2 or Id = 3) order by Id")) {
 
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 4, rs.getInt("Id"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(4, rs.getInt("Id"));
+            assertFalse(rs.next());
         }
     }
 
@@ -317,17 +314,16 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testComplexColumnsAndFunctions() throws SQLException {
+    void testComplexColumnsAndFunctions() throws SQLException {
         try (final Statement stmt = this.conn.createStatement();
-             final ResultSet rs = stmt.executeQuery(
-                     "select distinct areaCode " +
-                             "from geog.tblAC ac " +
-                             "         inner join geog.tblsttes st on st.State = ac.State " +
-                             "         inner join geog.County c on c.StateID = st.State " +
-                             "where upper(AreasCovered) like upper(trim('hackensack%')) " +
-                             "order by \"Admitted Order\" desc")) {
+             final ResultSet rs = stmt.executeQuery("select distinct areaCode " +
+                     "from geog.tblAC ac " +
+                     "         inner join geog.tblsttes st on st.State = ac.State " +
+                     "         inner join geog.County c on c.StateID = st.State " +
+                     "where upper(AreasCovered) like upper(trim('hackensack%')) " +
+                     "order by \"Admitted Order\" desc")) {
 
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 
@@ -337,11 +333,11 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testErrorDateConversion() throws SQLException {
+    void testErrorDateConversion() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select a.* from fields.DATE4 a where a.DATE = 1 order by \"DATE\"");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -351,13 +347,13 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionWithFields() throws SQLException {
+    void testFunctionWithFields() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select upper(Cities) as ret from AREACODES where AC = 202");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "WASHINGTON D.C.", rs.getString("ret"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("WASHINGTON D.C.", rs.getString("ret"));
+            assertFalse(rs.next());
         }
     }
 
@@ -367,12 +363,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionWithFunctionAlias() throws SQLException {
+    void testFunctionWithFunctionAlias() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select DATE(CURRENT_DATE)");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotNull("Invalid value", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertNotNull(rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -382,12 +378,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunction() throws SQLException {
+    void testFunction() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select upper('upper') as ret");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "UPPER", rs.getString("ret"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("UPPER", rs.getString("ret"));
+            assertFalse(rs.next());
         }
     }
 
@@ -397,13 +393,13 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionInClause() throws SQLException {
+    void testFunctionInClause() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select \"DATE\" from fields.date7 where \"DATE\" = DATE('2018-01-02')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "2018-01-02", rs.getString("DATE"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("2018-01-02", rs.getString("DATE"));
+            assertFalse(rs.next());
         }
     }
 
@@ -413,14 +409,14 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testRecursiveFunction() throws SQLException {
+    void testRecursiveFunction() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select SUBSTRING(upper('upper'), 1, 2) as ret");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertEquals("Invalid column count", 1, rs.getMetaData().getColumnCount());
+            assertEquals(1, rs.getMetaData().getColumnCount());
 
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "UP", rs.getString("ret"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("UP", rs.getString("ret"));
+            assertFalse(rs.next());
         }
     }
 
@@ -430,12 +426,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionAlias() throws SQLException {
+    void testFunctionAlias() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select upper('upper')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "UPPER", rs.getString("upper('upper')"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("UPPER", rs.getString("upper('upper')"));
+            assertFalse(rs.next());
         }
     }
 
@@ -445,12 +441,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrderByNull() throws SQLException {
+    void testOrderByNull() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
                 " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State " +
                 " order by 12 desc, 3 desc");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 
@@ -460,12 +456,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLike() throws SQLException {
+    void testLike() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
                 " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State and " +
                 " AreasCovered like 'hackensack%'");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -475,12 +471,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testUpperInLike() throws SQLException {
+    void testUpperInLike() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac cross join " +
                 " geog.tblsttes st cross join geog.County c where st.State = ac.State and c.StateID = st.State " +
                 " and upper(AreasCovered) like upper('hackensack%')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 
@@ -490,12 +486,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLeftInNoValuesTable() throws SQLException {
+    void testLeftInNoValuesTable() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
                 " left join geog.tblsttes st on st.State = ac.State " +
                 " left join geog.County c on c.StateID = st.State where AreasCovered like 'hackensack%'");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -505,12 +501,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLeftAndFull() throws SQLException {
+    void testLeftAndFull() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
                 " left join geog.tblsttes st on st.State = ac.State " +
                 " left join geog.County c on c.StateID = st.State");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 
@@ -520,12 +516,12 @@ public class SelectPlanTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLeftAndCross() throws SQLException {
+    void testLeftAndCross() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select * from geog.tblAC ac " +
                 " left join geog.tblsttes st on st.State = ac.State " +
                 " cross join geog.County c where c.StateID = st.State");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 
@@ -535,15 +531,14 @@ public class SelectPlanTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testDistinctWithHiddenColumns() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT distinct State FROM AREACODES ORDER BY State, AC");
+    void testDistinctWithHiddenColumns() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT distinct State FROM AREACODES ORDER BY State, AC");
              final ResultSet rs = stmt.executeQuery()) {
 
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "--", rs.getString(1));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotEquals("Invalid value", "--", rs.getString(1));
+            assertTrue(rs.next());
+            assertEquals("--", rs.getString(1));
+            assertTrue(rs.next());
+            assertNotEquals("--", rs.getString(1));
         }
     }
 }

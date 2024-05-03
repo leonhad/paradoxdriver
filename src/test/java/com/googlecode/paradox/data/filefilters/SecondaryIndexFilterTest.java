@@ -10,19 +10,19 @@
  */
 package com.googlecode.paradox.data.filefilters;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Unit test for {@link SecondaryIndexFilter}.
  *
- * @version 1.1
  * @since 1.0
  */
-public class SecondaryIndexFilterTest {
+class SecondaryIndexFilterTest {
 
     /**
      * Test for acceptance.
@@ -31,7 +31,7 @@ public class SecondaryIndexFilterTest {
     public void testAccept() {
         final File file = new File("test.xn2");
         final SecondaryIndexFilter filter = new SecondaryIndexFilter(Locale.ENGLISH);
-        Assert.assertTrue("Invalid file filter.", filter.accept(file));
+        assertTrue(filter.accept(file));
     }
 
 }

@@ -12,20 +12,24 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.Driver;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit test for pdx_warnings.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class WarningsTest {
+class WarningsTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
 
@@ -39,8 +43,8 @@ public class WarningsTest {
      *
      * @throws Exception in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
@@ -49,8 +53,8 @@ public class WarningsTest {
      *
      * @throws Exception in case of failures.
      */
-    @After
-    public void closeConnection() throws Exception {
+    @AfterEach
+    void closeConnection() throws Exception {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -61,8 +65,8 @@ public class WarningsTest {
      *
      * @throws Exception in case of failures.
      */
-    @Before
-    public void connect() throws Exception {
+    @BeforeEach
+    void connect() throws Exception {
         this.conn = DriverManager.getConnection(CONNECTION_STRING);
     }
 
@@ -70,13 +74,13 @@ public class WarningsTest {
      * Test for pdx_warnings.
      */
     @Test
-    public void testPdxWarning() throws SQLException {
+    void testPdxWarning() throws SQLException {
         conn.clearWarnings();
         conn.getMetaData().getTables(null, null, null, null);
 
         try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.pdx_warnings");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertNotNull("Invalid result set state", rs);
+            assertNotNull(rs);
         }
     }
 }

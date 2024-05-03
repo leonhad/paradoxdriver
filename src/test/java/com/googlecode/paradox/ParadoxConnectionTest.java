@@ -12,9 +12,9 @@ package com.googlecode.paradox;
 
 import com.googlecode.paradox.exceptions.ParadoxConnectionException;
 import com.googlecode.paradox.exceptions.ParadoxNotSupportedException;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,26 +22,25 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for connection.
  *
- * @version 1.1
  * @since 1.6.0
  */
-@SuppressWarnings({"java:S2115", "java:S1192"})
-public class ParadoxConnectionTest {
+class ParadoxConnectionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
 
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    @SuppressWarnings("java:S2115")
-    public static void setUp() {
+    @BeforeAll
+    static void setUp() {
         new Driver();
     }
 
@@ -51,9 +50,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testConnect() throws SQLException {
+    void testConnect() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertNotNull("Invalid connection", conn);
+            assertNotNull(conn);
         }
     }
 
@@ -63,10 +62,10 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testClearWarnings() throws SQLException {
+    void testClearWarnings() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
             conn.clearWarnings();
-            Assert.assertNull("Invalid warnings", conn.getWarnings());
+            assertNull(conn.getWarnings());
         }
     }
 
@@ -74,9 +73,8 @@ public class ParadoxConnectionTest {
      * Test for invalid directory.
      */
     @Test
-    public void testInvalidDirectory() {
-        Assert.assertThrows("Invalid directory", ParadoxConnectionException.class,
-                () -> DriverManager.getConnection(CONNECTION_STRING + "/invalid"));
+    void testInvalidDirectory() {
+        assertThrows(ParadoxConnectionException.class, () -> DriverManager.getConnection(CONNECTION_STRING + "/invalid"));
     }
 
     /**
@@ -85,15 +83,14 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharsetChanging() throws SQLException {
+    void testCharsetChanging() throws SQLException {
         String charsetName = "UTF-8";
 
         final Properties info = new Properties();
         info.put("charset", charsetName);
 
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
-            Assert.assertEquals("Invalid charset", charsetName,
-                    ((ParadoxConnection) conn).getConnectionInfo().getCharset().displayName());
+            assertEquals(charsetName, ((ParadoxConnection) conn).getConnectionInfo().getCharset().displayName());
         }
     }
 
@@ -103,9 +100,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDefaultCharset() throws SQLException {
+    void testDefaultCharset() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertNull("Invalid charset", ((ParadoxConnection) conn).getConnectionInfo().getCharset());
+            assertNull(((ParadoxConnection) conn).getConnectionInfo().getCharset());
         }
     }
 
@@ -115,10 +112,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDefaultLocale() throws SQLException {
+    void testDefaultLocale() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertEquals("Invalid charset", "en",
-                    ((ParadoxConnection) conn).getConnectionInfo().getLocale().getLanguage());
+            assertEquals("en", ((ParadoxConnection) conn).getConnectionInfo().getLocale().getLanguage());
         }
     }
 
@@ -128,15 +124,14 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLocaleChanging() throws SQLException {
+    void testLocaleChanging() throws SQLException {
         Locale locale = new Locale.Builder().setLanguage("pt").setRegion("BR").build();
 
         final Properties info = new Properties();
         info.put("locale", locale.toLanguageTag());
 
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
-            Assert.assertEquals("Invalid locale", locale,
-                    ((ParadoxConnection) conn).getConnectionInfo().getLocale());
+            assertEquals(locale, ((ParadoxConnection) conn).getConnectionInfo().getLocale());
         }
     }
 
@@ -146,12 +141,12 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSchemaSwitch() throws SQLException {
+    void testSchemaSwitch() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertEquals("Invalid schema name", "db", conn.getSchema());
+            assertEquals("db", conn.getSchema());
 
             conn.setSchema("fields");
-            Assert.assertEquals("Invalid schema name", "fields", conn.getSchema());
+            assertEquals("fields", conn.getSchema());
         }
     }
 
@@ -161,15 +156,15 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSchemaSwitchWithCatalog() throws SQLException {
+    void testSchemaSwitchWithCatalog() throws SQLException {
         Properties info = new Properties();
         info.put(ConnectionInfo.ENABLE_CATALOG_KEY, "true");
 
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
-            Assert.assertEquals("Invalid schema name", "db", conn.getSchema());
+            assertEquals("db", conn.getSchema());
 
             conn.setSchema("fields");
-            Assert.assertEquals("Invalid schema name", "fields", conn.getSchema());
+            assertEquals("fields", conn.getSchema());
         }
     }
 
@@ -179,9 +174,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDefaultBCDRounding() throws SQLException {
+    void testDefaultBCDRounding() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertTrue("Invalid BCD rounding", ((ParadoxConnection) conn).getConnectionInfo().isBcdRounding());
+            assertTrue(((ParadoxConnection) conn).getConnectionInfo().isBcdRounding());
         }
     }
 
@@ -191,12 +186,12 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testBCDRoundingChanging() throws SQLException {
+    void testBCDRoundingChanging() throws SQLException {
         final Properties info = new Properties();
         info.put("bcd_rounding", "false");
 
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING, info)) {
-            Assert.assertFalse("Invalid BCD rounding", ((ParadoxConnection) conn).getConnectionInfo().isBcdRounding());
+            assertFalse(((ParadoxConnection) conn).getConnectionInfo().isBcdRounding());
         }
     }
 
@@ -206,10 +201,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCreateArray() throws SQLException {
+    void testCreateArray() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertThrows("Invalid create array", ParadoxNotSupportedException.class,
-                    () -> conn.createArrayOf(null, null));
+            assertThrows(ParadoxNotSupportedException.class, () -> conn.createArrayOf(null, null));
         }
     }
 
@@ -219,10 +213,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCreateNClob() throws SQLException {
+    void testCreateNClob() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertThrows("Invalid create NCLOB", ParadoxNotSupportedException.class,
-                    conn::createNClob);
+            assertThrows(ParadoxNotSupportedException.class, conn::createNClob);
         }
     }
 
@@ -232,10 +225,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCreateSQLXML() throws SQLException {
+    void testCreateSQLXML() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertThrows("Invalid create SQL XML", ParadoxNotSupportedException.class,
-                    conn::createSQLXML);
+            assertThrows(ParadoxNotSupportedException.class, conn::createSQLXML);
         }
     }
 
@@ -245,10 +237,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCreateStruct() throws SQLException {
+    void testCreateStruct() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertThrows("Invalid create SQL XML", ParadoxNotSupportedException.class,
-                    () -> conn.createStruct(null, null));
+            assertThrows(ParadoxNotSupportedException.class, () -> conn.createStruct(null, null));
         }
     }
 
@@ -258,9 +249,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCreateBlob() throws SQLException {
+    void testCreateBlob() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertNotNull("Invalid created BLOB", conn.createBlob());
+            assertNotNull(conn.createBlob());
         }
     }
 
@@ -270,9 +261,9 @@ public class ParadoxConnectionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCreateClob() throws SQLException {
+    void testCreateClob() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING)) {
-            Assert.assertNotNull("Invalid created CLOB", conn.createClob());
+            assertNotNull(conn.createClob());
         }
     }
 
@@ -283,11 +274,11 @@ public class ParadoxConnectionTest {
      */
     @Test
     @SuppressWarnings("java:S2095")
-    public void testIsClosed() throws SQLException {
+    void testIsClosed() throws SQLException {
         Connection conn = DriverManager.getConnection(CONNECTION_STRING);
-        Assert.assertFalse("Invalid connection state", conn.isClosed());
+        assertFalse(conn.isClosed());
         conn.close();
-        Assert.assertTrue("Invalid connection state", conn.isClosed());
+        assertTrue(conn.isClosed());
     }
 
     /**
@@ -295,8 +286,7 @@ public class ParadoxConnectionTest {
      */
     @Test
     @SuppressWarnings("java:S2095")
-    public void testRoot() {
-        Assert.assertThrows("Invalid connection in root", ParadoxConnectionException.class,
-                () -> DriverManager.getConnection("jdbc:paradox:/"));
+    void testRoot() {
+        assertThrows(ParadoxConnectionException.class, () -> DriverManager.getConnection("jdbc:paradox:/"));
     }
 }

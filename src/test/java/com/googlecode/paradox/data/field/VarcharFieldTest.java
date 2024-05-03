@@ -11,32 +11,33 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link VarcharField} class.
  *
- * @version 1.5
  * @since 1.3
  */
-public class VarcharFieldTest {
+class VarcharFieldTest {
 
     /**
      * Test for invalid match.
      */
     @Test
-    public void testInvalidMatch() {
+    void testInvalidMatch() {
         final VarcharField field = new VarcharField();
-        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
+        assertFalse(field.match(ParadoxType.NULL));
     }
 
     /**
      * Test for valid match.
      */
     @Test
-    public void testValidMatch() {
+    void testValidMatch() {
         final VarcharField field = new VarcharField();
-        Assert.assertTrue("Field doesn't match.", field.match(ParadoxType.VARCHAR));
+        assertTrue(field.match(ParadoxType.VARCHAR));
     }
 }

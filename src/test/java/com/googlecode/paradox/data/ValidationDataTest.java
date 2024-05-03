@@ -18,11 +18,16 @@ import com.googlecode.paradox.metadata.paradox.ParadoxReferentialIntegrity;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link ValidationData}.
@@ -30,6 +35,7 @@ import java.util.List;
  * @since 1.6.1
  */
 public class ValidationDataTest {
+
     /**
      * Connection string used in tests.
      */
@@ -47,8 +53,8 @@ public class ValidationDataTest {
     /**
      * Register the driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -57,8 +63,8 @@ public class ValidationDataTest {
      *
      * @throws SQLException in case closing of errors.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -69,8 +75,8 @@ public class ValidationDataTest {
      *
      * @throws SQLException in case of connection errors.
      */
-    @Before
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -80,35 +86,35 @@ public class ValidationDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testPictureValidationAreaCode() throws SQLException {
+    void testPictureValidationAreaCode() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getCurrentSchema().list(this.conn.getConnectionInfo(), "AREACODE");
-        Assert.assertFalse(validations.isEmpty());
-        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
         ParadoxTable table = (ParadoxTable) validations.get(0);
-        Assert.assertNotNull(table.getValidation());
+        assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals(4, validation.getFields().length);
-        Assert.assertEquals("###", validation.getFields()[0].getPicture());
-        Assert.assertEquals("Area Code", validation.getFields()[0].getName());
-        Assert.assertNull(validation.getFields()[1].getPicture());
-        Assert.assertEquals("Country", validation.getFields()[1].getName());
-        Assert.assertNull(validation.getFields()[2].getPicture());
-        Assert.assertEquals("Full State", validation.getFields()[2].getName());
-        Assert.assertEquals("&&", validation.getFields()[3].getPicture());
-        Assert.assertEquals("State", validation.getFields()[3].getName());
+        assertEquals(4, validation.getFields().length);
+        assertEquals("###", validation.getFields()[0].getPicture());
+        assertEquals("Area Code", validation.getFields()[0].getName());
+        assertNull(validation.getFields()[1].getPicture());
+        assertEquals("Country", validation.getFields()[1].getName());
+        assertNull(validation.getFields()[2].getPicture());
+        assertEquals("Full State", validation.getFields()[2].getName());
+        assertEquals("&&", validation.getFields()[3].getPicture());
+        assertEquals("State", validation.getFields()[3].getName());
 
         validations = this.conn.getConnectionInfo().getSchema(null, "areas").list(this.conn.getConnectionInfo(), "ZIPCODES");
-        Assert.assertFalse(validations.isEmpty());
-        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
         table = (ParadoxTable) validations.get(0);
-        Assert.assertNotNull(table.getValidation());
+        assertNotNull(table.getValidation());
 
         validation = table.getValidation();
-        Assert.assertEquals("#####", validation.getFields()[0].getPicture());
-        Assert.assertEquals("Zip", validation.getFields()[0].getName());
-        Assert.assertEquals("&&", validation.getFields()[1].getPicture());
-        Assert.assertEquals("State", validation.getFields()[1].getName());
+        assertEquals("#####", validation.getFields()[0].getPicture());
+        assertEquals("Zip", validation.getFields()[0].getName());
+        assertEquals("&&", validation.getFields()[1].getPicture());
+        assertEquals("State", validation.getFields()[1].getName());
     }
 
     /**
@@ -117,18 +123,18 @@ public class ValidationDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testPictureValidationZipCode() throws SQLException {
+    void testPictureValidationZipCode() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "areas").list(this.conn.getConnectionInfo(), "ZIPCODES");
-        Assert.assertFalse(validations.isEmpty());
-        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
         ParadoxTable table = (ParadoxTable) validations.get(0);
-        Assert.assertNotNull(table.getValidation());
+        assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals("#####", validation.getFields()[0].getPicture());
-        Assert.assertEquals("Zip", validation.getFields()[0].getName());
-        Assert.assertEquals("&&", validation.getFields()[1].getPicture());
-        Assert.assertEquals("State", validation.getFields()[1].getName());
+        assertEquals("#####", validation.getFields()[0].getPicture());
+        assertEquals("Zip", validation.getFields()[0].getName());
+        assertEquals("&&", validation.getFields()[1].getPicture());
+        assertEquals("State", validation.getFields()[1].getName());
     }
 
     /**
@@ -137,18 +143,18 @@ public class ValidationDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDefaultValue() throws SQLException {
+    void testDefaultValue() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "fields").list(this.conn.getConnectionInfo(), "logical");
-        Assert.assertFalse(validations.isEmpty());
-        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
         ParadoxTable table = (ParadoxTable) validations.get(0);
-        Assert.assertNotNull(table.getValidation());
+        assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals("BOOL", validation.getFields()[0].getName());
-        Assert.assertEquals(ParadoxType.BOOLEAN, validation.getFields()[0].getType());
-        Assert.assertNotNull(validation.getFields()[0].getDefaultValue());
-        Assert.assertTrue((Boolean) validation.getFields()[0].getDefaultValue());
+        assertEquals("BOOL", validation.getFields()[0].getName());
+        assertEquals(ParadoxType.BOOLEAN, validation.getFields()[0].getType());
+        assertNotNull(validation.getFields()[0].getDefaultValue());
+        assertTrue((Boolean) validation.getFields()[0].getDefaultValue());
     }
 
     /**
@@ -157,19 +163,19 @@ public class ValidationDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTableLookup() throws SQLException {
+    void testTableLookup() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "joins").list(this.conn.getConnectionInfo(), "origin");
-        Assert.assertFalse(validations.isEmpty());
-        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
         ParadoxTable table = (ParadoxTable) validations.get(0);
-        Assert.assertNotNull(table.getValidation());
+        assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals("FK", validation.getFields()[1].getName());
-        Assert.assertEquals(ParadoxType.LONG, validation.getFields()[1].getType());
-        Assert.assertEquals("destination.db", validation.getFields()[1].getDestinationTable());
-        Assert.assertFalse(validation.getFields()[1].isLookupAllFields());
-        Assert.assertTrue(validation.getFields()[1].isLookupHelp());
+        assertEquals("FK", validation.getFields()[1].getName());
+        assertEquals(ParadoxType.LONG, validation.getFields()[1].getType());
+        assertEquals("destination.db", validation.getFields()[1].getDestinationTable());
+        assertFalse(validation.getFields()[1].isLookupAllFields());
+        assertTrue(validation.getFields()[1].isLookupHelp());
     }
 
     /**
@@ -178,19 +184,19 @@ public class ValidationDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFk1() throws SQLException {
+    void testFk1() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "joins").list(this.conn.getConnectionInfo(), "fk1");
-        Assert.assertFalse(validations.isEmpty());
-        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
         ParadoxTable table = (ParadoxTable) validations.get(0);
-        Assert.assertNotNull(table.getValidation());
+        assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
         ParadoxReferentialIntegrity[] references = validation.getReferentialIntegrity();
-        Assert.assertEquals(1, references.length);
-        Assert.assertEquals("reference", references[0].getName());
-        Assert.assertEquals("primary.db", references[0].getDestinationTable());
-        Assert.assertTrue(references[0].isCascade());
+        assertEquals(1, references.length);
+        assertEquals("reference", references[0].getName());
+        assertEquals("primary.db", references[0].getDestinationTable());
+        assertTrue(references[0].isCascade());
     }
 
     /**
@@ -199,36 +205,36 @@ public class ValidationDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMultiple() throws SQLException {
+    void testMultiple() throws SQLException {
         List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "joins").list(this.conn.getConnectionInfo(), "multiple");
-        Assert.assertFalse(validations.isEmpty());
-        Assert.assertTrue(validations.get(0) instanceof ParadoxTable);
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
         ParadoxTable table = (ParadoxTable) validations.get(0);
-        Assert.assertNotNull(table.getValidation());
+        assertNotNull(table.getValidation());
 
         ParadoxValidation validation = table.getValidation();
-        Assert.assertEquals(2, validation.getCount());
+        assertEquals(2, validation.getCount());
 
-        Assert.assertEquals(4, validation.getFieldCount());
-        Assert.assertEquals("ID", validation.getFields()[0].getName());
-        Assert.assertEquals("FK", validation.getFields()[1].getName());
-        Assert.assertEquals("A", validation.getFields()[2].getName());
-        Assert.assertEquals("FK2", validation.getFields()[3].getName());
+        assertEquals(4, validation.getFieldCount());
+        assertEquals("ID", validation.getFields()[0].getName());
+        assertEquals("FK", validation.getFields()[1].getName());
+        assertEquals("A", validation.getFields()[2].getName());
+        assertEquals("FK2", validation.getFields()[3].getName());
 
-        Assert.assertNull(validation.getFields()[0].getPicture());
-        Assert.assertNull(validation.getFields()[1].getPicture());
-        Assert.assertEquals("[(*3{#}) ]*3{#}-*4{#}", validation.getFields()[2].getPicture());
-        Assert.assertNull(validation.getFields()[3].getPicture());
+        assertNull(validation.getFields()[0].getPicture());
+        assertNull(validation.getFields()[1].getPicture());
+        assertEquals("[(*3{#}) ]*3{#}-*4{#}", validation.getFields()[2].getPicture());
+        assertNull(validation.getFields()[3].getPicture());
 
         ParadoxReferentialIntegrity[] references = validation.getReferentialIntegrity();
-        Assert.assertEquals("fk2", references[0].getName());
-        Assert.assertEquals("primary.db", references[0].getDestinationTable());
-        Assert.assertEquals(4, references[0].getFields()[0]);
-        Assert.assertTrue(references[0].isCascade());
+        assertEquals("fk2", references[0].getName());
+        assertEquals("primary.db", references[0].getDestinationTable());
+        assertEquals(4, references[0].getFields()[0]);
+        assertTrue(references[0].isCascade());
 
-        Assert.assertEquals("fk_multiple_primary", references[1].getName());
-        Assert.assertEquals("primary.db", references[1].getDestinationTable());
-        Assert.assertEquals(2, references[1].getFields()[0]);
-        Assert.assertTrue(references[1].isCascade());
+        assertEquals("fk_multiple_primary", references[1].getName());
+        assertEquals("primary.db", references[1].getDestinationTable());
+        assertEquals(2, references[1].getFields()[0]);
+        assertTrue(references[1].isCascade());
     }
 }

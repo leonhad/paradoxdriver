@@ -14,20 +14,24 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.function.string.RightFunction;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link RightFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class CastFunctionTest {
+class CastFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -46,8 +50,8 @@ public class CastFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -56,8 +60,8 @@ public class CastFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -68,9 +72,8 @@ public class CastFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -80,16 +83,16 @@ public class CastFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCast() throws SQLException {
+    void testCast() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select CAST('1234' as INTEGER) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid column type", Types.INTEGER, rs.getMetaData().getColumnType(1));
-            Assert.assertEquals("Invalid column type", "INTEGER", rs.getMetaData().getColumnTypeName(1));
-            Assert.assertEquals("Invalid value", 1234, rs.getInt(1));
-            Assert.assertTrue("Invalid value", rs.getObject(1) instanceof Integer);
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(Types.INTEGER, rs.getMetaData().getColumnType(1));
+            assertEquals("INTEGER", rs.getMetaData().getColumnTypeName(1));
+            assertEquals(1234, rs.getInt(1));
+            assertInstanceOf(Integer.class, rs.getObject(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -99,17 +102,17 @@ public class CastFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testBlob() throws SQLException {
+    void testBlob() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select CAST('1234' as BLOB) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid column type", Types.BLOB, rs.getMetaData().getColumnType(1));
-            Assert.assertEquals("Invalid column type", "BLOB", rs.getMetaData().getColumnTypeName(1));
-            Assert.assertTrue("Invalid value", rs.getObject(1) instanceof byte[]);
+            assertEquals(Types.BLOB, rs.getMetaData().getColumnType(1));
+            assertEquals("BLOB", rs.getMetaData().getColumnTypeName(1));
+            assertInstanceOf(byte[].class, rs.getObject(1));
 
-            Assert.assertNotNull("Invalid blob value", rs.getBlob(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertNotNull(rs.getBlob(1));
+            assertFalse(rs.next());
         }
     }
 }

@@ -13,23 +13,27 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link LPadFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class LPadFunctionTest {
+class LPadFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -48,8 +52,8 @@ public class LPadFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -58,8 +62,8 @@ public class LPadFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -70,9 +74,8 @@ public class LPadFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -82,13 +85,13 @@ public class LPadFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFewer() throws SQLException {
+    void testFewer() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select lpad('1234', 3, '12') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "123", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("123", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -98,13 +101,13 @@ public class LPadFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLPad() throws SQLException {
+    void testLPad() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select lpad('1234', 5, '12') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "11234", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("11234", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -114,13 +117,13 @@ public class LPadFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLPadPattern() throws SQLException {
+    void testLPadPattern() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select lpad('12345', 8, '12') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "12112345", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("12112345", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 }

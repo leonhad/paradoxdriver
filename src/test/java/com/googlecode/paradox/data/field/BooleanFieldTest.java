@@ -11,66 +11,67 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link BooleanField} class.
  *
- * @version 1.3
  * @since 1.3
  */
-public class BooleanFieldTest {
+class BooleanFieldTest {
+
     /**
      * Test for invalid match.
      */
     @Test
-    public void testInvalidMatch() {
+    void testInvalidMatch() {
         final BooleanField field = new BooleanField();
-        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
+        assertFalse(field.match(ParadoxType.NULL));
     }
 
     /**
      * Test for parse false value.
      */
     @Test
-    public void testParseFalse() {
+    void testParseFalse() {
         final BooleanField field = new BooleanField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{-128});
         final Boolean value = field.parse(null, buffer, null);
-        Assert.assertFalse("Invalid boolean value.", value);
+        assertFalse(value);
     }
 
     /**
      * Test for parse null value.
      */
     @Test
-    public void testParseNull() {
+    void testParseNull() {
         final BooleanField field = new BooleanField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0});
         final Boolean value = field.parse(null, buffer, null);
-        Assert.assertNull("Invalid boolean value.", value);
+        assertNull(value);
     }
 
     /**
      * Test for parse true value.
      */
     @Test
-    public void testParseTrue() {
+    void testParseTrue() {
         final BooleanField field = new BooleanField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{-127});
         final Boolean value = field.parse(null, buffer, null);
-        Assert.assertTrue("Invalid boolean value.", value);
+        assertTrue(value);
     }
 
     /**
      * Test for valid match.
      */
     @Test
-    public void testValidMatch() {
+    void testValidMatch() {
         final BooleanField field = new BooleanField();
-        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.BOOLEAN));
+        assertTrue(field.match(ParadoxType.BOOLEAN));
     }
 }

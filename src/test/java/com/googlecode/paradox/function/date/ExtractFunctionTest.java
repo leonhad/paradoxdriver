@@ -12,23 +12,27 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link ExtractFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class ExtractFunctionTest {
+class ExtractFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -47,8 +51,8 @@ public class ExtractFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -57,8 +61,8 @@ public class ExtractFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -69,9 +73,8 @@ public class ExtractFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -81,14 +84,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMilliseconds() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(MILLISECOND FROM '2017-06-15 01:02:03.091') ");
+    void testMilliseconds() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(MILLISECOND FROM '2017-06-15 01:02:03.091') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 91, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(91, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -98,14 +100,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSeconds() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(SECOND FROM '2017-06-15 01:02:03.091') ");
+    void testSeconds() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(SECOND FROM '2017-06-15 01:02:03.091') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 3, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(3, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -115,14 +116,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMinutes() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(MINUTE FROM '2017-06-15 01:02:03.091') ");
+    void testMinutes() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(MINUTE FROM '2017-06-15 01:02:03.091') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 2, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(2, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -132,14 +132,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testHours() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(HOUR FROM '2017-06-15 13:02:03.091') ");
+    void testHours() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(HOUR FROM '2017-06-15 13:02:03.091') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 13, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(13, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -149,14 +148,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testHoursTime() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(HOUR FROM '13:02:03') ");
+    void testHoursTime() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(HOUR FROM '13:02:03') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 13, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(13, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -166,14 +164,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDay() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(DAY FROM '2017-06-15') ");
+    void testDay() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(DAY FROM '2017-06-15') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 15, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(15, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -183,14 +180,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDayTimestamp() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(DAY FROM '2017-06-15 13:02:03.091') ");
+    void testDayTimestamp() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(DAY FROM '2017-06-15 13:02:03.091') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 15, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(15, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -200,14 +196,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMonth() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(MONTH FROM '2017-06-15') ");
+    void testMonth() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(MONTH FROM '2017-06-15') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 6, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(6, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -217,14 +212,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testYear() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(YEAR FROM '2017-06-15') ");
+    void testYear() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(YEAR FROM '2017-06-15') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 2017, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(2017, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -234,14 +228,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testWeek() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(WEEK FROM '2017-06-15') ");
+    void testWeek() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(WEEK FROM '2017-06-15') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 24, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(24, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -251,14 +244,13 @@ public class ExtractFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testQuarter() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select EXTRACT(QUARTER FROM '2017-06-15') ");
+    void testQuarter() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select EXTRACT(QUARTER FROM '2017-06-15') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", 2, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals(2, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 }

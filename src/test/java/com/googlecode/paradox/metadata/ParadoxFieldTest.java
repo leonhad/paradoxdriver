@@ -12,113 +12,113 @@ package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.metadata.paradox.ParadoxField;
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link ParadoxField} class.
  *
- * @version 1.4
  * @since 1.3
  */
-public class ParadoxFieldTest {
+class ParadoxFieldTest {
 
     /**
      * Test for auto increment.
      */
     @Test
-    public void testAutoIncrement() {
+    void testAutoIncrement() {
         final ParadoxField field = new ParadoxField(ParadoxType.AUTO_INCREMENT);
-        Assert.assertTrue("Invalid autoincrement type.", field.isAutoIncrement());
+        assertTrue(field.isAutoIncrement());
     }
 
     /**
      * Test for default order.
      */
     @Test
-    public void testDefaultOrder() {
+    void testDefaultOrder() {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
-        Assert.assertEquals("Invalid field order.", 1, field.getOrderNum());
+        assertEquals(1, field.getOrderNum());
     }
 
     /**
      * Test for empty alias.
      */
     @Test
-    public void testEmptyAlias() {
+    void testEmptyAlias() {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         field.setName("Field");
-        Assert.assertEquals("Invalid field alias.", "Field", field.getAlias());
+        assertEquals("Field", field.getAlias());
     }
 
     /**
      * Test for {@link ParadoxField#equals(Object)} method.
      */
     @Test
-    public void testEquals() {
+    void testEquals() {
         final ParadoxField first = new ParadoxField(ParadoxType.VARCHAR);
         first.setName("Field");
         final ParadoxField last = new ParadoxField(ParadoxType.VARCHAR);
         last.setName("Field");
-        Assert.assertEquals("Invalid equals result.", last, first);
+        assertEquals(last, first);
     }
 
     /**
      * Test for getters and setters.
      */
     @Test
-    public void testGettersAndSetters() {
+    void testGettersAndSetters() {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         field.setAlias("alias");
         field.setName("name");
         field.setTable(null);
 
-        Assert.assertEquals("Invalid field alias.", "alias", field.getAlias());
-        Assert.assertEquals("Invalid field name.", "name", field.getName());
-        Assert.assertNull("Invalid table", field.getTable());
+        assertEquals("alias", field.getAlias());
+        assertEquals("name", field.getName());
+        assertNull(field.getTable());
     }
 
     /**
      * Test for {@link ParadoxField#hashCode()} method.
      */
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         field.setName("Field");
-        Assert.assertNotEquals("Invalid hash code.", 0, field.hashCode());
+        assertNotEquals(0, field.hashCode());
     }
 
     /**
      * Test for not auto increment.
      */
     @Test
-    public void testNotAutoIncrement() {
+    void testNotAutoIncrement() {
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
-        Assert.assertFalse("Invalid autoincrement type.", field.isAutoIncrement());
+        assertFalse(field.isAutoIncrement());
     }
 
     /**
      * Test for {@link ParadoxField#equals(Object)} method different values.
      */
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
         final ParadoxField first = new ParadoxField(ParadoxType.VARCHAR);
         first.setName("Field");
         final ParadoxField last = new ParadoxField(ParadoxType.VARCHAR);
         last.setName("Field 2");
-        Assert.assertNotEquals("Invalid field.", first, last);
+        assertNotEquals(first, last);
 
         first.setName(null);
         last.setName("Field 2");
-        Assert.assertNotEquals("Invalid field.", first, last);
+        assertNotEquals(first, last);
 
         first.setName("Field");
         last.setName(null);
-        Assert.assertNotEquals("Invalid field.", first, last);
+        assertNotEquals(first, last);
 
         first.setName(null);
         last.setName(null);
-        Assert.assertEquals("Invalid field.", first, last);
+        assertEquals(first, last);
     }
 
     /**
@@ -126,20 +126,20 @@ public class ParadoxFieldTest {
      * method.
      */
     @Test
-    public void testSize() {
+    void testSize() {
         // Not CLOB or BLOB type
         final ParadoxField field = new ParadoxField(ParadoxType.VARCHAR);
         field.setSize(10);
-        Assert.assertEquals("Field size invalid.", 10, field.getSize());
+        assertEquals(10, field.getSize());
     }
 
     /**
      * Test for {@link ParadoxField#toString()} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         final ParadoxField first = new ParadoxField(ParadoxType.VARCHAR);
         first.setName("Field");
-        Assert.assertEquals("Invalid field name.", "Field", first.toString());
+        assertEquals("Field", first.toString());
     }
 }

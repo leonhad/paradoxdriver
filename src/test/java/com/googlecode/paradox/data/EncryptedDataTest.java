@@ -11,76 +11,76 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.Driver;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for encrypted data.
  *
- * @version 1.2
  * @since 1.5.0
  */
-public class EncryptedDataTest {
+class EncryptedDataTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * Register the database driver.
      *
      * @throws ClassNotFoundException in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws ClassNotFoundException {
+    @BeforeAll
+    static void setUp() throws ClassNotFoundException {
         Class.forName(Driver.class.getName());
     }
 
     @Test
-    public void testEncrypted() throws SQLException {
+    void testEncrypted() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "encrypt");
              final Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM encrypt.encrypted")) {
 
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid id value", 1, rs.getInt("Id"));
-            Assert.assertEquals("Invalid id value", "Value 1", rs.getString("Text"));
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("Id"));
+            assertEquals("Value 1", rs.getString("Text"));
 
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid id value", 2, rs.getInt("Id"));
-            Assert.assertEquals("Invalid id value", "Value 2", rs.getString("Text"));
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt("Id"));
+            assertEquals("Value 2", rs.getString("Text"));
 
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid id value", 3, rs.getInt("Id"));
-            Assert.assertEquals("Invalid id value", "Value 3", rs.getString("Text"));
+            assertTrue(rs.next());
+            assertEquals(3, rs.getInt("Id"));
+            assertEquals("Value 3", rs.getString("Text"));
 
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid id value", 4, rs.getInt("Id"));
-            Assert.assertEquals("Invalid id value", "Last one", rs.getString("Text"));
+            assertTrue(rs.next());
+            assertEquals(4, rs.getInt("Id"));
+            assertEquals("Last one", rs.getString("Text"));
 
-            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+            assertFalse(rs.next());
         }
     }
 
     @Test
-    public void testEncrypted35() throws SQLException {
+    void testEncrypted35() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "encrypt");
              final Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT * FROM encrypt.encrypted35")) {
 
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid id value", 1.0D, rs.getDouble("A"), 0.0001D);
-            Assert.assertEquals("Invalid id value", "Test 1", rs.getString("B"));
+            assertTrue(rs.next());
+            assertEquals(1.0D, rs.getDouble("A"), 0.0001D);
+            assertEquals("Test 1", rs.getString("B"));
 
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid id value", 2.0D, rs.getInt("A"), 0.0001D);
-            Assert.assertEquals("Invalid id value", "Test2", rs.getString("B"));
+            assertTrue(rs.next());
+            assertEquals(2.0D, rs.getInt("A"), 0.0001D);
+            assertEquals("Test2", rs.getString("B"));
 
-            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -90,15 +90,15 @@ public class EncryptedDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testEncryptedBlob() throws SQLException {
+    void testEncryptedBlob() throws SQLException {
         try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "encrypt");
              final Statement stmt = conn.createStatement();
              final ResultSet rs = stmt.executeQuery("select TEXT from encrypt.encryptedmemo")) {
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertNotNull("Invalid blob value", rs.getBlob("TEXT"));
-            Assert.assertTrue("Invalid ResultSet state", rs.next());
-            Assert.assertNotNull("Invalid blob value", rs.getBlob("TEXT"));
-            Assert.assertFalse("Invalid ResultSet state", rs.next());
+            assertTrue(rs.next());
+            assertNotNull(rs.getBlob("TEXT"));
+            assertTrue(rs.next());
+            assertNotNull(rs.getBlob("TEXT"));
+            assertFalse(rs.next());
         }
     }
 }

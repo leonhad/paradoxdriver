@@ -12,23 +12,27 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for BitLength function.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class BitLengthFunctionTest {
+class BitLengthFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -47,8 +51,8 @@ public class BitLengthFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -57,8 +61,8 @@ public class BitLengthFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -69,9 +73,8 @@ public class BitLengthFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -81,12 +84,12 @@ public class BitLengthFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testStringSize() throws SQLException {
+    void testStringSize() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select bit_length('test') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", "test".length() * 8L, rs.getLong(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals("test".length() * 8L, rs.getLong(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -96,12 +99,12 @@ public class BitLengthFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testIntSize() throws SQLException {
+    void testIntSize() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select bit_length(1) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 64, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(64, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 }

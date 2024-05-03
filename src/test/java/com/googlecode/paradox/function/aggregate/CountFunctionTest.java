@@ -13,24 +13,27 @@ package com.googlecode.paradox.function.aggregate;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link CountFunction}.
  *
- * @version 1.2
  * @since 1.6.0
  */
-@SuppressWarnings({"java:S1192", "java:S109"})
-public class CountFunctionTest {
+class CountFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -49,8 +52,8 @@ public class CountFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -59,8 +62,8 @@ public class CountFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -71,9 +74,8 @@ public class CountFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -83,12 +85,12 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCount() throws SQLException {
+    void testCount() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select count(1) from fields.date7");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 5, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(5, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -98,12 +100,12 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCountNull() throws SQLException {
+    void testCountNull() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select count(\"DATE\") from fields.date7");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 4, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(4, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -113,12 +115,12 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCountAsterisk() throws SQLException {
+    void testCountAsterisk() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select count(*) from fields.date7");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value count", 5, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(5, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -128,12 +130,11 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCountWithGroupBy() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select count(State), AC from db.AREACODES group by AC");
+    void testCountWithGroupBy() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select count(State), AC from db.AREACODES group by AC");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
+            assertTrue(rs.next());
+            assertNotEquals(0, rs.getInt(1));
         }
     }
 
@@ -143,14 +144,13 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCountWithGroupByNotInSelect() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT count(*) FROM AREACODES group by State");
+    void testCountWithGroupByNotInSelect() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT count(*) FROM AREACODES group by State");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotEquals("Invalid column count", 0, rs.getInt(1));
+            assertTrue(rs.next());
+            assertNotEquals(0, rs.getInt(1));
+            assertTrue(rs.next());
+            assertNotEquals(0, rs.getInt(1));
         }
     }
 
@@ -160,14 +160,13 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCountWithNullValues() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select count(LONG) from fields.long where LONG is null");
+    void testCountWithNullValues() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select count(LONG) from fields.long where LONG is null");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 0, rs.getInt(1));
-            Assert.assertFalse("Invalid null value", rs.wasNull());
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(0, rs.getInt(1));
+            assertFalse(rs.wasNull());
+            assertFalse(rs.next());
         }
     }
 
@@ -177,13 +176,12 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCountWithGroupByNullValues() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT count(*), null FROM AREACODES group by null");
+    void testCountWithGroupByNullValues() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT count(*), null FROM AREACODES group by null");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 370, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(370, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -193,13 +191,12 @@ public class CountFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCountInsideFunction() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT upper(count(*)) FROM AREACODES");
+    void testCountInsideFunction() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT upper(count(*)) FROM AREACODES");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid column count", 370, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(370, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 }

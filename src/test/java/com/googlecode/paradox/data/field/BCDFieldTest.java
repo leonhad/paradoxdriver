@@ -12,22 +12,26 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for BCD field.
  *
- * @version 1.2
  * @since 1.5.0
  */
-public class BCDFieldTest {
+class BCDFieldTest {
 
     /**
      * Connection string used in tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.
@@ -37,8 +41,8 @@ public class BCDFieldTest {
     /**
      * Register the driver.
      */
-    @BeforeClass
-    public static void setUp() {
+    @BeforeAll
+    static void setUp() {
         new Driver();
     }
 
@@ -47,8 +51,8 @@ public class BCDFieldTest {
      *
      * @throws SQLException in case closing of errors.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -59,8 +63,8 @@ public class BCDFieldTest {
      *
      * @throws SQLException in case of connection errors.
      */
-    @Before
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
@@ -70,25 +74,24 @@ public class BCDFieldTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadBCD() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT A, B, C FROM fields.bcd")) {
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 1.23D, rs.getDouble("A"), 0.001D);
-            Assert.assertEquals("Invalid value.", 1.0D, rs.getDouble("B"), 0.001D);
-            Assert.assertEquals("Invalid value.", 0.123D, rs.getDouble("C"), 0.001D);
+    void testReadBCD() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT A, B, C FROM fields.bcd")) {
+            assertTrue(rs.next());
+            assertEquals(1.23D, rs.getDouble("A"), 0.001D);
+            assertEquals(1.0D, rs.getDouble("B"), 0.001D);
+            assertEquals(0.123D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", -1.23D, rs.getDouble("A"), 0.001D);
-            Assert.assertEquals("Invalid value.", -1.0D, rs.getDouble("B"), 0.001D);
-            Assert.assertEquals("Invalid value.", -0.123D, rs.getDouble("C"), 0.001D);
+            assertTrue(rs.next());
+            assertEquals(-1.23D, rs.getDouble("A"), 0.001D);
+            assertEquals(-1.0D, rs.getDouble("B"), 0.001D);
+            assertEquals(-0.123D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 0.0D, rs.getDouble("A"), 0.001D);
-            Assert.assertNull("Invalid value.", rs.getObject("B"));
-            Assert.assertEquals("Invalid value.", 0.9999D, rs.getDouble("C"), 0.001D);
+            assertTrue(rs.next());
+            assertEquals(0.0D, rs.getDouble("A"), 0.001D);
+            assertNull(rs.getObject("B"));
+            assertEquals(0.9999D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertFalse("Invalid Result Set state.", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -98,19 +101,18 @@ public class BCDFieldTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadBCDSkipping() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT C FROM fields.bcd")) {
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 0.123D, rs.getDouble("C"), 0.001D);
+    void testReadBCDSkipping() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT C FROM fields.bcd")) {
+            assertTrue(rs.next());
+            assertEquals(0.123D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", -0.123D, rs.getDouble("C"), 0.001D);
+            assertTrue(rs.next());
+            assertEquals(-0.123D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 0.9999D, rs.getDouble("C"), 0.001D);
+            assertTrue(rs.next());
+            assertEquals(0.9999D, rs.getDouble("C"), 0.001D);
 
-            Assert.assertFalse("Invalid Result Set state.", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -120,18 +122,17 @@ public class BCDFieldTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testBCDMetadata() throws SQLException {
-        try (final Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT C FROM fields.bcd")) {
+    void testBCDMetadata() throws SQLException {
+        try (final Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT C FROM fields.bcd")) {
 
             final ResultSetMetaData metaData = rs.getMetaData();
-            Assert.assertEquals("Invalid type name.", "BCD", metaData.getColumnTypeName(1));
+            assertEquals("BCD", metaData.getColumnTypeName(1));
         }
 
         DatabaseMetaData databaseMetaData = conn.getMetaData();
         try (ResultSet rs = databaseMetaData.getColumns(null, "fields", "bcd", "%")) {
             while (rs.next()) {
-                Assert.assertEquals("Invalid type name.", "BCD", rs.getString("TYPE_NAME"));
+                assertEquals("BCD", rs.getString("TYPE_NAME"));
             }
         }
     }
@@ -142,13 +143,11 @@ public class BCDFieldTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testEquals() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "select c from fields.bcd " +
-                        "where c = 0.999900000000000011810001400000141541")) {
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 1.0D, rs.getDouble("c"), 0.001D);
-            Assert.assertFalse("Invalid Result Set state.", rs.next());
+    void testEquals() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery("select c from fields.bcd where c = 0.999900000000000011810001400000141541")) {
+            assertTrue(rs.next());
+            assertEquals(1.0D, rs.getDouble("c"), 0.001D);
+            assertFalse(rs.next());
         }
     }
 }

@@ -11,51 +11,52 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link IntegerField} class.
  *
- * @version 1.3
  * @since 1.3
  */
-public class IntegerFieldTest {
+class IntegerFieldTest {
+
     /**
      * Test for invalid match.
      */
     @Test
-    public void testInvalidMatch() {
+    void testInvalidMatch() {
         final IntegerField field = new IntegerField();
-        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
+        assertFalse(field.match(ParadoxType.NULL));
     }
 
     /**
      * Test for parse method.
      */
     @Test
-    public void testParse() {
+    void testParse() {
         final IntegerField field = new IntegerField();
 
         // Test positive numbers
         ByteBuffer buffer = ByteBuffer.wrap(new byte[]{(byte) 0x87, (byte) 0xE1});
         Object value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", 2017, value);
+        assertEquals(2017, value);
 
         // Test negative numbers
         buffer = ByteBuffer.wrap(new byte[]{(byte) 0x40, (byte) 0x59});
         value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number value.", -16295, value);
+        assertEquals(-16295, value);
     }
 
     /**
      * Test for valid match.
      */
     @Test
-    public void testValidMatch() {
+    void testValidMatch() {
         final IntegerField field = new IntegerField();
-        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.INTEGER));
+        assertTrue(field.match(ParadoxType.INTEGER));
     }
 }

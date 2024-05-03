@@ -15,27 +15,28 @@ import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.rowset.ValuesConverter;
 import com.googlecode.paradox.utils.TestUtil;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Unit test for {@link FieldValueUtils} class.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class FieldValueUtilsTest {
+class FieldValueUtilsTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The connection.
@@ -47,14 +48,14 @@ public class FieldValueUtilsTest {
      *
      * @throws SQLException in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws SQLException {
+    @BeforeAll
+    static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
-    @AfterClass
-    public static void tearDown() throws SQLException {
+    @AfterAll
+    static void tearDown() throws SQLException {
         conn.close();
     }
 
@@ -62,8 +63,8 @@ public class FieldValueUtilsTest {
      * Test for sanity.
      */
     @Test
-    public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(FieldValueUtils.class));
+    void testSanity() {
+        assertTrue(TestUtil.assertSanity(FieldValueUtils.class));
     }
 
     /**
@@ -72,10 +73,10 @@ public class FieldValueUtilsTest {
      * @throws ParadoxDataException in case of conversion failures.
      */
     @Test
-    public void testConversion() throws ParadoxDataException {
+    void testConversion() throws ParadoxDataException {
         final String original = "String to convert.";
         final byte[] values = original.getBytes(StandardCharsets.UTF_8);
 
-        Assert.assertEquals("Invalid conversion", original, ValuesConverter.convert(values, StandardCharsets.UTF_8));
+        assertEquals(original, ValuesConverter.convert(values, StandardCharsets.UTF_8));
     }
 }

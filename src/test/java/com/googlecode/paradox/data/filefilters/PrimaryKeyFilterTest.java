@@ -11,19 +11,19 @@
 
 package com.googlecode.paradox.data.filefilters;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Unit test for {@link PrimaryKeyFilter}.
  *
- * @version 1.1
  * @since 1.0
  */
-public class PrimaryKeyFilterTest {
+class PrimaryKeyFilterTest {
 
     /**
      * Test for acceptance.
@@ -32,6 +32,6 @@ public class PrimaryKeyFilterTest {
     public void testAccept() {
         final File file = new File("test.px");
         final PrimaryKeyFilter filter = new PrimaryKeyFilter(Locale.ENGLISH);
-        Assert.assertTrue("Invalid file filter.", filter.accept(file));
+        assertTrue(filter.accept(file));
     }
 }

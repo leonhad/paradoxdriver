@@ -20,20 +20,19 @@ import com.googlecode.paradox.planner.nodes.comparable.*;
 import com.googlecode.paradox.planner.nodes.join.ANDNode;
 import com.googlecode.paradox.planner.nodes.join.ORNode;
 import com.googlecode.paradox.planner.sorting.OrderType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link SQLParser}.
  *
- * @version 1.7
  * @since 1.0
  */
-@SuppressWarnings({"java:S109", "java:S1192", "java:S1200", "java:S1448"})
-public class SQLParserTest {
+class SQLParserTest {
 
     /**
      * Test for is null expressions.
@@ -41,16 +40,17 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testIsNull() throws SQLException {
+    void testIsNull() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A is NULL");
         final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof IsNullNode);
+        assertInstanceOf(IsNullNode.class, select.getCondition());
+
         final IsNullNode node = (IsNullNode) select.getCondition();
-        Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
-        Assert.assertNull("Invalid field value.", node.getLast());
+        assertEquals("A", node.getField().getName());
+        assertNull(node.getLast());
     }
 
     /**
@@ -59,17 +59,18 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLike() throws SQLException {
+    void testLike() throws SQLException {
         final SQLParser parser = new SQLParser("select ac.AreasCovered from geog.tblAC ac " +
                 " where ac.AreasCovered like 'Hackensack%'");
         final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof LikeNode);
+        assertInstanceOf(LikeNode.class, select.getCondition());
+
         final LikeNode node = (LikeNode) select.getCondition();
-        Assert.assertEquals("Invalid field name.", "AreasCovered", node.getField().getName());
-        Assert.assertEquals("Invalid field value.", "Hackensack%", node.getLast().getName());
+        assertEquals("AreasCovered", node.getField().getName());
+        assertEquals("Hackensack%", node.getLast().getName());
     }
 
     /**
@@ -78,17 +79,18 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testILike() throws SQLException {
+    void testILike() throws SQLException {
         final SQLParser parser = new SQLParser("select ac.AreasCovered from geog.tblAC ac " +
                 " where ac.AreasCovered ilike 'Hackensack%'");
         final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof ILikeNode);
+        assertInstanceOf(ILikeNode.class, select.getCondition());
+
         final ILikeNode node = (ILikeNode) select.getCondition();
-        Assert.assertEquals("Invalid field name.", "AreasCovered", node.getField().getName());
-        Assert.assertEquals("Invalid field value.", "Hackensack%", node.getLast().getName());
+        assertEquals("AreasCovered", node.getField().getName());
+        assertEquals("Hackensack%", node.getLast().getName());
     }
 
     /**
@@ -97,16 +99,17 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testIsNotNull() throws SQLException {
+    void testIsNotNull() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A is not NULL");
         final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof IsNotNullNode);
+        assertInstanceOf(IsNotNullNode.class, select.getCondition());
+
         final IsNotNullNode node = (IsNotNullNode) select.getCondition();
-        Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
-        Assert.assertNull("Invalid field value.", node.getLast());
+        assertEquals("A", node.getField().getName());
+        assertNull(node.getLast());
     }
 
     /**
@@ -115,16 +118,17 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNullAsValue() throws SQLException {
+    void testNullAsValue() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT A FROM db.B WHERE A = NULL");
         final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertTrue("Invalid condition value.", select.getCondition() instanceof EqualsNode);
+        assertInstanceOf(EqualsNode.class, select.getCondition());
+
         final EqualsNode node = (EqualsNode) select.getCondition();
-        Assert.assertEquals("Invalid field name.", "A", node.getField().getName());
-        Assert.assertTrue("Invalid field value.", node.getLast() instanceof ValueNode);
+        assertEquals("A", node.getField().getName());
+        assertInstanceOf(ValueNode.class, node.getLast());
     }
 
     /**
@@ -133,19 +137,19 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelectWithAlias() throws SQLException {
+    void testSelectWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT t.* FROM table t");
         final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        assertEquals(1, select.getFields().size());
         final SQLNode node = select.getFields().get(0);
 
-        Assert.assertTrue("Invalid node type.", node instanceof AsteriskNode);
+        assertInstanceOf(AsteriskNode.class, node);
         final AsteriskNode asteriskNode = (AsteriskNode) node;
 
-        Assert.assertEquals("Invalid value.", "t", asteriskNode.getTableName());
+        assertEquals("t", asteriskNode.getTableName());
     }
 
     /**
@@ -154,19 +158,19 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSchemaName() throws SQLException {
+    void testSchemaName() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT t.* FROM db.table t");
         final SQLNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
+        assertEquals(1, select.getFields().size());
         final SQLNode node = select.getFields().get(0);
 
-        Assert.assertTrue("Invalid node type.", node instanceof AsteriskNode);
+        assertInstanceOf(AsteriskNode.class, node);
         final AsteriskNode asteriskNode = (AsteriskNode) node;
 
-        Assert.assertEquals("Invalid value.", "t", asteriskNode.getTableName());
+        assertEquals("t", asteriskNode.getTableName());
     }
 
     /**
@@ -175,29 +179,29 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testColumnValue() throws SQLException {
+    void testColumnValue() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT 'test', 123 as number, null FROM client");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 3, select.getFields().size());
+        assertEquals(3, select.getFields().size());
 
-        Assert.assertTrue("Invalid node type.", select.getFields().get(0) instanceof ValueNode);
-        Assert.assertEquals("Invalid node name.", "test", select.getFields().get(0).getName());
+        assertInstanceOf(ValueNode.class, select.getFields().get(0));
+        assertEquals("test", select.getFields().get(0).getName());
 
-        Assert.assertTrue("Invalid node type.", select.getFields().get(1) instanceof ValueNode);
-        Assert.assertEquals("Invalid node name.", "123", select.getFields().get(1).getName());
-        Assert.assertEquals("Invalid node alias.", "number", select.getFields().get(1).getAlias());
+        assertInstanceOf(ValueNode.class, select.getFields().get(1));
+        assertEquals("123", select.getFields().get(1).getName());
+        assertEquals("number", select.getFields().get(1).getAlias());
 
-        Assert.assertTrue("Invalid node type.", select.getFields().get(2) instanceof ValueNode);
-        Assert.assertNull("Invalid node name.", select.getFields().get(2).getName());
-        Assert.assertEquals("Invalid node alias.", "null", select.getFields().get(2).getAlias());
+        assertInstanceOf(ValueNode.class, select.getFields().get(2));
+        assertNull(select.getFields().get(2).getName());
+        assertEquals("null", select.getFields().get(2).getAlias());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
     }
 
     /**
@@ -206,20 +210,20 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testJoin() throws SQLException {
+    void testJoin() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "SELECT * FROM client c inner join test t on test_id = id and a <> b left join table on a = b");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 3, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        assertEquals(3, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
     }
 
     /**
@@ -228,22 +232,22 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFullJoin() throws SQLException {
+    void testFullJoin() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client c full join test t on test_id = id ");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 2, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
-        Assert.assertEquals("Invalid node name.", "test", select.getTables().get(1).getName());
-        Assert.assertTrue("Invalid node type", select.getTables().get(1) instanceof JoinNode);
-        Assert.assertEquals("Invalid node name.", JoinType.FULL, ((JoinNode) select.getTables().get(1)).getJoinType());
+        assertEquals(2, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
+        assertEquals("test", select.getTables().get(1).getName());
+        assertInstanceOf(JoinNode.class, select.getTables().get(1));
+        assertEquals(JoinType.FULL, ((JoinNode) select.getTables().get(1)).getJoinType());
     }
 
     /**
@@ -252,19 +256,19 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelect() throws SQLException {
+    void testSelect() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals( TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
     }
 
     /**
@@ -273,9 +277,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNoTableAfterFrom() throws SQLException {
+    void testNoTableAfterFrom() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM");
-        Assert.assertThrows("Invalid table loaded", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 
     /**
@@ -284,9 +288,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNoOrderByFields() throws SQLException {
+    void testNoOrderByFields() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM a ORDER BY");
-        Assert.assertThrows("Invalid table loaded", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 
     /**
@@ -295,9 +299,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testEmptyWhere() throws SQLException {
+    void testEmptyWhere() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM a WHERE");
-        Assert.assertThrows("Invalid table loaded", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 
     /**
@@ -306,19 +310,19 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTable() throws SQLException {
+    void testTable() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM \"client.db\"");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
     }
 
     /**
@@ -327,25 +331,25 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTwoTable() throws SQLException {
+    void testTwoTable() throws SQLException {
         final SQLParser parser = new SQLParser("select a.CODE as cod, state.NAME name FROM client, state");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", "CODE", select.getFields().get(0).getName());
-        Assert.assertEquals("Invalid node alias.", "cod", select.getFields().get(0).getAlias());
+        assertEquals(2, select.getFields().size());
+        assertEquals("CODE", select.getFields().get(0).getName());
+        assertEquals("cod", select.getFields().get(0).getAlias());
 
-        Assert.assertEquals("Invalid node name.", "state", ((FieldNode) select.getFields().get(1)).getTableName());
-        Assert.assertEquals("Invalid node name.", "NAME", select.getFields().get(1).getName());
-        Assert.assertEquals("Invalid node alias.", "name", select.getFields().get(1).getAlias());
+        assertEquals("state", ((FieldNode) select.getFields().get(1)).getTableName());
+        assertEquals("NAME", select.getFields().get(1).getName());
+        assertEquals("name", select.getFields().get(1).getAlias());
 
-        Assert.assertEquals("Invalid node size.", 2, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
-        Assert.assertEquals("Invalid node alias.", "state", select.getTables().get(1).getName());
+        assertEquals(2, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
+        assertEquals("state", select.getTables().get(1).getName());
     }
 
     /**
@@ -354,23 +358,23 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTwoTableWithAlias() throws SQLException {
+    void testTwoTableWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser("select *, name FROM client as cli, state STATE");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
-        Assert.assertEquals("Invalid node size.", 2, select.getTables().size());
+        assertEquals(2, select.getFields().size());
+        assertEquals(2, select.getTables().size());
 
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
-        Assert.assertEquals("Invalid node alias.", "cli", select.getTables().get(0).getAlias());
-        Assert.assertEquals("Invalid node name.", "state", select.getTables().get(1).getName());
-        Assert.assertEquals("Invalid node alias.", "STATE", select.getTables().get(1).getAlias());
+        assertEquals("client", select.getTables().get(0).getName());
+        assertEquals("cli", select.getTables().get(0).getAlias());
+        assertEquals("state", select.getTables().get(1).getName());
+        assertEquals("STATE", select.getTables().get(1).getAlias());
     }
 
     /**
@@ -379,36 +383,32 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testWhere() throws SQLException {
+    void testWhere() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE a = b and c <> t");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
-        Assert.assertEquals("Invalid node alias.", "test", select.getTables().get(0).getAlias());
+        assertEquals(1, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
+        assertEquals("test", select.getTables().get(0).getAlias());
 
-        Assert.assertNotNull("Invalid node value.", select.getCondition());
-        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof ANDNode);
+        assertNotNull(select.getCondition());
+        assertInstanceOf(ANDNode.class, select.getCondition());
 
         ANDNode node = ((ANDNode) select.getCondition());
-        Assert.assertEquals("Invalid node size.", 2, node.getChildren().size());
-        Assert.assertTrue("Invalid node type.", node.getChildren().get(0) instanceof EqualsNode);
-        Assert.assertTrue("Invalid node type.", node.getChildren().get(1) instanceof NotEqualsNode);
-        Assert.assertEquals("Invalid node name.", "a",
-                ((EqualsNode) node.getChildren().get(0)).getField().getName());
-        Assert.assertEquals("Invalid node name.", "b",
-                ((EqualsNode) node.getChildren().get(0)).getLast().getName());
-        Assert.assertEquals("Invalid node name.", "c",
-                ((NotEqualsNode) node.getChildren().get(1)).getField().getName());
-        Assert.assertEquals("Invalid node name.", "t",
-                ((NotEqualsNode) node.getChildren().get(1)).getLast().getName());
+        assertEquals(2, node.getChildren().size());
+        assertInstanceOf(EqualsNode.class, node.getChildren().get(0));
+        assertInstanceOf(NotEqualsNode.class, node.getChildren().get(1));
+        assertEquals("a", ((EqualsNode) node.getChildren().get(0)).getField().getName());
+        assertEquals("b", ((EqualsNode) node.getChildren().get(0)).getLast().getName());
+        assertEquals("c", ((NotEqualsNode) node.getChildren().get(1)).getField().getName());
+        assertEquals("t", ((NotEqualsNode) node.getChildren().get(1)).getLast().getName());
     }
 
     /**
@@ -417,29 +417,29 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testWhereWithAlias() throws SQLException {
+    void testWhereWithAlias() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM client as test WHERE test.a = c.b");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "client", select.getTables().get(0).getName());
-        Assert.assertEquals("Invalid node alias.", "test", select.getTables().get(0).getAlias());
+        assertEquals(1, select.getTables().size());
+        assertEquals("client", select.getTables().get(0).getName());
+        assertEquals("test", select.getTables().get(0).getAlias());
 
-        Assert.assertNotNull("Invalid node value.", select.getCondition());
-        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof EqualsNode);
+        assertNotNull(select.getCondition());
+        assertInstanceOf(EqualsNode.class, select.getCondition());
 
         EqualsNode node = ((EqualsNode) select.getCondition());
-        Assert.assertEquals("Invalid node table name.", "test", node.getField().getTableName());
-        Assert.assertEquals("Invalid node name.", "a", node.getField().getName());
-        Assert.assertEquals("Invalid node table name.", "c", node.getLast().getTableName());
-        Assert.assertEquals("Invalid node name.", "b", node.getLast().getName());
+        assertEquals("test", node.getField().getTableName());
+        assertEquals("a", node.getField().getName());
+        assertEquals("c", node.getLast().getTableName());
+        assertEquals("b", node.getLast().getName());
     }
 
     /**
@@ -448,26 +448,26 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNot() throws SQLException {
+    void testNot() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT * FROM AREACODES WHERE NOT State = 'NY'");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "AREACODES", select.getTables().get(0).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("AREACODES", select.getTables().get(0).getName());
 
-        Assert.assertNotNull("Invalid node value.", select.getCondition());
-        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof NotNode);
+        assertNotNull(select.getCondition());
+        assertInstanceOf(NotNode.class, select.getCondition());
 
         final NotNode node = (NotNode) select.getCondition();
-        Assert.assertEquals("Invalid node table name.", 1, node.getChildren().size());
-        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof EqualsNode);
+        assertEquals(1, node.getChildren().size());
+        assertInstanceOf(EqualsNode.class, node.getChildren().get(0));
     }
 
     /**
@@ -476,30 +476,30 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNotAndOr() throws SQLException {
+    void testNotAndOr() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select * from joins.joinb where not (Id = 2 or Id = 3) or Id = 2 order by Id"
         );
 
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "joinb", select.getTables().get(0).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("joinb", select.getTables().get(0).getName());
 
-        Assert.assertNotNull("Invalid node value.", select.getCondition());
-        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof ORNode);
+        assertNotNull(select.getCondition());
+        assertInstanceOf(ORNode.class, select.getCondition());
 
         final ORNode node = (ORNode) select.getCondition();
-        Assert.assertEquals("Invalid node size.", 2, node.getChildren().size());
-        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof NotNode);
-        Assert.assertTrue("Invalid node name.", node.getChildren().get(1) instanceof EqualsNode);
+        assertEquals(2, node.getChildren().size());
+        assertInstanceOf(NotNode.class, node.getChildren().get(0));
+        assertInstanceOf(EqualsNode.class, node.getChildren().get(1));
     }
 
     /**
@@ -508,30 +508,30 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrAndNot() throws SQLException {
+    void testOrAndNot() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select * from joins.joinb where Id = 2 or not (Id = 2 or Id = 3) order by Id"
         );
 
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "joinb", select.getTables().get(0).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("joinb", select.getTables().get(0).getName());
 
-        Assert.assertNotNull("Invalid node value.", select.getCondition());
-        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof ORNode);
+        assertNotNull(select.getCondition());
+        assertInstanceOf(ORNode.class, select.getCondition());
 
         final ORNode node = (ORNode) select.getCondition();
-        Assert.assertEquals("Invalid node size.", 2, node.getChildren().size());
-        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof EqualsNode);
-        Assert.assertTrue("Invalid node name.", node.getChildren().get(1) instanceof NotNode);
+        assertEquals(2, node.getChildren().size());
+        assertInstanceOf(EqualsNode.class, node.getChildren().get(0));
+        assertInstanceOf(NotNode.class, node.getChildren().get(1));
     }
 
     /**
@@ -540,29 +540,27 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNotLike() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "select * from joins.joinb where Id not like '2' "
-        );
+    void testNotLike() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from joins.joinb where Id not like '2' ");
 
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", TokenType.ASTERISK.name(), select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals(TokenType.ASTERISK.name(), select.getFields().get(0).getName());
 
-        Assert.assertEquals("Invalid node size.", 1, select.getTables().size());
-        Assert.assertEquals("Invalid node name.", "joinb", select.getTables().get(0).getName());
+        assertEquals(1, select.getTables().size());
+        assertEquals("joinb", select.getTables().get(0).getName());
 
-        Assert.assertNotNull("Invalid node value.", select.getCondition());
-        Assert.assertTrue("Invalid node type.", select.getCondition() instanceof NotNode);
+        assertNotNull(select.getCondition());
+        assertInstanceOf(NotNode.class, select.getCondition());
 
         final NotNode node = (NotNode) select.getCondition();
-        Assert.assertEquals("Invalid node size.", 1, node.getChildren().size());
-        Assert.assertTrue("Invalid node name.", node.getChildren().get(0) instanceof LikeNode);
+        assertEquals(1, node.getChildren().size());
+        assertInstanceOf(LikeNode.class, node.getChildren().get(0));
     }
 
     /**
@@ -571,9 +569,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testException() throws SQLException {
+    void testException() throws SQLException {
         final SQLParser parser = new SQLParser("select a. FROM AREACODES a");
-        Assert.assertThrows("Invalid result", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 
     /**
@@ -582,17 +580,17 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelectWithoutFromTwoArguments() throws SQLException {
+    void testSelectWithoutFromTwoArguments() throws SQLException {
         final SQLParser parser = new SQLParser("select 1, 'b'");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 2, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", "1", select.getFields().get(0).getName());
-        Assert.assertEquals("Invalid node name.", "b", select.getFields().get(1).getName());
+        assertEquals(2, select.getFields().size());
+        assertEquals("1", select.getFields().get(0).getName());
+        assertEquals("b", select.getFields().get(1).getName());
     }
 
     /**
@@ -601,16 +599,16 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelectWithoutFrom() throws SQLException {
+    void testSelectWithoutFrom() throws SQLException {
         final SQLParser parser = new SQLParser("select 1");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertEquals("Invalid node name.", "1", select.getFields().get(0).getName());
+        assertEquals(1, select.getFields().size());
+        assertEquals("1", select.getFields().get(0).getName());
     }
 
     /**
@@ -619,9 +617,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSelectToken() throws SQLException {
+    void testSelectToken() throws SQLException {
         final SQLParser parser = new SQLParser("select");
-        Assert.assertThrows("Invalid SQL node", ParadoxSyntaxErrorException.class, parser::parse);
+        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -630,21 +628,20 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testJoinOptimizationAND() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
-                        " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
+    void testJoinOptimizationAND() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                " where c.StateID = st.State and st.State = ac.State and c.CountyID = 201");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(ANDNode.class, select.getCondition());
 
         final ANDNode and = (ANDNode) select.getCondition();
-        Assert.assertEquals("Invalid node size.", 3, and.getChildren().size());
+        assertEquals(3, and.getChildren().size());
     }
 
     /**
@@ -653,21 +650,20 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testJoinOptimizationOR() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
-                        " where c.StateID = st.State or st.State = ac.State or c.CountyID = 201");
+    void testJoinOptimizationOR() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from geog.tblAC ac, geog.tblsttes st, geog.County c " +
+                " where c.StateID = st.State or st.State = ac.State or c.CountyID = 201");
         final SQLNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ORNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(ORNode.class, select.getCondition());
 
         final ORNode and = (ORNode) select.getCondition();
-        Assert.assertEquals("Invalid node size.", 3, and.getChildren().size());
+        assertEquals(3, and.getChildren().size());
     }
 
     /**
@@ -676,35 +672,34 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testParameters() throws SQLException {
-        final SQLParser parser = new SQLParser("select * from geog.tblAC ac" +
-                " where ac.State = ? and ? = ac.AreaCode");
+    void testParameters() throws SQLException {
+        final SQLParser parser = new SQLParser("select * from geog.tblAC ac where ac.State = ? and ? = ac.AreaCode");
         final StatementNode tree = parser.parse();
 
-        Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());
+        assertEquals(2, tree.getParameterCount());
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(ANDNode.class, select.getCondition());
 
         final ANDNode and = (ANDNode) select.getCondition();
-        Assert.assertEquals("Invalid node size.", 2, and.getChildren().size());
+        assertEquals(2, and.getChildren().size());
 
-        Assert.assertTrue("Invalid conditional type", and.getChildren().get(0) instanceof EqualsNode);
+        assertInstanceOf(EqualsNode.class, and.getChildren().get(0));
         EqualsNode equals = (EqualsNode) and.getChildren().get(0);
 
-        Assert.assertEquals("Invalid node value.", "ac.State", equals.getField().toString());
-        Assert.assertTrue("Invalid node type.", equals.getLast() instanceof ParameterNode);
-        Assert.assertEquals("Invalid parameter index.", 0, ((ParameterNode) equals.getLast()).getParameterIndex());
+        assertEquals("ac.State", equals.getField().toString());
+        assertInstanceOf(ParameterNode.class, equals.getLast());
+        assertEquals(0, ((ParameterNode) equals.getLast()).getParameterIndex());
 
-        Assert.assertTrue("Invalid conditional type", and.getChildren().get(1) instanceof EqualsNode);
+        assertInstanceOf(EqualsNode.class, and.getChildren().get(1));
         equals = (EqualsNode) and.getChildren().get(1);
-        Assert.assertTrue("Invalid node type.", equals.getField() instanceof ParameterNode);
-        Assert.assertEquals("Invalid parameter index.", 1, ((ParameterNode) equals.getField()).getParameterIndex());
-        Assert.assertEquals("Invalid node value.", "ac.AreaCode", equals.getLast().toString());
+        assertInstanceOf(ParameterNode.class, equals.getField());
+        assertEquals(1, ((ParameterNode) equals.getField()).getParameterIndex());
+        assertEquals("ac.AreaCode", equals.getLast().toString());
     }
 
     /**
@@ -713,18 +708,18 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testParametersInSelect() throws SQLException {
+    void testParametersInSelect() throws SQLException {
         final SQLParser parser = new SQLParser("select ? as test");
         final StatementNode tree = parser.parse();
-        Assert.assertEquals("Invalid parameter count.", 1, tree.getParameterCount());
+        assertEquals(1, tree.getParameterCount());
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertTrue("Invalid conditional type", select.getFields().get(0) instanceof ParameterNode);
-        Assert.assertEquals("Invalid conditional type", "test", select.getFields().get(0).getAlias());
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(ParameterNode.class, select.getFields().get(0));
+        assertEquals("test", select.getFields().get(0).getAlias());
     }
 
     /**
@@ -733,9 +728,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testInvalidJoinNode() throws SQLException {
+    void testInvalidJoinNode() throws SQLException {
         final SQLParser parser = new SQLParser("select * from a where ab = 1 aaa ba = 2");
-        Assert.assertThrows("Invalid join node", ParadoxSyntaxErrorException.class, parser::parse);
+        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -744,35 +739,35 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testParenthesis() throws SQLException {
+    void testParenthesis() throws SQLException {
         final SQLParser parser = new SQLParser("select * from geog.tblAC ac" +
                 " where (ac.State = ? and ? = ac.AreaCode)");
         final StatementNode tree = parser.parse();
 
-        Assert.assertEquals("Invalid parameter count.", 2, tree.getParameterCount());
+        assertEquals(2, tree.getParameterCount());
 
-        Assert.assertTrue("Invalid node type.", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid node size.", 1, select.getFields().size());
-        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof ANDNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(ANDNode.class, select.getCondition());
 
         final ANDNode and = (ANDNode) select.getCondition();
-        Assert.assertEquals("Invalid node size.", 2, and.getChildren().size());
+        assertEquals(2, and.getChildren().size());
 
-        Assert.assertTrue("Invalid conditional type", and.getChildren().get(0) instanceof EqualsNode);
+        assertInstanceOf(EqualsNode.class, and.getChildren().get(0));
         EqualsNode equals = (EqualsNode) and.getChildren().get(0);
 
-        Assert.assertEquals("Invalid node value.", "ac.State", equals.getField().toString());
-        Assert.assertTrue("Invalid node type.", equals.getLast() instanceof ParameterNode);
-        Assert.assertEquals("Invalid parameter index.", 0, ((ParameterNode) equals.getLast()).getParameterIndex());
+        assertEquals("ac.State", equals.getField().toString());
+        assertInstanceOf(ParameterNode.class, equals.getLast());
+        assertEquals(0, ((ParameterNode) equals.getLast()).getParameterIndex());
 
-        Assert.assertTrue("Invalid conditional type", and.getChildren().get(1) instanceof EqualsNode);
+        assertInstanceOf(EqualsNode.class, and.getChildren().get(1));
         equals = (EqualsNode) and.getChildren().get(1);
-        Assert.assertTrue("Invalid node type.", equals.getField() instanceof ParameterNode);
-        Assert.assertEquals("Invalid parameter index.", 1, ((ParameterNode) equals.getField()).getParameterIndex());
-        Assert.assertEquals("Invalid node value.", "ac.AreaCode", equals.getLast().toString());
+        assertInstanceOf(ParameterNode.class, equals.getField());
+        assertEquals(1, ((ParameterNode) equals.getField()).getParameterIndex());
+        assertEquals("ac.AreaCode", equals.getLast().toString());
     }
 
     /**
@@ -781,20 +776,20 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrderBy() throws SQLException {
+    void testOrderBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 order by \"DATE\"");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+        assertEquals(1, select.getFields().size());
 
-        Assert.assertEquals("Invalid order size", 1, select.getOrder().size());
+        assertEquals(1, select.getOrder().size());
 
         final FieldNode field = select.getOrder().get(0);
-        Assert.assertNull("Invalid parameter index", field.getTableName());
-        Assert.assertEquals("Invalid parameter index", "DATE", field.getName());
+        assertNull(field.getTableName());
+        assertEquals("DATE", field.getName());
     }
 
     /**
@@ -803,26 +798,26 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOrderByDesc() throws SQLException {
+    void testOrderByDesc() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 order by \"DATE\" desc, \"TIME\" asc");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
+        assertEquals(1, select.getFields().size());
 
-        Assert.assertEquals("Invalid order size", 2, select.getOrder().size());
+        assertEquals(2, select.getOrder().size());
 
         FieldNode field = select.getOrder().get(0);
-        Assert.assertNull("Invalid parameter index", field.getTableName());
-        Assert.assertEquals("Invalid parameter index", "DATE", field.getName());
-        Assert.assertEquals("Invalid order type", OrderType.DESC, select.getOrderTypes().get(0));
+        assertNull(field.getTableName());
+        assertEquals("DATE", field.getName());
+        assertEquals(OrderType.DESC, select.getOrderTypes().get(0));
 
         field = select.getOrder().get(1);
-        Assert.assertNull("Invalid parameter index", field.getTableName());
-        Assert.assertEquals("Invalid parameter index", "TIME", field.getName());
-        Assert.assertEquals("Invalid order type", OrderType.ASC, select.getOrderTypes().get(1));
+        assertNull(field.getTableName());
+        assertEquals("TIME", field.getName());
+        assertEquals(OrderType.ASC, select.getOrderTypes().get(1));
     }
 
     /**
@@ -831,9 +826,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testExtraToken() throws SQLException {
+    void testExtraToken() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.DATE4 a a");
-        Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
+        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -842,9 +837,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testExtraTokenInOrderBy() throws SQLException {
+    void testExtraTokenInOrderBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.DATE4 a order by 1 a");
-        Assert.assertThrows("Invalid parser state", ParadoxSyntaxErrorException.class, parser::parse);
+        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -853,20 +848,20 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testIn() throws SQLException {
+    void testIn() throws SQLException {
         final SQLParser parser = new SQLParser("select id from fields.long where id in (1, '2')");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getCondition() instanceof InNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(InNode.class, select.getCondition());
 
         final InNode node = (InNode) select.getCondition();
-        Assert.assertEquals("Invalid field size", 2, node.getValues().size());
-        Assert.assertEquals("Invalid field size", "1", node.getValues().get(0).getName());
-        Assert.assertEquals("Invalid field size", "2", node.getValues().get(1).getName());
+        assertEquals(2, node.getValues().size());
+        assertEquals("1", node.getValues().get(0).getName());
+        assertEquals("2", node.getValues().get(1).getName());
     }
 
     /**
@@ -875,20 +870,20 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionInFields() throws SQLException {
+    void testFunctionInFields() throws SQLException {
         final SQLParser parser = new SQLParser("select upper('2')");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(FunctionNode.class, select.getFields().get(0));
 
         final FunctionNode node = (FunctionNode) select.getFields().get(0);
-        Assert.assertEquals("Invalid field size", "upper", node.getName());
-        Assert.assertEquals("Invalid field size", 1, node.getParameters().size());
-        Assert.assertEquals("Invalid field value", "2", node.getParameters().get(0).getName());
+        assertEquals("upper", node.getName());
+        assertEquals(1, node.getParameters().size());
+        assertEquals("2", node.getParameters().get(0).getName());
     }
 
     /**
@@ -897,26 +892,26 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testRecursiveFunction() throws SQLException {
+    void testRecursiveFunction() throws SQLException {
         final SQLParser parser = new SQLParser("select upper(lower('2'))");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(FunctionNode.class, select.getFields().get(0));
 
         final FunctionNode upper = (FunctionNode) select.getFields().get(0);
-        Assert.assertEquals("Invalid field size", "upper", upper.getName());
-        Assert.assertEquals("Invalid field size", 1, upper.getParameters().size());
+        assertEquals("upper", upper.getName());
+        assertEquals(1, upper.getParameters().size());
 
-        Assert.assertTrue("Invalid field value", upper.getParameters().get(0) instanceof FunctionNode);
+        assertInstanceOf(FunctionNode.class, upper.getParameters().get(0));
 
         final FunctionNode lower = (FunctionNode) upper.getParameters().get(0);
-        Assert.assertEquals("Invalid field size", "lower", lower.getName());
-        Assert.assertEquals("Invalid field size", 1, lower.getParameters().size());
-        Assert.assertEquals("Invalid field value", "2", lower.getParameters().get(0).getName());
+        assertEquals("lower", lower.getName());
+        assertEquals(1, lower.getParameters().size());
+        assertEquals("2", lower.getParameters().get(0).getName());
     }
 
     /**
@@ -925,25 +920,25 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testRecursiveFunctionAlias() throws SQLException {
+    void testRecursiveFunctionAlias() throws SQLException {
         final SQLParser parser = new SQLParser("select varchar(current_date)");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(FunctionNode.class, select.getFields().get(0));
 
         final FunctionNode upper = (FunctionNode) select.getFields().get(0);
-        Assert.assertEquals("Invalid field size", "varchar", upper.getName());
-        Assert.assertEquals("Invalid field size", 1, upper.getParameters().size());
+        assertEquals("varchar", upper.getName());
+        assertEquals(1, upper.getParameters().size());
 
-        Assert.assertTrue("Invalid field value", upper.getParameters().get(0) instanceof FunctionNode);
+        assertInstanceOf(FunctionNode.class, upper.getParameters().get(0));
 
         final FunctionNode lower = (FunctionNode) upper.getParameters().get(0);
-        Assert.assertEquals("Invalid field size", "current_date", lower.getName());
-        Assert.assertEquals("Invalid field size", 0, lower.getParameters().size());
+        assertEquals("current_date", lower.getName());
+        assertEquals(0, lower.getParameters().size());
     }
 
     /**
@@ -952,9 +947,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionThreeFields() throws SQLException {
+    void testFunctionThreeFields() throws SQLException {
         final SQLParser parser = new SQLParser("select lower(1, null, a.b) from a");
-        Assert.assertThrows("Invalid function", ParadoxSyntaxErrorException.class, parser::parse);
+        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -963,20 +958,20 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionAlias() throws SQLException {
+    void testFunctionAlias() throws SQLException {
         final SQLParser parser = new SQLParser("select upper('2') as alias");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(FunctionNode.class, select.getFields().get(0));
 
         final FunctionNode upper = (FunctionNode) select.getFields().get(0);
-        Assert.assertEquals("Invalid field size", "upper", upper.getName());
-        Assert.assertEquals("Invalid field size", "alias", upper.getAlias());
-        Assert.assertEquals("Invalid field size", 1, upper.getParameters().size());
+        assertEquals("upper", upper.getName());
+        assertEquals("alias", upper.getAlias());
+        assertEquals(1, upper.getParameters().size());
     }
 
     /**
@@ -985,22 +980,22 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testRecursiveFunctionAliasName() throws SQLException {
+    void testRecursiveFunctionAliasName() throws SQLException {
         final SQLParser parser = new SQLParser("select upper(lower('Name')) as alias");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof FunctionNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(FunctionNode.class, select.getFields().get(0));
 
         final FunctionNode upper = (FunctionNode) select.getFields().get(0);
-        Assert.assertEquals("Invalid field size", "upper", upper.getName());
-        Assert.assertEquals("Invalid field size", "alias", upper.getAlias());
-        Assert.assertEquals("Invalid field size", 1, upper.getParameters().size());
+        assertEquals("upper", upper.getName());
+        assertEquals("alias", upper.getAlias());
+        assertEquals(1, upper.getParameters().size());
 
-        Assert.assertTrue("Invalid field size", upper.getParameters().get(0) instanceof FunctionNode);
+        assertInstanceOf(FunctionNode.class, upper.getParameters().get(0));
     }
 
     /**
@@ -1009,21 +1004,21 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionInClause() throws SQLException {
+    void testFunctionInClause() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 where \"DATE\" = DATE('2018-01-02')");
         final StatementNode tree = parser.parse();
 
-        Assert.assertTrue("Invalid node type", tree instanceof SelectNode);
+        assertInstanceOf(SelectNode.class, tree);
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid node type", select.getFields().get(0) instanceof AsteriskNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(AsteriskNode.class, select.getFields().get(0));
 
-        Assert.assertTrue("Invalid conditional type", select.getCondition() instanceof EqualsNode);
+        assertInstanceOf(EqualsNode.class, select.getCondition());
         final EqualsNode equalsNode = (EqualsNode) select.getCondition();
-        Assert.assertEquals("Invalid conditional size", 0, equalsNode.getChildren().size());
-        Assert.assertNotNull("Invalid field type", equalsNode.getField());
-        Assert.assertTrue("Invalid field type", equalsNode.getLast() instanceof FunctionNode);
+        assertEquals(0, equalsNode.getChildren().size());
+        assertNotNull(equalsNode.getField());
+        assertInstanceOf(FunctionNode.class, equalsNode.getLast());
     }
 
     /**
@@ -1032,9 +1027,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testUnterminatedFunction() throws SQLException {
+    void testUnterminatedFunction() throws SQLException {
         final SQLParser parser = new SQLParser("select upper('2'");
-        Assert.assertThrows("Invalid function definition", ParadoxSyntaxErrorException.class, parser::parse);
+        assertThrows(ParadoxSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -1043,18 +1038,18 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testBooleanValues() throws SQLException {
+    void testBooleanValues() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT TRUE, FALSE");
         final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid field size", 2, select.getFields().size());
+        assertEquals(2, select.getFields().size());
 
-        Assert.assertTrue("Invalid field type", select.getFields().get(0) instanceof ValueNode);
-        Assert.assertTrue("Invalid field type", select.getFields().get(1) instanceof ValueNode);
-        Assert.assertEquals("Invalid field size", "true", select.getFields().get(0).getName());
-        Assert.assertEquals("Invalid field size", "false", select.getFields().get(1).getName());
+        assertInstanceOf(ValueNode.class, select.getFields().get(0));
+        assertInstanceOf(ValueNode.class, select.getFields().get(1));
+        assertEquals("true", select.getFields().get(0).getName());
+        assertEquals("false", select.getFields().get(1).getName());
     }
 
     /**
@@ -1063,21 +1058,21 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunctionInOrderBy() throws SQLException {
+    void testFunctionInOrderBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.long order by VARCHAR(Id)");
         final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid order by size", 1, select.getOrder().size());
-        Assert.assertTrue("Invalid field type", select.getOrder().get(0) instanceof FunctionNode);
+        assertEquals(1, select.getOrder().size());
+        assertInstanceOf(FunctionNode.class, select.getOrder().get(0));
         final FunctionNode functionNode = (FunctionNode) select.getOrder().get(0);
 
-        Assert.assertEquals("Invalid function name", "VARCHAR", functionNode.getName());
-        Assert.assertEquals("Invalid field count", 1, functionNode.getClauseFields().size());
+        assertEquals("VARCHAR", functionNode.getName());
+        assertEquals(1, functionNode.getClauseFields().size());
 
         final FieldNode fieldNode = functionNode.getClauseFields().iterator().next();
-        Assert.assertEquals("Invalid field name", "Id", fieldNode.getName());
+        assertEquals("Id", fieldNode.getName());
     }
 
     /**
@@ -1086,16 +1081,16 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testGroupBy() throws SQLException {
+    void testGroupBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.long group by Id");
         final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid order by size", 1, select.getGroups().size());
+        assertEquals(1, select.getGroups().size());
         final FieldNode field = select.getGroups().get(0);
 
-        Assert.assertEquals("Invalid field name", "Id", field.getName());
+        assertEquals("Id", field.getName());
     }
 
     /**
@@ -1104,7 +1099,7 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testGroupByAndWhere() throws SQLException {
+    void testGroupByAndWhere() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "SELECT count(*) FROM AREACODES WHERE (NOT State = 'NY') or State = 'NJ' group by State"
         );
@@ -1113,11 +1108,11 @@ public class SQLParserTest {
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertNotNull("Invalid where clauses", select.getCondition());
-        Assert.assertEquals("Invalid order by size", 1, select.getGroups().size());
+        assertNotNull(select.getCondition());
+        assertEquals(1, select.getGroups().size());
         final FieldNode field = select.getGroups().get(0);
 
-        Assert.assertEquals("Invalid field name", "State", field.getName());
+        assertEquals("State", field.getName());
     }
 
     /**
@@ -1126,18 +1121,18 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testGroupByAndOrderBy() throws SQLException {
+    void testGroupByAndOrderBy() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by State ORDER BY State");
 
         final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertFalse("Invalid order by fields", select.getOrder().isEmpty());
-        Assert.assertEquals("Invalid group by size", 1, select.getGroups().size());
+        assertFalse(select.getOrder().isEmpty());
+        assertEquals(1, select.getGroups().size());
         final FieldNode field = select.getGroups().get(0);
 
-        Assert.assertEquals("Invalid field name", "State", field.getName());
+        assertEquals("State", field.getName());
     }
 
     /**
@@ -1146,16 +1141,16 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testGroupByAndFixedValues() throws SQLException {
+    void testGroupByAndFixedValues() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by 123, 'abc'");
 
         final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid group by size", 2, select.getGroups().size());
-        Assert.assertEquals("Invalid field name", "123", select.getGroups().get(0).getName());
-        Assert.assertEquals("Invalid field name", "abc", select.getGroups().get(1).getName());
+        assertEquals(2, select.getGroups().size());
+        assertEquals("123", select.getGroups().get(0).getName());
+        assertEquals("abc", select.getGroups().get(1).getName());
     }
 
     /**
@@ -1164,23 +1159,23 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testAggregateFunctionInSelectFunction() throws SQLException {
+    void testAggregateFunctionInSelectFunction() throws SQLException {
         final SQLParser parser = new SQLParser("select upper(count(1)) from fields.date7");
 
         final StatementNode tree = parser.parse();
 
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertEquals("Invalid column size", 1, select.getFields().size());
-        Assert.assertTrue("Invalid field type", select.getFields().get(0) instanceof FunctionNode);
+        assertEquals(1, select.getFields().size());
+        assertInstanceOf(FunctionNode.class, select.getFields().get(0));
         final FunctionNode node = (FunctionNode) select.getFields().get(0);
 
-        Assert.assertEquals("Invalid column size", 1, node.getClauseFields().size());
+        assertEquals(1, node.getClauseFields().size());
         final FunctionNode function = (FunctionNode) node.getClauseFields().iterator().next();
-        Assert.assertEquals("Invalid field name", "count", function.getName());
+        assertEquals("count", function.getName());
 
-        Assert.assertEquals("Invalid column size", 1, node.getGroupingNodes().size());
-        Assert.assertSame("Invalid field type", function, node.getGroupingNodes().get(0));
+        assertEquals(1, node.getGroupingNodes().size());
+        assertSame(function, node.getGroupingNodes().get(0));
     }
 
     /**
@@ -1189,9 +1184,9 @@ public class SQLParserTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testParameterInGroupBy() throws SQLException {
+    void testParameterInGroupBy() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by ?");
-        Assert.assertThrows("Invalid parser value", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 
     /**
@@ -1200,9 +1195,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testGroupingFunctionInGroupBy() throws SQLException {
+    void testGroupingFunctionInGroupBy() throws SQLException {
         final SQLParser parser = new SQLParser("select * from table group by count(Id)");
-        Assert.assertThrows("Invalid use of aggregate function", SQLSyntaxErrorException.class, parser::parse);
+        assertThrows(SQLSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -1211,9 +1206,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testGroupingFunctionInWhere() throws SQLException {
+    void testGroupingFunctionInWhere() throws SQLException {
         final SQLParser parser = new SQLParser("select * from table where count(Id) = 1");
-        Assert.assertThrows("Invalid use of aggregate function", SQLSyntaxErrorException.class, parser::parse);
+        assertThrows(SQLSyntaxErrorException.class, parser::parse);
     }
 
     /**
@@ -1222,17 +1217,17 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOffsetLimit() throws SQLException {
+    void testOffsetLimit() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 limit 10 offset 2");
 
         final StatementNode tree = parser.parse();
         final SelectNode select = (SelectNode) tree;
 
-        Assert.assertNotNull("Invalid limit value", select.getLimit());
-        Assert.assertNotNull("Invalid offset value", select.getOffset());
+        assertNotNull(select.getLimit());
+        assertNotNull(select.getOffset());
 
-        Assert.assertEquals("Invalid limit value", 10, select.getLimit().intValue());
-        Assert.assertEquals("Invalid offsetvalue", 2, select.getOffset().intValue());
+        assertEquals(10, select.getLimit().intValue());
+        assertEquals(2, select.getOffset().intValue());
     }
 
     /**
@@ -1241,9 +1236,9 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLimitNegative() throws SQLException {
+    void testLimitNegative() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 limit -10");
-        Assert.assertThrows("Invalid parse", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 
     /**
@@ -1252,8 +1247,8 @@ public class SQLParserTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testOffsetNegative() throws SQLException {
+    void testOffsetNegative() throws SQLException {
         final SQLParser parser = new SQLParser("select * from fields.date7 offset -10");
-        Assert.assertThrows("Invalid parse", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 }
