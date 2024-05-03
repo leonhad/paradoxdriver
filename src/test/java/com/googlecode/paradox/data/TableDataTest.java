@@ -19,6 +19,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -93,10 +95,8 @@ class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    void testLoadAreaCodes() throws SQLException {
-
-        final List<Table> tables = this.conn.getConnectionInfo().getCurrentSchema()
-                .list(this.conn.getConnectionInfo(), "areacodes");
+    void testLoadTables() throws SQLException {
+        final List<Table> tables = this.conn.getConnectionInfo().getCurrentSchema().list(this.conn.getConnectionInfo(), "areacodes");
         assertNotNull(tables);
         assertFalse(tables.isEmpty());
         final Table table = tables.get(0);
@@ -109,23 +109,15 @@ class TableDataTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test
-    void testLoadContacts() throws SQLException {
-        final Table table = this.conn.getConnectionInfo().getCurrentSchema()
-                .findTable(this.conn.getConnectionInfo(), "contacts");
-        final Field[] fields = new Field[]{table.getFields()[0]};
-        assertNotNull(table.load(fields));
-    }
-
-    /**
-     * Test for customer table.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testLoadCustomer() throws SQLException {
-        final Table table = this.conn.getConnectionInfo().getCurrentSchema()
-                .findTable(this.conn.getConnectionInfo(), "customer");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "contacts",
+            "customer",
+            "orders",
+            "server"
+    })
+    void testLoadTables(String tableName) throws SQLException {
+        final Table table = this.conn.getConnectionInfo().getCurrentSchema().findTable(this.conn.getConnectionInfo(), tableName);
         final Field[] fields = new Field[]{table.getFields()[0]};
         assertNotNull(table.load(fields));
     }
@@ -136,36 +128,9 @@ class TableDataTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    void testLoadHercules() throws SQLException {
-        final Table table = this.conn.getConnectionInfo().getCurrentSchema()
-                .findTable(this.conn.getConnectionInfo(), "hercules");
+    void testFindTable() throws SQLException {
+        final Table table = this.conn.getConnectionInfo().getCurrentSchema().findTable(this.conn.getConnectionInfo(), "hercules");
         assertNotNull(table.load(table.getFields()));
-    }
-
-    /**
-     * Test for orders table.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testLoadOrders() throws SQLException {
-        final Table table = this.conn.getConnectionInfo().getCurrentSchema()
-                .findTable(this.conn.getConnectionInfo(), "orders");
-        final Field[] fields = new Field[]{table.getFields()[0]};
-        assertNotNull(table.load(fields));
-    }
-
-    /**
-     * Test for server table.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testLoadServer() throws SQLException {
-        final Table table = this.conn.getConnectionInfo().getCurrentSchema()
-                .findTable(this.conn.getConnectionInfo(), "server");
-        final Field[] fields = new Field[]{table.getFields()[0]};
-        assertNotNull(table.load(fields));
     }
 
     /**

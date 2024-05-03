@@ -10,7 +10,6 @@
  */
 package com.googlecode.paradox.parser;
 
-import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.nodes.*;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.FunctionNode;
@@ -25,7 +24,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.SQLException;
-import java.sql.SQLSyntaxErrorException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -696,7 +694,6 @@ class SQLParserTest {
         assertInstanceOf(ParameterNode.class, select.getFields().get(0));
         assertEquals("test", select.getFields().get(0).getAlias());
     }
-
 
     /**
      * Test for parenthesis.
