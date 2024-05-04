@@ -58,12 +58,12 @@ public class Cp867Charset extends Charset {
     }
 
     public Cp867Charset() {
-        super("cp867", new String[]{"cp-867", "IBM867", "IBM-867"});
+        super("IBM867", new String[]{"cp-867", "cp867", "IBM-867"});
     }
 
     @Override
     public boolean contains(Charset cs) {
-        return cs.name().equals("cp867");
+        return cs.name().equals("IBM867");
     }
 
     @Override
