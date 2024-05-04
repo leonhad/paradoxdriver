@@ -85,14 +85,14 @@ The body start at position 0x35, and it repeats for all field. The field count a
 |:--------:|:--------------:|---------|-------------------------------------------------------------------|
 |   0x00   |       1        | byte    | Field order, starts with zero                                     |
 |   0x01   |       1        | byte    | Picture size                                                      |
-|   0x02   |       1        | byte    | Dependency table order (starts with 1)                            |
+|   0x02   |       1        | byte    | Required field. 1 for required, zero for none                     |
 |   0x03   |       1        | byte    | Integrity status*                                                 |
-|   0x04   |       4        | integer | Table lookup key pointer. Seems to finish always in 6B.           |
+|   0x04   |       4        | integer | Table lookup key pointer.                                         |
 |   0x08   |       4        | integer | Internal pointer                                                  |
-|   0x0C   |       4        | integer | Minimum value pointer. Seems to finish always in 6B.              |
-|   0x10   |       4        | integer | Maximum value pointer. Seems to finish always in 6B.              |
-|   0x14   |       4        | integer | Default value pointer. Seems to finish always in 6B.              |
-|   0x18   |       4        | integer | Picture pointer. No value here?                                   |
+|   0x0C   |       4        | integer | Minimum value pointer.                                            |
+|   0x10   |       4        | integer | Maximum value pointer.                                            |
+|   0x14   |       4        | integer | Default value pointer.                                            |
+|   0x18   |       4        | integer | Picture pointer.                                                  |
 |   0x1C   | field size\*\* | any     | Field value by type. Picture definition is an ending zero string. |
 
 **\*** Integrity status (bit status in one byte):

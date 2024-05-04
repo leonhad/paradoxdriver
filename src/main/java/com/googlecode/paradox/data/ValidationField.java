@@ -27,6 +27,8 @@ public class ValidationField {
 
     private Object maximumValue;
 
+    private boolean required;
+
     private ParadoxType type;
 
     private int fieldSize;
@@ -123,5 +125,13 @@ public class ValidationField {
 
     public void setLookupHelp(boolean lookupHelp) {
         this.lookupHelp = lookupHelp;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
     }
 }

@@ -98,8 +98,6 @@ public class ValidationData {
 
             return data;
         } catch (final Exception e) {
-            e.printStackTrace();
-
             // Don't break in validation erros.
             connectionInfo.addWarning(e);
         }
@@ -128,9 +126,8 @@ public class ValidationData {
                     .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN_FILE, validationField.getName(), fileName));
 
             int pictureSize = buffer.get() & 0xFF;
-
-            // Referential integrity attribute in foreign key only.
-            buffer.get();
+            int required =  buffer.get() & 0xFF;
+            validationField.setRequired(required == 1);
 
             int tableLookupAttribute = buffer.get() & 0xFF;
 

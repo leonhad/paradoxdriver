@@ -200,6 +200,25 @@ public class ValidationDataTest {
     }
 
     /**
+     * Test for required fields.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    void testRequired() throws SQLException {
+        List<Table> validations = this.conn.getConnectionInfo().getSchema(null, "joins").list(this.conn.getConnectionInfo(), "paradox-ascii");
+        assertFalse(validations.isEmpty());
+        assertInstanceOf(ParadoxTable.class, validations.get(0));
+        ParadoxTable table = (ParadoxTable) validations.get(0);
+        assertNotNull(table.getValidation());
+
+        ParadoxValidation validation = table.getValidation();
+        assertEquals("A", validation.getFields()[0].getName());
+        assertTrue(validation.getFields()[0].isRequired());
+        assertEquals(ParadoxType.VARCHAR, validation.getFields()[0].getType());
+    }
+
+    /**
      * Test for table with multiple options.
      *
      * @throws SQLException in case of failures.
