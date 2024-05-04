@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.charset.CharsetUtil;
 import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Table;
@@ -28,8 +29,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Handles the paradox files (structure).
@@ -44,25 +43,6 @@ public class ParadoxData {
      * Minimum paradox file version.
      */
     protected static final int MINIMUM_VERSION = 4;
-    private static final int CHARSET_DEFAULT = 437;
-    private static final Charset CP437 = Charset.forName("cp437");
-    private static final Map<Integer, Charset> CHARSET_TABLE = new HashMap<>();
-
-    static {
-        CHARSET_TABLE.put(437, CP437);
-        CHARSET_TABLE.put(850, Charset.forName("cp850"));
-        CHARSET_TABLE.put(852, Charset.forName("cp852"));
-        CHARSET_TABLE.put(861, Charset.forName("cp861"));
-        CHARSET_TABLE.put(862, Charset.forName("cp862"));
-        CHARSET_TABLE.put(863, Charset.forName("cp863"));
-        CHARSET_TABLE.put(865, Charset.forName("cp865"));
-        CHARSET_TABLE.put(866, Charset.forName("cp866"));
-        CHARSET_TABLE.put(867, Charset.forName("cp862"));
-        CHARSET_TABLE.put(932, Charset.forName("windows-31j"));
-        CHARSET_TABLE.put(936, Charset.forName("cp936"));
-        CHARSET_TABLE.put(0x4e3, Charset.forName("cp1251"));
-        CHARSET_TABLE.put(0x4e4, Charset.forName("cp1252"));
-    }
 
     /**
      * Creates a new instance.
@@ -97,13 +77,18 @@ public class ParadoxData {
         if (dataFile.getVersionId() > ParadoxData.MINIMUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
-            int cp = buffer.getShort();
+            dataFile.setCodePage(buffer.getShort() & 0xFFFF);
 
             // Force charset if we have one.
-            if (dataFile.getCharset() == null && cp != 0) {
-                dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
-                if (CHARSET_TABLE.get(cp) == null) {
-                    connectionInfo.addWarning(String.format("Charset %d not found for file %s", cp, dataFile.getName()));
+            if (dataFile.getCharset() == null && dataFile.getCodePage() != 0) {
+                dataFile.setSortOrder(dataFile.getSortOrder());
+
+                Charset charset = CharsetUtil.get(dataFile.getCodePage(), dataFile.getSortOrderID());
+                dataFile.setCharset(charset);
+                if (charset == null) {
+                    dataFile.setCharset(Charset.defaultCharset());
+                    connectionInfo.addWarning(String.format("Charset not found for file %s width sort order %d and code page %d", dataFile.getFile().getName(), dataFile.getSortOrder(),
+                            dataFile.getCodePage()));
                 }
             }
 
@@ -112,7 +97,7 @@ public class ParadoxData {
             buffer.position(0x58);
 
             if (dataFile.getCharset() == null) {
-                dataFile.setCharset(CHARSET_TABLE.get(CHARSET_DEFAULT));
+                dataFile.setCharset(CharsetUtil.getDefault());
             }
         }
     }
@@ -186,6 +171,7 @@ public class ParadoxData {
             // Check for encrypted file.
             buffer.position(0x25);
             int value = buffer.getInt();
+            data.setSortOrder(buffer.get());
 
             buffer.position(0x38);
             data.setWriteProtected(buffer.get() != 0);

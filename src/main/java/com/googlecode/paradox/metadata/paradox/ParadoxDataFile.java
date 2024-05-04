@@ -52,9 +52,19 @@ public class ParadoxDataFile {
     private int autoIncrementValue;
 
     /**
+     * Language sort order.
+     */
+    private byte sortOrder;
+
+    /**
      * File charset.
      */
     protected Charset charset;
+
+    /**
+     * Original code page.
+     */
+    private int codePage;
 
     /**
      * File count in this file.
@@ -127,7 +137,7 @@ public class ParadoxDataFile {
     private byte versionId;
 
     /**
-     * If this file has an write protected lock.
+     * If this file has a write protected lock.
      */
     private boolean writeProtected;
 
@@ -598,5 +608,41 @@ public class ParadoxDataFile {
      */
     public ConnectionInfo getConnectionInfo() {
         return connectionInfo;
+    }
+
+    /**
+     * Gets the sort order.
+     *
+     * @return the sort order.
+     */
+    public byte getSortOrder() {
+        return sortOrder;
+    }
+
+    /**
+     * Sets the sort order.
+     *
+     * @param sortOrder the sort order.
+     */
+    public void setSortOrder(byte sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    /**
+     * Gets the original code page.
+     *
+     * @return the original code page.
+     */
+    public int getCodePage() {
+        return codePage;
+    }
+
+    /**
+     * Sets the original code page.
+     *
+     * @param codePage the original code page.
+     */
+    public void setCodePage(int codePage) {
+        this.codePage = codePage;
     }
 }
