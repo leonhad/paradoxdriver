@@ -23,7 +23,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -139,5 +141,21 @@ class TableDataTest {
     @Test
     void testSanity() {
         assertTrue(TestUtil.assertSanity(TableData.class));
+    }
+
+    /**
+     * Test for CLOB with cp1251 charset.
+     *
+     * @throws SQLException in case of failures.
+     */
+    @Test
+    void testRoman8() throws SQLException {
+        try (final Statement stmt = conn.createStatement();
+             final ResultSet rs = stmt.executeQuery("SELECT A FROM db.ROMAN8")) {
+
+            assertTrue(rs.next());
+            assertEquals("Š½ƒ¶", rs.getString(1));
+            assertFalse(rs.next());
+        }
     }
 }

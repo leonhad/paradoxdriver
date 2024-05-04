@@ -74,31 +74,23 @@ public class ParadoxData {
      * @param connectionInfo the connection information.
      */
     protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile, final ConnectionInfo connectionInfo) {
+
+
+
         if (dataFile.getVersionId() > ParadoxData.MINIMUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
             dataFile.setCodePage(buffer.getShort() & 0xFFFF);
 
-            // Force charset if we have one.
-            if (dataFile.getCharset() == null && dataFile.getCodePage() != 0) {
-                dataFile.setSortOrder(dataFile.getSortOrder());
+            dataFile.setSortOrder(dataFile.getSortOrder());
 
-                Charset charset = CharsetUtil.get(dataFile.getCodePage(), dataFile.getSortOrderID());
-                dataFile.setCharset(charset);
-                if (charset == null) {
-                    dataFile.setCharset(Charset.defaultCharset());
-                    connectionInfo.addWarning(String.format("Charset not found for file %s width sort order %d and code page %d", dataFile.getFile().getName(), dataFile.getSortOrder(),
-                            dataFile.getCodePage()));
-                }
-            }
+            Charset charset = CharsetUtil.get(dataFile.getCodePage(), dataFile.getSortOrderID(), connectionInfo);
+            dataFile.setCharset(charset);
 
             buffer.position(0x78);
         } else {
             buffer.position(0x58);
-
-            if (dataFile.getCharset() == null) {
-                dataFile.setCharset(CharsetUtil.getDefault());
-            }
+            dataFile.setCharset(CharsetUtil.getDefault());
         }
     }
 
@@ -269,8 +261,7 @@ public class ParadoxData {
      * @param buffer   the buffer to read of.
      * @param fields   the field list.
      */
-    private static void parseFieldsName(final ParadoxDataFile dataFile, final ByteBuffer buffer,
-                                        final ParadoxField[] fields) {
+    private static void parseFieldsName(final ParadoxDataFile dataFile, final ByteBuffer buffer, final ParadoxField[] fields) {
         final ByteBuffer name = ByteBuffer.allocate(261);
         for (int loop = 0; loop < dataFile.getFieldCount(); loop++) {
             name.clear();
@@ -281,7 +272,7 @@ public class ParadoxData {
             }
 
             name.flip();
-            fields[loop].setName(dataFile.getCharset().decode(name).toString());
+            fields[loop].setName(CharsetUtil.translate(dataFile, name));
         }
 
         dataFile.setFields(fields);
@@ -319,7 +310,7 @@ public class ParadoxData {
         }
 
         sortOrderID.flip();
-        index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
+        index.setSortOrderID(CharsetUtil.translate(index, sortOrderID));
     }
 
     /**
@@ -339,7 +330,7 @@ public class ParadoxData {
         }
 
         name.flip();
-        final String tempName = index.getCharset().decode(name).toString();
+        final String tempName = CharsetUtil.translate(index, name);
         if (!tempName.isEmpty()) {
             index.setName(tempName);
         }

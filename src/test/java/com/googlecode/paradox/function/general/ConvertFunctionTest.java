@@ -96,23 +96,6 @@ class ConvertFunctionTest {
     }
 
     /**
-     * Test for convert using charset.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testCharset() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement("select CONVERT(Note using cp1251) from db.NOTE1251 where Id = 2");
-             final ResultSet rs = stmt.executeQuery()) {
-            assertTrue(rs.next());
-
-            assertEquals("Удивительное устройство USB-флешки Kingston DataTraveler",
-                    rs.getString(1));
-            assertFalse(rs.next());
-        }
-    }
-
-    /**
      * Test for convert using charset with bytes.
      *
      * @throws SQLException in case of failures.

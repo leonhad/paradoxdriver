@@ -10,36 +10,40 @@
  */
 package com.googlecode.paradox.data.charset;
 
+import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
+
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CharsetUtil {
 
-    private static final Charset CP437 = Charset.forName("cp437");
     private static final List<CharsetData> CHARSET_TABLE = new ArrayList<>();
 
     static {
-        Charset windows1250 = Charset.forName("windows-1250");
-        Charset windows1251 = Charset.forName("windows-1251");
-        Charset windows1252 = Charset.forName("windows-1252");
-        Charset windows1253 = Charset.forName("windows-1253");
-        Charset windows1254 = Charset.forName("windows-1254");
-        Charset windows1255 = Charset.forName("windows-1255");
-        Charset windows31j = Charset.forName("windows-31j");
-        Charset cp850 = Charset.forName("cp850");
-        Charset cp852 = Charset.forName("cp852");
-        Charset cp857 = Charset.forName("cp857");
-        Charset cp860 = Charset.forName("cp860");
-        Charset cp861 = Charset.forName("cp861");
-        Charset cp862 = Charset.forName("cp862");
-        Charset cp863 = Charset.forName("cp863");
-        Charset cp865 = Charset.forName("cp865");
-        Charset cp866 = Charset.forName("cp866");
-        Charset cp737 = Charset.forName("cp737");
-        Charset cp936 = Charset.forName("cp936");
-
-        CHARSET_TABLE.add(new CharsetData(0x4C, 1252, "DBWINUS0", "'ascii' ANSI", windows1252));
+        final Charset windows1250 = Charset.forName("windows-1250");
+        final Charset windows1251 = Charset.forName("windows-1251");
+        final Charset windows1252 = Charset.forName("windows-1252");
+        final Charset windows1253 = Charset.forName("windows-1253");
+        final Charset windows1254 = Charset.forName("windows-1254");
+        final Charset windows1255 = Charset.forName("windows-1255");
+        final Charset windows31j = Charset.forName("windows-31j");
+        final Charset cp437 = Charset.forName("cp437");
+        final Charset cp850 = Charset.forName("cp850");
+        final Charset cp852 = Charset.forName("cp852");
+        final Charset cp857 = Charset.forName("cp857");
+        final Charset cp860 = Charset.forName("cp860");
+        final Charset cp861 = Charset.forName("cp861");
+        final Charset cp862 = Charset.forName("cp862");
+        final Charset cp863 = Charset.forName("cp863");
+        final Charset cp865 = Charset.forName("cp865");
+        final Charset cp866 = Charset.forName("cp866");
+        final Charset cp737 = Charset.forName("cp737");
+        final Charset cp936 = Charset.forName("cp936");
+        final Charset cp1051 = Roman8CharsetProvider.roman8();
 
         // Borland set
         CHARSET_TABLE.add(new CharsetData(20, 1252, "BLLT1DA0", "Borland DAN Latin-1", windows1252));
@@ -61,24 +65,24 @@ public class CharsetUtil {
         CHARSET_TABLE.add(new CharsetData(242, 850, "DB852CZ0", "dBASE CSY cp852", cp852));
         CHARSET_TABLE.add(new CharsetData(248, 867, "DB867CZ0", "dBASE CSY cp867", cp862));
         CHARSET_TABLE.add(new CharsetData(222, 865, "DB865DA0", "dBASE DAN cp865", cp865));
-        CHARSET_TABLE.add(new CharsetData(221, 865, "DB437DE0", "dBASE DEU cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(221, 865, "DB437DE0", "dBASE DEU cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(220, 850, "DB850DE0", "dBASE DEU cp850", cp850));
         CHARSET_TABLE.add(new CharsetData(109, 737, "db437gr0", "dBASE ELL GR437", cp737));
-        CHARSET_TABLE.add(new CharsetData(244, 437, "DB437UK0", "dBASE ENG cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(244, 437, "DB437UK0", "dBASE ENG cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(243, 437, "DB850UK0", "dBASE ENG cp850", cp850));
-        CHARSET_TABLE.add(new CharsetData(252, 437, "DB437US0", "dBASE ENU cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(252, 437, "DB437US0", "dBASE ENU cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(251, 850, "DB850US0", "dBASE ENU cp850", cp850));
-        CHARSET_TABLE.add(new CharsetData(237, 437, "DB437ES1", "dBASE ESP cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(237, 437, "DB437ES1", "dBASE ESP cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(235, 850, "DB850ES0", "dBASE ESP cp850", cp850));
-        CHARSET_TABLE.add(new CharsetData(227, 437, "DB437FI0", "dBASE FIN cp437", CP437));
-        CHARSET_TABLE.add(new CharsetData(236, 437, "DB437FR0", "dBASE FRA cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(227, 437, "DB437FI0", "dBASE FIN cp437", cp437));
+        CHARSET_TABLE.add(new CharsetData(236, 437, "DB437FR0", "dBASE FRA cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(235, 850, "DB850FR0", "dBASE FRA cp850", cp850));
         CHARSET_TABLE.add(new CharsetData(220, 850, "DB850CF0", "dBASE FRC cp850", cp850));
         CHARSET_TABLE.add(new CharsetData(225, 863, "DB863CF1", "dBASE FRC cp863", cp863));
         CHARSET_TABLE.add(new CharsetData(148, 852, "db852hdc", "dBASE HUN cp852", cp852));
-        CHARSET_TABLE.add(new CharsetData(241, 437, "DB437IT0", "dBASE ITA cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(241, 437, "DB437IT0", "dBASE ITA cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(241, 850, "DB850IT1", "dBASE ITA cp850", cp850));
-        CHARSET_TABLE.add(new CharsetData(238, 437, "DB437NL0", "dBASE NLD cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(238, 437, "DB437NL0", "dBASE NLD cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(237, 850, "DB850NL0", "dBASE NLD cp850", cp850));
         CHARSET_TABLE.add(new CharsetData(246, 865, "DB865NO0", "dBASE NLD cp865", cp865));
         CHARSET_TABLE.add(new CharsetData(116, 852, "db852po0", "dBASE PLK cp852", cp852));
@@ -86,20 +90,22 @@ public class CharsetUtil {
         CHARSET_TABLE.add(new CharsetData(248, 860, "DB860PT0", "dBASE PTB cp850", cp860));
         CHARSET_TABLE.add(new CharsetData(129, 866, "db866ru0", "dBASE RUS cp866", cp866));
         CHARSET_TABLE.add(new CharsetData(116, 852, "db852sl0", "dBASE SLO cp852", cp852));
-        CHARSET_TABLE.add(new CharsetData(253, 437, "DB437SV0", "dBASE SVE cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(253, 437, "DB437SV0", "dBASE SVE cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(253, 850, "DB850SV1", "dBASE SVE cp850", cp850));
-        CHARSET_TABLE.add(new CharsetData(112, 437, "db437th0", "dBASE THA cp437", CP437));
+        CHARSET_TABLE.add(new CharsetData(112, 437, "db437th0", "dBASE THA cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(0, 857, "DB857TR0", "dBASE TRK cp857", cp857));
 
         // Others
+        CHARSET_TABLE.add(new CharsetData(0x4C, 1252, "DBWINUS0", "'ascii' ANSI", windows1252));
         CHARSET_TABLE.add(new CharsetData(35, 862, "dbHebrew", "Hebrew dBASE", cp862));
         CHARSET_TABLE.add(new CharsetData(27, 850, "ORAWE850", "Oracle SQL WE850", cp862));
         CHARSET_TABLE.add(new CharsetData(60, 1252, "DBWINES0", "'Spanish' ANSI", windows1252));
-        CHARSET_TABLE.add(new CharsetData(209, 437, "SYDC437", "Sybase SQL Dic437", CP437));
+        CHARSET_TABLE.add(new CharsetData(209, 437, "SYDC437", "Sybase SQL Dic437", cp437));
         CHARSET_TABLE.add(new CharsetData(208, 850, "SYDC850", "Sybase SQL Dic850", cp850));
         CHARSET_TABLE.add(new CharsetData(64, 1252, "DBWINWE0", "'WEurope' ANSI", windows1252));
-        CHARSET_TABLE.add(new CharsetData(0, 932, "unknown", "'Japanese'", windows31j));
-        CHARSET_TABLE.add(new CharsetData(106, 936, "unknown", "'Simplified Chinese'", cp936));
+        CHARSET_TABLE.add(new CharsetData(0, 932, null, "'Japanese'", windows31j));
+        CHARSET_TABLE.add(new CharsetData(106, 936, null, "'Simplified Chinese'", cp936));
+        CHARSET_TABLE.add(new CharsetData(20, 0, "BLROM800", "SQL Link ROMAN8", cp1051));
 
         // Paradox set
         CHARSET_TABLE.add(new CharsetData(76, 1255, "ANHEBREW", "Paradox ANSI HEBREW", windows1255));
@@ -107,19 +113,19 @@ public class CharsetUtil {
         CHARSET_TABLE.add(new CharsetData(192, 866, "cyrr", "Paradox Cyrr 866", cp866));
         CHARSET_TABLE.add(new CharsetData(13, 852, "czech", "Paradox Czech 852", cp852));
         CHARSET_TABLE.add(new CharsetData(266, 867, "cskamen", "Paradox Czech 867", cp862));
-        CHARSET_TABLE.add(new CharsetData(22, 437, "SPANISH", "Paradox ESP 437", CP437));
+        CHARSET_TABLE.add(new CharsetData(22, 437, "SPANISH", "Paradox ESP 437", cp437));
         CHARSET_TABLE.add(new CharsetData(74, 737, "grcp437", "Paradox Greek GR437", cp737));
         CHARSET_TABLE.add(new CharsetData(125, 862, "hebrew", "Paradox 'hebrew'", cp862));
         CHARSET_TABLE.add(new CharsetData(177, 852, "hun852dc", "Paradox Hun 852 DC", cp852));
-        CHARSET_TABLE.add(new CharsetData(183, 437, "intl", "Paradox 'intl'", CP437));
+        CHARSET_TABLE.add(new CharsetData(183, 437, "intl", "Paradox 'intl'", cp437));
         CHARSET_TABLE.add(new CharsetData(84, 850, "intl850", "Paradox 'intl' 850", cp850));
         CHARSET_TABLE.add(new CharsetData(208, 861, "iceland", "Paradox ISL 861", cp861));
         CHARSET_TABLE.add(new CharsetData(130, 865, "nordan", "Paradox 'nordan'", cp865));
         CHARSET_TABLE.add(new CharsetData(230, 865, "nordan40", "Paradox 'nordan40'", cp865));
         CHARSET_TABLE.add(new CharsetData(143, 852, "polish", "Paradox Polish 852", cp852));
         CHARSET_TABLE.add(new CharsetData(252, 852, "slovene", "Paradox Slovene 852", cp852));
-        CHARSET_TABLE.add(new CharsetData(240, 437, "swedfin", "Paradox 'swedfin'", CP437));
-        CHARSET_TABLE.add(new CharsetData(166, 437, "thai", "Paradox Thai 437", CP437));
+        CHARSET_TABLE.add(new CharsetData(240, 437, "swedfin", "Paradox 'swedfin'", cp437));
+        CHARSET_TABLE.add(new CharsetData(166, 437, "thai", "Paradox Thai 437", cp437));
         CHARSET_TABLE.add(new CharsetData(198, 857, "turk", "Paradox 'turk'", cp857));
         CHARSET_TABLE.add(new CharsetData(143, 1251, "ancyrr", "Pdox ANSI Cyrillic", windows1251));
         CHARSET_TABLE.add(new CharsetData(220, 1250, "anczech", "Pdox ANSI Czech", windows1250));
@@ -140,18 +146,45 @@ public class CharsetUtil {
     }
 
     public static Charset getDefault() {
-        return CP437;
+        return StandardCharsets.US_ASCII;
     }
 
-    public static Charset get(int codePage, String sortOrderId) {
+    public static Charset get(int codePage, String sortOrderId, final ConnectionInfo connectionInfo) {
+        CharsetData data = get(codePage, sortOrderId);
+        if (data == null) {
+            connectionInfo.addWarning(String.format("Charset not found for width sort order %s and code page %d", sortOrderId, codePage));
+            return StandardCharsets.US_ASCII;
+        }
+
+        return data.getCharset();
+    }
+
+    public static CharsetData get(int codePage, String sortOrderId) {
         if (sortOrderId != null && !sortOrderId.isEmpty()) {
             return CHARSET_TABLE.stream()
-                    .filter(x -> x.getSortOrderId().equalsIgnoreCase(sortOrderId))
-                    .map(CharsetData::getCharset).findFirst().orElse(null);
+                    .filter(x -> sortOrderId.equalsIgnoreCase(x.getSortOrderId()))
+                    .findFirst().orElse(null);
         }
 
         return CHARSET_TABLE.stream()
                 .filter(x -> x.getCodePage() == codePage)
-                .map(CharsetData::getCharset).findFirst().orElse(null);
+                .findFirst().orElse(null);
+    }
+
+    public static String translate(final ParadoxDataFile data, final ByteBuffer name) {
+        if (data.getCharset() != null) {
+            return data.getCharset().decode(name).toString();
+        }
+
+        return StandardCharsets.US_ASCII.decode(name).toString();
+    }
+
+    public static String getOrigialName(ParadoxDataFile table) {
+        CharsetData data = get(table.getCodePage(), table.getSortOrderID());
+        if (data == null) {
+            return "Unknown";
+        }
+
+        return data.getName();
     }
 }

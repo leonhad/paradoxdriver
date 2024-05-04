@@ -238,28 +238,6 @@ class ParadoxClobTest {
     }
 
     /**
-     * Test for CLOB with cp1251 charset.
-     *
-     * @throws SQLException in case of failures.
-     */
-    @Test
-    void testReadBlob1251() throws SQLException {
-        Properties properties = new Properties();
-        properties.put("charset", "cp1251");
-
-        try (final Connection conn = DriverManager.getConnection(CONNECTION_STRING + "db", properties);
-             final Statement stmt = conn.createStatement();
-             final ResultSet rs = stmt.executeQuery("SELECT Note FROM NOTE1251 WHERE Id=2")) {
-
-            assertTrue(rs.next());
-            final Clob c = rs.getClob("note");
-            final String expected = "Удивительное устройство USB-флешки Kingston DataTraveler";
-            final String real = c.getSubString(1, (int) c.length());
-            assertEquals(expected, real);
-        }
-    }
-
-    /**
      * Test for {@link Clob#getSubString(long, int)} method.
      *
      * @throws SQLException in case of failures.

@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.data.FieldParser;
+import com.googlecode.paradox.data.charset.CharsetUtil;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
@@ -54,7 +55,7 @@ public final class VarcharField implements FieldParser {
         }
         valueString.flip();
         valueString.limit(length);
-        final String str = table.getCharset().decode(valueString).toString();
+        final String str = CharsetUtil.translate(table, valueString);
 
         if (str.isEmpty()) {
             return null;

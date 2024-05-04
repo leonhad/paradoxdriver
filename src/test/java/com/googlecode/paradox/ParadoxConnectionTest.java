@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -84,7 +85,7 @@ class ParadoxConnectionTest {
      */
     @Test
     void testCharsetChanging() throws SQLException {
-        String charsetName = "UTF-8";
+        String charsetName = StandardCharsets.UTF_8.name();
 
         final Properties info = new Properties();
         info.put("charset", charsetName);

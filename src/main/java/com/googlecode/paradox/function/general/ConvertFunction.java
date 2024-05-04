@@ -13,6 +13,7 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.parser.TokenType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -26,6 +27,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The SQL CONVERT function.
@@ -96,12 +98,7 @@ public class ConvertFunction extends AbstractGeneralFunction {
             if (value == null) {
                 return null;
             } else if (value instanceof String) {
-                Charset original = StandardCharsets.UTF_8;
-                final FieldNode field = fields[0];
-                if (field != null && field.getTable() != null) {
-                    original = field.getTable().getCharset();
-                }
-
+                Charset original = Optional.ofNullable(fields[0]).map(FieldNode::getTable).map(Table::getCharset).orElse(StandardCharsets.US_ASCII);
                 byte[] bytes = ((String) value).getBytes(original);
 
                 return new String(bytes, charset);

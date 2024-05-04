@@ -88,7 +88,7 @@ chose from:
 |    117     |    anthai     |   1252    | Pdox ANSI Thai       | windows-1252                     |
 |    213     |    ANTURK     |   1254    | Pdox ANSI Turkish    | windows-1254                     |
 |     60     |   DBWINES0    |   1252    | 'Spanish' ANSI       | windows-1252                     |
-|     20     |   BLROM800    |     0     | SQL Link ROMAN8      | roman8 / cp1051 (unsupported)    |
+|     20     |   BLROM800    |     0     | SQL Link ROMAN8      | roman8 / cp1051                  |
 |    209     |    SYDC437    |    437    | Sybase SQL Dic437    | cp437                            |
 |    208     |    SYDC850    |    850    | Sybase SQL Dic850    | cp850                            |
 |     64     |   DBWINWE0    |   1252    | 'WEurope' ANSI       | windows-1252                     |

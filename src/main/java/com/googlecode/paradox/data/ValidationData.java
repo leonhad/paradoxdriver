@@ -11,10 +11,10 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.charset.CharsetUtil;
 import com.googlecode.paradox.data.filefilters.ValidationFilter;
 import com.googlecode.paradox.exceptions.ParadoxException;
 import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxReferentialIntegrity;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.metadata.paradox.ParadoxValidation;
@@ -126,7 +126,7 @@ public class ValidationData {
                     .orElseThrow(() -> new ParadoxException(ParadoxException.Error.INVALID_COLUMN_FILE, validationField.getName(), fileName));
 
             int pictureSize = buffer.get() & 0xFF;
-            int required =  buffer.get() & 0xFF;
+            int required = buffer.get() & 0xFF;
             validationField.setRequired(required == 1);
 
             int tableLookupAttribute = buffer.get() & 0xFF;
@@ -224,7 +224,7 @@ public class ValidationData {
         stringBuffer.limit(size);
         stringBuffer.flip();
 
-        String ret = table.getCharset().decode(stringBuffer).toString();
+        String ret = CharsetUtil.translate(table, stringBuffer);
         buffer.position(originalPosition + size);
         return ret;
     }
@@ -248,7 +248,7 @@ public class ValidationData {
             pictureBuffer.flip();
             pictureBuffer.limit(pictureSize - 1);
 
-            validationField.setPicture(table.getCharset().decode(pictureBuffer).toString());
+            validationField.setPicture(CharsetUtil.translate(table, pictureBuffer));
         }
     }
 
@@ -262,7 +262,7 @@ public class ValidationData {
         data.setReferentialIntegrityOffset(buffer.getInt());
     }
 
-    private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final Table table) {
+    private static void loadFooter(final ByteBuffer buffer, ParadoxValidation data, final ParadoxTable table) {
         buffer.position(data.getFooterOffset());
         data.setFieldCount(buffer.getShort());
 
@@ -288,7 +288,7 @@ public class ValidationData {
         }
         originalTableName.flip();
 
-        data.setOriginalTableName(table.getCharset().decode(originalTableName).toString());
+        data.setOriginalTableName(CharsetUtil.translate(table, originalTableName));
         buffer.position(position + 0x4F);
 
         // Field name and position
@@ -302,7 +302,7 @@ public class ValidationData {
             }
 
             name.flip();
-            String fieldName = table.getCharset().decode(name).toString();
+            String fieldName = CharsetUtil.translate(table, name);
 
             ValidationField field = new ValidationField();
             field.setName(fieldName);

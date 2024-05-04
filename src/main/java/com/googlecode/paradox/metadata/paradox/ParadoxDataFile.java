@@ -16,6 +16,7 @@ import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 /**
  * Defines the paradox default file structure.
@@ -166,9 +167,7 @@ public class ParadoxDataFile {
         this.file = file;
         this.name = Utils.removeSuffix(file.getName(), "DB");
         this.connectionInfo = connectionInfo;
-        if (connectionInfo != null && connectionInfo.getCharset() != null) {
-            this.charset = connectionInfo.getCharset();
-        }
+        this.charset = Optional.ofNullable(connectionInfo).map(ConnectionInfo::getCharset).orElse(null);
     }
 
     /**

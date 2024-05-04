@@ -27,6 +27,7 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 /**
@@ -524,7 +525,7 @@ public final class ValuesConverter {
      * @throws ParadoxDataException in case of converter errors.
      */
     public static String convert(final byte[] bytes, final Charset charset) throws ParadoxDataException {
-        final CharsetDecoder decoder = charset.newDecoder();
+        final CharsetDecoder decoder = Optional.ofNullable(charset).orElse(StandardCharsets.US_ASCII).newDecoder();
         decoder.onMalformedInput(CodingErrorAction.IGNORE);
         decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
         final ByteBuffer input = ByteBuffer.wrap(bytes);
