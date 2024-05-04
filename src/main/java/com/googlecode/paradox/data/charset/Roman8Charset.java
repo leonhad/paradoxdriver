@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Roman8Charset extends Charset {
+
     public Roman8Charset() {
         super("roman8", new String[]{"IBM1051", "cp1051", "cp-1051", "IBM-1051", "hp-roman8", "HP_ROMAN8", "ROMAN8"});
     }
@@ -100,6 +101,17 @@ public class Roman8Charset extends Charset {
         for (int i = 0; i < ROMAN_8.length; i++) {
             map.put(ROMAN_8[i], (byte) i);
         }
+
+        // Add special cases (problems with encoding definition by IBM and HP).
+        map.put('\u007F', (byte) 0x7F);
+        map.put('｀', (byte) 0xA9);
+        map.put('‾', (byte) 0xB0);
+        map.put('˚', (byte) 0xB3);
+        map.put('β', (byte) 0xDE);
+        map.put('đ', (byte) 0xE4);
+        map.put('μ', (byte) 0xF3);
+        map.put('\u00AD', (byte) 0xF6);
+
         LOOKUP = Collections.unmodifiableMap(map);
     }
 }
