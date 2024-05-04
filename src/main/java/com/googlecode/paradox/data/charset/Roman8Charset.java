@@ -64,7 +64,7 @@ public class Roman8Charset extends Charset {
     }
 
     public Roman8Charset() {
-        super("roman8", new String[]{"IBM1051", "cp1051", "cp-1051", "IBM-1051", "hp-roman8", "HP_ROMAN8", "ROMAN8"});
+        super("roman8", new String[]{"IBM1051", "cp1051", "cp-1051", "IBM-1051", "hp-roman8", "HP_ROMAN8", "ROMAN8", "cp1050", "cp-1050", "IBM1050", "IBM-1050"});
     }
 
     @Override
