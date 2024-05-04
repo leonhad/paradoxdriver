@@ -41,6 +41,7 @@ public class CharsetUtil {
         final Charset cp863 = Charset.forName("cp863");
         final Charset cp865 = Charset.forName("cp865");
         final Charset cp866 = Charset.forName("cp866");
+        final Charset cp867 = Cp867CharsetProvider.cp867();
         final Charset cp737 = Charset.forName("cp737");
         final Charset cp936 = Charset.forName("cp936");
         final Charset cp1051 = Roman8CharsetProvider.roman8();
@@ -63,7 +64,7 @@ public class CharsetUtil {
 
         // dBASE set
         CHARSET_TABLE.add(new CharsetData(242, 850, "DB852CZ0", "dBASE CSY cp852", cp852));
-        CHARSET_TABLE.add(new CharsetData(248, 867, "DB867CZ0", "dBASE CSY cp867", cp862));
+        CHARSET_TABLE.add(new CharsetData(248, 867, "DB867CZ0", "dBASE CSY cp867", cp867));
         CHARSET_TABLE.add(new CharsetData(222, 865, "DB865DA0", "dBASE DAN cp865", cp865));
         CHARSET_TABLE.add(new CharsetData(221, 865, "DB437DE0", "dBASE DEU cp437", cp437));
         CHARSET_TABLE.add(new CharsetData(220, 850, "DB850DE0", "dBASE DEU cp850", cp850));
@@ -112,7 +113,7 @@ public class CharsetUtil {
         CHARSET_TABLE.add(new CharsetData(0, 850, "ascii", "Paradox 'ascii'", cp850));
         CHARSET_TABLE.add(new CharsetData(192, 866, "cyrr", "Paradox Cyrr 866", cp866));
         CHARSET_TABLE.add(new CharsetData(13, 852, "czech", "Paradox Czech 852", cp852));
-        CHARSET_TABLE.add(new CharsetData(266, 867, "cskamen", "Paradox Czech 867", cp862));
+        CHARSET_TABLE.add(new CharsetData(266, 867, "cskamen", "Paradox Czech 867", cp867));
         CHARSET_TABLE.add(new CharsetData(22, 437, "SPANISH", "Paradox ESP 437", cp437));
         CHARSET_TABLE.add(new CharsetData(74, 737, "grcp437", "Paradox Greek GR437", cp737));
         CHARSET_TABLE.add(new CharsetData(125, 862, "hebrew", "Paradox 'hebrew'", cp862));

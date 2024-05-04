@@ -8,6 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.googlecode.paradox.data.charset;
 
 import java.nio.charset.Charset;
@@ -16,24 +17,24 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class Roman8CharsetProvider extends CharsetProvider {
+public class Cp867CharsetProvider extends CharsetProvider {
 
-    private static final Charset ROMAN_8 = new Roman8Charset();
-    private static final List<Charset> ROMAN8_LIST = Collections.singletonList(ROMAN_8);
+    private static final Charset CP_867 = new Cp867Charset();
+    private static final List<Charset> CP_867_LIST = Collections.singletonList(CP_867);
 
-    public static Charset roman8() {
-        return ROMAN_8;
+    public static Charset cp867() {
+        return CP_867;
     }
 
     @Override
     public Iterator<Charset> charsets() {
-        return ROMAN8_LIST.iterator();
+        return CP_867_LIST.iterator();
     }
 
     @Override
     public Charset charsetForName(String charsetName) {
-        if (charsetName.equals(ROMAN_8.name()) || ROMAN_8.aliases().contains(charsetName)) {
-            return ROMAN_8;
+        if (charsetName.equals(CP_867.name()) || CP_867.aliases().contains(charsetName)) {
+            return CP_867;
         }
 
         return null;

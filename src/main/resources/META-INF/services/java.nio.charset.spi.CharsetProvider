@@ -10,3 +10,4 @@
 #
 
 com.googlecode.paradox.data.charset.Roman8CharsetProvider
+com.googlecode.paradox.data.charset.Cp867CharsetProvider
