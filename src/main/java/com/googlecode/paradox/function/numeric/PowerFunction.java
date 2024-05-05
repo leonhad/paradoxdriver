@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL POWER functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class PowerFunction extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class PowerFunction extends AbstractNumericFunction {
             new Column("exponent", ParadoxType.NUMBER, "The exponent number.", 2, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public PowerFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns the value of a number raised to the power of another number.";
@@ -49,8 +55,7 @@ public class PowerFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         final Double exponent = ValuesConverter.getDouble(values[1], connectionInfo);
         if (value == null || exponent == null) {

@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL RIGHT PAD function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class RPadFunction extends AbstractStringFunction {
@@ -41,6 +40,13 @@ public class RPadFunction extends AbstractStringFunction {
             new Column("lpad_string", ParadoxType.VARCHAR, "The filler string to use.", 3, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public RPadFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Right-pads a string with another string, to a certain length.";
@@ -52,8 +58,7 @@ public class RPadFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
 
         final String pattern = values[2].toString();
 

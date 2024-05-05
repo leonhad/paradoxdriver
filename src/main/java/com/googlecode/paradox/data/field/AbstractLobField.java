@@ -29,7 +29,6 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.8
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
@@ -64,8 +63,14 @@ public abstract class AbstractLobField implements FieldParser {
      */
     public static final int LEADER_SIZE_PADDING = 10;
 
-    private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table)
-            throws IOException {
+    /**
+     * Creates a new instance.
+     */
+    protected AbstractLobField() {
+        super();
+    }
+
+    private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table) throws IOException {
         // Calculate the block size.
         final long pos = channel.position();
         final long offset = pos & 0xFFFFFF00L;

@@ -21,10 +21,16 @@ import java.nio.ByteBuffer;
 /**
  * Parses a VARCHAR field.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class VarcharField implements FieldParser {
+
+    /**
+     * Creates a new instance.
+     */
+    public VarcharField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

@@ -23,10 +23,16 @@ import java.util.GregorianCalendar;
 /**
  * Parses time fields.
  *
- * @version 1.6
  * @since 1.3
  */
 public final class TimeField implements FieldParser {
+
+    /**
+     * Creates a new instance.
+     */
+    public TimeField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

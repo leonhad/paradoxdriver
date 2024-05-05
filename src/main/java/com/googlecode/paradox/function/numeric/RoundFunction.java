@@ -23,7 +23,6 @@ import java.util.Optional;
 /**
  * The SQL ROUND functions.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class RoundFunction extends AbstractNumericFunction {
@@ -46,6 +45,13 @@ public class RoundFunction extends AbstractNumericFunction {
                     "decimal, otherwise it truncates the result to the number of decimals. " +
                     "Default value is false.", 3, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public RoundFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -73,8 +79,7 @@ public class RoundFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         final BigDecimal value = ValuesConverter.getBigDecimal(values[0], connectionInfo);
         final Integer decimal = ValuesConverter.getInteger(values[1], connectionInfo);
 

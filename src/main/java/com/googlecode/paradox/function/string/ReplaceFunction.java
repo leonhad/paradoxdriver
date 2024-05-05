@@ -18,10 +18,8 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL REPLACE function.
  *
- * @version 1.4
  * @since 1.6.0
  */
-@SuppressWarnings("java:S109")
 public class ReplaceFunction extends AbstractStringFunction {
 
     /**
@@ -39,6 +37,13 @@ public class ReplaceFunction extends AbstractStringFunction {
             new Column("new_string", ParadoxType.VARCHAR, "The new replacement string..", 3, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public ReplaceFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Replaces all occurrences of a substring within a string, with a new substring.";
@@ -50,8 +55,7 @@ public class ReplaceFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
 
         return values[0].toString().replace(values[1].toString(), values[2].toString());
     }

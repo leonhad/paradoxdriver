@@ -20,7 +20,6 @@ import java.sql.SQLException;
 /**
  * The SQL PI function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class PiFunction extends AbstractNumericFunction {
@@ -37,6 +36,13 @@ public class PiFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.NUMBER, "The value of PI constant (π).", 0, false, RESULT)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public PiFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Gets the PI constant (π).";
@@ -48,8 +54,7 @@ public class PiFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
         return Math.PI;
     }
 }

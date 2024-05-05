@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL USER functions.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class UserFunction extends AbstractSystemFunction {
@@ -34,6 +33,13 @@ public class UserFunction extends AbstractSystemFunction {
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.VARCHAR, "The current user.", 0, false, RESULT)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public UserFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -51,8 +57,7 @@ public class UserFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         return connectionInfo.getUser();
     }
 }

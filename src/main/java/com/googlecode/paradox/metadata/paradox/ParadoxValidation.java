@@ -66,6 +66,13 @@ public class ParadoxValidation {
     private String originalTableName;
 
     /**
+     * Creates a new instance.
+     */
+    public ParadoxValidation() {
+        super();
+    }
+
+    /**
      * Gets the validation version ID.
      *
      * @return the validation version ID.

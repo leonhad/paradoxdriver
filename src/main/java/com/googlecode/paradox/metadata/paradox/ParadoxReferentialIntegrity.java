@@ -43,6 +43,13 @@ public class ParadoxReferentialIntegrity {
     private int[] destinationFields;
 
     /**
+     * Creates a new instance.
+     */
+    public ParadoxReferentialIntegrity() {
+        super();
+    }
+
+    /**
      * Gets the referential integrity name.
      *
      * @return the referential integrity name.

@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL SQUARE functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class SquareFunction extends AbstractNumericFunction {
@@ -37,6 +36,13 @@ public class SquareFunction extends AbstractNumericFunction {
             new Column("number", ParadoxType.NUMBER, "A number to calculate the square of.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public SquareFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns the square of a number.";
@@ -48,8 +54,7 @@ public class SquareFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         if (value == null) {
             return null;

@@ -25,6 +25,13 @@ import java.sql.SQLException;
  */
 public interface Plan<T, C extends Context> {
 
+    /**
+     * Execute the plan.
+     *
+     * @param context the context to use.
+     * @return the generated values.
+     * @throws SQLException in case of failures.
+     */
     T execute(final C context) throws SQLException;
 
     /**

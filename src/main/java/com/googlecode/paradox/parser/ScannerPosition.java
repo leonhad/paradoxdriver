@@ -13,7 +13,6 @@ package com.googlecode.paradox.parser;
 /**
  * Stores the scanner position.
  *
- * @version 1.1
  * @since 1.6.0
  */
 public class ScannerPosition {
@@ -35,7 +34,12 @@ public class ScannerPosition {
         super();
     }
 
-    public void add(final char c) {
+    /**
+     * Reposition the scanner tracking based on char type.
+     *
+     * @param c the char to avail.
+     */
+    public void setTrackingPosition(final char c) {
         if (c == '\n') {
             column = 1;
             line++;
@@ -60,10 +64,6 @@ public class ScannerPosition {
      */
     public int getLine() {
         return line;
-    }
-
-    public String getLocation() {
-        return String.format("line %d, column %d", line, column);
     }
 
     /**

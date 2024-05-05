@@ -20,7 +20,6 @@ import java.sql.SQLException;
 /**
  * The SQL TEXT function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class TextFunction extends AbstractStringFunction {
@@ -38,6 +37,13 @@ public class TextFunction extends AbstractStringFunction {
             new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public TextFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Converts the value to CLOB (text) type.";
@@ -49,8 +55,7 @@ public class TextFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
 
         return values[0].toString();
     }

@@ -33,10 +33,8 @@ import java.util.function.BiFunction;
 /**
  * Custom values conversion utility class.
  *
- * @version 1.8
  * @since 1.6.0
  */
-@SuppressWarnings("java:S1200")
 public final class ValuesConverter {
 
     /**
@@ -88,9 +86,17 @@ public final class ValuesConverter {
         super();
     }
 
+    /**
+     * Converts the value to one defined in type.
+     *
+     * @param value          the value to convert.
+     * @param type           the destination type.
+     * @param connectionInfo the connection info.
+     * @return the converted value.
+     * @throws SQLException in case of failures.
+     */
     @SuppressWarnings("unchecked")
-    public static <T> T convert(final Object value, Class<T> type, final ConnectionInfo connectionInfo)
-            throws SQLException {
+    public static <T> T convert(final Object value, Class<T> type, final ConnectionInfo connectionInfo) throws SQLException {
         try {
             return (T) CLASS_MAPPING.get(type).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
@@ -98,6 +104,15 @@ public final class ValuesConverter {
         }
     }
 
+    /**
+     * Converts the value to one defined in type.
+     *
+     * @param value          the value to convert.
+     * @param sqlType        the destination type.
+     * @param connectionInfo the connection info.
+     * @return the converted value.
+     * @throws SQLException in case of failures.
+     */
     public static Object convert(final Object value, int sqlType, final ConnectionInfo connectionInfo)
             throws SQLException {
         try {
@@ -107,8 +122,16 @@ public final class ValuesConverter {
         }
     }
 
-    public static Object convert(final Object value, ParadoxType type, final ConnectionInfo connectionInfo)
-            throws SQLException {
+    /**
+     * Converts the value to one defined in type.
+     *
+     * @param value          the value to convert.
+     * @param type           the destination type.
+     * @param connectionInfo the connection info.
+     * @return the converted value.
+     * @throws SQLException in case of failures.
+     */
+    public static Object convert(final Object value, ParadoxType type, final ConnectionInfo connectionInfo) throws SQLException {
         try {
             return CLASS_MAPPING.get(type.getJavaClass()).apply(value, connectionInfo);
         } catch (final IllegalArgumentException e) {
@@ -116,6 +139,13 @@ public final class ValuesConverter {
         }
     }
 
+    /**
+     * Converts the value to boolean.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the converted boolean value.
+     */
     public static Boolean getBoolean(final Object value, final ConnectionInfo connectionInfo) {
         Boolean ret = null;
         if (value instanceof Boolean) {
@@ -143,6 +173,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Converts the value to byte.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the converted byte value.
+     */
     public static Byte getByte(final Object value, final ConnectionInfo connectionInfo) {
         Byte ret = null;
         if (value instanceof Byte) {
@@ -166,6 +203,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Converts the value to short.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the converted short value.
+     */
     public static Short getShort(final Object value, final ConnectionInfo connectionInfo) {
         Short ret = null;
         if (value instanceof Short) {
@@ -195,8 +239,7 @@ public final class ValuesConverter {
      * @param value          the value to convert.
      * @param connectionInfo the connection information.
      * @return a positive integer value.
-     * @throws ParadoxSyntaxErrorException if the value is not a valid integer
-     *                                     value.
+     * @throws ParadoxSyntaxErrorException if the value is not a valid integer value.
      */
     public static int getPositiveInteger(final Object value, final ConnectionInfo connectionInfo)
             throws ParadoxSyntaxErrorException {
@@ -208,6 +251,13 @@ public final class ValuesConverter {
         return size;
     }
 
+    /**
+     * Get the value as integer.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the integer value.
+     */
     public static Integer getInteger(final Object value, final ConnectionInfo connectionInfo) {
         Integer ret = null;
 
@@ -238,6 +288,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Get the value as long.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the long value.
+     */
     public static Long getLong(final Object value, final ConnectionInfo connectionInfo) {
         Long ret = null;
         if (value instanceof Long) {
@@ -268,6 +325,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Get the value as {@link BigDecimal}.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the {@link BigDecimal} value.
+     */
     public static BigDecimal getBigDecimal(final Object value, final ConnectionInfo connectionInfo) {
         BigDecimal ret = null;
         if (value instanceof BigDecimal) {
@@ -291,6 +355,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Get the value as float.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the float value.
+     */
     public static Float getFloat(final Object value, final ConnectionInfo connectionInfo) {
         Float ret = null;
         if (value instanceof Float) {
@@ -314,6 +385,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Get the value as double.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the double value.
+     */
     public static Double getDouble(final Object value, final ConnectionInfo connectionInfo) {
         Double ret = null;
         if (value instanceof Double) {
@@ -337,6 +415,12 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Gets only the time part from the date.
+     *
+     * @param date the date to use.
+     * @return the time part of the date.
+     */
     public static Time removeDate(java.util.Date date) {
         if (date == null) {
             return null;
@@ -352,11 +436,11 @@ public final class ValuesConverter {
     }
 
     /**
-     * Converts the value to time.
+     * Get the value as {@link Time}.
      *
      * @param value          the value to convert.
-     * @param connectionInfo the connection information.
-     * @return the converted time value.
+     * @param connectionInfo the connection info.
+     * @return the {@link Time} value.
      */
     public static Time getTime(final Object value, final ConnectionInfo connectionInfo) {
         Time ret = null;
@@ -392,11 +476,11 @@ public final class ValuesConverter {
     }
 
     /**
-     * Converts the value to timestamp.
+     * Get the value as {@link Timestamp}.
      *
      * @param value          the value to convert.
-     * @param connectionInfo the connection information.
-     * @return the converted timestamp value.
+     * @param connectionInfo the connection info.
+     * @return the {@link Timestamp} value.
      */
     public static Timestamp getTimestamp(final Object value, final ConnectionInfo connectionInfo) {
         Timestamp ret = null;
@@ -431,6 +515,12 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Gets the date without time.
+     *
+     * @param date the date to use.
+     * @return the date without the time.
+     */
     public static Date removeTime(java.util.Date date) {
         if (date == null) {
             return null;
@@ -447,11 +537,11 @@ public final class ValuesConverter {
     }
 
     /**
-     * Converts the value to date.
+     * Get the value as {@link Date}.
      *
      * @param value          the value to convert.
-     * @param connectionInfo the connection information.
-     * @return the converted date value.
+     * @param connectionInfo the connection info.
+     * @return the {@link Date} value.
      */
     public static Date getDate(final Object value, final ConnectionInfo connectionInfo) {
         Date ret = null;
@@ -478,6 +568,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Get the value as byte[].
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the byte[] value.
+     */
     public static byte[] getByteArray(final Object value, final ConnectionInfo connectionInfo) {
         byte[] ret = null;
         if (value instanceof byte[]) {
@@ -489,6 +586,13 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Get the value as String.
+     *
+     * @param value          the value to convert.
+     * @param connectionInfo the connection info.
+     * @return the String value.
+     */
     public static String getString(final Object value, final ConnectionInfo connectionInfo) {
         String ret = null;
         if (value instanceof String) {
@@ -502,6 +606,14 @@ public final class ValuesConverter {
         return ret;
     }
 
+    /**
+     * Get the byte[] from an {@link InputStream}.
+     *
+     * @param inputStream the stream to load from.
+     * @param length      the length to load.
+     * @return the byte[] loaded from stream.
+     * @throws ParadoxDataException in case of failures.
+     */
     public static byte[] getBytes(final InputStream inputStream, final int length) throws ParadoxDataException {
         byte[] ret = null;
         if (inputStream != null) {

@@ -20,6 +20,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The Java cp867 charset.
+ *
+ * @since 1.6.2
+ */
 public class Cp867Charset extends Charset {
 
     private static final char[] CP_867 = {
@@ -57,6 +62,9 @@ public class Cp867Charset extends Charset {
         LOOKUP = Collections.unmodifiableMap(map);
     }
 
+    /**
+     * Creates a new instance.
+     */
     public Cp867Charset() {
         super("IBM867", new String[]{"cp-867", "cp867", "IBM-867"});
     }

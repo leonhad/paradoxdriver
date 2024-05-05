@@ -197,6 +197,15 @@ public interface Table {
         return "NO";
     }
 
+    /**
+     * Gets the field values from context.
+     *
+     * @param fields  the fields to get.
+     * @param mapper  the value mapper.
+     * @param context the context to use.
+     * @param <T>     The context type.
+     * @return the field values.
+     */
     static <T> Object[] getFieldValues(Field[] fields, Map<Field, Function<T, Object>> mapper, T context) {
         final Object[] row = new Object[fields.length];
         for (int i = 0; i < fields.length; i++) {

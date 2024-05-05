@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL SPACE function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class SpaceFunction extends AbstractStringFunction {
@@ -39,6 +38,13 @@ public class SpaceFunction extends AbstractStringFunction {
             new Column("space_count", ParadoxType.INTEGER, "The space count.", 1, true, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public SpaceFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Return a string only with spaces.";
@@ -50,8 +56,7 @@ public class SpaceFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
 
         final int size = ValuesConverter.getPositiveInteger(values[0], connectionInfo);
         final StringBuilder ret = new StringBuilder();

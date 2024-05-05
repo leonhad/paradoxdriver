@@ -20,6 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The charset lookup and translation util.
+ *
+ * @since 1.6.2
+ */
 public class CharsetUtil {
 
     private static final List<CharsetData> CHARSET_TABLE = new ArrayList<>();
@@ -153,6 +158,7 @@ public class CharsetUtil {
     /**
      * Gets the default charset.
      *
+     * @param connectionInfo the connection info.
      * @return the default charset.
      */
     public static Charset getDefault(ConnectionInfo connectionInfo) {

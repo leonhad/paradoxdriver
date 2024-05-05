@@ -19,7 +19,6 @@ import com.googlecode.paradox.utils.Constants;
 /**
  * The SQL VERSION_NUMBER functions.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class VersionNumberFunction extends AbstractSystemFunction {
@@ -36,6 +35,13 @@ public class VersionNumberFunction extends AbstractSystemFunction {
             new Column(null, ParadoxType.VARCHAR, "The driver version number.", 0, false, RESULT)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public VersionNumberFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Gets the driver version number.";
@@ -47,8 +53,7 @@ public class VersionNumberFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         return Constants.DRIVER_VERSION;
     }
 }

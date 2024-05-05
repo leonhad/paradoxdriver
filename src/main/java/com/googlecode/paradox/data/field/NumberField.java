@@ -22,10 +22,16 @@ import java.nio.ByteBuffer;
 /**
  * Parses the numeric fields.
  *
- * @version 1.6
  * @since 1.3
  */
 public final class NumberField implements FieldParser {
+
+    /**
+     * Creates a new instance.
+     */
+    public NumberField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 /**
  * Utility class to reduce Select Plan complexity.
  *
- * @version 1.0
  * @since 1.6.0
  */
 public final class SelectUtils {
@@ -37,6 +36,12 @@ public final class SelectUtils {
         // Not using.
     }
 
+    /**
+     * Add a AND clause to the plan tree.
+     *
+     * @param table  the plan table.
+     * @param clause the clause to add.
+     */
     public static void addAndClause(final PlanTableNode table, SQLNode clause) {
         if (table.getConditionalJoin() instanceof ANDNode) {
             // Exists and it is an AND node.
@@ -52,6 +57,12 @@ public final class SelectUtils {
         }
     }
 
+    /**
+     * Add a column to the grouping function.
+     *
+     * @param column the column to add.
+     * @return the function grouping node.
+     */
     public static List<FunctionNode> getGroupingFunctions(final Column column) {
         final FunctionNode function = column.getFunction();
         if (function == null) {
@@ -61,6 +72,13 @@ public final class SelectUtils {
         return function.getGroupingNodes();
     }
 
+    /**
+     * Gets the conditional fields.
+     *
+     * @param table     the plan table.
+     * @param condition the condition used to search.
+     * @return the column set.
+     */
     public static Set<Column> getConditionalFields(final PlanTableNode table, final AbstractConditionalNode condition) {
         if (condition != null) {
             return condition.getClauseFields().stream()
@@ -74,19 +92,23 @@ public final class SelectUtils {
         return Collections.emptySet();
     }
 
+    /**
+     * Add a JOIN clauses.
+     *
+     * @param node the node to add.
+     * @return the conditional node.
+     */
     public static AbstractConditionalNode joinClauses(final AbstractConditionalNode node) {
         AbstractConditionalNode ret = node;
 
-        // It is an AND and OR node?
+        // It is an 'AND' and 'OR' node?
         if (node instanceof AbstractJoinNode) {
             final List<SQLNode> children = node.getChildren();
 
             // Reduce all children.
-            for (int loop = 0; loop < children.size(); loop++) {
-                children.set(loop, joinClauses((AbstractConditionalNode) children.get(loop)));
-            }
+            children.replaceAll(sqlNode -> joinClauses((AbstractConditionalNode) sqlNode));
 
-            // Join only AND and OR nodes.
+            // Join only 'AND' and 'OR' nodes.
             while (ret instanceof AbstractJoinNode && ret.getChildren().size() <= 1) {
                 if (ret.getChildren().isEmpty()) {
                     ret = null;
@@ -99,6 +121,14 @@ public final class SelectUtils {
         return ret;
     }
 
+    /**
+     * Gets the fields from field node and plan tables.
+     *
+     * @param node   the field node.
+     * @param tables the plan tables.
+     * @return the column list.
+     * @throws ParadoxException in case of failures.
+     */
     public static List<Column> getParadoxFields(final FieldNode node, final List<PlanTableNode> tables)
             throws ParadoxException {
         final List<Column> ret = new ArrayList<>();

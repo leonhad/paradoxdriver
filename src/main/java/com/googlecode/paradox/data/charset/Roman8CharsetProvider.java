@@ -16,11 +16,26 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * The HP Roman 8 charset provider.
+ */
 public class Roman8CharsetProvider extends CharsetProvider {
 
     private static final Charset ROMAN_8 = new Roman8Charset();
     private static final List<Charset> ROMAN8_LIST = Collections.singletonList(ROMAN_8);
 
+    /**
+     * Creates a new instance.
+     */
+    public Roman8CharsetProvider() {
+        super();
+    }
+
+    /**
+     * Gets the HP Roman 8 charset.
+     *
+     * @return the HP Roman 8 charset.
+     */
     public static Charset roman8() {
         return ROMAN_8;
     }

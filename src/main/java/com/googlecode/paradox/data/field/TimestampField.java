@@ -21,12 +21,18 @@ import java.sql.Timestamp;
 /**
  * Parses time stamp fields.
  *
- * @version 1.4
  * @since 1.2
  */
 public final class TimestampField implements FieldParser {
 
     private static final long MILLIS_UNTIL_1970 = 62_135_683_200_000L;
+
+    /**
+     * Creates a new instance.
+     */
+    public TimestampField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

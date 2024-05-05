@@ -16,10 +16,16 @@ import com.googlecode.paradox.function.FunctionType;
 /**
  * Base class for string functions.
  *
- * @version 1.0
  * @since 1.6.0
  */
 public abstract class AbstractStringFunction extends AbstractFunction {
+
+    /**
+     * Creates a new instance.
+     */
+    public AbstractStringFunction() {
+        super();
+    }
 
     @Override
     public FunctionType getType() {

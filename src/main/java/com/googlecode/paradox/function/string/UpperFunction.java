@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL UPPER function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class UpperFunction extends AbstractStringFunction {
@@ -36,6 +35,13 @@ public class UpperFunction extends AbstractStringFunction {
             new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public UpperFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Converts a texto to upper case.";
@@ -47,8 +53,7 @@ public class UpperFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
 
         return values[0].toString().toUpperCase(connectionInfo.getLocale());
     }

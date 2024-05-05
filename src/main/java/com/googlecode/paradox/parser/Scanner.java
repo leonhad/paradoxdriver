@@ -171,7 +171,7 @@ public class Scanner {
         }
 
         char c = this.buffer.get();
-        position.add(c);
+        position.setTrackingPosition(c);
 
         // Handles escape characters.
         if (c == '\\') {

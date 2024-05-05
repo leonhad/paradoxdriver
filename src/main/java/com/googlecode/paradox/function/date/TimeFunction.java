@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL TIME function.
  *
- * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -40,6 +39,13 @@ public class TimeFunction extends AbstractDateFunction {
             new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the time from.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public TimeFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Extract the time from a timestamp value.";
@@ -51,8 +57,7 @@ public class TimeFunction extends AbstractDateFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
 
         return ValuesConverter.getTime(values[0], connectionInfo);
     }

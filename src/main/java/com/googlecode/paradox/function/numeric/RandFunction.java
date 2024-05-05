@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL RAND function.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class RandFunction extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class RandFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.NUMBER, "The random number.", 0, false, RESULT)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public RandFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns a random number between 0 and 1.";
@@ -49,8 +55,7 @@ public class RandFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
         return new SecureRandom().nextDouble();
     }
 }

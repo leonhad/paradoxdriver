@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL REPEAT function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class RepeatFunction extends AbstractStringFunction {
@@ -40,6 +39,13 @@ public class RepeatFunction extends AbstractStringFunction {
             new Column("count", ParadoxType.INTEGER, "The repeat count.", 2, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public RepeatFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Return a repeated string a specified number of times.";
@@ -51,8 +57,7 @@ public class RepeatFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
 
         final int size = ValuesConverter.getPositiveInteger(values[1], connectionInfo);
         final StringBuilder ret = new StringBuilder();
