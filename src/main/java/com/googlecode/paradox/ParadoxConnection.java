@@ -31,7 +31,6 @@ import java.util.concurrent.Executor;
 /**
  * JDBC Paradox connection implementation.
  *
- * @version 1.3
  * @since 1.0
  */
 public final class ParadoxConnection implements Connection {
@@ -82,7 +81,6 @@ public final class ParadoxConnection implements Connection {
      * @param info the connection properties.
      * @throws SQLException in case of any connection fault.
      */
-    @SuppressWarnings("i18n-java:V1019")
     public ParadoxConnection(final File dir, final String url, final Properties info) throws SQLException {
         if (!dir.exists() && !dir.isDirectory()) {
             throw new ParadoxConnectionException(ParadoxConnectionException.Error.DIRECTORY_NOT_FOUND);
@@ -465,8 +463,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency,
-                                         final int resultSetHoldability) throws SQLException {
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
         return this.prepareCall(sql);
     }
 
@@ -482,8 +479,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType,
-                                              final int resultSetConcurrency) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
         return prepareStatement(sql, resultSetType, resultSetConcurrency, connectionInfo.getHoldability());
     }
 
@@ -502,8 +498,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public CallableStatement prepareCall(final String sql, final int resultSetType,
-                                         final int resultSetConcurrency) throws SQLException {
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
         return this.prepareCall(sql);
     }
 
@@ -511,8 +506,7 @@ public final class ParadoxConnection implements Connection {
      * {@inheritDoc}.
      */
     @Override
-    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency,
-                                              final int resultSetHoldability) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
         final ParadoxPreparedStatement statement = new ParadoxPreparedStatement(this, sql, resultSetType,
                 resultSetConcurrency, connectionInfo.getHoldability());
         this.statements.add(statement);
