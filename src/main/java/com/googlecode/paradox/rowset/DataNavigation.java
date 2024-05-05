@@ -20,7 +20,6 @@ import java.util.List;
 /**
  * Data navigation facility.
  *
- * @version 1.1
  * @since 1.6.0
  */
 public class DataNavigation implements AutoCloseable {
@@ -28,18 +27,22 @@ public class DataNavigation implements AutoCloseable {
     private boolean closed;
     private List<? extends Object[]> values;
     private Object[] currentRow;
+
     /**
      * Last got value.
      */
     private Object lastValue;
+
     /**
      * Current index.
      */
     private int index = -1;
+
     /**
      * ResultSet fetch direction.
      */
     private int fetchDirection = ResultSet.FETCH_FORWARD;
+
     /**
      * The column mapping.
      */
@@ -56,6 +59,13 @@ public class DataNavigation implements AutoCloseable {
         this.values = values;
     }
 
+    /**
+     * Gets the column value.
+     *
+     * @param columnIndex the column index.
+     * @return the column value.
+     * @throws SQLException in case of failures.
+     */
     public Object getColumnValue(final int columnIndex) throws SQLException {
         verifyStatus();
         verifyRow();
@@ -78,11 +88,22 @@ public class DataNavigation implements AutoCloseable {
         return this.lastValue;
     }
 
+    /**
+     * Gets the fetch direction.
+     *
+     * @return the fetch direction.
+     */
     public int getFetchDirection() throws SQLException {
         verifyStatus();
         return fetchDirection;
     }
 
+    /**
+     * Sets the fetch direction.
+     *
+     * @param fetchDirection the fetch direction.
+     * @throws SQLException in case of failures.
+     */
     public void setFetchDirection(int fetchDirection) throws SQLException {
         verifyStatus();
 
@@ -137,6 +158,12 @@ public class DataNavigation implements AutoCloseable {
         return ret;
     }
 
+    /**
+     * Go to first row.
+     *
+     * @return <code>true</code> if success.
+     * @throws SQLException in case of failures.
+     */
     public boolean first() throws SQLException {
         verifyStatus();
 
@@ -149,6 +176,11 @@ public class DataNavigation implements AutoCloseable {
         return true;
     }
 
+    /**
+     * Go to after the last one.
+     *
+     * @throws SQLException in case of failures.
+     */
     public void afterLast() throws SQLException {
         verifyStatus();
 
@@ -158,6 +190,11 @@ public class DataNavigation implements AutoCloseable {
         }
     }
 
+    /**
+     * Go to a row before the first.
+     *
+     * @throws SQLException in case of failures.
+     */
     public void beforeFirst() throws SQLException {
         verifyStatus();
 
@@ -165,18 +202,36 @@ public class DataNavigation implements AutoCloseable {
         updateCurrentRow();
     }
 
+    /**
+     * If the current row is after the last one.
+     *
+     * @return <code>true</code> if the current row is after the last one.
+     * @throws SQLException in case of failures.
+     */
     public boolean isAfterLast() throws SQLException {
         verifyStatus();
 
         return index >= values.size() || values.isEmpty();
     }
 
+    /**
+     * If the current row is before the first one.
+     *
+     * @return <code>true</code> if the current row is before the first one.
+     * @throws SQLException in case of failures.
+     */
     public boolean isBeforeFirst() throws SQLException {
         verifyStatus();
 
         return index < 0;
     }
 
+    /**
+     * Gets the current row index.
+     *
+     * @return the current row index.
+     * @throws SQLException in case of failures.
+     */
     public int getRow() throws SQLException {
         verifyStatus();
 
@@ -187,18 +242,36 @@ public class DataNavigation implements AutoCloseable {
         return index + 1;
     }
 
+    /**
+     * If the current row is first.
+     *
+     * @return <code>true</code> if the current row is first.
+     * @throws SQLException in case of failures.
+     */
     public boolean isFirst() throws SQLException {
         verifyStatus();
 
         return index == 0;
     }
 
+    /**
+     * If the current row is the last one.
+     *
+     * @return <code>true</code> if the current row is the last one.
+     * @throws SQLException in case of failures.
+     */
     public boolean isLast() throws SQLException {
         verifyStatus();
 
         return index == values.size() - 1;
     }
 
+    /**
+     * Go to last row.
+     *
+     * @return <code>true</code> if success.
+     * @throws SQLException in case of failures.
+     */
     public boolean last() throws SQLException {
         verifyStatus();
 
@@ -211,6 +284,13 @@ public class DataNavigation implements AutoCloseable {
         return true;
     }
 
+    /**
+     * Go to position relative to the current.
+     *
+     * @param rows the position relative to the current.
+     * @return <code>true</code> in case of success.
+     * @throws SQLException in case of failures.
+     */
     public boolean relative(final int rows) throws SQLException {
         verifyStatus();
 
@@ -261,6 +341,11 @@ public class DataNavigation implements AutoCloseable {
         }
     }
 
+    /**
+     * Go to the next row.
+     *
+     * @return <code>true</code> in case of failures.
+     */
     public boolean next() {
         if (fetchDirection == ResultSet.FETCH_FORWARD) {
             return moveNext();
@@ -269,6 +354,11 @@ public class DataNavigation implements AutoCloseable {
         }
     }
 
+    /**
+     * Go to previous row.
+     *
+     * @return in case of failures.
+     */
     public boolean previous() {
         if (fetchDirection == ResultSet.FETCH_FORWARD) {
             return movePrevious();
@@ -277,6 +367,11 @@ public class DataNavigation implements AutoCloseable {
         }
     }
 
+    /**
+     * Go to next row (forward mode only).
+     *
+     * @return <code>true</code> in case of success.
+     */
     private boolean moveNext() {
         if (index < values.size()) {
             index++;
@@ -286,6 +381,11 @@ public class DataNavigation implements AutoCloseable {
         return index != values.size();
     }
 
+    /**
+     * Go to previous row (forward mode only).
+     *
+     * @return <code>true</code> in case of success.
+     */
     private boolean movePrevious() {
         if (index != -1) {
             index--;
@@ -295,6 +395,11 @@ public class DataNavigation implements AutoCloseable {
         return index != -1;
     }
 
+    /**
+     * If the navigation is already closed.
+     *
+     * @return in case of failures.
+     */
     public boolean isClosed() {
         return closed;
     }

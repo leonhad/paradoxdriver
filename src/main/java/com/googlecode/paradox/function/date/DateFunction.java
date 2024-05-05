@@ -21,10 +21,8 @@ import java.sql.SQLException;
 /**
  * The SQL DATE function.
  *
- * @version 1.4
  * @since 1.6.0
  */
-@SuppressWarnings({"i18n-java:V1017", "java:S109"})
 public class DateFunction extends AbstractDateFunction {
 
     /**
@@ -39,6 +37,13 @@ public class DateFunction extends AbstractDateFunction {
             new Column(null, ParadoxType.DATE, "The date.", 0, false, RESULT),
             new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the time from.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public DateFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

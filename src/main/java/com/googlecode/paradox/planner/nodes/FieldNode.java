@@ -21,7 +21,6 @@ import java.util.Set;
 /**
  * Stores the field values.
  *
- * @version 1.6
  * @since 1.0
  */
 public class FieldNode extends SQLNode {
@@ -87,18 +86,38 @@ public class FieldNode extends SQLNode {
         return builder.toString();
     }
 
+    /**
+     * Gets the index.
+     *
+     * @return the index.
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * Sets the index.
+     *
+     * @param index the index.
+     */
     public void setIndex(int index) {
         this.index = index;
     }
 
+    /**
+     * Gets the table.
+     *
+     * @return the table.
+     */
     public Table getTable() {
         return table;
     }
 
+    /**
+     * Sets the table.
+     *
+     * @param table the table.
+     */
     public void setTable(final Table table) {
         this.table = table;
     }

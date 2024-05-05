@@ -75,6 +75,16 @@ public class Field {
         super();
     }
 
+    /**
+     * Creates a new instance.
+     * @param name The field name.
+     * @param precision the field precision.
+     * @param scale the field scale.
+     * @param size the field size.
+     * @param type the field type.
+     * @param table the field table.
+     * @param orderNum the order number.
+     */
     public Field(String name, int precision, int scale, int size, ParadoxType type, Table table, int orderNum) {
         this.name = name;
         this.precision = precision;

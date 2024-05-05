@@ -24,10 +24,8 @@ import java.util.GregorianCalendar;
 /**
  * The SQL DATE FROM PARTS function.
  *
- * @version 1.3
  * @since 1.6.0
  */
-@SuppressWarnings({"i18n-java:V1017", "java:S109"})
 public class DateFromPartsFunction extends AbstractDateFunction {
 
     /**
@@ -44,6 +42,13 @@ public class DateFromPartsFunction extends AbstractDateFunction {
             new Column("month", ParadoxType.INTEGER, "Specifies a month (from 1 to 12).", 2, false, IN),
             new Column("day", ParadoxType.INTEGER, "Specifies a day (from 1 to 31).", 3, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public DateFromPartsFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

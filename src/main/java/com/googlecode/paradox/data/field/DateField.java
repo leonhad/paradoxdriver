@@ -22,10 +22,16 @@ import java.sql.Date;
 /**
  * Parses date fields.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class DateField implements FieldParser {
+
+    /**
+     * Creates a new instance.
+     */
+    public DateField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

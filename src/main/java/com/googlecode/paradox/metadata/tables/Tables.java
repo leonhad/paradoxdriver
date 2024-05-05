@@ -11,7 +11,6 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.data.ParadoxData;
 import com.googlecode.paradox.data.charset.CharsetUtil;
 import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
@@ -96,9 +95,9 @@ public class Tables implements Table {
                 type,
                 typeName,
                 charset,
-         codePage,
-         sortOrder,
-         charsetOriginalName,
+                codePage,
+                sortOrder,
+                charsetOriginalName,
                 encrypted,
                 writeProtected,
                 count,
@@ -139,22 +138,22 @@ public class Tables implements Table {
         map.put(typeName, details -> details.getTable().type().typeName());
         map.put(charset, details -> Optional.ofNullable(details.getTable().getCharset()).map(Charset::displayName).orElse(null));
         map.put(codePage, details -> {
-           if(details.getTable() instanceof ParadoxDataFile) {
-               return ((ParadoxDataFile)details.getTable()).getCodePage();
-           }
+            if (details.getTable() instanceof ParadoxDataFile) {
+                return ((ParadoxDataFile) details.getTable()).getCodePage();
+            }
 
-           return null;
+            return null;
         });
         map.put(sortOrder, details -> {
-            if(details.getTable() instanceof ParadoxDataFile) {
-                return ((ParadoxDataFile)details.getTable()).getSortOrder() & 0xFF;
+            if (details.getTable() instanceof ParadoxDataFile) {
+                return ((ParadoxDataFile) details.getTable()).getSortOrder() & 0xFF;
             }
 
             return null;
         });
         map.put(charsetOriginalName, details -> {
-            if(details.getTable() instanceof ParadoxDataFile) {
-                return CharsetUtil.getOrigialName((ParadoxDataFile)details.getTable());
+            if (details.getTable() instanceof ParadoxDataFile) {
+                return CharsetUtil.getOrigialName((ParadoxDataFile) details.getTable());
             }
 
             return null;

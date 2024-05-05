@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 /**
  * Utility class to use with functional programming, mostly in Java Stream API.
  *
- * @version 1.1
  * @since 1.6.0
  */
 public final class FunctionalUtils {
@@ -65,6 +64,14 @@ public final class FunctionalUtils {
      */
     @FunctionalInterface
     public interface FunctionWithExceptions<T, R, E extends SQLException> {
+
+        /**
+         * Execute a function.
+         *
+         * @param t the function parameter.
+         * @return the function product.
+         * @throws E in case of failures.
+         */
         R apply(T t) throws E;
     }
 
@@ -130,17 +137,22 @@ public final class FunctionalUtils {
                 return true;
             } else {
                 // Do grouping.
-                Arrays.stream(indexes).forEach((int index) ->
-                        ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index],
-                                connectionInfo));
+                Arrays.stream(indexes).forEach((int index) -> ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index], connectionInfo));
             }
 
             return false;
         };
     }
 
-    public static FunctionWithExceptions<Object[], Object[], SQLException> removeGrouping(
-            final SelectContext context, final int[] indexes, final List<Column> columnsLoaded) {
+    /**
+     * Remove grouping from value list.
+     *
+     * @param context       the execution context.
+     * @param indexes       the value indexes.
+     * @param columnsLoaded loaded columns.
+     * @return the grouped list values.
+     */
+    public static FunctionWithExceptions<Object[], Object[], SQLException> removeGrouping(final SelectContext context, final int[] indexes, final List<Column> columnsLoaded) {
         return (Object[] value) -> {
             for (final int index : indexes) {
                 if (value[index] != null) {

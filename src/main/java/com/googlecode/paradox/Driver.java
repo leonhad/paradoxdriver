@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 /**
  * PARADOX JDBC Driver type 4.
  *
- * @version 2.5
  * @since 1.0
  */
 @SuppressWarnings("squid:S2176")
@@ -44,6 +43,13 @@ public final class Driver implements java.sql.Driver {
         } catch (final SQLException e) {
             Driver.LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
+    }
+
+    /**
+     * Creates a new instance.
+     */
+    public Driver() {
+        super();
     }
 
     /**

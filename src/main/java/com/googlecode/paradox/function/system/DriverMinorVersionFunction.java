@@ -19,7 +19,6 @@ import com.googlecode.paradox.utils.Constants;
 /**
  * The SQL DRIVER_MINOR_VERSION functions.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class DriverMinorVersionFunction extends AbstractSystemFunction {
@@ -35,6 +34,13 @@ public class DriverMinorVersionFunction extends AbstractSystemFunction {
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.INTEGER, "The driver minor version.", 0, false, RESULT)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public DriverMinorVersionFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

@@ -10,9 +10,9 @@
  */
 package com.googlecode.paradox.function;
 
+import com.googlecode.paradox.function.aggregate.*;
 import com.googlecode.paradox.function.date.*;
 import com.googlecode.paradox.function.general.*;
-import com.googlecode.paradox.function.aggregate.*;
 import com.googlecode.paradox.function.numeric.*;
 import com.googlecode.paradox.function.string.*;
 import com.googlecode.paradox.function.system.*;
@@ -174,6 +174,11 @@ public final class FunctionFactory {
         // Not used.
     }
 
+    /**
+     * Gets the function list.
+     *
+     * @return the function list.
+     */
     @SuppressWarnings("java:S1452")
     public static Map<String, Supplier<? extends AbstractFunction>> getFunctions() {
         return Collections.unmodifiableMap(FUNCTIONS);
@@ -183,7 +188,7 @@ public final class FunctionFactory {
      * Gets a function by alias.
      *
      * @param alias the function alias.
-     * @return the a function by alias.
+     * @return the function by alias.
      */
     @SuppressWarnings({"i18n-java:V1018", "java:S1449"})
     public static boolean isFunctionAlias(final String alias) {
