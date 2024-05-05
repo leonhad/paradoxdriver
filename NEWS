@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2024-05-05 Fixed the project Javadoc.
 2024-05-04 Improved charset management.
 2024-05-02 Migrate unit test from JUnit 4 to JUnit 5.
 2024-04-23 Fixed precision and scale metadata in Java and Information Schema table.

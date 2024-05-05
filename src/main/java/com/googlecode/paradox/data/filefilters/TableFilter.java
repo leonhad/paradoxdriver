@@ -20,7 +20,6 @@ import java.util.Locale;
 /**
  * Paradox Table filters.
  *
- * @version 1.1
  * @since 1.0
  */
 public final class TableFilter implements FileFilter {
@@ -35,6 +34,9 @@ public final class TableFilter implements FileFilter {
      */
     private final String tableName;
 
+    /**
+     * The locale to use.
+     */
     private final Locale locale;
 
     /**
@@ -69,9 +71,6 @@ public final class TableFilter implements FileFilter {
         this.extension = extension;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();

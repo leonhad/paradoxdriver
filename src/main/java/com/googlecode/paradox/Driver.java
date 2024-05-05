@@ -52,17 +52,11 @@ public final class Driver implements java.sql.Driver {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean acceptsURL(final String url) {
         return (url != null) && url.startsWith(Constants.URL_PREFIX);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Connection connect(final String url, final Properties info) throws SQLException {
         if (this.acceptsURL(url)) {
@@ -73,41 +67,26 @@ public final class Driver implements java.sql.Driver {
         return null;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int getMajorVersion() {
         return Constants.MAJOR_VERSION;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int getMinorVersion() {
         return Constants.MINOR_VERSION;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Logger getParentLogger() {
         return Driver.LOGGER;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
         return ConnectionInfo.getMetaData(info);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean jdbcCompliant() {
         return false;

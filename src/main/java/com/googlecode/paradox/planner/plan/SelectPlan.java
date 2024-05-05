@@ -35,10 +35,8 @@ import static com.googlecode.paradox.utils.FunctionalUtils.predicateWrapper;
 /**
  * Creates a SELECT plan for execution.
  *
- * @version 1.18
  * @since 1.1
  */
-@SuppressWarnings({"java:S1448", "java:S1200"})
 public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
 
     /**
@@ -276,7 +274,6 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
      * @param node the node to process.
      * @return <code>true</code> if the node is processed and needed to be removed.
      */
-    @SuppressWarnings({"java:S3776", "java:S1541"})
     private boolean optimizeConditions(final SQLNode node) {
         boolean ret = false;
         if (node instanceof ANDNode) {
@@ -284,7 +281,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
             andNode.getChildren().removeIf(this::optimizeConditions);
             ret = node.getClauseFields().isEmpty();
         } else if (node != null && !(node instanceof ORNode)) {
-            // Don't process OR nodes.
+            // Don't process 'OR' nodes.
             final List<Field> conditionalFields = new ArrayList<>();
 
             final Set<FieldNode> fields = node.getClauseFields();
@@ -318,7 +315,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
                 final int index1 = getTableIndex(paradoxTable1);
                 final int index2 = getTableIndex(paradoxTable2);
 
-                // Both tables exists?
+                // Both tables exist?
                 if (index1 != -1 && index2 != -1) {
                     // Use the last table to
                     int lastIndex = Math.max(index1, index2);
@@ -333,11 +330,7 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
-    @SuppressWarnings({"java:S3776", "java:S1541", "java:S1142"})
     public List<Object[]> execute(final SelectContext context) throws SQLException {
 
         // Can't do anything without fields defined.
@@ -364,16 +357,14 @@ public final class SelectPlan implements Plan<List<Object[]>, SelectContext> {
                 if (table.getConditionalJoin() != null) {
                     rawData = tableData.stream()
                             .filter(context.getCancelPredicate())
-                            .filter(predicateWrapper(tableRow ->
-                                    table.getConditionalJoin().evaluate(context, tableRow, columnsLoaded)))
+                            .filter(predicateWrapper(tableRow -> table.getConditionalJoin().evaluate(context, tableRow, columnsLoaded)))
                             .collect(Collectors.toList());
                 } else {
                     // No conditions to process. Just use it.
                     rawData = tableData;
                 }
             } else {
-                rawData = TableJoiner.processJoinByType(context, columnsLoaded, rawData, table,
-                        tableData);
+                rawData = TableJoiner.processJoinByType(context, columnsLoaded, rawData, table, tableData);
             }
         }
 

@@ -51,9 +51,6 @@ public final class ValidationFilter implements FileFilter {
         this.tableName = tableName;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();

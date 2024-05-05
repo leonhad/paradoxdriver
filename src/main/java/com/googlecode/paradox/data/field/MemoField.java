@@ -31,9 +31,6 @@ public final class MemoField extends AbstractLobField {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.MEMO || type == ParadoxType.FORMATTED_MEMO;

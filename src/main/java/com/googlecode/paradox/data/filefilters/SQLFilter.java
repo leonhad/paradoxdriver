@@ -44,9 +44,6 @@ public final class SQLFilter implements FileFilter {
         this.extension = "sql";
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();

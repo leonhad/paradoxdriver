@@ -29,9 +29,6 @@ public final class BlobField extends AbstractLobField {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.BLOB || type == ParadoxType.OLE || type == ParadoxType.GRAPHIC;

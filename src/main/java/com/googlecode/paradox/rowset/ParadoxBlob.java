@@ -20,7 +20,6 @@ import java.util.Arrays;
 /**
  * BLOB for paradox file (MB).
  *
- * @version 1.3
  * @since 1.5.0
  */
 public final class ParadoxBlob implements Blob {
@@ -62,9 +61,6 @@ public final class ParadoxBlob implements Blob {
         return ret;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public void free() {
         this.value = EMPTY_BLOB;
@@ -75,9 +71,6 @@ public final class ParadoxBlob implements Blob {
         return new ByteArrayInputStream(getBytes(pos, (int) length));
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public long length() {
         return this.value.length;
@@ -143,9 +136,6 @@ public final class ParadoxBlob implements Blob {
         return new BlobStream(this);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public void truncate(final long length) throws SQLException {
         if (length > this.value.length) {

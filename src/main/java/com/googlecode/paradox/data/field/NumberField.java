@@ -33,17 +33,11 @@ public final class NumberField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return (type == ParadoxType.CURRENCY) || (type == ParadoxType.NUMBER);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Double parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         long value = buffer.getLong();

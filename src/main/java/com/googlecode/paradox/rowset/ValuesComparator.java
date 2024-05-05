@@ -23,10 +23,8 @@ import java.util.function.IntPredicate;
 /**
  * Compare Paradox values.
  *
- * @version 1.8
  * @since 1.6.0
  */
-@SuppressWarnings({"java:S1142", "java:S3776", "java:S1541"})
 public final class ValuesComparator {
 
     /**
@@ -41,8 +39,16 @@ public final class ValuesComparator {
         // Not used.
     }
 
-    public static boolean compare(final Object o1, final Object o2, final IntPredicate condition,
-                                  final ConnectionInfo connectionInfo) {
+    /**
+     * Compare two values with int predicate test.
+     *
+     * @param o1             the first value.
+     * @param o2             the second value.
+     * @param connectionInfo the connection info.
+     * @param condition      the int predicate to use.
+     * @return the value {@code 0} if second is equal to first; a value less than {@code 0} if the first is less than second and a value greater than {@code 0} if first is greater than second.
+     */
+    public static boolean compare(final Object o1, final Object o2, final IntPredicate condition, final ConnectionInfo connectionInfo) {
         if (o1 == null || o2 == null) {
             return false;
         }
@@ -50,7 +56,14 @@ public final class ValuesComparator {
         return condition.test(compare(o1, o2, connectionInfo));
     }
 
-    @SuppressWarnings("java:S138")
+    /**
+     * Check for equality on two fields.
+     *
+     * @param o1             the first value.
+     * @param o2             the second value.
+     * @param connectionInfo the connection info.
+     * @return <code>true</code> if the two values are semantically equals.
+     */
     public static boolean equals(final Object o1, final Object o2, final ConnectionInfo connectionInfo) {
         if (o1 == null || o2 == null) {
             return false;
@@ -171,7 +184,14 @@ public final class ValuesComparator {
         return false;
     }
 
-    @SuppressWarnings("java:S138")
+    /**
+     * Compare two values.
+     *
+     * @param o1             the first value.
+     * @param o2             the second value.
+     * @param connectionInfo the connection info.
+     * @return the value {@code 0} if second is equal to first; a value less than {@code 0} if the first is less than second and a value greater than {@code 0} if first is greater than second.
+     */
     public static int compare(final Object o1, final Object o2, final ConnectionInfo connectionInfo) {
         if (o1 == o2) {
             return 0;

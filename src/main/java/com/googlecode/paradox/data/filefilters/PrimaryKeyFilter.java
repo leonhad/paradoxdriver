@@ -20,7 +20,6 @@ import java.util.Locale;
 /**
  * Paradox primary key file filter.
  *
- * @version 1.1
  * @since 1.0
  */
 public final class PrimaryKeyFilter implements FileFilter {
@@ -30,6 +29,9 @@ public final class PrimaryKeyFilter implements FileFilter {
      */
     private final String pkName;
 
+    /**
+     * The locale to use.
+     */
     private final Locale locale;
 
     /**
@@ -52,9 +54,6 @@ public final class PrimaryKeyFilter implements FileFilter {
         this.pkName = pkName;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();

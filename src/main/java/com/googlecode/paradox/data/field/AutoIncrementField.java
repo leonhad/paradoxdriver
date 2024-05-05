@@ -31,17 +31,11 @@ public final class AutoIncrementField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.AUTO_INCREMENT;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         return buffer.getInt() & 0x0FFF_FFFF;

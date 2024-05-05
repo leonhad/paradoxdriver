@@ -31,9 +31,6 @@ public final class LongField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.LONG;

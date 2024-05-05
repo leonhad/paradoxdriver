@@ -75,9 +75,7 @@ public class CurrentTimeFunction extends AbstractDateFunction {
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return <code>0</code>, because it can be called without any parameters.
+     * @return Always <code>0</code>, because it has no parameters.
      */
     @Override
     public int getParameterCount() {

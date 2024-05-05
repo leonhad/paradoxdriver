@@ -34,17 +34,11 @@ public final class TimestampField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.TIMESTAMP;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         long rawValue = buffer.getLong();

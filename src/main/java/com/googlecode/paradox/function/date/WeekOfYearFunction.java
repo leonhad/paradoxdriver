@@ -23,10 +23,8 @@ import java.util.Calendar;
 /**
  * The SQL WEEK OF YEAR function.
  *
- * @version 1.3
  * @since 1.6.0
  */
-@SuppressWarnings({"i18n-java:V1017", "java:S109"})
 public class WeekOfYearFunction extends AbstractDateFunction {
 
     /**
@@ -42,6 +40,13 @@ public class WeekOfYearFunction extends AbstractDateFunction {
             new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract from.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public WeekOfYearFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Extract the week of the year from a timestamp value  (a number from 1 to 31).";
@@ -53,8 +58,7 @@ public class WeekOfYearFunction extends AbstractDateFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,                          final FieldNode[] fields) throws SQLException {
 
         final Date date = ValuesConverter.getDate(values[0], connectionInfo);
         if (date == null) {

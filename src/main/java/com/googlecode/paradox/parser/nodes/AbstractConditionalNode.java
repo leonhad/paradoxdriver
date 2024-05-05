@@ -102,9 +102,6 @@ public abstract class AbstractConditionalNode extends SQLNode {
         return field;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         return field.toString();

@@ -20,7 +20,6 @@ import java.util.Locale;
 /**
  * Paradox secondary key file filter (Index Key).
  *
- * @version 1.1
  * @since 1.0
  */
 public final class SecondaryIndexFilter implements FileFilter {
@@ -52,9 +51,6 @@ public final class SecondaryIndexFilter implements FileFilter {
         this(locale, null);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();

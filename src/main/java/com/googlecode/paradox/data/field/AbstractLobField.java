@@ -116,9 +116,6 @@ public abstract class AbstractLobField implements FieldParser {
      */
     protected abstract Object getValue(final ParadoxTable table, final ByteBuffer buffer) throws ParadoxDataException;
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field)
             throws SQLException {

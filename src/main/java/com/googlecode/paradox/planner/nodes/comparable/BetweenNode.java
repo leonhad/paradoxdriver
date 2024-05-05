@@ -23,7 +23,6 @@ import java.util.List;
 /**
  * Stores the between node.
  *
- * @version 1.11
  * @since 1.1
  */
 public final class BetweenNode extends AbstractComparableNode {
@@ -47,9 +46,6 @@ public final class BetweenNode extends AbstractComparableNode {
         this.first = first;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         return this.field + " BETWEEN " + first + " AND " + last;

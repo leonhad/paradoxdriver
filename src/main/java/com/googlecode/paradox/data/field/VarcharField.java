@@ -32,17 +32,11 @@ public final class VarcharField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.VARCHAR;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final ByteBuffer valueString = ByteBuffer.allocate(field.getSize());

@@ -92,6 +92,7 @@ public final class ValuesConverter {
      * @param value          the value to convert.
      * @param type           the destination type.
      * @param connectionInfo the connection info.
+     * @param <T>            the result class.
      * @return the converted value.
      * @throws SQLException in case of failures.
      */

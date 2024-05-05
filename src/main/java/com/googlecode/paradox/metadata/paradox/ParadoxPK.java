@@ -18,9 +18,8 @@ import com.googlecode.paradox.planner.sorting.OrderType;
 import java.io.File;
 
 /**
- * Stores a primary key definition..
+ * Stores a primary key definition.
  *
- * @version 1.3
  * @since 1.0
  */
 public final class ParadoxPK extends ParadoxDataFile implements Index {
@@ -41,9 +40,6 @@ public final class ParadoxPK extends ParadoxDataFile implements Index {
         this.name = file.getName();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean equals(final Object obj) {
         return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass())
@@ -68,9 +64,6 @@ public final class ParadoxPK extends ParadoxDataFile implements Index {
         this.indexFieldNumber = indexFieldNumber;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int hashCode() {
         return this.getName().hashCode();

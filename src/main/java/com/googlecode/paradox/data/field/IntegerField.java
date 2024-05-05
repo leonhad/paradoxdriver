@@ -33,19 +33,13 @@ public final class IntegerField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.INTEGER;
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
-     * Integer (2 bytes) fields are stored as two's complement with the high bit
-     * inverted.
+     * Integer (2 bytes) fields are stored as two's complement with the high bit inverted.
      */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {

@@ -34,17 +34,11 @@ public final class BooleanField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.BOOLEAN;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Boolean parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final byte v = buffer.get();

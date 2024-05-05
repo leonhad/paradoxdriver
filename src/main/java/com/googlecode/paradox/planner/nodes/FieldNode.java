@@ -61,9 +61,6 @@ public class FieldNode extends SQLNode {
         return this.tableName;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();

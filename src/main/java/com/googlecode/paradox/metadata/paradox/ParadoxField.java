@@ -21,7 +21,6 @@ import java.util.Objects;
 /**
  * Stores a field from a table.
  *
- * @version 1.4
  * @since 1.0
  */
 public final class ParadoxField extends Field {
@@ -80,9 +79,6 @@ public final class ParadoxField extends Field {
         }
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         if (this.table == null) {

@@ -13,7 +13,6 @@ package com.googlecode.paradox.parser;
 /**
  * Stores a token.
  *
- * @version 1.1
  * @since 1.0
  */
 public final class Token {
@@ -63,9 +62,6 @@ public final class Token {
         return this.value;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         return this.type + " = " + this.value;

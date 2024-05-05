@@ -82,6 +82,7 @@
                 <version>3.13.0</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
+                    <compilerArgs>-Xlint:-options</compilerArgs>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>

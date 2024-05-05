@@ -52,17 +52,11 @@ public final class BCDField implements FieldParser {
         }
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.BCD;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field originalField) {
         final byte[] valueBuffer = new byte[BCD_SIZE];

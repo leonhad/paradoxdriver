@@ -33,17 +33,11 @@ public final class DateField implements FieldParser {
         super();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.DATE;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Date parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final long days = buffer.getInt() & 0x0FFF_FFFFL;

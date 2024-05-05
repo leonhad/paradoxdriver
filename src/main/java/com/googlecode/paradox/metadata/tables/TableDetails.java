@@ -61,6 +61,13 @@ public class TableDetails {
     private Column column;
 
     /**
+     * Creates a new instance.
+     */
+    public TableDetails() {
+        super();
+    }
+
+    /**
      * Gets the schema.
      *
      * @return the schema.
