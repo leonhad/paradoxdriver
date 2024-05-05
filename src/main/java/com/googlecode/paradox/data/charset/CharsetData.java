@@ -12,18 +12,47 @@ package com.googlecode.paradox.data.charset;
 
 import java.nio.charset.Charset;
 
+/**
+ * Charset structured data.
+ *
+ * @since 1.6.2
+ */
 public class CharsetData {
 
+    /**
+     * The sort order.
+     */
     private final byte sortOrder;
 
+    /**
+     * The code page.
+     */
     private final int codePage;
 
+    /**
+     * The sort order ID.
+     */
     private final String sortOrderId;
 
+    /**
+     * The encoding name.
+     */
     private final String name;
 
+    /**
+     * The Java charset.
+     */
     private final Charset charset;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param sortOrder   the sort order.
+     * @param codePage    the code page.
+     * @param sortOrderId the sort order ID.
+     * @param name        the encoding name
+     * @param charset     the Java charset.
+     */
     public CharsetData(int sortOrder, int codePage, String sortOrderId, String name, Charset charset) {
         this.codePage = codePage;
         this.sortOrder = (byte) sortOrder;
@@ -32,22 +61,47 @@ public class CharsetData {
         this.charset = charset;
     }
 
+    /**
+     * Gets the sort order.
+     *
+     * @return the sort order.
+     */
     public byte getSortOrder() {
         return sortOrder;
     }
 
+    /**
+     * Gets the code page.
+     *
+     * @return the code page.
+     */
     public int getCodePage() {
         return codePage;
     }
 
+    /**
+     * Gets the sort order ID.
+     *
+     * @return the sort order ID.
+     */
     public String getSortOrderId() {
         return sortOrderId;
     }
 
+    /**
+     * Gets the encoding name.
+     *
+     * @return the encoding name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets the Java charset.
+     *
+     * @return the Java charset.
+     */
     public Charset getCharset() {
         return charset;
     }

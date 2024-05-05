@@ -81,6 +81,11 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         }
     }
 
+    /**
+     * Loads the table indexes metadata.
+     *
+     * @throws SQLException in case of failures.
+     */
     public void loadIndexes() throws SQLException {
         final List<Index> loadedIndexes = IndexData.listIndexes(file.getParentFile(), this, this.connectionInfo);
         final Index index = PrimaryKeyData.getPrimaryKey(file.getParentFile(), this, connectionInfo);
@@ -91,6 +96,9 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         indexes = loadedIndexes.toArray(new Index[0]);
     }
 
+    /**
+     * Loads the table validation metadata.
+     */
     public void loadValidations() {
         validation = ValidationData.listValidation(file.getParentFile(), this, this.connectionInfo);
     }
