@@ -45,6 +45,14 @@ public final class FunctionalUtils {
      */
     @FunctionalInterface
     public interface PredicateWithExceptions<T, E extends SQLException> {
+
+        /**
+         * Test value.
+         *
+         * @param t the value to test.
+         * @return <code>true</code> if predicate pass.
+         * @throws E in case of failures.
+         */
         boolean test(T t) throws E;
     }
 
