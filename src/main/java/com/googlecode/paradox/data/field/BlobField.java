@@ -18,10 +18,16 @@ import java.nio.ByteBuffer;
 /**
  * Parses blob fields.
  *
- * @version 1.4
  * @since 1.3
  */
 public final class BlobField extends AbstractLobField {
+
+    /**
+     * Creates a new instance.
+     */
+    public BlobField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.
@@ -32,9 +38,9 @@ public final class BlobField extends AbstractLobField {
     }
 
     @Override
-    protected Object getValue(final ParadoxTable table, final ByteBuffer value) {
-        byte[] values = new byte[value.limit()];
-        value.get(values);
+    protected Object getValue(final ParadoxTable table, final ByteBuffer buffer) {
+        byte[] values = new byte[buffer.limit()];
+        buffer.get(values);
         return values;
     }
 }

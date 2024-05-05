@@ -25,7 +25,6 @@ import java.util.Set;
 /**
  * Stores a abstract comparable node.
  *
- * @version 1.10
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
@@ -62,8 +61,16 @@ public abstract class AbstractConditionalNode extends SQLNode {
         this(name, null, position);
     }
 
-    public abstract boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
-            throws SQLException;
+    /**
+     * Evaluate the conditional.
+     *
+     * @param context       the context to use.
+     * @param row           the associated row.
+     * @param columnsLoaded the columns loaded to use.
+     * @return <code>true</code> if the conditional expression is valid.
+     * @throws SQLException in case of failures.
+     */
+    public abstract boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded) throws SQLException;
 
     /**
      * Sets the field indexes.

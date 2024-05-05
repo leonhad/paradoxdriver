@@ -26,6 +26,13 @@ import java.sql.SQLException;
  */
 public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
 
+    /**
+     * Creates a new instance.
+     */
+    protected AbstractGroupingFunction() {
+        super();
+    }
+
     @Override
     public FunctionType getType() {
         return FunctionType.NUMERIC;
@@ -37,6 +44,5 @@ public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
     }
 
     @Override
-    public abstract IGroupingContext<T> execute(final ConnectionInfo connectionInfo, final Object[] values,
-                                                final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
+    public abstract IGroupingContext<T> execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
 }

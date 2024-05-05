@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL LOG functions.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class LogFunction extends AbstractNumericFunction {
@@ -39,6 +38,13 @@ public class LogFunction extends AbstractNumericFunction {
             new Column("base", ParadoxType.NUMBER, "The base the natural logarithm is to be calculated with. Must be " +
                     "greater than 1.", 2, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public LogFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

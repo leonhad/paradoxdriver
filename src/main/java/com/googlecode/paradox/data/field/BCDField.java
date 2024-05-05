@@ -22,7 +22,6 @@ import java.nio.ByteBuffer;
 /**
  * Parses boolean fields.
  *
- * @version 1.3
  * @since 1.3
  */
 public final class BCDField implements FieldParser {
@@ -39,6 +38,13 @@ public final class BCDField implements FieldParser {
      * Second position in byte.
      */
     private static final byte SECOND_BYTE = 4;
+
+    /**
+     * Creates a new instance.
+     */
+    public BCDField() {
+        super();
+    }
 
     private static void removeLeadingZeroes(final StringBuilder builder) {
         while (builder.length() > 1 && builder.charAt(0) == '0') {

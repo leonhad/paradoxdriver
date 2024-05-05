@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL LEFT PAD function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class LPadFunction extends AbstractStringFunction {
@@ -40,6 +39,13 @@ public class LPadFunction extends AbstractStringFunction {
             new Column("length", ParadoxType.VARCHAR, "The length of the final string.", 2, false, IN),
             new Column("lpad_string", ParadoxType.VARCHAR, "The filler string to use.", 3, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public LPadFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

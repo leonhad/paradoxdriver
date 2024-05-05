@@ -16,11 +16,28 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * The cp867 charset provider.
+ *
+ * @since 1.6.2
+ */
 public class Cp867CharsetProvider extends CharsetProvider {
 
     private static final Charset CP_867 = new Cp867Charset();
     private static final List<Charset> CP_867_LIST = Collections.singletonList(CP_867);
 
+    /**
+     * Creates a new instance.
+     */
+    public Cp867CharsetProvider() {
+        super();
+    }
+
+    /**
+     * Gets the cp867 charset.
+     *
+     * @return the cp867 charset.
+     */
     public static Charset cp867() {
         return CP_867;
     }

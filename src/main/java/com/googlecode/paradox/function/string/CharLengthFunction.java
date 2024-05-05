@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL char length function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class CharLengthFunction extends AbstractStringFunction {
@@ -36,6 +35,13 @@ public class CharLengthFunction extends AbstractStringFunction {
             new Column("string", ParadoxType.VARCHAR, "The character values to count.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public CharLengthFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Gets the length of the character values.";
@@ -47,8 +53,7 @@ public class CharLengthFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         return values[0].toString().length();
     }
 }

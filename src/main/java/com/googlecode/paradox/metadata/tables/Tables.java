@@ -153,7 +153,7 @@ public class Tables implements Table {
         });
         map.put(charsetOriginalName, details -> {
             if (details.getTable() instanceof ParadoxDataFile) {
-                return CharsetUtil.getOrigialName((ParadoxDataFile) details.getTable());
+                return CharsetUtil.getOriginalName((ParadoxDataFile) details.getTable());
             }
 
             return null;

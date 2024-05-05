@@ -16,10 +16,16 @@ import com.googlecode.paradox.function.FunctionType;
 /**
  * Base class for general functions.
  *
- * @version 1.0
  * @since 1.6.0
  */
 public abstract class AbstractGeneralFunction extends AbstractFunction {
+
+    /**
+     * Creates a new instance.
+     */
+    protected AbstractGeneralFunction() {
+        super();
+    }
 
     @Override
     public FunctionType getType() {

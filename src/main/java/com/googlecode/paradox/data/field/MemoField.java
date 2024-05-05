@@ -20,10 +20,16 @@ import java.nio.ByteBuffer;
 /**
  * Parses memo fields.
  *
- * @version 1.4
  * @since 1.3
  */
 public final class MemoField extends AbstractLobField {
+
+    /**
+     * Creates a new instance.
+     */
+    public MemoField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.
@@ -34,9 +40,9 @@ public final class MemoField extends AbstractLobField {
     }
 
     @Override
-    protected Object getValue(final ParadoxTable table, final ByteBuffer value) throws ParadoxDataException {
-        final byte[] bytes = new byte[value.remaining()];
-        value.get(bytes);
+    protected Object getValue(final ParadoxTable table, final ByteBuffer buffer) throws ParadoxDataException {
+        final byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
         return ValuesConverter.convert(bytes, table.getCharset());
     }
 }

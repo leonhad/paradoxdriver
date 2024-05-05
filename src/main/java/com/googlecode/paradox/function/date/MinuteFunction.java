@@ -23,10 +23,8 @@ import java.util.Calendar;
 /**
  * The SQL MINUTE function.
  *
- * @version 1.3
  * @since 1.6.0
  */
-@SuppressWarnings({"i18n-java:V1017", "java:S109"})
 public class MinuteFunction extends AbstractDateFunction {
 
     /**
@@ -41,6 +39,13 @@ public class MinuteFunction extends AbstractDateFunction {
             new Column(null, ParadoxType.INTEGER, "The minute.", 0, false, RESULT),
             new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the minute from.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public MinuteFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

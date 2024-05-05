@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL CHR function.
  *
- * @version 1.7
  * @since 1.6.0
  */
 public class ChrFunction extends AbstractStringFunction {
@@ -42,6 +41,13 @@ public class ChrFunction extends AbstractStringFunction {
     static {
         // Fix the column return size.
         COLUMNS[0].setSize(1);
+    }
+
+    /**
+     * Creates a new instance.
+     */
+    public ChrFunction() {
+        super();
     }
 
     @Override

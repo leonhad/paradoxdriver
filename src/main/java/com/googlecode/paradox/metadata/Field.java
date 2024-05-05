@@ -77,13 +77,14 @@ public class Field {
 
     /**
      * Creates a new instance.
-     * @param name The field name.
+     *
+     * @param name      The field name.
      * @param precision the field precision.
-     * @param scale the field scale.
-     * @param size the field size.
-     * @param type the field type.
-     * @param table the field table.
-     * @param orderNum the order number.
+     * @param scale     the field scale.
+     * @param size      the field size.
+     * @param type      the field type.
+     * @param table     the field table.
+     * @param orderNum  the order number.
      */
     public Field(String name, int precision, int scale, int size, ParadoxType type, Table table, int orderNum) {
         this.name = name;
@@ -96,6 +97,11 @@ public class Field {
         this.orderNum = orderNum;
     }
 
+    /**
+     * Creates a new instance.
+     *
+     * @param column the column to import from.
+     */
     public Field(final Column column) {
         this.name = column.getName();
         this.alias = column.getName();

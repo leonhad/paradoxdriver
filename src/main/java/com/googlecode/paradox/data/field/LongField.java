@@ -20,10 +20,16 @@ import java.nio.ByteBuffer;
 /**
  * Parses long fields.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class LongField implements FieldParser {
+
+    /**
+     * Creates a new instance.
+     */
+    public LongField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}

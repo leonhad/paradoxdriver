@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL DATABASE functions.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class DatabaseFunction extends AbstractSystemFunction {
@@ -34,6 +33,13 @@ public class DatabaseFunction extends AbstractSystemFunction {
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.VARCHAR, "The current database.", 0, false, RESULT)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public DatabaseFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

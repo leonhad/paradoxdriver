@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * The SQL AVG function.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -42,6 +41,13 @@ public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
             new Column("value", ParadoxType.BCD, "The numeric value to check.", 1, false, IN),
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public AvgFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns the average of a set of values.";
@@ -53,8 +59,7 @@ public class AvgFunction extends AbstractGroupingFunction<BigDecimal> {
     }
 
     @Override
-    public AvgContext execute(final ConnectionInfo connectionInfo, final Object[] values,
-                              final ParadoxType[] types, final FieldNode[] fields) {
+    public AvgContext execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         final BigDecimal value = ValuesConverter.getBigDecimal(values[0], connectionInfo);
         return new AvgContext(value);
     }

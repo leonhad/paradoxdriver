@@ -20,10 +20,16 @@ import java.nio.ByteBuffer;
 /**
  * Parses auto increment fields.
  *
- * @version 1.4
  * @since 1.3
  */
 public final class AutoIncrementField implements FieldParser {
+
+    /**
+     * Creates a new instance.
+     */
+    public AutoIncrementField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

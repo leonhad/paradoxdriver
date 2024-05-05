@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL lower function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class LowerFunction extends AbstractStringFunction {
@@ -35,6 +34,13 @@ public class LowerFunction extends AbstractStringFunction {
             new Column(null, ParadoxType.VARCHAR, "A varchar value in lower case.", 0, true, RESULT),
             new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public LowerFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

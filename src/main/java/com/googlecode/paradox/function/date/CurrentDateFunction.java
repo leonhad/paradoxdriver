@@ -22,7 +22,6 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_DATE function.
  *
- * @version 1.8
  * @since 1.6.0
  */
 public class CurrentDateFunction extends AbstractDateFunction {
@@ -38,6 +37,13 @@ public class CurrentDateFunction extends AbstractDateFunction {
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.DATE, "The current date.", 0, false, RESULT)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public CurrentDateFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

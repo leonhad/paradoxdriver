@@ -28,7 +28,6 @@ import java.util.stream.Stream;
 /**
  * SQL function interface.
  *
- * @version 1.6
  * @since 1.6.0
  */
 public abstract class AbstractFunction {
@@ -122,8 +121,7 @@ public abstract class AbstractFunction {
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    public abstract Object execute(final ConnectionInfo connectionInfo, final Object[] values,
-                                   final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
+    public abstract Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
 
     /**
      * If this function can be called without parenthesis.
@@ -139,7 +137,6 @@ public abstract class AbstractFunction {
      *
      * @return the max parameters allowed in function.
      */
-    @SuppressWarnings("java:S3400")
     public int getMaxParameterCount() {
         return 0;
     }
@@ -150,12 +147,10 @@ public abstract class AbstractFunction {
      * @param parameters the parameter list.
      * @throws ParadoxSyntaxErrorException in case of syntax errors.
      */
-    @SuppressWarnings("java:S3242")
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         for (final SQLNode node : parameters) {
             if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
+                throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_IN_FUNCTION, node.getPosition());
             }
         }
     }
@@ -174,10 +169,20 @@ public abstract class AbstractFunction {
         return Objects.hashCode(this.getClass());
     }
 
+    /**
+     * Gets if this function is deterministic.
+     *
+     * @return <code>true</code> if this function is deterministic.
+     */
     public boolean isDeterministic() {
         return true;
     }
 
+    /**
+     * Gets the function definition string.
+     *
+     * @return the function definition string.
+     */
     public String definition() {
         return null;
     }

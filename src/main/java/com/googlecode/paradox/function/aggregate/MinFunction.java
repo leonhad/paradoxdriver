@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * The SQL MIN function.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -41,6 +40,13 @@ public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
             new Column(null, ParadoxType.NUMBER, "The minimum of the values.", 0, true, RESULT),
             new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, false, IN),
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public MinFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

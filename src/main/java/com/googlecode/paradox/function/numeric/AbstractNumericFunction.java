@@ -20,6 +20,13 @@ import com.googlecode.paradox.function.FunctionType;
  */
 public abstract class AbstractNumericFunction extends AbstractFunction {
 
+    /**
+     * Creates a new instance.
+     */
+    protected AbstractNumericFunction() {
+        super();
+    }
+
     @Override
     public FunctionType getType() {
         return FunctionType.NUMERIC;

@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL ATAN functions.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class ATanFunction extends AbstractNumericFunction {
@@ -37,6 +36,13 @@ public class ATanFunction extends AbstractNumericFunction {
             new Column("number", ParadoxType.NUMBER, "A numeric value.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public ATanFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns the arc-tangent of a number.";
@@ -48,8 +54,7 @@ public class ATanFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         final Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         if (value == null) {
             return null;

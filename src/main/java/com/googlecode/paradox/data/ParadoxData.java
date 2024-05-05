@@ -75,8 +75,6 @@ public class ParadoxData {
      */
     protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile, final ConnectionInfo connectionInfo) {
 
-
-
         if (dataFile.getVersionId() > ParadoxData.MINIMUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
@@ -90,7 +88,7 @@ public class ParadoxData {
             buffer.position(0x78);
         } else {
             buffer.position(0x58);
-            dataFile.setCharset(CharsetUtil.getDefault());
+            dataFile.setCharset(CharsetUtil.getDefault(connectionInfo));
         }
     }
 

@@ -18,6 +18,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CharsetUtil {
 
@@ -142,24 +143,47 @@ public class CharsetUtil {
         CHARSET_TABLE.add(new CharsetData(213, 1254, "ANTURK", "Pdox ANSI Turkish", windows1254));
     }
 
+    /**
+     * Creates a new instance.
+     */
     private CharsetUtil() {
         super();
     }
 
-    public static Charset getDefault() {
-        return StandardCharsets.US_ASCII;
+    /**
+     * Gets the default charset.
+     *
+     * @return the default charset.
+     */
+    public static Charset getDefault(ConnectionInfo connectionInfo) {
+        return Optional.ofNullable(connectionInfo.getCharset()).orElse(StandardCharsets.US_ASCII);
     }
 
+    /**
+     * Gets the {@link Charset} based on code page, sort order ID and connection info.
+     *
+     * @param codePage       the code page.
+     * @param sortOrderId    the sort order ID.
+     * @param connectionInfo the connection info.
+     * @return the charset.
+     */
     public static Charset get(int codePage, String sortOrderId, final ConnectionInfo connectionInfo) {
         CharsetData data = get(codePage, sortOrderId);
         if (data == null) {
             connectionInfo.addWarning(String.format("Charset not found for width sort order %s and code page %d", sortOrderId, codePage));
-            return StandardCharsets.US_ASCII;
+            return getDefault(connectionInfo);
         }
 
         return data.getCharset();
     }
 
+    /**
+     * Gets the charset data based on code page and sort order ID.
+     *
+     * @param codePage    the code page.
+     * @param sortOrderId the sort order ID.
+     * @return the charset data.
+     */
     public static CharsetData get(int codePage, String sortOrderId) {
         if (sortOrderId != null && !sortOrderId.isEmpty()) {
             return CHARSET_TABLE.stream()
@@ -172,20 +196,33 @@ public class CharsetUtil {
                 .findFirst().orElse(null);
     }
 
-    public static String translate(final ParadoxDataFile data, final ByteBuffer name) {
+    /**
+     * Translate a string using the data original charset.
+     *
+     * @param data   the data with the charset to use.
+     * @param buffer the buffer to translate.
+     * @return the string translated.
+     */
+    public static String translate(final ParadoxDataFile data, final ByteBuffer buffer) {
         if (data.getCharset() != null) {
-            return data.getCharset().decode(name).toString();
+            return data.getCharset().decode(buffer).toString();
         }
 
-        return StandardCharsets.US_ASCII.decode(name).toString();
+        return StandardCharsets.US_ASCII.decode(buffer).toString();
     }
 
-    public static String getOrigialName(ParadoxDataFile table) {
-        CharsetData data = get(table.getCodePage(), table.getSortOrderID());
-        if (data == null) {
+    /**
+     * Gets the original encoding name (in Paradox).
+     *
+     * @param data the data with charset to use.
+     * @return the original encoding name.
+     */
+    public static String getOriginalName(ParadoxDataFile data) {
+        CharsetData charsetData = get(data.getCodePage(), data.getSortOrderID());
+        if (charsetData == null) {
             return "Unknown";
         }
 
-        return data.getName();
+        return charsetData.getName();
     }
 }

@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL CONNECTION_ID functions.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class ConnectionIDFunction extends AbstractSystemFunction {
@@ -34,6 +33,13 @@ public class ConnectionIDFunction extends AbstractSystemFunction {
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.INTEGER, "The connection ID.", 0, false, RESULT)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public ConnectionIDFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -51,8 +57,7 @@ public class ConnectionIDFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         return System.identityHashCode(connectionInfo);
     }
 }

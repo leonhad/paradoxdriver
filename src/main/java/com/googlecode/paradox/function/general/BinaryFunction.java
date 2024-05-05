@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL BINARY functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class BinaryFunction extends AbstractGeneralFunction {
@@ -37,6 +36,13 @@ public class BinaryFunction extends AbstractGeneralFunction {
             new Column("value", ParadoxType.NUMBER, "A value to convert.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public BinaryFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns the square root of a number.";
@@ -48,8 +54,7 @@ public class BinaryFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         return ValuesConverter.getByteArray(values[0], connectionInfo);
     }
 }

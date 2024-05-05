@@ -68,7 +68,7 @@ public abstract class AbstractLobField implements FieldParser {
             throws IOException {
         // Calculate the block size.
         final long pos = channel.position();
-        final long offset = pos & 0xFFFFFF00;
+        final long offset = pos & 0xFFFFFF00L;
         int blockSize = (int) (size + pos - offset);
         if ((blockSize & 0xFF) > 0) {
             blockSize = ((blockSize >> 0x08) + 1) << 0x08;
@@ -101,7 +101,15 @@ public abstract class AbstractLobField implements FieldParser {
         return buffer;
     }
 
-    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value) throws ParadoxDataException;
+    /**
+     * Gets the LOB value.
+     *
+     * @param table  the associated table.
+     * @param buffer the buffer.
+     * @return the LOB value.
+     * @throws ParadoxDataException in case of failures.
+     */
+    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer buffer) throws ParadoxDataException;
 
     /**
      * {@inheritDoc}.
@@ -139,7 +147,7 @@ public abstract class AbstractLobField implements FieldParser {
         }
 
         try (final FileInputStream fs = table.openBlobs(); final FileChannel channel = fs.getChannel()) {
-            final long offset = beginIndex & 0xFFFFFF00;
+            final long offset = beginIndex & 0xFFFFFF00L;
             channel.position(offset);
 
             ByteBuffer head = readBlock(channel, HEAD_SIZE, table);

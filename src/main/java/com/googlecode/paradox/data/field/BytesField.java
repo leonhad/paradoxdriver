@@ -20,10 +20,16 @@ import java.nio.ByteBuffer;
 /**
  * Parses a VARCHAR field.
  *
- * @version 1.4
  * @since 1.3
  */
 public final class BytesField implements FieldParser {
+
+    /**
+     * Creates a new instance.
+     */
+    public BytesField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

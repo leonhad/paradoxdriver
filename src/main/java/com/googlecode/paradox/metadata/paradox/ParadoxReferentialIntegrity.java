@@ -10,54 +10,124 @@
  */
 package com.googlecode.paradox.metadata.paradox;
 
+/**
+ * The paradox referential integrity data.
+ *
+ * @since 1.6.2
+ */
 public class ParadoxReferentialIntegrity {
 
+    /**
+     * The referential integrity name.
+     */
     private String name;
 
+    /**
+     * The destination table.
+     */
     private String destinationTable;
 
+    /**
+     * If the constraints is in cascade mode.
+     */
     private boolean cascade;
 
+    /**
+     * The origin fields.
+     */
     private int[] fields;
 
+    /**
+     * The destination fields.
+     */
     private int[] destinationFields;
 
+    /**
+     * Gets the referential integrity name.
+     *
+     * @return the referential integrity name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the referential integrity name.
+     *
+     * @param name the referential integrity name.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the destination table.
+     *
+     * @return the destination table.
+     */
     public String getDestinationTable() {
         return destinationTable;
     }
 
+    /**
+     * Sets the destination table.
+     *
+     * @param destinationTable the destination table.
+     */
     public void setDestinationTable(String destinationTable) {
         this.destinationTable = destinationTable;
     }
 
+    /**
+     * Gets if the cascade mode is enabled.
+     *
+     * @return if the cascade mode is enabled.
+     */
     public boolean isCascade() {
         return cascade;
     }
 
+    /**
+     * Sets the cascade mode.
+     *
+     * @param cascade the cascade mode
+     */
     public void setCascade(boolean cascade) {
         this.cascade = cascade;
     }
 
+    /**
+     * Gets the origin field list.
+     *
+     * @return the origin field list.
+     */
     public int[] getFields() {
         return fields;
     }
 
+    /**
+     * Sets the origin field list.
+     *
+     * @param fields the origin field list.
+     */
     public void setFields(int[] fields) {
         this.fields = fields;
     }
 
+    /**
+     * Gets the destination fields.
+     *
+     * @return the destination fields.
+     */
     public int[] getDestinationFields() {
         return destinationFields;
     }
 
+    /**
+     * Sets the destination fields.
+     *
+     * @param destinationFields the destination fields.
+     */
     public void setDestinationFields(int[] destinationFields) {
         this.destinationFields = destinationFields;
     }

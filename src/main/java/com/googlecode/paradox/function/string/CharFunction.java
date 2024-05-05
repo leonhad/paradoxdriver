@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL CHAR function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class CharFunction extends AbstractStringFunction {
@@ -39,6 +38,13 @@ public class CharFunction extends AbstractStringFunction {
             new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, true, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public CharFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Converts the value to char type.";
@@ -50,8 +56,7 @@ public class CharFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
         if (values[0] == null) {
             return null;
         }

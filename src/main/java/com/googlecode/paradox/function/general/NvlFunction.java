@@ -22,7 +22,6 @@ import java.util.Objects;
 /**
  * The SQL NVL function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class NvlFunction extends AbstractGeneralFunction {
@@ -40,6 +39,13 @@ public class NvlFunction extends AbstractGeneralFunction {
             new Column("string", ParadoxType.VARCHAR, "The string to test if null.", 1, true, IN),
             new Column("replacement", ParadoxType.VARCHAR, "The replacement in case of null.", 2, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public NvlFunction() {
+        super();
+    }
 
     /**
      * The current type.

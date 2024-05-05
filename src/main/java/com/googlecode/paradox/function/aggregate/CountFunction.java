@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * The SQL count function.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class CountFunction extends AbstractGroupingFunction<Integer> {
@@ -40,6 +39,13 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
             new Column("value", ParadoxType.NULL, "Any value to count.", 1, true, IN),
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public CountFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns the number of rows that value is not null.";
@@ -51,8 +57,7 @@ public class CountFunction extends AbstractGroupingFunction<Integer> {
     }
 
     @Override
-    public CountContext execute(final ConnectionInfo connectionInfo, final Object[] values,
-                                final ParadoxType[] types, final FieldNode[] fields) {
+    public CountContext execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         int value = 0;
         if (values[0] != null) {
             value = 1;

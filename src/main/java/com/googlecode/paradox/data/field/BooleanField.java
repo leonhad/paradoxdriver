@@ -20,13 +20,19 @@ import java.nio.ByteBuffer;
 /**
  * Parses boolean fields.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class BooleanField implements FieldParser {
 
     private static final int TRUE_VALUE = -127;
     private static final int FALSE_VALUE = -128;
+
+    /**
+     * Creates a new instance.
+     */
+    public BooleanField() {
+        super();
+    }
 
     /**
      * {@inheritDoc}.

@@ -23,10 +23,8 @@ import java.util.Calendar;
 /**
  * The SQL MONTH function.
  *
- * @version 1.3
  * @since 1.6.0
  */
-@SuppressWarnings({"i18n-java:V1017", "java:S109"})
 public class MonthFunction extends AbstractDateFunction {
 
     /**
@@ -41,6 +39,13 @@ public class MonthFunction extends AbstractDateFunction {
             new Column(null, ParadoxType.INTEGER, "The month (a number from 1 to 12).", 0, false, RESULT),
             new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the month from.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public MonthFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

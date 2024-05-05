@@ -92,6 +92,7 @@ public class DataNavigation implements AutoCloseable {
      * Gets the fetch direction.
      *
      * @return the fetch direction.
+     * @throws SQLException in case of failures.
      */
     public int getFetchDirection() throws SQLException {
         verifyStatus();
