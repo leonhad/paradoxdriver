@@ -169,6 +169,8 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     @Override
     public ResultSet getCrossReference(final String primaryCatalog, final String primarySchema, final String primaryTable, final String foreignCatalog, final String foreignSchema,
                                        final String foreignTable) {
+        // FIXME foreign keys
+
         return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
     }
 
@@ -1062,6 +1064,7 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
 
     @Override
     public boolean supportsConvert(final int fromType, final int toType) {
+        // FIXME test for all conditions.
         return true;
     }
 

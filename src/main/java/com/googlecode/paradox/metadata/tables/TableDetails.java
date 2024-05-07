@@ -16,6 +16,7 @@ import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.paradox.ParadoxForeignKey;
 import com.googlecode.paradox.results.Column;
 
 /**
@@ -55,10 +56,17 @@ public class TableDetails {
      */
     private String functionName;
 
+    private String tableName;
+
     /**
      * The column.
      */
     private Column column;
+
+    /**
+     * Foreign key.
+     */
+    private ParadoxForeignKey foreignKey;
 
     /**
      * Creates a new instance.
@@ -191,5 +199,31 @@ public class TableDetails {
      */
     public void setColumn(Column column) {
         this.column = column;
+    }
+
+    /**
+     * Gets the foreign key.
+     *
+     * @return the foreign key.
+     */
+    public ParadoxForeignKey getForeignKey() {
+        return foreignKey;
+    }
+
+    /**
+     * the foreign key.
+     *
+     * @param foreignKey the foreign key.
+     */
+    public void setForeignKey(ParadoxForeignKey foreignKey) {
+        this.foreignKey = foreignKey;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 }

@@ -8,6 +8,7 @@
  * License for more details. You should have received a copy of the GNU General Public License along with this
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
@@ -24,12 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Table constraints table.
- *
- * @since 1.6.0
- */
-public class TableConstraints implements Table {
+public class ConstraintsColumnUsage implements Table {
 
     /**
      * The current catalog.
@@ -45,9 +41,7 @@ public class TableConstraints implements Table {
     private final Field schema = new Field("schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
     private final Field table = new Field("table", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 3);
     private final Field name = new Field("name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
-    private final Field type = new Field("type", 0, 0, 0x0B, ParadoxType.VARCHAR, this, 5);
-    private final Field isDeferrable = new Field("is_deferrable", 0, 0, 2, ParadoxType.VARCHAR, this, 6);
-    private final Field initiallyDeferred = new Field("initially_deferred", 0, 0, 2, ParadoxType.VARCHAR, this, 7);
+    private final Field constraintName = new Field("constraint_name", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 4);
 
     /**
      * Creates a new instance.
@@ -55,19 +49,24 @@ public class TableConstraints implements Table {
      * @param connectionInfo the connection information.
      * @param catalogName    the catalog name.
      */
-    public TableConstraints(final ConnectionInfo connectionInfo, final String catalogName) {
+    public ConstraintsColumnUsage(final ConnectionInfo connectionInfo, final String catalogName) {
         this.catalogName = catalogName;
         this.connectionInfo = connectionInfo;
     }
 
     @Override
     public String getName() {
-        return "pdx_table_constraints";
+        return "pdx_constraint_column_usage";
     }
 
     @Override
     public TableType type() {
         return TableType.SYSTEM_TABLE;
+    }
+
+    @Override
+    public Index[] getIndexes() {
+        return new Index[]{new SoftIndex("pdx_constraint_column_usage.pk", true, new Field[]{catalog, schema, table, name}, IndexType.PRIMARY_KEY, this::getRowCount)};
     }
 
     @Override
@@ -77,9 +76,7 @@ public class TableConstraints implements Table {
                 schema,
                 table,
                 name,
-                type,
-                isDeferrable,
-                initiallyDeferred
+                constraintName
         };
     }
 
@@ -91,15 +88,8 @@ public class TableConstraints implements Table {
     @Override
     public int getRowCount() {
         try {
-            int sum = 0;
-            for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
-                for (final Table localTable : localSchema.list(connectionInfo, null)) {
-                    sum += localTable.getConstraints().length;
-                }
-            }
-
-            return sum;
-        } catch (@SuppressWarnings("java:S1166") final SQLException e) {
+            return load(new Field[0]).size();
+        } catch (SQLException e) {
             return 0;
         }
     }
@@ -109,53 +99,53 @@ public class TableConstraints implements Table {
         final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
         map.put(catalog, details -> details.getSchema().catalogName());
         map.put(schema, details -> details.getSchema().name());
-        map.put(table, TableDetails::getTableName);
-        map.put(name, details -> {
+        map.put(table, details -> {
+            if (details.getTable() == null) {
+                return details.getForeignKey().getReferencedTableName();
+            }
+
+            return details.getTable().getName();
+        });
+        map.put(name, details -> details.getCurrentField().getName());
+        map.put(constraintName, details -> {
             if (details.getIndex() != null) {
                 return details.getIndex().getName();
             }
 
             return details.getForeignKey().getName();
         });
-        map.put(type, details -> {
-            if (details.getIndex() != null) {
-                return details.getIndex().type().description();
-            }
-
-            return "FOREIGN KEY";
-        });
-        map.put(isDeferrable, details -> "NO");
-        map.put(initiallyDeferred, details -> "NO");
 
         final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table localTable : localSchema.list(connectionInfo, null)) {
                 for (final Index index : localTable.getConstraints()) {
-                    final TableDetails details = new TableDetails();
-                    details.setSchema(localSchema);
-                    details.setTable(localTable);
-                    details.setIndex(index);
-                    details.setTableName(localTable.getName());
+                    for (Field field : index.getFields()) {
+                        final TableDetails details = new TableDetails();
+                        details.setSchema(localSchema);
+                        details.setTable(localTable);
+                        details.setCurrentField(field);
+                        details.setIndex(index);
 
-                    ret.add(Table.getFieldValues(fields, map, details));
-
-                    ret.add(Table.getFieldValues(fields, map, details));
+                        final Object[] row = Table.getFieldValues(fields, map, details);
+                        ret.add(row);
+                    }
                 }
 
                 if (localTable instanceof ParadoxTable) {
                     ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
                     for (ParadoxForeignKey fk : fks) {
-                        final TableDetails details = new TableDetails();
-                        details.setSchema(localSchema);
-                        details.setTable(localTable);
-                        details.setTableName(localTable.getName());
-                        details.setForeignKey(fk);
+                        for (Field field : fk.getOriginFields()) {
+                            final TableDetails details = new TableDetails();
+                            details.setSchema(localSchema);
+                            details.setTable(localTable);
+                            details.setForeignKey(fk);
+                            details.setCurrentField(field);
 
-                        ret.add(Table.getFieldValues(fields, map, details));
-
-                        details.setTableName(fk.getReferencedTableName());
-                        ret.add(Table.getFieldValues(fields, map, details));
+                            ret.add(Table.getFieldValues(fields, map, details));
+                        }
                     }
+
+                    // FIXME destination fields.
                 }
             }
         }

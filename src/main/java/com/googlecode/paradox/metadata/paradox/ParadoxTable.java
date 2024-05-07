@@ -47,7 +47,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      */
     private ParadoxValidation validation;
 
-    private ParadoxForeignKey[] foreignKey;
+    private ParadoxForeignKey[] foreignKeys;
 
     /**
      * Creates a new instance.
@@ -113,7 +113,9 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
                     field.setMaxValue(validationField.getMaximumValue());
                     field.setDefaultValue(validationField.getDefaultValue());
 
-                    fks.add(new ParadoxForeignKey(field, validationField));
+                    if (validationField.getDestinationTable() != null) {
+                        fks.add(new ParadoxForeignKey(field, validationField));
+                    }
                 });
             }
 
@@ -122,7 +124,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
             }
         }
 
-        this.foreignKey = fks.toArray(new ParadoxForeignKey[0]);
+        this.foreignKeys = fks.toArray(new ParadoxForeignKey[0]);
     }
 
     @Override
@@ -170,7 +172,7 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         return validation;
     }
 
-    public ParadoxForeignKey[] getForeignKey() {
-        return foreignKey;
+    public ParadoxForeignKey[] getForeignKeys() {
+        return foreignKeys;
     }
 }

@@ -11,14 +11,15 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.paradox.ParadoxForeignKey;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
-import java.util.Collections;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Referential constraints table.
@@ -27,6 +28,16 @@ import java.util.List;
  * @since 1.6.0
  */
 public class ReferentialConstraints implements Table {
+
+    /**
+     * The current catalog.
+     */
+    private final String catalogName;
+
+    /**
+     * The connection information.
+     */
+    private final ConnectionInfo connectionInfo;
 
     private final Field catalog = new Field("constraint_catalog", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 1);
     private final Field schema = new Field("constraint_schema", 0, 0, Constants.MAX_STRING_SIZE, ParadoxType.VARCHAR, this, 2);
@@ -37,9 +48,13 @@ public class ReferentialConstraints implements Table {
 
     /**
      * Creates a new instance.
+     *
+     * @param connectionInfo the connection information.
+     * @param catalogName    the catalog name.
      */
-    public ReferentialConstraints() {
-        super();
+    public ReferentialConstraints(final ConnectionInfo connectionInfo, final String catalogName) {
+        this.catalogName = catalogName;
+        this.connectionInfo = connectionInfo;
     }
 
     @Override
@@ -75,7 +90,39 @@ public class ReferentialConstraints implements Table {
     }
 
     @Override
-    public List<Object[]> load(final Field[] fields) {
-        return Collections.emptyList();
+    public List<Object[]> load(final Field[] fields) throws SQLException {
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, details -> details.getForeignKey().getName());
+        map.put(check, details -> "NONE");
+        map.put(updateRule, details -> "RESTRICT");
+        map.put(deleteRule, details -> {
+            if (details.getForeignKey().isCascade()) {
+                return "CASCADE";
+            }
+
+            return "RESTRICT";
+        });
+
+        final List<Object[]> ret = new ArrayList<>();
+        for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
+            for (final Table localTable : localSchema.list(connectionInfo, null)) {
+                if (localTable instanceof ParadoxTable) {
+                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
+                    for (ParadoxForeignKey fk : fks) {
+                        final TableDetails details = new TableDetails();
+                        details.setSchema(localSchema);
+                        details.setTable(localTable);
+                        details.setForeignKey(fk);
+
+                        final Object[] row = Table.getFieldValues(fields, map, details);
+                        ret.add(row);
+                    }
+                }
+            }
+        }
+
+        return ret;
     }
 }

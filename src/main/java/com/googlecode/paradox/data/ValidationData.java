@@ -98,6 +98,8 @@ public class ValidationData {
             loadValidations(buffer, data, table, file.getName());
             loadReferentialIntegrity(buffer, data, table);
 
+            // FIXME load destination validation files and search for field names.
+
             return data;
         } catch (final Exception e) {
             // Don't break in validation erros.

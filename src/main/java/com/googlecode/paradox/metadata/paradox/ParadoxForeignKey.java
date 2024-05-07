@@ -14,6 +14,7 @@ package com.googlecode.paradox.metadata.paradox;
 import com.googlecode.paradox.data.ValidationField;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.utils.Utils;
 
 import java.util.Arrays;
 
@@ -37,16 +38,22 @@ public class ParadoxForeignKey {
 
     public ParadoxForeignKey(Table table, ParadoxReferentialIntegrity referentialIntegrity) {
         this.originTable = table;
-        this.referencedTableName = referentialIntegrity.getDestinationTable();
+        this.name = referentialIntegrity.getName();
+        this.referencedTableName = Utils.removeSuffix(referentialIntegrity.getDestinationTable(), "DB");
         this.referencedFieldIndexes = referentialIntegrity.getDestinationFields();
         this.originFields = Arrays.stream(referentialIntegrity.getFields()).mapToObj(i -> table.getFields()[i - 1]).toArray(Field[]::new);
+
+        // FIXME destination fields name
     }
 
     public ParadoxForeignKey(Field field, ValidationField validationField) {
+        this.name = String.format("DT_%s_%s", field.getTable(), field.getName());
         this.originTable = field.getTable();
         this.originFields = new Field[]{field};
         this.referencedFieldIndexes = new int[0];
-        this.referencedTableName = validationField.getDestinationTable();
+        this.referencedTableName = Utils.removeSuffix(validationField.getDestinationTable(), "DB");
+
+        // FIXME destination fields name
     }
 
     public String getName() {

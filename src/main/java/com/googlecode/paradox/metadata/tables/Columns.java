@@ -26,7 +26,6 @@ import java.util.function.Function;
  *
  * @since 1.6.0
  */
-@SuppressWarnings("java:S1820")
 public class Columns implements Table {
 
     /**

@@ -54,10 +54,11 @@ public class SystemSchema implements Schema {
         tables.add(new ColumnPrivileges());
         tables.add(new Columns(connectionInfo, catalog));
         tables.add(new ColumnDomainUsage());
+        tables.add(new ConstraintsColumnUsage(connectionInfo, catalog));
         tables.add(new Indexes(connectionInfo, catalog));
         tables.add(new KeyColumns(connectionInfo, catalog));
         tables.add(new Parameters(catalog));
-        tables.add(new ReferentialConstraints());
+        tables.add(new ReferentialConstraints(connectionInfo, catalog));
         tables.add(new Routines(connectionInfo, catalog));
         tables.add(new Schemata(connectionInfo, catalog));
         tables.add(new TableConstraints(connectionInfo, catalog));
@@ -71,6 +72,7 @@ public class SystemSchema implements Schema {
             tables.add(load(connectionInfo, "column_domain_usage"));
             tables.add(load(connectionInfo, "column_privileges"));
             tables.add(load(connectionInfo, "columns"));
+            tables.add(load(connectionInfo, "constraint_column_usage"));
             tables.add(load(connectionInfo, "constraint_table_usage"));
             tables.add(load(connectionInfo, "key_column_usage"));
             tables.add(load(connectionInfo, "parameters"));
