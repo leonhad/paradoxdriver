@@ -90,6 +90,8 @@ public class ValidationData {
             if (data.getVersionId() < 0x09) {
                 // Unsupported file version.
                 return null;
+            } else if (table.getBlockChangeCount() != data.getTableChangeCount()) {
+                throw new SQLException("The validation file is outdated");
             }
 
             loadFooter(buffer, data, table);

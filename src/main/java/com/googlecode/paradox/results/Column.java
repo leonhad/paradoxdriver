@@ -20,6 +20,7 @@ import com.googlecode.paradox.planner.nodes.ValueNode;
 
 import java.sql.Types;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Column values from a ResultSet.
@@ -28,60 +29,80 @@ import java.util.Objects;
  * @see ParadoxResultSet
  * @since 1.0
  */
-@SuppressWarnings("java:S1448")
 public final class Column {
 
-    private final boolean nullable;
+    /**
+     * If this field is readonly;
+     */
+    private boolean readonly;
+
+    /**
+     * If this field can have null values.
+     */
+    private boolean nullable;
+
     /**
      * The paradox field associated to this field.
      */
     private Field field;
+
     /**
      * Column index.
      */
     private int index;
+
     /**
      * Column Name.
      */
     private String name;
+
     /**
      * The field precision.
      */
     private int precision;
+
     /**
      * The field scale.
      */
     private int scale;
+
     /**
      * Column size.
      */
     private int size;
+
     /**
      * The SQL data type.
      *
      * @see Types
      */
     private ParadoxType type;
+
     /**
      * Column remarks.
      */
     private String remarks;
+
     /**
      * The column type.
      */
     private int columnType;
+
     /**
      * Is this a hidden column.
      */
     private boolean hidden;
+
     /**
      * Single value.
      */
     private Object value;
+
     /**
      * The function associated to this value.
      */
     private FunctionNode function;
+
     /**
      * A parameter value.
      */
@@ -97,6 +118,8 @@ public final class Column {
         this.field = field;
         this.precision = field.getPrecision();
         this.scale = field.getScale();
+        this.nullable = !field.isRequired();
+        this.readonly = Optional.ofNullable(field.getTable()).map(Table::isWriteProtected).orElse(false);
     }
 
     /**
@@ -107,6 +130,8 @@ public final class Column {
     public Column(final ParameterNode parameter) {
         this(parameter.getAlias(), ParadoxType.NULL);
         this.parameter = parameter;
+        this.nullable = true;
+        this.readonly = false;
     }
 
     /**
@@ -118,6 +143,8 @@ public final class Column {
     public Column(final ValueNode node) {
         this(node.getAlias(), node.getType());
         this.value = node.getName();
+        this.nullable = true;
+        this.readonly = true;
     }
 
     /**
@@ -128,6 +155,7 @@ public final class Column {
     public Column(final FunctionNode node) {
         this(node.getAlias(), node.getType());
         this.function = node;
+        this.readonly = true;
     }
 
     /**
@@ -140,9 +168,7 @@ public final class Column {
      * @param nullable   the column nullable.
      * @param columnType the column return type (IN ou RESULT).
      */
-    @SuppressWarnings("java:S107")
-    public Column(final String name, final ParadoxType type, final String remarks, final int index,
-                  final boolean nullable, final int columnType) {
+    public Column(final String name, final ParadoxType type, final String remarks, final int index, final boolean nullable, final int columnType) {
         this.name = name;
         this.type = type;
         this.precision = type.getPrecision();
@@ -152,6 +178,7 @@ public final class Column {
         this.index = index;
         this.nullable = nullable;
         this.columnType = columnType;
+        this.readonly = false;
     }
 
     /**
@@ -163,6 +190,7 @@ public final class Column {
     public Column(final String name, final ParadoxType type) {
         this.name = name;
         this.type = type;
+        this.readonly = false;
         this.nullable = type != ParadoxType.AUTO_INCREMENT;
     }
 
@@ -318,7 +346,7 @@ public final class Column {
      * @return true if this field is read only.
      */
     public boolean isReadOnly() {
-        return isAutoIncrement();
+        return readonly;
     }
 
     /**
@@ -345,7 +373,7 @@ public final class Column {
      * @return true if this field is writable.
      */
     public boolean isWritable() {
-        return !isAutoIncrement();
+        return !readonly;
     }
 
     /**

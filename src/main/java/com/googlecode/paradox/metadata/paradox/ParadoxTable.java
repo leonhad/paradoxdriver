@@ -11,10 +11,7 @@
 package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.data.IndexData;
-import com.googlecode.paradox.data.PrimaryKeyData;
-import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.data.ValidationData;
+import com.googlecode.paradox.data.*;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
@@ -27,7 +24,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Stores a table data file.
@@ -46,6 +46,8 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      * Validations.
      */
     private ParadoxValidation validation;
+
+    private ParadoxForeignKey[] foreignKey;
 
     /**
      * Creates a new instance.
@@ -101,6 +103,26 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      */
     public void loadValidations() {
         validation = ValidationData.listValidation(file.getParentFile(), this, this.connectionInfo);
+        List<ParadoxForeignKey> fks = new ArrayList<>();
+        if (validation != null) {
+            for (ValidationField validationField: validation.getFields()) {
+                Arrays.stream(fields).filter(f -> Objects.equals(f.getName(), validationField.getName())).findFirst().ifPresent(field -> {
+                    field.setRequired(validationField.isRequired());
+                    field.setPicture(validationField.getPicture());
+                    field.setMinValue(validationField.getMinimumValue());
+                    field.setMaxValue(validationField.getMaximumValue());
+                    field.setDefaultValue(validationField.getDefaultValue());
+
+                    fks.add(new ParadoxForeignKey(field, validationField));
+                });
+            }
+
+            if (validation.getReferentialIntegrity() != null) {
+                Arrays.stream(validation.getReferentialIntegrity()).map(ri -> new ParadoxForeignKey(this, ri)).forEach(fks::add);
+            }
+        }
+
+        this.foreignKey = fks.toArray(new ParadoxForeignKey[0]);
     }
 
     @Override
@@ -146,5 +168,9 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      */
     public ParadoxValidation getValidation() {
         return validation;
+    }
+
+    public ParadoxForeignKey[] getForeignKey() {
+        return foreignKey;
     }
 }

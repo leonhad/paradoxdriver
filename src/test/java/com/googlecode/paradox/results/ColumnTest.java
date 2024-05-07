@@ -105,9 +105,6 @@ class ColumnTest {
     void testNullable() {
         final Column column = new Column("NAME", ParadoxType.INTEGER);
         assertTrue(column.isNullable());
-
-        final Column column2 = new Column(new ParadoxField(ParadoxType.AUTO_INCREMENT));
-        assertFalse(column2.isNullable());
     }
 
     /**

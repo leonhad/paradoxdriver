@@ -73,6 +73,16 @@ public class ParadoxDataFile {
     private int fieldCount;
 
     /**
+     * Table header change count.
+     */
+    private byte headerChangeCount;
+
+    /**
+     * Block change count;
+     */
+    private byte blockChangeCount;
+
+    /**
      * Fields index order.
      */
     private short[] fieldsOrder;
@@ -643,5 +653,41 @@ public class ParadoxDataFile {
      */
     public void setCodePage(int codePage) {
         this.codePage = codePage;
+    }
+
+    /**
+     * Gets the header change count.
+     *
+     * @return the header change count.
+     */
+    public byte getHeaderChangeCount() {
+        return headerChangeCount;
+    }
+
+    /**
+     * Sets the header change count.
+     *
+     * @param headerChangeCount the header change count.
+     */
+    public void setHeaderChangeCount(byte headerChangeCount) {
+        this.headerChangeCount = headerChangeCount;
+    }
+
+    /**
+     * Gets the block change count.
+     *
+     * @return the block change count.
+     */
+    public byte getBlockChangeCount() {
+        return blockChangeCount;
+    }
+
+    /**
+     * Sets the block change count.
+     *
+     * @param blockChangeCount the block change count.
+     */
+    public void setBlockChangeCount(byte blockChangeCount) {
+        this.blockChangeCount = blockChangeCount;
     }
 }

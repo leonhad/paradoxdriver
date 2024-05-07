@@ -142,7 +142,7 @@ public class Columns implements Table {
         map.put(table, details -> details.getTable().getName());
         map.put(name, details -> details.getCurrentField().getName());
         map.put(ordinal, details -> details.getCurrentField().getOrderNum());
-        map.put(isNullable, details -> description(!details.getCurrentField().isAutoIncrement()));
+        map.put(isNullable, details -> description(!details.getCurrentField().isRequired()));
         map.put(autoincrement, details -> description(details.getCurrentField().isAutoIncrement()));
         map.put(incrementValue, details -> {
             if (details.getCurrentField().isAutoIncrement()) {
@@ -177,7 +177,7 @@ public class Columns implements Table {
         map.put(nullable, details -> {
             int nullValue = DatabaseMetaData.columnNullable;
 
-            if (details.getCurrentField().isAutoIncrement()) {
+            if (details.getCurrentField().isRequired()) {
                 nullValue = DatabaseMetaData.columnNoNulls;
             }
 

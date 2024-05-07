@@ -69,6 +69,31 @@ public class Field {
     protected int realSize;
 
     /**
+     * The field required status.
+     */
+    protected boolean required;
+
+    /**
+     * The picture format.
+     */
+    protected String picture;
+
+    /**
+     * The field default value.
+     */
+    protected Object defaultValue;
+
+    /**
+     * The field min value.
+     */
+    protected Object minValue;
+
+    /**
+     * The field max value.
+     */
+    protected Object maxValue;
+
+    /**
      * Creates a new instance.
      */
     public Field() {
@@ -266,6 +291,94 @@ public class Field {
      */
     public int getRealSize() {
         return this.realSize;
+    }
+
+    /**
+     * Gets the field required status.
+     */
+    public boolean isRequired() {
+        return required;
+    }
+
+    /**
+     * Sets the field required status.
+     *
+     * @param required the field required status.
+     */
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    /**
+     * Gets the picture format.
+     *
+     * @return the picture format.
+     */
+    public String getPicture() {
+        return picture;
+    }
+
+    /**
+     * Sets the picture format.
+     *
+     * @param picture the picture format.
+     */
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    /**
+     * Gets the field default value.
+     *
+     * @return the field default value.
+     */
+    public Object getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * Sets the field default value.
+     *
+     * @param defaultValue the field default value.
+     */
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    /**
+     * Gets the field minimum value.
+     *
+     * @return the field minimum value.
+     */
+    public Object getMinValue() {
+        return minValue;
+    }
+
+    /**
+     * Sets the field minimum value.
+     *
+     * @param minValue the field minimum value.
+     */
+    public void setMinValue(Object minValue) {
+        this.minValue = minValue;
+    }
+
+    /**
+     * Sets the field maximum value.
+     *
+     * @return the field maximum value.
+     */
+    public Object getMaxValue() {
+        return maxValue;
+    }
+
+    /**
+     * Sets the field maximum value.
+     *
+     * @param maxValue the field maximum value.
+     */
+    public void setMaxValue(Object maxValue) {
+        this.maxValue = maxValue;
     }
 
     @Override

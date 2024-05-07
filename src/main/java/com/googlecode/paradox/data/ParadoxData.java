@@ -163,6 +163,10 @@ public class ParadoxData {
             int value = buffer.getInt();
             data.setSortOrder(buffer.get());
 
+            buffer.position(0x2D);
+            data.setHeaderChangeCount(buffer.get());
+            data.setBlockChangeCount(buffer.get());
+
             buffer.position(0x38);
             data.setWriteProtected(buffer.get() != 0);
             data.setVersionId(buffer.get());

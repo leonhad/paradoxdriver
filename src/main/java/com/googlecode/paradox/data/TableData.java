@@ -49,8 +49,7 @@ public final class TableData extends ParadoxData {
      * @param connectionInfo the connection information.
      * @return the tables filtered.
      */
-    public static List<Table> listTables(final File schema, final String pattern,
-                                         final ConnectionInfo connectionInfo) {
+    public static List<Table> listTables(final File schema, final String pattern, final ConnectionInfo connectionInfo) {
         final List<Table> tables = new ArrayList<>();
         final File[] fileList = schema.listFiles(new TableFilter(connectionInfo.getLocale(), pattern));
 
