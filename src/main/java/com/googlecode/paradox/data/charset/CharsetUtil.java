@@ -47,10 +47,10 @@ public class CharsetUtil {
         final Charset cp863 = Charset.forName("cp863");
         final Charset cp865 = Charset.forName("cp865");
         final Charset cp866 = Charset.forName("cp866");
-        final Charset cp867 = Cp867CharsetProvider.cp867();
+        final Charset cp867 = new Cp867Charset();
         final Charset cp737 = Charset.forName("cp737");
         final Charset cp936 = Charset.forName("cp936");
-        final Charset cp1051 = Roman8CharsetProvider.roman8();
+        final Charset cp1051 = new Roman8Charset();
 
         // Borland set
         CHARSET_TABLE.add(new CharsetData(20, 1252, "BLLT1DA0", "Borland DAN Latin-1", windows1252));
