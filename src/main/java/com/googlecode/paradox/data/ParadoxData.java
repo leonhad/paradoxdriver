@@ -33,10 +33,8 @@ import java.sql.SQLException;
 /**
  * Handles the paradox files (structure).
  *
- * @version 1.3
  * @since 1.4.0
  */
-@SuppressWarnings({"i18n-java:V1008", "java:S109", "i18n-java:V1004"})
 public class ParadoxData {
 
     /**

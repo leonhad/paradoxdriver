@@ -143,19 +143,19 @@ public class TableConstraints implements Table {
                 }
 
                 if (localTable instanceof ParadoxTable) {
-                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
-                    for (ParadoxForeignKey fk : fks) {
-                        final TableDetails details = new TableDetails();
-                        details.setSchema(localSchema);
-                        details.setTable(localTable);
-                        details.setTableName(localTable.getName());
-                        details.setForeignKey(fk);
-
-                        ret.add(Table.getFieldValues(fields, map, details));
-
-                        details.setTableName(fk.getReferencedTableName());
-                        ret.add(Table.getFieldValues(fields, map, details));
-                    }
+//                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
+//                    for (ParadoxForeignKey fk : fks) {
+//                        final TableDetails details = new TableDetails();
+//                        details.setSchema(localSchema);
+//                        details.setTable(localTable);
+//                        details.setTableName(localTable.getName());
+//                        details.setForeignKey(fk);
+//
+//                        ret.add(Table.getFieldValues(fields, map, details));
+//
+//                        details.setTableName(fk.getReferencedTableName());
+//                        ret.add(Table.getFieldValues(fields, map, details));
+//                    }
                 }
             }
         }

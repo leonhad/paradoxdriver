@@ -17,6 +17,7 @@ import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
+import com.googlecode.paradox.metadata.schema.DirectorySchema;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,21 +50,30 @@ public final class TableData extends ParadoxData {
      * @param connectionInfo the connection information.
      * @return the tables filtered.
      */
-    public static List<Table> listTables(final File schema, final String pattern, final ConnectionInfo connectionInfo) {
+    public static List<Table> listTables(final DirectorySchema schema, final String pattern, final ConnectionInfo connectionInfo) {
         final List<Table> tables = new ArrayList<>();
-        final File[] fileList = schema.listFiles(new TableFilter(connectionInfo.getLocale(), pattern));
+        final File[] fileList = schema.getSchemaFile().listFiles(new TableFilter(connectionInfo.getLocale(), pattern));
 
         if (fileList != null) {
             Arrays.sort(fileList);
+
             for (final File file : fileList) {
-                try {
-                    final ParadoxTable table = loadHeader(file, connectionInfo);
-                    Arrays.stream(table.getFields()).forEach(field -> field.setTable(table));
-                    table.loadIndexes();
-                    table.loadValidations();
-                    tables.add(table);
-                } catch (final SQLException e) {
-                    connectionInfo.addWarning(e);
+                Table cachedTable = schema.getFromCache(file);
+                if (cachedTable != null) {
+                    tables.add(cachedTable);
+                } else {
+                    try {
+                        final ParadoxTable table = loadHeader(file, connectionInfo);
+                        Arrays.stream(table.getFields()).forEach(field -> field.setTable(table));
+                        table.loadIndexes();
+                        table.loadValidations();
+                        tables.add(table);
+
+                        // Update the cache.
+                        schema.addCache(table, file.lastModified());
+                    } catch (final SQLException e) {
+                        connectionInfo.addWarning(e);
+                    }
                 }
             }
         }
@@ -127,7 +137,7 @@ public final class TableData extends ParadoxData {
     }
 
     /**
-     * Read a entire row.
+     * Read an entire row.
      *
      * @param table  the table to read of.
      * @param fields the fields to read.

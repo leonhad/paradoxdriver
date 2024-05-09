@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +46,10 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      */
     private ParadoxValidation validation;
 
-    private ParadoxForeignKey[] foreignKeys;
+    /**
+     * Last update timestamp.
+     */
+    private long timestamp;
 
     /**
      * Creates a new instance.
@@ -103,28 +105,17 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      */
     public void loadValidations() {
         validation = ValidationData.listValidation(file.getParentFile(), this, this.connectionInfo);
-        List<ParadoxForeignKey> fks = new ArrayList<>();
         if (validation != null) {
-            for (ValidationField validationField: validation.getFields()) {
+            for (ValidationField validationField : validation.getFields()) {
                 Arrays.stream(fields).filter(f -> Objects.equals(f.getName(), validationField.getName())).findFirst().ifPresent(field -> {
                     field.setRequired(validationField.isRequired());
                     field.setPicture(validationField.getPicture());
                     field.setMinValue(validationField.getMinimumValue());
                     field.setMaxValue(validationField.getMaximumValue());
                     field.setDefaultValue(validationField.getDefaultValue());
-
-                    if (validationField.getDestinationTable() != null) {
-                        fks.add(new ParadoxForeignKey(field, validationField));
-                    }
                 });
             }
-
-            if (validation.getReferentialIntegrity() != null) {
-                Arrays.stream(validation.getReferentialIntegrity()).map(ri -> new ParadoxForeignKey(this, ri)).forEach(fks::add);
-            }
         }
-
-        this.foreignKeys = fks.toArray(new ParadoxForeignKey[0]);
     }
 
     @Override
@@ -172,7 +163,11 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         return validation;
     }
 
-    public ParadoxForeignKey[] getForeignKeys() {
-        return foreignKeys;
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

@@ -109,16 +109,16 @@ public class ReferentialConstraints implements Table {
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table localTable : localSchema.list(connectionInfo, null)) {
                 if (localTable instanceof ParadoxTable) {
-                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
-                    for (ParadoxForeignKey fk : fks) {
-                        final TableDetails details = new TableDetails();
-                        details.setSchema(localSchema);
-                        details.setTable(localTable);
-                        details.setForeignKey(fk);
-
-                        final Object[] row = Table.getFieldValues(fields, map, details);
-                        ret.add(row);
-                    }
+//                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
+//                    for (ParadoxForeignKey fk : fks) {
+//                        final TableDetails details = new TableDetails();
+//                        details.setSchema(localSchema);
+//                        details.setTable(localTable);
+//                        details.setForeignKey(fk);
+//
+//                        final Object[] row = Table.getFieldValues(fields, map, details);
+//                        ret.add(row);
+//                    }
                 }
             }
         }

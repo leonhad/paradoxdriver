@@ -132,18 +132,18 @@ public class ConstraintsColumnUsage implements Table {
                 }
 
                 if (localTable instanceof ParadoxTable) {
-                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
-                    for (ParadoxForeignKey fk : fks) {
-                        for (Field field : fk.getOriginFields()) {
-                            final TableDetails details = new TableDetails();
-                            details.setSchema(localSchema);
-                            details.setTable(localTable);
-                            details.setForeignKey(fk);
-                            details.setCurrentField(field);
-
-                            ret.add(Table.getFieldValues(fields, map, details));
-                        }
-                    }
+//                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
+//                    for (ParadoxForeignKey fk : fks) {
+//                        for (Field field : fk.getOriginFields()) {
+//                            final TableDetails details = new TableDetails();
+//                            details.setSchema(localSchema);
+//                            details.setTable(localTable);
+//                            details.setForeignKey(fk);
+//                            details.setCurrentField(field);
+//
+//                            ret.add(Table.getFieldValues(fields, map, details));
+//                        }
+//                    }
 
                     // FIXME destination fields.
                 }

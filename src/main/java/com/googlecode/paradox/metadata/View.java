@@ -201,11 +201,9 @@ public class View implements Table {
      * @param connectionInfo  the connection information.
      * @return the views list.
      */
-    public static List<View> listViews(final File currentSchema, final String viewNamePattern,
-                                       final ConnectionInfo connectionInfo) {
+    public static List<View> listViews(final File currentSchema, final String viewNamePattern, final ConnectionInfo connectionInfo) {
         return search(connectionInfo, currentSchema.getName(), currentSchema)
-                .stream().filter(view -> viewNamePattern == null ||
-                        Expressions.accept(connectionInfo.getLocale(), view.getName(), viewNamePattern, false, '\\'))
+                .stream().filter(view -> viewNamePattern == null || Expressions.accept(connectionInfo.getLocale(), view.getName(), viewNamePattern, false, '\\'))
                 .collect(Collectors.toList());
     }
 
@@ -217,8 +215,7 @@ public class View implements Table {
      * @param directory      the directory to search.
      * @return the view list.
      */
-    public static List<View> search(final ConnectionInfo connectionInfo, final String schemaName,
-                                    final File directory) {
+    public static List<View> search(final ConnectionInfo connectionInfo, final String schemaName, final File directory) {
         final List<View> views = new ArrayList<>();
 
         if (directory.isDirectory()) {

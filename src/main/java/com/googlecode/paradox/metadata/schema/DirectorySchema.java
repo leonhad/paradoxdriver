@@ -12,14 +12,19 @@ package com.googlecode.paradox.metadata.schema;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.TableData;
+import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.View;
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
+import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A directory schema.
@@ -34,6 +39,8 @@ public class DirectorySchema implements Schema {
      */
     private final File schemaFile;
 
+    private static final List<Table> TABLE_CACHE = new ArrayList<>();
+
     /**
      * Create a directory schema.
      *
@@ -46,8 +53,9 @@ public class DirectorySchema implements Schema {
     @Override
     public List<Table> list(final ConnectionInfo connectionInfo, final String tablePattern) throws SQLException {
         final List<Table> ret = new ArrayList<>();
-        ret.addAll(TableData.listTables(schemaFile, tablePattern, connectionInfo));
+        ret.addAll(TableData.listTables(this, tablePattern, connectionInfo));
         ret.addAll(View.listViews(schemaFile, tablePattern, connectionInfo));
+        updateCache(connectionInfo);
         return ret;
     }
 
@@ -62,10 +70,42 @@ public class DirectorySchema implements Schema {
     }
 
     @Override
-    public Table findTable(final ConnectionInfo connectionInfo, final String tableName) throws SQLException {
+    public Table findTable(final ConnectionInfo connectionInfo, final String tableName) {
         final List<Table> tables = new ArrayList<>();
-        tables.addAll(TableData.listTables(schemaFile, null, connectionInfo));
+        tables.addAll(TableData.listTables(this, null, connectionInfo));
         tables.addAll(View.search(connectionInfo, name(), schemaFile));
-        return tables.stream().filter(table -> tableName.equalsIgnoreCase(table.getName())).findFirst().orElse(null);
+        Table ret = tables.stream().filter(table -> tableName.equalsIgnoreCase(table.getName())).findFirst().orElse(null);
+        updateCache(connectionInfo);
+        return ret;
+    }
+
+    public File getSchemaFile() {
+        return schemaFile;
+    }
+
+    private void updateCache(ConnectionInfo connectionInfo) {
+        final File[] files = schemaFile.listFiles(new TableFilter(connectionInfo.getLocale(), null));
+        if (files != null) {
+            final List<String> fileList = Arrays.stream(files).map(file -> Utils.removeSuffix(file.getName(), "DB"))                    .collect(Collectors.toList());
+            TABLE_CACHE.removeIf(t -> !fileList.contains(t.getName()));
+        } else {
+            TABLE_CACHE.clear();
+        }
+    }
+
+    public Table getFromCache(File file) {
+        String tableName = Utils.removeSuffix(file.getName(), "DB");
+        Table cachedTable = TABLE_CACHE.stream().filter(table -> table.getName().equals(tableName)).findFirst().orElse(null);
+        if (cachedTable != null && ((ParadoxTable) cachedTable).getTimestamp() >= file.lastModified()) {
+            return cachedTable;
+        }
+
+        return null;
+    }
+
+    public void addCache(ParadoxTable table, long lastModified) {
+        table.setTimestamp(lastModified);
+        TABLE_CACHE.removeIf(t -> t.getName().equals(table.getName()));
+        TABLE_CACHE.add(table);
     }
 }
