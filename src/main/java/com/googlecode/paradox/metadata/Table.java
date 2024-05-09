@@ -118,6 +118,10 @@ public interface Table {
                 .toArray(Index[]::new);
     }
 
+    default ForeignKey[] getForeignKeys() {
+        return new ForeignKey[0];
+    }
+
     /**
      * Gets the table constraints.
      *

@@ -13,8 +13,8 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
-import com.googlecode.paradox.metadata.paradox.ParadoxForeignKey;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -101,7 +101,7 @@ public class ConstraintsColumnUsage implements Table {
         map.put(schema, details -> details.getSchema().name());
         map.put(table, details -> {
             if (details.getTable() == null) {
-                return details.getForeignKey().getReferencedTableName();
+                return details.getForeignKey().getReferencedTable().getName();
             }
 
             return details.getTable().getName();
@@ -132,20 +132,28 @@ public class ConstraintsColumnUsage implements Table {
                 }
 
                 if (localTable instanceof ParadoxTable) {
-//                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
-//                    for (ParadoxForeignKey fk : fks) {
-//                        for (Field field : fk.getOriginFields()) {
-//                            final TableDetails details = new TableDetails();
-//                            details.setSchema(localSchema);
-//                            details.setTable(localTable);
-//                            details.setForeignKey(fk);
-//                            details.setCurrentField(field);
-//
-//                            ret.add(Table.getFieldValues(fields, map, details));
-//                        }
-//                    }
+                    ForeignKey[] fks = localTable.getForeignKeys();
+                    for (ForeignKey fk : fks) {
+                        for (Field field : fk.getOriginFields()) {
+                            final TableDetails details = new TableDetails();
+                            details.setSchema(localSchema);
+                            details.setTable(localTable);
+                            details.setForeignKey(fk);
+                            details.setCurrentField(field);
 
-                    // FIXME destination fields.
+                            ret.add(Table.getFieldValues(fields, map, details));
+                        }
+
+                        for (Field field : fk.getReferencedFields()) {
+                            final TableDetails details = new TableDetails();
+                            details.setSchema(localSchema);
+                            details.setTable(fk.getReferencedTable());
+                            details.setForeignKey(fk);
+                            details.setCurrentField(field);
+
+                            ret.add(Table.getFieldValues(fields, map, details));
+                        }
+                    }
                 }
             }
         }

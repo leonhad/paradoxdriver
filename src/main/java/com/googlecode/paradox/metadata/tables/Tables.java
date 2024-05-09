@@ -14,6 +14,7 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.data.charset.CharsetUtil;
 import com.googlecode.paradox.metadata.*;
 import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 

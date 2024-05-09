@@ -25,7 +25,7 @@ import java.util.Arrays;
  * @version 1.4
  * @since 1.0
  */
-public final class PrimaryKeyData extends ParadoxData {
+public final class PrimaryKeyData extends AbstractParadoxData {
 
     /**
      * Utility class.

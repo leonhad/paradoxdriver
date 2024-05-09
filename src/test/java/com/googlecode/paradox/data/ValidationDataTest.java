@@ -173,7 +173,7 @@ public class ValidationDataTest {
         ParadoxValidation validation = table.getValidation();
         assertEquals("FK", validation.getFields()[1].getName());
         assertEquals(ParadoxType.LONG, validation.getFields()[1].getType());
-        assertEquals("destination.db", validation.getFields()[1].getDestinationTable());
+        assertEquals("destination.db", validation.getFields()[1].getReferencedTableName());
         assertFalse(validation.getFields()[1].isLookupAllFields());
         assertTrue(validation.getFields()[1].isLookupHelp());
     }
@@ -195,7 +195,7 @@ public class ValidationDataTest {
         ParadoxReferentialIntegrity[] references = validation.getReferentialIntegrity();
         assertEquals(1, references.length);
         assertEquals("reference", references[0].getName());
-        assertEquals("primary.db", references[0].getDestinationTable());
+        assertEquals("primary.db", references[0].getDestinationTableName());
         assertTrue(references[0].isCascade());
     }
 
@@ -247,12 +247,12 @@ public class ValidationDataTest {
 
         ParadoxReferentialIntegrity[] references = validation.getReferentialIntegrity();
         assertEquals("fk2", references[0].getName());
-        assertEquals("primary.db", references[0].getDestinationTable());
+        assertEquals("primary.db", references[0].getDestinationTableName());
         assertEquals(4, references[0].getFields()[0]);
         assertTrue(references[0].isCascade());
 
         assertEquals("fk_multiple_primary", references[1].getName());
-        assertEquals("primary.db", references[1].getDestinationTable());
+        assertEquals("primary.db", references[1].getDestinationTableName());
         assertEquals(2, references[1].getFields()[0]);
         assertTrue(references[1].isCascade());
     }

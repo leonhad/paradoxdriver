@@ -35,7 +35,7 @@ import java.sql.SQLException;
  *
  * @since 1.4.0
  */
-public class ParadoxData {
+public abstract class AbstractParadoxData {
 
     /**
      * Minimum paradox file version.
@@ -45,8 +45,8 @@ public class ParadoxData {
     /**
      * Creates a new instance.
      */
-    protected ParadoxData() {
-        // Unused.
+    protected AbstractParadoxData() {
+        super();
     }
 
     /**
@@ -73,7 +73,7 @@ public class ParadoxData {
      */
     protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile, final ConnectionInfo connectionInfo) {
 
-        if (dataFile.getVersionId() > ParadoxData.MINIMUM_VERSION) {
+        if (dataFile.getVersionId() > AbstractParadoxData.MINIMUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
             dataFile.setCodePage(buffer.getShort() & 0xFFFF);

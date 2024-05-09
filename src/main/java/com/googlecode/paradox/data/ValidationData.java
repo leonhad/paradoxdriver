@@ -98,8 +98,6 @@ public class ValidationData {
             loadValidations(buffer, data, table, file.getName());
             loadReferentialIntegrity(buffer, data, table);
 
-            // FIXME load destination validation files and search for field names.
-
             return data;
         } catch (final Exception e) {
             // Don't break in validation erros.
@@ -171,7 +169,7 @@ public class ValidationData {
             // Ignoring non used fields.
             buffer.position(startPosition + 0xD4);
 
-            reference.setDestinationTable(loadString(buffer, table, 0x72));
+            reference.setDestinationTableName(loadString(buffer, table, 0x72));
 
             // Ignoring non used fields.
             buffer.position(startPosition + 0x19A);
@@ -203,7 +201,7 @@ public class ValidationData {
 
     private static void loadTableLookup(ByteBuffer buffer, ParadoxTable table, int tableLookupHint, ValidationField validationField, int tableLookupAttribute) {
         if (tableLookupHint != 0) {
-            validationField.setDestinationTable(loadString(buffer, table, 0x1A));
+            validationField.setReferencedTableName(loadString(buffer, table, 0x1A));
             validationField.setLookupAllFields((tableLookupAttribute & 0b01) > 0);
             validationField.setLookupHelp((tableLookupAttribute & 0b10) > 0);
 

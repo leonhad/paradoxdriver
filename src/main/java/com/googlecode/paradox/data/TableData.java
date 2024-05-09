@@ -33,7 +33,7 @@ import java.util.*;
  *
  * @since 1.0
  */
-public final class TableData extends ParadoxData {
+public final class TableData extends AbstractParadoxData {
 
     /**
      * Utility class.

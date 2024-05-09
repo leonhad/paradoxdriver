@@ -16,6 +16,7 @@ import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;

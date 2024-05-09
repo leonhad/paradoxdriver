@@ -25,7 +25,9 @@ public class ParadoxReferentialIntegrity {
     /**
      * The destination table.
      */
-    private String destinationTable;
+    private String destinationTableName;
+
+    private ParadoxTable destinationTable;
 
     /**
      * If the constraints is in cascade mode.
@@ -72,17 +74,17 @@ public class ParadoxReferentialIntegrity {
      *
      * @return the destination table.
      */
-    public String getDestinationTable() {
-        return destinationTable;
+    public String getDestinationTableName() {
+        return destinationTableName;
     }
 
     /**
      * Sets the destination table.
      *
-     * @param destinationTable the destination table.
+     * @param destinationTableName the destination table.
      */
-    public void setDestinationTable(String destinationTable) {
-        this.destinationTable = destinationTable;
+    public void setDestinationTableName(String destinationTableName) {
+        this.destinationTableName = destinationTableName;
     }
 
     /**
@@ -137,5 +139,13 @@ public class ParadoxReferentialIntegrity {
      */
     public void setDestinationFields(int[] destinationFields) {
         this.destinationFields = destinationFields;
+    }
+
+    public ParadoxTable getDestinationTable() {
+        return destinationTable;
+    }
+
+    public void setDestinationTable(ParadoxTable destinationTable) {
+        this.destinationTable = destinationTable;
     }
 }

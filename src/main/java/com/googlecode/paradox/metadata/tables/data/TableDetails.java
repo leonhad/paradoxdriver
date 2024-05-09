@@ -9,14 +9,14 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.metadata.tables;
+package com.googlecode.paradox.metadata.tables.data;
 
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.metadata.Field;
 import com.googlecode.paradox.metadata.Index;
 import com.googlecode.paradox.metadata.Schema;
 import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.paradox.ParadoxForeignKey;
+import com.googlecode.paradox.metadata.ForeignKey;
 import com.googlecode.paradox.results.Column;
 
 /**
@@ -56,8 +56,6 @@ public class TableDetails {
      */
     private String functionName;
 
-    private String tableName;
-
     /**
      * The column.
      */
@@ -66,7 +64,7 @@ public class TableDetails {
     /**
      * Foreign key.
      */
-    private ParadoxForeignKey foreignKey;
+    private ForeignKey foreignKey;
 
     /**
      * Creates a new instance.
@@ -206,7 +204,7 @@ public class TableDetails {
      *
      * @return the foreign key.
      */
-    public ParadoxForeignKey getForeignKey() {
+    public ForeignKey getForeignKey() {
         return foreignKey;
     }
 
@@ -215,15 +213,7 @@ public class TableDetails {
      *
      * @param foreignKey the foreign key.
      */
-    public void setForeignKey(ParadoxForeignKey foreignKey) {
+    public void setForeignKey(ForeignKey foreignKey) {
         this.foreignKey = foreignKey;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
 }

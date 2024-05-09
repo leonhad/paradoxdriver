@@ -12,8 +12,8 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
-import com.googlecode.paradox.metadata.paradox.ParadoxForeignKey;
 import com.googlecode.paradox.metadata.paradox.ParadoxTable;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
@@ -109,7 +109,7 @@ public class TableConstraints implements Table {
         final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
         map.put(catalog, details -> details.getSchema().catalogName());
         map.put(schema, details -> details.getSchema().name());
-        map.put(table, TableDetails::getTableName);
+        map.put(table, details -> details.getTable().getName());
         map.put(name, details -> {
             if (details.getIndex() != null) {
                 return details.getIndex().getName();
@@ -135,7 +135,6 @@ public class TableConstraints implements Table {
                     details.setSchema(localSchema);
                     details.setTable(localTable);
                     details.setIndex(index);
-                    details.setTableName(localTable.getName());
 
                     ret.add(Table.getFieldValues(fields, map, details));
 
@@ -143,19 +142,18 @@ public class TableConstraints implements Table {
                 }
 
                 if (localTable instanceof ParadoxTable) {
-//                    ParadoxForeignKey[] fks = ((ParadoxTable) localTable).getForeignKeys();
-//                    for (ParadoxForeignKey fk : fks) {
-//                        final TableDetails details = new TableDetails();
-//                        details.setSchema(localSchema);
-//                        details.setTable(localTable);
-//                        details.setTableName(localTable.getName());
-//                        details.setForeignKey(fk);
-//
-//                        ret.add(Table.getFieldValues(fields, map, details));
-//
-//                        details.setTableName(fk.getReferencedTableName());
-//                        ret.add(Table.getFieldValues(fields, map, details));
-//                    }
+                    ForeignKey[] fks = localTable.getForeignKeys();
+                    for (ForeignKey fk : fks) {
+                        final TableDetails details = new TableDetails();
+                        details.setSchema(localSchema);
+                        details.setTable(localTable);
+                        details.setForeignKey(fk);
+
+                        ret.add(Table.getFieldValues(fields, map, details));
+
+                        details.setTable(fk.getReferencedTable());
+                        ret.add(Table.getFieldValues(fields, map, details));
+                    }
                 }
             }
         }

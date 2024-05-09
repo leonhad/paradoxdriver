@@ -27,7 +27,7 @@ import java.util.List;
  * @version 1.9
  * @since 1.0
  */
-public final class IndexData extends ParadoxData {
+public final class IndexData extends AbstractParadoxData {
 
     /**
      * Utility class.

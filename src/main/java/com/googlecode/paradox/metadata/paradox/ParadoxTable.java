@@ -15,10 +15,7 @@ import com.googlecode.paradox.data.*;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Index;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +47,8 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
      * Last update timestamp.
      */
     private long timestamp;
+
+    private ForeignKey[]     foreignKeys = new ForeignKey[0];
 
     /**
      * Creates a new instance.
@@ -169,5 +168,14 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    @Override
+    public ForeignKey[] getForeignKeys() {
+        return foreignKeys;
+    }
+
+    public void setForeignKeys(ForeignKey[] foreignKeys) {
+        this.foreignKeys = foreignKeys;
     }
 }

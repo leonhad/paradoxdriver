@@ -11,6 +11,7 @@
 
 package com.googlecode.paradox.data;
 
+import com.googlecode.paradox.metadata.paradox.ParadoxTable;
 import com.googlecode.paradox.results.ParadoxType;
 
 /**
@@ -68,7 +69,9 @@ public class ValidationField {
     /**
      * Look up destination table.
      */
-    private String destinationTable;
+    private String referencedTableName;
+
+    private ParadoxTable referencedTable;
 
     /**
      * Lookup all fields status.
@@ -236,17 +239,17 @@ public class ValidationField {
      *
      * @return the table lookup destination table.
      */
-    public String getDestinationTable() {
-        return destinationTable;
+    public String getReferencedTableName() {
+        return referencedTableName;
     }
 
     /**
      * Sets the table lookup destination table.
      *
-     * @param destinationTable the table lookup destination table.
+     * @param referencedTableName the table lookup destination table.
      */
-    public void setDestinationTable(String destinationTable) {
-        this.destinationTable = destinationTable;
+    public void setReferencedTableName(String referencedTableName) {
+        this.referencedTableName = referencedTableName;
     }
 
     /**
@@ -301,5 +304,13 @@ public class ValidationField {
      */
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    public ParadoxTable getReferencedTable() {
+        return referencedTable;
+    }
+
+    public void setReferencedTable(ParadoxTable referencedTable) {
+        this.referencedTable = referencedTable;
     }
 }

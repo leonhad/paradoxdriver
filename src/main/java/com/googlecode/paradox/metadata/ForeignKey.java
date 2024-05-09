@@ -9,16 +9,15 @@
  * program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.googlecode.paradox.metadata.paradox;
+package com.googlecode.paradox.metadata;
 
 import com.googlecode.paradox.data.ValidationField;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Table;
+import com.googlecode.paradox.metadata.paradox.ParadoxReferentialIntegrity;
 import com.googlecode.paradox.utils.Utils;
 
 import java.util.Arrays;
 
-public class ParadoxForeignKey {
+public class ForeignKey {
 
     private String name;
 
@@ -32,28 +31,21 @@ public class ParadoxForeignKey {
 
     private Table originTable;
 
-    private String referencedTableName;
-
-    private int[] referencedFieldIndexes;
-
-    public ParadoxForeignKey(Table table, ParadoxReferentialIntegrity referentialIntegrity) {
+    public ForeignKey(Table table, ParadoxReferentialIntegrity referentialIntegrity) {
         this.originTable = table;
         this.name = referentialIntegrity.getName();
-        this.referencedTableName = Utils.removeSuffix(referentialIntegrity.getDestinationTable(), "DB");
-        this.referencedFieldIndexes = referentialIntegrity.getDestinationFields();
+        this.referencedTable = referentialIntegrity.getDestinationTable();
+        Field[] fields = referentialIntegrity.getDestinationTable().getFields();
+        this.referencedFields = Arrays.stream(referentialIntegrity.getDestinationFields()).mapToObj(i -> fields[i - 1]).toArray(Field[]::new);
         this.originFields = Arrays.stream(referentialIntegrity.getFields()).mapToObj(i -> table.getFields()[i - 1]).toArray(Field[]::new);
-
-        // FIXME destination fields name
     }
 
-    public ParadoxForeignKey(Field field, ValidationField validationField) {
+    public ForeignKey(Field field, ValidationField validationField) {
         this.name = String.format("DT_%s_%s", field.getTable(), field.getName());
         this.originTable = field.getTable();
         this.originFields = new Field[]{field};
-        this.referencedFieldIndexes = new int[0];
-        this.referencedTableName = Utils.removeSuffix(validationField.getDestinationTable(), "DB");
-
-        // FIXME destination fields name
+        this.referencedTable = validationField.getReferencedTable();
+        this.referencedFields = new Field[]{referencedTable.getFields()[0]};
     }
 
     public String getName() {
@@ -104,19 +96,4 @@ public class ParadoxForeignKey {
         this.originTable = originTable;
     }
 
-    public String getReferencedTableName() {
-        return referencedTableName;
-    }
-
-    public void setReferencedTableName(String referencedTableName) {
-        this.referencedTableName = referencedTableName;
-    }
-
-    public int[] getReferencedFieldIndexes() {
-        return referencedFieldIndexes;
-    }
-
-    public void setReferencedFieldIndexes(int[] referencedFieldIndexes) {
-        this.referencedFieldIndexes = referencedFieldIndexes;
-    }
 }
