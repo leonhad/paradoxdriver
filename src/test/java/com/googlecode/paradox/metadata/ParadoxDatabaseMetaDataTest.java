@@ -250,7 +250,7 @@ class ParadoxDatabaseMetaDataTest {
      */
     @Test
     void testCrossReference() throws SQLException {
-        try (ResultSet rs = this.conn.getMetaData().getCrossReference("db", "%", "%", "db", "%", "%")) {
+        try (ResultSet rs = this.conn.getMetaData().getCrossReference(this.conn.getCatalog(), "joins", "joina", null, null, null)) {
             assertInstanceOf(ParadoxResultSet.class, rs);
         }
     }

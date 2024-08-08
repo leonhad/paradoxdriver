@@ -28,7 +28,7 @@ If you're using Maven, you can use the dependencies below:
 <dependency>
     <groupId>com.googlecode.paradoxdriver</groupId>
     <artifactId>paradoxdriver</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
 </dependency>
 ```
 

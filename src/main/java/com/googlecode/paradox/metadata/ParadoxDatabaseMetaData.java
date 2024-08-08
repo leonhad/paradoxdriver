@@ -167,11 +167,87 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     }
 
     @Override
-    public ResultSet getCrossReference(final String primaryCatalog, final String primarySchema, final String primaryTable, final String foreignCatalog, final String foreignSchema,
-                                       final String foreignTable) {
-        // FIXME foreign keys
+    public ResultSet getCrossReference(final String catalog, final String schemaPattern, final String primaryTable, final String foreignCatalog, final String foreignSchema,
+                                       final String foreignTable) throws SQLException {
+        final ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("PKTABLE_CAT", ParadoxType.VARCHAR));
+        columns.add(new Column("PKTABLE_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("PKTABLE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("PKCOLUMN_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("FKTABLE_CAT", ParadoxType.INTEGER));
+        columns.add(new Column("FKTABLE_SCHEM", ParadoxType.INTEGER));
+        columns.add(new Column("FKTABLE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("FKCOLUMN_NAME", ParadoxType.INTEGER));
+        columns.add(new Column("KEY_SEQ", ParadoxType.INTEGER));
+        columns.add(new Column("UPDATE_RULE", ParadoxType.INTEGER));
+        columns.add(new Column("DELETE_RULE", ParadoxType.INTEGER));
+        columns.add(new Column("FK_NAME", ParadoxType.INTEGER));
+        columns.add(new Column("PK_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("DEFERRABILITY", ParadoxType.INTEGER));
 
-        return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
+        final List<Object[]> values = new ArrayList<>();
+
+        if (foreignCatalog != null && !foreignCatalog.equals(connectionInfo.getCatalog())) {
+            return new ParadoxResultSet(this.connectionInfo, null, values, columns);
+        }
+
+        List<Schema> schemas = connectionInfo.getSchemas(catalog, schemaPattern);
+        for (Schema schema : schemas) {
+            if (foreignSchema != null && !schema.name().equals(foreignSchema)) {
+                continue;
+            }
+
+            List<Table> tables = schema.list(connectionInfo, Optional.ofNullable(foreignTable).orElse("%"));
+            for (Table table : tables) {
+                ForeignKey[] fks = table.getForeignKeys();
+                if (fks != null) {
+                    for (ForeignKey foreignKey : fks) {
+                        if (foreignKey.getReferencedTable().getName().equals(primaryTable)) {
+                            for (int index = 0; index < foreignKey.getOriginFields().length; index++) {
+                                Field[] originFields = foreignKey.getOriginFields();
+                                Field[] referencedFields = foreignKey.getReferencedFields();
+
+                                final Object[] row = {
+                                        // PKTABLE_CAT.
+                                        connectionInfo.getCatalog(),
+                                        // PKTABLE_SCHEM.
+                                        schema.name(),
+                                        // PKTABLE_NAME.
+                                        foreignKey.getOriginTable().getName(),
+                                        // PKCOLUMN_NAME.
+                                        referencedFields[index].getName(),
+                                        // FKTABLE_CAT.
+                                        connectionInfo.getCatalog(),
+                                        // FKTABLE_SCHEM.
+                                        schema.name(),
+                                        // FKTABLE_NAME.
+                                        foreignKey.getReferencedTable().getName(),
+                                        // FKCOLUMN_NAME.
+                                        originFields[index].getName(),
+                                        // KEY_SEQ.
+                                        index + 1,
+                                        // UPDATE_RULE.
+                                        foreignKey.isCascade() ? importedKeyCascade : importedKeyNoAction,
+                                        // DELETE_RULE.
+                                        foreignKey.isCascade() ? importedKeyCascade : importedKeyNoAction,
+                                        // FK_NAME
+                                        foreignKey.getName(),
+                                        // PK_NAME.
+                                        null,
+                                        // DEFERRABILITY.
+                                        importedKeyNotDeferrable,
+                                };
+
+                                values.add(row);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // FIXME foreign keys
+        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
 
     @Override
@@ -363,8 +439,76 @@ public final class ParadoxDatabaseMetaData implements java.sql.DatabaseMetaData 
     }
 
     @Override
-    public ResultSet getImportedKeys(final String catalog, final String schema, final String table) {
-        return new ParadoxResultSet(this.connectionInfo, null, Collections.emptyList(), Collections.emptyList());
+    public ResultSet getImportedKeys(final String catalog, final String schemaPattern, final String tableName) throws SQLException {
+        final ArrayList<Column> columns = new ArrayList<>();
+        columns.add(new Column("PKTABLE_CAT", ParadoxType.VARCHAR));
+        columns.add(new Column("PKTABLE_SCHEM", ParadoxType.VARCHAR));
+        columns.add(new Column("PKTABLE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("PKCOLUMN_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("FKTABLE_CAT", ParadoxType.INTEGER));
+        columns.add(new Column("FKTABLE_SCHEM", ParadoxType.INTEGER));
+        columns.add(new Column("FKTABLE_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("FKCOLUMN_NAME", ParadoxType.INTEGER));
+        columns.add(new Column("KEY_SEQ", ParadoxType.INTEGER));
+        columns.add(new Column("UPDATE_RULE", ParadoxType.INTEGER));
+        columns.add(new Column("DELETE_RULE", ParadoxType.INTEGER));
+        columns.add(new Column("FK_NAME", ParadoxType.INTEGER));
+        columns.add(new Column("PK_NAME", ParadoxType.VARCHAR));
+        columns.add(new Column("DEFERRABILITY", ParadoxType.INTEGER));
+
+        final List<Object[]> values = new ArrayList<>();
+
+        List<Schema> schemas = connectionInfo.getSchemas(catalog, schemaPattern);
+        for (Schema schema : schemas) {
+            List<Table> tables = schema.list(connectionInfo, tableName);
+            for (Table table : tables) {
+                ForeignKey[] fks = table.getForeignKeys();
+                if (fks != null) {
+                    for (ForeignKey foreignKey : fks) {
+                        for (int index = 0; index < foreignKey.getOriginFields().length; index++) {
+                            Field[] originFields = foreignKey.getOriginFields();
+                            Field[] referencedFields = foreignKey.getReferencedFields();
+
+                            final Object[] row = {
+                                    // PKTABLE_CAT.
+                                    connectionInfo.getCatalog(),
+                                    // PKTABLE_SCHEM.
+                                    schema.name(),
+                                    // PKTABLE_NAME.
+                                    foreignKey.getOriginTable().getName(),
+                                    // PKCOLUMN_NAME.
+                                    referencedFields[index].getName(),
+                                    // FKTABLE_CAT.
+                                    connectionInfo.getCatalog(),
+                                    // FKTABLE_SCHEM.
+                                    schema.name(),
+                                    // FKTABLE_NAME.
+                                    foreignKey.getReferencedTable().getName(),
+                                    // FKCOLUMN_NAME.
+                                    originFields[index].getName(),
+                                    // KEY_SEQ.
+                                    index + 1,
+                                    // UPDATE_RULE.
+                                    foreignKey.isCascade() ? importedKeyCascade : importedKeyNoAction,
+                                    // DELETE_RULE.
+                                    foreignKey.isCascade() ? importedKeyCascade : importedKeyNoAction,
+                                    // FK_NAME
+                                    foreignKey.getName(),
+                                    // PK_NAME.
+                                    null,
+                                    // DEFERRABILITY.
+                                    importedKeyNotDeferrable,
+                            };
+
+                            values.add(row);
+                        }
+                    }
+                }
+            }
+        }
+
+        // FIXME foreign keys
+        return new ParadoxResultSet(this.connectionInfo, null, values, columns);
     }
 
     @Override
