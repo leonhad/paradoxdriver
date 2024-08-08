@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -25,7 +25,6 @@ import java.util.Set;
 /**
  * Stores a abstract comparable node.
  *
- * @version 1.10
  * @since 1.1
  */
 public abstract class AbstractConditionalNode extends SQLNode {
@@ -47,18 +46,39 @@ public abstract class AbstractConditionalNode extends SQLNode {
      * @param field    the field node to compare.
      * @param position the current Scanner position.
      */
-    public AbstractConditionalNode(final String name, final FieldNode field, final ScannerPosition position) {
+    protected AbstractConditionalNode(final String name, final FieldNode field, final ScannerPosition position) {
         super(name, position);
         this.field = field;
     }
 
-    public AbstractConditionalNode(final String name, ScannerPosition position) {
+    /**
+     * Creates a new instance.
+     *
+     * @param name     the condition name.
+     * @param position the current Scanner position.
+     */
+    protected AbstractConditionalNode(final String name, ScannerPosition position) {
         this(name, null, position);
     }
 
-    public abstract boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded)
-            throws SQLException;
+    /**
+     * Evaluate the conditional.
+     *
+     * @param context       the context to use.
+     * @param row           the associated row.
+     * @param columnsLoaded the columns loaded to use.
+     * @return <code>true</code> if the conditional expression is valid.
+     * @throws SQLException in case of failures.
+     */
+    public abstract boolean evaluate(final Context context, final Object[] row, final List<Column> columnsLoaded) throws SQLException;
 
+    /**
+     * Sets the field indexes.
+     *
+     * @param columns The column list.
+     * @param tables  the table to set.
+     * @throws SQLException in case of failures.
+     */
     public void setFieldIndexes(final List<Column> columns, final List<PlanTableNode> tables) throws SQLException {
         FieldValueUtils.setFieldIndex(field, columns, tables);
     }
@@ -82,9 +102,6 @@ public abstract class AbstractConditionalNode extends SQLNode {
         return field;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         return field.toString();

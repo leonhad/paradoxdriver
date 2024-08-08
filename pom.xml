@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (C) 2009 Leonardo Alves da Costa
+  ~ Copyright (c) 2009 Leonardo Alves da Costa
   ~
   ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
   ~ License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -16,7 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.googlecode.paradoxdriver</groupId>
     <artifactId>paradoxdriver</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
     <packaging>jar</packaging>
     <name>Paradox Driver</name>
     <description>A Paradox Java Driver (using JDBC 4)</description>
@@ -54,6 +54,7 @@
     </issueManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>8</maven.compiler.release>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -68,9 +69,9 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -82,9 +83,7 @@
                 <version>3.13.0</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
-                    <compilerVersion>1.8</compilerVersion>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <compilerArgs>-Xlint:-options</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

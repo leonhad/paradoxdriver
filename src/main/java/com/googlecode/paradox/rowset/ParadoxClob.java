@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.util.Objects;
 /**
  * CLOB for paradox file (MB).
  *
- * @version 1.5
  * @since 1.2
  */
 public final class ParadoxClob implements Clob {
@@ -40,17 +39,11 @@ public final class ParadoxClob implements Clob {
         this.value = value;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public void free() {
         // Unused
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public InputStream getAsciiStream() {
         if (this.value != null) {
@@ -60,17 +53,11 @@ public final class ParadoxClob implements Clob {
         return null;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Reader getCharacterStream() {
         return new StringReader(value);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
         if (pos < 1) {
@@ -90,9 +77,6 @@ public final class ParadoxClob implements Clob {
         return new StringReader(this.value.substring((int) pos - 1, endPos));
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String getSubString(final long pos, final int length) throws SQLException {
         if (pos < 1) {
@@ -112,65 +96,41 @@ public final class ParadoxClob implements Clob {
         return this.value.substring((int) pos - 1, endPos);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public long length() {
         return value.length();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public long position(final Clob search, final long start) {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public long position(final String search, final long start) {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public OutputStream setAsciiStream(final long pos) {
         return null;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Writer setCharacterStream(final long pos) {
         return null;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int setString(final long pos, final String str) {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int setString(final long pos, final String str, final int offset, final int len) {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public void truncate(final long length) throws SQLException {
         if (length > this.value.length()) {

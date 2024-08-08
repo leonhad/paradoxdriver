@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -29,7 +29,6 @@ import java.util.Arrays;
 /**
  * Parses LOB fields.
  *
- * @version 1.8
  * @since 1.5.0
  */
 public abstract class AbstractLobField implements FieldParser {
@@ -64,11 +63,17 @@ public abstract class AbstractLobField implements FieldParser {
      */
     public static final int LEADER_SIZE_PADDING = 10;
 
-    private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table)
-            throws IOException {
+    /**
+     * Creates a new instance.
+     */
+    protected AbstractLobField() {
+        super();
+    }
+
+    private static ByteBuffer readBlock(final FileChannel channel, final int size, final ParadoxTable table) throws IOException {
         // Calculate the block size.
         final long pos = channel.position();
-        final long offset = pos & 0xFFFFFF00;
+        final long offset = pos & 0xFFFFFF00L;
         int blockSize = (int) (size + pos - offset);
         if ((blockSize & 0xFF) > 0) {
             blockSize = ((blockSize >> 0x08) + 1) << 0x08;
@@ -101,11 +106,16 @@ public abstract class AbstractLobField implements FieldParser {
         return buffer;
     }
 
-    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer value) throws ParadoxDataException;
-
     /**
-     * {@inheritDoc}.
+     * Gets the LOB value.
+     *
+     * @param table  the associated table.
+     * @param buffer the buffer.
+     * @return the LOB value.
+     * @throws ParadoxDataException in case of failures.
      */
+    protected abstract Object getValue(final ParadoxTable table, final ByteBuffer buffer) throws ParadoxDataException;
+
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field)
             throws SQLException {
@@ -139,7 +149,7 @@ public abstract class AbstractLobField implements FieldParser {
         }
 
         try (final FileInputStream fs = table.openBlobs(); final FileChannel channel = fs.getChannel()) {
-            final long offset = beginIndex & 0xFFFFFF00;
+            final long offset = beginIndex & 0xFFFFFF00L;
             channel.position(offset);
 
             ByteBuffer head = readBlock(channel, HEAD_SIZE, table);

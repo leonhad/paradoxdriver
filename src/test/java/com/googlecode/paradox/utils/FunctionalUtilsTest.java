@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,26 +12,26 @@ package com.googlecode.paradox.utils;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Unit test for {@link FunctionalUtils} class.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class FunctionalUtilsTest {
+class FunctionalUtilsTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The connection.
@@ -43,14 +43,14 @@ public class FunctionalUtilsTest {
      *
      * @throws SQLException in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws SQLException {
+    @BeforeAll
+    static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
-    @AfterClass
-    public static void tearDown() throws SQLException {
+    @AfterAll
+    static void tearDown() throws SQLException {
         conn.close();
     }
 
@@ -58,7 +58,7 @@ public class FunctionalUtilsTest {
      * Test for sanity.
      */
     @Test
-    public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(FunctionalUtils.class));
+    void testSanity() {
+        assertTrue(TestUtil.assertSanity(FunctionalUtils.class));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,17 +12,20 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Indexes table.
  *
- * @version 1.1
  * @since 1.6.0
  */
 public class Indexes implements Table {
@@ -112,43 +115,32 @@ public class Indexes implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(table, details -> details.getTable().getName());
+        map.put(name, details -> details.getIndex().getName());
+        map.put(nonUnique, details -> !details.getIndex().isUnique());
+        map.put(ordinal, details -> details.getCurrentField().getOrderNum());
+        map.put(ascOrDesc, details -> details.getIndex().getOrder().name());
+        map.put(cardinality, details -> details.getIndex().getRowCount());
+        map.put(pages, details -> details.getIndex().getTotalBlocks());
+        map.put(field, details -> details.getIndex().getName());
+        map.put(type, details -> details.getIndex().type().description());
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table localTable : localSchema.list(connectionInfo, null)) {
                 for (final Index index : localTable.getIndexes()) {
                     for (final Field indexField : index.getFields()) {
-                        final Object[] row = new Object[fields.length];
-                        for (int i = 0; i < fields.length; i++) {
-                            final Field localField = fields[i];
-                            Object value = null;
-                            if (catalog.equals(localField)) {
-                                value = localSchema.catalogName();
-                            } else if (this.schema.equals(localField)) {
-                                value = localSchema.name();
-                            } else if (this.table.equals(localField)) {
-                                value = localTable.getName();
-                            } else if (name.equals(localField)) {
-                                value = index.getName();
-                            } else if (this.nonUnique.equals(localField)) {
-                                value = !index.isUnique();
-                            } else if (this.ordinal.equals(localField)) {
-                                value = indexField.getOrderNum();
-                            } else if (this.ascOrDesc.equals(localField)) {
-                                value = index.getOrder().name();
-                            } else if (this.cardinality.equals(localField)) {
-                                value = index.getRowCount();
-                            } else if (this.pages.equals(localField)) {
-                                value = index.getTotalBlocks();
-                            } else if (this.field.equals(localField)) {
-                                value = indexField.getName();
-                            } else if (this.type.equals(localField)) {
-                                value = index.type().description();
-                            }
+                        final TableDetails details = new TableDetails();
+                        details.setSchema(localSchema);
+                        details.setSchema(localSchema);
+                        details.setTable(localTable);
+                        details.setIndex(index);
+                        details.setCurrentField(indexField);
 
-                            row[i] = value;
-                        }
-
+                        final Object[] row = Table.getFieldValues(fields, map, details);
                         ret.add(row);
                     }
                 }

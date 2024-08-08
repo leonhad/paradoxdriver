@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,45 +11,45 @@
 package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link AutoIncrementField} class.
  *
- * @version 1.2
  * @since 1.3
  */
-public class AutoIncrementFieldTest {
+class AutoIncrementFieldTest {
 
     /**
      * Test for invalid match.
      */
     @Test
-    public void testInvalidMatch() {
+    void testInvalidMatch() {
         final AutoIncrementField field = new AutoIncrementField();
-        Assert.assertFalse("Invalid field value.", field.match(ParadoxType.NULL));
+        assertFalse(field.match(ParadoxType.NULL));
     }
 
     /**
      * Test for parse method.
      */
     @Test
-    public void testParse() {
+    void testParse() {
         final AutoIncrementField field = new AutoIncrementField();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[]{0, 0, 1, 0});
         final Object value = field.parse(null, buffer, null);
-        Assert.assertEquals("Invalid number.", 256, value);
+        assertEquals(256, value);
     }
 
     /**
      * Test for valid match.
      */
     @Test
-    public void testValidMatch() {
+    void testValidMatch() {
         final AutoIncrementField field = new AutoIncrementField();
-        Assert.assertTrue("Invalid field type.", field.match(ParadoxType.AUTO_INCREMENT));
+        assertTrue(field.match(ParadoxType.AUTO_INCREMENT));
     }
 }

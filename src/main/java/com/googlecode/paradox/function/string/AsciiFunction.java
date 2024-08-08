@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,7 +20,6 @@ import java.sql.SQLException;
 /**
  * The SQL ASCII function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class AsciiFunction extends AbstractStringFunction {
@@ -28,7 +27,6 @@ public class AsciiFunction extends AbstractStringFunction {
     /**
      * The function name.
      */
-    @SuppressWarnings("i18n-java:V1008")
     public static final String NAME = "ASCII";
 
     /**
@@ -44,6 +42,13 @@ public class AsciiFunction extends AbstractStringFunction {
         COLUMNS[1].setSize(1);
     }
 
+    /**
+     * Creates a new instance.
+     */
+    public AsciiFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Converts a character value to unicode integer value.";
@@ -55,8 +60,7 @@ public class AsciiFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
         Object value = values[0];
         if (value != null && !value.toString().isEmpty()) {
             return (int) value.toString().charAt(0);

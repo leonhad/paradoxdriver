@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -49,6 +49,10 @@ public class SQLNode {
         this.position = position;
     }
 
+    /**
+     * Gets the clause fields.
+     * @return the clause fields set.
+     */
     public Set<FieldNode> getClauseFields() {
         return new HashSet<>();
     }

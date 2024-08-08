@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * The SQL MIN function.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -41,6 +40,13 @@ public class MinFunction extends AbstractGroupingFunction<BigDecimal> {
             new Column(null, ParadoxType.NUMBER, "The minimum of the values.", 0, true, RESULT),
             new Column("value", ParadoxType.NUMBER, "The numeric value to check.", 1, false, IN),
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public MinFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

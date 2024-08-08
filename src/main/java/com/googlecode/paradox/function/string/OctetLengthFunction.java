@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL OCTET_LENGTH function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class OctetLengthFunction extends AbstractStringFunction {
@@ -35,6 +34,13 @@ public class OctetLengthFunction extends AbstractStringFunction {
             new Column(null, ParadoxType.INTEGER, "The bytes count.", 0, false, RESULT),
             new Column("bytes", ParadoxType.BLOB, "The byte values to count.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public OctetLengthFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

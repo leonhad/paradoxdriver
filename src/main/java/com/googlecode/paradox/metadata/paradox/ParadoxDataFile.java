@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -16,6 +16,7 @@ import com.googlecode.paradox.utils.Utils;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 /**
  * Defines the paradox default file structure.
@@ -52,14 +53,34 @@ public class ParadoxDataFile {
     private int autoIncrementValue;
 
     /**
+     * Language sort order.
+     */
+    private byte sortOrder;
+
+    /**
      * File charset.
      */
     protected Charset charset;
 
     /**
+     * Original code page.
+     */
+    private int codePage;
+
+    /**
      * File count in this file.
      */
     private int fieldCount;
+
+    /**
+     * Table header change count.
+     */
+    private byte headerChangeCount;
+
+    /**
+     * Block change count;
+     */
+    private byte blockChangeCount;
 
     /**
      * Fields index order.
@@ -127,7 +148,7 @@ public class ParadoxDataFile {
     private byte versionId;
 
     /**
-     * If this file has an write protected lock.
+     * If this file has a write protected lock.
      */
     private boolean writeProtected;
 
@@ -156,9 +177,7 @@ public class ParadoxDataFile {
         this.file = file;
         this.name = Utils.removeSuffix(file.getName(), "DB");
         this.connectionInfo = connectionInfo;
-        if (connectionInfo != null && connectionInfo.getCharset() != null) {
-            this.charset = connectionInfo.getCharset();
-        }
+        this.charset = Optional.ofNullable(connectionInfo).map(ConnectionInfo::getCharset).orElse(null);
     }
 
     /**
@@ -598,5 +617,77 @@ public class ParadoxDataFile {
      */
     public ConnectionInfo getConnectionInfo() {
         return connectionInfo;
+    }
+
+    /**
+     * Gets the sort order.
+     *
+     * @return the sort order.
+     */
+    public byte getSortOrder() {
+        return sortOrder;
+    }
+
+    /**
+     * Sets the sort order.
+     *
+     * @param sortOrder the sort order.
+     */
+    public void setSortOrder(byte sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    /**
+     * Gets the original code page.
+     *
+     * @return the original code page.
+     */
+    public int getCodePage() {
+        return codePage;
+    }
+
+    /**
+     * Sets the original code page.
+     *
+     * @param codePage the original code page.
+     */
+    public void setCodePage(int codePage) {
+        this.codePage = codePage;
+    }
+
+    /**
+     * Gets the header change count.
+     *
+     * @return the header change count.
+     */
+    public byte getHeaderChangeCount() {
+        return headerChangeCount;
+    }
+
+    /**
+     * Sets the header change count.
+     *
+     * @param headerChangeCount the header change count.
+     */
+    public void setHeaderChangeCount(byte headerChangeCount) {
+        this.headerChangeCount = headerChangeCount;
+    }
+
+    /**
+     * Gets the block change count.
+     *
+     * @return the block change count.
+     */
+    public byte getBlockChangeCount() {
+        return blockChangeCount;
+    }
+
+    /**
+     * Sets the block change count.
+     *
+     * @param blockChangeCount the block change count.
+     */
+    public void setBlockChangeCount(byte blockChangeCount) {
+        this.blockChangeCount = blockChangeCount;
     }
 }

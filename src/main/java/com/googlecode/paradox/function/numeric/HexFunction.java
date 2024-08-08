@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 /**
  * The SQL HEX functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class HexFunction extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class HexFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.VARCHAR, "The the hexadecimal representation of a number.", 0, false, RESULT),
             new Column("number", ParadoxType.LONG, "A numeric value.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public HexFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

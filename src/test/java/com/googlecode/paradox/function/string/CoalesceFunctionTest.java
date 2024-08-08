@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -14,17 +14,22 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for coalesce function.
  */
-public class CoalesceFunctionTest {
+class CoalesceFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -43,8 +48,8 @@ public class CoalesceFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -53,8 +58,8 @@ public class CoalesceFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -65,9 +70,8 @@ public class CoalesceFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -77,17 +81,17 @@ public class CoalesceFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCoalesce() throws SQLException {
+    void testCoalesce() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement(
                 "select coalesce(b, a) ret from fields.bcd");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", -1, rs.getInt("ret"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 0, rs.getInt("ret"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("ret"));
+            assertTrue(rs.next());
+            assertEquals(-1, rs.getInt("ret"));
+            assertTrue(rs.next());
+            assertEquals(0, rs.getInt("ret"));
+            assertFalse(rs.next());
         }
     }
 
@@ -97,17 +101,16 @@ public class CoalesceFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCoalesceThreeParameters() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select coalesce(1, b, 1) ret from fields.BCD");
+    void testCoalesceThreeParameters() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select coalesce(1, b, 1) ret from fields.BCD");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid value", 1, rs.getInt("ret"));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("ret"));
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("ret"));
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("ret"));
+            assertFalse(rs.next());
         }
     }
 
@@ -117,13 +120,13 @@ public class CoalesceFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCoalesceWithParameters() throws SQLException {
+    void testCoalesceWithParameters() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select coalesce(?, 1)")) {
             stmt.setNull(1, Types.NUMERIC);
             try (final ResultSet rs = stmt.executeQuery()) {
-                Assert.assertTrue("Invalid result set state", rs.next());
-                Assert.assertEquals("Invalid value", 1, rs.getInt(1));
-                Assert.assertFalse("Invalid result set state", rs.next());
+                assertTrue(rs.next());
+                assertEquals(1, rs.getInt(1));
+                assertFalse(rs.next());
             }
         }
     }
@@ -134,10 +137,9 @@ public class CoalesceFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testInvalidTypes() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "select coalesce(1, 'value')")) {
-            Assert.assertThrows("Invalid result set", ParadoxSyntaxErrorException.class, stmt::executeQuery);
+    void testInvalidTypes() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("select coalesce(1, 'value')")) {
+            assertThrows(ParadoxSyntaxErrorException.class, stmt::executeQuery);
         }
     }
 }

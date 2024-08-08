@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,23 +12,27 @@ package com.googlecode.paradox.function.string;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link SubstringFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class SubstringFunctionTest {
+class SubstringFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -47,8 +51,8 @@ public class SubstringFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -57,8 +61,8 @@ public class SubstringFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -69,9 +73,8 @@ public class SubstringFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -81,13 +84,13 @@ public class SubstringFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSubstring() throws SQLException {
+    void testSubstring() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select substring('123', 1, 2) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "12", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("12", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -97,13 +100,13 @@ public class SubstringFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDefaultSyntax() throws SQLException {
+    void testDefaultSyntax() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select substring('123' FROM 1 FOR 2) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "12", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("12", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 }

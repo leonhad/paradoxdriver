@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -10,46 +10,46 @@
  */
 package com.googlecode.paradox.parser;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link TokenType} class.
  *
- * @version 1.2
  * @since 1.3
  */
-public class TokenTypeTest {
+class TokenTypeTest {
 
     /**
      * Test for null conditional break.
      */
     @Test
-    public void testNullConditional() {
-        Assert.assertFalse("Invalid token type.", TokenType.isConditionalBreak(null));
+    void testNullConditional() {
+        assertFalse(TokenType.isConditionalBreak(null));
     }
 
     /**
      * Test for null operator.
      */
     @Test
-    public void testNullOperators() {
-        Assert.assertFalse("Invalid operator.", TokenType.isOperator(null));
+    void testNullOperators() {
+        assertFalse(TokenType.isOperator(null));
     }
 
     /**
      * Test the get token by nonexistent value.
      */
     @Test
-    public void testTokenByNonexistentValue() {
-        Assert.assertNull("Invalid token type.", TokenType.get("invalid"));
+    void testTokenByNonexistentValue() {
+        assertNull(TokenType.get("invalid"));
     }
 
     /**
      * Test the get token by value.
      */
     @Test
-    public void testTokenByValue() {
-        Assert.assertEquals("Invalid token type.", TokenType.PLUS, TokenType.get("+"));
+    void testTokenByValue() {
+        assertEquals(TokenType.PLUS, TokenType.get("+"));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -25,7 +25,6 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIME function.
  *
- * @version 1.9
  * @since 1.6.0
  */
 public class CurrentTimeFunction extends AbstractDateFunction {
@@ -42,6 +41,13 @@ public class CurrentTimeFunction extends AbstractDateFunction {
             new Column(null, ParadoxType.TIME, "The current time.", 0, false, RESULT),
             new Column("precision", ParadoxType.INTEGER, "The time precision from 0 to 6. Ignored", 1, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public CurrentTimeFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -69,9 +75,7 @@ public class CurrentTimeFunction extends AbstractDateFunction {
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @return <code>0</code>, because it can be called without any parameters.
+     * @return Always <code>0</code>, because it has no parameters.
      */
     @Override
     public int getParameterCount() {

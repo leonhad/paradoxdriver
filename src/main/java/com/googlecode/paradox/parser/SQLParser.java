@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -35,7 +35,6 @@ import java.sql.SQLException;
 /**
  * Parses a SQL statement.
  *
- * @version 1.13
  * @since 1.0
  */
 @SuppressWarnings("java:S1448")
@@ -256,7 +255,7 @@ public final class SQLParser {
      * Parses the equals tokens.
      *
      * @param field the left field token.
-     * @return the equals node.
+     * @return the EQUALS node.
      * @throws SQLException in case of parse errors.
      */
     private EqualsNode parseEquals(final FieldNode field) throws SQLException {
@@ -383,11 +382,10 @@ public final class SQLParser {
     /**
      * Parse the field list in SELECT statement.
      *
-     * @param select          the select node.
-     * @param enableAggregate if this field can have a aggregate function.
+     * @param select the select node.
      * @throws SQLException in case of parse errors.
      */
-    private void parseFields(final SelectNode select, final boolean enableAggregate) throws SQLException {
+    private void parseFields(final SelectNode select) throws SQLException {
         boolean firstField = true;
         do {
             expectComma(!firstField);
@@ -420,7 +418,7 @@ public final class SQLParser {
                     node = parseParameter();
                     break;
                 default:
-                    node = this.parseIdentifier(fieldName, enableAggregate);
+                    node = this.parseIdentifier(fieldName);
                     break;
             }
 
@@ -482,12 +480,11 @@ public final class SQLParser {
     /**
      * Parse the identifier token associated with a field.
      *
-     * @param fieldName       the field name.
-     * @param enableAggregate if this field can have a aggregate function.
+     * @param fieldName the field name.
      * @return the field node.
      * @throws SQLException in case of parse errors.
      */
-    private SQLNode parseIdentifier(final String fieldName, final boolean enableAggregate) throws SQLException {
+    private SQLNode parseIdentifier(final String fieldName) throws SQLException {
         String newTableName = null;
         String newFieldName = fieldName;
 
@@ -503,7 +500,7 @@ public final class SQLParser {
 
         if (isToken(TokenType.L_PAREN)) {
             // function
-            return parseFunction(fieldName, position, enableAggregate);
+            return parseFunction(fieldName, position, true);
         } else if (isToken(TokenType.PERIOD)) {
             this.expect(TokenType.PERIOD);
             newTableName = fieldName;
@@ -541,24 +538,7 @@ public final class SQLParser {
             this.expect(TokenType.FROM);
             ret = true;
         } else if (functionName.equalsIgnoreCase(TrimFunction.NAME) && this.token != null) {
-            if (TrimFunction.isValidType(node.getParameters().get(0).getName())) {
-                // TRIM(TYPE...
-                if (node.getParameters().size() == 0x02) {
-                    // TRIM(TYPE 'CHARS'...
-                    this.expect(TokenType.FROM);
-                } else if (node.getParameters().size() != 1) {
-                    // TRIM(TYPE 'CHARS' FROM 'X'...
-                    throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
-                            this.token.getPosition(), this.token.getValue());
-                }
-            } else if (node.getParameters().size() == 1) {
-                // TRIM('CHARS' ...).
-                this.expect(TokenType.FROM);
-            } else {
-                // TRIM('CHARS' FROM 'TEXT).
-                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, this.token.getPosition(),
-                        this.token.getValue());
-            }
+            parseTrimFunction(node);
 
             // Do nothing, no separator here. TRIM(TYPE...
             ret = true;
@@ -593,16 +573,42 @@ public final class SQLParser {
     }
 
     /**
+     * Parses TRIM function.
+     *
+     * @param node the function node.
+     * @throws SQLException in case of failures.
+     */
+    private void parseTrimFunction(FunctionNode node) throws SQLException {
+        if (TrimFunction.isValidType(node.getParameters().get(0).getName())) {
+            // TRIM(TYPE...
+            if (node.getParameters().size() == 0x02) {
+                // TRIM(TYPE 'CHARS'...
+                this.expect(TokenType.FROM);
+            } else if (node.getParameters().size() != 1) {
+                // TRIM(TYPE 'CHARS' FROM 'X'...
+                throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE,
+                        this.token.getPosition(), this.token.getValue());
+            }
+        } else if (node.getParameters().size() == 1) {
+            // TRIM('CHARS' ...).
+            this.expect(TokenType.FROM);
+        } else {
+            // TRIM('CHARS' FROM 'TEXT).
+            throw new ParadoxSyntaxErrorException(SyntaxError.INVALID_PARAMETER_VALUE, this.token.getPosition(),
+                    this.token.getValue());
+        }
+    }
+
+    /**
      * Parses a function node.
      *
      * @param functionName    the function name.
      * @param position        the current scanner position.
-     * @param enableAggregate if this field can have a aggregate function.
+     * @param enableAggregate if this field can have an aggregate function.
      * @return the function node.
      * @throws SQLException in case of failures.
      */
-    private FunctionNode parseFunction(final String functionName, final ScannerPosition position,
-                                       final boolean enableAggregate) throws SQLException {
+    private FunctionNode parseFunction(final String functionName, final ScannerPosition position, final boolean enableAggregate) throws SQLException {
         final FunctionNode functionNode = new FunctionNode(functionName, position);
         this.expect(TokenType.L_PAREN);
 
@@ -1206,7 +1212,7 @@ public final class SQLParser {
 
         // Field loop
         if (this.token != null) {
-            this.parseFields(select, true);
+            this.parseFields(select);
         }
 
         if (select.getFields().isEmpty()) {
@@ -1323,7 +1329,7 @@ public final class SQLParser {
     }
 
     /**
-     * Safe way to add a offset to a scanner position.
+     * Safe way to add an offset to a scanner position.
      *
      * @param position the scanner position.
      * @param offset   the offset to add.

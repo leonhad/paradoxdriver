@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * The SQL sum function.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
@@ -42,6 +41,13 @@ public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
             new Column("value", ParadoxType.NUMBER, "The numeric value to sum.", 1, false, IN),
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public SumFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns a sum of a set of values.";
@@ -53,8 +59,7 @@ public class SumFunction extends AbstractGroupingFunction<BigDecimal> {
     }
 
     @Override
-    public SumContext execute(final ConnectionInfo connectionInfo, final Object[] values,
-                              final ParadoxType[] types, final FieldNode[] fields) {
+    public SumContext execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         BigDecimal value = ValuesConverter.getBigDecimal(values[0], connectionInfo);
         if (values[0] == null) {
             value = BigDecimal.ZERO;

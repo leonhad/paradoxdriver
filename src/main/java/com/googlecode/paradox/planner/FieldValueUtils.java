@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -85,12 +85,10 @@ public final class FieldValueUtils {
      * @throws SQLException in case of column ambiguous defined or field not found.
      */
     @SuppressWarnings("java:S1541")
-    public static void setFieldIndex(final FieldNode field, final List<Column> columns,
-                                     final Collection<PlanTableNode> tables) throws SQLException {
+    public static void setFieldIndex(final FieldNode field, final List<Column> columns, final Collection<PlanTableNode> tables) throws SQLException {
 
         // Do not set indexes in value or parameter nodes.
-        if (field == null || field instanceof ValueNode || field instanceof ParameterNode
-                || field instanceof AsteriskNode) {
+        if (field == null || field instanceof ValueNode || field instanceof ParameterNode || field instanceof AsteriskNode) {
             return;
         } else if (field instanceof FunctionNode) {
             setFunctionIndexes(field, columns, tables);

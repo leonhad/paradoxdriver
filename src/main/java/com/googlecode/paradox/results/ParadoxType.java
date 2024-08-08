@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,6 +22,7 @@ import java.sql.*;
  * @see SQLType
  * @since 1.3
  */
+@SuppressWarnings("java:S107")
 public enum ParadoxType implements SQLType {
 
     /**
@@ -62,12 +63,12 @@ public enum ParadoxType implements SQLType {
     /**
      * The numeric type.
      */
-    NUMERIC(6, Types.NUMERIC, true, Double.class, 15, 6, 0x04, true),
+    NUMERIC(6, Types.NUMERIC, true, Double.class, 15, 6, 0x08, true),
 
     /**
      * The numeric type.
      */
-    DECIMAL(6, Types.DECIMAL, false, Double.class, 15, 6, 0x04, true),
+    DECIMAL(6, Types.DECIMAL, false, Double.class, 15, 6, 0x08, true),
 
     /**
      * The boolean type.

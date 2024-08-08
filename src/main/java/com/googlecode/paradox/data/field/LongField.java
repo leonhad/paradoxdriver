@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,14 +20,17 @@ import java.nio.ByteBuffer;
 /**
  * Parses long fields.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class LongField implements FieldParser {
 
     /**
-     * {@inheritDoc}
+     * Creates a new instance.
      */
+    public LongField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.LONG;

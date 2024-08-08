@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL reverse function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class ReverseFunction extends AbstractStringFunction {
@@ -36,6 +35,13 @@ public class ReverseFunction extends AbstractStringFunction {
             new Column("string", ParadoxType.VARCHAR, "The string to invert.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public ReverseFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Return a string in inverted order.";
@@ -47,8 +53,7 @@ public class ReverseFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
 
         final StringBuilder builder = new StringBuilder(values[0].toString());
         builder.reverse();

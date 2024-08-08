@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,7 +19,6 @@ import com.googlecode.paradox.utils.Constants;
 /**
  * The SQL DRIVER_MAJOR_VERSION functions.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class DriverMajorVersionFunction extends AbstractSystemFunction {
@@ -35,6 +34,13 @@ public class DriverMajorVersionFunction extends AbstractSystemFunction {
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.INTEGER, "The driver major version.", 0, false, RESULT)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public DriverMajorVersionFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

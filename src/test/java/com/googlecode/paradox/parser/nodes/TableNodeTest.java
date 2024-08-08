@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -10,24 +10,24 @@
  */
 package com.googlecode.paradox.parser.nodes;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link TableNode} class.
  *
- * @version 1.4
  * @since 1.3
  */
-public class TableNodeTest {
+class TableNodeTest {
 
     /**
      * Test for instance.
      */
     @Test
-    public void testInstance() {
+    void testInstance() {
         final TableNode node = new TableNode(null, "table.db", "alias", null);
-        Assert.assertEquals("Invalid table name.", "table", node.getName());
-        Assert.assertEquals("Invalid table alias.", "alias", node.getAlias());
+        assertEquals("table", node.getName());
+        assertEquals("alias", node.getAlias());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -10,33 +10,33 @@
  */
 package com.googlecode.paradox.parser;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link Token} class.
  *
- * @version 1.0
  * @since 1.3
  */
-public class TokenTest {
+class TokenTest {
 
     /**
      * Test for instance.
      */
     @Test
-    public void testInstance() {
+    void testInstance() {
         final Token token = new Token(TokenType.AND, "value", new ScannerPosition());
-        Assert.assertEquals("Invalid token type.", TokenType.AND, token.getType());
-        Assert.assertEquals("Invalid token value.", "value", token.getValue());
+        assertEquals(TokenType.AND, token.getType());
+        assertEquals("value", token.getValue());
     }
 
     /**
      * Test for {@link Token#toString()} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         final Token token = new Token(TokenType.AND, "value", new ScannerPosition());
-        Assert.assertEquals("Invalid token value.", "AND = value", token.toString());
+        assertEquals("AND = value", token.toString());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,11 +20,18 @@ import java.sql.SQLException;
  * Used to creates and execute SQL plans.
  *
  * @param <T> the return type.
- * @version 1.8
+ * @param <C> the plan context type.
  * @since 1.1
  */
 public interface Plan<T, C extends Context> {
 
+    /**
+     * Execute the plan.
+     *
+     * @param context the context to use.
+     * @return the generated values.
+     * @throws SQLException in case of failures.
+     */
     T execute(final C context) throws SQLException;
 
     /**

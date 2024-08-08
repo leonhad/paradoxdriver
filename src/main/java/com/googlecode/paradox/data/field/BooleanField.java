@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 /**
  * Parses boolean fields.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class BooleanField implements FieldParser {
@@ -29,16 +28,17 @@ public final class BooleanField implements FieldParser {
     private static final int FALSE_VALUE = -128;
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public BooleanField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.BOOLEAN;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Boolean parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final byte v = buffer.get();

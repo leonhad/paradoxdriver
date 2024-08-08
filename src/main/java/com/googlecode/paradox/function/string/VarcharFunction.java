@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL VARCHAR function.
  *
- * @version 1.6
  * @since 1.6.0
  */
 public class VarcharFunction extends AbstractStringFunction {
@@ -39,6 +38,13 @@ public class VarcharFunction extends AbstractStringFunction {
             new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public VarcharFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Converts the value to VARCHAR type.";
@@ -50,8 +56,7 @@ public class VarcharFunction extends AbstractStringFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws SQLException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException {
 
         return ValuesConverter.getString(values[0], connectionInfo);
     }

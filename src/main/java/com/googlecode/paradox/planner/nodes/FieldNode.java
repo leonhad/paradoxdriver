@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.util.Set;
 /**
  * Stores the field values.
  *
- * @version 1.6
  * @since 1.0
  */
 public class FieldNode extends SQLNode {
@@ -62,9 +61,6 @@ public class FieldNode extends SQLNode {
         return this.tableName;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
@@ -87,18 +83,38 @@ public class FieldNode extends SQLNode {
         return builder.toString();
     }
 
+    /**
+     * Gets the index.
+     *
+     * @return the index.
+     */
     public int getIndex() {
         return index;
     }
 
+    /**
+     * Sets the index.
+     *
+     * @param index the index.
+     */
     public void setIndex(int index) {
         this.index = index;
     }
 
+    /**
+     * Gets the table.
+     *
+     * @return the table.
+     */
     public Table getTable() {
         return table;
     }
 
+    /**
+     * Sets the table.
+     *
+     * @param table the table.
+     */
     public void setTable(final Table table) {
         this.table = table;
     }

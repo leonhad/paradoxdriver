@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -16,10 +16,16 @@ import com.googlecode.paradox.function.FunctionType;
 /**
  * Base class for general functions.
  *
- * @version 1.0
  * @since 1.6.0
  */
 public abstract class AbstractGeneralFunction extends AbstractFunction {
+
+    /**
+     * Creates a new instance.
+     */
+    protected AbstractGeneralFunction() {
+        super();
+    }
 
     @Override
     public FunctionType getType() {

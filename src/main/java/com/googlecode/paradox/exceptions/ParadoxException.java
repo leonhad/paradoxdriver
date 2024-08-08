@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -72,7 +72,12 @@ public class ParadoxException extends SQLDataException {
         /**
          * Invalid column name.
          */
-        INVALID_COLUMN("001", "Invalid column name: %s"),
+        INVALID_COLUMN("001", "Invalid column name %s"),
+
+        /**
+         * Invalid column name.
+         */
+        INVALID_COLUMN_FILE("001", "Invalid column name %s in file %s"),
 
         /**
          * Call next() in result set first.
@@ -102,7 +107,12 @@ public class ParadoxException extends SQLDataException {
         /**
          * Invalid column index.
          */
-        INVALID_COLUMN_INDEX("007", "Invalid column index: %s"),
+        INVALID_COLUMN_INDEX("007", "Invalid column index %s"),
+
+        /**
+         * Invalid column index.
+         */
+        INVALID_COLUMN_INDEX_FILE("007", "Invalid column index %s in file %s"),
 
         /**
          * Invalid fetch direction.

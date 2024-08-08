@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 /**
  * The SQL coalesce function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class CoalesceFunction extends AbstractGeneralFunction {
@@ -34,18 +33,26 @@ public class CoalesceFunction extends AbstractGeneralFunction {
      */
     public static final String NAME = "COALESCE";
 
+    /**
+     * The return type;
+     */
     private ParadoxType type = ParadoxType.NULL;
 
     /**
      * Column parameter list.
      */
     private static final Column[] COLUMNS = {
-            new Column(null, ParadoxType.VARCHAR,
-                    "The string or replacement (if first is null).", 0, true,
-                    DatabaseMetaData.functionColumnResult),
+            new Column(null, ParadoxType.VARCHAR, "The string or replacement (if first is null).", 0, true, DatabaseMetaData.functionColumnResult),
             new Column("string", ParadoxType.VARCHAR, "The string to test if null.", 1, true, IN),
             new Column("replacement", ParadoxType.VARCHAR, "The replacement in case of null.", 2, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public CoalesceFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -68,8 +75,7 @@ public class CoalesceFunction extends AbstractGeneralFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) throws ParadoxSyntaxErrorException {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws ParadoxSyntaxErrorException {
         this.type = FieldValueUtils.getSqlType(values, types);
         return Stream.of(values).filter(Objects::nonNull).findFirst().orElse(null);
     }

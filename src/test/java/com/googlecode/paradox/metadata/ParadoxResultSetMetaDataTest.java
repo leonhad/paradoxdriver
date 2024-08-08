@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,10 +13,15 @@ package com.googlecode.paradox.metadata;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.utils.Utils;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
 import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link ParadoxResultSetMetaData} class.
@@ -24,7 +29,7 @@ import java.util.Collections;
  * @version 1.1
  * @since 1.3
  */
-public class ParadoxResultSetMetaDataTest {
+class ParadoxResultSetMetaDataTest {
 
     /**
      * The connection string used by tests.
@@ -41,8 +46,8 @@ public class ParadoxResultSetMetaDataTest {
      *
      * @throws Exception in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
@@ -51,8 +56,8 @@ public class ParadoxResultSetMetaDataTest {
      *
      * @throws Exception in case of failures.
      */
-    @After
-    public void closeConnection() throws Exception {
+    @AfterEach
+    void closeConnection() throws Exception {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -63,8 +68,8 @@ public class ParadoxResultSetMetaDataTest {
      *
      * @throws Exception in case of failures.
      */
-    @Before
-    public void connect() throws Exception {
+    @BeforeEach
+    void connect() throws Exception {
         this.conn = (ParadoxConnection) DriverManager.getConnection(ParadoxResultSetMetaDataTest.CONNECTION_STRING + "db");
     }
 
@@ -72,40 +77,36 @@ public class ParadoxResultSetMetaDataTest {
      * Test for instance.
      */
     @Test
-    public void testInstance() {
+    void testInstance() {
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
-        Assert.assertEquals("Testing for column size.", 0, metaData.getColumnCount());
+        assertEquals(0, metaData.getColumnCount());
     }
 
     /**
      * Test for invalid column with high value.
-     *
-     * @throws SQLException in case of errors.
      */
-    @Test(expected = SQLException.class)
-    public void testInvalidColumnHighValue() throws SQLException {
+    @Test
+    void testInvalidColumnHighValue() {
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
-        metaData.getColumnName(5);
+        assertThrows(SQLException.class, () -> metaData.getColumnName(5));
     }
 
     /**
      * Test for invalid column with low value.
-     *
-     * @throws SQLException in case of errors.
      */
-    @Test(expected = SQLException.class)
-    public void testInvalidColumnLowValue() throws SQLException {
+    @Test
+    void testInvalidColumnLowValue() {
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
-        metaData.getColumnName(0);
+        assertThrows(SQLException.class, () -> metaData.getColumnName(0));
     }
 
     /**
      * Test for the {@link Utils#isWrapperFor(java.sql.Wrapper, Class)}.
      */
     @Test
-    public void testIsWrapFor() {
+    void testIsWrapFor() {
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
-        Assert.assertTrue("Invalid value.", metaData.isWrapperFor(ParadoxResultSetMetaData.class));
+        assertTrue(metaData.isWrapperFor(ParadoxResultSetMetaData.class));
     }
 
     /**
@@ -114,9 +115,9 @@ public class ParadoxResultSetMetaDataTest {
      * @throws Exception in case of failures.
      */
     @Test
-    public void testUnwrap() throws Exception {
+    void testUnwrap() throws Exception {
         final ParadoxResultSetMetaData metaData = new ParadoxResultSetMetaData(this.conn.getConnectionInfo(), Collections.emptyList());
-        Assert.assertNotNull("Invalid value.", metaData.unwrap(ParadoxResultSetMetaData.class));
+        assertNotNull(metaData.unwrap(ParadoxResultSetMetaData.class));
     }
 
     /**
@@ -125,15 +126,15 @@ public class ParadoxResultSetMetaDataTest {
      * @throws Exception in case of failures.
      */
     @Test
-    public void testPrecisionScaleDecimal() throws Exception {
+    void testPrecisionScaleDecimal() throws Exception {
         try (Statement statement = conn.createStatement();
              ResultSet rs = statement.executeQuery("SELECT * FROM db.DECIMAL")) {
             if (rs.next()) {
                 ResultSetMetaData metaData = rs.getMetaData();
-                Assert.assertEquals("Invalid precision.", 15, metaData.getPrecision(1));
-                Assert.assertEquals("Invalid scale.", 6, metaData.getScale(1));
+                assertEquals(15, metaData.getPrecision(1));
+                assertEquals(6, metaData.getScale(1));
             } else {
-                Assert.fail("No catalog selected.");
+                fail("No catalog selected.");
             }
         }
     }
@@ -144,16 +145,16 @@ public class ParadoxResultSetMetaDataTest {
      * @throws Exception in case of failures.
      */
     @Test
-    public void testPrecisionScaleBcd() throws Exception {
+    void testPrecisionScaleBcd() throws Exception {
         try (Statement statement = conn.createStatement();
              ResultSet rs = statement.executeQuery("SELECT * FROM fields.bcd")) {
             if (rs.next()) {
                 ResultSetMetaData metaData = rs.getMetaData();
-                Assert.assertEquals("Invalid precision.", 2, metaData.getPrecision(1));
-                Assert.assertEquals("Invalid scale.", 0, metaData.getScale(1));
-                Assert.assertEquals("Invalid column display size.", 2, metaData.getColumnDisplaySize(1));
+                assertEquals(2, metaData.getPrecision(1));
+                assertEquals(0, metaData.getScale(1));
+                assertEquals(2, metaData.getColumnDisplaySize(1));
             } else {
-                Assert.fail("No catalog selected.");
+                fail("No catalog selected.");
             }
         }
     }

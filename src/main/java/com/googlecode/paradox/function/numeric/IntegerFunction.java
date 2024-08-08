@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL INTEGER function.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class IntegerFunction extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class IntegerFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.INTEGER, "A integer value.", 0, true, RESULT),
             new Column("integer", ParadoxType.VARCHAR, "A value to convert.", 1, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public IntegerFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

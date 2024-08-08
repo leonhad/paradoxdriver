@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -18,9 +18,8 @@ import com.googlecode.paradox.planner.sorting.OrderType;
 import java.io.File;
 
 /**
- * Stores a primary key definition..
+ * Stores a primary key definition.
  *
- * @version 1.3
  * @since 1.0
  */
 public final class ParadoxPK extends ParadoxDataFile implements Index {
@@ -41,9 +40,6 @@ public final class ParadoxPK extends ParadoxDataFile implements Index {
         this.name = file.getName();
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean equals(final Object obj) {
         return (obj == this) || ((obj != null) && (this.getClass() == obj.getClass())
@@ -68,9 +64,6 @@ public final class ParadoxPK extends ParadoxDataFile implements Index {
         this.indexFieldNumber = indexFieldNumber;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int hashCode() {
         return this.getName().hashCode();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -14,18 +14,19 @@ import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.function.AbstractFunction;
 import com.googlecode.paradox.function.FunctionFactory;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.Column;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
  * Routines.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class Routines implements Table {
@@ -125,87 +126,40 @@ public class Routines implements Table {
         }
     }
 
+    private boolean isResultType(Column column) {
+        return column.getColumnType() == AbstractFunction.RESULT;
+    }
+
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> catalogName);
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, TableDetails::getFunctionName);
+        map.put(type, details -> "FUNCTION");
+        map.put(dataType, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getType).map(ParadoxType::name).findFirst().orElse(null));
+        map.put(maximumLength, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getSize).findFirst().orElse(null));
+        map.put(octetLength, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getOctets).findFirst().orElse(null));
+        map.put(scale, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getScale).findFirst().orElse(null));
+        map.put(precision, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getPrecision).findFirst().orElse(null));
+        map.put(radix, details -> Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).map(Column::getRadix).filter(Objects::nonNull).findFirst().orElse(null));
+        map.put(body, details -> "EXTERNAL");
+        map.put(definition, details -> details.getFunction().definition());
+        map.put(isDeterministic, details -> details.getFunction().isDeterministic());
+        map.put(sqlDataAccess, details -> "READS");
+        map.put(isNullCall, details -> description(Arrays.stream(details.getFunction().getColumns()).filter(this::isResultType).noneMatch(Column::isNullable)));
+        map.put(isImplicitly, details -> "NO");
+        map.put(remarks, details -> details.getFunction().getRemarks());
+
         final List<Object[]> ret = new ArrayList<>();
-
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
-            for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry :
-                    FunctionFactory.getFunctions().entrySet()) {
-                final AbstractFunction function = entry.getValue().get();
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    Object value = null;
-                    if (this.catalog.equals(field)) {
-                        value = catalogName;
-                    } else if (this.schema.equals(field)) {
-                        value = localSchema.name();
-                    } else if (this.name.equals(field)) {
-                        value = entry.getKey();
-                    } else if (this.type.equals(field)) {
-                        value = "FUNCTION";
-                    } else if (this.dataType.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getType)
-                                .map(ParadoxType::name)
-                                .findFirst().orElse(null);
-                    } else if (this.maximumLength.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getSize)
-                                .findFirst().orElse(null);
-                    } else if (this.octetLength.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getOctets)
-                                .findFirst().orElse(null);
-                    } else if (this.scale.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getScale)
-                                .findFirst().orElse(null);
-                    } else if (this.precision.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getPrecision)
-                                .findFirst().orElse(null);
-                    } else if (this.radix.equals(field)) {
-                        value = Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() == AbstractFunction.RESULT)
-                                .map(Column::getRadix)
-                                .filter(Objects::nonNull)
-                                .findFirst().orElse(null);
-                    } else if (this.body.equals(field)) {
-                        value = "EXTERNAL";
-                    } else if (this.definition.equals(field)) {
-                        value = function.definition();
-                    } else if (this.isDeterministic.equals(field)) {
-                        if (function.isDeterministic()) {
-                            value = "YES";
-                        } else {
-                            value = "NO";
-                        }
-                    } else if (this.sqlDataAccess.equals(field)) {
-                        value = "READS";
-                    } else if (this.isNullCall.equals(field)) {
-                        if (Arrays.stream(function.getColumns())
-                                .filter(c -> c.getColumnType() != AbstractFunction.RESULT)
-                                .anyMatch(Column::isNullable)) {
-                            value = "NO";
-                        } else {
-                            value = "YES";
-                        }
-                    } else if (this.isImplicitly.equals(field)) {
-                        value = "NO";
-                    } else if (this.remarks.equals(field)) {
-                        value = function.getRemarks();
-                    }
+            for (final Map.Entry<String, Supplier<? extends AbstractFunction>> entry : FunctionFactory.getFunctions().entrySet()) {
+                final TableDetails details = new TableDetails();
+                details.setSchema(localSchema);
+                details.setFunction(entry.getValue().get());
+                details.setFunctionName(entry.getKey());
 
-                    row[i] = value;
-                }
-
+                final Object[] row = Table.getFieldValues(fields, map, details);
                 ret.add(row);
             }
         }

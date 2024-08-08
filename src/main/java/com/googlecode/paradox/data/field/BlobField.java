@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -18,23 +18,26 @@ import java.nio.ByteBuffer;
 /**
  * Parses blob fields.
  *
- * @version 1.4
  * @since 1.3
  */
 public final class BlobField extends AbstractLobField {
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public BlobField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.BLOB || type == ParadoxType.OLE || type == ParadoxType.GRAPHIC;
     }
 
     @Override
-    protected Object getValue(final ParadoxTable table, final ByteBuffer value) {
-        byte[] values = new byte[value.limit()];
-        value.get(values);
+    protected Object getValue(final ParadoxTable table, final ByteBuffer buffer) {
+        byte[] values = new byte[buffer.limit()];
+        buffer.get(values);
         return values;
     }
 }

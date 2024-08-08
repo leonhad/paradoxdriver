@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,17 +12,20 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Check constraints table.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class CheckConstraints implements Table {
@@ -96,28 +99,22 @@ public class CheckConstraints implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, details -> details.getIndex().getName());
+        map.put(check, details -> details.getIndex().definition());
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
                 for (final Index index : table.getCheckConstraints()) {
-                    final Object[] row = new Object[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        final Field field = fields[i];
-                        Object value = null;
-                        if (catalog.equals(field)) {
-                            value = localSchema.catalogName();
-                        } else if (this.schema.equals(field)) {
-                            value = localSchema.name();
-                        } else if (name.equals(field)) {
-                            value = index.getName();
-                        } else if (this.check.equals(field)) {
-                            value = index.definition();
-                        }
+                    final TableDetails details = new TableDetails();
+                    details.setSchema(localSchema);
+                    details.setTable(table);
+                    details.setIndex(index);
 
-                        row[i] = value;
-                    }
-
+                    final Object[] row = Table.getFieldValues(fields, map, details);
                     ret.add(row);
                 }
             }

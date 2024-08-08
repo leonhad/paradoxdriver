@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,7 +20,6 @@ import java.util.Locale;
 /**
  * Paradox primary key file filter.
  *
- * @version 1.1
  * @since 1.0
  */
 public final class PrimaryKeyFilter implements FileFilter {
@@ -30,6 +29,9 @@ public final class PrimaryKeyFilter implements FileFilter {
      */
     private final String pkName;
 
+    /**
+     * The locale to use.
+     */
     private final Locale locale;
 
     /**
@@ -52,9 +54,6 @@ public final class PrimaryKeyFilter implements FileFilter {
         this.pkName = pkName;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean accept(final File pathname) {
         final String name = pathname.getName();

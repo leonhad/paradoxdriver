@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,22 +11,22 @@
 
 package com.googlecode.paradox.utils;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for {@link Constants} class.
  *
- * @version 1.1
  * @since 1.3
  */
-public class ConstantsTest {
+class ConstantsTest {
 
     /**
      * Test for sanity.
      */
     @Test
-    public void testSanity() {
-        Assert.assertTrue("Utility class in wrong format.", TestUtil.assertSanity(Constants.class));
+    void testSanity() {
+        assertTrue(TestUtil.assertSanity(Constants.class));
     }
 }

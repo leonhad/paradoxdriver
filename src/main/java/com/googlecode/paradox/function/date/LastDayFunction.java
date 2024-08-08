@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -23,7 +23,6 @@ import java.util.Calendar;
 /**
  * The SQL LAST_DAY function.
  *
- * @version 1.3
  * @since 1.6.0
  */
 @SuppressWarnings({"i18n-java:V1017", "java:S109"})
@@ -41,6 +40,13 @@ public class LastDayFunction extends AbstractDateFunction {
             new Column(null, ParadoxType.DATE, "The date with the last day of the month.", 0, false, RESULT),
             new Column("date", ParadoxType.TIMESTAMP, "The time/datetime to extract the last day from.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public LastDayFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

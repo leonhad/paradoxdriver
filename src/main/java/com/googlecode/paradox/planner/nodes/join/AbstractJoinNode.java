@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -36,7 +36,7 @@ public abstract class AbstractJoinNode extends AbstractConditionalNode {
      * @param child     the child node.
      * @param position  the current scanner position.
      */
-    public AbstractJoinNode(final String fieldName, final SQLNode child, final ScannerPosition position) {
+    protected AbstractJoinNode(final String fieldName, final SQLNode child, final ScannerPosition position) {
         super(fieldName, position);
         if (child != null) {
             this.children.add(child);

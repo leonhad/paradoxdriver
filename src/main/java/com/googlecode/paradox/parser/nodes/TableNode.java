@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -16,7 +16,6 @@ import com.googlecode.paradox.utils.Utils;
 /**
  * Stores a table node.
  *
- * @version 1.6
  * @since 1.0
  */
 public class TableNode extends SQLNode {
@@ -42,9 +41,6 @@ public class TableNode extends SQLNode {
         this.schemaName = schemaName;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();

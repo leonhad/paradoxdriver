@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -18,7 +18,6 @@ import java.util.Objects;
 /**
  * Stores a node value.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class ValueNode extends FieldNode {
@@ -28,6 +27,13 @@ public class ValueNode extends FieldNode {
      */
     private final ParadoxType type;
 
+    /**
+     * Creates a new instance.
+     *
+     * @param name     the node name.
+     * @param position the node scanner position.
+     * @param type     the node type.
+     */
     public ValueNode(final String name, final ScannerPosition position, final ParadoxType type) {
         super(null, name, position);
         this.type = type;

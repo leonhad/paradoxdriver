@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,18 +11,21 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.charset.CharsetUtil;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.paradox.ParadoxDataFile;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
+import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Tables.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class Tables implements Table {
@@ -43,14 +46,17 @@ public class Tables implements Table {
     private final Field type = new Field("type", 0, 0, 0x0A, ParadoxType.VARCHAR, this, 4);
     private final Field typeName = new Field("type_name", 0, 0, 0x0A, ParadoxType.VARCHAR, this, 5);
     private final Field charset = new Field("charset", 0, 0, 0, ParadoxType.VARCHAR, this, 6);
-    private final Field encrypted = new Field("encrypted", 0, 0, 3, ParadoxType.VARCHAR, this, 7);
-    private final Field writeProtected = new Field("write_protected", 0, 0, 3, ParadoxType.VARCHAR, this, 8);
-    private final Field count = new Field("count", 0, 0, 0, ParadoxType.VARCHAR, this, 9);
-    private final Field blockSize = new Field("block_size", 0, 0, 2, ParadoxType.INTEGER, this, 10);
-    private final Field totalBlocks = new Field("total_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 11);
-    private final Field usedBlocks = new Field("used_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 12);
-    private final Field freeBlocks = new Field("free_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 13);
-    private final Field recordSize = new Field("record_size", 0, 0, 2, ParadoxType.INTEGER, this, 14);
+    private final Field codePage = new Field("codePage", 0, 0, 0, ParadoxType.INTEGER, this, 7);
+    private final Field sortOrder = new Field("sortOrder", 0, 0, 0, ParadoxType.INTEGER, this, 8);
+    private final Field charsetOriginalName = new Field("charsetOriginalName", 0, 0, 80, ParadoxType.VARCHAR, this, 9);
+    private final Field encrypted = new Field("encrypted", 0, 0, 3, ParadoxType.VARCHAR, this, 10);
+    private final Field writeProtected = new Field("write_protected", 0, 0, 3, ParadoxType.VARCHAR, this, 11);
+    private final Field count = new Field("count", 0, 0, 0, ParadoxType.VARCHAR, this, 12);
+    private final Field blockSize = new Field("block_size", 0, 0, 2, ParadoxType.INTEGER, this, 12);
+    private final Field totalBlocks = new Field("total_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 13);
+    private final Field usedBlocks = new Field("used_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 14);
+    private final Field freeBlocks = new Field("free_blocks", 0, 0, 2, ParadoxType.INTEGER, this, 15);
+    private final Field recordSize = new Field("record_size", 0, 0, 2, ParadoxType.INTEGER, this, 16);
 
     /**
      * Creates a new instance.
@@ -90,6 +96,9 @@ public class Tables implements Table {
                 type,
                 typeName,
                 charset,
+                codePage,
+                sortOrder,
+                charsetOriginalName,
                 encrypted,
                 writeProtected,
                 count,
@@ -122,47 +131,51 @@ public class Tables implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, details -> details.getTable().getName());
+        map.put(type, details -> details.getTable().type().description());
+        map.put(typeName, details -> details.getTable().type().typeName());
+        map.put(charset, details -> Optional.ofNullable(details.getTable().getCharset()).map(Charset::displayName).orElse(null));
+        map.put(codePage, details -> {
+            if (details.getTable() instanceof ParadoxDataFile) {
+                return ((ParadoxDataFile) details.getTable()).getCodePage();
+            }
 
+            return null;
+        });
+        map.put(sortOrder, details -> {
+            if (details.getTable() instanceof ParadoxDataFile) {
+                return ((ParadoxDataFile) details.getTable()).getSortOrder() & 0xFF;
+            }
+
+            return null;
+        });
+        map.put(charsetOriginalName, details -> {
+            if (details.getTable() instanceof ParadoxDataFile) {
+                return CharsetUtil.getOriginalName((ParadoxDataFile) details.getTable());
+            }
+
+            return null;
+        });
+        map.put(encrypted, details -> description(details.getTable().isEncrypted()));
+        map.put(writeProtected, details -> description(details.getTable().isWriteProtected()));
+        map.put(count, details -> details.getTable().getRowCount());
+        map.put(blockSize, details -> details.getTable().getBlockSizeBytes());
+        map.put(totalBlocks, details -> details.getTable().getTotalBlocks());
+        map.put(usedBlocks, details -> details.getTable().getUsedBlocks());
+        map.put(freeBlocks, details -> details.getTable().getTotalBlocks() - details.getTable().getUsedBlocks());
+        map.put(recordSize, details -> details.getTable().getRecordSize());
+
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
-                final Object[] row = new Object[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    final Field field = fields[i];
-                    Object value = null;
-                    if (catalog.equals(field)) {
-                        value = localSchema.catalogName();
-                    } else if (this.schema.equals(field)) {
-                        value = localSchema.name();
-                    } else if (name.equals(field)) {
-                        value = table.getName();
-                    } else if (this.type.equals(field)) {
-                        value = table.type().description();
-                    } else if (this.typeName.equals(field)) {
-                        value = table.type().typeName();
-                    } else if (this.charset.equals(field) && table.getCharset() != null) {
-                        value = table.getCharset().displayName();
-                    } else if (this.encrypted.equals(field)) {
-                        value = description(table.isEncrypted());
-                    } else if (this.writeProtected.equals(field)) {
-                        value = description(table.isWriteProtected());
-                    } else if (this.count.equals(field) && table.getCharset() != null) {
-                        value = table.getRowCount();
-                    } else if (this.blockSize.equals(field)) {
-                        value = table.getBlockSizeBytes();
-                    } else if (this.totalBlocks.equals(field)) {
-                        value = table.getTotalBlocks();
-                    } else if (this.usedBlocks.equals(field)) {
-                        value = table.getUsedBlocks();
-                    } else if (this.freeBlocks.equals(field)) {
-                        value = table.getTotalBlocks() - table.getUsedBlocks();
-                    } else if (this.recordSize.equals(field)) {
-                        value = table.getRecordSize();
-                    }
+                final TableDetails details = new TableDetails();
+                details.setSchema(localSchema);
+                details.setTable(table);
 
-                    row[i] = value;
-                }
-
+                final Object[] row = Table.getFieldValues(fields, map, details);
                 ret.add(row);
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,23 +12,27 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link DateFromPartsFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class DateFromPartsFunctionTest {
+class DateFromPartsFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -47,8 +51,8 @@ public class DateFromPartsFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -57,8 +61,8 @@ public class DateFromPartsFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -69,9 +73,8 @@ public class DateFromPartsFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -81,13 +84,13 @@ public class DateFromPartsFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testFunction() throws SQLException {
+    void testFunction() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEFROMPARTS(2018, 10, 31)");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotNull("Null date value", rs.getDate(1));
-            Assert.assertEquals("Invalid date", "2018-10-31", rs.getDate(1).toString());
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertNotNull(rs.getDate(1));
+            assertEquals("2018-10-31", rs.getDate(1).toString());
+            assertFalse(rs.next());
         }
     }
 
@@ -97,13 +100,13 @@ public class DateFromPartsFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testInvalid() throws SQLException {
+    void testInvalid() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEFROMPARTS(2018, 2, 31)");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNotNull("Null date value", rs.getDate(1));
-            Assert.assertEquals("Invalid date", "2018-03-03", rs.getDate(1).toString());
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertNotNull(rs.getDate(1));
+            assertEquals("2018-03-03", rs.getDate(1).toString());
+            assertFalse(rs.next());
         }
     }
 
@@ -113,12 +116,12 @@ public class DateFromPartsFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNull() throws SQLException {
+    void testNull() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEFROMPARTS(2018, 10, null)");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNull("Invalid null date value", rs.getDate(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertNull(rs.getDate(1));
+            assertFalse(rs.next());
         }
     }
 }

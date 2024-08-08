@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,14 +22,29 @@ import java.nio.ByteBuffer;
 /**
  * Parses boolean fields.
  *
- * @version 1.3
  * @since 1.3
  */
 public final class BCDField implements FieldParser {
 
+    /**
+     * BCD real size.
+     */
     public static final int BCD_SIZE = 17;
+    /**
+     * Max digits a BCD can have.
+     */
     public static final int MAX_DIGITS = 32;
-    public static final byte SECOND_BYTE = 4;
+    /**
+     * Second position in byte.
+     */
+    private static final byte SECOND_BYTE = 4;
+
+    /**
+     * Creates a new instance.
+     */
+    public BCDField() {
+        super();
+    }
 
     private static void removeLeadingZeroes(final StringBuilder builder) {
         while (builder.length() > 1 && builder.charAt(0) == '0') {
@@ -37,17 +52,11 @@ public final class BCDField implements FieldParser {
         }
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.BCD;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field originalField) {
         final byte[] valueBuffer = new byte[BCD_SIZE];
@@ -62,7 +71,7 @@ public final class BCDField implements FieldParser {
         boolean negative = (valueBuffer[0] & 0x80) == 0;
         if (negative) {
             for (int i = 1; i < valueBuffer.length; i++) {
-                valueBuffer[i] ^= 0xFF;
+                valueBuffer[i] ^= (byte) 0xFF;
             }
         }
 

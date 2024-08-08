@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,7 +22,6 @@ import java.util.Objects;
 /**
  * The SQL NVL function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class NvlFunction extends AbstractGeneralFunction {
@@ -40,6 +39,13 @@ public class NvlFunction extends AbstractGeneralFunction {
             new Column("string", ParadoxType.VARCHAR, "The string to test if null.", 1, true, IN),
             new Column("replacement", ParadoxType.VARCHAR, "The replacement in case of null.", 2, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public NvlFunction() {
+        super();
+    }
 
     /**
      * The current type.

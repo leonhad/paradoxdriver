@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,23 +13,27 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link SpaceFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class SpaceFunctionTest {
+class SpaceFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -48,8 +52,8 @@ public class SpaceFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -58,8 +62,8 @@ public class SpaceFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -70,9 +74,8 @@ public class SpaceFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -82,13 +85,13 @@ public class SpaceFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSpace() throws SQLException {
+    void testSpace() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select space(3) ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "   ", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("   ", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -98,10 +101,9 @@ public class SpaceFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testNegative() throws SQLException {
+    void testNegative() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select space(-1) ")) {
-            Assert.assertThrows("Invalid function validation", ParadoxSyntaxErrorException.class,
-                    stmt::executeQuery);
+            assertThrows(ParadoxSyntaxErrorException.class, stmt::executeQuery);
         }
     }
 
@@ -111,10 +113,9 @@ public class SpaceFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testCharValue() throws SQLException {
+    void testCharValue() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select space('a') ")) {
-            Assert.assertThrows("Invalid function validation", ParadoxSyntaxErrorException.class,
-                    stmt::executeQuery);
+            assertThrows(ParadoxSyntaxErrorException.class, stmt::executeQuery);
         }
     }
 }

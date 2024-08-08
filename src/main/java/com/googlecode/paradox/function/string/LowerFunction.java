@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -18,7 +18,6 @@ import com.googlecode.paradox.results.ParadoxType;
 /**
  * The SQL lower function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class LowerFunction extends AbstractStringFunction {
@@ -35,6 +34,13 @@ public class LowerFunction extends AbstractStringFunction {
             new Column(null, ParadoxType.VARCHAR, "A varchar value in lower case.", 0, true, RESULT),
             new Column("value", ParadoxType.VARCHAR, "A value to convert.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public LowerFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

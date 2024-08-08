@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -14,23 +14,27 @@ package com.googlecode.paradox.function.string;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link TrimFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class TrimFunctionTest {
+class TrimFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -49,8 +53,8 @@ public class TrimFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -59,8 +63,8 @@ public class TrimFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -71,9 +75,8 @@ public class TrimFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -83,13 +86,13 @@ public class TrimFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTrim() throws SQLException {
+    void testTrim() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select trim(' 3   ') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "3", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("3", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -99,13 +102,13 @@ public class TrimFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTrimFrom() throws SQLException {
+    void testTrimFrom() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select trim('1' from '1  3   ') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "  3   ", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("  3   ", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -115,13 +118,13 @@ public class TrimFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTrimBoth() throws SQLException {
+    void testTrimBoth() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select trim(BOTH '1' from '1  3   ') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "  3   ", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("  3   ", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -131,13 +134,13 @@ public class TrimFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTrimLeading() throws SQLException {
+    void testTrimLeading() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select trim(LEADING '1' from '1  3   1') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "  3   1", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("  3   1", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -147,13 +150,13 @@ public class TrimFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTrimTrailing() throws SQLException {
+    void testTrimTrailing() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select trim(TRAILING '1' from '1  3   1') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "1  3   ", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("1  3   ", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -163,13 +166,13 @@ public class TrimFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testTrimSpaces() throws SQLException {
+    void testTrimSpaces() throws SQLException {
         try (final PreparedStatement stmt = this.conn.prepareStatement("select trim(both ' ' from '   3   1') ");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
 
-            Assert.assertEquals("Invalid value", "3   1", rs.getString(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertEquals("3   1", rs.getString(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -177,18 +180,15 @@ public class TrimFunctionTest {
      * Test for trim with invalid size count.
      */
     @Test
-    public void testTrimInvalidCount() {
-        Assert.assertThrows("Invalid trim validation", ParadoxSyntaxErrorException.class,
-                () -> this.conn.prepareStatement("select trim(1 from ' ' from '   3   1') "));
+    void testTrimInvalidCount() {
+        assertThrows(ParadoxSyntaxErrorException.class, () -> this.conn.prepareStatement("select trim(1 from ' ' from '   3   1') "));
     }
-
 
     /**
      * Test for trim with invalid type.
      */
     @Test
-    public void testTrimInvalid() {
-        Assert.assertThrows("Invalid trim validation", ParadoxSyntaxErrorException.class,
-                () -> this.conn.prepareStatement("select trim(INVALID ' ' from '   3   1') "));
+    void testTrimInvalid() {
+        assertThrows(ParadoxSyntaxErrorException.class, () -> this.conn.prepareStatement("select trim(INVALID ' ' from '   3   1') "));
     }
 }

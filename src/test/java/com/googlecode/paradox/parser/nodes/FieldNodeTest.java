@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,51 +11,51 @@
 package com.googlecode.paradox.parser.nodes;
 
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link FieldNode}
  *
- * @version 1.2
  * @since 1.3
  */
-public class FieldNodeTest {
+class FieldNodeTest {
 
     /**
      * Test for {@link FieldNode#toString()} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         final FieldNode node = new FieldNode("table", "field", null);
         node.setAlias("alias");
-        Assert.assertEquals("Invalid node value.", "table.field AS alias", node.toString());
+        assertEquals("table.field AS alias", node.toString());
     }
 
     /**
      * Test for {@link FieldNode#toString()} method with null alias.
      */
     @Test
-    public void testToStringWithNullAlias() {
+    void testToStringWithNullAlias() {
         final FieldNode node = new FieldNode("table", "field", null);
-        Assert.assertEquals("Invalid node value.", "table.field", node.toString());
+        assertEquals("table.field", node.toString());
     }
 
     /**
      * Test {@link FieldNode#toString()} with null table.
      */
     @Test
-    public void testToStringWithNullTable() {
+    void testToStringWithNullTable() {
         final FieldNode node = new FieldNode(null, "field", null);
-        Assert.assertEquals("Invalid node value.", "field", node.toString());
+        assertEquals("field", node.toString());
     }
 
     /**
      * Test for {@link FieldNode#toString()} method without alias.
      */
     @Test
-    public void testToStringWithoutAlias() {
+    void testToStringWithoutAlias() {
         final FieldNode node = new FieldNode("table", "field", null);
-        Assert.assertEquals("Invalid node value.", "table.field", node.toString());
+        assertEquals("table.field", node.toString());
     }
 }

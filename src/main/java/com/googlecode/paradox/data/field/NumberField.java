@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,22 +22,22 @@ import java.nio.ByteBuffer;
 /**
  * Parses the numeric fields.
  *
- * @version 1.6
  * @since 1.3
  */
 public final class NumberField implements FieldParser {
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public NumberField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return (type == ParadoxType.CURRENCY) || (type == ParadoxType.NUMBER);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Double parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         long value = buffer.getLong();

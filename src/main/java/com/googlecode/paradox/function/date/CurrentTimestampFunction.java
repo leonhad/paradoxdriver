@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.util.TimeZone;
 /**
  * The SQL CURRENT_TIMESTAMP function.
  *
- * @version 1.8
  * @since 1.6.0
  */
 public class CurrentTimestampFunction extends AbstractDateFunction {
@@ -37,6 +36,13 @@ public class CurrentTimestampFunction extends AbstractDateFunction {
     private static final Column[] COLUMNS = {
             new Column(null, ParadoxType.TIMESTAMP, "The current timestamp.", 0, false, RESULT)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public CurrentTimestampFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {
@@ -59,8 +65,7 @@ public class CurrentTimestampFunction extends AbstractDateFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         long time = System.currentTimeMillis();
         return new Timestamp(time + connectionInfo.getTimeZone().getOffset(time)
                 - TimeZone.getDefault().getOffset(time));

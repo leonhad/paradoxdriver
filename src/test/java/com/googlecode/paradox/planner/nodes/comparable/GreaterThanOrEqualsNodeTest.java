@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,27 +13,27 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.planner.nodes.FieldNode;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link GreaterThanOrEqualsNode} class.
  *
- * @version 1.3
  * @since 1.6.0
  */
-public class GreaterThanOrEqualsNodeTest {
+class GreaterThanOrEqualsNodeTest {
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
 
     private static ParadoxConnection conn;
 
@@ -42,14 +42,14 @@ public class GreaterThanOrEqualsNodeTest {
      *
      * @throws SQLException in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws SQLException {
+    @BeforeAll
+    static void setUp() throws SQLException {
         new Driver();
         conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING);
     }
 
-    @AfterClass
-    public static void tearDown() throws SQLException {
+    @AfterAll
+    static void tearDown() throws SQLException {
         conn.close();
     }
 
@@ -57,11 +57,11 @@ public class GreaterThanOrEqualsNodeTest {
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         final FieldNode first = new FieldNode("table", "first", null);
         final FieldNode last = new FieldNode("table", "last", null);
         final GreaterThanOrEqualsNode node = new GreaterThanOrEqualsNode(first, last, null);
-        Assert.assertEquals("Invalid node value.", "table.first >= table.last", node.toString());
+        assertEquals("table.first >= table.last", node.toString());
     }
 
     /**
@@ -70,14 +70,14 @@ public class GreaterThanOrEqualsNodeTest {
      * @throws Exception in case of failures.
      */
     @Test
-    public void testResultSet() throws Exception {
+    void testResultSet() throws Exception {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT B FROM fields.bcd where B >= -1")) {
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid value.", 1, rs.getInt("B"));
-            Assert.assertTrue("Invalid ResultSet state.", rs.next());
-            Assert.assertEquals("Invalid value", -1, rs.getInt("B"));
-            Assert.assertFalse("Invalid ResultSet state.", rs.next());
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("B"));
+            assertTrue(rs.next());
+            assertEquals(-1, rs.getInt("B"));
+            assertFalse(rs.next());
         }
     }
 }

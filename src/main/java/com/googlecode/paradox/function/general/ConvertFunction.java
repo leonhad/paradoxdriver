@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,6 +13,7 @@ package com.googlecode.paradox.function.general;
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.exceptions.SyntaxError;
+import com.googlecode.paradox.metadata.Table;
 import com.googlecode.paradox.parser.TokenType;
 import com.googlecode.paradox.parser.nodes.SQLNode;
 import com.googlecode.paradox.planner.nodes.FieldNode;
@@ -26,6 +27,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The SQL CONVERT function.
@@ -96,12 +98,7 @@ public class ConvertFunction extends AbstractGeneralFunction {
             if (value == null) {
                 return null;
             } else if (value instanceof String) {
-                Charset original = StandardCharsets.UTF_8;
-                final FieldNode field = fields[0];
-                if (field != null && field.getTable() != null) {
-                    original = field.getTable().getCharset();
-                }
-
+                Charset original = Optional.ofNullable(fields[0]).map(FieldNode::getTable).map(Table::getCharset).orElse(StandardCharsets.US_ASCII);
                 byte[] bytes = ((String) value).getBytes(original);
 
                 return new String(bytes, charset);
@@ -123,16 +120,14 @@ public class ConvertFunction extends AbstractGeneralFunction {
             // If three parameters, the second needs to be a valid type.
 
             if (!parameters.get(1).getName().equalsIgnoreCase(TokenType.USING.name())) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
-                        parameters.get(1).getPosition());
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, parameters.get(1).getPosition());
             }
 
             SQLNode charsetNode = parameters.get(2);
             try {
                 charset = Charset.forName(charsetNode.getName());
             } catch (final UnsupportedCharsetException e) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN,
-                        charsetNode.getPosition(), charsetNode.getName(), e);
+                throw new ParadoxSyntaxErrorException(SyntaxError.UNEXPECTED_TOKEN, charsetNode.getPosition(), charsetNode.getName(), e);
             }
 
             // Charset conversion.

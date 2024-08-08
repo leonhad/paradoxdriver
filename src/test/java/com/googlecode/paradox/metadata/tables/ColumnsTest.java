@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,20 +12,25 @@
 package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.Driver;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.*;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for pdx_columns.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class ColumnsTest {
+class ColumnsTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/db";
 
@@ -39,8 +44,8 @@ public class ColumnsTest {
      *
      * @throws Exception in case of failures.
      */
-    @BeforeClass
-    public static void setUp() throws Exception {
+    @BeforeAll
+    static void setUp() throws Exception {
         Class.forName(Driver.class.getName());
     }
 
@@ -49,8 +54,8 @@ public class ColumnsTest {
      *
      * @throws Exception in case of failures.
      */
-    @After
-    public void closeConnection() throws Exception {
+    @AfterEach
+    void closeConnection() throws Exception {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -61,8 +66,8 @@ public class ColumnsTest {
      *
      * @throws Exception in case of failures.
      */
-    @Before
-    public void connect() throws Exception {
+    @BeforeEach
+    void connect() throws Exception {
         this.conn = DriverManager.getConnection(CONNECTION_STRING);
     }
 
@@ -70,10 +75,10 @@ public class ColumnsTest {
      * Test for pdx_columns.
      */
     @Test
-    public void testPdxColumns() throws SQLException {
+    void testPdxColumns() throws SQLException {
         try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.pdx_columns");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
+            assertTrue(rs.next());
         }
     }
 
@@ -81,11 +86,11 @@ public class ColumnsTest {
      * Test for columns.
      */
     @Test
-    public void testColumns() throws SQLException {
+    void testColumns() throws SQLException {
         try (final PreparedStatement stmt = conn.prepareStatement("SELECT * FROM information_schema.columns");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertNull("Invalid null value", rs.getObject("column_default"));
+            assertTrue(rs.next());
+            assertNull(rs.getObject("column_default"));
         }
     }
 }

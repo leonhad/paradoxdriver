@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -25,7 +25,6 @@ import java.util.function.Predicate;
 /**
  * Utility class to use with functional programming, mostly in Java Stream API.
  *
- * @version 1.1
  * @since 1.6.0
  */
 public final class FunctionalUtils {
@@ -45,6 +44,14 @@ public final class FunctionalUtils {
      */
     @FunctionalInterface
     public interface PredicateWithExceptions<T, E extends SQLException> {
+
+        /**
+         * Test value.
+         *
+         * @param t the value to test.
+         * @return <code>true</code> if predicate pass.
+         * @throws E in case of failures.
+         */
         boolean test(T t) throws E;
     }
 
@@ -52,10 +59,19 @@ public final class FunctionalUtils {
      * Functional interface to allow the use of exceptions .
      *
      * @param <T> the predicate type.
+     * @param <R> the function return type.
      * @param <E> the exception type.
      */
     @FunctionalInterface
     public interface FunctionWithExceptions<T, R, E extends SQLException> {
+
+        /**
+         * Execute a function.
+         *
+         * @param t the function parameter.
+         * @return the function product.
+         * @throws E in case of failures.
+         */
         R apply(T t) throws E;
     }
 
@@ -121,17 +137,22 @@ public final class FunctionalUtils {
                 return true;
             } else {
                 // Do grouping.
-                Arrays.stream(indexes).forEach((int index) ->
-                        ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index],
-                                connectionInfo));
+                Arrays.stream(indexes).forEach((int index) -> ((IGroupingContext<?>) current[index]).process((IGroupingContext) value[index], connectionInfo));
             }
 
             return false;
         };
     }
 
-    public static FunctionWithExceptions<Object[], Object[], SQLException> removeGrouping(
-            final SelectContext context, final int[] indexes, final List<Column> columnsLoaded) {
+    /**
+     * Remove grouping from value list.
+     *
+     * @param context       the execution context.
+     * @param indexes       the value indexes.
+     * @param columnsLoaded loaded columns.
+     * @return the grouped list values.
+     */
+    public static FunctionWithExceptions<Object[], Object[], SQLException> removeGrouping(final SelectContext context, final int[] indexes, final List<Column> columnsLoaded) {
         return (Object[] value) -> {
             for (final int index : indexes) {
                 if (value[index] != null) {

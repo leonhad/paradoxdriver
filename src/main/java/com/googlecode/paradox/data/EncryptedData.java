@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,9 +11,9 @@
 package com.googlecode.paradox.data;
 
 /**
- * Encrypted data based on http://pxlib.sourceforge.net.
+ * Encrypted data.
  *
- * @version 1.1
+ * @see <a href="https://pxlib.sourceforge.net">PXLIB</a>
  * @since 1.5.0
  */
 public final class EncryptedData {
@@ -145,6 +145,14 @@ public final class EncryptedData {
         System.arraycopy(tmp, 0, src, offset, tmp.length);
     }
 
+    /**
+     * Decrypt a table block.
+     *
+     * @param src        the source array.
+     * @param encryption the encryption key.
+     * @param blockSize  the block size.
+     * @param blockNo    the block number.
+     */
     public static void decryptDBBlock(byte[] src, long encryption, int blockSize, long blockNo) {
         byte a = (byte) (encryption & 0xFF);
         byte b = (byte) ((encryption >> SECOND_BYTE) & 0xFF);
@@ -155,6 +163,13 @@ public final class EncryptedData {
         }
     }
 
+    /**
+     * Decrypt an MB block.
+     *
+     * @param src        the source array.
+     * @param encryption the encryption key.
+     * @param blockSize  the block size.
+     */
     public static void decryptMBBlock(byte[] src, long encryption, int blockSize) {
         byte a = (byte) (encryption & 0xFF);
         byte b = (byte) ((encryption >> SECOND_BYTE) & 0xFF);

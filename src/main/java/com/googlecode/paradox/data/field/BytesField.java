@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,22 +20,22 @@ import java.nio.ByteBuffer;
 /**
  * Parses a VARCHAR field.
  *
- * @version 1.4
  * @since 1.3
  */
 public final class BytesField implements FieldParser {
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public BytesField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.BYTES;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final ByteBuffer bytes = ByteBuffer.allocate(field.getSize());

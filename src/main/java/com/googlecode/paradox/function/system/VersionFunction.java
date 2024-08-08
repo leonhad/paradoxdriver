@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,7 +19,6 @@ import com.googlecode.paradox.utils.Constants;
 /**
  * The SQL VERSION functions.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class VersionFunction extends AbstractSystemFunction {
@@ -36,6 +35,13 @@ public class VersionFunction extends AbstractSystemFunction {
             new Column(null, ParadoxType.VARCHAR, "The driver version.", 0, false, RESULT)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public VersionFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Gets the driver version.";
@@ -47,8 +53,7 @@ public class VersionFunction extends AbstractSystemFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         final String system = String.format("%s %s (%s), %s %s (%s)",
                 System.getProperty("java.vm.name"), System.getProperty("java.runtime.version"),
                 System.getProperty("java.vendor.version"), System.getProperty("os.name"),

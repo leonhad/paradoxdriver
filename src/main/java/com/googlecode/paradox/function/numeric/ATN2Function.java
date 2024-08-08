@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL ATN2 functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class ATN2Function extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class ATN2Function extends AbstractNumericFunction {
             new Column("number2", ParadoxType.NUMBER, "A numeric value.", 2, false, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public ATN2Function() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns the arc-tangent of two numbers.";
@@ -49,8 +55,7 @@ public class ATN2Function extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         final Double value1 = ValuesConverter.getDouble(values[0], connectionInfo);
         final Double value2 = ValuesConverter.getDouble(values[1], connectionInfo);
         if (value1 == null || value2 == null) {

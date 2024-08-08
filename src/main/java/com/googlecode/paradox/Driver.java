@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 /**
  * PARADOX JDBC Driver type 4.
  *
- * @version 2.5
  * @since 1.0
  */
 @SuppressWarnings("squid:S2176")
@@ -47,16 +46,17 @@ public final class Driver implements java.sql.Driver {
     }
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public Driver() {
+        super();
+    }
+
     @Override
     public boolean acceptsURL(final String url) {
         return (url != null) && url.startsWith(Constants.URL_PREFIX);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Connection connect(final String url, final Properties info) throws SQLException {
         if (this.acceptsURL(url)) {
@@ -67,41 +67,26 @@ public final class Driver implements java.sql.Driver {
         return null;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int getMajorVersion() {
         return Constants.MAJOR_VERSION;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public int getMinorVersion() {
         return Constants.MINOR_VERSION;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Logger getParentLogger() {
         return Driver.LOGGER;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties info) {
         return ConnectionInfo.getMetaData(info);
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public boolean jdbcCompliant() {
         return false;

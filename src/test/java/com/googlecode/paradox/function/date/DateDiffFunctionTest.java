@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,23 +12,27 @@ package com.googlecode.paradox.function.date;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link DateFromPartsFunction}.
  *
- * @version 1.0
  * @since 1.6.0
  */
-public class DateDiffFunctionTest {
+class DateDiffFunctionTest {
 
     /**
-     * The connection string used in this tests.
+     * The connection string used in  tests.
      */
     private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
@@ -47,8 +51,8 @@ public class DateDiffFunctionTest {
     /**
      * Register the database driver.
      */
-    @BeforeClass
-    public static void initClass() {
+    @BeforeAll
+    static void initClass() {
         new Driver();
     }
 
@@ -57,8 +61,8 @@ public class DateDiffFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -69,9 +73,8 @@ public class DateDiffFunctionTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Before
-    @SuppressWarnings("java:S2115")
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
@@ -81,13 +84,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMilliseconds() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(MILLISECOND, '2017-08-25', '2017-08-24')");
+    void testMilliseconds() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(MILLISECOND, '2017-08-25', '2017-08-24')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -86_400_000, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-86_400_000, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -97,13 +99,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testSeconds() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(SECOND, '2017-08-25', '2011-08-25')");
+    void testSeconds() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(SECOND, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -189_388_800, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-189_388_800, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -113,13 +114,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMinute() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(MINUTE, '2017-08-25', '2011-08-25')");
+    void testMinute() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(MINUTE, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -3_156_480, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-3_156_480, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -129,13 +129,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testHour() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(HOUR, '2017-08-25', '2011-08-25')");
+    void testHour() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(HOUR, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -52_608, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-52_608, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -145,13 +144,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDays() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(day, '2017-08-25', '2011-08-25')");
+    void testDays() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(day, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -2_192, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-2_192, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -161,13 +159,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testDayOfYear() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(DAYOFYEAR, '2017-08-25', '2011-08-25')");
+    void testDayOfYear() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(DAYOFYEAR, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -2_192, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-2_192, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -177,13 +174,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testMonth() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(MONTH, '2017-08-25', '2011-08-25')");
+    void testMonth() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(MONTH, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -72, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-72, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -193,13 +189,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testYear() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(YEAR, '2017-08-25', '2011-08-25')");
+    void testYear() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(YEAR, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -6, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-6, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -209,13 +204,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testWeeks() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(WEEK, '2017-08-25', '2011-08-25')");
+    void testWeeks() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(WEEK, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -313, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-313, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 
@@ -225,13 +219,12 @@ public class DateDiffFunctionTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testQarters() throws SQLException {
-        try (final PreparedStatement stmt = this.conn.prepareStatement(
-                "SELECT DATEDIFF(QUARTER, '2017-08-25', '2011-08-25')");
+    void testQarters() throws SQLException {
+        try (final PreparedStatement stmt = this.conn.prepareStatement("SELECT DATEDIFF(QUARTER, '2017-08-25', '2011-08-25')");
              final ResultSet rs = stmt.executeQuery()) {
-            Assert.assertTrue("Invalid result set state", rs.next());
-            Assert.assertEquals("Invalid date", -24, rs.getInt(1));
-            Assert.assertFalse("Invalid result set state", rs.next());
+            assertTrue(rs.next());
+            assertEquals(-24, rs.getInt(1));
+            assertFalse(rs.next());
         }
     }
 }

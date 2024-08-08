@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,6 +11,7 @@
 package com.googlecode.paradox.data;
 
 import com.googlecode.paradox.ConnectionInfo;
+import com.googlecode.paradox.data.charset.CharsetUtil;
 import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
 import com.googlecode.paradox.metadata.Table;
@@ -28,51 +29,35 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Handles the paradox files (structure).
  *
- * @version 1.3
  * @since 1.4.0
  */
-@SuppressWarnings({"i18n-java:V1008", "java:S109", "i18n-java:V1004"})
-public class ParadoxData {
+public abstract class AbstractParadoxData {
 
     /**
      * Minimum paradox file version.
      */
     protected static final int MINIMUM_VERSION = 4;
-    private static final int CHARSET_DEFAULT = 437;
-    private static final Charset CP437 = Charset.forName("cp437");
-    private static final Map<Integer, Charset> CHARSET_TABLE = new HashMap<>();
-
-    static {
-        CHARSET_TABLE.put(437, CP437);
-        CHARSET_TABLE.put(850, Charset.forName("cp850"));
-        CHARSET_TABLE.put(852, Charset.forName("cp852"));
-        CHARSET_TABLE.put(861, Charset.forName("cp861"));
-        CHARSET_TABLE.put(862, Charset.forName("cp862"));
-        CHARSET_TABLE.put(863, Charset.forName("cp863"));
-        CHARSET_TABLE.put(865, Charset.forName("cp865"));
-        CHARSET_TABLE.put(866, Charset.forName("cp866"));
-        CHARSET_TABLE.put(867, Charset.forName("cp862"));
-        CHARSET_TABLE.put(932, Charset.forName("windows-31j"));
-        CHARSET_TABLE.put(936, Charset.forName("cp936"));
-        CHARSET_TABLE.put(0x4e3, Charset.forName("cp1251"));
-        CHARSET_TABLE.put(0x4e4, Charset.forName("cp1252"));
-    }
 
     /**
      * Creates a new instance.
      */
-    protected ParadoxData() {
-        // Unused.
+    protected AbstractParadoxData() {
+        super();
     }
 
-    protected static void checkDBEncryption(final ByteBuffer buffer, final ParadoxDataFile dataFile, int blockSize,
-                                            long blockNumber) {
+    /**
+     * Checks for encryption in table file.
+     *
+     * @param buffer      the table buffer
+     * @param dataFile    the file definition.
+     * @param blockSize   the block size.
+     * @param blockNumber the block number.
+     */
+    protected static void checkDBEncryption(final ByteBuffer buffer, final ParadoxDataFile dataFile, int blockSize, long blockNumber) {
         if (dataFile.isEncrypted()) {
             byte[] b = buffer.array();
             EncryptedData.decryptDBBlock(b, dataFile.getEncryptedData(), blockSize, blockNumber);
@@ -86,28 +71,22 @@ public class ParadoxData {
      * @param dataFile       the paradox index.
      * @param connectionInfo the connection information.
      */
-    protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile,
-                                         final ConnectionInfo connectionInfo) {
-        if (dataFile.getVersionId() > ParadoxData.MINIMUM_VERSION) {
+    protected static void parseVersionID(final ByteBuffer buffer, final ParadoxDataFile dataFile, final ConnectionInfo connectionInfo) {
+
+        if (dataFile.getVersionId() > AbstractParadoxData.MINIMUM_VERSION) {
             // Set the charset.
             buffer.position(0x6A);
-            int cp = buffer.getShort();
+            dataFile.setCodePage(buffer.getShort() & 0xFFFF);
 
-            // Force charset if we have one.
-            if (dataFile.getCharset() == null && cp != 0) {
-                dataFile.setCharset(CHARSET_TABLE.getOrDefault(cp, CP437));
-                if (CHARSET_TABLE.get(cp) == null) {
-                    connectionInfo.addWarning("Charset " + cp + " not found.");
-                }
-            }
+            dataFile.setSortOrder(dataFile.getSortOrder());
+
+            Charset charset = CharsetUtil.get(dataFile.getCodePage(), dataFile.getSortOrderID(), connectionInfo);
+            dataFile.setCharset(charset);
 
             buffer.position(0x78);
         } else {
             buffer.position(0x58);
-
-            if (dataFile.getCharset() == null) {
-                dataFile.setCharset(CHARSET_TABLE.get(CHARSET_DEFAULT));
-            }
+            dataFile.setCharset(CharsetUtil.getDefault(connectionInfo));
         }
     }
 
@@ -155,7 +134,7 @@ public class ParadoxData {
 
         try (FileInputStream fs = new FileInputStream(file); FileChannel channel = fs.getChannel()) {
             channel.read(buffer);
-            ((Buffer)buffer).flip();
+            ((Buffer) buffer).flip();
 
             int recordSize = buffer.getShort() & 0xFFFF;
             int headerSize = buffer.getShort() & 0xFFFF;
@@ -179,7 +158,12 @@ public class ParadoxData {
 
             // Check for encrypted file.
             buffer.position(0x25);
-            long value = buffer.getInt();
+            int value = buffer.getInt();
+            data.setSortOrder(buffer.get());
+
+            buffer.position(0x2D);
+            data.setHeaderChangeCount(buffer.get());
+            data.setBlockChangeCount(buffer.get());
 
             buffer.position(0x38);
             data.setWriteProtected(buffer.get() != 0);
@@ -200,7 +184,10 @@ public class ParadoxData {
             buffer.position(0x55);
             data.setReferentialIntegrity(buffer.get());
 
-            parseVersionID(buffer, data, connectionInfo);
+            // Only for DB files and Xnn files.
+            if (data instanceof ParadoxTable || data instanceof ParadoxIndex) {
+                parseVersionID(buffer, data, connectionInfo);
+            }
 
             final ParadoxField[] fields = parseTableFields(data, buffer);
 
@@ -274,8 +261,7 @@ public class ParadoxData {
      * @param buffer   the buffer to read of.
      * @param fields   the field list.
      */
-    private static void parseFieldsName(final ParadoxDataFile dataFile, final ByteBuffer buffer,
-                                        final ParadoxField[] fields) {
+    private static void parseFieldsName(final ParadoxDataFile dataFile, final ByteBuffer buffer, final ParadoxField[] fields) {
         final ByteBuffer name = ByteBuffer.allocate(261);
         for (int loop = 0; loop < dataFile.getFieldCount(); loop++) {
             name.clear();
@@ -286,7 +272,7 @@ public class ParadoxData {
             }
 
             name.flip();
-            fields[loop].setName(dataFile.getCharset().decode(name).toString());
+            fields[loop].setName(CharsetUtil.translate(dataFile, name));
         }
 
         dataFile.setFields(fields);
@@ -324,7 +310,7 @@ public class ParadoxData {
         }
 
         sortOrderID.flip();
-        index.setSortOrderID(index.getCharset().decode(sortOrderID).toString());
+        index.setSortOrderID(CharsetUtil.translate(index, sortOrderID));
     }
 
     /**
@@ -344,8 +330,8 @@ public class ParadoxData {
         }
 
         name.flip();
-        final String tempName = index.getCharset().decode(name).toString();
-        if (tempName.length() != 0) {
+        final String tempName = CharsetUtil.translate(index, name);
+        if (!tempName.isEmpty()) {
             index.setName(tempName);
         }
     }

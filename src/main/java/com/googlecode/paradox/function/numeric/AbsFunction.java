@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.sql.SQLException;
 /**
  * The SQL ABS function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class AbsFunction extends AbstractNumericFunction {
@@ -38,6 +37,13 @@ public class AbsFunction extends AbstractNumericFunction {
             new Column(null, ParadoxType.NUMBER, "A absolute value.", 0, true, RESULT),
             new Column("number", ParadoxType.NUMBER, "A numeric value.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public AbsFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

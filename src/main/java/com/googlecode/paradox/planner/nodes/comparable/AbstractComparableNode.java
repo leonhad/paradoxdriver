@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -42,7 +42,7 @@ public abstract class AbstractComparableNode extends AbstractConditionalNode {
      * @param last     the last field node.
      * @param position the current Scanner position.
      */
-    public AbstractComparableNode(final String name, final FieldNode field, final FieldNode last,
+    protected AbstractComparableNode(final String name, final FieldNode field, final FieldNode last,
                                   final ScannerPosition position) {
         super(name, field, position);
         this.last = last;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -23,28 +23,28 @@ import java.util.GregorianCalendar;
 /**
  * Parses time fields.
  *
- * @version 1.6
  * @since 1.3
  */
 public final class TimeField implements FieldParser {
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public TimeField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.TIME;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final long timeInMillis = buffer.getInt() & 0x0FFF_FFFFL;
 
         if (timeInMillis != 0) {
-            final Calendar calendar = new GregorianCalendar(1, Calendar.JANUARY, 0);
+            final Calendar calendar = new GregorianCalendar(1970, Calendar.JANUARY, 1);
             calendar.add(Calendar.MILLISECOND, (int) timeInMillis);
             return new Time(calendar.getTimeInMillis());
         }

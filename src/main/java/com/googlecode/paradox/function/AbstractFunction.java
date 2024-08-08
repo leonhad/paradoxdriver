@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -28,7 +28,6 @@ import java.util.stream.Stream;
 /**
  * SQL function interface.
  *
- * @version 1.6
  * @since 1.6.0
  */
 public abstract class AbstractFunction {
@@ -44,6 +43,13 @@ public abstract class AbstractFunction {
     public static final int RESULT = DatabaseMetaData.functionColumnResult;
 
     /**
+     * Creates a new instance.
+     */
+    protected AbstractFunction() {
+        super();
+    }
+
+    /**
      * Gets the function type.
      *
      * @return the function type.
@@ -53,7 +59,7 @@ public abstract class AbstractFunction {
     /**
      * Gets the functions remarks.
      *
-     * @return the functions remarks.
+     * @return the function remarks.
      */
     public abstract String getRemarks();
 
@@ -115,8 +121,7 @@ public abstract class AbstractFunction {
      * @return The function processed value.
      * @throws SQLException in case of failures.
      */
-    public abstract Object execute(final ConnectionInfo connectionInfo, final Object[] values,
-                                   final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
+    public abstract Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
 
     /**
      * If this function can be called without parenthesis.
@@ -132,7 +137,6 @@ public abstract class AbstractFunction {
      *
      * @return the max parameters allowed in function.
      */
-    @SuppressWarnings("java:S3400")
     public int getMaxParameterCount() {
         return 0;
     }
@@ -143,12 +147,10 @@ public abstract class AbstractFunction {
      * @param parameters the parameter list.
      * @throws ParadoxSyntaxErrorException in case of syntax errors.
      */
-    @SuppressWarnings("java:S3242")
     public void validate(final List<SQLNode> parameters) throws ParadoxSyntaxErrorException {
         for (final SQLNode node : parameters) {
             if (node instanceof AsteriskNode) {
-                throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_IN_FUNCTION,
-                        node.getPosition());
+                throw new ParadoxSyntaxErrorException(SyntaxError.ASTERISK_IN_FUNCTION, node.getPosition());
             }
         }
     }
@@ -167,10 +169,20 @@ public abstract class AbstractFunction {
         return Objects.hashCode(this.getClass());
     }
 
+    /**
+     * Gets if this function is deterministic.
+     *
+     * @return <code>true</code> if this function is deterministic.
+     */
     public boolean isDeterministic() {
         return true;
     }
 
+    /**
+     * Gets the function definition string.
+     *
+     * @return the function definition string.
+     */
     public String definition() {
         return null;
     }

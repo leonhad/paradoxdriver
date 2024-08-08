@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -31,7 +31,6 @@ import java.util.stream.Stream;
 /**
  * Stores a function node.
  *
- * @version 1.5
  * @since 1.6.0
  */
 public class FunctionNode extends FieldNode {
@@ -132,6 +131,11 @@ public class FunctionNode extends FieldNode {
         return function.isGrouping() || !functionNodes.isEmpty();
     }
 
+    /**
+     * Gets the second pass status.
+     *
+     * @return the second pass status.
+     */
     public boolean isSecondPass() {
         final List<FunctionNode> functionNodes = this.getGroupingNodes();
         return !function.isGrouping() && !functionNodes.isEmpty();

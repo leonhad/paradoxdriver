@@ -1,5 +1,10 @@
 Paradox Driver NEWS - User visible changes.
 
+2024-08-07 Fixed JDK 1.8 loading file bug.
+2024-05-08 Added table metadata cache.
+2024-05-05 Fixed the project Javadoc.
+2024-05-04 Improved charset management.
+2024-05-02 Migrate unit test from JUnit 4 to JUnit 5.
 2024-04-23 Fixed precision and scale metadata in Java and Information Schema table.
 2020-09-05 Added limit and offset support.
 2020-08-17 Finished information_schema support.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL IS DATE functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class IsDateFunction extends AbstractDateFunction {
@@ -36,6 +35,13 @@ public class IsDateFunction extends AbstractDateFunction {
             new Column(null, ParadoxType.BOOLEAN, "True if the value is date.", 0, false, RESULT),
             new Column("date", ParadoxType.DATE, "The value to check.", 1, false, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public IsDateFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

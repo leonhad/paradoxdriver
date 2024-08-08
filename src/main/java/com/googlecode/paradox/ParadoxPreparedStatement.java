@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -39,14 +39,17 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
      * Execution list.
      */
     protected final List<Object[]> executions = new ArrayList<>();
+
     /**
      * Execution parameter list.
      */
     protected final List<ParadoxType[]> executionTypes = new ArrayList<>();
+
     /**
      * Parameter list.
      */
     private final Object[] currentParameterValues;
+
     /**
      * Parameter type list.
      */
@@ -58,9 +61,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
 
         this.statements.add(connection.createPlan(sql));
 
-        if (statements.isEmpty()) {
-            throw new ParadoxSyntaxErrorException(SyntaxError.EMPTY_SQL);
-        } else if (statements.size() > 1) {
+        if (statements.size() > 1) {
             throw new ParadoxNotSupportedException(ParadoxNotSupportedException.Error.USE_BATCH_OPERATION);
         }
 
@@ -214,9 +215,7 @@ class ParadoxPreparedStatement extends ParadoxStatement implements PreparedState
     }
 
     /**
-     * {@inheritDoc}.
-     *
-     * @deprecated to keep compatibility.
+     * @deprecated This method exists only to keep compatibility.
      */
     @Deprecated
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL LOG functions.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class LogFunction extends AbstractNumericFunction {
@@ -39,6 +38,13 @@ public class LogFunction extends AbstractNumericFunction {
             new Column("base", ParadoxType.NUMBER, "The base the natural logarithm is to be calculated with. Must be " +
                     "greater than 1.", 2, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public LogFunction() {
+        super();
+    }
 
     @Override
     public String getRemarks() {

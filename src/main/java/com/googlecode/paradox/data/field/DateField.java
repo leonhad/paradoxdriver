@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,22 +22,22 @@ import java.sql.Date;
 /**
  * Parses date fields.
  *
- * @version 1.5
  * @since 1.3
  */
 public final class DateField implements FieldParser {
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public DateField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.DATE;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Date parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         final long days = buffer.getInt() & 0x0FFF_FFFFL;

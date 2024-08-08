@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,7 +21,6 @@ import java.sql.Timestamp;
 /**
  * Parses time stamp fields.
  *
- * @version 1.4
  * @since 1.2
  */
 public final class TimestampField implements FieldParser {
@@ -29,16 +28,17 @@ public final class TimestampField implements FieldParser {
     private static final long MILLIS_UNTIL_1970 = 62_135_683_200_000L;
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public TimestampField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.TIMESTAMP;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         long rawValue = buffer.getLong();

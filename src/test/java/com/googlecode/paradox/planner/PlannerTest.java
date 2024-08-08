@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,29 +13,36 @@ package com.googlecode.paradox.planner;
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
+import com.googlecode.paradox.exceptions.ParadoxSyntaxErrorException;
 import com.googlecode.paradox.parser.SQLParser;
 import com.googlecode.paradox.parser.nodes.SelectNode;
 import com.googlecode.paradox.parser.nodes.StatementNode;
 import com.googlecode.paradox.planner.context.SelectContext;
 import com.googlecode.paradox.planner.plan.SelectPlan;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.sql.*;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for {@link Planner}.
  *
- * @version 1.12
  * @since 1.1
  */
-@SuppressWarnings({"java:S2115", "java:S1192", "java:S109"})
-public class PlannerTest {
+class PlannerTest {
 
     /**
      * The database test connection.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.
@@ -52,8 +59,8 @@ public class PlannerTest {
     /**
      * Register the driver.
      */
-    @BeforeClass
-    public static void setUp() {
+    @BeforeAll
+    static void setUp() {
         new Driver();
     }
 
@@ -62,8 +69,8 @@ public class PlannerTest {
      *
      * @throws SQLException in case closing of errors.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -74,41 +81,41 @@ public class PlannerTest {
      *
      * @throws SQLException in case of connection errors.
      */
-    @Before
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "db");
     }
 
     /**
-     * Test for a asterisk node plan.
+     * Test for an asterisk node plan.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testAsterisk() throws SQLException {
+    void testAsterisk() throws SQLException {
         final SQLParser parser = new SQLParser("select * from areacodes a");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
-        Assert.assertNotNull("No columns.", plan.getColumns());
-        Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
-        Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
-        Assert.assertEquals("Second column not 'State'.", "State", plan.getColumns().get(1).getName());
-        Assert.assertEquals("Third column not 'Cities'.", "Cities", plan.getColumns().get(2).getName());
+        assertNotNull(plan.getColumns());
+        assertEquals(3, plan.getColumns().size());
+        assertEquals("AC", plan.getColumns().get(0).getName());
+        assertEquals("State", plan.getColumns().get(1).getName());
+        assertEquals("Cities", plan.getColumns().get(2).getName());
     }
 
     /**
-     * Test for a asterisk node plan.
+     * Test for an asterisk node plan.
      *
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testAsteriskWithTables() throws SQLException {
+    void testAsteriskWithTables() throws SQLException {
         final SQLParser parser = new SQLParser("select a.* from areacodes a");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
-        Assert.assertNotNull("No columns.", plan.getColumns());
-        Assert.assertEquals("Number of columns in table.", 3, plan.getColumns().size());
-        Assert.assertEquals("First column not 'AC'.", "AC", plan.getColumns().get(0).getName());
-        Assert.assertEquals("Second column not 'State'.", "State", plan.getColumns().get(1).getName());
-        Assert.assertEquals("Third column not 'Cities'.", "Cities", plan.getColumns().get(2).getName());
+        assertNotNull(plan.getColumns());
+        assertEquals(3, plan.getColumns().size());
+        assertEquals("AC", plan.getColumns().get(0).getName());
+        assertEquals("State", plan.getColumns().get(1).getName());
+        assertEquals("Cities", plan.getColumns().get(2).getName());
     }
 
     /**
@@ -117,22 +124,20 @@ public class PlannerTest {
      * @throws SQLException if there is no errors.
      */
     @Test
-    public void testColumnName() throws SQLException {
+    void testColumnName() throws SQLException {
         final SQLParser parser = new SQLParser("select ac from areacodes a");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
-        Assert.assertEquals("Test the column size.", 1, plan.getColumns().size());
-        Assert.assertEquals("Test the column name.", "ac", plan.getColumns().get(0).getName());
+        assertEquals(1, plan.getColumns().size());
+        assertEquals("ac", plan.getColumns().get(0).getName());
     }
 
     /**
-     * Test for a invalid node.
-     *
-     * @throws SQLException if there is no errors.
+     * Test for an invalid node.
      */
-    @Test(expected = SQLFeatureNotSupportedException.class)
-    public void testInvalid() throws SQLException {
+    @Test
+    void testInvalid() {
         final StatementNode node = new StatementNode("node", null);
-        Planner.create(conn.getConnectionInfo(), node);
+        assertThrows(SQLFeatureNotSupportedException.class, () -> Planner.create(conn.getConnectionInfo(), node));
     }
 
     /**
@@ -140,21 +145,19 @@ public class PlannerTest {
      *
      * @throws SQLException in case of failures.
      */
-    @Test(expected = ParadoxDataException.class)
-    public void testInvalidTable() throws SQLException {
+    @Test
+    void testInvalidTables() throws SQLException {
         final SQLParser parser = new SQLParser("select * from invalid");
-        Planner.create(conn.getConnectionInfo(), parser.parse());
+        assertThrows(ParadoxDataException.class, () -> Planner.create(conn.getConnectionInfo(), parser.parse()));
     }
 
     /**
      * Test for SELECT plan without columns.
-     *
-     * @throws SQLException in case of errors.
      */
-    @Test(expected = SQLException.class)
-    public void testSelectWithoutColumns() throws SQLException {
+    @Test
+    void testSelectWithoutColumns() {
         final SelectNode node = new SelectNode(null);
-        Planner.create(conn.getConnectionInfo(), node);
+        assertThrows(ParadoxSyntaxErrorException.class, () -> Planner.create(conn.getConnectionInfo(), node));
     }
 
     /**
@@ -163,16 +166,16 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testSelectWhereEquals() throws SQLException {
+    void testSelectWhereEquals() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select ac from areacodes where state = 'NY' and ac = 212 or ac=315 or ac=917");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
         final SelectContext context = plan.createContext(conn.getConnectionInfo(), null, null);
         final List<Object[]> values = plan.execute(context);
-        Assert.assertEquals("Test the result size.", 3, values.size());
-        Assert.assertEquals("Test the result value.", "212", values.get(0)[0]);
-        Assert.assertEquals("Test the result value.", "315", values.get(1)[0]);
-        Assert.assertEquals("Test the result value.", "917", values.get(2)[0]);
+        assertEquals(3, values.size());
+        assertEquals("212", values.get(0)[0]);
+        assertEquals("315", values.get(1)[0]);
+        assertEquals("917", values.get(2)[0]);
     }
 
     /**
@@ -180,42 +183,18 @@ public class PlannerTest {
      *
      * @throws SQLException in case of errors.
      */
-    @Test
-    public void testSelectWhereNotEquals() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "select ac from areacodes where state <> 'NY' and (ac = 212 or ac=315 or ac=917)");
+    @ParameterizedTest
+    @CsvSource({
+            "select ac from areacodes where state <> 'NY' and (ac = 212 or ac=315 or ac=917), 0",
+            "select ac from areacodes where state = 'NY' and ac > 845, 2",
+            "select ac from areacodes where state = 'NY' and ac < 320, 2"
+    })
+    void testSelectWhereNotEquals(String sql, int size) throws SQLException {
+        final SQLParser parser = new SQLParser(sql);
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
         final SelectContext context = plan.createContext(conn.getConnectionInfo(), null, null);
         final List<Object[]> values = plan.execute(context);
-        Assert.assertEquals("Test the result size.", 0, values.size());
-    }
-
-    /**
-     * Test for SELECT plan with where GreaterThan clause.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testSelectWhereGreaterThan() throws SQLException {
-        final SQLParser parser = new SQLParser("select ac from areacodes where state = 'NY' and ac > 845");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
-        final SelectContext context = plan.createContext(conn.getConnectionInfo(), null, null);
-        final List<Object[]> values = plan.execute(context);
-        Assert.assertEquals("Test the result size.", 2, values.size());
-    }
-
-    /**
-     * Test for SELECT plan with where LessThan clause.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testSelectWhereLessThan() throws SQLException {
-        final SQLParser parser = new SQLParser("select ac from areacodes where state = 'NY' and ac < 320");
-        final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
-        final SelectContext context = plan.createContext(conn.getConnectionInfo(), null, null);
-        final List<Object[]> values = plan.execute(context);
-        Assert.assertEquals("Test the result size.", 2, values.size());
+        assertEquals(size, values.size());
     }
 
     /**
@@ -224,15 +203,15 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testSelectWhereMultipleColumns() throws SQLException {
+    void testSelectWhereMultipleColumns() throws SQLException {
         final SQLParser parser = new SQLParser("select * from areacodes where state = 'NY' and ac < 320");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
         final SelectContext context = plan.createContext(conn.getConnectionInfo(), null, null);
         final List<Object[]> values = plan.execute(context);
-        Assert.assertEquals("Test the result size.", 2, values.size());
-        Assert.assertEquals("Field expected", "AC", plan.getColumns().get(0).getField().getName());
-        Assert.assertEquals("Field expected", "State", plan.getColumns().get(1).getField().getName());
-        Assert.assertEquals("Field expected", "Cities", plan.getColumns().get(2).getField().getName());
+        assertEquals(2, values.size());
+        assertEquals("AC", plan.getColumns().get(0).getField().getName());
+        assertEquals("State", plan.getColumns().get(1).getField().getName());
+        assertEquals("Cities", plan.getColumns().get(2).getField().getName());
     }
 
     /**
@@ -241,14 +220,14 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testValuesInFields() throws SQLException {
+    void testValuesInFields() throws SQLException {
         final SQLParser parser = new SQLParser("select 1 as \"1\", 'value' as b, null from areacodes");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
-        Assert.assertEquals("Invalid column size", 3, plan.getColumns().size());
-        Assert.assertEquals("Field expected", "1", plan.getColumns().get(0).getValue());
-        Assert.assertEquals("Field expected", "b", plan.getColumns().get(1).getName());
-        Assert.assertEquals("Field expected", "value", plan.getColumns().get(1).getValue());
-        Assert.assertNull("Field expected", plan.getColumns().get(2).getValue());
+        assertEquals(3, plan.getColumns().size());
+        assertEquals("1", plan.getColumns().get(0).getValue());
+        assertEquals("b", plan.getColumns().get(1).getName());
+        assertEquals("value", plan.getColumns().get(1).getValue());
+        assertNull(plan.getColumns().get(2).getValue());
     }
 
     /**
@@ -257,16 +236,15 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testGroupBy() throws SQLException {
+    void testGroupBy() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT count(*) FROM AREACODES group by State");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
 
-        Assert.assertEquals("Invalid column size", 1,
-                plan.getColumns().stream().filter(c -> !c.isHidden()).count());
-        Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
-        Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
-        Assert.assertEquals("Invalid group by field size", 1, plan.getGroupBy().getColumns().size());
-        Assert.assertEquals("Invalid group by field name", "State", plan.getGroupBy().getColumns().get(0).getName());
+        assertEquals(1, plan.getColumns().stream().filter(c -> !c.isHidden()).count());
+        assertNotNull(plan.getColumns().get(0).getFunction());
+        assertEquals("count", plan.getColumns().get(0).getFunction().getName());
+        assertEquals(1, plan.getGroupBy().getColumns().size());
+        assertEquals("State", plan.getGroupBy().getColumns().get(0).getName());
     }
 
     /**
@@ -274,13 +252,17 @@ public class PlannerTest {
      *
      * @throws SQLException in case of errors.
      */
-    @Test
-    public void testGroupByWithInvalidOrderBy() throws SQLException {
-        final SQLParser parser = new SQLParser(
-                "select State, count(*) from geog.tblZCode group by State order by AreaCode");
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "select State, count(*) from geog.tblZCode group by State order by AreaCode",
+            "SELECT count(*), Cities FROM AREACODES group by State",
+            "select count(State), AC from db.AREACODES",
+            "SELECT count(*), 1, 'a' FROM AREACODES group by State, 1"
+    })
+    void testInvalidOperation(String sql) throws SQLException {
+        final SQLParser parser = new SQLParser(sql);
         final StatementNode tree = parser.parse();
-        Assert.assertThrows("Invalid planer value", SQLException.class,
-                () -> Planner.create(conn.getConnectionInfo(), tree));
+        assertThrows(SQLException.class, () -> Planner.create(conn.getConnectionInfo(), tree));
     }
 
     /**
@@ -289,18 +271,17 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testGroupByFixValues() throws SQLException {
+    void testGroupByFixValues() throws SQLException {
         final SQLParser parser = new SQLParser("SELECT count(*), State, 1, 'a' FROM AREACODES group by State, 1, 'a'");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
 
-        Assert.assertEquals("Invalid column size", 4,
-                plan.getColumns().stream().filter(c -> !c.isHidden()).count());
-        Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
-        Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
-        Assert.assertEquals("Invalid group by field size", 3, plan.getGroupBy().getColumns().size());
-        Assert.assertEquals("Invalid group by field name", "State", plan.getGroupBy().getColumns().get(0).getName());
-        Assert.assertEquals("Invalid group by field name", "1", plan.getGroupBy().getColumns().get(1).getName());
-        Assert.assertEquals("Invalid group by field name", "a", plan.getGroupBy().getColumns().get(2).getName());
+        assertEquals(4, plan.getColumns().stream().filter(c -> !c.isHidden()).count());
+        assertNotNull(plan.getColumns().get(0).getFunction());
+        assertEquals("count", plan.getColumns().get(0).getFunction().getName());
+        assertEquals(3, plan.getGroupBy().getColumns().size());
+        assertEquals("State", plan.getGroupBy().getColumns().get(0).getName());
+        assertEquals("1", plan.getGroupBy().getColumns().get(1).getName());
+        assertEquals("a", plan.getGroupBy().getColumns().get(2).getName());
     }
 
     /**
@@ -309,55 +290,16 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testGroupByAndOrderWithAggregate() throws SQLException {
+    void testGroupByAndOrderWithAggregate() throws SQLException {
         final SQLParser parser = new SQLParser(
                 "select count(*), state from geog.tblZCode group by State order by count(*) desc");
         final SelectPlan plan = (SelectPlan) Planner.create(conn.getConnectionInfo(), parser.parse());
 
-        Assert.assertEquals("Invalid column size", 2, plan.getColumns().size());
-        Assert.assertNotNull("Invalid function node", plan.getColumns().get(0).getFunction());
-        Assert.assertEquals("Invalid function name", "count", plan.getColumns().get(0).getFunction().getName());
-        Assert.assertEquals("Invalid group by field size", 1, plan.getGroupBy().getColumns().size());
-        Assert.assertEquals("Invalid group by field name", "State", plan.getGroupBy().getColumns().get(0).getName());
-    }
-
-    /**
-     * Test for group by with invalid field list.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testGroupByInvalidFieldList() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT count(*), Cities FROM AREACODES group by State");
-        final StatementNode tree = parser.parse();
-        Assert.assertThrows("Invalid planer value", SQLException.class,
-                () -> Planner.create(conn.getConnectionInfo(), tree));
-    }
-
-    /**
-     * Test for group by with invalid field list 2.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testGroupByInvalidFieldList2() throws SQLException {
-        final SQLParser parser = new SQLParser("select count(State), AC from db.AREACODES");
-        final StatementNode tree = parser.parse();
-        Assert.assertThrows("Invalid planer value", SQLException.class,
-                () -> Planner.create(conn.getConnectionInfo(), tree));
-    }
-
-    /**
-     * Test for group by with invalid fix values.
-     *
-     * @throws SQLException in case of errors.
-     */
-    @Test
-    public void testGroupByInvalidFieldListAndFixValues() throws SQLException {
-        final SQLParser parser = new SQLParser("SELECT count(*), 1, 'a' FROM AREACODES group by State, 1");
-        final StatementNode tree = parser.parse();
-        Assert.assertThrows("Invalid planer value", SQLException.class,
-                () -> Planner.create(conn.getConnectionInfo(), tree));
+        assertEquals(2, plan.getColumns().size());
+        assertNotNull(plan.getColumns().get(0).getFunction());
+        assertEquals("count", plan.getColumns().get(0).getFunction().getName());
+        assertEquals(1, plan.getGroupBy().getColumns().size());
+        assertEquals("State", plan.getGroupBy().getColumns().get(0).getName());
     }
 
     /**
@@ -366,11 +308,10 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testGroupByWithoutAggregate() throws SQLException {
+    void testGroupByWithoutAggregate() throws SQLException {
         try (Statement stmt = this.conn.createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("select AreaCode, state from geog.tblZCode group by AreaCode, " +
-                    "state")) {
-                Assert.assertTrue("Invalid result set", rs.next());
+            try (ResultSet rs = stmt.executeQuery("select AreaCode, state from geog.tblZCode group by AreaCode, state")) {
+                assertTrue(rs.next());
             }
         }
     }
@@ -380,11 +321,11 @@ public class PlannerTest {
      *
      * @throws SQLException in case of errors.
      */
-    @Test(expected = ParadoxDataException.class)
-    public void testTableNotFound() throws SQLException {
+    @Test
+    void testTableNotFound() throws SQLException {
         final SQLParser parser = new SQLParser("select * from notfound");
         final StatementNode statementNode = parser.parse();
-        Planner.create(conn.getConnectionInfo(), statementNode);
+        assertThrows(ParadoxDataException.class, () -> Planner.create(conn.getConnectionInfo(), statementNode));
     }
 
     /**
@@ -393,9 +334,9 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testNoTableAfterFrom() throws SQLException {
+    void testNoTableAfterFrom() throws SQLException {
         final SQLParser parser = new SQLParser("select * from");
-        Assert.assertThrows("Invalid table loaded", SQLException.class, parser::parse);
+        assertThrows(SQLException.class, parser::parse);
     }
 
     /**
@@ -404,18 +345,18 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testValuesInResultSet() throws SQLException {
+    void testValuesInResultSet() throws SQLException {
         try (Statement stmt = this.conn.createStatement()) {
             stmt.setMaxRows(1);
             try (ResultSet rs = stmt.executeQuery("select 1 as \"1\", 'value' as b, null from areacodes")) {
 
-                Assert.assertTrue("Invalid result set", rs.next());
+                assertTrue(rs.next());
 
-                Assert.assertEquals("Invalid ResultSet value", 1, rs.getInt("1"));
-                Assert.assertEquals("Invalid ResultSet value", "value", rs.getString("b"));
-                Assert.assertNull("Invalid ResultSet value", rs.getString("null"));
+                assertEquals(1, rs.getInt("1"));
+                assertEquals("value", rs.getString("b"));
+                assertNull(rs.getString("null"));
 
-                Assert.assertFalse("Invalid result set", rs.next());
+                assertFalse(rs.next());
             }
         }
     }
@@ -426,14 +367,14 @@ public class PlannerTest {
      * @throws SQLException in case of errors.
      */
     @Test
-    public void testIn() throws SQLException {
+    void testIn() throws SQLException {
         try (Statement stmt = this.conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select id from fields.long where id in (1, '2') order by 1")) {
-                Assert.assertTrue("Invalid result set", rs.next());
-                Assert.assertEquals("Invalid ResultSet value", 1, rs.getInt("id"));
-                Assert.assertTrue("Invalid result set", rs.next());
-                Assert.assertEquals("Invalid ResultSet value", 2, rs.getInt("id"));
-                Assert.assertFalse("Invalid result set", rs.next());
+                assertTrue(rs.next());
+                assertEquals(1, rs.getInt("id"));
+                assertTrue(rs.next());
+                assertEquals(2, rs.getInt("id"));
+                assertFalse(rs.next());
             }
         }
     }
@@ -444,11 +385,11 @@ public class PlannerTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testBoolean() throws SQLException {
+    void testBoolean() throws SQLException {
         try (final Statement stmt = this.conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
-                Assert.assertTrue("Invalid result set", rs.next());
-                Assert.assertTrue("Invalid ResultSet value", rs.getBoolean("BOOL"));
+                assertTrue(rs.next());
+                assertTrue(rs.getBoolean("BOOL"));
             }
         }
     }
@@ -459,14 +400,14 @@ public class PlannerTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testLimitOffset() throws SQLException {
+    void testLimitOffset() throws SQLException {
         try (final Statement stmt = this.conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select Id from fields.long order by Id limit 2 offset 1")) {
-                Assert.assertTrue("Invalid result set state", rs.next());
-                Assert.assertEquals("Invalid value", 2, rs.getInt("Id"));
-                Assert.assertTrue("Invalid result set state", rs.next());
-                Assert.assertEquals("Invalid value", 3, rs.getInt("Id"));
-                Assert.assertFalse("Invalid result set state", rs.next());
+                assertTrue(rs.next());
+                assertEquals(2, rs.getInt("Id"));
+                assertTrue(rs.next());
+                assertEquals(3, rs.getInt("Id"));
+                assertFalse(rs.next());
             }
         }
     }
@@ -477,18 +418,18 @@ public class PlannerTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testPlannerCache() throws SQLException {
+    void testPlannerCache() throws SQLException {
         try (final Statement stmt = this.conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
-                Assert.assertTrue("Invalid result set", rs.next());
-                Assert.assertTrue("Invalid ResultSet value", rs.getBoolean("BOOL"));
+                assertTrue(rs.next());
+                assertTrue(rs.getBoolean("BOOL"));
             }
         }
 
         try (final Statement stmt = this.conn.createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select BOOL from fields.logical where BOOL = 1")) {
-                Assert.assertTrue("Invalid result set", rs.next());
-                Assert.assertTrue("Invalid ResultSet value", rs.getBoolean("BOOL"));
+                assertTrue(rs.next());
+                assertTrue(rs.getBoolean("BOOL"));
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,26 +13,26 @@ package com.googlecode.paradox.planner.nodes.comparable;
 import com.googlecode.paradox.planner.nodes.FieldNode;
 import com.googlecode.paradox.planner.nodes.ValueNode;
 import com.googlecode.paradox.results.ParadoxType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test for {@link InNode} class.
  *
- * @version 1.3
  * @since 1.6.0
  */
-public class InNodeTest {
+class InNodeTest {
 
     /**
      * Test for {@link BetweenNode#toString()} method.
      */
     @Test
-    public void testToString() {
+    void testToString() {
         final FieldNode first = new FieldNode("table", "first", null);
         final InNode node = new InNode(first, null);
         node.addField(new ValueNode("test", null, ParadoxType.VARCHAR));
         node.addField(new ValueNode("1", null, ParadoxType.NUMBER));
-        Assert.assertEquals("Invalid node value.", "table.first IN ('test', 1)", node.toString());
+        assertEquals("table.first IN ('test', 1)", node.toString());
     }
 }

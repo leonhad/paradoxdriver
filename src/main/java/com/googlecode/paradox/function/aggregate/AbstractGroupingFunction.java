@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -21,10 +21,17 @@ import java.sql.SQLException;
 /**
  * Base class for general functions.
  *
- * @version 1.0
+ * @param <T> the function return type.
  * @since 1.6.0
  */
 public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
+
+    /**
+     * Creates a new instance.
+     */
+    protected AbstractGroupingFunction() {
+        super();
+    }
 
     @Override
     public FunctionType getType() {
@@ -37,6 +44,5 @@ public abstract class AbstractGroupingFunction<T> extends AbstractFunction {
     }
 
     @Override
-    public abstract IGroupingContext<T> execute(final ConnectionInfo connectionInfo, final Object[] values,
-                                             final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
+    public abstract IGroupingContext<T> execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) throws SQLException;
 }

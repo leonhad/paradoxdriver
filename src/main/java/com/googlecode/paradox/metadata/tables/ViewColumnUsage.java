@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -13,17 +13,20 @@ package com.googlecode.paradox.metadata.tables;
 
 import com.googlecode.paradox.ConnectionInfo;
 import com.googlecode.paradox.metadata.*;
+import com.googlecode.paradox.metadata.tables.data.TableDetails;
 import com.googlecode.paradox.results.ParadoxType;
 import com.googlecode.paradox.utils.Constants;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Views tables and columns usage.
  *
- * @version 1.2
  * @since 1.6.0
  */
 public class ViewColumnUsage implements Table {
@@ -91,8 +94,7 @@ public class ViewColumnUsage implements Table {
             int sum = 0;
 
             for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
-                sum += (int) localSchema.list(connectionInfo, null).stream()
-                        .filter(table -> (table instanceof View)).count();
+                sum += (int) localSchema.list(connectionInfo, null).stream().filter(View.class::isInstance).count();
             }
 
             return sum;
@@ -103,38 +105,29 @@ public class ViewColumnUsage implements Table {
 
     @Override
     public List<Object[]> load(final Field[] fields) throws SQLException {
-        final List<Object[]> ret = new ArrayList<>();
+        final Map<Field, Function<TableDetails, Object>> map = new HashMap<>();
+        map.put(catalog, details -> details.getSchema().catalogName());
+        map.put(schema, details -> details.getSchema().name());
+        map.put(name, details -> details.getTable().getName());
+        map.put(tableCatalog, details -> details.getSchema().catalogName());
+        map.put(tableSchema, details -> details.getTable().getSchemaName());
+        map.put(tableName, details -> details.getCurrentField().getTable().getName());
+        map.put(columnName, details -> details.getCurrentField().getName());
 
+        final List<Object[]> ret = new ArrayList<>();
         for (final Schema localSchema : connectionInfo.getSchemas(catalogName, null)) {
             for (final Table table : localSchema.list(connectionInfo, null)) {
                 if (!(table instanceof View)) {
                     continue;
                 }
 
-                for (final Field usageField : ((View) table).usages()) {
-                    final Object[] row = new Object[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        final Field field = fields[i];
-                        Object value = null;
-                        if (catalog.equals(field)) {
-                            value = localSchema.catalogName();
-                        } else if (this.schema.equals(field)) {
-                            value = localSchema.name();
-                        } else if (name.equals(field)) {
-                            value = table.getName();
-                        } else if (this.tableCatalog.equals(field)) {
-                            value = localSchema.catalogName();
-                        } else if (this.tableSchema.equals(field)) {
-                            value = usageField.getTable().getSchemaName();
-                        } else if (this.tableName.equals(field)) {
-                            value = usageField.getTable().getName();
-                        } else if (this.columnName.equals(field)) {
-                            value = usageField.getName();
-                        }
+                for (final Field currentField : ((View) table).usages()) {
+                    final TableDetails details = new TableDetails();
+                    details.setSchema(localSchema);
+                    details.setTable(table);
+                    details.setCurrentField(currentField);
 
-                        row[i] = value;
-                    }
-
+                    final Object[] row = Table.getFieldValues(fields, map, details);
                     ret.add(row);
                 }
             }

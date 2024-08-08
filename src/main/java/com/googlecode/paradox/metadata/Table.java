@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -15,11 +15,12 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * A generic table.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public interface Table {
@@ -117,6 +118,10 @@ public interface Table {
                 .toArray(Index[]::new);
     }
 
+    default ForeignKey[] getForeignKeys() {
+        return new ForeignKey[0];
+    }
+
     /**
      * Gets the table constraints.
      *
@@ -194,5 +199,27 @@ public interface Table {
         }
 
         return "NO";
+    }
+
+    /**
+     * Gets the field values from context.
+     *
+     * @param fields  the fields to get.
+     * @param mapper  the value mapper.
+     * @param context the context to use.
+     * @param <T>     The context type.
+     * @return the field values.
+     */
+    static <T> Object[] getFieldValues(Field[] fields, Map<Field, Function<T, Object>> mapper, T context) {
+        final Object[] row = new Object[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            final Field field = fields[i];
+            final Function<T, Object> function = mapper.get(field);
+            if (function != null) {
+                row[i] = mapper.get(field).apply(context);
+            }
+        }
+
+        return row;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -22,7 +22,6 @@ import java.util.Objects;
 /**
  * The SQL NULLIF function.
  *
- * @version 1.4
  * @since 1.6.0
  */
 public class NullIfFunction extends AbstractGeneralFunction {
@@ -41,6 +40,13 @@ public class NullIfFunction extends AbstractGeneralFunction {
             new Column("expression1", ParadoxType.VARCHAR, "The first value to test.", 1, true, IN),
             new Column("expression2", ParadoxType.VARCHAR, "The second value to test.", 2, true, IN)
     };
+
+    /**
+     * Creates a new instance.
+     */
+    public NullIfFunction() {
+        super();
+    }
 
     private ParadoxType type = ParadoxType.NULL;
 

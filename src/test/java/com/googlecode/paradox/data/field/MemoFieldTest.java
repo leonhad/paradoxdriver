@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,25 +12,29 @@ package com.googlecode.paradox.data.field;
 
 import com.googlecode.paradox.Driver;
 import com.googlecode.paradox.ParadoxConnection;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Unit test for MEMO field.
  *
- * @version 1.0
  * @since 1.5.0
  */
-public class MemoFieldTest {
+class MemoFieldTest {
 
     /**
      * Connection string used in tests.
      */
-    public static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
+    private static final String CONNECTION_STRING = "jdbc:paradox:target/test-classes/";
 
     /**
      * The database connection.
@@ -40,8 +44,8 @@ public class MemoFieldTest {
     /**
      * Register the driver.
      */
-    @BeforeClass
-    public static void setUp() {
+    @BeforeAll
+    static void setUp() {
         new Driver();
     }
 
@@ -50,8 +54,8 @@ public class MemoFieldTest {
      *
      * @throws SQLException in case closing of errors.
      */
-    @After
-    public void closeConnection() throws SQLException {
+    @AfterEach
+    void closeConnection() throws SQLException {
         if (this.conn != null) {
             this.conn.close();
         }
@@ -62,8 +66,8 @@ public class MemoFieldTest {
      *
      * @throws SQLException in case of connection errors.
      */
-    @Before
-    public void connect() throws SQLException {
+    @BeforeEach
+    void connect() throws SQLException {
         this.conn = (ParadoxConnection) DriverManager.getConnection(CONNECTION_STRING + "fields");
     }
 
@@ -73,18 +77,17 @@ public class MemoFieldTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadMemo() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT Id, MEMO FROM fields.memo")) {
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", 555, rs.getString("MEMO").length());
+    void testReadMemo() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT Id, MEMO FROM fields.memo")) {
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("Id"));
+            assertEquals(555, rs.getString("MEMO").length());
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", "01234567890\n", rs.getString("MEMO"));
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt("Id"));
+            assertEquals("01234567890\n", rs.getString("MEMO"));
 
-            Assert.assertFalse("Invalid Result Set state.", rs.next());
+            assertFalse(rs.next());
         }
     }
 
@@ -94,18 +97,17 @@ public class MemoFieldTest {
      * @throws SQLException in case of failures.
      */
     @Test
-    public void testReadFormattedMemo() throws SQLException {
-        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery(
-                "SELECT Id, FMEMO FROM fields.fmemo")) {
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 1, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", 169, rs.getString("FMEMO").length());
+    void testReadFormattedMemo() throws SQLException {
+        try (Statement stmt = this.conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT Id, FMEMO FROM fields.fmemo")) {
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt("Id"));
+            assertEquals(169, rs.getString("FMEMO").length());
 
-            Assert.assertTrue("Invalid Result Set state.", rs.next());
-            Assert.assertEquals("Invalid value.", 2, rs.getInt("Id"));
-            Assert.assertEquals("Invalid value.", 726, rs.getString("FMEMO").length());
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt("Id"));
+            assertEquals(726, rs.getString("FMEMO").length());
 
-            Assert.assertFalse("Invalid Result Set state.", rs.next());
+            assertFalse(rs.next());
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -20,22 +20,22 @@ import java.nio.ByteBuffer;
 /**
  * Parses auto increment fields.
  *
- * @version 1.4
  * @since 1.3
  */
 public final class AutoIncrementField implements FieldParser {
 
     /**
-     * {@inheritDoc}.
+     * Creates a new instance.
      */
+    public AutoIncrementField() {
+        super();
+    }
+
     @Override
     public boolean match(final ParadoxType type) {
         return type == ParadoxType.AUTO_INCREMENT;
     }
 
-    /**
-     * {@inheritDoc}.
-     */
     @Override
     public Object parse(final ParadoxTable table, final ByteBuffer buffer, final Field field) {
         return buffer.getInt() & 0x0FFF_FFFF;

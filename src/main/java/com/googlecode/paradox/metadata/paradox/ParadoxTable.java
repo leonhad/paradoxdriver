@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -11,23 +11,19 @@
 package com.googlecode.paradox.metadata.paradox;
 
 import com.googlecode.paradox.ConnectionInfo;
-import com.googlecode.paradox.data.IndexData;
-import com.googlecode.paradox.data.PrimaryKeyData;
-import com.googlecode.paradox.data.TableData;
-import com.googlecode.paradox.data.ValidationData;
+import com.googlecode.paradox.data.*;
 import com.googlecode.paradox.data.filefilters.TableFilter;
 import com.googlecode.paradox.exceptions.DataError;
 import com.googlecode.paradox.exceptions.ParadoxDataException;
-import com.googlecode.paradox.metadata.Field;
-import com.googlecode.paradox.metadata.Index;
-import com.googlecode.paradox.metadata.Table;
-import com.googlecode.paradox.metadata.TableType;
+import com.googlecode.paradox.metadata.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Stores a table data file.
@@ -45,7 +41,14 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
     /**
      * Validations.
      */
-    private ParadoxValidation[] validations = new ParadoxValidation[0];
+    private ParadoxValidation validation;
+
+    /**
+     * Last update timestamp.
+     */
+    private long timestamp;
+
+    private ForeignKey[]     foreignKeys = new ForeignKey[0];
 
     /**
      * Creates a new instance.
@@ -81,6 +84,11 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         }
     }
 
+    /**
+     * Loads the table indexes metadata.
+     *
+     * @throws SQLException in case of failures.
+     */
     public void loadIndexes() throws SQLException {
         final List<Index> loadedIndexes = IndexData.listIndexes(file.getParentFile(), this, this.connectionInfo);
         final Index index = PrimaryKeyData.getPrimaryKey(file.getParentFile(), this, connectionInfo);
@@ -91,9 +99,22 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         indexes = loadedIndexes.toArray(new Index[0]);
     }
 
-    public void loadValidations() throws SQLException {
-        final List<ParadoxValidation> loadedValidations = ValidationData.listValidations(file.getParentFile(), this, this.connectionInfo);
-        validations = loadedValidations.toArray(new ParadoxValidation[0]);
+    /**
+     * Loads the table validation metadata.
+     */
+    public void loadValidations() {
+        validation = ValidationData.listValidation(file.getParentFile(), this, this.connectionInfo);
+        if (validation != null) {
+            for (ValidationField validationField : validation.getFields()) {
+                Arrays.stream(fields).filter(f -> Objects.equals(f.getName(), validationField.getName())).findFirst().ifPresent(field -> {
+                    field.setRequired(validationField.isRequired());
+                    field.setPicture(validationField.getPicture());
+                    field.setMinValue(validationField.getMinimumValue());
+                    field.setMaxValue(validationField.getMaximumValue());
+                    field.setDefaultValue(validationField.getDefaultValue());
+                });
+            }
+        }
     }
 
     @Override
@@ -132,7 +153,29 @@ public final class ParadoxTable extends ParadoxDataFile implements Table {
         return TableType.TABLE;
     }
 
-    public ParadoxValidation[] getValidations() {
-        return validations;
+    /**
+     * Gets the table validation.
+     *
+     * @return the table validation.
+     */
+    public ParadoxValidation getValidation() {
+        return validation;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Override
+    public ForeignKey[] getForeignKeys() {
+        return foreignKeys;
+    }
+
+    public void setForeignKeys(ForeignKey[] foreignKeys) {
+        this.foreignKeys = foreignKeys;
     }
 }

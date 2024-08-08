@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Leonardo Alves da Costa
+ * Copyright (c) 2009 Leonardo Alves da Costa
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -19,7 +19,6 @@ import com.googlecode.paradox.rowset.ValuesConverter;
 /**
  * The SQL EXP functions.
  *
- * @version 1.3
  * @since 1.6.0
  */
 public class ExpFunction extends AbstractNumericFunction {
@@ -37,6 +36,13 @@ public class ExpFunction extends AbstractNumericFunction {
             new Column("number", ParadoxType.NUMBER, "The power number.", 1, true, IN)
     };
 
+    /**
+     * Creates a new instance.
+     */
+    public ExpFunction() {
+        super();
+    }
+
     @Override
     public String getRemarks() {
         return "Returns e (natural number) raised to the power of the specified number.";
@@ -48,8 +54,7 @@ public class ExpFunction extends AbstractNumericFunction {
     }
 
     @Override
-    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types,
-                          final FieldNode[] fields) {
+    public Object execute(final ConnectionInfo connectionInfo, final Object[] values, final ParadoxType[] types, final FieldNode[] fields) {
         Double value = ValuesConverter.getDouble(values[0], connectionInfo);
         if (value == null) {
             return null;
