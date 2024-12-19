@@ -295,6 +295,8 @@ public class Field {
 
     /**
      * Gets the field required status.
+     *
+     * @return the field required status.
      */
     public boolean isRequired() {
         return required;
