@@ -1,5 +1,6 @@
 Paradox Driver NEWS - User visible changes.
 
+2024-12-18 Fixed the table loading with header size more than 2048 bytes.
 2024-08-07 Fixed JDK 1.8 loading file bug.
 2024-05-08 Added table metadata cache.
 2024-05-05 Fixed the project Javadoc.
